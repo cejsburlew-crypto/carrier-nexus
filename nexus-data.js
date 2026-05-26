@@ -15,94 +15,115 @@ const NEXUS = {
 
   drivers: [
     {
+      // ── ROSTER ──────────────────────────────────────────────────────────
       id: "001", name: "Avis Modesto", short: "AVIS", truck: "01", status: "active", phone: "", dispatch_pct: 0.14,
       loads: "142", revenue: "$107K", avatar_bg: "#d6e4f0",
-      cdl_number: "FL-A-289-1047", cdl_class: "A", cdl_state: "FL", cdl_expires: "2027-03-15",
-      med_cert_expires: "2027-06-10", med_examiner: "Dr. R. Martinez, DO",
-      drug_test_date: "2025-12-10", drug_test_result: "Pass", drug_test_next: "2026-12-10",
-      mvr_date: "2026-01-15", mvr_violations: 0,
+      // ── CDL ─────────────────────────────────────────────────────────────
+      cdl_number: "ENTER CDL #", cdl_class: "A", cdl_state: "FL", cdl_expires: "YYYY-MM-DD",
+      // ── MEDICAL CERTIFICATE ─────────────────────────────────────────────
+      med_cert_expires: "YYYY-MM-DD", med_examiner: "Enter Examiner",
+      // ── DRUG & ALCOHOL TESTING ──────────────────────────────────────────
+      drug_test_date: "YYYY-MM-DD", drug_test_result: "Pass", drug_test_next: "YYYY-MM-DD",
+      // ── MOTOR VEHICLE RECORD ────────────────────────────────────────────
+      mvr_date: "YYYY-MM-DD", mvr_violations: 0,
+      // ── ENDORSEMENTS ────────────────────────────────────────────────────
       hazmat: false, hazmat_expires: null,
-      annual_review: "2025-10-20"
+      // ── ANNUAL DRIVING RECORD REVIEW (INTERNAL) ─────────────────────────
+      annual_review: "YYYY-MM-DD",
+      // ── VIOLATIONS HISTORY ──────────────────────────────────────────────
+      // severity: "warning" | "citation" | "oos" (out-of-service)
+      // type: "HOS" | "Equipment" | "Driver" | "Weight" | "Hazmat" | "Drug" | "Accident" | "Speeding" | "Other"
+      violations: [
+        // { date:"YYYY-MM-DD", type:"HOS", code:"395.8", description:"Log not current", severity:"warning", state:"TX", report_no:"", penalty:null, resolved:true, notes:"" }
+      ]
     },
     {
       id: "005", name: "Miguel Fonseca", short: "MIGUEL", truck: "05", status: "active", phone: "", dispatch_pct: 0.13,
       loads: "98", revenue: "$82K", avatar_bg: "#d5e8d4",
-      cdl_number: "FL-A-734-2819", cdl_class: "A", cdl_state: "FL", cdl_expires: "2026-06-08",
-      med_cert_expires: "2026-08-15", med_examiner: "Dr. J. Torres, MD",
-      drug_test_date: "2025-09-05", drug_test_result: "Pass", drug_test_next: "2026-09-05",
-      mvr_date: "2025-11-20", mvr_violations: 1,
+      cdl_number: "ENTER CDL #", cdl_class: "A", cdl_state: "FL", cdl_expires: "YYYY-MM-DD",
+      med_cert_expires: "YYYY-MM-DD", med_examiner: "Enter Examiner",
+      drug_test_date: "YYYY-MM-DD", drug_test_result: "Pass", drug_test_next: "YYYY-MM-DD",
+      mvr_date: "YYYY-MM-DD", mvr_violations: 0,
       hazmat: false, hazmat_expires: null,
-      annual_review: "2025-11-20"
+      annual_review: "YYYY-MM-DD",
+      violations: []
     },
     {
       id: "003", name: "Guillermo Pinera", short: "GUILLERMO", truck: "03", status: "active", phone: "", dispatch_pct: 0.13,
       loads: "118", revenue: "$102K", avatar_bg: "#fff3cd",
-      cdl_number: "FL-A-581-9234", cdl_class: "A", cdl_state: "FL", cdl_expires: "2027-08-22",
-      med_cert_expires: "2027-03-01", med_examiner: "Dr. A. Gomez, DO",
-      drug_test_date: "2026-02-18", drug_test_result: "Pass", drug_test_next: "2027-02-18",
-      mvr_date: "2026-02-15", mvr_violations: 0,
-      hazmat: true, hazmat_expires: "2027-08-22",
-      annual_review: "2026-02-15"
+      cdl_number: "ENTER CDL #", cdl_class: "A", cdl_state: "FL", cdl_expires: "YYYY-MM-DD",
+      med_cert_expires: "YYYY-MM-DD", med_examiner: "Enter Examiner",
+      drug_test_date: "YYYY-MM-DD", drug_test_result: "Pass", drug_test_next: "YYYY-MM-DD",
+      mvr_date: "YYYY-MM-DD", mvr_violations: 0,
+      hazmat: false, hazmat_expires: null,
+      annual_review: "YYYY-MM-DD",
+      violations: []
     },
     {
       id: "007", name: "David Fonseca", short: "DAVID", truck: "09", status: "active", phone: "", dispatch_pct: 0.14,
       loads: "89", revenue: "$75K", avatar_bg: "#f8d7da",
-      cdl_number: "FL-A-304-7821", cdl_class: "A", cdl_state: "FL", cdl_expires: "2026-11-30",
-      med_cert_expires: "2026-06-12", med_examiner: "Dr. C. Rodriguez, MD",
-      drug_test_date: "2025-07-11", drug_test_result: "Pass", drug_test_next: "2026-07-11",
-      mvr_date: "2025-08-30", mvr_violations: 1,
+      cdl_number: "ENTER CDL #", cdl_class: "A", cdl_state: "FL", cdl_expires: "YYYY-MM-DD",
+      med_cert_expires: "YYYY-MM-DD", med_examiner: "Enter Examiner",
+      drug_test_date: "YYYY-MM-DD", drug_test_result: "Pass", drug_test_next: "YYYY-MM-DD",
+      mvr_date: "YYYY-MM-DD", mvr_violations: 0,
       hazmat: false, hazmat_expires: null,
-      annual_review: "2025-08-30"
+      annual_review: "YYYY-MM-DD",
+      violations: []
     },
     {
       id: "010", name: "Yosviel Pinera", short: "YOSVIEL", truck: "06", status: "active", phone: "", dispatch_pct: 0.13,
       loads: "14", revenue: "$2.75K", avatar_bg: "#e8d5f5",
-      cdl_number: "FL-A-920-4713", cdl_class: "A", cdl_state: "FL", cdl_expires: "2027-01-08",
-      med_cert_expires: "2027-01-25", med_examiner: "Dr. R. Martinez, DO",
-      drug_test_date: "2026-01-15", drug_test_result: "Pass", drug_test_next: "2027-01-15",
-      mvr_date: "2026-01-08", mvr_violations: 0,
+      cdl_number: "ENTER CDL #", cdl_class: "A", cdl_state: "FL", cdl_expires: "YYYY-MM-DD",
+      med_cert_expires: "YYYY-MM-DD", med_examiner: "Enter Examiner",
+      drug_test_date: "YYYY-MM-DD", drug_test_result: "Pass", drug_test_next: "YYYY-MM-DD",
+      mvr_date: "YYYY-MM-DD", mvr_violations: 0,
       hazmat: false, hazmat_expires: null,
-      annual_review: "2026-01-08"
+      annual_review: "YYYY-MM-DD",
+      violations: []
     },
     {
       id: "002", name: "Amet Abreu", short: "AMET", truck: "04", status: "active", phone: "", dispatch_pct: 0.13,
       loads: "310+", revenue: "$420K+", avatar_bg: "#d4edda",
-      cdl_number: "FL-A-648-2935", cdl_class: "A", cdl_state: "FL", cdl_expires: "2028-04-30",
-      med_cert_expires: "2028-03-15", med_examiner: "Dr. M. Perez, MD",
-      drug_test_date: "2026-03-10", drug_test_result: "Pass", drug_test_next: "2027-03-10",
-      mvr_date: "2025-12-15", mvr_violations: 0,
-      hazmat: true, hazmat_expires: "2028-04-30",
-      annual_review: "2025-12-15"
+      cdl_number: "ENTER CDL #", cdl_class: "A", cdl_state: "FL", cdl_expires: "YYYY-MM-DD",
+      med_cert_expires: "YYYY-MM-DD", med_examiner: "Enter Examiner",
+      drug_test_date: "YYYY-MM-DD", drug_test_result: "Pass", drug_test_next: "YYYY-MM-DD",
+      mvr_date: "YYYY-MM-DD", mvr_violations: 0,
+      hazmat: false, hazmat_expires: null,
+      annual_review: "YYYY-MM-DD",
+      violations: []
     },
     {
       id: "011", name: "Nelson", short: "NELSON", truck: "06", status: "active", phone: "", dispatch_pct: 0.14,
       loads: "32", revenue: "$28K", avatar_bg: "#d1ecf1",
-      cdl_number: "FL-A-193-8472", cdl_class: "A", cdl_state: "FL", cdl_expires: "2026-09-14",
-      med_cert_expires: "2026-06-05", med_examiner: "Dr. J. Torres, MD",
-      drug_test_date: "2025-11-20", drug_test_result: "Pass", drug_test_next: "2026-11-20",
-      mvr_date: "2025-10-05", mvr_violations: 0,
+      cdl_number: "ENTER CDL #", cdl_class: "A", cdl_state: "FL", cdl_expires: "YYYY-MM-DD",
+      med_cert_expires: "YYYY-MM-DD", med_examiner: "Enter Examiner",
+      drug_test_date: "YYYY-MM-DD", drug_test_result: "Pass", drug_test_next: "YYYY-MM-DD",
+      mvr_date: "YYYY-MM-DD", mvr_violations: 0,
       hazmat: false, hazmat_expires: null,
-      annual_review: "2025-10-05"
+      annual_review: "YYYY-MM-DD",
+      violations: []
     },
     {
       id: "009", name: "Laura Moreno", short: "LAURA", truck: null, status: "inactive", phone: "", dispatch_pct: 0.00,
       loads: null, revenue: null, avatar_bg: "#ffe0cc",
-      cdl_number: "FL-A-472-9186", cdl_class: "A", cdl_state: "FL", cdl_expires: "2025-11-30",
-      med_cert_expires: "2025-11-30", med_examiner: "Dr. A. Gomez, DO",
-      drug_test_date: "2024-08-20", drug_test_result: "Pass", drug_test_next: "2025-08-20",
-      mvr_date: "2024-09-10", mvr_violations: 0,
+      cdl_number: "ENTER CDL #", cdl_class: "A", cdl_state: "FL", cdl_expires: "YYYY-MM-DD",
+      med_cert_expires: "YYYY-MM-DD", med_examiner: "Enter Examiner",
+      drug_test_date: "YYYY-MM-DD", drug_test_result: "Pass", drug_test_next: "YYYY-MM-DD",
+      mvr_date: "YYYY-MM-DD", mvr_violations: 0,
       hazmat: false, hazmat_expires: null,
-      annual_review: "2024-09-10"
+      annual_review: "YYYY-MM-DD",
+      violations: []
     },
     {
       id: "008", name: "Betty", short: "BETTY", truck: null, status: "inactive", phone: "", dispatch_pct: 0.00,
       loads: null, revenue: null, avatar_bg: "#f0e6ff",
-      cdl_number: "FL-B-830-1947", cdl_class: "B", cdl_state: "FL", cdl_expires: "2025-08-15",
-      med_cert_expires: "2025-08-15", med_examiner: "Dr. M. Perez, MD",
-      drug_test_date: "2024-06-05", drug_test_result: "Pass", drug_test_next: "2025-06-05",
-      mvr_date: "2024-07-22", mvr_violations: 0,
+      cdl_number: "ENTER CDL #", cdl_class: "B", cdl_state: "FL", cdl_expires: "YYYY-MM-DD",
+      med_cert_expires: "YYYY-MM-DD", med_examiner: "Enter Examiner",
+      drug_test_date: "YYYY-MM-DD", drug_test_result: "Pass", drug_test_next: "YYYY-MM-DD",
+      mvr_date: "YYYY-MM-DD", mvr_violations: 0,
       hazmat: false, hazmat_expires: null,
-      annual_review: "2024-07-22"
+      annual_review: "YYYY-MM-DD",
+      violations: []
     },
   ],
 

@@ -635,6 +635,65 @@ body {
 .driver-card.c-ok    { border-left: 3px solid #22c55e !important; }
 .driver-card.c-warn  { border-left: 3px solid #fbbf24 !important; }
 .driver-card.c-alert { border-left: 3px solid #ef4444 !important; }
+
+/* ── VIOLATIONS SECTION ── */
+.violations-section {
+  padding: 10px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(239,68,68,0.04);
+}
+.violations-hdr {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #ef4444;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.violation-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(239,68,68,0.08);
+  flex-wrap: wrap;
+}
+.violation-row:last-child { border-bottom: none; }
+.viol-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  min-width: 80px;
+  flex-shrink: 0;
+}
+.viol-type {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--orange);
+  min-width: 55px;
+  flex-shrink: 0;
+}
+.viol-state {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  min-width: 22px;
+  flex-shrink: 0;
+}
+.viol-desc {
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-mid);
+  flex: 1;
+}
+/* c-pending = data not yet on file */
+.driver-card.c-pending { border-left: 3px solid #94a3b8 !important; }
 </style>
 <style id="nexus-unified">
 /* ── SIDEBAR BLACK ── */
@@ -825,15 +884,19 @@ body {
 <script src="nexus-data.js"></script>
 <script>
 // ─── Helpers ───────────────────────────────────────────────────────────────
+function isPlaceholder(val) {
+  return !val || val === 'YYYY-MM-DD' || val.includes('ENTER') || val.length < 6;
+}
+
 function fmtDate(d) {
-  if (!d) return '—';
+  if (!d || isPlaceholder(d)) return '—';
   const [y, m, day] = d.split('-');
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return months[parseInt(m)-1] + ' ' + parseInt(day) + ', ' + y;
 }
 
 function expiryStatus(dateStr) {
-  if (!dateStr) return 'na';
+  if (!dateStr || isPlaceholder(dateStr)) return 'na';
   const today = new Date('2026-05-25');
   const exp = new Date(dateStr);
   const days = Math.floor((exp - today) / 86400000);
@@ -843,7 +906,7 @@ function expiryStatus(dateStr) {
 }
 
 function expiryBadge(dateStr, prefix) {
-  if (!dateStr) return '<span class="badge badge-gray">N/A</span>';
+  if (!dateStr || isPlaceholder(dateStr)) return '<span class="badge badge-gray">NOT ON FILE</span>';
   const s = expiryStatus(dateStr);
   const today = new Date('2026-05-25');
   const days = Math.floor((new Date(dateStr) - today) / 86400000);
@@ -855,27 +918,28 @@ function expiryBadge(dateStr, prefix) {
 
 function complianceClass(d) {
   const dates = [d.cdl_expires, d.med_cert_expires, d.drug_test_next];
-  let worst = 'valid';
+  let worst = 'ok';
+  let hasPlaceholders = false;
   for (const dt of dates) {
-    if (!dt) continue;
+    if (!dt || isPlaceholder(dt)) { hasPlaceholders = true; continue; }
     const s = expiryStatus(dt);
     if (s === 'expired') worst = 'expired';
     else if (s === 'expiring' && worst !== 'expired') worst = 'expiring';
   }
   if (worst === 'expired') return 'c-alert';
   if (worst === 'expiring') return 'c-warn';
+  if (hasPlaceholders) return 'c-pending';
   return 'c-ok';
 }
 
 // ─── Render Compliance Alert Banner ───────────────────────────────────────
 function renderComplianceAlert() {
-  const today = new Date('2026-05-25');
-  let expired = 0, expiring = 0, compliant = 0, total = NEXUS.drivers.length;
-
+  let expired = 0, expiring = 0, pending = 0, compliant = 0;
   NEXUS.drivers.forEach(d => {
     const cls = complianceClass(d);
     if (cls === 'c-alert') expired++;
     else if (cls === 'c-warn') expiring++;
+    else if (cls === 'c-pending') pending++;
     else compliant++;
   });
 
@@ -888,25 +952,33 @@ function renderComplianceAlert() {
       '<div class="alert-label">⚠️ EXPIRING ≤30D</div>' +
       '<div class="alert-value yellow">' + expiring + '</div>' +
     '</div>' +
-    '<div class="alert-stat">' +
-      '<div class="alert-label">✅ FULLY COMPLIANT</div>' +
-      '<div class="alert-value green">' + compliant + '</div>' +
+    '<div class="alert-stat' + (pending > 0 ? ' has-expiring' : '') + '">' +
+      '<div class="alert-label">📋 NOT ON FILE</div>' +
+      '<div class="alert-value ice">' + pending + '</div>' +
     '</div>' +
     '<div class="alert-stat">' +
-      '<div class="alert-label">👥 TOTAL DRIVERS</div>' +
-      '<div class="alert-value ice">' + total + '</div>' +
+      '<div class="alert-label">✅ COMPLIANT</div>' +
+      '<div class="alert-value green">' + compliant + '</div>' +
     '</div>';
+}
+
+// ─── Violation severity badge ──────────────────────────────────────────────
+function violationBadge(severity) {
+  if (severity === 'oos')     return '<span class="badge badge-red">OOS</span>';
+  if (severity === 'citation') return '<span class="badge badge-orange">CITATION</span>';
+  return '<span class="badge badge-gray">WARNING</span>';
 }
 
 // ─── Render Driver Cards ───────────────────────────────────────────────────
 function renderDriverCards(filter) {
   const truckSVG = '<svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>';
   const shieldSVG = '<svg width="9" height="9" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l6 2v5c0 4-6 7-6 7S2 12 2 8V3l6-2z"/></svg>';
+  const warnSVG = '<svg width="9" height="9" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L1 14h14L8 1zm0 3l5.5 9H2.5L8 4zm-1 3v3h2V7H7zm0 4v2h2v-2H7z"/></svg>';
 
   let drivers = NEXUS.drivers;
   if (filter === 'active') drivers = drivers.filter(d => d.status === 'active');
   else if (filter === 'inactive') drivers = drivers.filter(d => d.status === 'inactive');
-  else if (filter === 'issues') drivers = drivers.filter(d => complianceClass(d) !== 'c-ok');
+  else if (filter === 'issues') drivers = drivers.filter(d => complianceClass(d) !== 'c-ok' && complianceClass(d) !== 'c-pending');
 
   const html = drivers.map(d => {
     const initials = d.name.split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase();
@@ -917,19 +989,36 @@ function renderDriverCards(filter) {
     const truckChip = d.truck
       ? '<div class="truck-chip">' + truckSVG + ' UNIT ' + d.truck.padStart(2, '0') + '</div>'
       : '<span class="no-truck">Unassigned</span>';
-    const loadsVal = d.loads || '—';
-    const revenueVal = d.revenue || '—';
 
-    // Compliance rows
     const cdlBadge = expiryBadge(d.cdl_expires);
     const medBadge = expiryBadge(d.med_cert_expires);
     const drugNextBadge = expiryBadge(d.drug_test_next, 'DUE');
-    const mvrBadge = d.mvr_violations > 0
-      ? '<span class="badge badge-orange">' + d.mvr_violations + ' VIOLATION' + (d.mvr_violations > 1 ? 'S' : '') + '</span>'
-      : '<span class="badge badge-green">CLEAN</span>';
+    const violations = d.violations || [];
+    const openViolations = violations.filter(v => !v.resolved);
+    const mvrBadge = violations.length === 0
+      ? '<span class="badge badge-green">CLEAN</span>'
+      : openViolations.length > 0
+        ? '<span class="badge badge-red">' + openViolations.length + ' OPEN</span>'
+        : '<span class="badge badge-orange">' + violations.length + ' RECORDED</span>';
     const hmtBadge = d.hazmat
-      ? '<span class="badge badge-blue">YES' + (d.hazmat_expires ? ' · ' + fmtDate(d.hazmat_expires) : '') + '</span>'
+      ? '<span class="badge badge-blue">YES' + (d.hazmat_expires && !isPlaceholder(d.hazmat_expires) ? ' · ' + fmtDate(d.hazmat_expires) : '') + '</span>'
       : '<span class="badge badge-gray">NO</span>';
+
+    // Violations history rows
+    const violationRows = violations.length === 0 ? '' :
+      '<div class="violations-section">' +
+        '<div class="violations-hdr">' + warnSVG + ' VIOLATION HISTORY (' + violations.length + ')</div>' +
+        violations.map(v =>
+          '<div class="violation-row">' +
+            '<span class="viol-date">' + fmtDate(v.date) + '</span>' +
+            '<span class="viol-type">' + (v.type || '—') + '</span>' +
+            '<span class="viol-desc">' + (v.description || '—') + '</span>' +
+            '<span class="viol-state">' + (v.state || '—') + '</span>' +
+            violationBadge(v.severity) +
+            (v.resolved ? '<span class="badge badge-green" style="font-size:8px;">RESOLVED</span>' : '') +
+          '</div>'
+        ).join('') +
+      '</div>';
 
     return '<div class="driver-card ' + (d.status === 'inactive' ? 'inactive ' : '') + cls + '" data-status="' + d.status + '" data-compliance="' + cls + '">' +
       '<div class="driver-card-top">' +
@@ -940,58 +1029,32 @@ function renderDriverCards(filter) {
         '</div>' +
         '<div class="driver-meta-row">' + truckChip + statusBadge + '</div>' +
       '</div>' +
-
       '<div class="driver-card-stats">' +
-        '<div class="stat-block">' +
-          '<div class="stat-block-label">Total Loads</div>' +
-          '<div class="stat-block-value' + (d.loads ? '' : ' na') + '">' + loadsVal + '</div>' +
-        '</div>' +
-        '<div class="stat-block">' +
-          '<div class="stat-block-label">Total Revenue</div>' +
-          '<div class="stat-block-value revenue' + (d.revenue ? '' : ' na') + '">' + revenueVal + '</div>' +
-        '</div>' +
+        '<div class="stat-block"><div class="stat-block-label">Total Loads</div><div class="stat-block-value' + (d.loads ? '' : ' na') + '">' + (d.loads || '—') + '</div></div>' +
+        '<div class="stat-block"><div class="stat-block-label">Total Revenue</div><div class="stat-block-value revenue' + (d.revenue ? '' : ' na') + '">' + (d.revenue || '—') + '</div></div>' +
       '</div>' +
-
       '<div class="compliance-section">' +
         '<div class="compliance-hdr">' + shieldSVG + ' COMPLIANCE</div>' +
-
-        '<div class="comp-row">' +
-          '<span class="comp-lbl">CDL</span>' +
-          '<span class="comp-val">' + (d.cdl_number || '—') + ' · Class ' + (d.cdl_class || '?') + ' · ' + (d.cdl_state || '—') + '</span>' +
-          cdlBadge +
-        '</div>' +
-
-        '<div class="comp-row">' +
-          '<span class="comp-lbl">MED</span>' +
-          '<span class="comp-val">DOT Physical · ' + (d.med_examiner || '—') + '</span>' +
-          medBadge +
-        '</div>' +
-
-        '<div class="comp-row">' +
-          '<span class="comp-lbl">DRUG</span>' +
-          '<span class="comp-val">Last: ' + fmtDate(d.drug_test_date) + ' · ' + (d.drug_test_result || '—') + '</span>' +
-          drugNextBadge +
-        '</div>' +
-
-        '<div class="comp-row">' +
-          '<span class="comp-lbl">MVR</span>' +
-          '<span class="comp-val">Last Review: ' + fmtDate(d.mvr_date) + '</span>' +
-          mvrBadge +
-        '</div>' +
-
-        '<div class="comp-row">' +
-          '<span class="comp-lbl">HMT</span>' +
-          '<span class="comp-val">Hazmat Endorsement</span>' +
-          hmtBadge +
-        '</div>' +
-
-        '<div class="comp-row">' +
-          '<span class="comp-lbl">ANN</span>' +
+        '<div class="comp-row"><span class="comp-lbl">CDL</span>' +
+          '<span class="comp-val">' + (isPlaceholder(d.cdl_number) ? 'Not on file' : d.cdl_number + ' · Class ' + d.cdl_class + ' · ' + d.cdl_state) + '</span>' +
+          cdlBadge + '</div>' +
+        '<div class="comp-row"><span class="comp-lbl">MED</span>' +
+          '<span class="comp-val">DOT Physical' + (isPlaceholder(d.med_examiner) ? '' : ' · ' + d.med_examiner) + '</span>' +
+          medBadge + '</div>' +
+        '<div class="comp-row"><span class="comp-lbl">DRUG</span>' +
+          '<span class="comp-val">' + (isPlaceholder(d.drug_test_date) ? 'Not on file' : 'Last: ' + fmtDate(d.drug_test_date) + ' · ' + (d.drug_test_result || '—')) + '</span>' +
+          drugNextBadge + '</div>' +
+        '<div class="comp-row"><span class="comp-lbl">MVR</span>' +
+          '<span class="comp-val">' + (isPlaceholder(d.mvr_date) ? 'Not on file' : 'Last Pull: ' + fmtDate(d.mvr_date)) + '</span>' +
+          mvrBadge + '</div>' +
+        '<div class="comp-row"><span class="comp-lbl">HMT</span>' +
+          '<span class="comp-val">Hazmat Endorsement</span>' + hmtBadge + '</div>' +
+        '<div class="comp-row"><span class="comp-lbl">ANN</span>' +
           '<span class="comp-val">Annual Driving Record Review (Internal)</span>' +
-          '<span class="comp-due">' + fmtDate(d.annual_review) + '</span>' +
+          '<span class="comp-due">' + (isPlaceholder(d.annual_review) ? 'Not on file' : fmtDate(d.annual_review)) + '</span>' +
         '</div>' +
       '</div>' +
-
+      violationRows +
       '<div class="driver-card-actions">' +
         '<button class="btn-driver-action settle" data-i18n="SETTLEMENTS">SETTLEMENTS</button>' +
         '<button class="btn-driver-action" data-i18n="CONTACT">CONTACT</button>' +
@@ -1001,8 +1064,6 @@ function renderDriverCards(filter) {
   }).join('');
 
   document.getElementById('drivers-grid').innerHTML = html;
-
-  // Update count label
   const filterLabel = filter === 'all' ? (drivers.length + ' DRIVERS') :
     filter === 'issues' ? (drivers.length + ' WITH ISSUES') :
     (drivers.length + ' ' + filter.toUpperCase() + ' DRIVER' + (drivers.length !== 1 ? 'S' : ''));
