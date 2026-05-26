@@ -694,6 +694,111 @@ body {
 }
 /* c-pending = data not yet on file */
 .driver-card.c-pending { border-left: 3px solid #94a3b8 !important; }
+
+/* ── COMPLIANCE EDIT MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.72);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal-box {
+  background: #fff; border-radius: 12px; width: 100%; max-width: 640px;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+  display: flex; flex-direction: column;
+}
+.modal-header {
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex; align-items: center; gap: 10px;
+  position: sticky; top: 0; background: #fff; z-index: 10;
+}
+.modal-driver-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: 18px; letter-spacing: 0.5px;
+  color: #0f172a; flex: 1;
+}
+.modal-close {
+  background: none; border: none; cursor: pointer;
+  font-size: 18px; color: #64748b; line-height: 1;
+  padding: 4px 8px; border-radius: 4px;
+}
+.modal-close:hover { background: #f1f5f9; }
+.modal-body { padding: 0 22px 10px; }
+.modal-section {
+  padding: 14px 0 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.modal-section:last-child { border-bottom: none; }
+.modal-section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  color: #94a3b8; text-transform: uppercase; margin-bottom: 10px;
+}
+.modal-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.modal-field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 120px; }
+.modal-field.flex2 { flex: 2; }
+.modal-field label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 600; color: #64748b; letter-spacing: 0.5px;
+}
+.modal-field input, .modal-field select {
+  border: 1px solid #e2e8f0; border-radius: 6px;
+  padding: 7px 10px; font-size: 13px; font-family: 'Barlow', sans-serif;
+  color: #0f172a; background: #f8fafc; outline: none;
+  transition: border-color 0.15s;
+}
+.modal-field input:focus, .modal-field select:focus {
+  border-color: #2e6da4; background: #fff;
+}
+.modal-field input[type="date"] { font-family: 'Barlow', sans-serif; }
+.modal-result-row { display: flex; gap: 10px; margin-bottom: 8px; }
+.modal-result-row label { font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:600; color:#64748b; }
+.modal-result-row select { border:1px solid #e2e8f0; border-radius:6px; padding:7px 10px; font-size:13px; font-family:'Barlow',sans-serif; color:#0f172a; background:#f8fafc; }
+.upload-zone {
+  margin-top: 8px;
+  border: 1.5px dashed #cbd5e1; border-radius: 8px;
+  padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+  cursor: pointer; transition: border-color 0.15s, background 0.15s;
+}
+.upload-zone:hover { border-color: #2e6da4; background: #f0f7ff; }
+.upload-zone input[type="file"] { display: none; }
+.upload-zone-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.5px;
+  color: #475569; cursor: pointer; flex: 1;
+}
+.upload-zone-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: #22c55e; font-weight: 600;
+}
+.modal-footer {
+  padding: 14px 22px 18px;
+  border-top: 1px solid #e2e8f0;
+  display: flex; gap: 10px; justify-content: flex-end;
+  position: sticky; bottom: 0; background: #fff;
+}
+.modal-btn {
+  padding: 9px 22px; border-radius: 6px; border: none;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 14px; letter-spacing: 0.5px; cursor: pointer;
+}
+.modal-btn-cancel { background: #f1f5f9; color: #475569; }
+.modal-btn-cancel:hover { background: #e2e8f0; }
+.modal-btn-save { background: #e8640a; color: #fff; }
+.modal-btn-save:hover { background: #ff7518; }
+.modal-btn-save.saved { background: #22c55e; }
+/* Edit button on card */
+.btn-edit-compliance {
+  background: rgba(46,109,164,0.12); border: 1px solid rgba(46,109,164,0.25);
+  border-radius: 4px; padding: 4px 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
+  color: #a8c4e0; letter-spacing: 1px; cursor: pointer;
+  transition: all 0.15s; margin-left: auto;
+}
+.btn-edit-compliance:hover { background: rgba(46,109,164,0.25); color: #fff; border-color: #2e6da4; }
+.has-stored { background: rgba(34,197,94,0.12) !important; border-color: rgba(34,197,94,0.3) !important; color: #22c55e !important; }
 </style>
 <style id="nexus-unified">
 /* ── SIDEBAR BLACK ── */
@@ -935,7 +1040,8 @@ function complianceClass(d) {
 // ─── Render Compliance Alert Banner ───────────────────────────────────────
 function renderComplianceAlert() {
   let expired = 0, expiring = 0, pending = 0, compliant = 0;
-  NEXUS.drivers.forEach(d => {
+  NEXUS.drivers.forEach(dRaw => {
+    const d = mergeDriver(dRaw);
     const cls = complianceClass(d);
     if (cls === 'c-alert') expired++;
     else if (cls === 'c-warn') expiring++;
@@ -980,7 +1086,10 @@ function renderDriverCards(filter) {
   else if (filter === 'inactive') drivers = drivers.filter(d => d.status === 'inactive');
   else if (filter === 'issues') drivers = drivers.filter(d => complianceClass(d) !== 'c-ok' && complianceClass(d) !== 'c-pending');
 
-  const html = drivers.map(d => {
+  const html = drivers.map(dRaw => {
+    const d = mergeDriver(dRaw);  // merge localStorage over nexus-data defaults
+    const storedDocs = loadDocs(d.id);
+    const hasStoredData = Object.keys(loadStored(d.id)).length > 0;
     const initials = d.name.split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase();
     const cls = complianceClass(d);
     const statusBadge = d.status === 'active'
@@ -1059,6 +1168,9 @@ function renderDriverCards(filter) {
         '<button class="btn-driver-action settle" data-i18n="SETTLEMENTS">SETTLEMENTS</button>' +
         '<button class="btn-driver-action" data-i18n="CONTACT">CONTACT</button>' +
         '<button class="btn-driver-action" data-i18n="DOCUMENTS">DOCUMENTS</button>' +
+        '<button class="btn-edit-compliance' + (hasStoredData ? ' has-stored' : '') + '" onclick="openComplianceModal(\''+d.id+'\')">' +
+          (hasStoredData ? '✓ EDIT' : '✏️ ENTER') +
+        '</button>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -1079,6 +1191,112 @@ function filterDrivers(filter, btn) {
 // ─── Initialize ────────────────────────────────────────────────────────────
 renderComplianceAlert();
 renderDriverCards('all');
+</script>
+<script>
+// ─── LocalStorage compliance store ─────────────────────────────────────────
+const LS_COMP = 'nexus_comp_';
+const LS_DOCS = 'nexus_docs_';
+let _modalDriverId = null;
+
+function loadStored(id) {
+  try { return JSON.parse(localStorage.getItem(LS_COMP + id)) || {}; } catch { return {}; }
+}
+function loadDocs(id) {
+  try { return JSON.parse(localStorage.getItem(LS_DOCS + id)) || {}; } catch { return {}; }
+}
+function mergeDriver(d) {
+  const stored = loadStored(d.id);
+  return Object.assign({}, d, stored);
+}
+
+// ─── Open / Close Modal ─────────────────────────────────────────────────────
+function openComplianceModal(driverId) {
+  const base = NEXUS.drivers.find(d => d.id === driverId);
+  if (!base) return;
+  const d = mergeDriver(base);
+  _modalDriverId = driverId;
+
+  document.getElementById('modal-driver-name').textContent = d.name + ' — Compliance';
+
+  // Fill fields
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = (!val || isPlaceholder(val)) ? '' : val; };
+  set('f-cdl_number', d.cdl_number);
+  document.getElementById('f-cdl_class').value = d.cdl_class || 'A';
+  set('f-cdl_state', d.cdl_state);
+  set('f-cdl_expires', d.cdl_expires);
+  set('f-med_examiner', d.med_examiner);
+  set('f-med_cert_expires', d.med_cert_expires);
+  set('f-drug_test_date', d.drug_test_date);
+  document.getElementById('f-drug_test_result').value = d.drug_test_result || 'Pass';
+  set('f-drug_test_next', d.drug_test_next);
+  set('f-mvr_date', d.mvr_date);
+  document.getElementById('f-hazmat').value = d.hazmat ? 'true' : 'false';
+  set('f-hazmat_expires', d.hazmat_expires);
+  set('f-annual_review', d.annual_review);
+
+  // Show uploaded doc status
+  const docs = loadDocs(driverId);
+  ['cdl','med_cert','drug_test','mvr'].forEach(type => {
+    const el = document.getElementById('us-' + type);
+    if (el) el.textContent = docs[type] ? '✓ ' + docs[type].name : '';
+  });
+
+  document.getElementById('modal-save-btn').textContent = 'Save Compliance Data';
+  document.getElementById('modal-save-btn').classList.remove('saved');
+  document.getElementById('compliance-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('compliance-modal').style.display = 'none';
+  document.body.style.overflow = '';
+  _modalDriverId = null;
+}
+
+// ─── Handle file upload (records filename, doesn't store binary) ─────────────
+function handleUpload(event, docType) {
+  const file = event.target.files[0];
+  if (!file || !_modalDriverId) return;
+  const docs = loadDocs(_modalDriverId);
+  docs[docType] = { name: file.name, uploaded: new Date().toISOString().split('T')[0], size: Math.round(file.size/1024) + 'KB' };
+  localStorage.setItem(LS_DOCS + _modalDriverId, JSON.stringify(docs));
+  const statusEl = document.getElementById('us-' + docType);
+  if (statusEl) statusEl.textContent = '✓ ' + file.name;
+}
+
+// ─── Save form to localStorage ──────────────────────────────────────────────
+function saveComplianceForm() {
+  if (!_modalDriverId) return;
+  const get = id => document.getElementById(id)?.value?.trim() || null;
+  const data = {
+    cdl_number: get('f-cdl_number'),
+    cdl_class: get('f-cdl_class'),
+    cdl_state: (get('f-cdl_state') || '').toUpperCase(),
+    cdl_expires: get('f-cdl_expires'),
+    med_examiner: get('f-med_examiner'),
+    med_cert_expires: get('f-med_cert_expires'),
+    drug_test_date: get('f-drug_test_date'),
+    drug_test_result: get('f-drug_test_result'),
+    drug_test_next: get('f-drug_test_next'),
+    mvr_date: get('f-mvr_date'),
+    hazmat: document.getElementById('f-hazmat')?.value === 'true',
+    hazmat_expires: get('f-hazmat_expires'),
+    annual_review: get('f-annual_review')
+  };
+  // Remove null/empty entries
+  Object.keys(data).forEach(k => { if (!data[k] && data[k] !== false) delete data[k]; });
+  localStorage.setItem(LS_COMP + _modalDriverId, JSON.stringify(data));
+
+  const btn = document.getElementById('modal-save-btn');
+  btn.textContent = '✓ Saved!'; btn.classList.add('saved');
+  setTimeout(() => {
+    closeModal();
+    renderComplianceAlert();
+    const activeFilter = document.querySelector('.filter-btn.active');
+    const filter = activeFilter?.textContent?.toLowerCase().trim() || 'all';
+    renderDriverCards(filter === 'all drivers' ? 'all' : filter);
+  }, 800);
+}
 </script>
 <script src="nexus-lang.js"></script>
 
@@ -1106,6 +1324,96 @@ renderDriverCards('all');
     TEAM
   </a>
 </nav>
+
+
+<!-- COMPLIANCE EDIT MODAL -->
+<div id="compliance-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-driver-name" id="modal-driver-name">Driver</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="modal-section">
+        <div class="modal-section-title">📄 CDL License</div>
+        <div class="modal-row">
+          <div class="modal-field flex2"><label>CDL Number</label><input id="f-cdl_number" type="text" placeholder="e.g. FL-A-289-1047"></div>
+          <div class="modal-field" style="max-width:70px"><label>Class</label>
+            <select id="f-cdl_class"><option>A</option><option>B</option><option>C</option></select></div>
+          <div class="modal-field" style="max-width:60px"><label>State</label><input id="f-cdl_state" type="text" placeholder="FL" maxlength="2" style="text-transform:uppercase"></div>
+          <div class="modal-field"><label>Expiration Date</label><input id="f-cdl_expires" type="date"></div>
+        </div>
+        <div class="upload-zone" onclick="document.getElementById('fu-cdl').click()">
+          <input type="file" id="fu-cdl" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(event,'cdl')">
+          <span class="upload-zone-label">📎 Upload CDL scan (PDF, JPG, PNG)</span>
+          <span class="upload-zone-status" id="us-cdl"></span>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">🏥 Medical Certificate (DOT Physical)</div>
+        <div class="modal-row">
+          <div class="modal-field flex2"><label>Examining Physician</label><input id="f-med_examiner" type="text" placeholder="Dr. Name, MD"></div>
+          <div class="modal-field"><label>Certificate Expiration</label><input id="f-med_cert_expires" type="date"></div>
+        </div>
+        <div class="upload-zone" onclick="document.getElementById('fu-med').click()">
+          <input type="file" id="fu-med" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(event,'med_cert')">
+          <span class="upload-zone-label">📎 Upload Medical Certificate</span>
+          <span class="upload-zone-status" id="us-med_cert"></span>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">🧪 Drug &amp; Alcohol Testing</div>
+        <div class="modal-row">
+          <div class="modal-field"><label>Last Test Date</label><input id="f-drug_test_date" type="date"></div>
+          <div class="modal-field" style="max-width:110px"><label>Result</label>
+            <select id="f-drug_test_result"><option>Pass</option><option>Fail</option><option>Pending</option></select></div>
+          <div class="modal-field"><label>Next Due Date</label><input id="f-drug_test_next" type="date"></div>
+        </div>
+        <div class="upload-zone" onclick="document.getElementById('fu-drug').click()">
+          <input type="file" id="fu-drug" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(event,'drug_test')">
+          <span class="upload-zone-label">📎 Upload Drug Test Report</span>
+          <span class="upload-zone-status" id="us-drug_test"></span>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">🚗 Motor Vehicle Record (MVR)</div>
+        <div class="modal-row">
+          <div class="modal-field"><label>Last MVR Pull Date</label><input id="f-mvr_date" type="date"></div>
+        </div>
+        <div class="upload-zone" onclick="document.getElementById('fu-mvr').click()">
+          <input type="file" id="fu-mvr" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(event,'mvr')">
+          <span class="upload-zone-label">📎 Upload MVR Report</span>
+          <span class="upload-zone-status" id="us-mvr"></span>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">⚠️ Hazmat Endorsement</div>
+        <div class="modal-row">
+          <div class="modal-field" style="max-width:100px"><label>Endorsed?</label>
+            <select id="f-hazmat"><option value="false">No</option><option value="true">Yes</option></select></div>
+          <div class="modal-field"><label>Endorsement Expiry (if yes)</label><input id="f-hazmat_expires" type="date"></div>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">📅 Annual Driving Record Review (Internal)</div>
+        <div class="modal-row">
+          <div class="modal-field"><label>Last Review Date</label><input id="f-annual_review" type="date"></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn modal-btn-save" id="modal-save-btn" onclick="saveComplianceForm()">Save Compliance Data</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
