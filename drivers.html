@@ -583,7 +583,7 @@ body {
 }
 .compliance-hdr {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: 2px;
   color: var(--text-muted);
@@ -597,26 +597,27 @@ body {
 .comp-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 0;
+  gap: 8px;
+  padding: 5px 0;
   border-bottom: 1px solid rgba(0,0,0,0.05);
-  min-height: 22px;
+  min-height: 26px;
 }
 .comp-row:last-child { border-bottom: none; }
 .comp-lbl {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
   color: var(--text-muted);
   letter-spacing: 0.8px;
-  min-width: 32px;
+  min-width: 36px;
   text-transform: uppercase;
   flex-shrink: 0;
 }
 .comp-val {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 8.5px;
-  color: var(--text-mid);
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--white-pure);
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -624,9 +625,10 @@ body {
   white-space: nowrap;
 }
 .comp-due {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 8px;
-  color: var(--text-muted);
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-mid);
   flex-shrink: 0;
 }
 /* Compliance left-border color coding */
@@ -985,7 +987,7 @@ function renderDriverCards(filter) {
 
         '<div class="comp-row">' +
           '<span class="comp-lbl">ANN</span>' +
-          '<span class="comp-val">Annual Review</span>' +
+          '<span class="comp-val">Annual Driving Record Review (Internal)</span>' +
           '<span class="comp-due">' + fmtDate(d.annual_review) + '</span>' +
         '</div>' +
       '</div>' +
