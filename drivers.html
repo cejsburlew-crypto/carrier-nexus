@@ -1271,6 +1271,20 @@ function saveComplianceForm() {
   if (!_modalDriverId) return;
   const get = id => document.getElementById(id)?.value?.trim() || null;
   const data = {
+    // --- NEW DQ FILE FIELDS ---
+    app_date:             document.getElementById('f-app_date')?.value || '',
+    app_status:           document.getElementById('f-app_status')?.value || '',
+    road_test_date:       document.getElementById('f-road_test_date')?.value || '',
+    road_test_result:     document.getElementById('f-road_test_result')?.value || '',
+    road_test_examiner:   document.getElementById('f-road_test_examiner')?.value || '',
+    prev_emp_sent:        document.getElementById('f-prev_emp_sent')?.value || '',
+    prev_emp_recv:        document.getElementById('f-prev_emp_recv')?.value || '',
+    prev_emp_status:      document.getElementById('f-prev_emp_status')?.value || '',
+    clrhs_pre_date:       document.getElementById('f-clrhs_pre_date')?.value || '',
+    clrhs_pre_result:     document.getElementById('f-clrhs_pre_result')?.value || '',
+    clrhs_annual_date:    document.getElementById('f-clrhs_annual_date')?.value || '',
+    clrhs_annual_result:  document.getElementById('f-clrhs_annual_result')?.value || '',
+    annual_reviewer:      document.getElementById('f-annual_reviewer')?.value || '',
     cdl_number: get('f-cdl_number'),
     cdl_class: get('f-cdl_class'),
     cdl_state: (get('f-cdl_state') || '').toUpperCase(),
@@ -1347,8 +1361,8 @@ function saveComplianceForm() {
           <div class="modal-field"><label>Expiration Date</label><input id="f-cdl_expires" type="date"></div>
         </div>
         <div class="upload-zone" onclick="document.getElementById('fu-cdl').click()">
-          <input type="file" id="fu-cdl" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(event,'cdl')">
-          <span class="upload-zone-label">📎 Upload CDL scan (PDF, JPG, PNG)</span>
+          <input type="file" id="fu-cdl" accept="image/*,.pdf" onchange="handleUpload(event,'cdl')">
+          <span class="upload-zone-label">📎 Upload or 📷 Take Photo — CDL (PDF/Image)</span>
           <span class="upload-zone-status" id="us-cdl"></span>
         </div>
       </div>
@@ -1360,8 +1374,8 @@ function saveComplianceForm() {
           <div class="modal-field"><label>Certificate Expiration</label><input id="f-med_cert_expires" type="date"></div>
         </div>
         <div class="upload-zone" onclick="document.getElementById('fu-med').click()">
-          <input type="file" id="fu-med" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(event,'med_cert')">
-          <span class="upload-zone-label">📎 Upload Medical Certificate</span>
+          <input type="file" id="fu-med" accept="image/*,.pdf" onchange="handleUpload(event,'med_cert')">
+          <span class="upload-zone-label">📎 Upload or 📷 Take Photo — DOT Medical Certificate</span>
           <span class="upload-zone-status" id="us-med_cert"></span>
         </div>
       </div>
@@ -1375,8 +1389,8 @@ function saveComplianceForm() {
           <div class="modal-field"><label>Next Due Date</label><input id="f-drug_test_next" type="date"></div>
         </div>
         <div class="upload-zone" onclick="document.getElementById('fu-drug').click()">
-          <input type="file" id="fu-drug" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(event,'drug_test')">
-          <span class="upload-zone-label">📎 Upload Drug Test Report</span>
+          <input type="file" id="fu-drug" accept="image/*,.pdf" onchange="handleUpload(event,'drug_test')">
+          <span class="upload-zone-label">📎 Upload or 📷 Take Photo — Drug Test Report</span>
           <span class="upload-zone-status" id="us-drug_test"></span>
         </div>
       </div>
@@ -1387,8 +1401,8 @@ function saveComplianceForm() {
           <div class="modal-field"><label>Last MVR Pull Date</label><input id="f-mvr_date" type="date"></div>
         </div>
         <div class="upload-zone" onclick="document.getElementById('fu-mvr').click()">
-          <input type="file" id="fu-mvr" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(event,'mvr')">
-          <span class="upload-zone-label">📎 Upload MVR Report</span>
+          <input type="file" id="fu-mvr" accept="image/*,.pdf" onchange="handleUpload(event,'mvr')">
+          <span class="upload-zone-label">📎 Upload or 📷 Take Photo — MVR Report</span>
           <span class="upload-zone-status" id="us-mvr"></span>
         </div>
       </div>
@@ -1403,9 +1417,78 @@ function saveComplianceForm() {
       </div>
 
       <div class="modal-section">
-        <div class="modal-section-title">📅 Annual Driving Record Review (Internal)</div>
+        <div class="modal-section-title">📅 Annual Driving Record Review (Internal) — §391.25</div>
         <div class="modal-row">
           <div class="modal-field"><label>Last Review Date</label><input id="f-annual_review" type="date"></div>
+          <div class="modal-field"><label>Reviewed By</label><input id="f-annual_reviewer" type="text" placeholder="Name/Title"></div>
+        </div>
+        <div class="upload-zone" onclick="document.getElementById('fu-annual').click()">
+          <input type="file" id="fu-annual" accept="image/*,.pdf" onchange="handleUpload(event,'annual_review')">
+          <span class="upload-zone-label">📎 Upload or 📷 Take Photo — Annual Review Sign-off</span>
+          <span class="upload-zone-status" id="us-annual_review"></span>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">📝 Driver Employment Application — §391.21</div>
+        <div class="modal-row">
+          <div class="modal-field"><label>Application Date</label><input id="f-app_date" type="date"></div>
+          <div class="modal-field" style="max-width:130px"><label>Status</label>
+            <select id="f-app_status"><option value="on_file">On File</option><option value="pending">Pending</option><option value="not_on_file">Not on File</option></select></div>
+        </div>
+        <div class="upload-zone" onclick="document.getElementById('fu-app').click()">
+          <input type="file" id="fu-app" accept="image/*,.pdf" onchange="handleUpload(event,'employment_app')">
+          <span class="upload-zone-label">📎 Upload or 📷 Take Photo — Signed Employment Application</span>
+          <span class="upload-zone-status" id="us-employment_app"></span>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">🛣️ Road Test Certificate — §391.31</div>
+        <div class="modal-row">
+          <div class="modal-field"><label>Test Date</label><input id="f-road_test_date" type="date"></div>
+          <div class="modal-field" style="max-width:110px"><label>Result</label>
+            <select id="f-road_test_result"><option value="Pass">Pass</option><option value="Fail">Fail</option><option value="Exempt">CDL Exempt</option></select></div>
+          <div class="modal-field flex2"><label>Examiner / Notes</label><input id="f-road_test_examiner" type="text" placeholder="Name or waived by CDL"></div>
+        </div>
+        <div class="upload-zone" onclick="document.getElementById('fu-road').click()">
+          <input type="file" id="fu-road" accept="image/*,.pdf" onchange="handleUpload(event,'road_test')">
+          <span class="upload-zone-label">📎 Upload or 📷 Take Photo — Road Test Certificate</span>
+          <span class="upload-zone-status" id="us-road_test"></span>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">📋 Previous Employer Safety History — §391.23</div>
+        <div class="modal-row">
+          <div class="modal-field"><label>Request Sent Date</label><input id="f-prev_emp_sent" type="date"></div>
+          <div class="modal-field"><label>Response Received Date</label><input id="f-prev_emp_recv" type="date"></div>
+          <div class="modal-field" style="max-width:120px"><label>Status</label>
+            <select id="f-prev_emp_status"><option value="received">Received</option><option value="no_response">No Response (3yr)</option><option value="pending">Pending</option><option value="na">N/A (New Driver)</option></select></div>
+        </div>
+        <div class="upload-zone" onclick="document.getElementById('fu-prev').click()">
+          <input type="file" id="fu-prev" accept="image/*,.pdf" onchange="handleUpload(event,'prev_employer')">
+          <span class="upload-zone-label">📎 Upload or 📷 Take Photo — Safety Performance History</span>
+          <span class="upload-zone-status" id="us-prev_employer"></span>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">🔍 FMCSA Drug &amp; Alcohol Clearinghouse — §382.701</div>
+        <div class="modal-row">
+          <div class="modal-field"><label>Pre-Employment Query Date</label><input id="f-clrhs_pre_date" type="date"></div>
+          <div class="modal-field" style="max-width:120px"><label>Pre-Employment Result</label>
+            <select id="f-clrhs_pre_result"><option value="Clear">Clear</option><option value="Violation">Violation Found</option><option value="Pending">Pending</option></select></div>
+        </div>
+        <div class="modal-row" style="margin-top:8px">
+          <div class="modal-field"><label>Annual Query Date</label><input id="f-clrhs_annual_date" type="date"></div>
+          <div class="modal-field" style="max-width:120px"><label>Annual Result</label>
+            <select id="f-clrhs_annual_result"><option value="Clear">Clear</option><option value="Violation">Violation Found</option><option value="Pending">Pending</option></select></div>
+        </div>
+        <div class="upload-zone" onclick="document.getElementById('fu-clrhs').click()">
+          <input type="file" id="fu-clrhs" accept="image/*,.pdf" onchange="handleUpload(event,'clearinghouse')">
+          <span class="upload-zone-label">📎 Upload or 📷 Take Photo — Clearinghouse Query Results</span>
+          <span class="upload-zone-status" id="us-clearinghouse"></span>
         </div>
       </div>
 
