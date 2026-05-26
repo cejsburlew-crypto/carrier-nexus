@@ -536,6 +536,103 @@ body {
   .kpi-value { font-size: 22px !important; }
 }
 
+
+/* ── COMPLIANCE SECTION ── */
+.badge-red { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+.compliance-alert {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  background: var(--gunmetal);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0;
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+.alert-stat {
+  text-align: center;
+  padding: 14px 12px;
+  border-right: 1px solid var(--border);
+  position: relative;
+}
+.alert-stat:last-child { border-right: none; }
+.alert-stat.has-issues { background: rgba(239,68,68,0.05); }
+.alert-stat.has-expiring { background: rgba(251,191,36,0.06); }
+.alert-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.alert-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+}
+.alert-value.red { color: var(--red); }
+.alert-value.yellow { color: var(--yellow); }
+.alert-value.green { color: var(--green); }
+.alert-value.ice { color: var(--ice); }
+.compliance-section {
+  padding: 10px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,0,0,0.025);
+}
+.compliance-hdr {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.compliance-hdr svg { opacity: 0.5; }
+.comp-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  min-height: 22px;
+}
+.comp-row:last-child { border-bottom: none; }
+.comp-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+  min-width: 32px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.comp-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  color: var(--text-mid);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.comp-due {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+/* Compliance left-border color coding */
+.driver-card.c-ok    { border-left: 3px solid #22c55e !important; }
+.driver-card.c-warn  { border-left: 3px solid #fbbf24 !important; }
+.driver-card.c-alert { border-left: 3px solid #ef4444 !important; }
 </style>
 <style id="nexus-unified">
 /* ── SIDEBAR BLACK ── */
@@ -684,310 +781,21 @@ body {
 
   <div class="content">
 
+    <!-- COMPLIANCE ALERT BANNER -->
+    <div class="compliance-alert" id="compliance-alert"></div>
+
     <!-- FILTER BAR -->
     <div class="filter-bar">
-      <button class="filter-btn active" onclick="filterDrivers('all', this)">All</button>
-      <button class="filter-btn" onclick="filterDrivers('active', this)">Active</button>
-      <button class="filter-btn" onclick="filterDrivers('inactive', this)">Inactive</button>
+      <button class="filter-btn active" data-i18n="All" onclick="filterDrivers('all', this)">All</button>
+      <button class="filter-btn" data-i18n="Active" onclick="filterDrivers('active', this)">Active</button>
+      <button class="filter-btn" data-i18n="Inactive" onclick="filterDrivers('inactive', this)">Inactive</button>
+      <button class="filter-btn" onclick="filterDrivers('issues', this)" style="color:var(--red);border-color:rgba(239,68,68,0.3);" data-i18n="Issues">Issues</button>
       <div class="filter-spacer"></div>
       <span class="driver-count-label" id="driver-count">9 DRIVERS</span>
     </div>
 
-    <!-- DRIVER CARDS GRID -->
-    <div class="drivers-grid" id="drivers-grid">
-
-      <!-- AVIS MODESTO -->
-      <div class="driver-card" data-status="active">
-        <div class="driver-card-top">
-          <div class="driver-avatar" style="background:#d6e4f0;">AM</div>
-          <div>
-            <div class="driver-name">Avis Modesto</div>
-            <div style="margin-top:4px;"><span class="driver-id-badge">ID #001</span></div>
-          </div>
-          <div class="driver-meta-row">
-            <div class="truck-chip">
-              <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>
-              UNIT 01
-            </div>
-            <span class="badge badge-green">ACTIVE</span>
-          </div>
-        </div>
-        <div class="driver-card-stats">
-          <div class="stat-block">
-            <div class="stat-block-label">Total Loads</div>
-            <div class="stat-block-value">142</div>
-          </div>
-          <div class="stat-block">
-            <div class="stat-block-label">Total Revenue</div>
-            <div class="stat-block-value revenue">$107K</div>
-          </div>
-        </div>
-        <div class="driver-card-actions">
-          <button class="btn-driver-action settle">SETTLEMENTS</button>
-          <button class="btn-driver-action">CONTACT</button>
-          <button class="btn-driver-action">DOCUMENTS</button>
-        </div>
-      </div>
-
-      <!-- MIGUEL FONSECA -->
-      <div class="driver-card" data-status="active">
-        <div class="driver-card-top">
-          <div class="driver-avatar" style="background:#d5e8d4;">MF</div>
-          <div>
-            <div class="driver-name">Miguel Fonseca</div>
-            <div style="margin-top:4px;"><span class="driver-id-badge">ID #005</span></div>
-          </div>
-          <div class="driver-meta-row">
-            <div class="truck-chip">
-              <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>
-              UNIT 05
-            </div>
-            <span class="badge badge-green">ACTIVE</span>
-          </div>
-        </div>
-        <div class="driver-card-stats">
-          <div class="stat-block">
-            <div class="stat-block-label">Total Loads</div>
-            <div class="stat-block-value">98</div>
-          </div>
-          <div class="stat-block">
-            <div class="stat-block-label">Total Revenue</div>
-            <div class="stat-block-value revenue">$82K</div>
-          </div>
-        </div>
-        <div class="driver-card-actions">
-          <button class="btn-driver-action settle">SETTLEMENTS</button>
-          <button class="btn-driver-action">CONTACT</button>
-          <button class="btn-driver-action">DOCUMENTS</button>
-        </div>
-      </div>
-
-      <!-- GUILLERMO PINERA -->
-      <div class="driver-card" data-status="active">
-        <div class="driver-card-top">
-          <div class="driver-avatar" style="background:#fff3cd;">GP</div>
-          <div>
-            <div class="driver-name">Guillermo Pinera</div>
-            <div style="margin-top:4px;"><span class="driver-id-badge">ID #003</span></div>
-          </div>
-          <div class="driver-meta-row">
-            <div class="truck-chip">
-              <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>
-              UNIT 03
-            </div>
-            <span class="badge badge-green">ACTIVE</span>
-          </div>
-        </div>
-        <div class="driver-card-stats">
-          <div class="stat-block">
-            <div class="stat-block-label">Total Loads</div>
-            <div class="stat-block-value">118</div>
-          </div>
-          <div class="stat-block">
-            <div class="stat-block-label">Total Revenue</div>
-            <div class="stat-block-value revenue">$102K</div>
-          </div>
-        </div>
-        <div class="driver-card-actions">
-          <button class="btn-driver-action settle">SETTLEMENTS</button>
-          <button class="btn-driver-action">CONTACT</button>
-          <button class="btn-driver-action">DOCUMENTS</button>
-        </div>
-      </div>
-
-      <!-- DAVID FONSECA -->
-      <div class="driver-card" data-status="active">
-        <div class="driver-card-top">
-          <div class="driver-avatar" style="background:#f8d7da;">DF</div>
-          <div>
-            <div class="driver-name">David Fonseca</div>
-            <div style="margin-top:4px;"><span class="driver-id-badge">ID #007</span></div>
-          </div>
-          <div class="driver-meta-row">
-            <div class="truck-chip">
-              <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>
-              UNIT 09
-            </div>
-            <span class="badge badge-green">ACTIVE</span>
-          </div>
-        </div>
-        <div class="driver-card-stats">
-          <div class="stat-block">
-            <div class="stat-block-label">Total Loads</div>
-            <div class="stat-block-value">89</div>
-          </div>
-          <div class="stat-block">
-            <div class="stat-block-label">Total Revenue</div>
-            <div class="stat-block-value revenue">$75K</div>
-          </div>
-        </div>
-        <div class="driver-card-actions">
-          <button class="btn-driver-action settle">SETTLEMENTS</button>
-          <button class="btn-driver-action">CONTACT</button>
-          <button class="btn-driver-action">DOCUMENTS</button>
-        </div>
-      </div>
-
-      <!-- YOSVIEL PINERA -->
-      <div class="driver-card" data-status="active">
-        <div class="driver-card-top">
-          <div class="driver-avatar" style="background:#e8d5f5;">YP</div>
-          <div>
-            <div class="driver-name">Yosviel Pinera</div>
-            <div style="margin-top:4px;"><span class="driver-id-badge">ID #006</span></div>
-          </div>
-          <div class="driver-meta-row">
-            <div class="truck-chip">
-              <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>
-              UNIT 06
-            </div>
-            <span class="badge badge-green">ACTIVE</span>
-          </div>
-        </div>
-        <div class="driver-card-stats">
-          <div class="stat-block">
-            <div class="stat-block-label">Total Loads</div>
-            <div class="stat-block-value">14</div>
-          </div>
-          <div class="stat-block">
-            <div class="stat-block-label">Total Revenue</div>
-            <div class="stat-block-value revenue">$2.75K</div>
-          </div>
-        </div>
-        <div class="driver-card-actions">
-          <button class="btn-driver-action settle">SETTLEMENTS</button>
-          <button class="btn-driver-action">CONTACT</button>
-          <button class="btn-driver-action">DOCUMENTS</button>
-        </div>
-      </div>
-
-      <!-- AMET ABREU -->
-      <div class="driver-card" data-status="active">
-        <div class="driver-card-top">
-          <div class="driver-avatar" style="background:#d4edda;">AA</div>
-          <div>
-            <div class="driver-name">Amet Abreu</div>
-            <div style="margin-top:4px;"><span class="driver-id-badge">ID #002</span></div>
-          </div>
-          <div class="driver-meta-row">
-            <div class="truck-chip">
-              <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>
-              UNIT 04
-            </div>
-            <span class="badge badge-green">ACTIVE</span>
-          </div>
-        </div>
-        <div class="driver-card-stats">
-          <div class="stat-block">
-            <div class="stat-block-label">Total Loads</div>
-            <div class="stat-block-value">310+</div>
-          </div>
-          <div class="stat-block">
-            <div class="stat-block-label">Total Revenue</div>
-            <div class="stat-block-value revenue">$420K+</div>
-          </div>
-        </div>
-        <div class="driver-card-actions">
-          <button class="btn-driver-action settle">SETTLEMENTS</button>
-          <button class="btn-driver-action">CONTACT</button>
-          <button class="btn-driver-action">DOCUMENTS</button>
-        </div>
-      </div>
-
-      <!-- NELSON -->
-      <div class="driver-card" data-status="active">
-        <div class="driver-card-top">
-          <div class="driver-avatar" style="background:#d1ecf1;">NE</div>
-          <div>
-            <div class="driver-name">Nelson</div>
-            <div style="margin-top:4px;"><span class="driver-id-badge">ID #006</span></div>
-          </div>
-          <div class="driver-meta-row">
-            <div class="truck-chip">
-              <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>
-              UNIT 06
-            </div>
-            <span class="badge badge-green">ACTIVE</span>
-          </div>
-        </div>
-        <div class="driver-card-stats">
-          <div class="stat-block">
-            <div class="stat-block-label">Total Loads</div>
-            <div class="stat-block-value">32</div>
-          </div>
-          <div class="stat-block">
-            <div class="stat-block-label">Total Revenue</div>
-            <div class="stat-block-value revenue">$28K</div>
-          </div>
-        </div>
-        <div class="driver-card-actions">
-          <button class="btn-driver-action settle">SETTLEMENTS</button>
-          <button class="btn-driver-action">CONTACT</button>
-          <button class="btn-driver-action">DOCUMENTS</button>
-        </div>
-      </div>
-
-      <!-- LAURA MORENO -->
-      <div class="driver-card inactive" data-status="inactive">
-        <div class="driver-card-top">
-          <div class="driver-avatar" style="background:#ffe0cc;">LM</div>
-          <div>
-            <div class="driver-name">Laura Moreno</div>
-            <div style="margin-top:4px;"><span class="driver-id-badge">ID #009</span></div>
-          </div>
-          <div class="driver-meta-row">
-            <span class="no-truck">Unassigned</span>
-            <span class="badge badge-gray">INACTIVE</span>
-          </div>
-        </div>
-        <div class="driver-card-stats">
-          <div class="stat-block">
-            <div class="stat-block-label">Total Loads</div>
-            <div class="stat-block-value na">—</div>
-          </div>
-          <div class="stat-block">
-            <div class="stat-block-label">Total Revenue</div>
-            <div class="stat-block-value na">—</div>
-          </div>
-        </div>
-        <div class="driver-card-actions">
-          <button class="btn-driver-action settle">SETTLEMENTS</button>
-          <button class="btn-driver-action">CONTACT</button>
-          <button class="btn-driver-action">DOCUMENTS</button>
-        </div>
-      </div>
-
-      <!-- BETTY -->
-      <div class="driver-card inactive" data-status="inactive">
-        <div class="driver-card-top">
-          <div class="driver-avatar" style="background:#f0e6ff;">BE</div>
-          <div>
-            <div class="driver-name">Betty</div>
-            <div style="margin-top:4px;"><span class="driver-id-badge">ID #008</span></div>
-          </div>
-          <div class="driver-meta-row">
-            <span class="no-truck">Unassigned</span>
-            <span class="badge badge-gray">INACTIVE</span>
-          </div>
-        </div>
-        <div class="driver-card-stats">
-          <div class="stat-block">
-            <div class="stat-block-label">Total Loads</div>
-            <div class="stat-block-value na">—</div>
-          </div>
-          <div class="stat-block">
-            <div class="stat-block-label">Total Revenue</div>
-            <div class="stat-block-value na">—</div>
-          </div>
-        </div>
-        <div class="driver-card-actions">
-          <button class="btn-driver-action settle">SETTLEMENTS</button>
-          <button class="btn-driver-action">CONTACT</button>
-          <button class="btn-driver-action">DOCUMENTS</button>
-        </div>
-      </div>
-
-    </div><!-- /drivers-grid -->
+    <!-- DRIVER CARDS GRID — JS Rendered -->
+    <div class="drivers-grid" id="drivers-grid"></div>
 
     <!-- SUMMARY FOOTER -->
     <div class="summary-footer">
@@ -1014,23 +822,200 @@ body {
 
 <script src="nexus-data.js"></script>
 <script>
-function filterDrivers(filter, btn) {
-  // Update active button
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+// ─── Helpers ───────────────────────────────────────────────────────────────
+function fmtDate(d) {
+  if (!d) return '—';
+  const [y, m, day] = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(m)-1] + ' ' + parseInt(day) + ', ' + y;
+}
 
-  const cards = document.querySelectorAll('.driver-card');
-  let visible = 0;
-  cards.forEach(card => {
-    const status = card.dataset.status;
-    const show = filter === 'all' || status === filter;
-    card.style.display = show ? '' : 'none';
-    if (show) visible++;
+function expiryStatus(dateStr) {
+  if (!dateStr) return 'na';
+  const today = new Date('2026-05-25');
+  const exp = new Date(dateStr);
+  const days = Math.floor((exp - today) / 86400000);
+  if (days < 0) return 'expired';
+  if (days <= 30) return 'expiring';
+  return 'valid';
+}
+
+function expiryBadge(dateStr, prefix) {
+  if (!dateStr) return '<span class="badge badge-gray">N/A</span>';
+  const s = expiryStatus(dateStr);
+  const today = new Date('2026-05-25');
+  const days = Math.floor((new Date(dateStr) - today) / 86400000);
+  if (s === 'expired') return '<span class="badge badge-red">EXPIRED</span>';
+  if (s === 'expiring') return '<span class="badge badge-orange">EXP IN ' + days + 'D</span>';
+  const label = prefix ? (prefix + ' ' + fmtDate(dateStr)) : fmtDate(dateStr);
+  return '<span class="badge badge-green">' + label + '</span>';
+}
+
+function complianceClass(d) {
+  const dates = [d.cdl_expires, d.med_cert_expires, d.drug_test_next];
+  let worst = 'valid';
+  for (const dt of dates) {
+    if (!dt) continue;
+    const s = expiryStatus(dt);
+    if (s === 'expired') worst = 'expired';
+    else if (s === 'expiring' && worst !== 'expired') worst = 'expiring';
+  }
+  if (worst === 'expired') return 'c-alert';
+  if (worst === 'expiring') return 'c-warn';
+  return 'c-ok';
+}
+
+// ─── Render Compliance Alert Banner ───────────────────────────────────────
+function renderComplianceAlert() {
+  const today = new Date('2026-05-25');
+  let expired = 0, expiring = 0, compliant = 0, total = NEXUS.drivers.length;
+
+  NEXUS.drivers.forEach(d => {
+    const cls = complianceClass(d);
+    if (cls === 'c-alert') expired++;
+    else if (cls === 'c-warn') expiring++;
+    else compliant++;
   });
 
-  const label = filter === 'all' ? '9 DRIVERS' : (visible + (filter === 'active' ? ' ACTIVE' : ' INACTIVE') + ' DRIVER' + (visible !== 1 ? 'S' : ''));
-  document.getElementById('driver-count').textContent = label;
+  document.getElementById('compliance-alert').innerHTML =
+    '<div class="alert-stat' + (expired > 0 ? ' has-issues' : '') + '">' +
+      '<div class="alert-label">🔴 EXPIRED DOCS</div>' +
+      '<div class="alert-value red">' + expired + '</div>' +
+    '</div>' +
+    '<div class="alert-stat' + (expiring > 0 ? ' has-expiring' : '') + '">' +
+      '<div class="alert-label">⚠️ EXPIRING ≤30D</div>' +
+      '<div class="alert-value yellow">' + expiring + '</div>' +
+    '</div>' +
+    '<div class="alert-stat">' +
+      '<div class="alert-label">✅ FULLY COMPLIANT</div>' +
+      '<div class="alert-value green">' + compliant + '</div>' +
+    '</div>' +
+    '<div class="alert-stat">' +
+      '<div class="alert-label">👥 TOTAL DRIVERS</div>' +
+      '<div class="alert-value ice">' + total + '</div>' +
+    '</div>';
 }
+
+// ─── Render Driver Cards ───────────────────────────────────────────────────
+function renderDriverCards(filter) {
+  const truckSVG = '<svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>';
+  const shieldSVG = '<svg width="9" height="9" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l6 2v5c0 4-6 7-6 7S2 12 2 8V3l6-2z"/></svg>';
+
+  let drivers = NEXUS.drivers;
+  if (filter === 'active') drivers = drivers.filter(d => d.status === 'active');
+  else if (filter === 'inactive') drivers = drivers.filter(d => d.status === 'inactive');
+  else if (filter === 'issues') drivers = drivers.filter(d => complianceClass(d) !== 'c-ok');
+
+  const html = drivers.map(d => {
+    const initials = d.name.split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase();
+    const cls = complianceClass(d);
+    const statusBadge = d.status === 'active'
+      ? '<span class="badge badge-green">ACTIVE</span>'
+      : '<span class="badge badge-gray">INACTIVE</span>';
+    const truckChip = d.truck
+      ? '<div class="truck-chip">' + truckSVG + ' UNIT ' + d.truck.padStart(2, '0') + '</div>'
+      : '<span class="no-truck">Unassigned</span>';
+    const loadsVal = d.loads || '—';
+    const revenueVal = d.revenue || '—';
+
+    // Compliance rows
+    const cdlBadge = expiryBadge(d.cdl_expires);
+    const medBadge = expiryBadge(d.med_cert_expires);
+    const drugNextBadge = expiryBadge(d.drug_test_next, 'DUE');
+    const mvrBadge = d.mvr_violations > 0
+      ? '<span class="badge badge-orange">' + d.mvr_violations + ' VIOLATION' + (d.mvr_violations > 1 ? 'S' : '') + '</span>'
+      : '<span class="badge badge-green">CLEAN</span>';
+    const hmtBadge = d.hazmat
+      ? '<span class="badge badge-blue">YES' + (d.hazmat_expires ? ' · ' + fmtDate(d.hazmat_expires) : '') + '</span>'
+      : '<span class="badge badge-gray">NO</span>';
+
+    return '<div class="driver-card ' + (d.status === 'inactive' ? 'inactive ' : '') + cls + '" data-status="' + d.status + '" data-compliance="' + cls + '">' +
+      '<div class="driver-card-top">' +
+        '<div class="driver-avatar" style="background:' + (d.avatar_bg || '#dde3eb') + ';">' + initials + '</div>' +
+        '<div>' +
+          '<div class="driver-name">' + d.name + '</div>' +
+          '<div style="margin-top:4px;"><span class="driver-id-badge">ID #' + d.id + '</span></div>' +
+        '</div>' +
+        '<div class="driver-meta-row">' + truckChip + statusBadge + '</div>' +
+      '</div>' +
+
+      '<div class="driver-card-stats">' +
+        '<div class="stat-block">' +
+          '<div class="stat-block-label">Total Loads</div>' +
+          '<div class="stat-block-value' + (d.loads ? '' : ' na') + '">' + loadsVal + '</div>' +
+        '</div>' +
+        '<div class="stat-block">' +
+          '<div class="stat-block-label">Total Revenue</div>' +
+          '<div class="stat-block-value revenue' + (d.revenue ? '' : ' na') + '">' + revenueVal + '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="compliance-section">' +
+        '<div class="compliance-hdr">' + shieldSVG + ' COMPLIANCE</div>' +
+
+        '<div class="comp-row">' +
+          '<span class="comp-lbl">CDL</span>' +
+          '<span class="comp-val">' + (d.cdl_number || '—') + ' · Class ' + (d.cdl_class || '?') + ' · ' + (d.cdl_state || '—') + '</span>' +
+          cdlBadge +
+        '</div>' +
+
+        '<div class="comp-row">' +
+          '<span class="comp-lbl">MED</span>' +
+          '<span class="comp-val">DOT Physical · ' + (d.med_examiner || '—') + '</span>' +
+          medBadge +
+        '</div>' +
+
+        '<div class="comp-row">' +
+          '<span class="comp-lbl">DRUG</span>' +
+          '<span class="comp-val">Last: ' + fmtDate(d.drug_test_date) + ' · ' + (d.drug_test_result || '—') + '</span>' +
+          drugNextBadge +
+        '</div>' +
+
+        '<div class="comp-row">' +
+          '<span class="comp-lbl">MVR</span>' +
+          '<span class="comp-val">Last Review: ' + fmtDate(d.mvr_date) + '</span>' +
+          mvrBadge +
+        '</div>' +
+
+        '<div class="comp-row">' +
+          '<span class="comp-lbl">HMT</span>' +
+          '<span class="comp-val">Hazmat Endorsement</span>' +
+          hmtBadge +
+        '</div>' +
+
+        '<div class="comp-row">' +
+          '<span class="comp-lbl">ANN</span>' +
+          '<span class="comp-val">Annual Review</span>' +
+          '<span class="comp-due">' + fmtDate(d.annual_review) + '</span>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="driver-card-actions">' +
+        '<button class="btn-driver-action settle" data-i18n="SETTLEMENTS">SETTLEMENTS</button>' +
+        '<button class="btn-driver-action" data-i18n="CONTACT">CONTACT</button>' +
+        '<button class="btn-driver-action" data-i18n="DOCUMENTS">DOCUMENTS</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('drivers-grid').innerHTML = html;
+
+  // Update count label
+  const filterLabel = filter === 'all' ? (drivers.length + ' DRIVERS') :
+    filter === 'issues' ? (drivers.length + ' WITH ISSUES') :
+    (drivers.length + ' ' + filter.toUpperCase() + ' DRIVER' + (drivers.length !== 1 ? 'S' : ''));
+  document.getElementById('driver-count').textContent = filterLabel;
+}
+
+function filterDrivers(filter, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDriverCards(filter);
+}
+
+// ─── Initialize ────────────────────────────────────────────────────────────
+renderComplianceAlert();
+renderDriverCards('all');
 </script>
 <script src="nexus-lang.js"></script>
 
