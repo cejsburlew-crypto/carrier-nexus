@@ -697,18 +697,18 @@ function loadLiveData(vehicles, mode) {
   // Update pill
   const pill = document.getElementById('conn-status-pill');
   pill.style.display = 'flex';
-  document.getElementById('conn-label').textContent = mode === 'live' ? 'LIVE' : 'SIMULATED';
+  document.getElementById('conn-label').textContent = mode === 'live' ? NEXUS_LANG.t('LIVE') : NEXUS_LANG.t('SIMULATED');
   pill.style.color = mode === 'live' ? '#22c55e' : '#fbbf24';
   // Timestamp
-  document.getElementById('last-updated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+  document.getElementById('last-updated').textContent = NEXUS_LANG.t('Updated:') + ' ' + new Date().toLocaleTimeString();
   // KPIs
   const driving = vehicles.filter(v => (v.status||'').toLowerCase() === 'driving').length;
   const offduty = vehicles.filter(v => (v.status||'').toLowerCase() === 'off_duty').length;
   document.getElementById('kpi-row').innerHTML = `
-    <div class="kpi-box"><div class="kpi-val">${vehicles.length}</div><div class="kpi-label">Total Vehicles</div></div>
-    <div class="kpi-box"><div class="kpi-val" style="color:#22c55e;">${driving}</div><div class="kpi-label">Driving</div></div>
-    <div class="kpi-box"><div class="kpi-val" style="color:#64748b;">${offduty}</div><div class="kpi-label">Off Duty</div></div>
-    <div class="kpi-box"><div class="kpi-val" style="color:#fbbf24;">${vehicles.length - driving - offduty}</div><div class="kpi-label">Other</div></div>
+    <div class="kpi-box"><div class="kpi-val">${vehicles.length}</div><div class="kpi-label">${NEXUS_LANG.t('Total Vehicles')}</div></div>
+    <div class="kpi-box"><div class="kpi-val" style="color:#22c55e;">${driving}</div><div class="kpi-label">${NEXUS_LANG.t('Driving')}</div></div>
+    <div class="kpi-box"><div class="kpi-val" style="color:#64748b;">${offduty}</div><div class="kpi-label">${NEXUS_LANG.t('Off Duty')}</div></div>
+    <div class="kpi-box"><div class="kpi-val" style="color:#fbbf24;">${vehicles.length - driving - offduty}</div><div class="kpi-label">${NEXUS_LANG.t('Other')}</div></div>
   `;
   // Vehicles table
   const vbody = document.getElementById('vehicles-tbody');
@@ -745,7 +745,7 @@ function loadLiveData(vehicles, mode) {
       <td>${h.drive}</td>
       <td>${h.onduty}</td>
       <td>${h.cycle}</td>
-      <td>${h.violations > 0 ? '<span class="badge badge-red">'+h.violations+' Violation</span>' : '<span class="badge badge-green">Clear</span>'}</td>
+      <td>${h.violations > 0 ? `<span class="badge badge-red">${h.violations} ${NEXUS_LANG.t('Violation')}</span>` : `<span class="badge badge-green">${NEXUS_LANG.t('Clear')}</span>`}</td>
     </tr>
   `).join('');
   // DVIR table
@@ -755,7 +755,7 @@ function loadLiveData(vehicles, mode) {
       <td>${d.driver}</td>
       <td>${d.vehicle}</td>
       <td>${d.defects}</td>
-      <td>${d.status === 'Satisfactory' ? '<span class="badge badge-green">Satisfactory</span>' : '<span class="badge badge-yellow">'+d.status+'</span>'}</td>
+      <td>${d.status === 'Satisfactory' ? `<span class="badge badge-green">${NEXUS_LANG.t('Satisfactory')}</span>` : `<span class="badge badge-yellow">${d.status}</span>`}</td>
     </tr>
   `).join('');
 }
@@ -765,14 +765,14 @@ function statusBadge(s) {
   const m = { driving:'badge-green', off_duty:'badge-gray', on_duty:'badge-blue', sleeper_berth:'badge-yellow', unknown:'badge-gray' };
   const l = { driving:'Driving', off_duty:'Off Duty', on_duty:'On Duty', sleeper_berth:'Sleeper', unknown:'Unknown' };
   const cls = m[s] || 'badge-gray';
-  const label = l[s] || s;
+  const label = NEXUS_LANG.t(l[s] || s);
   return `<span class="badge ${cls}">${label}</span>`;
 }
 function dutyBadge(s) {
-  if (s.includes('Driving')) return '<span class="badge badge-green">Driving</span>';
-  if (s.includes('Sleeper')) return '<span class="badge badge-yellow">Sleeper</span>';
-  if (s.includes('On Duty')) return '<span class="badge badge-blue">On Duty</span>';
-  return '<span class="badge badge-gray">Off Duty</span>';
+  if (s.includes('Driving')) return `<span class="badge badge-green">${NEXUS_LANG.t('Driving')}</span>`;
+  if (s.includes('Sleeper')) return `<span class="badge badge-yellow">${NEXUS_LANG.t('Sleeper')}</span>`;
+  if (s.includes('On Duty')) return `<span class="badge badge-blue">${NEXUS_LANG.t('On Duty')}</span>`;
+  return `<span class="badge badge-gray">${NEXUS_LANG.t('Off Duty')}</span>`;
 }
 function showBanner(type, msg) {
   const b = document.getElementById('conn-banner');

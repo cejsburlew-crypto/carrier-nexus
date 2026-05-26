@@ -92,9 +92,99 @@ const NEXUS_LANG = {
     "Remember me":"Recordarme","Forgot password?":"¿Olvidó su contraseña?",
     "Sign In":"Iniciar Sesión",
     "Secure access for authorized personnel only":"Acceso seguro solo para personal autorizado",
+    // Cross-page missing strings
+    "OPS INTELLIGENCE":"INTELIGENCIA OPS","CARRIER NEXUS":"CARRIER NEXUS",
+    "CARRIER TRUCKING":"CARRIER TRUCKING","DOCUMENT VAULT":"BÓVEDA DE DOCUMENTOS",
+    "ACTIVE LOADS":"CARGAS ACTIVAS","FUEL TRACKING":"SEGUIMIENTO DE COMBUSTIBLE",
+    "SETTLEMENT STATEMENT":"ESTADO DE CUENTA","DRIVERS":"CONDUCTORES",
+    "DOCUMENTS":"DOCUMENTOS","SETTLEMENTS":"LIQUIDACIONES",
+    // Fleet Command
+    "Upload POD":"Subir POD","Upload BOL":"Subir BOL","Export Report":"Exportar Reporte",
+    // Settlements
+    "Additions":"Adiciones","Total Overhead":"Total Gastos Grls.",
+    "Total Permits":"Total Permisos","All Statuses":"Todos los Estados",
+    "Cargo / Description":"Carga / Descripción","Finalized settlements":"Liquidaciones finalizadas",
+    "Draft / Pending":"Borrador / Pendiente","DRIVER":"CONDUCTOR","TOTAL":"TOTAL",
+    "Carrier representative":"Representante del Transportista",
+    // Equipment
+    "In-Transit":"En Tránsito","Availability":"Disponibilidad","LOG PM":"REGISTRAR PM",
+    "Cancel":"Cancelar","Export Fleet Report":"Exportar Reporte de Flota",
+    "DOWN":"AVERIADO","ADD UNIT":"AGREGAR UNIDAD","COVERED":"CUBIERTO",
+    "Next PM Date":"Próxima Fecha de PM","Units":"Unidades","Fleet":"Flota",
+    // Active Loads
+    "Destination":"Destino","Origin":"Origen","In transit now":"En tránsito ahora",
+    "Pending":"Pendiente","Missing":"Faltante","This week":"Esta semana",
+    "DOCS":"DOCS",
+    // Documents
+    "Total Documents":"Total de Documentos","Load Conf.":"Conf. de Carga",
+    "Export List":"Exportar Lista","In vault":"En bóveda","Needs Review":"Necesita Revisión",
+    "DEDUCT Documents":"Documentos DEDUCCIÓN","ADD Documents":"Documentos INGRESO",
+    "ADD / DEDUCT":"INGRESO / DEDUCCIÓN",
+    // PM Schedule
+    "Service Type":"Tipo de Servicio","Full PM Service":"Servicio PM Completo",
+    "On schedule":"Al día","Oil Change":"Cambio de Aceite","Overdue":"Vencido",
+    "Due Soon":"Próximo a Vencer","DOT Inspection":"Inspección DOT",
+    "Last Done":"Último Realizado","Due Date":"Fecha de Vencimiento",
+    "Due This Week":"Vence Esta Semana","Brake Inspection":"Inspección de Frenos",
+    "Action":"Acción",
+    // Tires
+    "Tires Needing Replacement":"Llantas que Necesitan Reemplazo",
+    "Installed":"Instalado","Miles on Tire":"Millas en Llanta","Good":"Bueno",
+    "Replaced This Month":"Reemplazadas Este Mes","Tire Status by Unit":"Estado de Llantas por Unidad",
+    "Order Tires":"Ordenar Llantas","Replace":"Reemplazar","Avg Tire Cost":"Costo Promedio de Llanta",
+    "Position":"Posición","Tread Depth":"Profundidad de Banda",
+    // Fuel
+    "MTD Fuel Cost":"Costo de Combustible MTD","Miles per gallon":"Millas por galón",
+    "Location":"Ubicación","This Week Spend":"Gasto Esta Semana","Gallons":"Galones",
+    "Avg MPG Fleet":"MPG Promedio Flota","Gallons This Week":"Galones Esta Semana",
+    "Price/Gal":"Precio/Galón",
+
+    // ELD / Motive Integration
+    "ELD INTEGRATION":"INTEGRACIÓN ELD","ELD / MOTIVE INTEGRATION":"INTEGRACIÓN ELD / MOTIVE",
+    "ELD Integration":"Integración ELD","ELD Integration — Carrier Nexus":"Integración ELD — Carrier Nexus",
+    "Connect your Motive (KeepTruckin) ELD system to pull live GPS, Hours of Service, DVIRs, and engine diagnostics.":"Conecte su sistema ELD Motive (KeepTruckin) para obtener GPS en vivo, Horas de Servicio, DVIRs y diagnósticos del motor.",
+    "Test Connection":"Probar Conexión","Save Settings":"Guardar Configuración",
+    "Motive API Key":"Clave API de Motive","API Base URL":"URL Base de API",
+    "Company Name":"Nombre de la Empresa","Refresh Interval":"Intervalo de Actualización",
+    "Step 1 — Get Your Motive API Key":"Paso 1 — Obtenga su Clave API de Motive",
+    "Step 2 — Enter API Credentials":"Paso 2 — Ingrese las Credenciales API",
+    "Log in to Motive Fleet Dashboard":"Inicie sesión en el Panel de Motive",
+    "Open Account Settings → API Keys":"Abrir Configuración de Cuenta → Claves API",
+    "Create a New API Key":"Crear una Nueva Clave API",
+    "Paste the Key Below & Test":"Pegue la Clave Abajo y Pruebe",
+    "Stored locally in your browser — never sent to any server except Motive's API.":"Almacenado localmente en su navegador — nunca enviado a ningún servidor excepto la API de Motive.",
+    "Live Fleet Data":"Datos de Flota en Vivo","Loading...":"Cargando...",
+    "Total Vehicles":"Total de Vehículos","Driving":"Conduciendo","Off Duty":"Fuera de Servicio",
+    "On Duty":"En Servicio","On-Duty Left":"Servicio Restante","Sleeper":"Cabina",
+    "Other":"Otro","Unknown":"Desconocido",
+    "Vehicles":"Vehículos","HOS Clocks":"Relojes HOS","DVIRs":"DVIRs",
+    "Vehicle":"Vehículo","Driver":"Conductor","Plate":"Placa","VIN":"VIN",
+    "Odometer":"Odómetro","Last GPS":"Último GPS","Status":"Estado",
+    "Duty Status":"Estado de Servicio","Drive Left":"Conducción Restante",
+    "Cycle Left":"Ciclo Restante","Violations":"Infracciones","Defects":"Defectos",
+    "Satisfactory":"Satisfactorio","Clear":"Sin Infracciones","Violation":"Infracción",
+    "Year / Make / Model":"Año / Marca / Modelo","Unit":"Unidad",
+    "API Endpoints Reference":"Referencia de Endpoints API",
+    "CORS Note & Proxy Setup":"Nota CORS y Configuración de Proxy",
+    "Motive Webhooks (Push Model)":"Webhooks de Motive (Modelo Push)",
+    "Motive Mobile / Native App":"App Móvil / Nativa de Motive",
+    "Netlify Serverless Proxy (Recommended)":"Proxy Serverless Netlify (Recomendado)",
+    "Every 1 minute":"Cada 1 minuto","Every 5 minutes":"Cada 5 minutos",
+    "Every 10 minutes":"Cada 10 minutos","Every 30 minutes":"Cada 30 minutos",
+    "LIVE":"EN VIVO","SIMULATED":"SIMULADO","CONNECTED":"CONECTADO",
+    "Updated:":"Actualizado:","Account Settings":"Configuración de Cuenta",
+    "API Keys":"Claves API",
+    // ELD Integration sidebar label
+    "ELD Integration":"Integración ELD",
   },
 
   currentLang: 'en',
+
+  // Quick translate helper for JS-rendered content
+  t(key) {
+    if (this.currentLang === 'es') return this.dict[key] || key;
+    return key;
+  },
 
   init() {
     this.currentLang = localStorage.getItem('nexus_lang') || 'en';
