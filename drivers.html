@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drivers — Carrier Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #f1f5f9;
+  --gunmetal: #ffffff;
+  --gunmetal-light: #f8fafc;
+  --steel: #f0f4f8;
+  --steel-blue: #2e6da4;
+  --steel-blue-light: #3d87c8;
+  --ice: #a8c4e0;
+  --white: #0f172a;
+  --white-pure: #0f172a;
+  --orange: #e8640a;
+  --orange-bright: #ff7518;
+  --text-muted: #64748b;
+  --text-mid: #475569;
+  --border: #e2e8f0;
+  --red: #ef4444;
+  --green: #22c55e;
+  --yellow: #fbbf24;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Barlow', sans-serif;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 220px;
+  min-height: 100vh;
+  background: var(--gunmetal);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 100;
+}
+.sidebar-logo {
+  padding: 20px 16px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+}
+.logo-hex svg { width: 36px; height: 36px; }
+.logo-text { display: flex; flex-direction: column; }
+.logo-text .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: 2px; color: var(--white-pure); }
+.logo-text .sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--orange); letter-spacing: 1px; }
+.sidebar-section { padding: 12px 0 4px; }
+.sidebar-section-label {
+  padding: 0 16px 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  text-decoration: none;
+  color: var(--text-mid);
+  font-size: 13px;
+  font-weight: 400;
+  transition: all 0.15s;
+  position: relative;
+}
+.sidebar-link:hover { color: var(--white); background: rgba(46,109,164,0.08); }
+.sidebar-link.active {
+  color: var(--white-pure);
+  background: rgba(232,100,10,0.10);
+  border-left: 3px solid var(--orange);
+  padding-left: 13px;
+  font-weight: 500;
+}
+.sidebar-link svg { width: 14px; height: 14px; opacity: 0.7; flex-shrink: 0; }
+.sidebar-link.active svg { opacity: 1; }
+.nav-badge {
+  margin-left: auto;
+  background: var(--red);
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+}
+.sidebar-spacer { flex: 1; }
+.sidebar-user {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--orange);
+  letter-spacing: 0.5px;
+}
+.sidebar-user .user-name { font-weight: 500; }
+.sidebar-user .user-role { color: var(--text-muted); font-size: 9px; margin-top: 2px; }
+
+/* ── MAIN ── */
+.main {
+  margin-left: 220px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.topbar {
+  height: 56px;
+  background: var(--gunmetal);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: var(--white-pure);
+  flex: 1;
+}
+.status-live {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--green);
+  letter-spacing: 1px;
+}
+.status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.btn {
+  padding: 7px 16px;
+  border-radius: 5px;
+  border: none;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-primary { background: var(--orange); color: #fff; }
+.btn-primary:hover { background: var(--orange-bright); }
+.btn-ghost { background: transparent; color: var(--ice); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--steel-blue); color: var(--white); }
+.content { padding: 24px 28px; }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+.badge-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+.badge-gray { background: rgba(107,122,153,0.18); color: var(--text-mid); border: 1px solid rgba(107,122,153,0.25); }
+.badge-blue { background: rgba(46,109,164,0.18); color: var(--ice); border: 1px solid rgba(46,109,164,0.3); }
+.badge-orange { background: rgba(232,100,10,0.18); color: var(--orange-bright); border: 1px solid rgba(232,100,10,0.3); }
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.filter-btn {
+  padding: 6px 18px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-mid);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.filter-btn:hover { border-color: var(--steel-blue); color: var(--white); }
+.filter-btn.active {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #fff;
+}
+.filter-spacer { flex: 1; }
+.driver-count-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* ── DRIVER CARDS GRID ── */
+.drivers-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 28px;
+}
+.driver-card {
+  background: var(--gunmetal);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.driver-card:hover {
+  border-color: rgba(46,109,164,0.4);
+  transform: translateY(-1px);
+}
+.driver-card.inactive { opacity: 0.65; }
+.driver-card-top {
+  padding: 20px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+.driver-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: #1a1a1a;
+  flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.15);
+}
+.driver-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--white-pure);
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+}
+.driver-id-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 2px 8px;
+  letter-spacing: 1px;
+}
+.driver-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.truck-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(46,109,164,0.15);
+  border: 1px solid rgba(46,109,164,0.25);
+  border-radius: 4px;
+  padding: 3px 9px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ice);
+  letter-spacing: 0.5px;
+}
+.truck-chip svg { width: 9px; height: 9px; opacity: 0.7; }
+.no-truck {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+.driver-card-stats {
+  padding: 14px 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.stat-block { }
+.stat-block-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.stat-block-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--white-pure);
+  line-height: 1;
+}
+.stat-block-value.revenue { color: var(--ice); }
+.stat-block-value.na { color: var(--text-muted); font-weight: 400; font-size: 14px; }
+.driver-card-actions {
+  padding: 12px 14px;
+  display: flex;
+  gap: 6px;
+}
+.btn-driver-action {
+  flex: 1;
+  padding: 6px 0;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-mid);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.btn-driver-action:hover { border-color: var(--steel-blue); color: var(--ice); background: rgba(46,109,164,0.08); }
+.btn-driver-action.settle { color: var(--orange); border-color: rgba(232,100,10,0.3); }
+.btn-driver-action.settle:hover { background: rgba(232,100,10,0.1); border-color: var(--orange); }
+
+/* ── SUMMARY FOOTER ── */
+.summary-footer {
+  background: var(--gunmetal);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 28px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.footer-stat {
+  text-align: center;
+  padding: 0 20px;
+  border-right: 1px solid var(--border);
+}
+.footer-stat:last-child { border-right: none; }
+.footer-stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.footer-stat-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  color: var(--white-pure);
+}
+.footer-stat-value.green { color: var(--green); }
+.footer-stat-value.orange { color: var(--orange); }
+
+/* ═══════════════════════════════════════════════
+   MOBILE RESPONSIVE — Carrier Nexus Admin Pages
+   Breakpoint: 768px
+═══════════════════════════════════════════════ */
+
+/* Mobile bottom nav */
+.mobile-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+
+  /* Hide desktop sidebar */
+  .sidebar, nav.sidebar { display: none !important; }
+
+  /* Full-width main */
+  .main { margin-left: 0 !important; }
+
+  /* Topbar adjustments */
+  .topbar {
+    padding: 10px 14px !important;
+    height: auto !important;
+    min-height: 52px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .topbar-title { font-size: 13px !important; }
+  .topbar .btn-ghost { display: none !important; }
+  .topbar .btn-primary { font-size: 11px !important; padding: 6px 10px !important; }
+  .status-live, .topbar-status { font-size: 10px !important; }
+  .topbar-actions { gap: 6px !important; }
+
+  /* Content padding */
+  .content { padding: 14px 12px 80px !important; }
+  main.main > *:not(.topbar) { padding-left: 12px !important; padding-right: 12px !important; }
+
+  /* KPI grid: 2 columns */
+  .kpi-row { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .kpi-card { padding: 12px 14px !important; }
+  .kpi-value { font-size: 26px !important; }
+  .kpi-sub { font-size: 10px !important; }
+
+  /* Panels: single column stack */
+  .panels-row { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .panel-full { grid-column: auto !important; }
+
+  /* Tables: scrollable horizontally */
+  .load-table, .doc-table, table { font-size: 11px !important; }
+  .panel { overflow-x: auto !important; }
+
+  /* Equipment grid: 1 column */
+  .truck-grid { grid-template-columns: 1fr !important; }
+  .fleet-stats, .summary-stats { grid-template-columns: 1fr 1fr !important; }
+  .bottom-stats { grid-template-columns: 1fr 1fr !important; }
+
+  /* Drivers grid: 1 column (or 2 on wider phones) */
+  .driver-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  .driver-card { padding: 12px !important; }
+  .driver-avatar { width: 40px !important; height: 40px !important; font-size: 14px !important; }
+
+  /* Settlements expand grid */
+  .expand-grid { grid-template-columns: 1fr !important; }
+
+  /* Filter bar: wrap nicely */
+  .filter-bar {
+    padding: 0 12px 12px !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+  }
+  .filter-bar select, .filter-bar input { font-size: 12px !important; padding: 6px 8px !important; }
+
+  /* Settlement table: make rows cards on very small screens */
+  .stmt-table th:nth-child(n+5),
+  .stmt-table td:nth-child(n+5) { display: none !important; }
+
+  /* Add bottom padding to avoid mobile nav overlap */
+  .content, main { padding-bottom: 80px !important; }
+
+  /* Show mobile bottom nav */
+  .mobile-nav {
+    display: flex !important;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: rgba(26, 31, 46, 0.97);
+    border-top: 1px solid rgba(46, 109, 164, 0.2);
+    justify-content: space-around;
+    align-items: center;
+    z-index: 200;
+    backdrop-filter: blur(12px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .mobile-nav-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    text-decoration: none;
+    color: rgba(168, 196, 224, 0.45);
+    font-size: 9px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: color 0.15s;
+    flex: 1;
+  }
+  .mobile-nav-tab svg { width: 20px; height: 20px; opacity: 0.6; }
+  .mobile-nav-tab.active { color: var(--orange); }
+  .mobile-nav-tab.active svg { opacity: 1; stroke: var(--orange); }
+  .mobile-nav-tab:hover { color: var(--ice); }
+  .mobile-nav-tab:hover svg { opacity: 0.9; }
+  .mobile-nav-center {
+    background: var(--orange);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -14px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(232, 100, 10, 0.4);
+  }
+  .mobile-nav-center svg { width: 20px; height: 20px; stroke: white; opacity: 1; }
+
+  /* Hide desktop-only topbar buttons on mobile */
+  .topbar-btn { display: none !important; }
+
+  /* Settlements detail panel */
+  .detail-panel { padding: 12px !important; }
+  .detail-grid { grid-template-columns: 1fr !important; }
+}
+
+/* Extra small phones */
+@media (max-width: 400px) {
+  .driver-grid { grid-template-columns: 1fr !important; }
+  .kpi-value { font-size: 22px !important; }
+}
+
+</style>
+<style id="nexus-unified">
+/* ── SIDEBAR BLACK ── */
+.sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
+/* ── LOGO AREA ── */
+.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
+.sidebar-logo .logo-hex { flex-shrink:0 !important; }
+.sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
+.sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
+.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
+.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
+/* ── NAV LINKS ── */
+.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
+.sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
+.sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
+.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
+.sidebar-link.active svg { opacity:1 !important; }
+/* ── SECTION LABELS ── */
+.sidebar-section { padding:12px 0 4px !important; }
+.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
+/* ── TOPBAR ── */
+.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
+.topbar *, .top-bar * { color:#ffffff !important; }
+.topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
+/* ── MOBILE NAV ── */
+.mobile-nav { background:#000000 !important; }
+.mobile-nav-tab.active { color:#e91e8c !important; }
+/* ── SIDEBAR USER ── */
+.sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
+.sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
+.sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
+/* ── NAV BADGE ── */
+.nav-badge { background:#e91e8c !important; color:#fff !important; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <a href="landing.html" class="sidebar-logo">
+    <div class="logo-hex">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hexGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#000000"/>
+            <stop offset="60%" stop-color="#6b0000"/>
+            <stop offset="100%" stop-color="#e91e8c"/>
+          </linearGradient>
+        </defs>
+        <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hexGrad)" stroke="#e91e8c" stroke-width="1.5"/>
+        <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#e91e8c" opacity="0.15"/>
+        <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff" letter-spacing="0">CN</text>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <span class="brand">CARRIER NEXUS</span>
+      <span class="sub">OPS INTELLIGENCE</span>
+    </div>
+  </a>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="fleet-command.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h7v2H2z"/></svg>
+      Dashboard
+    </a>
+    <a href="active-loads.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V3zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V9zm4 4h6v2H5z"/></svg>
+      Active Loads
+    </a>
+    <a href="settlements.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h6V4H5zm0 3v1h6V7H5zm0 3v1h4v-1H5z"/></svg>
+      Settlements
+    </a>
+    <a href="drivers.html" class="sidebar-link active">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>
+      Drivers
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Documents</div>
+    <a href="documents.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm5 0v4h4"/></svg>
+      Document Vault
+      <span class="nav-badge">3</span>
+    </a>
+    <a href="pods.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm-.5 2v4.5l3.5 2-.5-.87-3-1.63V5h-1z"/></svg>
+      Missing PODs
+      <span class="nav-badge">3</span>
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Maintenance</div>
+    <a href="equipment.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8 4 10l1-3.5L2 4h4.5z"/></svg>
+      Fleet &amp; Equipment
+    </a>
+    <a href="pm-schedule.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h10v2H3zm0 4h10v2H3zm0 4h6v2H3z"/></svg>
+      PM Schedule
+    </a>
+    <a href="tires.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>
+      Tires
+    </a>
+    <a href="fuel.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h7l3 3v10a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 6h6V6H4zm0 3h4V9H4z"/></svg>
+      Fuel
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Intelligence</div>
+    <a href="nexus-ai.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v5l4.5 2.7-.7-1.2-3.8-2.3V5z"/></svg>
+      Nexus AI
+    </a>
+    <a href="analysis.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h2v-4H2zm3 0h2V6H5zm3 0h2V4H8zm3 0h2V2h-2z"/></svg>
+      Analytics
+    </a>
+    <a href="eld-settings.html" class="sidebar-link">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 00-3 3c0 1.3.83 2.4 2 2.82V8H5v2h2v1.18A3 3 0 108 14.93V10h2V8H8V6.82A3.001 3.001 0 008 1zm0 12a1 1 0 110-2 1 1 0 010 2zm0-8a1 1 0 110-2 1 1 0 010 2z"/></svg>
+      ELD Integration
+    </a>
+  </div>
+
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-user">
+    <div class="user-name">Jim Burlew · ADMIN</div>
+    <div class="user-role">Carrier Trucking US, LLC</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">DRIVERS</div>
+    <div class="status-live"><span class="status-dot"></span>LIVE</div>
+    <button class="btn btn-ghost">Export Roster</button>
+    <button class="btn btn-primary">+ Add Driver</button>
+  </div>
+
+  <div class="content">
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterDrivers('all', this)">All</button>
+      <button class="filter-btn" onclick="filterDrivers('active', this)">Active</button>
+      <button class="filter-btn" onclick="filterDrivers('inactive', this)">Inactive</button>
+      <div class="filter-spacer"></div>
+      <span class="driver-count-label" id="driver-count">9 DRIVERS</span>
+    </div>
+
+    <!-- DRIVER CARDS GRID -->
+    <div class="drivers-grid" id="drivers-grid">
+
+      <!-- AVIS MODESTO -->
+      <div class="driver-card" data-status="active">
+        <div class="driver-card-top">
+          <div class="driver-avatar" style="background:#d6e4f0;">AM</div>
+          <div>
+            <div class="driver-name">Avis Modesto</div>
+            <div style="margin-top:4px;"><span class="driver-id-badge">ID #001</span></div>
+          </div>
+          <div class="driver-meta-row">
+            <div class="truck-chip">
+              <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>
+              UNIT 01
+            </div>
+            <span class="badge badge-green">ACTIVE</span>
+          </div>
+        </div>
+        <div class="driver-card-stats">
+          <div class="stat-block">
+            <div class="stat-block-label">Total Loads</div>
+            <div class="stat-block-value">142</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-block-label">Total Revenue</div>
+            <div class="stat-block-value revenue">$107K</div>
+          </div>
+        </div>
+        <div class="driver-card-actions">
+          <button class="btn-driver-action settle">SETTLEMENTS</button>
+          <button class="btn-driver-action">CONTACT</button>
+          <button class="btn-driver-action">DOCUMENTS</button>
+        </div>
+      </div>
+
+      <!-- MIGUEL FONSECA -->
+      <div class="driver-card" data-status="active">
+        <div class="driver-card-top">
+          <div class="driver-avatar" style="background:#d5e8d4;">MF</div>
+          <div>
+            <div class="driver-name">Miguel Fonseca</div>
+            <div style="margin-top:4px;"><span class="driver-id-badge">ID #005</span></div>
+          </div>
+          <div class="driver-meta-row">
+            <div class="truck-chip">
+              <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>
+              UNIT 05
+            </div>
+            <span class="badge badge-green">ACTIVE</span>
+          </div>
+        </div>
+        <div class="driver-card-stats">
+          <div class="stat-block">
+            <div class="stat-block-label">Total Loads</div>
+            <div class="stat-block-value">98</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-block-label">Total Revenue</div>
+            <div class="stat-block-value revenue">$82K</div>
+          </div>
+        </div>
+        <div class="driver-card-actions">
+          <button class="btn-driver-action settle">SETTLEMENTS</button>
+          <button class="btn-driver-action">CONTACT</button>
+          <button class="btn-driver-action">DOCUMENTS</button>
+        </div>
+      </div>
+
+      <!-- GUILLERMO PINERA -->
+      <div class="driver-card" data-status="active">
+        <div class="driver-card-top">
+          <div class="driver-avatar" style="background:#fff3cd;">GP</div>
+          <div>
+            <div class="driver-name">Guillermo Pinera</div>
+            <div style="margin-top:4px;"><span class="driver-id-badge">ID #003</span></div>
+          </div>
+          <div class="driver-meta-row">
+            <div class="truck-chip">
+              <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>
+              UNIT 03
+            </div>
+            <span class="badge badge-green">ACTIVE</span>
+          </div>
+        </div>
+        <div class="driver-card-stats">
+          <div class="stat-block">
+            <div class="stat-block-label">Total Loads</div>
+            <div class="stat-block-value">118</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-block-label">Total Revenue</div>
+            <div class="stat-block-value revenue">$102K</div>
+          </div>
+        </div>
+        <div class="driver-card-actions">
+          <button class="btn-driver-action settle">SETTLEMENTS</button>
+          <button class="btn-driver-action">CONTACT</button>
+          <button class="btn-driver-action">DOCUMENTS</button>
+        </div>
+      </div>
+
+      <!-- DAVID FONSECA -->
+      <div class="driver-card" data-status="active">
+        <div class="driver-card-top">
+          <div class="driver-avatar" style="background:#f8d7da;">DF</div>
+          <div>
+            <div class="driver-name">David Fonseca</div>
+            <div style="margin-top:4px;"><span class="driver-id-badge">ID #007</span></div>
+          </div>
+          <div class="driver-meta-row">
+            <div class="truck-chip">
+              <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>
+              UNIT 09
+            </div>
+            <span class="badge badge-green">ACTIVE</span>
+          </div>
+        </div>
+        <div class="driver-card-stats">
+          <div class="stat-block">
+            <div class="stat-block-label">Total Loads</div>
+            <div class="stat-block-value">89</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-block-label">Total Revenue</div>
+            <div class="stat-block-value revenue">$75K</div>
+          </div>
+        </div>
+        <div class="driver-card-actions">
+          <button class="btn-driver-action settle">SETTLEMENTS</button>
+          <button class="btn-driver-action">CONTACT</button>
+          <button class="btn-driver-action">DOCUMENTS</button>
+        </div>
+      </div>
+
+      <!-- YOSVIEL PINERA -->
+      <div class="driver-card" data-status="active">
+        <div class="driver-card-top">
+          <div class="driver-avatar" style="background:#e8d5f5;">YP</div>
+          <div>
+            <div class="driver-name">Yosviel Pinera</div>
+            <div style="margin-top:4px;"><span class="driver-id-badge">ID #006</span></div>
+          </div>
+          <div class="driver-meta-row">
+            <div class="truck-chip">
+              <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>
+              UNIT 06
+            </div>
+            <span class="badge badge-green">ACTIVE</span>
+          </div>
+        </div>
+        <div class="driver-card-stats">
+          <div class="stat-block">
+            <div class="stat-block-label">Total Loads</div>
+            <div class="stat-block-value">14</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-block-label">Total Revenue</div>
+            <div class="stat-block-value revenue">$2.75K</div>
+          </div>
+        </div>
+        <div class="driver-card-actions">
+          <button class="btn-driver-action settle">SETTLEMENTS</button>
+          <button class="btn-driver-action">CONTACT</button>
+          <button class="btn-driver-action">DOCUMENTS</button>
+        </div>
+      </div>
+
+      <!-- AMET ABREU -->
+      <div class="driver-card" data-status="active">
+        <div class="driver-card-top">
+          <div class="driver-avatar" style="background:#d4edda;">AA</div>
+          <div>
+            <div class="driver-name">Amet Abreu</div>
+            <div style="margin-top:4px;"><span class="driver-id-badge">ID #002</span></div>
+          </div>
+          <div class="driver-meta-row">
+            <div class="truck-chip">
+              <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>
+              UNIT 04
+            </div>
+            <span class="badge badge-green">ACTIVE</span>
+          </div>
+        </div>
+        <div class="driver-card-stats">
+          <div class="stat-block">
+            <div class="stat-block-label">Total Loads</div>
+            <div class="stat-block-value">310+</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-block-label">Total Revenue</div>
+            <div class="stat-block-value revenue">$420K+</div>
+          </div>
+        </div>
+        <div class="driver-card-actions">
+          <button class="btn-driver-action settle">SETTLEMENTS</button>
+          <button class="btn-driver-action">CONTACT</button>
+          <button class="btn-driver-action">DOCUMENTS</button>
+        </div>
+      </div>
+
+      <!-- NELSON -->
+      <div class="driver-card" data-status="active">
+        <div class="driver-card-top">
+          <div class="driver-avatar" style="background:#d1ecf1;">NE</div>
+          <div>
+            <div class="driver-name">Nelson</div>
+            <div style="margin-top:4px;"><span class="driver-id-badge">ID #006</span></div>
+          </div>
+          <div class="driver-meta-row">
+            <div class="truck-chip">
+              <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>
+              UNIT 06
+            </div>
+            <span class="badge badge-green">ACTIVE</span>
+          </div>
+        </div>
+        <div class="driver-card-stats">
+          <div class="stat-block">
+            <div class="stat-block-label">Total Loads</div>
+            <div class="stat-block-value">32</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-block-label">Total Revenue</div>
+            <div class="stat-block-value revenue">$28K</div>
+          </div>
+        </div>
+        <div class="driver-card-actions">
+          <button class="btn-driver-action settle">SETTLEMENTS</button>
+          <button class="btn-driver-action">CONTACT</button>
+          <button class="btn-driver-action">DOCUMENTS</button>
+        </div>
+      </div>
+
+      <!-- LAURA MORENO -->
+      <div class="driver-card inactive" data-status="inactive">
+        <div class="driver-card-top">
+          <div class="driver-avatar" style="background:#ffe0cc;">LM</div>
+          <div>
+            <div class="driver-name">Laura Moreno</div>
+            <div style="margin-top:4px;"><span class="driver-id-badge">ID #009</span></div>
+          </div>
+          <div class="driver-meta-row">
+            <span class="no-truck">Unassigned</span>
+            <span class="badge badge-gray">INACTIVE</span>
+          </div>
+        </div>
+        <div class="driver-card-stats">
+          <div class="stat-block">
+            <div class="stat-block-label">Total Loads</div>
+            <div class="stat-block-value na">—</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-block-label">Total Revenue</div>
+            <div class="stat-block-value na">—</div>
+          </div>
+        </div>
+        <div class="driver-card-actions">
+          <button class="btn-driver-action settle">SETTLEMENTS</button>
+          <button class="btn-driver-action">CONTACT</button>
+          <button class="btn-driver-action">DOCUMENTS</button>
+        </div>
+      </div>
+
+      <!-- BETTY -->
+      <div class="driver-card inactive" data-status="inactive">
+        <div class="driver-card-top">
+          <div class="driver-avatar" style="background:#f0e6ff;">BE</div>
+          <div>
+            <div class="driver-name">Betty</div>
+            <div style="margin-top:4px;"><span class="driver-id-badge">ID #008</span></div>
+          </div>
+          <div class="driver-meta-row">
+            <span class="no-truck">Unassigned</span>
+            <span class="badge badge-gray">INACTIVE</span>
+          </div>
+        </div>
+        <div class="driver-card-stats">
+          <div class="stat-block">
+            <div class="stat-block-label">Total Loads</div>
+            <div class="stat-block-value na">—</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-block-label">Total Revenue</div>
+            <div class="stat-block-value na">—</div>
+          </div>
+        </div>
+        <div class="driver-card-actions">
+          <button class="btn-driver-action settle">SETTLEMENTS</button>
+          <button class="btn-driver-action">CONTACT</button>
+          <button class="btn-driver-action">DOCUMENTS</button>
+        </div>
+      </div>
+
+    </div><!-- /drivers-grid -->
+
+    <!-- SUMMARY FOOTER -->
+    <div class="summary-footer">
+      <div class="footer-stat">
+        <div class="footer-stat-label">Total Drivers</div>
+        <div class="footer-stat-value">9</div>
+      </div>
+      <div class="footer-stat">
+        <div class="footer-stat-label">Active Drivers</div>
+        <div class="footer-stat-value green">7</div>
+      </div>
+      <div class="footer-stat">
+        <div class="footer-stat-label">Total Loads Processed</div>
+        <div class="footer-stat-value orange">803+</div>
+      </div>
+      <div class="footer-stat">
+        <div class="footer-stat-label">Total Settlements Paid</div>
+        <div class="footer-stat-value" style="color:var(--ice);">$816K+</div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script src="nexus-data.js"></script>
+<script>
+function filterDrivers(filter, btn) {
+  // Update active button
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const cards = document.querySelectorAll('.driver-card');
+  let visible = 0;
+  cards.forEach(card => {
+    const status = card.dataset.status;
+    const show = filter === 'all' || status === filter;
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+
+  const label = filter === 'all' ? '9 DRIVERS' : (visible + (filter === 'active' ? ' ACTIVE' : ' INACTIVE') + ' DRIVER' + (visible !== 1 ? 'S' : ''));
+  document.getElementById('driver-count').textContent = label;
+}
+</script>
+<script src="nexus-lang.js"></script>
+
+<!-- Mobile Bottom Nav -->
+<nav class="mobile-nav" role="navigation" aria-label="Mobile navigation">
+
+  <a href="fleet-command.html" class="mobile-nav-tab" aria-label="DASH">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    DASH
+  </a>
+  <a href="settlements.html" class="mobile-nav-tab" aria-label="PAY">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+    PAY
+  </a>
+  <a href="documents.html" class="mobile-nav-tab" aria-label="Documents">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+    DOCS
+  </a>
+  <a href="equipment.html" class="mobile-nav-tab" aria-label="FLEET">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+    FLEET
+  </a>
+  <a href="drivers.html" class="mobile-nav-tab active" aria-label="TEAM">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    TEAM
+  </a>
+</nav>
+
+</body>
+</html>

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELD Integration — Carrier Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #f1f5f9;
+  --gunmetal: #ffffff;
+  --gunmetal-light: #f8fafc;
+  --steel: #f0f4f8;
+  --steel-blue: #2e6da4;
+  --steel-blue-light: #3d87c8;
+  --ice: #a8c4e0;
+  --white: #0f172a;
+  --white-pure: #0f172a;
+  --orange: #e8640a;
+  --orange-bright: #ff7518;
+  --text-muted: #64748b;
+  --text-mid: #475569;
+  --border: #e2e8f0;
+  --red: #ef4444;
+  --green: #22c55e;
+  --yellow: #fbbf24;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Barlow', sans-serif;
+  display: flex;
+  min-height: 100vh;
+}
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 220px; min-height: 100vh;
+  background: var(--gunmetal);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0; z-index: 100;
+}
+.sidebar-logo {
+  padding: 20px 16px 16px; display: flex; align-items: center;
+  gap: 10px; text-decoration: none; border-bottom: 1px solid var(--border);
+}
+.logo-hex svg { width: 36px; height: 36px; }
+.logo-text { display: flex; flex-direction: column; }
+.logo-text .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: 2px; color: var(--white-pure); }
+.logo-text .sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--orange); letter-spacing: 1px; }
+.sidebar-section { padding: 12px 0 4px; }
+.sidebar-section-label {
+  padding: 0 16px 6px; font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 500; color: var(--text-muted);
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+.sidebar-link {
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px;
+  text-decoration: none; color: var(--text-mid); font-size: 13px; font-weight: 400;
+  transition: all 0.15s; position: relative;
+}
+.sidebar-link:hover { color: var(--white); background: rgba(46,109,164,0.08); }
+.sidebar-link.active {
+  color: var(--white-pure); background: rgba(232,100,10,0.10);
+  border-left: 3px solid var(--orange); padding-left: 13px; font-weight: 500;
+}
+.sidebar-link svg { width: 14px; height: 14px; opacity: 0.7; flex-shrink: 0; }
+.sidebar-link.active svg { opacity: 1; }
+.nav-badge {
+  margin-left: auto; background: var(--red); color: #fff;
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 500;
+  padding: 2px 6px; border-radius: 3px;
+}
+.sidebar-spacer { flex: 1; }
+.sidebar-user {
+  padding: 12px 16px; border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--text-muted);
+}
+.user-name { font-weight: 600; color: var(--text-mid); margin-bottom: 2px; }
+/* ── MAIN ── */
+.main { margin-left: 220px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+.topbar {
+  height: 56px; display: flex; align-items: center; gap: 16px;
+  padding: 0 24px; background: var(--gunmetal);
+  border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 90;
+}
+.topbar-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 18px; letter-spacing: 2px; flex: 1; }
+.btn {
+  padding: 7px 16px; border-radius: 4px; font-size: 12px; font-weight: 600;
+  cursor: pointer; border: none; font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: 1px; text-transform: uppercase; transition: all 0.15s;
+}
+.btn-primary { background: var(--steel-blue); color: #fff; }
+.btn-primary:hover { background: var(--steel-blue-light); }
+.btn-success { background: #16a34a; color: #fff; }
+.btn-success:hover { background: #15803d; }
+.btn-ghost { background: transparent; color: var(--text-mid); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--steel); color: var(--white); }
+.btn-danger { background: #dc2626; color: #fff; }
+.btn-danger:hover { background: #b91c1c; }
+.status-live { display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; color: var(--green); }
+.status-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(1.3)} }
+/* ── CONTENT ── */
+.content { padding: 24px; flex: 1; }
+.page-header { margin-bottom: 24px; }
+.page-header h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 28px; letter-spacing: 2px; color: var(--white-pure); }
+.page-header p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+/* ── CARDS ── */
+.card {
+  background: var(--gunmetal); border: 1px solid var(--border);
+  border-radius: 8px; margin-bottom: 20px; overflow: hidden;
+}
+.card-header {
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  background: #1e3a5f;
+}
+.card-header h2 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 1.5px; text-transform: uppercase; color: #fff; }
+.card-header .card-icon { width: 18px; height: 18px; color: #60a5fa; flex-shrink: 0; }
+.card-body { padding: 20px; }
+/* ── STEPS ── */
+.steps { display: flex; flex-direction: column; gap: 16px; }
+.step { display: flex; gap: 14px; align-items: flex-start; }
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #1e3a5f; color: #60a5fa;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 14px;
+  flex-shrink: 0; margin-top: 1px;
+}
+.step-content h3 { font-size: 14px; font-weight: 600; color: var(--white-pure); margin-bottom: 4px; }
+.step-content p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+.step-content a { color: #3b82f6; text-decoration: none; }
+.step-content a:hover { text-decoration: underline; }
+.step-content code {
+  background: #0f172a; color: #e2e8f0; font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; padding: 2px 6px; border-radius: 3px;
+}
+/* ── FORM ── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-label { font-size: 12px; font-weight: 600; color: var(--text-mid); letter-spacing: 0.5px; text-transform: uppercase; }
+.form-input {
+  padding: 9px 12px; border: 1px solid var(--border); border-radius: 4px;
+  background: var(--gunmetal-light); color: var(--white);
+  font-size: 13px; font-family: 'Barlow', sans-serif; width: 100%;
+  transition: border-color 0.15s;
+}
+.form-input:focus { outline: none; border-color: var(--steel-blue); }
+.form-hint { font-size: 11px; color: var(--text-muted); }
+/* ── STATUS BANNER ── */
+.status-banner {
+  padding: 12px 16px; border-radius: 6px; font-size: 13px; font-weight: 500;
+  display: none; align-items: center; gap: 10px; margin-top: 16px;
+}
+.status-banner.show { display: flex; }
+.status-banner.success { background: rgba(22,163,74,0.12); border: 1px solid rgba(22,163,74,0.3); color: #16a34a; }
+.status-banner.error { background: rgba(220,38,38,0.12); border: 1px solid rgba(220,38,38,0.3); color: #dc2626; }
+.status-banner.warning { background: rgba(234,179,8,0.12); border: 1px solid rgba(234,179,8,0.3); color: #ca8a04; }
+.status-banner.info { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3); color: #3b82f6; }
+/* ── DATA TABLE ── */
+.data-table-wrap { overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th {
+  padding: 9px 12px; text-align: left; font-size: 10px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; color: #fff;
+  background: #1e3a5f; white-space: nowrap;
+}
+.data-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--white); vertical-align: middle; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(46,109,164,0.06); }
+.badge {
+  display: inline-block; padding: 2px 8px; border-radius: 10px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.badge-green { background: rgba(22,163,74,0.15); color: #16a34a; border: 1px solid rgba(22,163,74,0.25); }
+.badge-red { background: rgba(220,38,38,0.15); color: #dc2626; border: 1px solid rgba(220,38,38,0.25); }
+.badge-yellow { background: rgba(234,179,8,0.15); color: #ca8a04; border: 1px solid rgba(234,179,8,0.25); }
+.badge-blue { background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.25); }
+.badge-gray { background: rgba(100,116,139,0.15); color: #64748b; border: 1px solid rgba(100,116,139,0.25); }
+/* ── ENDPOINTS ── */
+.endpoint-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.endpoint-item { background: var(--gunmetal-light); border: 1px solid var(--border); border-radius: 6px; padding: 14px; }
+.endpoint-method { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: #16a34a; margin-bottom: 4px; }
+.endpoint-path { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--white-pure); margin-bottom: 6px; word-break: break-all; }
+.endpoint-desc { font-size: 12px; color: var(--text-muted); }
+/* ── KPI ROW ── */
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 20px; }
+.kpi-box {
+  background: var(--gunmetal); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; text-align: center;
+}
+.kpi-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 28px; color: var(--steel-blue); }
+.kpi-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+/* ── TABS ── */
+.tab-bar { display: flex; gap: 4px; border-bottom: 2px solid var(--border); margin-bottom: 20px; }
+.tab-btn {
+  padding: 8px 18px; background: none; border: none; cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted);
+  border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s;
+}
+.tab-btn.active { color: var(--steel-blue); border-bottom-color: var(--steel-blue); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+/* ── MOBILE ── */
+@media (max-width: 900px) {
+  .sidebar { display: none !important; }
+  .main { margin-left: 0; }
+  .form-grid { grid-template-columns: 1fr; }
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+}
+/* ── NEXUS UNIFIED ── */
+</style>
+<style id="nexus-unified">
+/* ── SIDEBAR BLACK ── */
+.sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
+/* ── LOGO AREA ── */
+.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
+.sidebar-logo .logo-hex { flex-shrink:0 !important; }
+.sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
+.sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
+.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
+.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
+/* ── NAV LINKS ── */
+.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
+.sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
+.sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
+.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
+.sidebar-link.active svg { opacity:1 !important; }
+/* ── SECTION LABELS ── */
+.sidebar-section { padding:12px 0 4px !important; }
+.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
+/* ── TOPBAR ── */
+.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
+.topbar *, .top-bar * { color:#ffffff !important; }
+.topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
+/* ── MOBILE NAV ── */
+.mobile-nav { background:#000000 !important; }
+.mobile-nav-tab.active { color:#e91e8c !important; }
+/* ── SIDEBAR USER ── */
+.sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
+.sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
+.sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
+/* ── NAV BADGE ── */
+.nav-badge { background:#e91e8c !important; color:#fff !important; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <a href="landing.html" class="sidebar-logo">
+    <div class="logo-hex">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hexGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#000000"/>
+            <stop offset="60%" stop-color="#6b0000"/>
+            <stop offset="100%" stop-color="#e91e8c"/>
+          </linearGradient>
+        </defs>
+        <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hexGrad)" stroke="#e91e8c" stroke-width="1.5"/>
+        <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#e91e8c" opacity="0.15"/>
+        <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff" letter-spacing="0">CN</text>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <span class="brand">CARRIER NEXUS</span>
+      <span class="sub">OPS INTELLIGENCE</span>
+    </div>
+  </a>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="fleet-command.html" class="sidebar-link">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h7v2H2z"/></svg>
+      Dashboard
+    </a>
+    <a href="active-loads.html" class="sidebar-link">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V3zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V9zm4 4h6v2H5z"/></svg>
+      Active Loads
+    </a>
+    <a href="settlements.html" class="sidebar-link">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h6V4H5zm0 3v1h6V7H5zm0 3v1h4v-1H5z"/></svg>
+      Settlements
+    </a>
+    <a href="drivers.html" class="sidebar-link">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>
+      Drivers
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Documents</div>
+    <a href="documents.html" class="sidebar-link">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm5 0v4h4"/></svg>
+      Document Vault
+    </a>
+    <a href="pods.html" class="sidebar-link">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm-.5 2v4.5l3.5 2-.5-.87-3-1.63V5h-1z"/></svg>
+      Missing PODs
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Maintenance</div>
+    <a href="equipment.html" class="sidebar-link">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8 4 10l1-3.5L2 4h4.5z"/></svg>
+      Fleet &amp; Equipment
+    </a>
+    <a href="pm-schedule.html" class="sidebar-link">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h10v2H3zm0 4h10v2H3zm0 4h6v2H3z"/></svg>
+      PM Schedule
+    </a>
+    <a href="tires.html" class="sidebar-link">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>
+      Tires
+    </a>
+    <a href="fuel.html" class="sidebar-link">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h7l3 3v10a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 6h6V6H4zm0 3h4V9H4z"/></svg>
+      Fuel
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Intelligence</div>
+    <a href="nexus-ai.html" class="sidebar-link">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v5l4.5 2.7-.7-1.2-3.8-2.3V5z"/></svg>
+      Nexus AI
+    </a>
+    <a href="analysis.html" class="sidebar-link">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h2v-4H2zm3 0h2V6H5zm3 0h2V4H8zm3 0h2V2h-2z"/></svg>
+      Analytics
+    </a>
+    <a href="eld-settings.html" class="sidebar-link active">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 00-3 3c0 1.3.83 2.4 2 2.82V8H5v2h2v1.18A3 3 0 108 14.93V10h2V8H8V6.82A3.001 3.001 0 008 1zm0 12a1 1 0 110-2 1 1 0 010 2zm0-8a1 1 0 110-2 1 1 0 010 2z"/></svg>
+      ELD Integration
+    </a>
+  </div>
+
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-user">
+    <div class="user-name">Jim Burlew · ADMIN</div>
+    <div class="user-role">Carrier Trucking US, LLC</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title">ELD INTEGRATION</div>
+    <div class="status-live" id="conn-status-pill" style="display:none;">
+      <span class="status-dot"></span><span id="conn-label">CONNECTED</span>
+    </div>
+    <button class="btn btn-success" onclick="testConnection()" id="btn-test">Test Connection</button>
+    <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="page-header">
+      <h1>ELD / MOTIVE INTEGRATION</h1>
+      <p>Connect your Motive (KeepTruckin) ELD system to pull live GPS, Hours of Service, DVIRs, and engine diagnostics.</p>
+    </div>
+
+    <!-- SETUP GUIDE -->
+    <div class="card">
+      <div class="card-header">
+        <svg class="card-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9zM4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z"/></svg>
+        <h2>Step 1 — Get Your Motive API Key</h2>
+      </div>
+      <div class="card-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h3>Log in to Motive Fleet Dashboard</h3>
+              <p>Go to <a href="https://app.keeptruckin.com" target="_blank">app.keeptruckin.com</a> and sign in with your fleet admin account.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h3>Open Account Settings → API Keys</h3>
+              <p>Click your profile icon (top right) → <strong>Account Settings</strong> → scroll down to <strong>API Keys</strong> section.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h3>Create a New API Key</h3>
+              <p>Click <strong>+ Create API Key</strong>. Give it a name like <code>Carrier Nexus</code>. Copy the generated key — it won't be shown again.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <h3>Paste the Key Below &amp; Test</h3>
+              <p>Enter your API key in the field below, then click <strong>Test Connection</strong> to verify. Data will populate automatically.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API SETTINGS FORM -->
+    <div class="card">
+      <div class="card-header">
+        <svg class="card-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+        <h2>Step 2 — Enter API Credentials</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Motive API Key</label>
+            <input type="password" class="form-input" id="api-key" placeholder="Paste your Motive API key here" autocomplete="off">
+            <div class="form-hint">Stored locally in your browser — never sent to any server except Motive's API.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Company Name</label>
+            <input type="text" class="form-input" id="company-name" placeholder="Carrier Trucking US, LLC" value="Carrier Trucking US, LLC">
+          </div>
+          <div class="form-group">
+            <label class="form-label">API Base URL</label>
+            <input type="text" class="form-input" id="api-base" value="https://api.keeptruckin.com" readonly>
+            <div class="form-hint">Standard Motive API endpoint. Do not change unless instructed by Motive support.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Refresh Interval</label>
+            <select class="form-input" id="refresh-interval">
+              <option value="60">Every 1 minute</option>
+              <option value="300" selected>Every 5 minutes</option>
+              <option value="600">Every 10 minutes</option>
+              <option value="1800">Every 30 minutes</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="conn-banner" class="status-banner"></div>
+
+        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-success" onclick="testConnection()">🔌 Test Connection</button>
+          <button class="btn btn-primary" onclick="saveSettings()">💾 Save Settings</button>
+          <button class="btn btn-ghost" onclick="clearSettings()">🗑 Clear Saved Key</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE DATA TABS -->
+    <div class="card" id="live-data-card" style="display:none;">
+      <div class="card-header">
+        <svg class="card-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V4zm6-1a1 1 0 00-1 1v12a1 1 0 001 1h2a1 1 0 001-1V4a1 1 0 00-1-1H8zm5 1a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+        <h2>Live Fleet Data</h2>
+        <span id="last-updated" style="margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:10px; color:rgba(255,255,255,0.5);"></span>
+      </div>
+      <div class="card-body">
+        <div class="kpi-row" id="kpi-row"></div>
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchTab('vehicles',this)">Vehicles</button>
+          <button class="tab-btn" onclick="switchTab('hos',this)">HOS Clocks</button>
+          <button class="tab-btn" onclick="switchTab('dvir',this)">DVIRs</button>
+        </div>
+        <!-- Vehicles Tab -->
+        <div class="tab-panel active" id="tab-vehicles">
+          <div class="data-table-wrap">
+            <table class="data-table" id="vehicles-table">
+              <thead><tr>
+                <th>Unit</th><th>Plate</th><th>Year / Make / Model</th><th>VIN</th>
+                <th>Odometer</th><th>Last GPS</th><th>Status</th>
+              </tr></thead>
+              <tbody id="vehicles-tbody"><tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px;">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- HOS Tab -->
+        <div class="tab-panel" id="tab-hos">
+          <div class="data-table-wrap">
+            <table class="data-table" id="hos-table">
+              <thead><tr>
+                <th>Driver</th><th>Duty Status</th><th>Drive Left</th>
+                <th>On-Duty Left</th><th>Cycle Left</th><th>Violations</th>
+              </tr></thead>
+              <tbody id="hos-tbody"><tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px;">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- DVIR Tab -->
+        <div class="tab-panel" id="tab-dvir">
+          <div class="data-table-wrap">
+            <table class="data-table" id="dvir-table">
+              <thead><tr>
+                <th>Date</th><th>Driver</th><th>Vehicle</th><th>Defects</th><th>Status</th>
+              </tr></thead>
+              <tbody id="dvir-tbody"><tr><td colspan="5" style="text-align:center;color:#64748b;padding:20px;">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENDPOINTS REFERENCE -->
+    <div class="card">
+      <div class="card-header">
+        <svg class="card-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        <h2>API Endpoints Reference</h2>
+      </div>
+      <div class="card-body">
+        <div class="endpoint-grid">
+          <div class="endpoint-item">
+            <div class="endpoint-method">GET</div>
+            <div class="endpoint-path">/v2/vehicles</div>
+            <div class="endpoint-desc">All vehicles in your fleet — make, model, VIN, plate, status.</div>
+          </div>
+          <div class="endpoint-item">
+            <div class="endpoint-method">GET</div>
+            <div class="endpoint-path">/v2/vehicle_locations</div>
+            <div class="endpoint-desc">Current GPS coordinates, speed, heading for each vehicle.</div>
+          </div>
+          <div class="endpoint-item">
+            <div class="endpoint-method">GET</div>
+            <div class="endpoint-path">/v1/hos_clocks</div>
+            <div class="endpoint-desc">HOS clocks — drive time remaining, on-duty, 70-hr cycle.</div>
+          </div>
+          <div class="endpoint-item">
+            <div class="endpoint-method">GET</div>
+            <div class="endpoint-path">/v1/dvirs</div>
+            <div class="endpoint-desc">Driver Vehicle Inspection Reports — defects, status, date.</div>
+          </div>
+          <div class="endpoint-item">
+            <div class="endpoint-method">GET</div>
+            <div class="endpoint-path">/v1/vehicles/{id}/vehicle_faults</div>
+            <div class="endpoint-desc">Engine fault codes (J1939/OBD) per vehicle.</div>
+          </div>
+          <div class="endpoint-item">
+            <div class="endpoint-method">GET</div>
+            <div class="endpoint-path">/v1/logs</div>
+            <div class="endpoint-desc">Driver ELD logs — duty status history and events.</div>
+          </div>
+        </div>
+        <div style="margin-top:16px; padding:12px 14px; background:#0f172a; border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:12px; color:#94a3b8; line-height:1.7;">
+          <span style="color:#60a5fa;">Authorization:</span> Token token="YOUR_API_KEY"<br>
+          <span style="color:#60a5fa;">Content-Type:</span> application/json<br>
+          <span style="color:#60a5fa;">Base URL:</span> https://api.keeptruckin.com
+        </div>
+      </div>
+    </div>
+
+    <!-- CORS / PROXY NOTE -->
+    <div class="card">
+      <div class="card-header">
+        <svg class="card-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+        <h2>CORS Note &amp; Proxy Setup</h2>
+      </div>
+      <div class="card-body">
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
+          Browser security (CORS) may block direct calls to <code>api.keeptruckin.com</code> from this web app.
+          If Test Connection shows a CORS error, the app falls back to simulated data automatically so you can see the layout.
+          For live data, use one of these options:
+        </p>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">A</div>
+            <div class="step-content">
+              <h3>Netlify Serverless Proxy (Recommended)</h3>
+              <p>Add a <code>netlify/functions/motive-proxy.js</code> file to your repo. The proxy forwards requests server-side, bypassing CORS. Contact your developer to set this up — it takes ~15 minutes.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">B</div>
+            <div class="step-content">
+              <h3>Motive Webhooks (Push Model)</h3>
+              <p>Configure Motive to push events to a webhook endpoint (Settings → Webhooks in Motive). Webhooks bypass CORS entirely since data is delivered to your server.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">C</div>
+            <div class="step-content">
+              <h3>Motive Mobile / Native App</h3>
+              <p>The Motive fleet app for iOS/Android has no CORS issues and provides the same data. Use Carrier Nexus for reporting/operations and Motive app for real-time ELD monitoring.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script src="nexus-lang.js"></script>
+<script>
+// ─── CONSTANTS ───────────────────────────────────────────────
+const STORAGE_KEY = 'nexus_motive_key';
+const STORAGE_COMPANY = 'nexus_motive_company';
+const STORAGE_INTERVAL = 'nexus_motive_interval';
+const MOTIVE_BASE = 'https://api.keeptruckin.com';
+
+// Simulated fleet data (fallback if CORS blocks live API)
+const SIM_VEHICLES = [
+  { unit:'01', plate:'FL-TRK-01', year:2020, make:'Peterbilt', model:'579', vin:'1XPWD49X1LD123451', odometer:187340, gps:'Hialeah, FL', status:'driving' },
+  { unit:'03', plate:'FL-TRK-03', year:2019, make:'Kenworth', model:'T680', vin:'2NKHHM6X1KM987652', odometer:214580, gps:'Miami, FL', status:'off_duty' },
+  { unit:'04', plate:'FL-TRK-04', year:2021, make:'Freightliner', model:'Cascadia', vin:'3AKJHHDR7LSGB3453', odometer:96120, gps:'Doral, FL (Yard)', status:'on_duty' },
+  { unit:'05', plate:'FL-TRK-05', year:2018, make:'Peterbilt', model:'389', vin:'1XPFDB9X0JD234564', odometer:312780, gps:'Atlanta, GA', status:'driving' },
+  { unit:'06', plate:'FL-TRK-06', year:2022, make:'Kenworth', model:'W900', vin:'2NKHHM6X2NM456785', odometer:44230, gps:'Orlando, FL', status:'sleeper_berth' },
+  { unit:'09', plate:'FL-TRK-09', year:2020, make:'Mack', model:'Anthem', vin:'1M1AW07Y6LM789096', odometer:158640, gps:'Jacksonville, FL', status:'off_duty' }
+];
+
+const SIM_HOS = [
+  { driver:'M. Rodriguez', status:'Driving', drive:'7h 15m', onduty:'9h 45m', cycle:'42h 30m', violations:0 },
+  { driver:'D. Thompson', status:'Off Duty', drive:'11h 00m', onduty:'14h 00m', cycle:'67h 15m', violations:0 },
+  { driver:'R. Hernandez', status:'On Duty (ND)', drive:'8h 00m', onduty:'11h 00m', cycle:'58h 45m', violations:0 },
+  { driver:'J. Williams', status:'Driving', drive:'5h 30m', onduty:'8h 15m', cycle:'39h 00m', violations:1 },
+  { driver:'A. Garcia', status:'Sleeper Berth', drive:'11h 00m', onduty:'14h 00m', cycle:'63h 20m', violations:0 },
+  { driver:'C. Martinez', status:'Off Duty', drive:'11h 00m', onduty:'14h 00m', cycle:'70h 00m', violations:0 }
+];
+
+const SIM_DVIRS = [
+  { date:'2026-05-25', driver:'M. Rodriguez', vehicle:'Unit 01', defects:'None', status:'Satisfactory' },
+  { date:'2026-05-25', driver:'D. Thompson', vehicle:'Unit 03', defects:'None', status:'Satisfactory' },
+  { date:'2026-05-24', driver:'J. Williams', vehicle:'Unit 05', defects:'Low tire pressure (RF)', status:'Defect Corrected' },
+  { date:'2026-05-24', driver:'A. Garcia', vehicle:'Unit 06', defects:'None', status:'Satisfactory' },
+  { date:'2026-05-23', driver:'R. Hernandez', vehicle:'Unit 04', defects:'None', status:'Satisfactory' },
+  { date:'2026-05-23', driver:'C. Martinez', vehicle:'Unit 09', defects:'None', status:'Satisfactory' }
+];
+
+// ─── INIT ────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', function() {
+  const savedKey = localStorage.getItem(STORAGE_KEY);
+  const savedCompany = localStorage.getItem(STORAGE_COMPANY);
+  const savedInterval = localStorage.getItem(STORAGE_INTERVAL);
+  if (savedKey) document.getElementById('api-key').value = savedKey;
+  if (savedCompany) document.getElementById('company-name').value = savedCompany;
+  if (savedInterval) document.getElementById('refresh-interval').value = savedInterval;
+  if (savedKey) { setTimeout(testConnection, 500); }
+});
+
+// ─── SAVE / CLEAR ────────────────────────────────────────────
+function saveSettings() {
+  const key = document.getElementById('api-key').value.trim();
+  const company = document.getElementById('company-name').value.trim();
+  const interval = document.getElementById('refresh-interval').value;
+  if (!key) { showBanner('error', 'Please enter your Motive API key before saving.'); return; }
+  localStorage.setItem(STORAGE_KEY, key);
+  localStorage.setItem(STORAGE_COMPANY, company);
+  localStorage.setItem(STORAGE_INTERVAL, interval);
+  showBanner('success', '✅ Settings saved. Changes take effect immediately.');
+}
+
+function clearSettings() {
+  if (!confirm('Clear saved API key and disconnect from Motive?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(STORAGE_COMPANY);
+  localStorage.removeItem(STORAGE_INTERVAL);
+  document.getElementById('api-key').value = '';
+  document.getElementById('live-data-card').style.display = 'none';
+  document.getElementById('conn-status-pill').style.display = 'none';
+  showBanner('info', 'API key cleared. Enter a new key to reconnect.');
+}
+
+// ─── TEST CONNECTION ─────────────────────────────────────────
+async function testConnection() {
+  const key = document.getElementById('api-key').value.trim();
+  if (!key) { showBanner('error', 'Please enter your Motive API key first.'); return; }
+  showBanner('info', '🔌 Connecting to Motive API…');
+  document.getElementById('btn-test').disabled = true;
+  try {
+    const res = await fetch(MOTIVE_BASE + '/v2/vehicles?per_page=25', {
+      headers: { 'Authorization': 'Token token="' + key + '"', 'Content-Type': 'application/json' }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      showBanner('success', '✅ Connected to Motive API! Pulling live data…');
+      loadLiveData(data.vehicles || [], 'live');
+    } else {
+      showBanner('warning', '⚠️ API returned ' + res.status + '. Check your key. Showing simulated data.');
+      loadLiveData(SIM_VEHICLES, 'sim');
+    }
+  } catch (err) {
+    // CORS or network error — fall back to simulation
+    showBanner('warning', '⚠️ CORS restriction detected (browser security). Showing simulated fleet data. See proxy setup below for live data.');
+    loadLiveData(SIM_VEHICLES, 'sim');
+  } finally {
+    document.getElementById('btn-test').disabled = false;
+  }
+}
+
+// ─── LOAD DATA ───────────────────────────────────────────────
+function loadLiveData(vehicles, mode) {
+  const card = document.getElementById('live-data-card');
+  card.style.display = 'block';
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Update pill
+  const pill = document.getElementById('conn-status-pill');
+  pill.style.display = 'flex';
+  document.getElementById('conn-label').textContent = mode === 'live' ? 'LIVE' : 'SIMULATED';
+  pill.style.color = mode === 'live' ? '#22c55e' : '#fbbf24';
+  // Timestamp
+  document.getElementById('last-updated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+  // KPIs
+  const driving = vehicles.filter(v => (v.status||'').toLowerCase() === 'driving').length;
+  const offduty = vehicles.filter(v => (v.status||'').toLowerCase() === 'off_duty').length;
+  document.getElementById('kpi-row').innerHTML = `
+    <div class="kpi-box"><div class="kpi-val">${vehicles.length}</div><div class="kpi-label">Total Vehicles</div></div>
+    <div class="kpi-box"><div class="kpi-val" style="color:#22c55e;">${driving}</div><div class="kpi-label">Driving</div></div>
+    <div class="kpi-box"><div class="kpi-val" style="color:#64748b;">${offduty}</div><div class="kpi-label">Off Duty</div></div>
+    <div class="kpi-box"><div class="kpi-val" style="color:#fbbf24;">${vehicles.length - driving - offduty}</div><div class="kpi-label">Other</div></div>
+  `;
+  // Vehicles table
+  const vbody = document.getElementById('vehicles-tbody');
+  if (mode === 'live') {
+    vbody.innerHTML = vehicles.map(v => `
+      <tr>
+        <td><strong>${v.number || v.unit || '—'}</strong></td>
+        <td>${v.license_plate_number || '—'}</td>
+        <td>${v.year||''} ${v.make||''} ${v.model||''}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">${v.vin||'—'}</td>
+        <td>${v.odometer ? v.odometer.toLocaleString() + ' mi' : '—'}</td>
+        <td>${v.last_location ? (v.last_location.description || '—') : '—'}</td>
+        <td>${statusBadge(v.current_driver_status||'unknown')}</td>
+      </tr>
+    `).join('');
+  } else {
+    vbody.innerHTML = vehicles.map(v => `
+      <tr>
+        <td><strong>Unit ${v.unit}</strong></td>
+        <td>${v.plate}</td>
+        <td>${v.year} ${v.make} ${v.model}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">${v.vin}</td>
+        <td>${v.odometer.toLocaleString()} mi</td>
+        <td>${v.gps}</td>
+        <td>${statusBadge(v.status)}</td>
+      </tr>
+    `).join('');
+  }
+  // HOS table
+  document.getElementById('hos-tbody').innerHTML = SIM_HOS.map(h => `
+    <tr>
+      <td><strong>${h.driver}</strong></td>
+      <td>${dutyBadge(h.status)}</td>
+      <td>${h.drive}</td>
+      <td>${h.onduty}</td>
+      <td>${h.cycle}</td>
+      <td>${h.violations > 0 ? '<span class="badge badge-red">'+h.violations+' Violation</span>' : '<span class="badge badge-green">Clear</span>'}</td>
+    </tr>
+  `).join('');
+  // DVIR table
+  document.getElementById('dvir-tbody').innerHTML = SIM_DVIRS.map(d => `
+    <tr>
+      <td>${d.date}</td>
+      <td>${d.driver}</td>
+      <td>${d.vehicle}</td>
+      <td>${d.defects}</td>
+      <td>${d.status === 'Satisfactory' ? '<span class="badge badge-green">Satisfactory</span>' : '<span class="badge badge-yellow">'+d.status+'</span>'}</td>
+    </tr>
+  `).join('');
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────
+function statusBadge(s) {
+  const m = { driving:'badge-green', off_duty:'badge-gray', on_duty:'badge-blue', sleeper_berth:'badge-yellow', unknown:'badge-gray' };
+  const l = { driving:'Driving', off_duty:'Off Duty', on_duty:'On Duty', sleeper_berth:'Sleeper', unknown:'Unknown' };
+  const cls = m[s] || 'badge-gray';
+  const label = l[s] || s;
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+function dutyBadge(s) {
+  if (s.includes('Driving')) return '<span class="badge badge-green">Driving</span>';
+  if (s.includes('Sleeper')) return '<span class="badge badge-yellow">Sleeper</span>';
+  if (s.includes('On Duty')) return '<span class="badge badge-blue">On Duty</span>';
+  return '<span class="badge badge-gray">Off Duty</span>';
+}
+function showBanner(type, msg) {
+  const b = document.getElementById('conn-banner');
+  b.className = 'status-banner show ' + type;
+  b.innerHTML = msg;
+}
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

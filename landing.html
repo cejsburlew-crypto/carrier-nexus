@@ -1,0 +1,2061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carrier Nexus — Own the Road. Own the Data.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #090a0c;
+    --gunmetal: #1a1f2e;
+    --gunmetal-light: #232a3a;
+    --steel: #2a3a52;
+    --steel-blue: #2e6da4;
+    --steel-blue-light: #3d87c8;
+    --ice: #a8c4e0;
+    --white: #f0f4f8;
+    --white-pure: #ffffff;
+    --orange: #e8640a;
+    --orange-bright: #ff7518;
+    --orange-dim: #c45508;
+    --text-muted: #6b7a99;
+    --text-mid: #8a9bbf;
+    --border: rgba(46, 109, 164, 0.18);
+    --border-bright: rgba(46, 109, 164, 0.4);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.35;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(9, 10, 12, 0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .nav-logo-mark {
+    width: 36px;
+    height: 36px;
+  }
+
+  .nav-logo-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: 0.06em;
+    color: var(--white-pure);
+    text-transform: uppercase;
+  }
+
+  .nav-logo-text span {
+    color: var(--orange);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text-mid);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--white-pure); }
+
+  .nav-cta {
+    display: flex;
+    gap: 12px;
+  }
+
+  .btn-ghost {
+    padding: 8px 20px;
+    border: 1px solid var(--border-bright);
+    background: transparent;
+    color: var(--text-mid);
+    font-family: 'Barlow', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--steel-blue-light);
+    color: var(--white-pure);
+    background: rgba(46, 109, 164, 0.12);
+  }
+
+  .btn-primary {
+    padding: 8px 20px;
+    background: var(--orange);
+    border: 1px solid var(--orange);
+    color: var(--white-pure);
+    font-family: 'Barlow', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-primary:hover {
+    background: var(--orange-bright);
+    border-color: var(--orange-bright);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(232, 100, 10, 0.35);
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 48px 80px;
+    overflow: hidden;
+  }
+
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(46, 109, 164, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(46, 109, 164, 0.07) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 100%);
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 900px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(46, 109, 164, 0.15) 0%, rgba(232, 100, 10, 0.04) 40%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-road-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--orange) 20%, var(--steel-blue) 50%, var(--orange) 80%, transparent);
+    opacity: 0.6;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: 1px solid rgba(232, 100, 10, 0.4);
+    background: rgba(232, 100, 10, 0.08);
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-badge-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--orange);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.4); }
+  }
+
+  .hero-badge span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--orange);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .hero-headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(52px, 8vw, 96px);
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--white-pure);
+    margin-bottom: 28px;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+
+  .hero-headline .line-accent {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--steel-blue-light);
+  }
+
+  .hero-headline .word-orange {
+    color: var(--orange);
+  }
+
+  .hero-subheadline {
+    font-size: 17px;
+    font-weight: 300;
+    color: var(--text-mid);
+    max-width: 620px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+
+  .hero-subheadline strong {
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
+
+  .btn-hero-primary {
+    padding: 16px 36px;
+    background: var(--orange);
+    color: var(--white-pure);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+
+  .btn-hero-primary:hover {
+    background: var(--orange-bright);
+    box-shadow: 0 12px 36px rgba(232, 100, 10, 0.45);
+    transform: translateY(-2px);
+  }
+
+  .btn-hero-secondary {
+    padding: 16px 32px;
+    background: transparent;
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--border-bright);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn-hero-secondary:hover {
+    border-color: var(--steel-blue-light);
+    background: rgba(46, 109, 164, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .hero-stats {
+    position: absolute;
+    right: 48px;
+    bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    animation: fadeUp 0.7s 0.5s ease both;
+    z-index: 2;
+  }
+
+  .hero-stat {
+    text-align: right;
+  }
+
+  .hero-stat-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 36px;
+    color: var(--white-pure);
+    line-height: 1;
+  }
+
+  .hero-stat-num span {
+    color: var(--orange);
+  }
+
+  .hero-stat-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .hero-truck-visual {
+    position: absolute;
+    right: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 480px;
+    opacity: 0.12;
+    pointer-events: none;
+    animation: fadeUp 0.8s 0.4s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── DATA FLOW STRIP ─── */
+  .data-flow {
+    background: var(--gunmetal);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0;
+    overflow: hidden;
+  }
+
+  .data-flow-track {
+    display: flex;
+    gap: 0;
+    animation: scrollLeft 24s linear infinite;
+    white-space: nowrap;
+  }
+
+  .data-flow-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-right: 1px solid var(--border);
+  }
+
+  .data-flow-item.active {
+    color: var(--orange);
+  }
+
+  .data-flow-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--border-bright);
+  }
+
+  .data-flow-item.active .data-flow-dot {
+    background: var(--orange);
+    box-shadow: 0 0 6px var(--orange);
+  }
+
+  @keyframes scrollLeft {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ─── PROBLEM SECTION ─── */
+  .section {
+    padding: 120px 48px;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--orange);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 48px;
+    height: 1px;
+    background: var(--orange);
+    opacity: 0.5;
+  }
+
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: clamp(36px, 5vw, 60px);
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--white-pure);
+    margin-bottom: 20px;
+  }
+
+  .section-sub {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text-mid);
+    max-width: 560px;
+    line-height: 1.7;
+  }
+
+  /* ─── PROBLEM GRID ─── */
+  .problem-section {
+    background: var(--gunmetal);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .problem-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .problem-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 48px;
+  }
+
+  .problem-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .problem-item:last-child { border-bottom: none; }
+
+  .problem-icon {
+    width: 8px;
+    height: 8px;
+    background: var(--orange);
+    flex-shrink: 0;
+    margin-top: 7px;
+    transform: rotate(45deg);
+  }
+
+  .problem-text {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--text-mid);
+    line-height: 1.5;
+  }
+
+  .problem-text strong {
+    color: var(--white);
+    font-weight: 600;
+    display: block;
+  }
+
+  /* ─── DISCONNECTED VISUAL ─── */
+  .chaos-visual {
+    background: rgba(9, 10, 12, 0.6);
+    border: 1px solid var(--border);
+    padding: 40px;
+    position: relative;
+    margin-top: 48px;
+  }
+
+  .chaos-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .chaos-nodes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .chaos-node {
+    padding: 12px 14px;
+    background: var(--gunmetal-light);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-align: center;
+    position: relative;
+  }
+
+  .chaos-node.isolated {
+    border-color: rgba(232, 100, 10, 0.3);
+    color: rgba(232, 100, 10, 0.6);
+  }
+
+  .chaos-cross {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 16px;
+    height: 16px;
+    background: rgba(232, 100, 10, 0.15);
+    color: var(--orange);
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ─── WORKFLOW / SOLUTION ─── */
+  .workflow-section { background: var(--black); }
+
+  .workflow-chain {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-top: 64px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .workflow-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 120px;
+    flex: 1;
+  }
+
+  .workflow-node-box {
+    width: 100%;
+    padding: 20px 12px;
+    background: var(--gunmetal);
+    border: 1px solid var(--border);
+    border-right: none;
+    text-align: center;
+    position: relative;
+    transition: all 0.2s;
+  }
+
+  .workflow-node:last-child .workflow-node-box {
+    border-right: 1px solid var(--border);
+  }
+
+  .workflow-node-box:hover {
+    background: var(--gunmetal-light);
+    border-color: var(--border-bright);
+    z-index: 2;
+  }
+
+  .workflow-node-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .workflow-node-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--white);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .workflow-node-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .workflow-arrow {
+    display: flex;
+    align-items: center;
+    color: var(--steel-blue-light);
+    font-size: 18px;
+    padding: 0 6px;
+    flex-shrink: 0;
+    margin-top: -1px;
+    opacity: 0;
+  }
+
+  .workflow-chain:hover .workflow-arrow { opacity: 0; }
+
+  .workflow-connector {
+    height: 2px;
+    background: linear-gradient(90deg, var(--steel-blue), var(--orange));
+    width: 100%;
+    margin-top: 12px;
+    position: relative;
+  }
+
+  .workflow-connector::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: -4px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid var(--orange);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+
+  /* ─── DIFFERENTIATORS ─── */
+  .diff-section {
+    background: var(--gunmetal);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .diff-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 64px;
+  }
+
+  .diff-card {
+    background: var(--gunmetal);
+    padding: 40px 32px;
+    transition: background 0.2s;
+  }
+
+  .diff-card:hover { background: var(--gunmetal-light); }
+
+  .diff-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .diff-not {
+    font-size: 13px;
+    color: rgba(232, 100, 10, 0.6);
+    line-height: 1.5;
+    margin-bottom: 16px;
+    font-weight: 400;
+    text-decoration: line-through;
+    text-decoration-color: rgba(232, 100, 10, 0.3);
+  }
+
+  .diff-is {
+    font-size: 15px;
+    color: var(--white);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* ─── FEATURES / BENEFITS ─── */
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 64px;
+  }
+
+  .benefit-card {
+    padding: 36px 32px;
+    background: var(--gunmetal);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s;
+  }
+
+  .benefit-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--steel-blue), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .benefit-card:hover::before { opacity: 1; }
+  .benefit-card:hover {
+    border-color: var(--border-bright);
+    background: var(--gunmetal-light);
+    transform: translateY(-4px);
+  }
+
+  .benefit-card.featured::before { opacity: 1; }
+  .benefit-card.featured {
+    border-color: rgba(46, 109, 164, 0.35);
+  }
+
+  .benefit-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(46, 109, 164, 0.3);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .benefit-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--white-pure);
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
+
+  .benefit-desc {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--text-mid);
+    line-height: 1.6;
+  }
+
+  /* ─── INTEGRATIONS ─── */
+  .integrations-section { background: var(--black); }
+
+  .integrations-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 64px;
+  }
+
+  .integration-pill {
+    background: var(--gunmetal);
+    padding: 28px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s;
+    cursor: default;
+  }
+
+  .integration-pill:hover { background: var(--gunmetal-light); }
+
+  .integration-icon {
+    font-size: 28px;
+  }
+
+  .integration-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-mid);
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .integration-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    padding: 2px 8px;
+    border: 1px solid;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .integration-status.live {
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.3);
+    background: rgba(74, 222, 128, 0.06);
+  }
+
+  .integration-status.sync {
+    color: var(--steel-blue-light);
+    border-color: rgba(61, 135, 200, 0.3);
+    background: rgba(61, 135, 200, 0.06);
+  }
+
+  /* ─── PLATFORM MODULES ─── */
+  .modules-section {
+    background: var(--gunmetal);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .modules-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 80px;
+    align-items: start;
+    margin-top: 64px;
+  }
+
+  .module-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: sticky;
+    top: 80px;
+  }
+
+  .module-nav-item {
+    padding: 14px 20px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .module-nav-item:hover, .module-nav-item.active {
+    color: var(--white-pure);
+    border-left-color: var(--orange);
+    background: rgba(232, 100, 10, 0.06);
+    padding-left: 24px;
+  }
+
+  .module-details {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .module-card {
+    background: var(--black);
+    border: 1px solid var(--border);
+    padding: 32px;
+    position: relative;
+  }
+
+  .module-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .module-card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 24px;
+    text-transform: uppercase;
+    color: var(--white-pure);
+    letter-spacing: 0.04em;
+  }
+
+  .module-phase {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    background: rgba(46, 109, 164, 0.15);
+    border: 1px solid var(--border-bright);
+    color: var(--steel-blue-light);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    flex-shrink: 0;
+  }
+
+  .module-card-desc {
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .module-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .module-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    background: var(--gunmetal);
+    border: 1px solid var(--border);
+    color: var(--text-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ─── CTA SECTION ─── */
+  .cta-section {
+    background: var(--black);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(232, 100, 10, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(48px, 7vw, 80px);
+    line-height: 0.95;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .cta-headline em {
+    font-style: normal;
+    color: var(--orange);
+  }
+
+  .cta-sub {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text-mid);
+    max-width: 480px;
+    margin: 0 auto 48px;
+    line-height: 1.7;
+    position: relative;
+    z-index: 2;
+  }
+
+  .cta-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
+  }
+
+  .btn-cta-primary {
+    padding: 18px 48px;
+    background: var(--orange);
+    color: var(--white-pure);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  }
+
+  .btn-cta-primary:hover {
+    background: var(--orange-bright);
+    box-shadow: 0 16px 48px rgba(232, 100, 10, 0.45);
+    transform: translateY(-2px);
+  }
+
+  .btn-cta-secondary {
+    padding: 18px 40px;
+    background: transparent;
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--border-bright);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-cta-secondary:hover {
+    border-color: var(--steel-blue-light);
+    background: rgba(46, 109, 164, 0.1);
+    transform: translateY(-2px);
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--gunmetal);
+    border-top: 1px solid var(--border);
+    padding: 48px 48px 32px;
+  }
+
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 48px;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .footer-brand {
+    max-width: 300px;
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    text-decoration: none;
+  }
+
+  .footer-logo-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: 0.06em;
+    color: var(--white-pure);
+    text-transform: uppercase;
+  }
+
+  .footer-logo-text span { color: var(--orange); }
+
+  .footer-tagline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 64px;
+    flex-wrap: wrap;
+  }
+
+  .footer-col-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--white);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+  }
+
+  .footer-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-col a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.2s;
+  }
+
+  .footer-col a:hover { color: var(--white); }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .footer-legal {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .footer-entity {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    text-align: right;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 80px; }
+    .hero-truck-visual { display: none; }
+    .hero-stats { right: 24px; }
+    .section { padding: 80px 24px; }
+    .problem-layout { grid-template-columns: 1fr; gap: 40px; }
+    .diff-grid { grid-template-columns: repeat(2, 1fr); }
+    .benefits-grid { grid-template-columns: repeat(2, 1fr); }
+    .integrations-grid { grid-template-columns: repeat(3, 1fr); }
+    .modules-layout { grid-template-columns: 1fr; }
+    .module-nav { position: static; flex-direction: row; flex-wrap: wrap; }
+    footer { padding: 40px 24px 24px; }
+  }
+
+  @media (max-width: 640px) {
+    .hero-headline { font-size: 48px; }
+    .hero-stats { display: none; }
+    .hero-actions { flex-direction: column; }
+    .btn-hero-primary, .btn-hero-secondary { width: 100%; justify-content: center; }
+    .diff-grid { grid-template-columns: 1fr; }
+    .benefits-grid { grid-template-columns: 1fr; }
+    .integrations-grid { grid-template-columns: repeat(2, 1fr); }
+    .workflow-chain { flex-direction: column; }
+    footer .footer-links { gap: 32px; }
+    .cta-actions { flex-direction: column; align-items: center; }
+  }
+</style>
+
+  <style id="nexus-gradient-header">
+  .topbar, nav.topbar {
+    background: linear-gradient(135deg, #000000 0%, #6b0000 45%, #c2185b 80%, #e91e8c 100%) !important;
+    border-bottom: none !important;
+  }
+  .topbar *, .topbar-title, .topbar .user-name,
+  .topbar button:not(.btn-primary):not(.btn-orange) {
+    color: #ffffff !important;
+  }
+  .topbar .btn-ghost {
+    border-color: rgba(255,255,255,0.35) !important;
+    color: #fff !important;
+    background: rgba(255,255,255,0.08) !important;
+  }
+  .topbar .btn-ghost:hover { background: rgba(255,255,255,0.18) !important; }
+  </style>
+
+  <style id="nexus-contrast-fix">
+  /* ── TOPBAR ── */
+  .topbar-title, .topbar h1, .topbar h2 {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    letter-spacing: .08em !important;
+    color: #fff !important;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4) !important;
+  }
+  .topbar * { color: #fff !important; }
+  .topbar .btn-ghost {
+    background: rgba(255,255,255,0.15) !important;
+    border: 1px solid rgba(255,255,255,0.45) !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+  }
+  .topbar .btn-ghost:hover { background: rgba(255,255,255,0.28) !important; }
+  .topbar .btn-orange, .topbar .btn-primary {
+    background: #fff !important;
+    color: #c2185b !important;
+    border: none !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
+  }
+
+  /* ── KPI CARDS ── */
+  .kpi-card, .stat-card {
+    border-left: 4px solid var(--steel-blue) !important;
+    background: #fff !important;
+    box-shadow: 0 1px 4px rgba(15,23,42,0.07) !important;
+  }
+  .kpi-card:nth-child(2), .stat-card:nth-child(2) { border-left-color: #22c55e !important; }
+  .kpi-card:nth-child(3), .stat-card:nth-child(3) { border-left-color: #e8640a !important; }
+  .kpi-card:nth-child(4), .stat-card:nth-child(4) { border-left-color: #ef4444 !important; }
+  .kpi-label, .stat-label, .card-label {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: #374151 !important;
+    letter-spacing: .07em !important;
+  }
+  .kpi-val, .stat-val {
+    font-size: 32px !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    line-height: 1.1 !important;
+  }
+  .kpi-sub, .stat-sub {
+    font-size: 12px !important;
+    color: #475569 !important;
+    font-weight: 500 !important;
+  }
+
+  /* ── PANELS & SECTION HEADERS ── */
+  .panel-title, .section-title, .panel-head h2,
+  .panel-head h3, .section-header {
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    letter-spacing: .07em !important;
+  }
+  .panel-head {
+    background: #f8fafc !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+  }
+
+  /* ── TABLES ── */
+  th {
+    background: #e8edf4 !important;
+    color: #1e293b !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: .07em !important;
+    border-bottom: 2px solid #cbd5e1 !important;
+    padding: 11px 16px !important;
+  }
+  td {
+    color: #1e293b !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    border-bottom: 1px solid #e8edf4 !important;
+  }
+  tr:hover td { background: #f0f4f8 !important; }
+
+  /* ── BUTTONS (non-topbar) ── */
+  .btn, button.btn, a.btn {
+    font-weight: 700 !important;
+    font-size: 12px !important;
+    border: 1.5px solid #94a3b8 !important;
+    color: #1e293b !important;
+    background: #fff !important;
+  }
+  .btn:hover { background: #f1f5f9 !important; border-color: #64748b !important; }
+  .btn-primary {
+    background: #2e6da4 !important;
+    color: #fff !important;
+    border-color: #2e6da4 !important;
+  }
+  .btn-primary:hover { background: #1d5a8a !important; }
+  .btn-orange, .btn-finalize {
+    background: #e8640a !important;
+    color: #fff !important;
+    border-color: #e8640a !important;
+  }
+  .btn-view {
+    background: #2e6da4 !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 5px 12px !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    cursor: pointer !important;
+  }
+
+  /* ── EQUIPMENT / TRUCK CARDS ── */
+  .truck-card, .driver-card {
+    border: 1.5px solid #cbd5e1 !important;
+    box-shadow: 0 2px 8px rgba(15,23,42,0.06) !important;
+  }
+  .truck-unit, .unit-number {
+    color: #e8640a !important;
+    font-weight: 800 !important;
+  }
+  .truck-name, .driver-name {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+  }
+  .truck-detail, .driver-role {
+    color: #475569 !important;
+    font-weight: 500 !important;
+  }
+
+  /* ── BADGES ── */
+  .badge, [class*="badge-"] {
+    font-weight: 700 !important;
+    font-size: 11px !important;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar-section {
+    color: #7aa3c4 !important;
+    font-weight: 800 !important;
+    font-size: 10px !important;
+  }
+  .sidebar-link {
+    font-weight: 600 !important;
+    font-size: 13px !important;
+  }
+
+  /* ── SETTLEMENT QUEUE ── */
+  .settle-name, .driver-list-name { color: #0f172a !important; font-weight: 700 !important; }
+  .settle-date, .driver-list-sub { color: #475569 !important; font-weight: 500 !important; }
+  .settle-amount { color: #0f172a !important; font-weight: 800 !important; font-size: 16px !important; }
+
+  /* ── MISSING DOC / ALERT ROWS ── */
+  .missing-doc, .alert-row {
+    border-left: 4px solid #ef4444 !important;
+    background: #fff !important;
+  }
+  .doc-title, .alert-title { color: #0f172a !important; font-weight: 700 !important; }
+  .doc-desc, .alert-desc { color: #475569 !important; }
+  </style>
+<style id="nexus-unified">
+/* ── SIDEBAR BLACK ── */
+.sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
+/* ── LOGO AREA ── */
+.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
+.sidebar-logo .logo-hex { flex-shrink:0 !important; }
+.sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
+.sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
+.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
+.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
+/* ── NAV LINKS ── */
+.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
+.sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
+.sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
+.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
+.sidebar-link.active svg { opacity:1 !important; }
+/* ── SECTION LABELS ── */
+.sidebar-section { padding:12px 0 4px !important; }
+.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
+/* ── TOPBAR ── */
+.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
+.topbar *, .top-bar * { color:#ffffff !important; }
+.topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
+/* ── MOBILE NAV ── */
+.mobile-nav { background:#000000 !important; }
+.mobile-nav-tab.active { color:#e91e8c !important; }
+/* ── SIDEBAR USER ── */
+.sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
+.sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
+.sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
+/* ── NAV BADGE ── */
+.nav-badge { background:#e91e8c !important; color:#fff !important; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <svg class="nav-logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="hg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#000000"/><stop offset="60%" stop-color="#6b0000"/><stop offset="100%" stop-color="#e91e8c"/></linearGradient></defs>
+      <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hg1)" stroke="#e91e8c" stroke-width="1.5"/>
+      <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#e91e8c" opacity="0.15"/>
+      <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff" letter-spacing="0">CN</text>
+    </svg>
+    <span class="nav-logo-text">CARRIER <span>NEXUS</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#platform">Platform</a></li>
+    <li><a href="#integrations">Integrations</a></li>
+    <li><a href="#modules">Modules</a></li>
+    <li><a href="#benefits">Why CN</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="#" class="btn-ghost">Request Demo</a>
+    <a href="login.html" class="btn-primary">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L11 6L6 11M11 6H1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Fleet Command
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+
+  <!-- Background truck SVG -->
+  <svg class="hero-truck-visual" viewBox="0 0 480 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="60" width="320" height="100" rx="4" fill="white"/>
+    <rect x="320" y="30" width="140" height="130" rx="4" fill="white"/>
+    <rect x="460" y="70" width="20" height="70" rx="2" fill="white" opacity="0.7"/>
+    <circle cx="80" cy="175" r="22" fill="white"/>
+    <circle cx="80" cy="175" r="12" fill="#090a0c" stroke="white" stroke-width="2"/>
+    <circle cx="200" cy="175" r="22" fill="white"/>
+    <circle cx="200" cy="175" r="12" fill="#090a0c" stroke="white" stroke-width="2"/>
+    <circle cx="380" cy="175" r="22" fill="white"/>
+    <circle cx="380" cy="175" r="12" fill="#090a0c" stroke="white" stroke-width="2"/>
+    <circle cx="430" cy="175" r="22" fill="white"/>
+    <circle cx="430" cy="175" r="12" fill="#090a0c" stroke="white" stroke-width="2"/>
+    <rect x="0" y="188" width="480" height="4" fill="white" opacity="0.3"/>
+  </svg>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      <span>Operational Intelligence Platform · Fleet Command</span>
+    </div>
+
+    <h1 class="hero-headline">
+      Your fleet<br>
+      <span class="line-accent">already creates</span><br>
+      <span class="word-orange">the data.</span><br>
+      Carrier Nexus<br>makes it work.
+    </h1>
+
+    <p class="hero-subheadline">
+      Connect <strong>rate cons, ELD mileage, drivers, repairs, tires, fuel, PODs, Gmail, Google Drive,</strong> and <strong>WhatsApp</strong> into one operational intelligence platform built specifically for carriers.
+    </p>
+
+    <div class="hero-actions">
+      <a href="login.html" class="btn-hero-primary">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 8L8 14M14 8H2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Login to Fleet Command
+      </a>
+      <a href="#" class="btn-hero-secondary">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M7 4V7L9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Request Demo
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">1<span>x</span></div>
+      <div class="hero-stat-label">Connected Platform</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num"><span>&lt;</span>60s</div>
+      <div class="hero-stat-label">Driver Action Time</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">100<span>%</span></div>
+      <div class="hero-stat-label">Operational Traceability</div>
+    </div>
+  </div>
+
+  <div class="hero-road-line"></div>
+</section>
+
+<!-- DATA FLOW TICKER -->
+<div class="data-flow">
+  <div class="data-flow-track">
+    <div class="data-flow-item active"><div class="data-flow-dot"></div>Rate Con Captured</div>
+    <div class="data-flow-item"><div class="data-flow-dot"></div>Driver Assigned</div>
+    <div class="data-flow-item active"><div class="data-flow-dot"></div>ELD Mileage Synced</div>
+    <div class="data-flow-item"><div class="data-flow-dot"></div>POD Uploaded</div>
+    <div class="data-flow-item active"><div class="data-flow-dot"></div>Billing Packet Ready</div>
+    <div class="data-flow-item"><div class="data-flow-dot"></div>Tire Event Logged</div>
+    <div class="data-flow-item active"><div class="data-flow-dot"></div>Fuel Event Linked</div>
+    <div class="data-flow-item"><div class="data-flow-dot"></div>Gmail Packet Sent</div>
+    <div class="data-flow-item active"><div class="data-flow-dot"></div>Settlement Updated</div>
+    <div class="data-flow-item"><div class="data-flow-dot"></div>WhatsApp Linked</div>
+    <div class="data-flow-item active"><div class="data-flow-dot"></div>Drive Filed</div>
+    <div class="data-flow-item"><div class="data-flow-dot"></div>Load Closed</div>
+    <!-- duplicate for seamless loop -->
+    <div class="data-flow-item active"><div class="data-flow-dot"></div>Rate Con Captured</div>
+    <div class="data-flow-item"><div class="data-flow-dot"></div>Driver Assigned</div>
+    <div class="data-flow-item active"><div class="data-flow-dot"></div>ELD Mileage Synced</div>
+    <div class="data-flow-item"><div class="data-flow-dot"></div>POD Uploaded</div>
+    <div class="data-flow-item active"><div class="data-flow-dot"></div>Billing Packet Ready</div>
+    <div class="data-flow-item"><div class="data-flow-dot"></div>Tire Event Logged</div>
+    <div class="data-flow-item active"><div class="data-flow-dot"></div>Fuel Event Linked</div>
+    <div class="data-flow-item"><div class="data-flow-dot"></div>Gmail Packet Sent</div>
+    <div class="data-flow-item active"><div class="data-flow-dot"></div>Settlement Updated</div>
+    <div class="data-flow-item"><div class="data-flow-dot"></div>WhatsApp Linked</div>
+    <div class="data-flow-item active"><div class="data-flow-dot"></div>Drive Filed</div>
+    <div class="data-flow-item"><div class="data-flow-dot"></div>Load Closed</div>
+  </div>
+</div>
+
+<!-- PROBLEM SECTION -->
+<section class="section problem-section" id="platform">
+  <div class="problem-layout">
+    <div>
+      <div class="section-label">The Problem</div>
+      <h2 class="section-title">Your Operations Are Bleeding Money</h2>
+      <p class="section-sub">Most carriers run 6–10 disconnected systems that never talk to each other. Data dies between tools.</p>
+
+      <div class="problem-list">
+        <div class="problem-item">
+          <div class="problem-icon"></div>
+          <div class="problem-text"><strong>Rate cons buried in email</strong>Never linked to the driver, truck, or POD that followed.</div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon"></div>
+          <div class="problem-text"><strong>PODs stuck on driver phones</strong>Billing delays because documents never make it to accounting.</div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon"></div>
+          <div class="problem-text"><strong>Dispatch lives in WhatsApp</strong>Conversations disappear. Nothing is searchable. No audit trail.</div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon"></div>
+          <div class="problem-text"><strong>Tire failures are invisible</strong>No position history, no cost per mile, no pattern detection.</div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon"></div>
+          <div class="problem-text"><strong>Repairs disconnected from loads</strong>Can't calculate true load cost. Can't identify problem trucks.</div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon"></div>
+          <div class="problem-text"><strong>Operational knowledge leaves with people</strong>Dispatcher quits — all broker history, contact context, and routing knowledge walks out the door.</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="chaos-visual" style="margin-top: 48px;">
+        <div class="chaos-title">// Current State: Disconnected Systems</div>
+        <div class="chaos-nodes">
+          <div class="chaos-node isolated">Gmail<div class="chaos-cross">✕</div></div>
+          <div class="chaos-node isolated">Motive ELD<div class="chaos-cross">✕</div></div>
+          <div class="chaos-node isolated">Google Drive<div class="chaos-cross">✕</div></div>
+          <div class="chaos-node isolated">WhatsApp<div class="chaos-cross">✕</div></div>
+          <div class="chaos-node isolated">Fuel Cards<div class="chaos-cross">✕</div></div>
+          <div class="chaos-node isolated">Spreadsheets<div class="chaos-cross">✕</div></div>
+          <div class="chaos-node isolated">Rate Cons<div class="chaos-cross">✕</div></div>
+          <div class="chaos-node isolated">Repairs<div class="chaos-cross">✕</div></div>
+          <div class="chaos-node isolated">Settlements<div class="chaos-cross">✕</div></div>
+        </div>
+      </div>
+
+      <div class="chaos-visual" style="margin-top: 16px; border-color: rgba(46,109,164,0.4); background: rgba(46,109,164,0.04);">
+        <div class="chaos-title" style="color: var(--steel-blue-light);">// Carrier Nexus: One Connected Graph</div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-mid);">
+            <span style="color: var(--orange); font-weight: 600;">Rate Con</span>
+            <span style="color: var(--border-bright);">→</span>
+            <span>Driver</span>
+            <span style="color: var(--border-bright);">→</span>
+            <span>Truck</span>
+            <span style="color: var(--border-bright);">→</span>
+            <span>ELD</span>
+            <span style="color: var(--border-bright);">→</span>
+            <span style="color: var(--steel-blue-light);">Fuel</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-mid);">
+            <span style="color: var(--steel-blue-light);">Fuel</span>
+            <span style="color: var(--border-bright);">→</span>
+            <span>Tire Events</span>
+            <span style="color: var(--border-bright);">→</span>
+            <span>Repairs</span>
+            <span style="color: var(--border-bright);">→</span>
+            <span>POD/BOL</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-mid);">
+            <span>POD/BOL</span>
+            <span style="color: var(--border-bright);">→</span>
+            <span style="color: var(--orange);">Billing Packet</span>
+            <span style="color: var(--border-bright);">→</span>
+            <span>Settlement</span>
+            <span style="color: var(--border-bright);">→</span>
+            <span style="color: #4ade80;">Intelligence</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW CHAIN -->
+<section class="section workflow-section">
+  <div class="section-label">How It Works</div>
+  <h2 class="section-title">Every Event. Connected.</h2>
+  <p class="section-sub">One load creates one complete operational record. Automatically.</p>
+
+  <div class="workflow-chain">
+    <div class="workflow-node">
+      <div class="workflow-node-box">
+        <span class="workflow-node-icon">📋</span>
+        <div class="workflow-node-label">Broker</div>
+        <div class="workflow-node-sub">Contact saved</div>
+      </div>
+      <div class="workflow-connector"></div>
+    </div>
+    <div class="workflow-node">
+      <div class="workflow-node-box">
+        <span class="workflow-node-icon">📄</span>
+        <div class="workflow-node-label">Rate Con</div>
+        <div class="workflow-node-sub">Gmail / PDF</div>
+      </div>
+      <div class="workflow-connector"></div>
+    </div>
+    <div class="workflow-node">
+      <div class="workflow-node-box">
+        <span class="workflow-node-icon">🚛</span>
+        <div class="workflow-node-label">Driver</div>
+        <div class="workflow-node-sub">Assigned + signed</div>
+      </div>
+      <div class="workflow-connector"></div>
+    </div>
+    <div class="workflow-node">
+      <div class="workflow-node-box">
+        <span class="workflow-node-icon">📡</span>
+        <div class="workflow-node-label">ELD Miles</div>
+        <div class="workflow-node-sub">Motive sync</div>
+      </div>
+      <div class="workflow-connector"></div>
+    </div>
+    <div class="workflow-node">
+      <div class="workflow-node-box">
+        <span class="workflow-node-icon">⛽</span>
+        <div class="workflow-node-label">Fuel</div>
+        <div class="workflow-node-sub">Linked to load</div>
+      </div>
+      <div class="workflow-connector"></div>
+    </div>
+    <div class="workflow-node">
+      <div class="workflow-node-box">
+        <span class="workflow-node-icon">🔧</span>
+        <div class="workflow-node-label">Repairs</div>
+        <div class="workflow-node-sub">Cost tracked</div>
+      </div>
+      <div class="workflow-connector"></div>
+    </div>
+    <div class="workflow-node">
+      <div class="workflow-node-box">
+        <span class="workflow-node-icon">📸</span>
+        <div class="workflow-node-label">POD / BOL</div>
+        <div class="workflow-node-sub">Uploaded → Drive</div>
+      </div>
+      <div class="workflow-connector"></div>
+    </div>
+    <div class="workflow-node">
+      <div class="workflow-node-box" style="border-color: rgba(232,100,10,0.4); background: rgba(232,100,10,0.06);">
+        <span class="workflow-node-icon">📧</span>
+        <div class="workflow-node-label" style="color: var(--orange);">Billing Packet</div>
+        <div class="workflow-node-sub">Auto-emailed</div>
+      </div>
+      <div class="workflow-connector" style="background: var(--orange);"></div>
+    </div>
+    <div class="workflow-node">
+      <div class="workflow-node-box" style="border-color: rgba(74, 222, 128, 0.3);">
+        <span class="workflow-node-icon">🧠</span>
+        <div class="workflow-node-label" style="color: #4ade80;">Intelligence</div>
+        <div class="workflow-node-sub">Historical data</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIFFERENTIATORS -->
+<section class="section diff-section">
+  <div class="section-label">Positioning</div>
+  <h2 class="section-title">What We Are. What We're Not.</h2>
+  <p class="section-sub">Carrier Nexus sits above your existing stack — connecting it, not replacing it.</p>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-eyebrow">vs. ELD Systems</div>
+      <div class="diff-not">Replace your compliance system</div>
+      <div class="diff-is">We connect ELD data to operational workflows. Motive stays. We make it useful beyond compliance.</div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-eyebrow">vs. TMS Platforms</div>
+      <div class="diff-not">Force you into a complex ERP</div>
+      <div class="diff-is">Operational intelligence and document control first. Not a dispatch marketplace. Not an accounting platform.</div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-eyebrow">vs. Maintenance Software</div>
+      <div class="diff-not">Track repairs in isolation</div>
+      <div class="diff-is">We connect repairs to mileage, routes, wheel positions, fuel usage, and load economics in one view.</div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-eyebrow">vs. Google Drive</div>
+      <div class="diff-not">Store files in folders</div>
+      <div class="diff-is">Drive stores the evidence. Carrier Nexus structures the intelligence. Every file linked to a record.</div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="section" id="benefits" style="background: var(--black);">
+  <div class="section-label">Core Benefits</div>
+  <h2 class="section-title">Stop Losing Money to Chaos</h2>
+  <p class="section-sub">Ten operational improvements from day one.</p>
+
+  <div class="benefits-grid">
+    <div class="benefit-card featured">
+      <div class="benefit-num">01</div>
+      <div class="benefit-title">Faster Billing Closeout</div>
+      <div class="benefit-desc">Billing packets auto-assemble when all required documents are uploaded. One click sends to broker, billing, and accounting.</div>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-num">02</div>
+      <div class="benefit-title">Tire Failure Intelligence</div>
+      <div class="benefit-desc">Track every tire by wheel position, odometer, and load. Identify failure patterns before they cost you a breakdown.</div>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-num">03</div>
+      <div class="benefit-title">Full Operational Visibility</div>
+      <div class="benefit-desc">Fleet Command shows every active load, missing POD, billing status, and maintenance alert in one dashboard.</div>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-num">04</div>
+      <div class="benefit-title">POD Collection in &lt;60s</div>
+      <div class="benefit-desc">Driver Command is built for under 60 seconds. Drivers tap, photograph, confirm. POD lands in Drive and links to the load automatically.</div>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-num">05</div>
+      <div class="benefit-title">Broker + Customer History</div>
+      <div class="benefit-desc">Every load, rate, complaint, contact, and communication permanently connected to the broker profile in your CRM.</div>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-num">06</div>
+      <div class="benefit-title">Fuel Cost Per Mile</div>
+      <div class="benefit-desc">Tank, WEX, EFS, and Comdata integrated. See cost per mile by truck, driver, and route. Flag anomalies automatically.</div>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-num">07</div>
+      <div class="benefit-title">Reduced Downtime</div>
+      <div class="benefit-desc">PM reminders based on actual ELD mileage. Fault codes connected to repair history. Maintenance patterns become visible early.</div>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-num">08</div>
+      <div class="benefit-title">Searchable Operational Memory</div>
+      <div class="benefit-desc">Every event, document, contact, conversation, and cost permanently linked and searchable. The knowledge stays when people leave.</div>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-num">09</div>
+      <div class="benefit-title">WhatsApp as Operational Record</div>
+      <div class="benefit-desc">Field communication stays in WhatsApp. Carrier Nexus captures it, links it to loads, drivers, and repairs. Nothing disappears.</div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATIONS -->
+<section class="section integrations-section" id="integrations">
+  <div class="section-label">Integrations</div>
+  <h2 class="section-title">Built On Tools You Already Use</h2>
+  <p class="section-sub">No ripping and replacing. Carrier Nexus connects the stack you already run.</p>
+
+  <div class="integrations-grid">
+    <div class="integration-pill">
+      <div class="integration-icon">📧</div>
+      <div class="integration-name">Gmail</div>
+      <div class="integration-status live">Live</div>
+    </div>
+    <div class="integration-pill">
+      <div class="integration-icon">📁</div>
+      <div class="integration-name">Google Drive</div>
+      <div class="integration-status live">Live</div>
+    </div>
+    <div class="integration-pill">
+      <div class="integration-icon">🗺️</div>
+      <div class="integration-name">Google Maps</div>
+      <div class="integration-status live">Live</div>
+    </div>
+    <div class="integration-pill">
+      <div class="integration-icon">💬</div>
+      <div class="integration-name">WhatsApp Business</div>
+      <div class="integration-status sync">Phase 3</div>
+    </div>
+    <div class="integration-pill">
+      <div class="integration-icon">📡</div>
+      <div class="integration-name">Motive ELD</div>
+      <div class="integration-status sync">Phase 2</div>
+    </div>
+    <div class="integration-pill">
+      <div class="integration-icon">📡</div>
+      <div class="integration-name">Samsara</div>
+      <div class="integration-status sync">Phase 2</div>
+    </div>
+    <div class="integration-pill">
+      <div class="integration-icon">⛽</div>
+      <div class="integration-name">Tank</div>
+      <div class="integration-status sync">Phase 3</div>
+    </div>
+    <div class="integration-pill">
+      <div class="integration-icon">⛽</div>
+      <div class="integration-name">WEX / EFS</div>
+      <div class="integration-status sync">Phase 3</div>
+    </div>
+    <div class="integration-pill">
+      <div class="integration-icon">⛽</div>
+      <div class="integration-name">Comdata</div>
+      <div class="integration-status sync">Phase 3</div>
+    </div>
+    <div class="integration-pill">
+      <div class="integration-icon">🔒</div>
+      <div class="integration-name">Google OAuth</div>
+      <div class="integration-status live">Live</div>
+    </div>
+    <div class="integration-pill">
+      <div class="integration-icon">📡</div>
+      <div class="integration-name">Geotab</div>
+      <div class="integration-status sync">Phase 2</div>
+    </div>
+    <div class="integration-pill">
+      <div class="integration-icon">📊</div>
+      <div class="integration-name">CSV / Manual</div>
+      <div class="integration-status live">Live</div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section class="section modules-section" id="modules">
+  <div class="section-label">Platform Modules</div>
+  <h2 class="section-title">Full-Stack Operational Control</h2>
+  <p class="section-sub">Every module is connected. Every record is traceable.</p>
+
+  <div class="modules-layout">
+    <div class="module-nav">
+      <div class="module-nav-item active">Fleet Command</div>
+      <div class="module-nav-item">Driver Command</div>
+      <div class="module-nav-item">Load & Rate Con</div>
+      <div class="module-nav-item">Contact CRM</div>
+      <div class="module-nav-item">Visual Maintenance</div>
+      <div class="module-nav-item">Tire Tracking</div>
+      <div class="module-nav-item">Fuel Analytics</div>
+      <div class="module-nav-item">Nexus Intelligence</div>
+    </div>
+
+    <div class="module-details">
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-title">Fleet Command</div>
+          <div class="module-phase">Phase 1</div>
+        </div>
+        <div class="module-card-desc">Admin operations dashboard. Real-time view of every active load, missing document, billing status, PM due, and maintenance alert across your entire fleet.</div>
+        <div class="module-features">
+          <span class="module-tag">Active Loads</span>
+          <span class="module-tag">Missing PODs</span>
+          <span class="module-tag">Billing Queue</span>
+          <span class="module-tag">PM Alerts</span>
+          <span class="module-tag">Trucks Down</span>
+          <span class="module-tag">Tire Blowouts</span>
+          <span class="module-tag">Settlement Status</span>
+          <span class="module-tag">Fuel Exceptions</span>
+        </div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-title">Driver Command</div>
+          <div class="module-phase">Phase 1</div>
+        </div>
+        <div class="module-card-desc">Mobile-first PWA built for iPhone. Drivers sign, upload, photograph, and confirm in under 60 seconds. No training required. No folders. No complexity.</div>
+        <div class="module-features">
+          <span class="module-tag">Sign Rate Con</span>
+          <span class="module-tag">Upload POD/BOL</span>
+          <span class="module-tag">Report Blowout</span>
+          <span class="module-tag">Report Repair</span>
+          <span class="module-tag">Take Photos</span>
+          <span class="module-tag">Enter Mileage</span>
+          <span class="module-tag">Camera-First</span>
+        </div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-title">Visual Maintenance Logs</div>
+          <div class="module-phase">Phase 2</div>
+        </div>
+        <div class="module-card-desc">Core differentiator. Visual diagrams of trucks, trailers, and axle layouts. Every tire, airbag, brake, and wheel seal tracked by position, odometer, driver, and load.</div>
+        <div class="module-features">
+          <span class="module-tag">Axle Diagrams</span>
+          <span class="module-tag">Wheel Position History</span>
+          <span class="module-tag">Airbag Tracking</span>
+          <span class="module-tag">Blowout by Position</span>
+          <span class="module-tag">Cost Per Component</span>
+          <span class="module-tag">Repair Invoices</span>
+        </div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-card-header">
+          <div class="module-card-title">Nexus Intelligence</div>
+          <div class="module-phase">Phase 4</div>
+        </div>
+        <div class="module-card-desc">Predictive analytics engine. Tire failure patterns, load profitability by broker, fuel anomaly detection, maintenance forecasting, and operational AI insights across your historical data.</div>
+        <div class="module-features">
+          <span class="module-tag">Tire Failure Prediction</span>
+          <span class="module-tag">Load Profitability</span>
+          <span class="module-tag">Fuel Anomalies</span>
+          <span class="module-tag">PM Forecasting</span>
+          <span class="module-tag">Broker Analytics</span>
+          <span class="module-tag">Route Optimization</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section cta-section">
+  <div class="cta-glow"></div>
+  <h2 class="cta-headline">
+    Stop Losing Money<br>
+    in <em>Disconnected</em> Systems.
+  </h2>
+  <p class="cta-sub">
+    Connect the load, driver, truck, ELD, fuel, repairs, documents, and customer into one operational intelligence platform.
+  </p>
+  <div class="cta-actions">
+    <a href="login.html" class="btn-cta-primary">Login to Fleet Command</a>
+    <a href="#" class="btn-cta-secondary">Request Demo</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="footer-logo">
+        <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+          <defs><linearGradient id="hg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#000000"/><stop offset="60%" stop-color="#6b0000"/><stop offset="100%" stop-color="#e91e8c"/></linearGradient></defs>
+          <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hg2)" stroke="#e91e8c" stroke-width="1.5"/>
+          <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#e91e8c" opacity="0.15"/>
+          <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff" letter-spacing="0">CN</text>
+        </svg>
+        <span class="footer-logo-text">CARRIER <span>NEXUS</span></span>
+      </a>
+      <div class="footer-tagline">Own the Road. Own the Data.</div>
+    </div>
+
+    <div class="footer-links">
+      <div class="footer-col">
+        <div class="footer-col-title">Platform</div>
+        <ul>
+          <li><a href="#">Fleet Command</a></li>
+          <li><a href="#">Driver Command</a></li>
+          <li><a href="#">Nexus Intelligence</a></li>
+          <li><a href="#">Integrations</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Modules</div>
+        <ul>
+          <li><a href="#">Load & Rate Con</a></li>
+          <li><a href="#">Visual Maintenance</a></li>
+          <li><a href="#">Tire Tracking</a></li>
+          <li><a href="#">Fuel Analytics</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Request Demo</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2025 Carrier Nexus, LLC · All rights reserved · Florida</div>
+    <div class="footer-entity" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted);">
+      CARRIER NEXUS, LLC · FLORIDA · OWN THE ROAD. OWN THE DATA.
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Module nav interaction
+  const navItems = document.querySelectorAll('.module-nav-item');
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      navItems.forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+
+  // Intersection observer for fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.benefit-card, .diff-card, .module-card, .integration-pill').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+<script src="nexus-lang.js"></script>
+</body>
+</html>

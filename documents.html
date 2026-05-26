@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document Vault — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #f1f5f9;
+  --gunmetal: #ffffff;
+  --gunmetal-light: #f8fafc;
+  --steel: #f0f4f8;
+  --steel-blue: #2e6da4;
+  --steel-blue-light: #3d87c8;
+  --ice: #a8c4e0;
+  --white: #0f172a;
+  --orange: #e8640a;
+  --text-muted: #64748b;
+  --text-mid: #475569;
+  --border: #e2e8f0;
+  --red: #ef4444;
+  --green: #22c55e;
+  --yellow: #fbbf24;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:220px;min-height:100vh;background:var(--gunmetal);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;}
+.sidebar-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;text-decoration:none;}
+.sidebar-logo span{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;color:var(--white);letter-spacing:0.04em;}
+.sidebar-logo span em{color:var(--orange);font-style:normal;}
+.nav-section{padding:14px 0 4px;}
+.nav-section-label{padding:0 16px 6px;font-size:10px;font-weight:600;letter-spacing:0.12em;color:var(--text-muted);text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 16px;font-size:13px;color:var(--text-mid);text-decoration:none;cursor:pointer;position:relative;transition:color 0.15s;}
+.nav-item:hover{color:var(--white);}
+.nav-item.active{color:var(--white);background:var(--gunmetal-light);border-left:3px solid var(--orange);padding-left:13px;}
+.nav-item svg{flex-shrink:0;opacity:0.7;}
+.nav-item.active svg{opacity:1;}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px;}
+.sidebar-bottom{margin-top:auto;padding:14px 16px;border-top:1px solid var(--border);}
+.sidebar-user{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange);}
+.sidebar-user span{display:block;color:var(--text-muted);font-size:10px;margin-top:2px;}
+
+/* MAIN */
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{padding:20px 28px 0;display:flex;align-items:flex-start;justify-content:space-between;}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;letter-spacing:0.03em;}
+.page-subtitle{font-size:13px;color:var(--text-muted);margin-top:2px;}
+.topbar-actions{display:flex;gap:10px;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
+.btn-orange{background:var(--orange);color:#fff;}
+.btn-orange:hover{background:#d05508;}
+.btn-ghost{background:transparent;color:var(--text-mid);border:1px solid var(--border);}
+.btn-ghost:hover{color:var(--white);border-color:var(--steel-blue);}
+
+/* KPI BAR */
+.kpi-bar{display:flex;gap:16px;padding:20px 28px;}
+.kpi-card{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;padding:16px 20px;flex:1;}
+.kpi-label{font-size:11px;font-weight:600;letter-spacing:0.1em;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;}
+.kpi-value{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--white);}
+.kpi-value.green{color:var(--green);}
+.kpi-value.red{color:var(--red);}
+.kpi-value.yellow{color:var(--yellow);}
+.kpi-sub{font-size:11px;color:var(--text-muted);margin-top:3px;}
+
+/* FILTER BAR */
+.filter-bar{padding:0 28px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1;max-width:320px;}
+.search-input{width:100%;background:var(--gunmetal);border:1px solid var(--border);color:var(--white);padding:7px 12px 7px 34px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;}
+.search-input::placeholder{color:var(--text-muted);}
+.search-input:focus{outline:none;border-color:var(--steel-blue);}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;}
+.filter-select{background:var(--gunmetal);border:1px solid var(--border);color:var(--white);padding:7px 12px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;cursor:pointer;}
+.filter-select:focus{outline:none;border-color:var(--steel-blue);}
+.filter-label{font-size:12px;color:var(--text-muted);}
+.filter-divider{width:1px;height:20px;background:var(--border);}
+
+/* TOGGLE GROUP */
+.toggle-group{display:flex;background:var(--gunmetal);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.toggle-btn{padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--text-mid);border:none;font-family:'Barlow',sans-serif;transition:all 0.15s;}
+.toggle-btn:hover{color:var(--white);}
+.toggle-btn.active{background:var(--steel-blue);color:#fff;}
+
+/* TABLE */
+.table-wrap{padding:0 28px 28px;overflow-x:auto;}
+.table{width:100%;border-collapse:collapse;font-size:13px;}
+.table thead th{padding:10px 12px;text-align:left;font-size:11px;font-weight:600;letter-spacing:0.1em;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--gunmetal);white-space:nowrap;}
+.table tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
+.table tbody tr:hover td{background:var(--gunmetal-light);}
+.table td{padding:9px 12px;vertical-align:middle;}
+.table td.date-col{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-mid);white-space:nowrap;}
+.filename-cell{display:flex;align-items:center;gap:8px;max-width:380px;}
+.filename-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--white);font-size:13px;}
+.pdf-icon{flex-shrink:0;color:var(--red);font-size:14px;}
+
+/* DRIVER BADGES */
+.driver-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#111;white-space:nowrap;}
+
+/* TYPE BADGES */
+.type-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;letter-spacing:0.04em;white-space:nowrap;}
+.type-bol{background:rgba(46,109,164,0.25);color:var(--ice);border:1px solid rgba(46,109,164,0.4);}
+.type-lc{background:rgba(232,100,10,0.2);color:var(--orange);border:1px solid rgba(232,100,10,0.35);}
+.type-permit{background:rgba(192,132,252,0.2);color:#c084fc;border:1px solid rgba(192,132,252,0.35);}
+.type-scan{background:rgba(107,122,153,0.2);color:var(--text-mid);border:1px solid rgba(107,122,153,0.35);}
+
+/* ADD/DEDUCT BADGES */
+.ad-badge{display:inline-block;padding:3px 9px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.08em;}
+.ad-add{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
+.ad-deduct{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
+.ad-review{background:rgba(251,191,36,0.15);color:var(--yellow);border:1px solid rgba(251,191,36,0.3);}
+
+.row-count{font-size:12px;color:var(--text-muted);padding:0 28px 12px;}
+.no-results{padding:40px;text-align:center;color:var(--text-muted);font-size:14px;}
+
+/* ═══════════════════════════════════════════════
+   MOBILE RESPONSIVE — Carrier Nexus Admin Pages
+   Breakpoint: 768px
+═══════════════════════════════════════════════ */
+
+/* Mobile bottom nav */
+.mobile-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+
+  /* Hide desktop sidebar */
+  .sidebar, nav.sidebar { display: none !important; }
+
+  /* Full-width main */
+  .main { margin-left: 0 !important; }
+
+  /* Topbar adjustments */
+  .topbar {
+    padding: 10px 14px !important;
+    height: auto !important;
+    min-height: 52px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .topbar-title { font-size: 13px !important; }
+  .topbar .btn-ghost { display: none !important; }
+  .topbar .btn-primary { font-size: 11px !important; padding: 6px 10px !important; }
+  .status-live, .topbar-status { font-size: 10px !important; }
+  .topbar-actions { gap: 6px !important; }
+
+  /* Content padding */
+  .content { padding: 14px 12px 80px !important; }
+  main.main > *:not(.topbar) { padding-left: 12px !important; padding-right: 12px !important; }
+
+  /* KPI grid: 2 columns */
+  .kpi-row { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .kpi-card { padding: 12px 14px !important; }
+  .kpi-value { font-size: 26px !important; }
+  .kpi-sub { font-size: 10px !important; }
+
+  /* Panels: single column stack */
+  .panels-row { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .panel-full { grid-column: auto !important; }
+
+  /* Tables: scrollable horizontally */
+  .load-table, .doc-table, table { font-size: 11px !important; }
+  .panel { overflow-x: auto !important; }
+
+  /* Equipment grid: 1 column */
+  .truck-grid { grid-template-columns: 1fr !important; }
+  .fleet-stats, .summary-stats { grid-template-columns: 1fr 1fr !important; }
+  .bottom-stats { grid-template-columns: 1fr 1fr !important; }
+
+  /* Drivers grid: 1 column (or 2 on wider phones) */
+  .driver-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  .driver-card { padding: 12px !important; }
+  .driver-avatar { width: 40px !important; height: 40px !important; font-size: 14px !important; }
+
+  /* Settlements expand grid */
+  .expand-grid { grid-template-columns: 1fr !important; }
+
+  /* Filter bar: wrap nicely */
+  .filter-bar {
+    padding: 0 12px 12px !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+  }
+  .filter-bar select, .filter-bar input { font-size: 12px !important; padding: 6px 8px !important; }
+
+  /* Settlement table: make rows cards on very small screens */
+  .stmt-table th:nth-child(n+5),
+  .stmt-table td:nth-child(n+5) { display: none !important; }
+
+  /* Add bottom padding to avoid mobile nav overlap */
+  .content, main { padding-bottom: 80px !important; }
+
+  /* Show mobile bottom nav */
+  .mobile-nav {
+    display: flex !important;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: rgba(26, 31, 46, 0.97);
+    border-top: 1px solid rgba(46, 109, 164, 0.2);
+    justify-content: space-around;
+    align-items: center;
+    z-index: 200;
+    backdrop-filter: blur(12px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .mobile-nav-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    text-decoration: none;
+    color: rgba(168, 196, 224, 0.45);
+    font-size: 9px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: color 0.15s;
+    flex: 1;
+  }
+  .mobile-nav-tab svg { width: 20px; height: 20px; opacity: 0.6; }
+  .mobile-nav-tab.active { color: var(--orange); }
+  .mobile-nav-tab.active svg { opacity: 1; stroke: var(--orange); }
+  .mobile-nav-tab:hover { color: var(--ice); }
+  .mobile-nav-tab:hover svg { opacity: 0.9; }
+  .mobile-nav-center {
+    background: var(--orange);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -14px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(232, 100, 10, 0.4);
+  }
+  .mobile-nav-center svg { width: 20px; height: 20px; stroke: white; opacity: 1; }
+
+  /* Hide desktop-only topbar buttons on mobile */
+  .topbar-btn { display: none !important; }
+
+  /* Settlements detail panel */
+  .detail-panel { padding: 12px !important; }
+  .detail-grid { grid-template-columns: 1fr !important; }
+}
+
+/* Extra small phones */
+@media (max-width: 400px) {
+  .driver-grid { grid-template-columns: 1fr !important; }
+  .kpi-value { font-size: 22px !important; }
+}
+
+</style>
+<style id="nexus-unified">
+/* ── SIDEBAR BLACK ── */
+.sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
+/* ── LOGO AREA ── */
+.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
+.sidebar-logo .logo-hex { flex-shrink:0 !important; }
+.sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
+.sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
+.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
+.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
+/* ── NAV LINKS ── */
+.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
+.sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
+.sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
+.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
+.sidebar-link.active svg { opacity:1 !important; }
+/* ── SECTION LABELS ── */
+.sidebar-section { padding:12px 0 4px !important; }
+.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
+/* ── TOPBAR ── */
+.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
+.topbar *, .top-bar * { color:#ffffff !important; }
+.topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
+/* ── MOBILE NAV ── */
+.mobile-nav { background:#000000 !important; }
+.mobile-nav-tab.active { color:#e91e8c !important; }
+/* ── SIDEBAR USER ── */
+.sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
+.sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
+.sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
+/* ── NAV BADGE ── */
+.nav-badge { background:#e91e8c !important; color:#fff !important; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <a href="landing.html" class="sidebar-logo">
+    <div class="logo-hex">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hexGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#000000"/>
+            <stop offset="60%" stop-color="#6b0000"/>
+            <stop offset="100%" stop-color="#e91e8c"/>
+          </linearGradient>
+        </defs>
+        <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hexGrad)" stroke="#e91e8c" stroke-width="1.5"/>
+        <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#e91e8c" opacity="0.15"/>
+        <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff" letter-spacing="0">CN</text>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <span class="brand">CARRIER NEXUS</span>
+      <span class="sub">OPS INTELLIGENCE</span>
+    </div>
+  </a>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="fleet-command.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h7v2H2z"/></svg>
+      Dashboard
+    </a>
+    <a href="active-loads.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V3zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V9zm4 4h6v2H5z"/></svg>
+      Active Loads
+    </a>
+    <a href="settlements.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h6V4H5zm0 3v1h6V7H5zm0 3v1h4v-1H5z"/></svg>
+      Settlements
+    </a>
+    <a href="drivers.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>
+      Drivers
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Documents</div>
+    <a href="documents.html" class="sidebar-link active">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm5 0v4h4"/></svg>
+      Document Vault
+      <span class="nav-badge">3</span>
+    </a>
+    <a href="pods.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm-.5 2v4.5l3.5 2-.5-.87-3-1.63V5h-1z"/></svg>
+      Missing PODs
+      <span class="nav-badge">3</span>
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Maintenance</div>
+    <a href="equipment.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8 4 10l1-3.5L2 4h4.5z"/></svg>
+      Fleet &amp; Equipment
+    </a>
+    <a href="pm-schedule.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h10v2H3zm0 4h10v2H3zm0 4h6v2H3z"/></svg>
+      PM Schedule
+    </a>
+    <a href="tires.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>
+      Tires
+    </a>
+    <a href="fuel.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h7l3 3v10a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 6h6V6H4zm0 3h4V9H4z"/></svg>
+      Fuel
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Intelligence</div>
+    <a href="nexus-ai.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v5l4.5 2.7-.7-1.2-3.8-2.3V5z"/></svg>
+      Nexus AI
+    </a>
+    <a href="analysis.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h2v-4H2zm3 0h2V6H5zm3 0h2V4H8zm3 0h2V2h-2z"/></svg>
+      Analytics
+    </a>
+    <a href="eld-settings.html" class="sidebar-link">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 00-3 3c0 1.3.83 2.4 2 2.82V8H5v2h2v1.18A3 3 0 108 14.93V10h2V8H8V6.82A3.001 3.001 0 008 1zm0 12a1 1 0 110-2 1 1 0 010 2zm0-8a1 1 0 110-2 1 1 0 010 2z"/></svg>
+      ELD Integration
+    </a>
+  </div>
+
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-user">
+    <div class="user-name">Jim Burlew · ADMIN</div>
+    <div class="user-role">Carrier Trucking US, LLC</div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+  <div class="topbar">
+    <div>
+      <div class="page-title">DOCUMENT VAULT</div>
+      <div class="page-subtitle">BOLs, load confirmations, permits &amp; scans · WhatsApp Documentos</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">Export List</button>
+      <button class="btn btn-orange">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Upload Document
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI BAR -->
+  <div class="kpi-bar">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Documents</div>
+      <div class="kpi-value" id="kpi-total">60</div>
+      <div class="kpi-sub">In vault</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">ADD Documents</div>
+      <div class="kpi-value green" id="kpi-add">38</div>
+      <div class="kpi-sub">BOLs &amp; load confirmations</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">DEDUCT Documents</div>
+      <div class="kpi-value red" id="kpi-deduct">19</div>
+      <div class="kpi-sub">Permits &amp; fees</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Needs Review</div>
+      <div class="kpi-value yellow" id="kpi-review">3</div>
+      <div class="kpi-sub">Unclassified scans</div>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input class="search-input" id="search-input" type="text" placeholder="Search filenames..." oninput="applyFilters()">
+    </div>
+    <select class="filter-select" id="f-driver" onchange="applyFilters()">
+      <option value="">All Drivers</option>
+      <option value="AVIS">Avis Modesto</option>
+      <option value="MIGUEL">Miguel Fonseca</option>
+      <option value="GUILLERMO">Guillermo Pinera</option>
+      <option value="DAVID">David Fonseca</option>
+      <option value="YOSVIEL">Yosviel Pinera</option>
+      <option value="AMET">Amet Abreu</option>
+      <option value="NELSON">Nelson</option>
+      <option value="UNKNOWN">Unknown</option>
+    </select>
+    <select class="filter-select" id="f-type" onchange="applyFilters()">
+      <option value="">All Types</option>
+      <option value="BOL">BOL</option>
+      <option value="Load Confirmation">Load Confirmation</option>
+      <option value="Oversize Permit">Oversize Permit</option>
+      <option value="State Permit">State Permit</option>
+      <option value="GA Permit">GA Permit</option>
+      <option value="Scan">Scan</option>
+    </select>
+    <div class="toggle-group" id="ad-toggle">
+      <button class="toggle-btn active" data-val="" onclick="setADFilter(this)">All</button>
+      <button class="toggle-btn" data-val="ADD" onclick="setADFilter(this)">ADD</button>
+      <button class="toggle-btn" data-val="DEDUCT" onclick="setADFilter(this)">DEDUCT</button>
+      <button class="toggle-btn" data-val="REVIEW" onclick="setADFilter(this)">REVIEW</button>
+    </div>
+    <div class="filter-divider"></div>
+    <input type="date" class="filter-select" id="f-date-from" onchange="applyFilters()" style="font-family:'Barlow',sans-serif;color-scheme:dark;">
+    <span style="font-size:12px;color:var(--text-muted)">–</span>
+    <input type="date" class="filter-select" id="f-date-to" onchange="applyFilters()" style="font-family:'Barlow',sans-serif;color-scheme:dark;">
+    <button class="btn btn-ghost" onclick="clearFilters()">Clear</button>
+  </div>
+
+  <div class="row-count" id="row-count">Showing 60 of 60 documents</div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Filename</th>
+          <th>Driver</th>
+          <th>Type</th>
+          <th>ADD / DEDUCT</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+    <div id="no-results" class="no-results" style="display:none;">No documents match the current filters.</div>
+  </div>
+</main>
+
+<script>
+const documents = [
+  {date:"2026-05-22",filename:"AVIS - ALLQUIP LOAD CONFIRMATION 36159.pdf",driver:"AVIS",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-22",filename:"AVIS - ALLQUIP LOAD CONFIRMATION 36158.pdf",driver:"AVIS",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-22",filename:"MIGUEL - ALLQUIP LOAD CONFIRMATION 35544.pdf",driver:"MIGUEL",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-22",filename:"GUILLERMO - ALLQUIP BOL 35544.pdf",driver:"GUILLERMO",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-20",filename:"DAVID - STT LOGISTICS BOL 32840.pdf",driver:"DAVID",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-19",filename:"DOT_OSOW_AZ_052126114014.pdf",driver:"UNKNOWN",type:"Oversize Permit",add_deduct:"DEDUCT",driveId:""},
+  {date:"2026-05-19",filename:"DOT_OSOW_TX_052126114015.pdf",driver:"UNKNOWN",type:"Oversize Permit",add_deduct:"DEDUCT",driveId:""},
+  {date:"2026-05-19",filename:"NMDOT_052126114016.pdf",driver:"UNKNOWN",type:"State Permit",add_deduct:"DEDUCT",driveId:""},
+  {date:"2026-05-18",filename:"AMET - COAST TO COAST BOL 120630.pdf",driver:"AMET",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-18",filename:"AVIS - COAST TO COAST LOAD CONFIRMATION 120630.pdf",driver:"AVIS",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-18",filename:"NELSON - WLE BOL 2070-0047-1225.pdf",driver:"NELSON",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-18",filename:"S260518GAPROS001.pdf",driver:"UNKNOWN",type:"GA Permit",add_deduct:"DEDUCT",driveId:""},
+  {date:"2026-05-16",filename:"GUILLERMO - SET LOGISTICS BOL 332500.pdf",driver:"GUILLERMO",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-16",filename:"GUILLERMO - SET LOGISTICS LOAD CONFIRMATION 332500.pdf",driver:"GUILLERMO",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-15",filename:"YOSVIEL - LRS LOGISTICS BOL 130209.pdf",driver:"YOSVIEL",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-15",filename:"YOSVIEL - LRS LOGISTICS LOAD CONFIRMATION 130209.pdf",driver:"YOSVIEL",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-15",filename:"YOSVIEL - LRS LOGISTICS BOL 130148.pdf",driver:"YOSVIEL",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-14",filename:"DAVID - EXPRESSWAY LOGISTICS BOL L10483.pdf",driver:"DAVID",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-14",filename:"DAVID - EXPRESSWAY LOGISTICS BOL L10399.pdf",driver:"DAVID",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-14",filename:"DAVID - EXPRESSWAY LOGISTICS LOAD CONFIRMATION L10483.pdf",driver:"DAVID",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-14",filename:"DAVID - EXPRESSWAY LOGISTICS LOAD CONFIRMATION L10399.pdf",driver:"DAVID",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-13",filename:"NELSON - EXPRESSWAY LOGISTICS BOL L10399.pdf",driver:"NELSON",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-13",filename:"NELSON - EXPRESSWAY LOGISTICS LOAD CONFIRMATION L10399.pdf",driver:"NELSON",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-12",filename:"CamScanner 5-12-26.pdf",driver:"UNKNOWN",type:"Scan",add_deduct:"REVIEW",driveId:""},
+  {date:"2026-05-12",filename:"AMET - ALLQUIP BOL 35544.pdf",driver:"AMET",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-12",filename:"AMET - ALLQUIP BOL 35545.pdf",driver:"AMET",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-11",filename:"DOT_OSOW_05112026114017.pdf",driver:"UNKNOWN",type:"Oversize Permit",add_deduct:"DEDUCT",driveId:""},
+  {date:"2026-05-11",filename:"GAPROS_05112026.pdf",driver:"UNKNOWN",type:"GA Permit",add_deduct:"DEDUCT",driveId:""},
+  {date:"2026-05-11",filename:"NMDOT_05112026.pdf",driver:"UNKNOWN",type:"State Permit",add_deduct:"DEDUCT",driveId:""},
+  {date:"2026-05-10",filename:"GUILLERMO - ALLQUIP BOL 35544.pdf",driver:"GUILLERMO",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-10",filename:"MIGUEL - ALLQUIP BOL 35544.pdf",driver:"MIGUEL",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-09",filename:"AMET - COAST TO COAST BOL 120630B.pdf",driver:"AMET",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-09",filename:"AVIS - COAST TO COAST BOL 120630.pdf",driver:"AVIS",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-08",filename:"DOT_OSOW_TX_05082026.pdf",driver:"UNKNOWN",type:"Oversize Permit",add_deduct:"DEDUCT",driveId:""},
+  {date:"2026-05-08",filename:"S260508GAPROS002.pdf",driver:"UNKNOWN",type:"GA Permit",add_deduct:"DEDUCT",driveId:""},
+  {date:"2026-05-08",filename:"YOSVIEL - LRS LOGISTICS BOL 130148B.pdf",driver:"YOSVIEL",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-07",filename:"NELSON - WLE LOAD CONFIRMATION 2070-0047-1225.pdf",driver:"NELSON",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-07",filename:"NELSON - NBENNET BOL 9965275.pdf",driver:"NELSON",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-07",filename:"NELSON - NBENNET LOAD CONFIRMATION 9965275.pdf",driver:"NELSON",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"CamScanner 5-6-26.pdf",driver:"UNKNOWN",type:"Scan",add_deduct:"REVIEW",driveId:""},
+  {date:"2026-05-06",filename:"DAVID - STT LOGISTICS LOAD CONFIRMATION 32840.pdf",driver:"DAVID",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"DOT_OSOW_AZ_050626.pdf",driver:"UNKNOWN",type:"Oversize Permit",add_deduct:"DEDUCT",driveId:""},
+  {date:"2026-05-06",filename:"NMDOT_050626.pdf",driver:"UNKNOWN",type:"State Permit",add_deduct:"DEDUCT",driveId:""},
+  {date:"2026-05-06",filename:"GAPROS_050626.pdf",driver:"UNKNOWN",type:"GA Permit",add_deduct:"DEDUCT",driveId:""},
+  {date:"2026-05-06",filename:"GUILLERMO - ALLQUIP LOAD CONFIRMATION 35544.pdf",driver:"GUILLERMO",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"MIGUEL - ALLQUIP LOAD CONFIRMATION 35544B.pdf",driver:"MIGUEL",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"AVIS - ALLQUIP LOAD CONFIRMATION 36155.pdf",driver:"AVIS",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"AMET - ALLQUIP LOAD CONFIRMATION 35544.pdf",driver:"AMET",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"NELSON - WLE BOL 2070-0047-1225B.pdf",driver:"NELSON",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"YOSVIEL - LRS LOGISTICS LOAD CONFIRMATION 130209.pdf",driver:"YOSVIEL",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"CamScanner 5-6-26b.pdf",driver:"UNKNOWN",type:"Scan",add_deduct:"REVIEW",driveId:""},
+  {date:"2026-05-06",filename:"DAVID - EXPRESSWAY LOGISTICS BOL L10399B.pdf",driver:"DAVID",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"GUILLERMO - SET LOGISTICS LOAD CONFIRMATION 332500B.pdf",driver:"GUILLERMO",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"AMET - COAST TO COAST LOAD CONFIRMATION 120630.pdf",driver:"AMET",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"YOSVIEL - LRS LOGISTICS BOL 130148C.pdf",driver:"YOSVIEL",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"DAVID - EXPRESSWAY LOGISTICS LOAD CONFIRMATION L10399B.pdf",driver:"DAVID",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"NELSON - NBENNET BOL 9965275B.pdf",driver:"NELSON",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"MIGUEL - ALLQUIP BOL 35544B.pdf",driver:"MIGUEL",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"AVIS - ALLQUIP BOL 36155.pdf",driver:"AVIS",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"AMET - ALLQUIP BOL 35544B.pdf",driver:"AMET",type:"BOL",add_deduct:"ADD",driveId:""},
+  {date:"2026-05-06",filename:"GUILLERMO - SET LOGISTICS BOL 332500B.pdf",driver:"GUILLERMO",type:"BOL",add_deduct:"ADD",driveId:""},
+];
+
+const driverBadgeColors = {
+  AVIS:    { bg:"#D6E4F0", color:"#1a3a5c" },
+  MIGUEL:  { bg:"#D5E8D4", color:"#1e4021" },
+  GUILLERMO:{ bg:"#FFF3CD", color:"#5a3e00" },
+  DAVID:   { bg:"#F8D7DA", color:"#5c1a1e" },
+  YOSVIEL: { bg:"#E8D5F5", color:"#3a1a5c" },
+  AMET:    { bg:"#D4EDDA", color:"#1a4a28" },
+  NELSON:  { bg:"#D1ECF1", color:"#0c3d47" },
+  UNKNOWN: { bg:"#F2F2F2", color:"#444444" },
+};
+
+function getTypeBadge(type){
+  if(type==='BOL') return '<span class="type-badge type-bol">BOL</span>';
+  if(type==='Load Confirmation') return '<span class="type-badge type-lc">Load Conf.</span>';
+  if(type==='Scan') return '<span class="type-badge type-scan">Scan</span>';
+  return '<span class="type-badge type-permit">'+type+'</span>';
+}
+
+function getADBadge(ad){
+  if(ad==='ADD') return '<span class="ad-badge ad-add">ADD</span>';
+  if(ad==='DEDUCT') return '<span class="ad-badge ad-deduct">DEDUCT</span>';
+  return '<span class="ad-badge ad-review">REVIEW</span>';
+}
+
+function fmtDate(d){
+  const dt = new Date(d+'T00:00:00');
+  return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'});
+}
+
+let adFilter = '';
+
+function setADFilter(btn){
+  adFilter = btn.dataset.val;
+  document.querySelectorAll('#ad-toggle .toggle-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters(){
+  const search = document.getElementById('search-input').value.toLowerCase();
+  const dv = document.getElementById('f-driver').value;
+  const tv = document.getElementById('f-type').value;
+  const from = document.getElementById('f-date-from').value;
+  const to = document.getElementById('f-date-to').value;
+
+  const filtered = documents.filter(d=>{
+    if(search && !d.filename.toLowerCase().includes(search)) return false;
+    if(dv && d.driver!==dv) return false;
+    if(tv && d.type!==tv) return false;
+    if(adFilter && d.add_deduct!==adFilter) return false;
+    if(from && d.date < from) return false;
+    if(to && d.date > to) return false;
+    return true;
+  });
+
+  renderTable(filtered);
+
+  // Update KPIs
+  document.getElementById('kpi-total').textContent = filtered.length;
+  document.getElementById('kpi-add').textContent = filtered.filter(d=>d.add_deduct==='ADD').length;
+  document.getElementById('kpi-deduct').textContent = filtered.filter(d=>d.add_deduct==='DEDUCT').length;
+  document.getElementById('kpi-review').textContent = filtered.filter(d=>d.add_deduct==='REVIEW').length;
+  document.getElementById('row-count').textContent = `Showing ${filtered.length} of ${documents.length} documents`;
+}
+
+function clearFilters(){
+  document.getElementById('search-input').value='';
+  document.getElementById('f-driver').value='';
+  document.getElementById('f-type').value='';
+  document.getElementById('f-date-from').value='';
+  document.getElementById('f-date-to').value='';
+  adFilter='';
+  document.querySelectorAll('#ad-toggle .toggle-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('#ad-toggle .toggle-btn[data-val=""]').classList.add('active');
+  applyFilters();
+}
+
+const DRIVE_ROOT = "https://drive.google.com/drive/folders/1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0";
+function openDoc(driveId){
+  const url = driveId ? `https://drive.google.com/file/d/${driveId}/view` : DRIVE_ROOT;
+  window.open(url, "_blank");
+}
+function renderTable(data){
+  const tbody = document.getElementById('table-body');
+  const noRes = document.getElementById('no-results');
+  tbody.innerHTML='';
+  if(data.length===0){ noRes.style.display='block'; return; }
+  noRes.style.display='none';
+  data.forEach(doc=>{
+    const dc = driverBadgeColors[doc.driver]||driverBadgeColors.UNKNOWN;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="date-col">${fmtDate(doc.date)}</td>
+      <td>
+        <div class="filename-cell">
+          <svg class="pdf-icon" width="14" height="16" viewBox="0 0 14 16" fill="none">
+            <path d="M8 1H2a1 1 0 00-1 1v12a1 1 0 001 1h10a1 1 0 001-1V6L8 1z" stroke="#ef4444" stroke-width="1.2" fill="rgba(239,68,68,0.1)"/>
+            <path d="M8 1v5h5" stroke="#ef4444" stroke-width="1.2"/>
+            <text x="3" y="13" font-family="Arial" font-size="4" fill="#ef4444" font-weight="bold">PDF</text>
+          </svg>
+          <span class="filename-text" title="${doc.filename}">${doc.filename}</span>
+        </div>
+      </td>
+      <td><span class="driver-badge" style="background:${dc.bg};color:${dc.color};">${doc.driver}</span></td>
+      <td>${getTypeBadge(doc.type)}</td>
+      <td>${getADBadge(doc.add_deduct)}</td>
+      <td>
+        <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="openDoc(doc.driveId||'')">Open</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Initial render
+renderTable(documents);
+</script>
+<script src="nexus-lang.js"></script>
+
+<!-- Mobile Bottom Nav -->
+<nav class="mobile-nav" role="navigation" aria-label="Mobile navigation">
+
+  <a href="fleet-command.html" class="mobile-nav-tab" aria-label="DASH">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    DASH
+  </a>
+  <a href="settlements.html" class="mobile-nav-tab" aria-label="PAY">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+    PAY
+  </a>
+  <a href="documents.html" class="mobile-nav-tab active" aria-label="Documents">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+    DOCS
+  </a>
+  <a href="equipment.html" class="mobile-nav-tab" aria-label="FLEET">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+    FLEET
+  </a>
+  <a href="drivers.html" class="mobile-nav-tab" aria-label="TEAM">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    TEAM
+  </a>
+</nav>
+
+</body>
+</html>

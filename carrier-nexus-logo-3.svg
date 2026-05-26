@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" width="480" height="160">
+  <defs>
+    <!-- Background -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&amp;display=swap');
+    </style>
+
+    <!-- Glow filter for orange road line -->
+    <filter id="orangeGlow" x="-20%" y="-100%" width="140%" height="300%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Subtle glow for icon -->
+    <filter id="iconGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Gradient for truck body -->
+    <linearGradient id="truckGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3a4a6a"/>
+      <stop offset="100%" stop-color="#1a2235"/>
+    </linearGradient>
+
+    <!-- Steel blue gradient for cab -->
+    <linearGradient id="cabGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2e6da4"/>
+      <stop offset="100%" stop-color="#1a3a5c"/>
+    </linearGradient>
+
+    <!-- Road line gradient -->
+    <linearGradient id="roadGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="transparent"/>
+      <stop offset="15%" stop-color="#e8640a"/>
+      <stop offset="50%" stop-color="#ff7518"/>
+      <stop offset="85%" stop-color="#e8640a"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </linearGradient>
+
+    <!-- Shield gradient -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2e6da4" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#1a2a42"/>
+    </linearGradient>
+
+  </defs>
+
+  <!-- DARK BACKGROUND (optional - remove for transparent) -->
+  <rect width="480" height="160" fill="#090a0c" rx="4"/>
+
+  <!-- ═══════════════════════════════════════
+       ICON MARK (left side)
+       Shield + Truck + Node system
+  ═══════════════════════════════════════ -->
+
+  <!-- SHIELD BASE -->
+  <g transform="translate(24, 16)">
+    <!-- Shield outer -->
+    <path d="M56 0 L112 20 L112 72 Q112 108 56 128 Q0 108 0 72 L0 20 Z"
+          fill="url(#shieldGrad)"
+          stroke="#2e6da4"
+          stroke-width="1.5"
+          opacity="0.9"/>
+
+    <!-- Shield inner border -->
+    <path d="M56 8 L104 26 L104 72 Q104 104 56 120 Q8 104 8 72 L8 26 Z"
+          fill="none"
+          stroke="rgba(46,109,164,0.3)"
+          stroke-width="0.8"/>
+
+    <!-- TRUCK SILHOUETTE inside shield -->
+
+    <!-- Trailer body -->
+    <rect x="10" y="54" width="58" height="34" rx="2"
+          fill="url(#truckGrad)"
+          stroke="rgba(168,196,224,0.2)"
+          stroke-width="0.8"/>
+
+    <!-- Cab body -->
+    <rect x="68" y="44" width="32" height="44" rx="2"
+          fill="url(#cabGrad)"/>
+
+    <!-- Cab windshield -->
+    <path d="M70 46 L98 46 L98 60 L70 60 Z"
+          fill="rgba(168,196,224,0.15)"
+          stroke="rgba(168,196,224,0.25)"
+          stroke-width="0.6"/>
+
+    <!-- Stack/exhaust -->
+    <rect x="96" y="32" width="5" height="18" rx="1" fill="#2e6da4" opacity="0.7"/>
+    <rect x="103" y="36" width="5" height="14" rx="1" fill="#2e6da4" opacity="0.5"/>
+
+    <!-- 5th wheel/hitch area -->
+    <rect x="66" y="72" width="6" height="8" rx="1" fill="rgba(232,100,10,0.6)"/>
+
+    <!-- WHEELS - trailer axle 1 -->
+    <circle cx="22" cy="95" r="9" fill="#0d1017" stroke="#2e6da4" stroke-width="1.5"/>
+    <circle cx="22" cy="95" r="5" fill="#1a2235" stroke="rgba(46,109,164,0.4)" stroke-width="0.8"/>
+    <circle cx="22" cy="95" r="1.5" fill="#3d87c8"/>
+
+    <!-- WHEELS - trailer axle 2 -->
+    <circle cx="42" cy="95" r="9" fill="#0d1017" stroke="#2e6da4" stroke-width="1.5"/>
+    <circle cx="42" cy="95" r="5" fill="#1a2235" stroke="rgba(46,109,164,0.4)" stroke-width="0.8"/>
+    <circle cx="42" cy="95" r="1.5" fill="#3d87c8"/>
+
+    <!-- WHEELS - drive axle -->
+    <circle cx="74" cy="95" r="9" fill="#0d1017" stroke="#2e6da4" stroke-width="1.5"/>
+    <circle cx="74" cy="95" r="5" fill="#1a2235" stroke="rgba(46,109,164,0.4)" stroke-width="0.8"/>
+    <circle cx="74" cy="95" r="1.5" fill="#3d87c8"/>
+
+    <!-- WHEELS - steer axle -->
+    <circle cx="92" cy="95" r="9" fill="#0d1017" stroke="#e8640a" stroke-width="1.5"/>
+    <circle cx="92" cy="95" r="5" fill="#1a2235" stroke="rgba(232,100,10,0.4)" stroke-width="0.8"/>
+    <circle cx="92" cy="95" r="1.5" fill="#e8640a"/>
+
+    <!-- ROAD / GROUND line -->
+    <line x1="4" y1="105" x2="108" y2="105"
+          stroke="rgba(46,109,164,0.3)"
+          stroke-width="0.8"/>
+
+    <!-- NEXUS NODES - connected dots (operational intelligence visual) -->
+    <!-- Node dots connected by lines showing data flow -->
+    <circle cx="22" cy="34" r="3" fill="#e8640a" opacity="0.9"/>
+    <circle cx="42" cy="28" r="3" fill="#3d87c8" opacity="0.9"/>
+    <circle cx="62" cy="34" r="3" fill="#e8640a" opacity="0.7"/>
+    <circle cx="82" cy="26" r="3" fill="#3d87c8" opacity="0.9"/>
+
+    <!-- Connecting lines between nodes -->
+    <polyline points="22,34 42,28 62,34 82,26"
+              fill="none"
+              stroke="rgba(61,135,200,0.5)"
+              stroke-width="0.8"
+              stroke-dasharray="2,1"/>
+
+    <!-- Orange accent node -->
+    <circle cx="42" cy="28" r="5" fill="none" stroke="rgba(232,100,10,0.4)" stroke-width="0.8"/>
+
+    <!-- Front light -->
+    <rect x="99" y="60" width="5" height="6" rx="1" fill="#fbbf24" opacity="0.8"/>
+    <rect x="99" y="68" width="5" height="4" rx="1" fill="rgba(232,100,10,0.6)"/>
+
+  </g>
+
+  <!-- ═══════════════════════════════════════
+       ROAD LINE below icon
+  ═══════════════════════════════════════ -->
+  <rect x="24" y="148" width="112" height="2"
+        fill="url(#roadGrad)"
+        filter="url(#orangeGlow)"
+        opacity="0.7"/>
+
+  <!-- ═══════════════════════════════════════
+       WORDMARK
+  ═══════════════════════════════════════ -->
+
+  <!-- CARRIER -->
+  <text x="164"
+        y="78"
+        font-family="'Barlow Condensed', 'Arial Narrow', Arial, sans-serif"
+        font-weight="900"
+        font-size="64"
+        letter-spacing="2"
+        fill="#f0f4f8"
+        text-anchor="start">CARRIER</text>
+
+  <!-- NEXUS (orange) -->
+  <text x="164"
+        y="136"
+        font-family="'Barlow Condensed', 'Arial Narrow', Arial, sans-serif"
+        font-weight="900"
+        font-size="64"
+        letter-spacing="2"
+        fill="#e8640a"
+        text-anchor="start">NEXUS</text>
+
+  <!-- Vertical separator line between icon and wordmark -->
+  <line x1="152" y1="20" x2="152" y2="148"
+        stroke="rgba(46,109,164,0.25)"
+        stroke-width="1"/>
+
+  <!-- Tagline -->
+  <text x="164"
+        y="152"
+        font-family="'JetBrains Mono', 'Courier New', monospace"
+        font-weight="400"
+        font-size="10"
+        letter-spacing="3"
+        fill="#6b7a99"
+        text-anchor="start">OWN THE ROAD. OWN THE DATA.</text>
+
+</svg>
