@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Maintenance — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sb:#000;--orange:#e8640a;--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+/* SIDEBAR */
+.sidebar{width:220px;min-height:100vh;background:#000;border-right:1px solid #1a1a1a;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
+.sidebar-logo{padding:16px;display:flex;align-items:center;gap:10px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.07);}
+.sidebar-logo .logo-hex svg{width:36px;height:36px;display:block;}
+.sidebar-logo .logo-text{display:flex;flex-direction:column;gap:2px;}
+.brand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:2px;color:#fff;}
+.sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.45);letter-spacing:1px;}
+.sidebar-section{padding:12px 0 4px;}
+.sidebar-section-label{padding:0 16px 6px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:rgba(255,255,255,0.3);letter-spacing:1.5px;text-transform:uppercase;display:block;}
+.sidebar-link{display:flex;align-items:center;gap:10px;padding:7px 16px;text-decoration:none;color:#a0aec0;font-size:13px;border-left:3px solid transparent;transition:all .15s;}
+.sidebar-link:hover{background:rgba(233,30,140,0.14);border-left-color:#c2185b;color:#fff;}
+.sidebar-link.active{background:rgba(233,30,140,0.22);border-left:3px solid #e91e8c;color:#fff;}
+.sidebar-link svg{width:14px;height:14px;flex-shrink:0;opacity:.7;}
+.sidebar-link.active svg{opacity:1;}
+.nav-badge{margin-left:auto;background:#e91e8c;color:#fff;font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 6px;border-radius:10px;}
+.sidebar-spacer{flex:1;}
+.sidebar-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.07);}
+.user-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.6);font-weight:500;}
+.user-role{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);margin-top:2px;}
+/* MAIN */
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:56px;background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#fff;flex:1;}
+.content{padding:24px 28px 48px;}
+/* KPIs */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;}
+.kpi-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:#0f172a;line-height:1;}
+.kpi-sub{font-size:11px;color:var(--blue);margin-top:4px;}
+/* PANEL */
+.panel{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.panel-head{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:#0f172a;letter-spacing:.06em;text-transform:uppercase;}
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+th{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:10px 16px;text-align:left;background:#f8fafc;border-bottom:1px solid var(--border);}
+td{padding:11px 16px;font-size:13px;color:#0f172a;border-bottom:1px solid #f8fafc;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f8fafc;}
+/* BADGES */
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;display:inline-block;}
+.badge-green{background:#dcfce7;color:#15803d;}
+.badge-red{background:#fee2e2;color:#b91c1c;}
+.badge-yellow{background:#fef9c3;color:#a16207;}
+.badge-blue{background:#dbeafe;color:#1d4ed8;}
+.badge-gray{background:#f1f5f9;color:#64748b;}
+.badge-orange{background:#ffedd5;color:#c2410c;}
+.badge-purple{background:#ede9fe;color:#6d28d9;}
+/* BTNS */
+.btn{padding:7px 16px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.8px;cursor:pointer;border:1px solid var(--border);background:#fff;color:#334155;transition:all .15s;}
+.btn:hover{background:#f1f5f9;}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn-primary:hover{background:#1d5a8a;}
+.btn-orange{background:var(--orange);color:#fff;border-color:var(--orange);}
+.btn-sm{padding:5px 12px;font-size:11px;}
+.mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue);}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#fff;border-radius:10px;width:92%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.modal-hdr{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:18px 24px;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between;}
+.modal-hdr-title{color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:2px;}
+.modal-close{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;}
+.modal-body{padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group.full{grid-column:1/3;}
+.form-label{font-size:11px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:1px;}
+.form-input{width:100%;padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:6px;font-size:14px;color:#0f172a;font-family:'Barlow',sans-serif;}
+.form-input:focus{outline:none;border-color:var(--blue);}
+.modal-footer{padding:0 24px 24px;display:flex;gap:10px;justify-content:flex-end;}
+/* MOBILE */
+.mobile-nav{display:none;}
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .main{margin-left:0;}
+  .content{padding:14px 12px 80px;}
+  .kpi-row{grid-template-columns:1fr 1fr;gap:10px;}
+  .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:60px;background:rgba(0,0,0,0.97);border-top:1px solid rgba(233,30,140,0.2);justify-content:space-around;align-items:center;z-index:200;}
+  .mn-tab{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:rgba(168,196,224,0.45);font-size:9px;font-family:'JetBrains Mono',monospace;flex:1;padding:6px 0;}
+  .mn-tab svg{width:20px;height:20px;opacity:.6;}
+  .mn-tab.active{color:#e91e8c;}
+  .mn-tab.active svg{opacity:1;}
+}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <a href="landing.html" class="sidebar-logo">
+    <div class="logo-hex">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hexGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#000000"/>
+            <stop offset="60%" stop-color="#6b0000"/>
+            <stop offset="100%" stop-color="#e91e8c"/>
+          </linearGradient>
+        </defs>
+        <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hexGrad)" stroke="#e91e8c" stroke-width="1.5"/>
+        <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#e91e8c" opacity="0.15"/>
+        <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff" letter-spacing="0">CN</text>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <span class="brand">CARRIER NEXUS</span>
+      <span class="sub">OPS INTELLIGENCE</span>
+    </div>
+  </a>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="fleet-command.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h7v2H2z"/></svg>
+      Dashboard
+    </a>
+    <a href="active-loads.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V3zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V9zm4 4h6v2H5z"/></svg>
+      Active Loads
+    </a>
+    <a href="settlements.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h6V4H5zm0 3v1h6V7H5zm0 3v1h4v-1H5z"/></svg>
+      Settlements
+    </a>
+    <a href="drivers.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>
+      Drivers
+    </a>
+    <a href="permits.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3h3.5l-2.8 2 1 3.3L8 8 4.8 9.3l1-3.3L3 4h3.5zm0 9a3 3 0 100 6 3 3 0 000-6z"/></svg>
+      Permits
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Finance</div>
+    <a href="invoicing.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h10a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h8V4H4zm0 3v1h8V7H4zm0 3v1h5v-1H4z"/></svg>
+      Invoicing
+    </a>
+    <a href="expenses.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v2H5v2h2v2h2V9h2V7H9V5z"/></svg>
+      Expenses
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Documents</div>
+    <a href="documents.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm5 0v4h4"/></svg>
+      Document Vault
+    </a>
+    <a href="pods.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm-.5 2v4.5l3.5 2-.5-.87-3-1.63V5h-1z"/></svg>
+      Missing PODs
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Contacts</div>
+    <a href="contacts.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 5a3 3 0 11-6 0 3 3 0 016 0zM2 13c0-2.761 2.686-5 6-5s6 2.239 6 5H2z"/></svg>
+      Directory
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Maintenance</div>
+    <a href="equipment.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8 4 10l1-3.5L2 4h4.5z"/></svg>
+      Fleet &amp; Equipment
+    </a>
+    <a href="maintenance.html" class="sidebar-link active">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.5 2.5l-1.4 1.4A4 4 0 106.1 9.8L4.7 11.2A6 6 0 1113.5 2.5zm-3 3A2 2 0 108 10a2 2 0 002.5-2.5z"/></svg>
+      Maintenance Log
+    </a>
+    <a href="pm-schedule.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h10v2H3zm0 4h10v2H3zm0 4h6v2H3z"/></svg>
+      PM Schedule
+    </a>
+    <a href="tires.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>
+      Tires
+    </a>
+    <a href="fuel.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h7l3 3v10a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 6h6V6H4zm0 3h4V9H4z"/></svg>
+      Fuel
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Intelligence</div>
+    <a href="nexus-ai.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v5l4.5 2.7-.7-1.2-3.8-2.3V5z"/></svg>
+      Nexus AI
+    </a>
+    <a href="analysis.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h2v-4H2zm3 0h2V6H5zm3 0h2V4H8zm3 0h2V2h-2z"/></svg>
+      Analytics
+    </a>
+    <a href="eld-settings.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 00-3 3c0 1.3.83 2.4 2 2.82V8H5v2h2v1.18A3 3 0 108 14.93V10h2V8H8V6.82A3.001 3.001 0 008 1zm0 12a1 1 0 110-2 1 1 0 010 2zm0-8a1 1 0 110-2 1 1 0 010 2z"/></svg>
+      ELD Integration
+    </a>
+  </div>
+
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-user">
+    <div class="user-name">Jim Burlew · ADMIN</div>
+    <div class="user-role">Carrier Trucking US, LLC</div>
+  </div>
+</nav>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">MAINTENANCE LOG</div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <div style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#22c55e;letter-spacing:1px;"><span style="width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;display:inline-block;"></span>LIVE</div>
+      <button class="btn btn-orange" onclick="openMaintModal()">+ Add Work Order</button>
+    </div>
+  </div>
+  <div class="content">
+    
+<div class="kpi-row">
+  <div class="kpi-card"><div class="kpi-label">Open Work Orders</div><div class="kpi-val" id="kpi-open" style="color:#ef4444;">0</div><div class="kpi-sub">Awaiting completion</div></div>
+  <div class="kpi-card"><div class="kpi-label">This Month Spend</div><div class="kpi-val" id="kpi-spend">$0</div><div class="kpi-sub">Repairs &amp; service</div></div>
+  <div class="kpi-card"><div class="kpi-label">Completed</div><div class="kpi-val" id="kpi-done" style="color:#22c55e;">0</div><div class="kpi-sub">All time</div></div>
+  <div class="kpi-card"><div class="kpi-label">YTD Total</div><div class="kpi-val" id="kpi-ytd">$0</div><div class="kpi-sub">Year to date</div></div>
+</div>
+
+<div class="panel">
+  <div class="panel-head">
+    <span class="panel-title">Work Orders &amp; Repair Log</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <select id="mf-unit" onchange="renderMaint()" class="btn btn-sm">
+        <option value="">All Units</option>
+        <option>01</option><option>03</option><option>04</option><option>05</option><option>06</option><option>09</option>
+        <option>T01</option><option>T02</option><option>J01</option><option>S01</option>
+      </select>
+      <select id="mf-type" onchange="renderMaint()" class="btn btn-sm">
+        <option value="">All Types</option>
+        <option>PM Service</option><option>Engine</option><option>Transmission</option><option>Brakes</option>
+        <option>Electrical</option><option>Suspension</option><option>Tires</option><option>Body/Frame</option>
+        <option>Trailer Repair</option><option>DOT Inspection</option><option>Other</option>
+      </select>
+      <select id="mf-status" onchange="renderMaint()" class="btn btn-sm">
+        <option value="">All Statuses</option><option>Open</option><option>In Progress</option><option>Completed</option><option>Pending Parts</option>
+      </select>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>Date</th><th>WO #</th><th>Unit</th><th>Type</th><th>Description</th><th>Shop / Mechanic</th><th style="text-align:right">Cost</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody id="maint-tbody"></tbody>
+  </table>
+</div>
+
+<div class="modal-overlay" id="maint-modal">
+  <div class="modal-box" style="max-width:600px;">
+    <div class="modal-hdr"><span class="modal-hdr-title" id="maint-modal-title">ADD WORK ORDER</span><button class="modal-close" onclick="closeMaintModal()">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="maint-edit-id">
+      <div class="form-group"><label class="form-label">Date *</label><input type="date" id="m-date" class="form-input" required></div>
+      <div class="form-group"><label class="form-label">WO # *</label><input type="text" id="m-wo" class="form-input" placeholder="WO-2026-001" required></div>
+      <div class="form-group"><label class="form-label">Unit *</label>
+        <select id="m-unit" class="form-input">
+          <option>01 — Peterbilt 379</option><option>03 — Freightliner Cascadia</option>
+          <option>04 — Kenworth T680</option><option>05 — Peterbilt 389</option>
+          <option>06 — Freightliner Cascadia</option><option>09 — Kenworth T800</option>
+          <option>T01 — Trailer</option><option>T02 — Trailer</option><option>J01 — Jeep</option><option>S01 — Spreader</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Repair Type *</label>
+        <select id="m-type" class="form-input">
+          <option>PM Service</option><option>Engine</option><option>Transmission</option><option>Brakes</option>
+          <option>Electrical</option><option>Suspension</option><option>Tires</option><option>Body/Frame</option>
+          <option>Trailer Repair</option><option>DOT Inspection</option><option>Other</option>
+        </select></div>
+      <div class="form-group full"><label class="form-label">Description *</label><input type="text" id="m-desc" class="form-input" placeholder="Describe the repair or service" required></div>
+      <div class="form-group"><label class="form-label">Shop / Mechanic</label><input type="text" id="m-shop" class="form-input" placeholder="Truck Parts Outlet, Mobile Mechanic…"></div>
+      <div class="form-group"><label class="form-label">Cost</label><input type="number" id="m-cost" class="form-input" step="0.01" placeholder="0.00"></div>
+      <div class="form-group"><label class="form-label">Odometer</label><input type="number" id="m-odo" class="form-input" placeholder="Miles at service"></div>
+      <div class="form-group"><label class="form-label">Status</label>
+        <select id="m-status" class="form-input">
+          <option>Open</option><option>In Progress</option><option>Completed</option><option>Pending Parts</option>
+        </select></div>
+      <div class="form-group full"><label class="form-label">Parts Used / Notes</label><input type="text" id="m-notes" class="form-input" placeholder="Part numbers, warranty info, etc."></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeMaintModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveMaint()">SAVE WORK ORDER</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const mStatusBadge={Open:'badge-red','In Progress':'badge-yellow',Completed:'badge-green','Pending Parts':'badge-orange'};
+const mTypeColor={Engine:'badge-red',Transmission:'badge-red',Brakes:'badge-orange','PM Service':'badge-blue',Electrical:'badge-yellow',Suspension:'badge-orange',Tires:'badge-gray','Body/Frame':'badge-gray','Trailer Repair':'badge-purple','DOT Inspection':'badge-blue',Other:'badge-gray'};
+function loadMaint(){try{return JSON.parse(localStorage.getItem('nexus_maintenance')||'[]');}catch(e){return[];}}
+function saveMaint2(d){try{localStorage.setItem('nexus_maintenance',JSON.stringify(d));}catch(e){}}
+function renderMaint(){
+  const u=document.getElementById('mf-unit').value,t=document.getElementById('mf-type').value,s=document.getElementById('mf-status').value;
+  const all=loadMaint();
+  const now=new Date(),yr=now.getFullYear(),mo=now.getMonth();
+  const data=all.filter(m=>(u?m.unit.startsWith(u):true)&&(t?m.type===t:true)&&(s?m.status===s:true)).sort((a,b)=>b.date.localeCompare(a.date));
+  const tbody=document.getElementById('maint-tbody');
+  tbody.innerHTML=data.length?data.map(m=>`<tr>
+    <td class="mono">${m.date}</td>
+    <td class="mono" style="font-weight:700;">${m.wo}</td>
+    <td><span class="badge badge-blue" style="font-size:10px;">Unit ${m.unit.split(' ')[0]}</span></td>
+    <td><span class="badge ${mTypeColor[m.type]||'badge-gray'}" style="font-size:9px;">${m.type}</span></td>
+    <td style="max-width:200px;">${m.desc}</td>
+    <td>${m.shop||'—'}</td>
+    <td style="text-align:right;font-weight:700;">${m.cost?'$'+Number(m.cost).toLocaleString('en-US',{minimumFractionDigits:2}):'—'}</td>
+    <td><span class="badge ${mStatusBadge[m.status]||'badge-gray'}">${m.status}</span></td>
+    <td><button class="btn btn-sm" onclick="editMaint('${m.id}')">Edit</button> <button class="btn btn-sm" style="color:#ef4444" onclick="delMaint('${m.id}')">Del</button></td>
+  </tr>`).join(''):'<tr><td colspan="9" style="text-align:center;color:#94a3b8;padding:32px;">No work orders yet. Click + Add Work Order to start.</td></tr>';
+  // KPIs
+  const thisMonthSpend=all.filter(m=>{const d=new Date(m.date);return d.getFullYear()===yr&&d.getMonth()===mo;}).reduce((s,m)=>s+Number(m.cost||0),0);
+  const ytd=all.filter(m=>new Date(m.date).getFullYear()===yr).reduce((s,m)=>s+Number(m.cost||0),0);
+  const fmt=n=>'$'+n.toLocaleString('en-US',{minimumFractionDigits:2});
+  document.getElementById('kpi-open').textContent=all.filter(m=>m.status==='Open'||m.status==='In Progress'||m.status==='Pending Parts').length;
+  document.getElementById('kpi-spend').textContent=fmt(thisMonthSpend);
+  document.getElementById('kpi-done').textContent=all.filter(m=>m.status==='Completed').length;
+  document.getElementById('kpi-ytd').textContent=fmt(ytd);
+}
+function openMaintModal(){const n=loadMaint().length+1;document.getElementById('maint-modal-title').textContent='ADD WORK ORDER';document.getElementById('maint-edit-id').value='';document.getElementById('m-date').value=new Date().toISOString().split('T')[0];document.getElementById('m-wo').value='WO-'+new Date().getFullYear()+'-'+n.toString().padStart(3,'0');document.getElementById('m-desc').value='';document.getElementById('m-shop').value='';document.getElementById('m-cost').value='';document.getElementById('m-odo').value='';document.getElementById('m-notes').value='';document.getElementById('m-status').value='Open';document.getElementById('maint-modal').classList.add('open');}
+function closeMaintModal(){document.getElementById('maint-modal').classList.remove('open');}
+function saveMaint(){const d=document.getElementById('m-date').value,w=document.getElementById('m-wo').value,desc=document.getElementById('m-desc').value;if(!d||!w||!desc){alert('Date, WO # and Description required.');return;}const data=loadMaint(),editId=document.getElementById('maint-edit-id').value;const rec={id:editId||'maint-'+Date.now(),date:d,wo:w,unit:document.getElementById('m-unit').value,type:document.getElementById('m-type').value,desc,shop:document.getElementById('m-shop').value,cost:document.getElementById('m-cost').value,odometer:document.getElementById('m-odo').value,status:document.getElementById('m-status').value,notes:document.getElementById('m-notes').value};if(editId){const i=data.findIndex(e=>e.id===editId);if(i>=0)data[i]=rec;}else data.push(rec);saveMaint2(data);closeMaintModal();renderMaint();}
+function editMaint(id){const m=loadMaint().find(x=>x.id===id);if(!m)return;document.getElementById('maint-modal-title').textContent='EDIT WORK ORDER';document.getElementById('maint-edit-id').value=id;document.getElementById('m-date').value=m.date;document.getElementById('m-wo').value=m.wo;document.getElementById('m-unit').value=m.unit;document.getElementById('m-type').value=m.type;document.getElementById('m-desc').value=m.desc;document.getElementById('m-shop').value=m.shop||'';document.getElementById('m-cost').value=m.cost||'';document.getElementById('m-odo').value=m.odometer||'';document.getElementById('m-status').value=m.status;document.getElementById('m-notes').value=m.notes||'';document.getElementById('maint-modal').classList.add('open');}
+function delMaint(id){if(confirm('Delete work order?')){saveMaint2(loadMaint().filter(m=>m.id!==id));renderMaint();}}
+document.getElementById('maint-modal').addEventListener('click',function(e){if(e.target===this)closeMaintModal();});
+renderMaint();
+</script>
+  </div>
+</div>
+<nav class="mobile-nav">
+  <a href="fleet-command.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>DASH</a>
+  <a href="settlements.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>PAY</a>
+  <a href="documents.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>DOCS</a>
+  <a href="equipment.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>FLEET</a>
+  <a href="drivers.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>TEAM</a>
+</nav>
+<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
+</body>
+</html>

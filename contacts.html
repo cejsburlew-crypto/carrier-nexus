@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Contacts — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sb:#000;--orange:#e8640a;--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+/* SIDEBAR */
+.sidebar{width:220px;min-height:100vh;background:#000;border-right:1px solid #1a1a1a;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
+.sidebar-logo{padding:16px;display:flex;align-items:center;gap:10px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.07);}
+.sidebar-logo .logo-hex svg{width:36px;height:36px;display:block;}
+.sidebar-logo .logo-text{display:flex;flex-direction:column;gap:2px;}
+.brand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:2px;color:#fff;}
+.sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.45);letter-spacing:1px;}
+.sidebar-section{padding:12px 0 4px;}
+.sidebar-section-label{padding:0 16px 6px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:rgba(255,255,255,0.3);letter-spacing:1.5px;text-transform:uppercase;display:block;}
+.sidebar-link{display:flex;align-items:center;gap:10px;padding:7px 16px;text-decoration:none;color:#a0aec0;font-size:13px;border-left:3px solid transparent;transition:all .15s;}
+.sidebar-link:hover{background:rgba(233,30,140,0.14);border-left-color:#c2185b;color:#fff;}
+.sidebar-link.active{background:rgba(233,30,140,0.22);border-left:3px solid #e91e8c;color:#fff;}
+.sidebar-link svg{width:14px;height:14px;flex-shrink:0;opacity:.7;}
+.sidebar-link.active svg{opacity:1;}
+.nav-badge{margin-left:auto;background:#e91e8c;color:#fff;font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 6px;border-radius:10px;}
+.sidebar-spacer{flex:1;}
+.sidebar-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.07);}
+.user-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.6);font-weight:500;}
+.user-role{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);margin-top:2px;}
+/* MAIN */
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:56px;background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#fff;flex:1;}
+.content{padding:24px 28px 48px;}
+/* KPIs */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;}
+.kpi-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:#0f172a;line-height:1;}
+.kpi-sub{font-size:11px;color:var(--blue);margin-top:4px;}
+/* PANEL */
+.panel{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.panel-head{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:#0f172a;letter-spacing:.06em;text-transform:uppercase;}
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+th{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:10px 16px;text-align:left;background:#f8fafc;border-bottom:1px solid var(--border);}
+td{padding:11px 16px;font-size:13px;color:#0f172a;border-bottom:1px solid #f8fafc;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f8fafc;}
+/* BADGES */
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;display:inline-block;}
+.badge-green{background:#dcfce7;color:#15803d;}
+.badge-red{background:#fee2e2;color:#b91c1c;}
+.badge-yellow{background:#fef9c3;color:#a16207;}
+.badge-blue{background:#dbeafe;color:#1d4ed8;}
+.badge-gray{background:#f1f5f9;color:#64748b;}
+.badge-orange{background:#ffedd5;color:#c2410c;}
+.badge-purple{background:#ede9fe;color:#6d28d9;}
+/* BTNS */
+.btn{padding:7px 16px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.8px;cursor:pointer;border:1px solid var(--border);background:#fff;color:#334155;transition:all .15s;}
+.btn:hover{background:#f1f5f9;}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn-primary:hover{background:#1d5a8a;}
+.btn-orange{background:var(--orange);color:#fff;border-color:var(--orange);}
+.btn-sm{padding:5px 12px;font-size:11px;}
+.mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue);}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#fff;border-radius:10px;width:92%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.modal-hdr{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:18px 24px;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between;}
+.modal-hdr-title{color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:2px;}
+.modal-close{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;}
+.modal-body{padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group.full{grid-column:1/3;}
+.form-label{font-size:11px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:1px;}
+.form-input{width:100%;padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:6px;font-size:14px;color:#0f172a;font-family:'Barlow',sans-serif;}
+.form-input:focus{outline:none;border-color:var(--blue);}
+.modal-footer{padding:0 24px 24px;display:flex;gap:10px;justify-content:flex-end;}
+/* MOBILE */
+.mobile-nav{display:none;}
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .main{margin-left:0;}
+  .content{padding:14px 12px 80px;}
+  .kpi-row{grid-template-columns:1fr 1fr;gap:10px;}
+  .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:60px;background:rgba(0,0,0,0.97);border-top:1px solid rgba(233,30,140,0.2);justify-content:space-around;align-items:center;z-index:200;}
+  .mn-tab{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:rgba(168,196,224,0.45);font-size:9px;font-family:'JetBrains Mono',monospace;flex:1;padding:6px 0;}
+  .mn-tab svg{width:20px;height:20px;opacity:.6;}
+  .mn-tab.active{color:#e91e8c;}
+  .mn-tab.active svg{opacity:1;}
+}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <a href="landing.html" class="sidebar-logo">
+    <div class="logo-hex">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hexGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#000000"/>
+            <stop offset="60%" stop-color="#6b0000"/>
+            <stop offset="100%" stop-color="#e91e8c"/>
+          </linearGradient>
+        </defs>
+        <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hexGrad)" stroke="#e91e8c" stroke-width="1.5"/>
+        <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#e91e8c" opacity="0.15"/>
+        <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff" letter-spacing="0">CN</text>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <span class="brand">CARRIER NEXUS</span>
+      <span class="sub">OPS INTELLIGENCE</span>
+    </div>
+  </a>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="fleet-command.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h7v2H2z"/></svg>
+      Dashboard
+    </a>
+    <a href="active-loads.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V3zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V9zm4 4h6v2H5z"/></svg>
+      Active Loads
+    </a>
+    <a href="settlements.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h6V4H5zm0 3v1h6V7H5zm0 3v1h4v-1H5z"/></svg>
+      Settlements
+    </a>
+    <a href="drivers.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>
+      Drivers
+    </a>
+    <a href="permits.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3h3.5l-2.8 2 1 3.3L8 8 4.8 9.3l1-3.3L3 4h3.5zm0 9a3 3 0 100 6 3 3 0 000-6z"/></svg>
+      Permits
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Finance</div>
+    <a href="invoicing.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h10a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h8V4H4zm0 3v1h8V7H4zm0 3v1h5v-1H4z"/></svg>
+      Invoicing
+    </a>
+    <a href="expenses.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v2H5v2h2v2h2V9h2V7H9V5z"/></svg>
+      Expenses
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Documents</div>
+    <a href="documents.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm5 0v4h4"/></svg>
+      Document Vault
+    </a>
+    <a href="pods.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm-.5 2v4.5l3.5 2-.5-.87-3-1.63V5h-1z"/></svg>
+      Missing PODs
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Contacts</div>
+    <a href="contacts.html" class="sidebar-link active">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 5a3 3 0 11-6 0 3 3 0 016 0zM2 13c0-2.761 2.686-5 6-5s6 2.239 6 5H2z"/></svg>
+      Directory
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Maintenance</div>
+    <a href="equipment.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8 4 10l1-3.5L2 4h4.5z"/></svg>
+      Fleet &amp; Equipment
+    </a>
+    <a href="maintenance.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.5 2.5l-1.4 1.4A4 4 0 106.1 9.8L4.7 11.2A6 6 0 1113.5 2.5zm-3 3A2 2 0 108 10a2 2 0 002.5-2.5z"/></svg>
+      Maintenance Log
+    </a>
+    <a href="pm-schedule.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h10v2H3zm0 4h10v2H3zm0 4h6v2H3z"/></svg>
+      PM Schedule
+    </a>
+    <a href="tires.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>
+      Tires
+    </a>
+    <a href="fuel.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h7l3 3v10a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 6h6V6H4zm0 3h4V9H4z"/></svg>
+      Fuel
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Intelligence</div>
+    <a href="nexus-ai.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v5l4.5 2.7-.7-1.2-3.8-2.3V5z"/></svg>
+      Nexus AI
+    </a>
+    <a href="analysis.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h2v-4H2zm3 0h2V6H5zm3 0h2V4H8zm3 0h2V2h-2z"/></svg>
+      Analytics
+    </a>
+    <a href="eld-settings.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 00-3 3c0 1.3.83 2.4 2 2.82V8H5v2h2v1.18A3 3 0 108 14.93V10h2V8H8V6.82A3.001 3.001 0 008 1zm0 12a1 1 0 110-2 1 1 0 010 2zm0-8a1 1 0 110-2 1 1 0 010 2z"/></svg>
+      ELD Integration
+    </a>
+  </div>
+
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-user">
+    <div class="user-name">Jim Burlew · ADMIN</div>
+    <div class="user-role">Carrier Trucking US, LLC</div>
+  </div>
+</nav>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">DIRECTORY</div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <div style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#22c55e;letter-spacing:1px;"><span style="width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;display:inline-block;"></span>LIVE</div>
+      <button class="btn btn-orange" onclick="openContactModal()">+ Add Contact</button>
+    </div>
+  </div>
+  <div class="content">
+    
+<div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+  <button class="btn btn-sm" id="tab-all" onclick="setTab('all')" style="background:#0f172a;color:#fff;">All</button>
+  <button class="btn btn-sm" id="tab-broker" onclick="setTab('broker')">Brokers</button>
+  <button class="btn btn-sm" id="tab-shipper" onclick="setTab('shipper')">Shippers</button>
+  <button class="btn btn-sm" id="tab-vendor" onclick="setTab('vendor')">Vendors</button>
+  <button class="btn btn-sm" id="tab-mechanic" onclick="setTab('mechanic')">Mechanics/Shops</button>
+  <input type="text" id="contact-search" oninput="renderContacts()" placeholder="Search name, company, phone…" class="form-input" style="max-width:240px;padding:5px 10px;font-size:13px;border:1px solid #e2e8f0;border-radius:6px;">
+</div>
+
+<div id="contacts-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;"></div>
+
+<div class="modal-overlay" id="contact-modal">
+  <div class="modal-box">
+    <div class="modal-hdr"><span class="modal-hdr-title" id="contact-modal-title">ADD CONTACT</span><button class="modal-close" onclick="closeContactModal()">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="contact-edit-id">
+      <div class="form-group full"><label class="form-label">Name / Company *</label><input type="text" id="c-name" class="form-input" placeholder="Company or contact name" required></div>
+      <div class="form-group"><label class="form-label">Type *</label>
+        <select id="c-type" class="form-input">
+          <option value="broker">Broker</option><option value="shipper">Shipper</option>
+          <option value="vendor">Vendor</option><option value="mechanic">Mechanic / Shop</option><option value="other">Other</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Contact Person</label><input type="text" id="c-person" class="form-input" placeholder="First Last"></div>
+      <div class="form-group"><label class="form-label">Phone</label><input type="tel" id="c-phone" class="form-input" placeholder="(305) 555-0100"></div>
+      <div class="form-group"><label class="form-label">Email</label><input type="email" id="c-email" class="form-input" placeholder="name@company.com"></div>
+      <div class="form-group"><label class="form-label">MC # / DOT</label><input type="text" id="c-mc" class="form-input" placeholder="MC 123456"></div>
+      <div class="form-group full"><label class="form-label">Address</label><input type="text" id="c-address" class="form-input" placeholder="Street, City, State ZIP"></div>
+      <div class="form-group full"><label class="form-label">Notes</label><input type="text" id="c-notes" class="form-input" placeholder="Payment terms, specialties, etc."></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeContactModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveContact()">SAVE CONTACT</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let activeTab='all';
+const typeColors={broker:'#1d4ed8',shipper:'#15803d',vendor:'#c2410c',mechanic:'#6d28d9',other:'#64748b'};
+const typeBg={broker:'#dbeafe',shipper:'#dcfce7',vendor:'#ffedd5',mechanic:'#ede9fe',other:'#f1f5f9'};
+function loadContacts(){try{return JSON.parse(localStorage.getItem('nexus_contacts')||'[]');}catch(e){return[];}}
+function saveContacts(d){try{localStorage.setItem('nexus_contacts',JSON.stringify(d));}catch(e){}}
+function setTab(t){activeTab=t;['all','broker','shipper','vendor','mechanic'].forEach(tab=>{const b=document.getElementById('tab-'+tab);if(b){b.style.background=tab===t?'#0f172a':'#fff';b.style.color=tab===t?'#fff':'#334155';}});renderContacts();}
+function renderContacts(){
+  const q=(document.getElementById('contact-search').value||'').toLowerCase();
+  let data=loadContacts().filter(c=>(activeTab==='all'||c.type===activeTab)&&(!q||[c.name,c.person,c.phone,c.email,c.notes].join(' ').toLowerCase().includes(q)));
+  data.sort((a,b)=>a.name.localeCompare(b.name));
+  const grid=document.getElementById('contacts-grid');
+  if(!data.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:48px 0;">No contacts found. Click + Add Contact to build your directory.</div>';return;}
+  grid.innerHTML=data.map(c=>`
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;transition:box-shadow .15s;" onmouseenter="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'" onmouseleave="this.style.boxShadow=''">
+      <div style="padding:14px 16px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:10px;">
+        <div style="width:40px;height:40px;border-radius:8px;background:${typeBg[c.type]||'#f1f5f9'};display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;color:${typeColors[c.type]||'#64748b'};flex-shrink:0;">${c.name.charAt(0).toUpperCase()}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:14px;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.name}</div>
+          <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:${typeBg[c.type]};color:${typeColors[c.type]};letter-spacing:.04em;text-transform:uppercase;">${c.type}</span>
+        </div>
+      </div>
+      <div style="padding:12px 16px;font-size:13px;display:flex;flex-direction:column;gap:6px;">
+        ${c.person?`<div style="color:#475569;">👤 ${c.person}</div>`:''}
+        ${c.phone?`<div><a href="tel:${c.phone}" style="color:#2e6da4;text-decoration:none;">📞 ${c.phone}</a></div>`:''}
+        ${c.email?`<div><a href="mailto:${c.email}" style="color:#2e6da4;text-decoration:none;font-size:12px;">✉ ${c.email}</a></div>`:''}
+        ${c.mc?`<div style="color:#64748b;font-family:'JetBrains Mono',monospace;font-size:11px;">${c.mc}</div>`:''}
+        ${c.notes?`<div style="color:#94a3b8;font-size:11px;font-style:italic;">${c.notes}</div>`:''}
+      </div>
+      <div style="padding:8px 16px 12px;display:flex;gap:8px;">
+        <button class="btn btn-sm" onclick="editContact('${c.id}')" style="flex:1;">Edit</button>
+        <button class="btn btn-sm" onclick="delContact('${c.id}')" style="flex:1;color:#ef4444;">Delete</button>
+      </div>
+    </div>`).join('');
+}
+function openContactModal(){document.getElementById('contact-modal-title').textContent='ADD CONTACT';document.getElementById('contact-edit-id').value='';['c-name','c-person','c-phone','c-email','c-mc','c-address','c-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('c-type').value='broker';document.getElementById('contact-modal').classList.add('open');}
+function closeContactModal(){document.getElementById('contact-modal').classList.remove('open');}
+function saveContact(){const n=document.getElementById('c-name').value;if(!n){alert('Name required.');return;}const data=loadContacts(),editId=document.getElementById('contact-edit-id').value;const rec={id:editId||'con-'+Date.now(),name:n,type:document.getElementById('c-type').value,person:document.getElementById('c-person').value,phone:document.getElementById('c-phone').value,email:document.getElementById('c-email').value,mc:document.getElementById('c-mc').value,address:document.getElementById('c-address').value,notes:document.getElementById('c-notes').value};if(editId){const i=data.findIndex(c=>c.id===editId);if(i>=0)data[i]=rec;}else data.push(rec);saveContacts(data);closeContactModal();renderContacts();}
+function editContact(id){const c=loadContacts().find(x=>x.id===id);if(!c)return;document.getElementById('contact-modal-title').textContent='EDIT CONTACT';document.getElementById('contact-edit-id').value=id;document.getElementById('c-name').value=c.name;document.getElementById('c-type').value=c.type;document.getElementById('c-person').value=c.person||'';document.getElementById('c-phone').value=c.phone||'';document.getElementById('c-email').value=c.email||'';document.getElementById('c-mc').value=c.mc||'';document.getElementById('c-address').value=c.address||'';document.getElementById('c-notes').value=c.notes||'';document.getElementById('contact-modal').classList.add('open');}
+function delContact(id){if(confirm('Delete contact?')){saveContacts(loadContacts().filter(c=>c.id!==id));renderContacts();}}
+document.getElementById('contact-modal').addEventListener('click',function(e){if(e.target===this)closeContactModal();});
+renderContacts();
+</script>
+  </div>
+</div>
+<nav class="mobile-nav">
+  <a href="fleet-command.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>DASH</a>
+  <a href="settlements.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>PAY</a>
+  <a href="documents.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>DOCS</a>
+  <a href="equipment.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>FLEET</a>
+  <a href="drivers.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>TEAM</a>
+</nav>
+<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
+</body>
+</html>
