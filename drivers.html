@@ -988,6 +988,20 @@ body {
 
 <script src="nexus-data.js"></script>
 <script>
+// ─── LocalStorage helpers (needed by render functions) ─────────────────────
+const LS_COMP = 'nexus_comp_';
+const LS_DOCS = 'nexus_docs_';
+
+function loadStored(id) {
+  try { return JSON.parse(localStorage.getItem(LS_COMP + id)) || {}; } catch { return {}; }
+}
+function loadDocs(id) {
+  try { return JSON.parse(localStorage.getItem(LS_DOCS + id)) || {}; } catch { return {}; }
+}
+function mergeDriver(d) {
+  return Object.assign({}, d, loadStored(d.id));
+}
+
 // ─── Helpers ───────────────────────────────────────────────────────────────
 function isPlaceholder(val) {
   return !val || val === 'YYYY-MM-DD' || val.includes('ENTER') || val.length < 6;
@@ -1193,21 +1207,9 @@ renderComplianceAlert();
 renderDriverCards('all');
 </script>
 <script>
-// ─── LocalStorage compliance store ─────────────────────────────────────────
-const LS_COMP = 'nexus_comp_';
-const LS_DOCS = 'nexus_docs_';
+// ─── Modal state ────────────────────────────────────────────────────────────
+// LS_COMP, LS_DOCS, loadStored, loadDocs, mergeDriver defined in render script above
 let _modalDriverId = null;
-
-function loadStored(id) {
-  try { return JSON.parse(localStorage.getItem(LS_COMP + id)) || {}; } catch { return {}; }
-}
-function loadDocs(id) {
-  try { return JSON.parse(localStorage.getItem(LS_DOCS + id)) || {}; } catch { return {}; }
-}
-function mergeDriver(d) {
-  const stored = loadStored(d.id);
-  return Object.assign({}, d, stored);
-}
 
 // ─── Open / Close Modal ─────────────────────────────────────────────────────
 function openComplianceModal(driverId) {
