@@ -645,7 +645,7 @@ function fmt(n){ if(n===0) return '—'; const a='$'+Math.abs(n).toLocaleString(
 function fmtDate(d){ const dt=new Date(d+'T00:00:00'); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}); }
 
 let expandedId = null;
-let filteredData = [...settlements];
+let filteredData = [...settlements]; try { const __cnOver = JSON.parse(localStorage.getItem('cn_settlement_status_overrides') || '{}'); settlements.forEach(s => { if (__cnOver[s.id]) s.status = __cnOver[s.id]; }); } catch(e) { console.warn('Could not load status overrides', e); } function saveStatusOverrides(){ try { const map = {}; settlements.forEach(s => { map[s.id] = s.status; }); localStorage.setItem('cn_settlement_status_overrides', JSON.stringify(map)); } catch(e) { console.warn('Could not save status overrides', e); } }
 
 function populateWeeks(){
   const sel = document.getElementById('f-week');
@@ -812,12 +812,12 @@ function renderTable(){
 
 function finalizeRow(id){
   const s = settlements.find(x=>x.id===id);
-  if(s){ s.status='approved'; applyFilters(); }
+  if(s){ s.status='approved'; saveStatusOverrides(); applyFilters(); }
 }
           function revertRow(id){
                       if(!confirm('Revert this settlement back to draft?')) return;
                       const s = settlements.find(x=>x.id===id);
-                      if(s){ s.status='draft'; applyFilters(); }
+                      if(s){ s.status='draft'; saveStatusOverrides(); applyFilters(); }
           }
 function viewPDF(id){
   const s = settlements.find(x=>x.id===id);
