@@ -1248,7 +1248,30 @@ function filterDrivers(filter, btn) {
 
 // ─── Initialize ────────────────────────────────────────────────────────────
 renderComplianceAlert();
-renderDriverCards('all');
+// Auth guard + NexusDB driver sync
+(async () => {
+  if (typeof NexusDB !== 'undefined') {
+    await NexusDB.Auth.requireAuth().catch(()=>{});
+    // If Supabase configured, sync driver list into NexusDB
+    if (NexusDB.isConfigured) {
+      try {
+        const dbDrivers = await NexusDB.Drivers.list();
+        if (!dbDrivers.length && typeof DRIVERS !== 'undefined') {
+          for (const d of DRIVERS) {
+            await NexusDB.Drivers.create({
+              name: d.name, status: d.status || 'active',
+              pay_type: d.pay_type, pay_rate: d.pay, cdl_number: d.cdl,
+              cdl_state: d.cdl_state, cdl_expiry: d.cdl_expiry,
+              phone: d.phone, email: d.email, hire_date: d.hire_date,
+              truck_unit: d.truck, notes: d.notes
+            }).catch(()=>{});
+          }
+        }
+      } catch(e) { /* offline fallback */ }
+    }
+  }
+  renderDriverCards('all');
+})();
 </script>
 <script>
 // ─── Modal state ────────────────────────────────────────────────────────────

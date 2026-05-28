@@ -266,16 +266,18 @@ tr:hover td{background:#f8fafc;}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
 <script>
-let activeTab='all';
+let activeTab='all', _contactCache=[];
 const typeColors={broker:'#1d4ed8',shipper:'#15803d',vendor:'#c2410c',mechanic:'#6d28d9',other:'#64748b'};
 const typeBg={broker:'#dbeafe',shipper:'#dcfce7',vendor:'#ffedd5',mechanic:'#ede9fe',other:'#f1f5f9'};
-function loadContacts(){try{return JSON.parse(localStorage.getItem('nexus_contacts')||'[]');}catch(e){return[];}}
-function saveContacts(d){try{localStorage.setItem('nexus_contacts',JSON.stringify(d));}catch(e){}}
 function setTab(t){activeTab=t;['all','broker','shipper','vendor','mechanic'].forEach(tab=>{const b=document.getElementById('tab-'+tab);if(b){b.style.background=tab===t?'#0f172a':'#fff';b.style.color=tab===t?'#fff':'#334155';}});renderContacts();}
-function renderContacts(){
+async function renderContacts(){
+  _contactCache = await NexusDB.Contacts.list();
   const q=(document.getElementById('contact-search').value||'').toLowerCase();
-  let data=loadContacts().filter(c=>(activeTab==='all'||c.type===activeTab)&&(!q||[c.name,c.person,c.phone,c.email,c.notes].join(' ').toLowerCase().includes(q)));
+  let data=_contactCache.filter(c=>(activeTab==='all'||(c.contact_type||c.type)===activeTab)&&(!q||[c.name,c.contact_person||c.person,c.phone,c.email,c.notes].join(' ').toLowerCase().includes(q)));
   data.sort((a,b)=>a.name.localeCompare(b.name));
   const grid=document.getElementById('contacts-grid');
   if(!data.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:48px 0;">No contacts found. Click + Add Contact to build your directory.</div>';return;}
@@ -285,14 +287,14 @@ function renderContacts(){
         <div style="width:40px;height:40px;border-radius:8px;background:${typeBg[c.type]||'#f1f5f9'};display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;color:${typeColors[c.type]||'#64748b'};flex-shrink:0;">${c.name.charAt(0).toUpperCase()}</div>
         <div style="flex:1;min-width:0;">
           <div style="font-weight:700;font-size:14px;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.name}</div>
-          <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:${typeBg[c.type]};color:${typeColors[c.type]};letter-spacing:.04em;text-transform:uppercase;">${c.type}</span>
+          <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:${typeBg[c.contact_type||c.type]};color:${typeColors[c.contact_type||c.type]};letter-spacing:.04em;text-transform:uppercase;">${c.type}</span>
         </div>
       </div>
       <div style="padding:12px 16px;font-size:13px;display:flex;flex-direction:column;gap:6px;">
-        ${c.person?`<div style="color:#475569;">👤 ${c.person}</div>`:''}
+        ${(c.contact_person||c.person)?`<div style="color:#475569;">👤 ${(c.contact_person||c.person)}</div>`:''}
         ${c.phone?`<div><a href="tel:${c.phone}" style="color:#2e6da4;text-decoration:none;">📞 ${c.phone}</a></div>`:''}
         ${c.email?`<div><a href="mailto:${c.email}" style="color:#2e6da4;text-decoration:none;font-size:12px;">✉ ${c.email}</a></div>`:''}
-        ${c.mc?`<div style="color:#64748b;font-family:'JetBrains Mono',monospace;font-size:11px;">${c.mc}</div>`:''}
+        ${(c.mc_number||c.mc)?`<div style="color:#64748b;font-family:'JetBrains Mono',monospace;font-size:11px;">${(c.mc_number||c.mc)}</div>`:''}
         ${c.notes?`<div style="color:#94a3b8;font-size:11px;font-style:italic;">${c.notes}</div>`:''}
       </div>
       <div style="padding:8px 16px 12px;display:flex;gap:8px;">
@@ -303,11 +305,11 @@ function renderContacts(){
 }
 function openContactModal(){document.getElementById('contact-modal-title').textContent='ADD CONTACT';document.getElementById('contact-edit-id').value='';['c-name','c-person','c-phone','c-email','c-mc','c-address','c-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('c-type').value='broker';document.getElementById('contact-modal').classList.add('open');}
 function closeContactModal(){document.getElementById('contact-modal').classList.remove('open');}
-function saveContact(){const n=document.getElementById('c-name').value;if(!n){alert('Name required.');return;}const data=loadContacts(),editId=document.getElementById('contact-edit-id').value;const rec={id:editId||'con-'+Date.now(),name:n,type:document.getElementById('c-type').value,person:document.getElementById('c-person').value,phone:document.getElementById('c-phone').value,email:document.getElementById('c-email').value,mc:document.getElementById('c-mc').value,address:document.getElementById('c-address').value,notes:document.getElementById('c-notes').value};if(editId){const i=data.findIndex(c=>c.id===editId);if(i>=0)data[i]=rec;}else data.push(rec);saveContacts(data);closeContactModal();renderContacts();}
-function editContact(id){const c=loadContacts().find(x=>x.id===id);if(!c)return;document.getElementById('contact-modal-title').textContent='EDIT CONTACT';document.getElementById('contact-edit-id').value=id;document.getElementById('c-name').value=c.name;document.getElementById('c-type').value=c.type;document.getElementById('c-person').value=c.person||'';document.getElementById('c-phone').value=c.phone||'';document.getElementById('c-email').value=c.email||'';document.getElementById('c-mc').value=c.mc||'';document.getElementById('c-address').value=c.address||'';document.getElementById('c-notes').value=c.notes||'';document.getElementById('contact-modal').classList.add('open');}
-function delContact(id){if(confirm('Delete contact?')){saveContacts(loadContacts().filter(c=>c.id!==id));renderContacts();}}
+async function saveContact(){const n=document.getElementById('c-name').value;if(!n){alert('Name required.');return;}const editId=document.getElementById('contact-edit-id').value;const rec={name:n,contact_type:document.getElementById('c-type').value,contact_person:document.getElementById('c-person').value,phone:document.getElementById('c-phone').value,email:document.getElementById('c-email').value,mc_number:document.getElementById('c-mc').value,address:document.getElementById('c-address').value,notes:document.getElementById('c-notes').value};if(editId){await NexusDB.Contacts.update(editId,rec);}else{await NexusDB.Contacts.create(rec);}closeContactModal();await renderContacts();}
+function editContact(id){const c=_contactCache.find(x=>x.id===id);if(!c)return;document.getElementById('contact-modal-title').textContent='EDIT CONTACT';document.getElementById('contact-edit-id').value=id;document.getElementById('c-name').value=c.name||'';document.getElementById('c-type').value=c.contact_type||c.type||'broker';document.getElementById('c-person').value=c.contact_person||c.person||'';document.getElementById('c-phone').value=c.phone||'';document.getElementById('c-email').value=c.email||'';document.getElementById('c-mc').value=c.mc_number||c.mc||'';document.getElementById('c-address').value=c.address||'';document.getElementById('c-notes').value=c.notes||'';document.getElementById('contact-modal').classList.add('open');}
+async function delContact(id){if(confirm('Delete contact?')){await NexusDB.Contacts.delete(id);await renderContacts();}}
 document.getElementById('contact-modal').addEventListener('click',function(e){if(e.target===this)closeContactModal();});
-renderContacts();
+(async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); await renderContacts(); })();
 </script>
   </div>
 </div>

@@ -290,48 +290,77 @@ tr:hover td{background:#f8fafc;}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
 <script>
 const fmt = n => '$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-function loadExp(){try{return JSON.parse(localStorage.getItem('nexus_expenses')||'[]');}catch(e){return [];}}
-function saveExp(d){try{localStorage.setItem('nexus_expenses',JSON.stringify(d));}catch(e){}}
-function renderExpenses(){
+let _expCache = [];
+
+function catBadge(c){return{Fuel:'badge-blue',Repair:'badge-red',Parts:'badge-orange',Permit:'badge-purple',Tire:'badge-yellow',Tolls:'badge-gray',Meals:'badge-gray',Miscellaneous:'badge-gray'}[c]||'badge-gray';}
+function openExpModal(){document.getElementById('exp-modal-title').textContent='ADD EXPENSE';document.getElementById('exp-edit-id').value='';document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];document.getElementById('exp-amount').value='';document.getElementById('exp-desc').value='';document.getElementById('exp-load').value='';document.getElementById('exp-vendor').value='';document.getElementById('exp-modal').classList.add('open');}
+function closeExpModal(){document.getElementById('exp-modal').classList.remove('open');}
+
+async function renderExpenses(){
+  _expCache = await NexusDB.Expenses.list();
   const driver=document.getElementById('f-driver').value, cat=document.getElementById('f-cat').value;
-  let data=loadExp().filter(e=>(driver?e.driver===driver:true)&&(cat?e.category===cat:true));
-  data.sort((a,b)=>b.date.localeCompare(a.date));
+  let data=_expCache.filter(e=>(driver?e.driver===driver:true)&&(cat?e.category===cat:true));
+  data.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
   const tbody=document.getElementById('expenses-tbody');
   tbody.innerHTML=data.length?data.map(e=>`<tr>
-    <td class="mono">${e.date}</td><td>${e.driver}</td>
+    <td class="mono">${e.date}</td><td>${e.driver||'—'}</td>
     <td><span class="badge ${catBadge(e.category)}">${e.category}</span></td>
-    <td>${e.desc||'—'}</td><td class="mono">${e.loadId||'—'}</td>
+    <td>${e.desc||e.description||'—'}</td><td class="mono">${e.loadId||e.load_ref||'—'}</td>
     <td style="text-align:right;font-weight:700;color:#0f172a;">${fmt(e.amount)}</td>
     <td><button class="btn btn-sm" onclick="editExp('${e.id}')">Edit</button> <button class="btn btn-sm" style="color:#ef4444" onclick="delExp('${e.id}')">Del</button></td>
   </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:32px;">No expenses recorded. Click + Add Expense to start.</td></tr>';
-  // KPIs
-  const all=loadExp(); const tot=all.reduce((s,e)=>s+Number(e.amount),0);
-  const fuel=all.filter(e=>e.category==='Fuel').reduce((s,e)=>s+Number(e.amount),0);
-  const rep=all.filter(e=>e.category==='Repair'||e.category==='Parts').reduce((s,e)=>s+Number(e.amount),0);
-  const oth=all.filter(e=>!['Fuel','Repair','Parts'].includes(e.category)).reduce((s,e)=>s+Number(e.amount),0);
+  const tot=_expCache.reduce((s,e)=>s+Number(e.amount),0);
+  const fuel=_expCache.filter(e=>e.category==='Fuel').reduce((s,e)=>s+Number(e.amount),0);
+  const rep=_expCache.filter(e=>e.category==='Repair'||e.category==='Parts').reduce((s,e)=>s+Number(e.amount),0);
+  const oth=_expCache.filter(e=>!['Fuel','Repair','Parts'].includes(e.category)).reduce((s,e)=>s+Number(e.amount),0);
   document.getElementById('kpi-total').textContent=fmt(tot);
-  document.getElementById('kpi-count').textContent=all.length+' entries';
+  document.getElementById('kpi-count').textContent=_expCache.length+' entries';
   document.getElementById('kpi-fuel').textContent=fmt(fuel);
   document.getElementById('kpi-repairs').textContent=fmt(rep);
   document.getElementById('kpi-other').textContent=fmt(oth);
 }
-function catBadge(c){return{Fuel:'badge-blue',Repair:'badge-red',Parts:'badge-orange',Permit:'badge-purple',Tire:'badge-yellow',Tolls:'badge-gray',Meals:'badge-gray',Miscellaneous:'badge-gray'}[c]||'badge-gray';}
-function openExpModal(){document.getElementById('exp-modal-title').textContent='ADD EXPENSE';document.getElementById('exp-edit-id').value='';document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];document.getElementById('exp-amount').value='';document.getElementById('exp-desc').value='';document.getElementById('exp-load').value='';document.getElementById('exp-vendor').value='';document.getElementById('exp-modal').classList.add('open');}
-function closeExpModal(){document.getElementById('exp-modal').classList.remove('open');}
-function saveExpense(){
+
+async function saveExpense(){
   const d=document.getElementById('exp-date').value,a=document.getElementById('exp-amount').value;
   if(!d||!a){alert('Date and Amount are required.');return;}
-  const data=loadExp(),editId=document.getElementById('exp-edit-id').value;
-  const rec={id:editId||'exp-'+Date.now(),date:d,driver:document.getElementById('exp-driver').value,category:document.getElementById('exp-cat').value,amount:parseFloat(a),desc:document.getElementById('exp-desc').value,loadId:document.getElementById('exp-load').value,vendor:document.getElementById('exp-vendor').value};
-  if(editId){const i=data.findIndex(e=>e.id===editId);if(i>=0)data[i]=rec;}else data.push(rec);
-  saveExp(data);closeExpModal();renderExpenses();
+  const editId=document.getElementById('exp-edit-id').value;
+  const rec={date:d,driver:document.getElementById('exp-driver').value,category:document.getElementById('exp-cat').value,
+    amount:parseFloat(a),description:document.getElementById('exp-desc').value,
+    load_ref:document.getElementById('exp-load').value,vendor:document.getElementById('exp-vendor').value};
+  if(editId){ await NexusDB.Expenses.update(editId, rec); }
+  else { await NexusDB.Expenses.create(rec); }
+  closeExpModal(); await renderExpenses();
 }
-function editExp(id){const e=loadExp().find(x=>x.id===id);if(!e)return;document.getElementById('exp-modal-title').textContent='EDIT EXPENSE';document.getElementById('exp-edit-id').value=id;document.getElementById('exp-date').value=e.date;document.getElementById('exp-driver').value=e.driver;document.getElementById('exp-cat').value=e.category;document.getElementById('exp-amount').value=e.amount;document.getElementById('exp-desc').value=e.desc||'';document.getElementById('exp-load').value=e.loadId||'';document.getElementById('exp-vendor').value=e.vendor||'';document.getElementById('exp-modal').classList.add('open');}
-function delExp(id){if(confirm('Delete this expense?')){saveExp(loadExp().filter(e=>e.id!==id));renderExpenses();}}
+
+async function editExp(id){
+  const e=_expCache.find(x=>x.id===id); if(!e)return;
+  document.getElementById('exp-modal-title').textContent='EDIT EXPENSE';
+  document.getElementById('exp-edit-id').value=id;
+  document.getElementById('exp-date').value=e.date;
+  document.getElementById('exp-driver').value=e.driver||'';
+  document.getElementById('exp-cat').value=e.category||'';
+  document.getElementById('exp-amount').value=e.amount;
+  document.getElementById('exp-desc').value=e.desc||e.description||'';
+  document.getElementById('exp-load').value=e.loadId||e.load_ref||'';
+  document.getElementById('exp-vendor').value=e.vendor||'';
+  document.getElementById('exp-modal').classList.add('open');
+}
+
+async function delExp(id){
+  if(confirm('Delete this expense?')){ await NexusDB.Expenses.delete(id); await renderExpenses(); }
+}
+
 document.getElementById('exp-modal').addEventListener('click',function(e){if(e.target===this)closeExpModal();});
-renderExpenses();
+
+(async()=>{
+  if(typeof NexusDB !== 'undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
+  await renderExpenses();
+})();
 </script>
   </div>
 </div>

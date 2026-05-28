@@ -812,6 +812,9 @@ body {
   </div><!-- /content -->
 </div><!-- /main -->
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
 <script src="nexus-data.js"></script>
 <script src="nexus-lang.js"></script>
 
@@ -905,15 +908,19 @@ const DEFAULT_FLEET = [
   {id:'spreader-S01',type:'SPREADER',unit:'S01',year:0,make:'',model:'',vin:'',driver:'',status:'ACTIVE',odometer:'',lastPM:'',nextPM:'',equipType:'Spread Axle',axles:'2-Axle',notes:'Oversize / permit loads'},
 ];
 
-function loadFleet() {
-  try {
-    const saved = localStorage.getItem('nexus_fleet');
-    return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_FLEET));
-  } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_FLEET)); }
+let _fleetCache = null;
+async function loadFleet() {
+  const rows = await NexusDB.Fleet.list();
+  // Seed from DEFAULT_FLEET if empty (first run)
+  if (!rows.length && typeof DEFAULT_FLEET !== 'undefined') {
+    for (const u of DEFAULT_FLEET) await NexusDB.Fleet.create(u).catch(()=>{});
+    _fleetCache = await NexusDB.Fleet.list();
+  } else {
+    _fleetCache = rows;
+  }
+  return _fleetCache;
 }
-function saveFleet(fleet) {
-  try { localStorage.setItem('nexus_fleet', JSON.stringify(fleet)); } catch(e){}
-}
+function getFleetCache() { return _fleetCache || []; }
 
 function statusBadge(s) {
   const map = {
@@ -1080,8 +1087,8 @@ function openAddModal() {
   document.getElementById('equip-modal-overlay').style.display = 'flex';
 }
 
-function openEditModal(id) {
-  const fleet = loadFleet();
+async function openEditModal(id) {
+  const fleet = await loadFleet();
   const u = fleet.find(x=>x.id===id);
   if (!u) return;
   document.getElementById('equip-modal-title').textContent = 'EDIT ' + (u.type||'UNIT') + ' ' + u.unit;
@@ -1112,7 +1119,7 @@ function openEditModal(id) {
 }
 
 // ── SAVE (Add or Edit) ──
-function saveUnit(e) {
+async function saveUnit(e) {
   e.preventDefault();
   const fleet = loadFleet();
   const editId = document.getElementById('equip-edit-id').value;
@@ -1156,31 +1163,33 @@ function saveUnit(e) {
       return String(a.unit).localeCompare(String(b.unit), undefined, {numeric:true});
     });
   }
-  saveFleet(fleet);
+  // Persist each changed unit
+  const editId = document.getElementById('equip-edit-id').value;
+  if (editId) { await NexusDB.Fleet.update(editId, fleet.find(u=>u.id===editId)); }
+  else { await NexusDB.Fleet.create(fleet[fleet.length-1]); }
+  _fleetCache = fleet;
   closeEquipModal();
-  renderFleet();
+  await renderFleet();
 }
 
 // ── REMOVE ──
 function removeUnit(id, unit) {
   if (!confirm('Remove Unit ' + unit + ' from fleet? This cannot be undone.')) return;
-  const fleet = loadFleet().filter(u=>u.id!==id);
-  saveFleet(fleet);
-  renderFleet();
+  await NexusDB.Fleet.delete(id);
+  await renderFleet();
 }
 
 // ── LOG PM ──
 function logPM(id) {
   const today = new Date().toISOString().split('T')[0];
-  const fleet = loadFleet();
+  const fleet = await loadFleet();
   const u = fleet.find(x=>x.id===id);
   if (!u) return;
   u.lastPM = today;
-  // Default next PM: 90 days
   const next = new Date(); next.setDate(next.getDate()+90);
   u.nextPM = next.toISOString().split('T')[0];
-  saveFleet(fleet);
-  renderFleet();
+  await NexusDB.Fleet.update(id, {lastPM: u.lastPM, nextPM: u.nextPM});
+  await renderFleet();
   alert('PM logged for Unit ' + u.unit + '. Next PM scheduled: ' + u.nextPM);
 }
 
@@ -1188,9 +1197,9 @@ function logPM(id) {
 function reportIssue(id, unit) {
   const issue = prompt('Describe the issue for Unit ' + unit + ':');
   if (issue) alert('Issue logged for Unit ' + unit + ':\n"' + issue + '"\n\nStatus updated to DOWN.');
-  const fleet = loadFleet();
+  const fleet = await loadFleet();
   const u = fleet.find(x=>x.id===id);
-  if (u && issue) { u.status = 'DOWN'; saveFleet(fleet); renderFleet(); }
+  if (u && issue) { await NexusDB.Fleet.update(id, {status:'DOWN'}); await renderFleet(); }
 }
 
 // Close modal on overlay click
@@ -1199,7 +1208,7 @@ document.getElementById('equip-modal-overlay').addEventListener('click', functio
 });
 
 // Initial render
-renderFleet();
+(async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); await renderFleet(); })();
 </script>
 
 </body>

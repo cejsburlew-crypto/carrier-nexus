@@ -300,24 +300,27 @@ tr:hover td{background:#f8fafc;}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
 <script>
 const mStatusBadge={Open:'badge-red','In Progress':'badge-yellow',Completed:'badge-green','Pending Parts':'badge-orange'};
 const mTypeColor={Engine:'badge-red',Transmission:'badge-red',Brakes:'badge-orange','PM Service':'badge-blue',Electrical:'badge-yellow',Suspension:'badge-orange',Tires:'badge-gray','Body/Frame':'badge-gray','Trailer Repair':'badge-purple','DOT Inspection':'badge-blue',Other:'badge-gray'};
-function loadMaint(){try{return JSON.parse(localStorage.getItem('nexus_maintenance')||'[]');}catch(e){return[];}}
-function saveMaint2(d){try{localStorage.setItem('nexus_maintenance',JSON.stringify(d));}catch(e){}}
-function renderMaint(){
+let _maintCache=[];
+async function renderMaint(){
+  _maintCache = await NexusDB.Maintenance.list();
   const u=document.getElementById('mf-unit').value,t=document.getElementById('mf-type').value,s=document.getElementById('mf-status').value;
-  const all=loadMaint();
+  const all=_maintCache;
   const now=new Date(),yr=now.getFullYear(),mo=now.getMonth();
-  const data=all.filter(m=>(u?m.unit.startsWith(u):true)&&(t?m.type===t:true)&&(s?m.status===s:true)).sort((a,b)=>b.date.localeCompare(a.date));
+  const data=all.filter(m=>(u?m.unit.startsWith(u):true)&&(t?(m.repair_type||m.type)===t:true)&&(s?m.status===s:true)).sort((a,b)=>b.date.localeCompare(a.date));
   const tbody=document.getElementById('maint-tbody');
   tbody.innerHTML=data.length?data.map(m=>`<tr>
     <td class="mono">${m.date}</td>
-    <td class="mono" style="font-weight:700;">${m.wo}</td>
-    <td><span class="badge badge-blue" style="font-size:10px;">Unit ${m.unit.split(' ')[0]}</span></td>
-    <td><span class="badge ${mTypeColor[m.type]||'badge-gray'}" style="font-size:9px;">${m.type}</span></td>
-    <td style="max-width:200px;">${m.desc}</td>
-    <td>${m.shop||'—'}</td>
+    <td class="mono" style="font-weight:700;">${m.wo_number||m.wo}</td>
+    <td><span class="badge badge-blue" style="font-size:10px;">Unit ${(m.unit||'').split(' ')[0]}</span></td>
+    <td><span class="badge ${mTypeColor[m.type]||'badge-gray'}" style="font-size:9px;">${m.repair_type||m.type}</span></td>
+    <td style="max-width:200px;">${m.description||m.desc}</td>
+    <td>${m.vendor||m.shop||'—'}</td>
     <td style="text-align:right;font-weight:700;">${m.cost?'$'+Number(m.cost).toLocaleString('en-US',{minimumFractionDigits:2}):'—'}</td>
     <td><span class="badge ${mStatusBadge[m.status]||'badge-gray'}">${m.status}</span></td>
     <td><button class="btn btn-sm" onclick="editMaint('${m.id}')">Edit</button> <button class="btn btn-sm" style="color:#ef4444" onclick="delMaint('${m.id}')">Del</button></td>
@@ -331,13 +334,13 @@ function renderMaint(){
   document.getElementById('kpi-done').textContent=all.filter(m=>m.status==='Completed').length;
   document.getElementById('kpi-ytd').textContent=fmt(ytd);
 }
-function openMaintModal(){const n=loadMaint().length+1;document.getElementById('maint-modal-title').textContent='ADD WORK ORDER';document.getElementById('maint-edit-id').value='';document.getElementById('m-date').value=new Date().toISOString().split('T')[0];document.getElementById('m-wo').value='WO-'+new Date().getFullYear()+'-'+n.toString().padStart(3,'0');document.getElementById('m-desc').value='';document.getElementById('m-shop').value='';document.getElementById('m-cost').value='';document.getElementById('m-odo').value='';document.getElementById('m-notes').value='';document.getElementById('m-status').value='Open';document.getElementById('maint-modal').classList.add('open');}
+async function openMaintModal(){document.getElementById('maint-modal-title').textContent='ADD WORK ORDER';document.getElementById('maint-edit-id').value='';document.getElementById('m-date').value=new Date().toISOString().split('T')[0];document.getElementById('m-wo').value=await NexusDB.Maintenance.nextWO();document.getElementById('m-desc').value='';document.getElementById('m-shop').value='';document.getElementById('m-cost').value='';document.getElementById('m-odo').value='';document.getElementById('m-notes').value='';document.getElementById('m-status').value='Open';document.getElementById('maint-modal').classList.add('open');}
 function closeMaintModal(){document.getElementById('maint-modal').classList.remove('open');}
-function saveMaint(){const d=document.getElementById('m-date').value,w=document.getElementById('m-wo').value,desc=document.getElementById('m-desc').value;if(!d||!w||!desc){alert('Date, WO # and Description required.');return;}const data=loadMaint(),editId=document.getElementById('maint-edit-id').value;const rec={id:editId||'maint-'+Date.now(),date:d,wo:w,unit:document.getElementById('m-unit').value,type:document.getElementById('m-type').value,desc,shop:document.getElementById('m-shop').value,cost:document.getElementById('m-cost').value,odometer:document.getElementById('m-odo').value,status:document.getElementById('m-status').value,notes:document.getElementById('m-notes').value};if(editId){const i=data.findIndex(e=>e.id===editId);if(i>=0)data[i]=rec;}else data.push(rec);saveMaint2(data);closeMaintModal();renderMaint();}
-function editMaint(id){const m=loadMaint().find(x=>x.id===id);if(!m)return;document.getElementById('maint-modal-title').textContent='EDIT WORK ORDER';document.getElementById('maint-edit-id').value=id;document.getElementById('m-date').value=m.date;document.getElementById('m-wo').value=m.wo;document.getElementById('m-unit').value=m.unit;document.getElementById('m-type').value=m.type;document.getElementById('m-desc').value=m.desc;document.getElementById('m-shop').value=m.shop||'';document.getElementById('m-cost').value=m.cost||'';document.getElementById('m-odo').value=m.odometer||'';document.getElementById('m-status').value=m.status;document.getElementById('m-notes').value=m.notes||'';document.getElementById('maint-modal').classList.add('open');}
-function delMaint(id){if(confirm('Delete work order?')){saveMaint2(loadMaint().filter(m=>m.id!==id));renderMaint();}}
+async function saveMaint(){const d=document.getElementById('m-date').value,w=document.getElementById('m-wo').value,desc=document.getElementById('m-desc').value;if(!d||!w||!desc){alert('Date, WO # and Description required.');return;}const editId=document.getElementById('maint-edit-id').value;const rec={date:d,wo_number:w,unit:document.getElementById('m-unit').value,repair_type:document.getElementById('m-type').value,description:desc,vendor:document.getElementById('m-shop').value,cost:document.getElementById('m-cost').value||null,odometer:document.getElementById('m-odo').value||null,status:document.getElementById('m-status').value,notes:document.getElementById('m-notes').value};if(editId){await NexusDB.Maintenance.update(editId,rec);}else{await NexusDB.Maintenance.create(rec);}closeMaintModal();await renderMaint();}
+function editMaint(id){const m=loadMaint().find(x=>x.id===id);if(!m)return;document.getElementById('maint-modal-title').textContent='EDIT WORK ORDER';document.getElementById('maint-edit-id').value=id;document.getElementById('m-date').value=m.date;document.getElementById('m-wo').value=m.wo;document.getElementById('m-unit').value=m.unit;document.getElementById('m-type').value=m.type;document.getElementById('m-desc').value=m.desc;document.getElementById('m-shop').value=m.vendor||m.shop||'';document.getElementById('m-cost').value=m.cost||'';document.getElementById('m-odo').value=m.odometer||'';document.getElementById('m-status').value=m.status;document.getElementById('m-notes').value=m.notes||'';document.getElementById('maint-modal').classList.add('open');}
+async function delMaint(id){if(confirm('Delete work order?')){await NexusDB.Maintenance.delete(id);await renderMaint();}}
 document.getElementById('maint-modal').addEventListener('click',function(e){if(e.target===this)closeMaintModal();});
-renderMaint();
+(async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); await renderMaint(); })();
 </script>
   </div>
 </div>

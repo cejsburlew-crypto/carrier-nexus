@@ -1163,6 +1163,17 @@
   const roleIndicator = document.getElementById('roleIndicator');
   const roleBadge = document.getElementById('roleBadge');
   const roleInfo = document.getElementById('roleInfo');
+  // If already authenticated, skip login
+  (async () => {
+    if (NexusDB && NexusDB.isConfigured) {
+      const session = await NexusDB.Auth.getSession();
+      if (session) { window.location.href = 'fleet-command.html'; return; }
+    } else {
+      const local = localStorage.getItem('nexus_session');
+      if (local) { window.location.href = 'fleet-command.html'; return; }
+    }
+  })();
+
   const loginBtn = document.getElementById('loginBtn');
 
   const driverEmails = ['driver', 'trucker', 'operator'];
@@ -1204,12 +1215,12 @@
     }
   });
 
-  // Form submit
+  // Form submit — Supabase auth
   const loginForm = document.getElementById('loginForm');
-  loginForm.addEventListener('submit', (e) => {
+  loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const email = emailInput.value;
+    const email = emailInput.value.trim();
     const password = pwdInput.value;
     let valid = true;
 
@@ -1234,10 +1245,26 @@
     if (!valid) return;
 
     loginBtn.classList.add('loading');
-    setTimeout(() => {
+    try {
+      if (NexusDB.isConfigured) {
+        // Real Supabase auth
+        await NexusDB.Auth.signIn(email, password);
+      } else {
+        // Dev mode: accept any credentials, store local session
+        const devSession = { email, role: 'admin', ts: Date.now() };
+        localStorage.setItem('nexus_session', JSON.stringify(devSession));
+        await new Promise(r => setTimeout(r, 800));
+      }
       loginBtn.classList.remove('loading');
       window.location.href = 'fleet-command.html';
-    }, 1400);
+    } catch (err) {
+      loginBtn.classList.remove('loading');
+      // Show error under password field
+      const errEl = document.getElementById('passwordError');
+      errEl.textContent = err.message || 'Invalid email or password';
+      errEl.classList.add('visible');
+      pwdInput.classList.add('error');
+    }
   });
 
   // Tenant selection
@@ -1270,6 +1297,9 @@
     }, 1400);
   });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
 <script src="nexus-lang.js"></script>
 </body>
 </html>

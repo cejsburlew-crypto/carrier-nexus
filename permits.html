@@ -293,12 +293,15 @@ tr:hover td{background:#f8fafc;}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
 <script>
-function loadPerms(){try{return JSON.parse(localStorage.getItem('nexus_permits')||'[]');}catch(e){return[];}}
-function savePerms(d){try{localStorage.setItem('nexus_permits',JSON.stringify(d));}catch(e){}}
-function renderPermits(){
+let _permCache = [];
+async function renderPermits(){
+  _permCache = await NexusDB.Permits.list();
   const drv=document.getElementById('pf-driver').value,st=document.getElementById('pf-state').value;
-  const all=loadPerms();
+  const all=_permCache;
   const data=all.filter(p=>(drv?p.driver===drv:true)&&(st?p.state===st:true)).sort((a,b)=>b.date.localeCompare(a.date));
   const today=new Date().toISOString().split('T')[0];
   const soon=new Date();soon.setDate(soon.getDate()+7);const soonStr=soon.toISOString().split('T')[0];
@@ -308,9 +311,9 @@ function renderPermits(){
     if(p.expires&&p.expires<today){status='badge-red';stLabel='Expired';}
     else if(p.expires&&p.expires<=soonStr){status='badge-yellow';stLabel='Expiring';}
     else if(!p.expires){status='badge-gray';stLabel='No Expiry';}
-    return `<tr><td class="mono">${p.date}</td><td class="mono">${p.permitNo}</td><td><b>${p.state}</b></td>
+    return `<tr><td class="mono">${p.date}</td><td class="mono">${p.permit_number||p.permitNo}</td><td><b>${p.state}</b></td>
     <td><span class="badge badge-purple" style="font-size:9px;">${p.type}</span></td>
-    <td>${p.driver||'—'}</td><td class="mono">${p.loadId||'—'}</td>
+    <td>${p.driver||'—'}</td><td class="mono">${p.load_ref||p.loadId||'—'}</td>
     <td style="text-align:right;font-weight:700;">${p.cost?'$'+Number(p.cost).toLocaleString('en-US',{minimumFractionDigits:2}):'—'}</td>
     <td class="mono">${p.expires||'—'}</td><td><span class="badge ${status}">${stLabel}</span></td>
     <td><button class="btn btn-sm" onclick="editPerm('${p.id}')">Edit</button> <button class="btn btn-sm" style="color:#ef4444" onclick="delPerm('${p.id}')">Del</button></td></tr>`;
@@ -323,18 +326,18 @@ function renderPermits(){
 }
 function openPermModal(){document.getElementById('perm-modal-title').textContent='ADD PERMIT';document.getElementById('perm-edit-id').value='';document.getElementById('perm-date').value=new Date().toISOString().split('T')[0];document.getElementById('perm-num').value='';document.getElementById('perm-cost').value='';document.getElementById('perm-expires').value='';document.getElementById('perm-load').value='';document.getElementById('perm-notes').value='';document.getElementById('perm-modal').classList.add('open');}
 function closePermModal(){document.getElementById('perm-modal').classList.remove('open');}
-function savePermit(){
+async function savePermit(){
   const d=document.getElementById('perm-date').value,n=document.getElementById('perm-num').value;
   if(!d||!n){alert('Date and Permit # required.');return;}
-  const data=loadPerms(),editId=document.getElementById('perm-edit-id').value;
-  const rec={id:editId||'perm-'+Date.now(),date:d,permitNo:n,state:document.getElementById('perm-state').value,type:document.getElementById('perm-type').value,driver:document.getElementById('perm-driver').value,loadId:document.getElementById('perm-load').value,cost:document.getElementById('perm-cost').value,expires:document.getElementById('perm-expires').value,notes:document.getElementById('perm-notes').value};
-  if(editId){const i=data.findIndex(e=>e.id===editId);if(i>=0)data[i]=rec;}else data.push(rec);
-  savePerms(data);closePermModal();renderPermits();
+  const editId=document.getElementById('perm-edit-id').value;
+  const rec={date:d,permit_number:n,state:document.getElementById('perm-state').value,permit_type:document.getElementById('perm-type').value,driver:document.getElementById('perm-driver').value,load_ref:document.getElementById('perm-load').value,cost:document.getElementById('perm-cost').value||null,expiry_date:document.getElementById('perm-expires').value||null,notes:document.getElementById('perm-notes').value};
+  if(editId){ await NexusDB.Permits.update(editId,rec); } else { await NexusDB.Permits.create(rec); }
+  closePermModal(); await renderPermits();
 }
-function editPerm(id){const p=loadPerms().find(x=>x.id===id);if(!p)return;document.getElementById('perm-modal-title').textContent='EDIT PERMIT';document.getElementById('perm-edit-id').value=id;document.getElementById('perm-date').value=p.date;document.getElementById('perm-num').value=p.permitNo;document.getElementById('perm-state').value=p.state;document.getElementById('perm-type').value=p.type;document.getElementById('perm-driver').value=p.driver||'';document.getElementById('perm-load').value=p.loadId||'';document.getElementById('perm-cost').value=p.cost||'';document.getElementById('perm-expires').value=p.expires||'';document.getElementById('perm-notes').value=p.notes||'';document.getElementById('perm-modal').classList.add('open');}
-function delPerm(id){if(confirm('Delete this permit?')){savePerms(loadPerms().filter(p=>p.id!==id));renderPermits();}}
+function editPerm(id){const p=loadPerms().find(x=>x.id===id);if(!p)return;document.getElementById('perm-modal-title').textContent='EDIT PERMIT';document.getElementById('perm-edit-id').value=id;document.getElementById('perm-date').value=p.date;document.getElementById('perm-num').value=p.permit_number||p.permitNo;document.getElementById('perm-state').value=p.state;document.getElementById('perm-type').value=p.type;document.getElementById('perm-driver').value=p.driver||'';document.getElementById('perm-load').value=p.load_ref||p.loadId||'';document.getElementById('perm-cost').value=p.cost||'';document.getElementById('perm-expires').value=p.expires||'';document.getElementById('perm-notes').value=p.notes||'';document.getElementById('perm-modal').classList.add('open');}
+async function delPerm(id){if(confirm('Delete this permit?')){await NexusDB.Permits.delete(id);await renderPermits();}}
 document.getElementById('perm-modal').addEventListener('click',function(e){if(e.target===this)closePermModal();});
-renderPermits();
+(async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); await renderPermits(); })();
 </script>
   </div>
 </div>

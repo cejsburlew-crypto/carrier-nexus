@@ -282,22 +282,25 @@ tr:hover td{background:#f8fafc;}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
 <script>
-function loadInv(){try{return JSON.parse(localStorage.getItem('nexus_invoices')||'[]');}catch(e){return[];}}
-function saveInv(d){try{localStorage.setItem('nexus_invoices',JSON.stringify(d));}catch(e){}}
+let _invCache = [];
 const statusBadge={Draft:'badge-gray',Sent:'badge-blue',Paid:'badge-green',Overdue:'badge-red'};
-function renderInvoices(){
+async function renderInvoices(){
+  _invCache = await NexusDB.Invoices.list();
   const sf=document.getElementById('inv-f-status').value;
-  const all=loadInv();
+  const all=_invCache;
   const today=new Date().toISOString().split('T')[0];
-  const data=all.filter(i=>sf?i.status===sf:true).sort((a,b)=>b.date.localeCompare(a.date));
+  const data=all.filter(i=>sf?i.status===sf:true).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
   const tbody=document.getElementById('invoices-tbody');
   tbody.innerHTML=data.length?data.map(i=>`<tr>
-    <td class="mono" style="font-weight:700;">${i.invoiceNo}</td>
-    <td class="mono">${i.date}</td><td><b>${i.broker}</b></td><td>${i.driver||'—'}</td>
-    <td class="mono" style="font-size:11px;">${i.loads||'—'}</td>
+    <td class="mono" style="font-weight:700;">${i.invoice_number||i.invoiceNo}</td>
+    <td class="mono">${i.date}</td><td><b>${i.customer||i.broker}</b></td><td>${i.driver||'—'}</td>
+    <td class="mono" style="font-size:11px;">${i.load_ref||i.loads||'—'}</td>
     <td style="text-align:right;font-weight:700;">$${Number(i.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-    <td class="mono">${i.due||'—'}</td>
+    <td class="mono">${i.due_date||i.due||'—'}</td>
     <td><span class="badge ${statusBadge[i.status]||'badge-gray'}">${i.status}</span></td>
     <td><button class="btn btn-sm" onclick="editInv('${i.id}')">Edit</button>
         <button class="btn btn-sm" style="color:#ef4444" onclick="delInv('${i.id}')">Del</button></td></tr>`).join('')
@@ -313,13 +316,13 @@ function renderInvoices(){
   document.getElementById('kpi-pending').textContent=fmt(pend);
   document.getElementById('kpi-overdue').textContent=fmt(over);
 }
-function openInvModal(){document.getElementById('inv-modal-title').textContent='CREATE INVOICE';document.getElementById('inv-edit-id').value='';const d=new Date();document.getElementById('inv-num').value='INV-'+d.getFullYear()+'-'+(loadInv().length+1).toString().padStart(3,'0');document.getElementById('inv-date').value=d.toISOString().split('T')[0];document.getElementById('inv-broker').value='';document.getElementById('inv-amount').value='';document.getElementById('inv-loads').value='';document.getElementById('inv-notes').value='';document.getElementById('inv-status').value='Draft';document.getElementById('inv-modal').classList.add('open');}
+async function openInvModal(){document.getElementById('inv-modal-title').textContent='CREATE INVOICE';document.getElementById('inv-edit-id').value='';const d=new Date();document.getElementById('inv-num').value=await NexusDB.Invoices.nextNumber();document.getElementById('inv-date').value=d.toISOString().split('T')[0];document.getElementById('inv-broker').value='';document.getElementById('inv-amount').value='';document.getElementById('inv-loads').value='';document.getElementById('inv-notes').value='';document.getElementById('inv-status').value='Draft';document.getElementById('inv-modal').classList.add('open');}
 function closeInvModal(){document.getElementById('inv-modal').classList.remove('open');}
-function saveInvoice(){const n=document.getElementById('inv-num').value,dt=document.getElementById('inv-date').value,br=document.getElementById('inv-broker').value,am=document.getElementById('inv-amount').value;if(!n||!dt||!br||!am){alert('Invoice #, Date, Broker and Amount are required.');return;}const data=loadInv(),editId=document.getElementById('inv-edit-id').value;const rec={id:editId||'inv-'+Date.now(),invoiceNo:n,date:dt,broker:br,driver:document.getElementById('inv-driver').value,amount:parseFloat(am),loads:document.getElementById('inv-loads').value,due:document.getElementById('inv-due').value,status:document.getElementById('inv-status').value,notes:document.getElementById('inv-notes').value};if(editId){const i=data.findIndex(e=>e.id===editId);if(i>=0)data[i]=rec;}else data.push(rec);saveInv(data);closeInvModal();renderInvoices();}
-function editInv(id){const i=loadInv().find(x=>x.id===id);if(!i)return;document.getElementById('inv-modal-title').textContent='EDIT INVOICE';document.getElementById('inv-edit-id').value=id;document.getElementById('inv-num').value=i.invoiceNo;document.getElementById('inv-date').value=i.date;document.getElementById('inv-broker').value=i.broker;document.getElementById('inv-driver').value=i.driver||'';document.getElementById('inv-amount').value=i.amount;document.getElementById('inv-loads').value=i.loads||'';document.getElementById('inv-due').value=i.due||'';document.getElementById('inv-status').value=i.status;document.getElementById('inv-notes').value=i.notes||'';document.getElementById('inv-modal').classList.add('open');}
-function delInv(id){if(confirm('Delete invoice?')){saveInv(loadInv().filter(i=>i.id!==id));renderInvoices();}}
+async function saveInvoice(){const n=document.getElementById('inv-num').value,dt=document.getElementById('inv-date').value,br=document.getElementById('inv-broker').value,am=document.getElementById('inv-amount').value;if(!n||!dt||!br||!am){alert('Invoice #, Date, Broker and Amount are required.');return;}const editId=document.getElementById('inv-edit-id').value;const rec={invoice_number:n,issue_date:dt,customer:br,driver:document.getElementById('inv-driver').value,amount:parseFloat(am),load_ref:document.getElementById('inv-loads').value,due_date:document.getElementById('inv-due').value||null,status:document.getElementById('inv-status').value,notes:document.getElementById('inv-notes').value};if(editId){await NexusDB.Invoices.update(editId,rec);}else{await NexusDB.Invoices.create(rec);}closeInvModal();await renderInvoices();}
+function editInv(id){const i=loadInv().find(x=>x.id===id);if(!i)return;document.getElementById('inv-modal-title').textContent='EDIT INVOICE';document.getElementById('inv-edit-id').value=id;document.getElementById('inv-num').value=i.invoice_number||i.invoiceNo;document.getElementById('inv-date').value=i.date;document.getElementById('inv-broker').value=i.customer||i.broker;document.getElementById('inv-driver').value=i.driver||'';document.getElementById('inv-amount').value=i.amount;document.getElementById('inv-loads').value=i.loads||'';document.getElementById('inv-due').value=i.due||'';document.getElementById('inv-status').value=i.status;document.getElementById('inv-notes').value=i.notes||'';document.getElementById('inv-modal').classList.add('open');}
+async function delInv(id){if(confirm('Delete invoice?')){await NexusDB.Invoices.delete(id);await renderInvoices();}}
 document.getElementById('inv-modal').addEventListener('click',function(e){if(e.target===this)closeInvModal();});
-renderInvoices();
+(async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); await renderInvoices(); })();
 </script>
   </div>
 </div>

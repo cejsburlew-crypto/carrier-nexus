@@ -1138,5 +1138,13 @@ body {
   </a>
 </nav>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<script>
+(async()=>{
+  if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
+})();
+</script>
 </body>
 </html>
