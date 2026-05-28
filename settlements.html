@@ -101,7 +101,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .btn-finalize{background:var(--orange);color:#fff;border:none;padding:5px 12px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;}
 .btn-finalize:hover{background:#d05508;}
 .btn-view{background:#1e3a5f;color:#ffffff;border:none;padding:5px 12px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;}
-.btn-view:hover{background:#2e6da4;}
+.btn-view:hover{background:#2e6da4;}        .btn-revert{background:#64748b;color:#ffffff;border:none;padding:5px 12px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;}        .btn-revert:hover{background:#475569;}
 
 /* EXPAND PANEL */
 .expand-row td{padding:0!important;background:var(--black)!important;}
@@ -713,7 +713,7 @@ function renderTable(){
       <td class="num ${s.expenses>0?'neg':'zero'}">${s.expenses>0?'(-$'+s.expenses.toLocaleString()+')':'—'}</td>
       <td class="num ${netClass}">${fmt(s.net_pay)}</td>
       <td><span class="badge badge-${s.status}">${s.status}</span></td>
-      <td onclick="event.stopPropagation()"><div style="display:flex;gap:5px;flex-wrap:wrap;">${s.status==='draft'?`<button class="btn-finalize" onclick="finalizeRow('${s.id}')">Finalize</button>`:''}<button class="btn-view" onclick="viewPDF('${s.id}')">View PDF</button></div></td>
+      <td onclick="event.stopPropagation()"><div style="display:flex;gap:5px;flex-wrap:wrap;">${s.status==='draft'?`<button class="btn-finalize" onclick="finalizeRow('${s.id}')">Finalize</button>`:`<button class="btn-revert" onclick="revertRow('${s.id}')">Revert</button>`}<button class="btn-view" onclick="viewPDF('${s.id}')">View PDF</button></div></td>
     `;
     tbody.appendChild(tr);
 
@@ -814,6 +814,11 @@ function finalizeRow(id){
   const s = settlements.find(x=>x.id===id);
   if(s){ s.status='approved'; applyFilters(); }
 }
+          function revertRow(id){
+                      if(!confirm('Revert this settlement back to draft?')) return;
+                      const s = settlements.find(x=>x.id===id);
+                      if(s){ s.status='draft'; applyFilters(); }
+          }
 function viewPDF(id){
   const s = settlements.find(x=>x.id===id);
   if(!s) return;
