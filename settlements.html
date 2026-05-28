@@ -650,10 +650,7 @@ let filteredData = [...settlements]; try { const __cnOver = JSON.parse(localStor
 function populateWeeks(){
   const sel = document.getElementById('f-week');
   const seen = new Set();
-  settlements.forEach(s=>{
-    const label = fmtDate(s.start)+' – '+fmtDate(s.end);
-    if(!seen.has(label)){ seen.add(label); const o=document.createElement('option'); o.value=s.start; o.textContent=label; sel.appendChild(o); }
-  });
+  const __cnW=[];settlements.forEach(s=>{const label=fmtDate(s.start)+' – '+fmtDate(s.end);if(!seen.has(label)){seen.add(label);__cnW.push({start:s.start,label});}});__cnW.sort((a,b)=>a.start.localeCompare(b.start));__cnW.forEach(w=>{const o=document.createElement('option');o.value=w.start;o.textContent=w.label;sel.appendChild(o);});
 }
 
 function applyFilters(){
