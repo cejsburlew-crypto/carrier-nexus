@@ -20,9 +20,9 @@
   --text-muted: #64748b;
   --text-mid: #475569;
   --border: #e2e8f0;
-  --red: #ef4444;
-  --green: #22c55e;
-  --yellow: #fbbf24;
+  --red: #b91c1c;
+  --green: #15803d;
+  --yellow: #a16207;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
@@ -641,7 +641,7 @@ const driverColors = {
   "Yosviel Pinera":"#c084fc"
 };
 
-function fmt(n){ if(n===0) return '—'; return (n<0?'-':'')+'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmt(n){ if(n===0) return '—'; const a='$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); return n<0?'(-'+a+')':a; }
 function fmtDate(d){ const dt=new Date(d+'T00:00:00'); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}); }
 
 let expandedId = null;
@@ -708,9 +708,9 @@ function renderTable(){
       <td style="font-size:12px;color:#334155;">${fmtDate(s.start)} – ${fmtDate(s.end)}</td>
       <td class="num" style="color:#1e3a5f;font-weight:700">${s.loads}</td>
       <td class="num pos">$${s.total_adds.toLocaleString()}</td>
-      <td class="num ${s.overhead>0?'neg':'zero'}">${s.overhead>0?'-$'+s.overhead.toLocaleString():'—'}</td>
-      <td class="num ${s.permits>0?'neg':'zero'}">${s.permits>0?'-$'+s.permits.toLocaleString('en-US',{minimumFractionDigits:2}):'—'}</td>
-      <td class="num ${s.expenses>0?'neg':'zero'}">${s.expenses>0?'-$'+s.expenses.toLocaleString():'—'}</td>
+      <td class="num ${s.overhead>0?'neg':'zero'}">${s.overhead>0?'(-$'+s.overhead.toLocaleString()+')':'—'}</td>
+      <td class="num ${s.permits>0?'neg':'zero'}">${s.permits>0?'(-$'+s.permits.toLocaleString('en-US',{minimumFractionDigits:2})+')':'—'}</td>
+      <td class="num ${s.expenses>0?'neg':'zero'}">${s.expenses>0?'(-$'+s.expenses.toLocaleString()+')':'—'}</td>
       <td class="num ${netClass}">${fmt(s.net_pay)}</td>
       <td><span class="badge badge-${s.status}">${s.status}</span></td>
       <td onclick="event.stopPropagation()"><div style="display:flex;gap:5px;flex-wrap:wrap;">${s.status==='draft'?`<button class="btn-finalize" onclick="finalizeRow('${s.id}')">Finalize</button>`:''}<button class="btn-view" onclick="viewPDF('${s.id}')">View PDF</button></div></td>
@@ -794,9 +794,9 @@ function renderTable(){
   // Totals
   document.getElementById('tot-loads').textContent = totLoads;
   document.getElementById('tot-gross').textContent = '$'+totGross.toLocaleString();
-  document.getElementById('tot-overhead').textContent = totOH>0?'-$'+totOH.toLocaleString():'—';
-  document.getElementById('tot-permits').textContent = totPerm>0?'-$'+totPerm.toLocaleString('en-US',{minimumFractionDigits:2}):'—';
-  document.getElementById('tot-expenses').textContent = totExp>0?'-$'+totExp.toLocaleString():'—';
+  document.getElementById('tot-overhead').textContent = totOH>0?'(-$'+totOH.toLocaleString()+')':'—';
+  document.getElementById('tot-permits').textContent = totPerm>0?'(-$'+totPerm.toLocaleString('en-US',{minimumFractionDigits:2})+')':'—';
+  document.getElementById('tot-expenses').textContent = totExp>0?'(-$'+totExp.toLocaleString()+')':'—';
   const tn = document.getElementById('tot-net');
   tn.textContent = fmt(totNet);
   tn.className='num '+(totNet>0?'pos':totNet<0?'neg':'zero');
@@ -830,7 +830,7 @@ function viewPDF(id){
   const fmtMoney = (n,parens=false) => {
     if(n===0||n===null||n===undefined) return '$ -';
     const abs = Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    if(parens && n<0) return `$ (${abs})`;
+    if(n<0) return `(-$${abs})`;
     return `$ ${abs}`;
   };
 
