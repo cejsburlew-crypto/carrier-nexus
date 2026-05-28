@@ -2,7 +2,7 @@
 
 > **Status:** Living design document. This is the target architecture, not the current implementation.
 > **Audience:** Future developers, future Claude sessions, and the founder.
-> **Last updated:** 2026-05-27
+> **Last updated:** 2026-05-27 · platform + accounting decisions locked
 
 ---
 
@@ -360,6 +360,74 @@ Every finalized settlement PDF must contain these seven sections, in this order.
 
 ---
 
+## 7.5 QuickBooks Online export mapping
+
+When a settlement is finalized, the system produces a QBO-ready export package. Each row in the canonical 7-section settlement maps to a specific QBO object and account type. The mapping below is the contract Phase 1 must honor.
+
+### Vendor / Customer entities
+
+- **Each Driver** → QBO **Vendor** (lease-on owner-operators are paid as vendors, not employees — confirm with CPA per state).
+- **Each Broker / Customer** → QBO **Customer**.
+- **Each fuel-card provider, repair shop, permit issuer, insurance carrier** → QBO **Vendor**.
+- **Each Asset (truck, trailer, jeep, booster)** → QBO **Fixed Asset** (if company-owned) or referenced via custom field on related transactions (if owner-operator-owned).
+
+### Section 1 — Revenue → QBO Customer Invoices
+
+- Linehaul, Fuel Surcharge, Detention, Layover, Escort Recovery, Permit Recovery, TONU → separate line items on the broker **Invoice**, each tied to a QBO Income Item.
+- Income Items recommended: `Linehaul Revenue`, `Fuel Surcharge Revenue`, `Accessorial Revenue`, `Permit Recovery Revenue`, `Escort Recovery Revenue`.
+
+### Section 2 — Carrier Fees → QBO Bills / Journal Entries
+
+- **Dispatch %** → NOT a separate transaction in QBO; it is a reduction of what the driver-vendor receives. Modeled as a **Journal Entry** crediting `Dispatch Fee Income` (carrier) and debiting `Driver Payable` (vendor balance).
+- **Factoring fee** → QBO **Bill** to the factoring company, expense account `Factoring Expense`.
+- **Trailer rental, ELD fees, occupational accident, technology fees** → **Bill** entries against the appropriate expense accounts.
+- **Escrow contribution** → **Other Current Liability** account `Driver Escrow Held` — NOT an expense.
+
+### Section 3 — Permits & Compliance → QBO Bills (or Pass-Through)
+
+- Permits paid by the carrier and recovered from the broker: route through a `Permit Recovery Clearing` account so revenue (Section 1) and cost (Section 3) net to zero or to the carrier's actual margin.
+- Permits paid by the carrier and absorbed: **Bill** against `Permits & Compliance` expense account.
+
+### Section 4 — Operating Expenses → QBO Bills
+
+- Each expense line → **Bill** entry against its specific expense account: `Fuel`, `DEF`, `Repairs & Maintenance`, `Tires`, `Hotels & Lodging`, `Tolls`, `Parking`, `Equipment Rental Income` (if carrier-billed) or `Equipment Rental Expense` (if carrier-paid), `Securement Supplies`, `Escort Services`.
+- Vendor reference + receipt attachment + (for repairs) repair order number must flow through.
+
+### Section 5 — Personal Driver Advances → QBO Other Current Asset (NEVER Expense)
+
+- **Critical:** Personal advances are NOT expenses of the carrier. They are **loans to the driver** that get netted against the final settlement.
+- QBO account: `Driver Advances Receivable — [Driver Name]` (Other Current Asset, one sub-account per driver).
+- When the carrier pays out the advance: debit `Driver Advances Receivable`, credit `Bank`.
+- When the advance is deducted from the settlement: debit `Driver Payable`, credit `Driver Advances Receivable`.
+- The P&L is never touched. This is the rule that keeps personal spending from polluting the carrier's books.
+
+### Section 6 — Prior Balance Reconciliation → QBO Journal Entries
+
+- Beginning balance reads from the previous period's `Driver Payable` or `Driver Advances Receivable` ending balance.
+- Any adjustments require a documented reason code and produce a Journal Entry with `Adjustment Reason` in the memo field.
+
+### Section 7 — Final Settlement → QBO Bill or Vendor Credit
+
+- If owed to driver: QBO **Bill** to the driver-vendor for the net amount, paid via the carrier's normal AP workflow.
+- If owed to carrier: QBO **Vendor Credit** against the driver-vendor, applied to the next settlement.
+- The immutable settlement PDF (§5) is attached to the QBO transaction.
+
+### Export mechanism
+
+- Phase 1: nightly batch export via QBO API (one-way: CN → QBO). OAuth 2.0 with refresh tokens. Sandbox environment for development.
+- Phase 4: two-way sync (pull paid status from QBO back to CN invoices).
+- All exports produce an audit log entry per object pushed. Failed pushes are queued for retry, not silently dropped.
+
+### Chart of Accounts (minimum required in QBO before go-live)
+
+- **Income:** Linehaul Revenue, Fuel Surcharge Revenue, Accessorial Revenue, Permit Recovery Revenue, Escort Recovery Revenue, Dispatch Fee Income, Equipment Rental Income
+- **Expense:** Fuel, DEF, Repairs & Maintenance, Tires, Hotels & Lodging, Tolls, Parking, Permits & Compliance, Securement Supplies, Escort Services, Factoring Expense, Insurance, ELD Fees, Occupational Accident, Technology Fees, Equipment Rental Expense
+- **Other Current Asset:** Driver Advances Receivable (with per-driver sub-accounts), Permit Recovery Clearing
+- **Other Current Liability:** Driver Escrow Held, Driver Payable (with per-driver sub-accounts)
+- **Fixed Asset:** Trucks, Trailers, RGNs, Jeeps, Boosters, Escort Vehicles
+
+---
+
 ## 8. What this system is NOT
 
 - Not an accounting platform. It exports to QuickBooks / Wave / Xero.
@@ -370,10 +438,10 @@ Every finalized settlement PDF must contain these seven sections, in this order.
 
 ---
 
-## 9. Open questions (for the founder)
+## 9. Locked decisions & remaining open questions
 
-1. **Accounting software target.** QuickBooks Online? Wave? Xero? Determines the export format.
-2. **Database / platform choice for Phase 1.** Airtable + scripts (fastest, limited) vs. Supabase / Firebase (mid) vs. custom Postgres (most flexible).
+1. **✅ LOCKED — Accounting target: QuickBooks Online.** Phase 1 data shapes must export cleanly to QBO. Personal Driver Advances map to a QBO **Other Current Asset / Employee Loan** account — never an Expense account — so they do not pollute the P&L. See §7.5 for the full mapping.
+2. **✅ LOCKED — Platform: custom Postgres backend.** Recommended host for Phase 1: **Supabase** (managed Postgres + auth + object storage for PDF archives + row-level security ready for multi-tenant). The SPEC.md schema drops in as raw SQL. **Operational note:** This stack still requires a developer to implement Phase 1; managed hosting is mandatory — do not self-host. (Alternatives considered: Airtable + scripts (fastest, limited) vs. Supabase / Firebase (mid) vs. custom Postgres [chosen]).
 3. **Authentication.** Google SSO only? Email + password? Magic link?
 4. **Receipt threshold.** What dollar amount requires a receipt to be attached?
 5. **Dispatch percentage basis.** Calculated on gross linehaul, or on gross revenue including fuel surcharge?
