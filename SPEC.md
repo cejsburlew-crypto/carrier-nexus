@@ -2,7 +2,7 @@
 
 > **Status:** Living design document. This is the target architecture, not the current implementation.
 > **Audience:** Future developers, future Claude sessions, and the founder.
-> **Last updated:** 2026-05-27 · platform + accounting decisions locked
+> **Last updated:** 2026-05-27 · all founder decisions locked
 
 ---
 
@@ -63,6 +63,46 @@ The system must **not** be modeled as generic dry-van trucking.
 
 ---
 
+## 2.5 User roles & document flow
+
+Four roles. Each role has a defined scope, and the flow of a load through the system follows a fixed sequence: **Dispatcher → Driver → Dispatcher → Accountant → Owner.**
+
+### Roles
+
+- **Dispatcher.** Creates loads, assigns drivers and equipment, confirms loads are complete and that paperwork is uploaded. Cannot enter expenses or advances. Cannot finalize settlements.
+- **Driver.** Reads their own loads. Uploads PODs / BOLs / receipts via Driver Command (mobile). Reports repairs, blowouts, fuel events. Cannot edit settlement amounts. Cannot view other drivers' data.
+- **Accountant.** Reads everything. Builds draft settlements from the documents Dispatch confirmed. Classifies each line as Revenue / Carrier Fee / Permit / Operating / Personal Advance. Runs prior-balance reconciliation. Produces the draft PDF. **Cannot finalize.** **Cannot authorize personal advances.**
+- **Owner.** Reads and writes everything. **Only role that can:** finalize a settlement (draft → finalized), authorize a personal advance, issue a vendor credit, override a reconciliation mismatch, or void/supersede a finalized settlement.
+
+### Document flow per load
+
+1. **Dispatcher** creates the load, attaches the rate confirmation, assigns the driver and the asset combination (tractor + trailer + jeep + booster + escort as applicable).
+2. **Driver** runs the load. Via Driver Command they upload: POD/BOL, fuel receipts, hotel receipts, toll receipts, parking, repair invoices, photos of any blowouts or damage. Each upload tags the load_id automatically.
+3. **Dispatcher** confirms the load is complete: paperwork is in, mileage is in, the load can be invoiced. Status flips to `delivered` then `billed`.
+4. **Accountant** opens the settlement for the period, sees every confirmed load and every uploaded document, and builds the draft settlement: classifies each line, runs reconciliation, generates the draft PDF. Settlement status is `draft`.
+5. **Owner** reviews the draft, authorizes any personal advances, and clicks Finalize. Status flips to `finalized`, the PDF is archived immutably, and the QBO export package is queued.
+
+### Audit log implications
+
+Every state transition (load `dispatched` → `delivered` → `billed`, settlement `draft` → `finalized`) writes an audit log entry with the actor (role + user_id), the before state, and the after state. A settlement that was finalized by anyone other than the Owner role is an integrity violation and must be flagged by the system.
+
+---
+
+## 2.6 Operating principle: AI is an assistant, not the system of record
+
+During design and demo phases (the current static site), an AI assistant (Claude or otherwise) may be used to draft settlement numbers, classify lines, and generate proposals — effectively standing in for the Accountant role. This is acceptable **only while no real money is moving.**
+
+Once Phase 1 goes live with real settlements paying real drivers:
+
+- The **Accountant role must be a human** (in-house bookkeeper, fractional bookkeeper, or the carrier's CPA).
+- AI may assist the human Accountant (e.g. extracting line items from receipts, suggesting classifications, flagging anomalies) but the human is the system of record and is professionally accountable.
+- AI must never finalize a settlement. AI must never authorize a personal advance. These are Owner-only actions performed by the human Owner.
+- The audit log records the human actor, not the AI tool. If AI assisted, that fact is noted in the audit memo, but the human's user_id is the actor.
+
+Rationale: AI sessions are not continuous (no memory between sessions), are not licensed to practice accounting, and cannot be held professionally accountable. A carrier's books must be owned by a human who can be subpoenaed and who carries E&O insurance.
+
+---
+
 ## 3. Entities (data model)
 
 Twelve core entities. Each gets its own table / collection in the production system.
@@ -95,7 +135,8 @@ Twelve core entities. Each gets its own table / collection in the production sys
 - `permit_classification` (text)
 - `weekly_rental_rate` (decimal)
 - `monthly_rental_rate` (decimal)
-- `rental_billing_method`: `per_week_assigned | per_day_assigned | per_load | none`
+- `rental_billing_method`: `monthly` (locked default — see §9 #6); `weekly_rental_rate` is derived as `monthly_rental_rate / 4.333` for display only
+- `rental_payment_plan` (per asset assignment): `1_payment | 2_payments | 3_payments` per calendar month
 - `status`: `active | in_maintenance | retired | sold`
 
 ### 3.3 LOADS
@@ -302,7 +343,7 @@ Every finalized settlement PDF must contain these seven sections, in this order.
 
 ## 5. Internal controls
 
-- All operating deductions over a configurable threshold (default $100) require an attached receipt / invoice.
+- Every operating expense and every personal advance requires an attached receipt or invoice. There is no minimum amount — $0.01 requires a receipt. The UI must reject save attempts that have no attachment.
 - All repair entries require a repair order number.
 - All personal advances require an authorizer.
 - Fuel charges should reconcile against fuel card exports (Tank, WEX, EFS, Comdata) within a tolerance; mismatches flagged.
@@ -438,16 +479,16 @@ When a settlement is finalized, the system produces a QBO-ready export package. 
 
 ---
 
-## 9. Locked decisions & remaining open questions
+## 9. Locked decisions (all founder questions resolved 2026-05-27)
 
 1. **✅ LOCKED — Accounting target: QuickBooks Online.** Phase 1 data shapes must export cleanly to QBO. Personal Driver Advances map to a QBO **Other Current Asset / Employee Loan** account — never an Expense account — so they do not pollute the P&L. See §7.5 for the full mapping.
 2. **✅ LOCKED — Platform: custom Postgres backend.** Recommended host for Phase 1: **Supabase** (managed Postgres + auth + object storage for PDF archives + row-level security ready for multi-tenant). The SPEC.md schema drops in as raw SQL. **Operational note:** This stack still requires a developer to implement Phase 1; managed hosting is mandatory — do not self-host. (Alternatives considered: Airtable + scripts (fastest, limited) vs. Supabase / Firebase (mid) vs. custom Postgres [chosen]).
-3. **Authentication.** Google SSO only? Email + password? Magic link?
-4. **Receipt threshold.** What dollar amount requires a receipt to be attached?
-5. **Dispatch percentage basis.** Calculated on gross linehaul, or on gross revenue including fuel surcharge?
-6. **Equipment rental billing method default.** Weekly while assigned? Daily while assigned? Per load?
-7. **Hosting / region.** US only? Specific state for data residency?
-8. **Who is allowed to finalize a settlement?** Owner only? Bookkeeper? Defines the roles table.
+3. **✅ LOCKED — Authentication: Google SSO only.** Confidence: low — may need to add email+password fallback if a driver doesn't have a Google account. Revisit if it blocks onboarding.
+4. **✅ LOCKED — Receipt threshold: $0.00 (every transaction).** Every operating expense and every personal advance requires an attached receipt/invoice regardless of amount. There is no minimum. The UI must reject save attempts that have no attachment.
+5. **✅ LOCKED — Dispatch %: applied to gross linehaul only.** Fuel surcharge, detention, layover, escort recovery, permit recovery, TONU and other accessorials are NOT subject to dispatch %. The settlement display must show the calculation basis explicitly on the dispatch fee line.
+6. **✅ LOCKED — Equipment rental: monthly, payable in 1, 2, or 3 installments.** `monthly_rental_rate` is the source-of-truth field on each asset. The driver may pay the monthly rent in 1 lump, 2 installments, or 3 installments per calendar month — selectable per asset assignment via a `rental_payment_plan` field. Each installment posts as its own line under §4 Operating Expenses with a label like `Equipment Rental — RGN-07 (installment 2 of 3)`.
+7. **✅ LOCKED — Hosting region: US only.** Supabase US region for Phase 1. No data residency in EU/CA/MX. PDF archives and document storage also US-region. Driver and broker data is US-jurisdiction only.
+8. **✅ LOCKED — Settlement finalization: Owner role only.** The Accountant role prepares the draft settlement and runs reconciliation. Only the Owner role can flip the status from `draft` to `finalized` and authorize payment. Personal advance authorization (§3.6 `authorized_by`) is also Owner-only — Accountant cannot self-authorize advances. See §2.5 for the full role flow.
 
 ---
 
