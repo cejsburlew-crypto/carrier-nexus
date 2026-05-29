@@ -1250,10 +1250,20 @@
         // Real Supabase auth
         await NexusDB.Auth.signIn(email, password);
       } else {
-        // Dev mode: accept any credentials, store local session
-        const devSession = { email, role: 'admin', ts: Date.now() };
-        localStorage.setItem('nexus_session', JSON.stringify(devSession));
-        await new Promise(r => setTimeout(r, 800));
+        // Local auth: validate against NEXUS_LOCAL_USERS (SHA-256 hashed passwords)
+        const users = window.NEXUS_LOCAL_USERS || [];
+        const msgBuf = new TextEncoder().encode(password);
+        const hashBuf = await crypto.subtle.digest('SHA-256', msgBuf);
+        const hash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('');
+        const match = users.find(u =>
+          u.email.toLowerCase() === email.toLowerCase() &&
+          u.passwordHash === hash &&
+          u.active !== false
+        );
+        if (!match) throw new Error('Invalid email or password');
+        const localSession = { email: match.email, role: match.role, name: match.name || 'User', ts: Date.now() };
+        localStorage.setItem('nexus_session', JSON.stringify(localSession));
+        await new Promise(r => setTimeout(r, 400));
       }
       loginBtn.classList.remove('loading');
       window.location.href = 'fleet-command.html';
