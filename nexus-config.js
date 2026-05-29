@@ -1,19 +1,19 @@
 // ============================================================
-// CARRIER NEXUS â CONFIG  (nexus-config.js)
+// CARRIER NEXUS ??? CONFIG  (nexus-config.js)
 //
-// SUPABASE (optional â leave placeholder to use local auth):
+// SUPABASE (optional ??? leave placeholder to use local auth):
 // 1. Create a project at https://supabase.com
-// 2. Go to Project Settings â API
-// 3. Copy Project URL â NEXUS_SUPABASE_URL
-// 4. Copy anon/public key â NEXUS_SUPABASE_KEY
+// 2. Go to Project Settings ??? API
+// 3. Copy Project URL ??? NEXUS_SUPABASE_URL
+// 4. Copy anon/public key ??? NEXUS_SUPABASE_KEY
 // ============================================================
 
-window.NEXUS_SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-window.NEXUS_SUPABASE_KEY = 'YOUR_ANON_KEY';
+window.NEXUS_SUPABASE_URL = '';
+window.NEXUS_SUPABASE_KEY = '';
 
 // ============================================================
 // LOCAL USER STORE  (used when Supabase is not configured)
-// Passwords are stored as SHA-256 hashes â NEVER plaintext.
+// Passwords are stored as SHA-256 hashes ??? NEVER plaintext.
 // Manage users via Admin > Users in the app.
 // ============================================================
 window.NEXUS_LOCAL_USERS = (function () {
