@@ -1167,10 +1167,10 @@
   (async () => {
     if (NexusDB && NexusDB.isConfigured) {
       const session = await NexusDB.Auth.getSession();
-      if (session) { window.location.href = 'fleet-command.html'; return; }
+      if (session) { const r=session.user?.user_metadata?.role||'staff'; window.location.href = r==='driver'?'driver-portal.html':'fleet-command.html'; return; }
     } else {
       const local = localStorage.getItem('nexus_session');
-      if (local) { window.location.href = 'fleet-command.html'; return; }
+      if (local) { const r=JSON.parse(local).role||'staff'; window.location.href = r==='driver'?'driver-portal.html':'fleet-command.html'; return; }
     }
   })();
 
@@ -1266,7 +1266,7 @@
         await new Promise(r => setTimeout(r, 400));
       }
       loginBtn.classList.remove('loading');
-      window.location.href = 'fleet-command.html';
+      window.location.href = (match.role === 'driver') ? 'driver-portal.html' : 'fleet-command.html';
     } catch (err) {
       loginBtn.classList.remove('loading');
       // Show error under password field
