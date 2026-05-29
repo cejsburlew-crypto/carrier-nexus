@@ -192,7 +192,7 @@ body {
 }
 .badge-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
 .badge-gray { background: rgba(107,122,153,0.18); color: var(--text-mid); border: 1px solid rgba(107,122,153,0.25); }
-.badge-blue { background: rgba(46,109,164,0.18); color: var(--ice); border: 1px solid rgba(46,109,164,0.3); }
+.badge-blue { background: rgba(46,109,164,0.18); color: #1e3a6e; border: 1px solid rgba(46,109,164,0.3); }
 .badge-orange { background: rgba(232,100,10,0.18); color: var(--orange-bright); border: 1px solid rgba(232,100,10,0.3); }
 
 /* ── FILTER BAR ── */
@@ -337,7 +337,7 @@ body {
   color: var(--white-pure);
   line-height: 1;
 }
-.stat-block-value.revenue { color: var(--ice); }
+.stat-block-value.revenue { color: #1e56a4; }
 .stat-block-value.na { color: var(--text-muted); font-weight: 400; font-size: 14px; }
 .driver-card-actions {
   padding: 12px 14px;
@@ -575,7 +575,7 @@ body {
 .alert-value.red { color: var(--red); }
 .alert-value.yellow { color: var(--yellow); }
 .alert-value.green { color: var(--green); }
-.alert-value.ice { color: var(--ice); }
+.alert-value.ice { color: #1e3a6e; }
 .compliance-section {
   padding: 10px 16px 12px;
   border-bottom: 1px solid var(--border);
@@ -1023,7 +1023,7 @@ body {
       </div>
       <div class="footer-stat">
         <div class="footer-stat-label">Total Settlements Paid</div>
-        <div class="footer-stat-value" style="color:var(--ice);">$816K+</div>
+        <div class="footer-stat-value" style="color:#1e3a6e;">$816K+</div>
       </div>
     </div>
 
@@ -1224,8 +1224,8 @@ function renderDriverCards(filter) {
       violationRows +
       '<div class="driver-card-actions">' +
         '<button class="btn-driver-action settle" data-i18n="SETTLEMENTS" onclick="window.location.href=\'settlements.html\'">SETTLEMENTS</button>' +
-        '<button class="btn-driver-action" data-i18n="CONTACT" onclick="openContactModal(\'' + d.id + '\')">CONTACT</button>' +
-        '<button class="btn-driver-action" data-i18n="DOCUMENTS" onclick="openDriverDocs(\'' + d.id + '\')">DOCUMENTS</button>' +
+        '<button class="btn-driver-action" data-i18n="CONTACT" onclick="openContactModal(\''+ d.id +'\')">CONTACT</button>' +
+        '<button class="btn-driver-action" data-i18n="DOCUMENTS" onclick="openDriverDocs(\''+ d.id +'\')">DOCUMENTS</button>' +
         '<button class="btn-edit-compliance' + (hasStoredData ? ' has-stored' : '') + '" onclick="openComplianceModal(\''+d.id+'\')">' +
           (hasStoredData ? '✓ EDIT' : '✏️ ENTER') +
         '</button>' +
@@ -1248,15 +1248,6 @@ function filterDrivers(filter, btn) {
 
 // ─── Initialize ────────────────────────────────────────────────────────────
 renderComplianceAlert();
-function openContactModal(driverId) {
-  const d = (window.NEXUS && NEXUS.drivers || []).find(x => x.id === driverId);
-  if (!d) return;
-  alert('CONTACT\n\n' + (d.name||driverId) + '\nPhone: ' + (d.phone||'Not on file') + '\nEmail: ' + (d.email||'Not on file'));
-}
-function openDriverDocs(driverId) {
-  window.location.href = 'documents.html?driver=' + encodeURIComponent(driverId);
-}
-
 // Auth guard + NexusDB driver sync
 (async () => {
   if (typeof NexusDB !== 'undefined') {

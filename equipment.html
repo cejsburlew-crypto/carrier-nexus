@@ -228,7 +228,7 @@ body {
   text-transform: uppercase;
 }
 .badge-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
-.badge-blue { background: rgba(46,109,164,0.18); color: var(--ice); border: 1px solid rgba(46,109,164,0.3); }
+.badge-blue { background: rgba(46,109,164,0.18); color: #1e3a6e; border: 1px solid rgba(46,109,164,0.3); }
 .badge-orange { background: rgba(232,100,10,0.18); color: var(--orange-bright); border: 1px solid rgba(232,100,10,0.3); }
 .badge-gray { background: rgba(107,122,153,0.18); color: var(--text-mid); border: 1px solid rgba(107,122,153,0.25); }
 .badge-red { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
@@ -308,7 +308,7 @@ body {
   padding: 3px 9px;
 }
 .truck-driver-badge .label { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--text-muted); letter-spacing: 1px; }
-.truck-driver-badge .value { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 12px; color: var(--ice); }
+.truck-driver-badge .value { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 12px; color: #0f172a; }
 .truck-card-body {
   padding: 16px 20px;
 }
@@ -765,7 +765,7 @@ body {
       </div>
       <div class="summary-divider"></div>
       <div class="summary-stat">
-        <div class="summary-stat-value" style="color:var(--ice);">2</div>
+        <div class="summary-stat-value" style="color:#1e3a6e;">2</div>
         <div class="summary-stat-label">Trailers</div>
       </div>
       <div class="summary-divider"></div>
@@ -775,7 +775,7 @@ body {
       </div>
       <div class="summary-divider"></div>
       <div class="summary-stat">
-        <div class="summary-stat-value" style="color:var(--ice);">100%</div>
+        <div class="summary-stat-value" style="color:#1e3a6e;">100%</div>
         <div class="summary-stat-label">Fleet<br>Availability</div>
       </div>
       <div class="summary-divider"></div>
@@ -1164,6 +1164,7 @@ async function saveUnit(e) {
     });
   }
   // Persist each changed unit
+  const editId = document.getElementById('equip-edit-id').value;
   if (editId) { await NexusDB.Fleet.update(editId, fleet.find(u=>u.id===editId)); }
   else { await NexusDB.Fleet.create(fleet[fleet.length-1]); }
   _fleetCache = fleet;
@@ -1172,14 +1173,14 @@ async function saveUnit(e) {
 }
 
 // ── REMOVE ──
-async function removeUnit(id, unit) {
+function removeUnit(id, unit) {
   if (!confirm('Remove Unit ' + unit + ' from fleet? This cannot be undone.')) return;
   await NexusDB.Fleet.delete(id);
   await renderFleet();
 }
 
 // ── LOG PM ──
-async function logPM(id) {
+function logPM(id) {
   const today = new Date().toISOString().split('T')[0];
   const fleet = await loadFleet();
   const u = fleet.find(x=>x.id===id);
@@ -1193,7 +1194,7 @@ async function logPM(id) {
 }
 
 // ── REPORT ISSUE ──
-async function reportIssue(id, unit) {
+function reportIssue(id, unit) {
   const issue = prompt('Describe the issue for Unit ' + unit + ':');
   if (issue) alert('Issue logged for Unit ' + unit + ':\n"' + issue + '"\n\nStatus updated to DOWN.');
   const fleet = await loadFleet();
@@ -1207,49 +1208,76 @@ document.getElementById('equip-modal-overlay').addEventListener('click', functio
 });
 
 
+// ── RENDER FLEET CARDS ──────────────────────────────────────────────────────
 async function renderFleet() {
-  var grid = document.getElementById("trucks-grid");
+  const grid = document.getElementById('trucks-grid');
   if (!grid) return;
-  grid.innerHTML = "<div style=\"color:#64748b;padding:40px;text-align:center;font-family:'Barlow Condensed',sans-serif;\">LOADING FLEET...</div>";
-  var fleet;
+  grid.innerHTML = '<div style="color:var(--text-muted);padding:40px;text-align:center;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">LOADING FLEET...</div>';
+  let fleet;
   try { fleet = await loadFleet(); } catch(e) { fleet = []; }
-  if (!fleet || !fleet.length) {
-    grid.innerHTML = "<div style=\"color:#64748b;padding:40px;text-align:center;\">NO UNITS — CLICK + ADD UNIT</div>";
+  if (!fleet.length) {
+    grid.innerHTML = '<div style="color:var(--text-muted);padding:40px;text-align:center;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">NO UNITS — CLICK + ADD UNIT TO BEGIN</div>';
     return;
   }
-  var sm = {ACTIVE:"badge-green","IN-TRANSIT":"badge-blue",DOWN:"badge-red",INACTIVE:"badge-yellow"};
-  var html = "";
-  fleet.forEach(function(u) {
-    var yn = u.unit || "??";
-    var ymm = [u.year && u.year > 0 ? u.year : "", u.make, u.model].filter(Boolean).join(" ") || "Unit " + yn;
-    var vin = u.vin ? "VIN: " + u.vin : "VIN: —";
-    var drv = u.driver || "—";
-    var st = u.status || "ACTIVE";
-    var bc = sm[st] || "badge-gray";
-    var odo = u.odometer ? Number(u.odometer).toLocaleString() : "—";
-    var tp = u.equipType || u.type || "UNIT";
-    html += '<div class="truck-card">';
-    html += '<div class="truck-card-header">';
-    html += '<div class="unit-circle"><span class="unit-label">' + (u.type||"UNIT") + '</span><span class="unit-number">' + yn + '</span></div>';
-    html += '<div class="truck-header-info"><div class="truck-ymm">' + ymm + '</div>';
-    html += '<div class="truck-vin">' + vin + '</div>';
-    html += '<div class="truck-driver-badge"><span class="label">DRIVER</span><span class="value">' + drv + '</span></div></div>';
-    html += '<span class="badge ' + bc + '">' + st + '</span></div>';
-    html += '<div class="truck-card-body"><div class="truck-stats-grid">';
-    html += '<div class="truck-stat"><div class="truck-stat-label">TYPE</div><div class="truck-stat-value" style="font-size:12px;">' + tp + '</div></div>';
-    html += '<div class="truck-stat"><div class="truck-stat-label">ODO</div><div class="truck-stat-value">' + odo + '</div></div>';
-    html += '<div class="truck-stat"><div class="truck-stat-label">LAST PM</div><div class="truck-stat-value" style="font-size:11px;">' + (u.lastPM||"—") + '</div></div>';
-    html += '<div class="truck-stat"><div class="truck-stat-label">NEXT PM</div><div class="truck-stat-value" style="font-size:11px;">' + (u.nextPM||"—") + '</div></div>';
-    html += '</div>';
-    html += '<div class="truck-actions">';
-    html += '<button class="btn-action" onclick="openEditModal(\''+ u.id +'\')"  >EDIT</button>';
-    html += '<button class="btn-action" onclick="reportIssue(\''+ u.id +'\')" >ISSUE</button>';
-    html += '<button class="btn-action" onclick="updatePM(\''+ u.id +'\')">LOG PM</button>';
-    html += '</div></div></div>';
-  });
-  grid.innerHTML = html;
+  const statusMap = {'ACTIVE':'badge-green','IN-TRANSIT':'badge-blue','DOWN':'badge-red','INACTIVE':'badge-yellow'};
+  grid.innerHTML = fleet.map(u => {
+    const unitNum = u.unit || '??';
+    const ymm = [u.year && u.year > 0 ? u.year : '', u.make, u.model].filter(Boolean).join(' ') || 'Unit ' + unitNum;
+    const vin = u.vin ? 'VIN: ' + u.vin : 'VIN: —';
+    const driver = u.driver || '—';
+    const status = u.status || 'ACTIVE';
+    const badgeCls = statusMap[status] || 'badge-gray';
+    const odo = u.odometer ? Number(u.odometer).toLocaleString() : '—';
+    const lastPM = u.lastPM || '—';
+    const nextPM = u.nextPM || '—';
+    const notes = u.notes || '—';
+    const typeLabel = u.equipType || u.type || 'UNIT';
+    return \`
+    <div class="truck-card">
+      <div class="truck-card-header">
+        <div class="unit-circle">
+          <span class="unit-label">\${u.type||'UNIT'}</span>
+          <span class="unit-number">\${unitNum}</span>
+        </div>
+        <div class="truck-header-info">
+          <div class="truck-ymm">\${ymm}</div>
+          <div class="truck-vin">\${vin}</div>
+          <div class="truck-driver-badge">
+            <span class="label">DRIVER</span>
+            <span class="value">\${driver}</span>
+          </div>
+        </div>
+        <span class="badge \${badgeCls}">\${status}</span>
+      </div>
+      <div class="truck-card-body">
+        <div class="truck-stats-grid">
+          <div class="truck-stat">
+            <div class="truck-stat-label">TYPE</div>
+            <div class="truck-stat-value" style="font-size:12px;">\${typeLabel}</div>
+          </div>
+          <div class="truck-stat">
+            <div class="truck-stat-label">ODO</div>
+            <div class="truck-stat-value \${odo==='—'?'na':''}">\${odo}</div>
+          </div>
+          <div class="truck-stat">
+            <div class="truck-stat-label">LAST PM</div>
+            <div class="truck-stat-value \${lastPM==='—'?'na':''}" style="font-size:11px;">\${lastPM}</div>
+          </div>
+          <div class="truck-stat">
+            <div class="truck-stat-label">NEXT PM</div>
+            <div class="truck-stat-value \${nextPM==='—'?'na':''}" style="font-size:11px;">\${nextPM}</div>
+          </div>
+        </div>
+        \${notes !== '—' ? \`<div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:4px;border-left:2px solid var(--steel-blue);">\${notes}</div>\` : ''}
+        <div class="truck-actions">
+          <button class="btn-action" onclick="openEditModal('\${u.id}')">EDIT</button>
+          <button class="btn-action" onclick="reportIssue('\${u.id}')">ISSUE</button>
+          <button class="btn-action" onclick="updatePM('\${u.id}')">LOG PM</button>
+        </div>
+      </div>
+    </div>\`;
+  }).join('');
 }
-
 
 // Initial render
 (async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); await renderFleet(); })();
