@@ -444,10 +444,14 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
       <div class="page-subtitle">BOLs, load confirmations, permits &amp; scans · WhatsApp Documentos</div>
     </div>
     <div class="topbar-actions">
+      <button class="btn btn-ghost" onclick="openSyncModal()" style="display:flex;align-items:center;gap:6px;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+        Sync NEXUS Docs
+      </button>
       <button class="btn btn-ghost">Export List</button>
-      <button class="btn btn-orange">
+      <button class="btn btn-orange" onclick="openAddDocModal()">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Upload Document
+        Add Document
       </button>
     </div>
   </div>
@@ -751,7 +755,82 @@ renderTable(documents);
 <script>
 (async()=>{
   if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
+  renderTable(documents);
 })();
+</script>
+
+<!-- SYNC NEXUS DOCS MODAL -->
+<div id="sync-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid #334155;">
+      <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#f1f5f9;letter-spacing:.06em;">SYNC NEXUS DOCUMENTS</span>
+      <button onclick="closeSyncModal()" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;">&#x2715;</button>
+    </div>
+    <div style="padding:24px;">
+      <p style="font-size:13px;color:#94a3b8;margin:0 0 20px;">Pull new files from Gmail and WhatsApp into the NEXUS Data Vault. Click a source to open it, then download files and add them here.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
+        <a href="https://mail.google.com/mail/u/0/#search/has:attachment+carrier+OR+BOL+OR+load" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;">
+          <svg width="28" height="28" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#ea4335"/><path d="M4 8l8 5 8-5V18H4V8z" fill="white"/></svg>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">GMAIL — Search Attachments</div><div style="font-size:11px;color:#64748b;margin-top:2px;">BOL, load confirmations, permits</div></div>
+          <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+        <a href="https://web.whatsapp.com" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;">
+          <svg width="28" height="28" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#25d366"/><text x="5" y="17" font-size="12" fill="white" font-weight="bold">W</text></svg>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">WHATSAPP WEB — Download Files</div><div style="font-size:11px;color:#64748b;margin-top:2px;">Open chats, download PDFs from drivers</div></div>
+          <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+        <a href="https://drive.google.com" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;">
+          <svg width="28" height="28" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#1a73e8"/><path d="M6 18l3.5-6L12 18H6zM12 18l3.5-6L18 7.5 16 6l-4 7-1.5 2.5L12 18zm6 0l-2-3.5L12 6h2.5l5.5 9.5L18 18z" fill="white"/></svg>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">GOOGLE DRIVE — Data Vault</div><div style="font-size:11px;color:#64748b;margin-top:2px;">Upload downloaded files to your vault folder</div></div>
+          <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+      <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px 18px;margin-bottom:20px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#e8640a;letter-spacing:.06em;margin-bottom:8px;">SYNC WORKFLOW</div>
+        <ol style="margin:0;padding-left:18px;font-size:12px;color:#94a3b8;line-height:2;">
+          <li>Open Gmail &#x2192; download BOLs / load confirmations as PDFs</li>
+          <li>Open WhatsApp Web &#x2192; download files drivers sent</li>
+          <li>Upload all files to Google Drive vault folder</li>
+          <li>Click <strong style="color:#f1f5f9;">Add Document</strong> above to log each file in NEXUS</li>
+        </ol>
+      </div>
+      <button onclick="closeSyncModal()" style="width:100%;padding:11px;background:#2e6da4;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">DONE</button>
+    </div>
+  </div>
+</div>
+<!-- ADD DOCUMENT MODAL -->
+<div id="add-doc-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;width:100%;max-width:480px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid #334155;">
+      <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#f1f5f9;letter-spacing:.06em;">ADD DOCUMENT</span>
+      <button onclick="closeAddDocModal()" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;">&#x2715;</button>
+    </div>
+    <form id="add-doc-form" onsubmit="submitAddDoc(event)" style="padding:24px;display:flex;flex-direction:column;gap:14px;">
+      <div><label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DATE</label><input type="date" id="nd-date" required style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;box-sizing:border-box;color-scheme:dark;"></div>
+      <div><label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">FILENAME</label><input type="text" id="nd-filename" required placeholder="AMET - BROKER BOL 12345.pdf" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;"></div>
+      <div><label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DRIVER</label>
+        <select id="nd-driver" required style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
+          <option value="">Select driver...</option><option value="AMET">Amet Abreu</option><option value="AVIS">Avis Modesto</option><option value="DAVID">David Fonseca</option><option value="GUILLERMO">Guillermo Pinera</option><option value="MIGUEL">Miguel Fonseca</option><option value="NELSON">Nelson</option><option value="YOSVIEL">Yosviel Pinera</option><option value="UNKNOWN">Unknown / General</option>
+        </select></div>
+      <div><label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">TYPE</label>
+        <select id="nd-type" required style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
+          <option value="BOL">BOL</option><option value="Load Confirmation">Load Confirmation</option><option value="Oversize Permit">Oversize Permit</option><option value="State Permit">State Permit</option><option value="Scan">Scan</option><option value="Other">Other</option>
+        </select></div>
+      <div><label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">ADD / DEDUCT</label>
+        <select id="nd-ad" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;"><option value="ADD">ADD</option><option value="DEDUCT">DEDUCT</option><option value="REVIEW">REVIEW</option></select></div>
+      <div><label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">GOOGLE DRIVE LINK (optional)</label><input type="url" id="nd-drive" placeholder="https://drive.google.com/file/d/..." style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;"></div>
+      <button type="submit" style="padding:11px;background:#2e6da4;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-top:4px;">ADD TO VAULT</button>
+    </form>
+  </div>
+</div>
+<script>
+function openSyncModal(){ document.getElementById('sync-modal').style.display='flex'; }
+function closeSyncModal(){ document.getElementById('sync-modal').style.display='none'; }
+function openAddDocModal(){ document.getElementById('nd-date').value=new Date().toISOString().split('T')[0]; document.getElementById('add-doc-modal').style.display='flex'; }
+function closeAddDocModal(){ document.getElementById('add-doc-modal').style.display='none'; }
+function submitAddDoc(e){ e.preventDefault(); var doc={date:document.getElementById('nd-date').value,filename:document.getElementById('nd-filename').value,driver:document.getElementById('nd-driver').value,type:document.getElementById('nd-type').value,add_deduct:document.getElementById('nd-ad').value,driveId:document.getElementById('nd-drive').value||''}; documents.unshift(doc); closeAddDocModal(); applyFilters(); }
+document.getElementById('sync-modal').addEventListener('click',function(e){if(e.target===this)closeSyncModal();});
+document.getElementById('add-doc-modal').addEventListener('click',function(e){if(e.target===this)closeAddDocModal();});
 </script>
 </body>
 </html>
