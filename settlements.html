@@ -670,6 +670,7 @@ function fmt(n){ if(n===0) return '—'; return (n<0?'-':'')+'$'+Math.abs(n).toL
 function fmtDate(d){ const dt=new Date(d+'T00:00:00'); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}); }
 
 let expandedId = null;
+let settlements = [...SEED_SETTLEMENTS];
 let filteredData = [...settlements];
 
 function populateWeeks(){
@@ -1053,8 +1054,13 @@ function emailSettlement(){
   window.location.href='mailto:?subject='+subject+'&body='+body;
 }
 
-populateWeeks();
-(async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); await renderTable(); })();
+(async()=>{
+  if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
+  settlements = await loadSettlements();
+  filteredData = [...settlements];
+  populateWeeks();
+  renderTable();
+})();
 </script>
 <script src="nexus-lang.js"></script>
 
