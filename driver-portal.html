@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Driver Portal â Carrier Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #090a0c;
+  --gunmetal: #1a1f2e;
+  --gunmetal-light: #232a3a;
+  --steel: #2a3a52;
+  --steel-blue: #2e6da4;
+  --steel-blue-light: #3d87c8;
+  --orange: #e8640a;
+  --orange-bright: #ff7518;
+  --white: #f0f4f8;
+  --white-pure: #ffffff;
+  --text-muted: #6b7a99;
+  --text-mid: #8a9bbf;
+  --border: rgba(46,109,164,0.18);
+  --border-bright: rgba(46,109,164,0.4);
+  --error: #ef4444;
+  --green: #22c55e;
+  --yellow: #f59e0b;
+  --pink: #e91e8c;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0b0e;color:var(--white);font-family:'Barlow',sans-serif;min-height:100vh}
+
+/* TOPBAR */
+.topbar{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,0.5)}
+.topbar-brand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;letter-spacing:.1em;color:#fff;display:flex;align-items:center;gap:10px}
+.topbar-brand .dot{color:var(--orange);font-size:20px}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.driver-badge{font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);padding:4px 10px;letter-spacing:.08em;color:#fff}
+.btn-logout{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:6px 14px;cursor:pointer;transition:all .2s}
+.btn-logout:hover{background:rgba(255,255,255,0.2)}
+
+/* MAIN LAYOUT */
+.portal-wrap{padding:20px;max-width:1400px;margin:0 auto}
+.portal-grid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto;gap:16px}
+
+@media(max-width:1000px){.portal-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.portal-grid{grid-template-columns:1fr}}
+
+/* CARDS */
+.card{background:var(--gunmetal);border:1px solid var(--border);overflow:hidden}
+.card.span2{grid-column:span 2}
+.card.full{grid-column:1/-1}
+.card-head{padding:14px 18px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-mid);display:flex;align-items:center;gap:8px}
+.card-title .ico{color:var(--orange);font-size:14px}
+.card-body{padding:18px}
+
+/* STATUS DOTS */
+.dot-green{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0}
+.dot-orange{width:8px;height:8px;border-radius:50%;background:var(--orange);box-shadow:0 0 8px var(--orange);flex-shrink:0}
+.dot-gray{width:8px;height:8px;border-radius:50%;background:var(--text-muted);flex-shrink:0}
+
+/* PROFILE */
+.profile-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:24px;color:var(--white-pure);margin-bottom:4px}
+.profile-email{font-size:13px;color:var(--text-mid);margin-bottom:12px;font-family:'JetBrains Mono',monospace;font-size:11px}
+.profile-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:13px;color:var(--text-mid)}
+.profile-row strong{color:var(--white)}
+.role-pill{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border:1px solid;display:inline-block}
+.role-driver{color:var(--steel-blue-light);border-color:var(--steel-blue)}
+
+/* TRUCK CARD */
+.truck-unit{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:48px;color:var(--orange);line-height:1}
+.truck-unit-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px}
+.truck-detail-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.truck-detail-row:last-child{border-bottom:none}
+.truck-detail-label{color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.truck-detail-val{color:var(--white);font-weight:600}
+.eld-badge{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 7px;border:1px solid}
+.eld-on{color:var(--green);border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.08)}
+.eld-off{color:var(--text-muted);border-color:rgba(107,122,153,0.3)}
+.eld-exempt{color:var(--yellow);border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.08)}
+.no-assignment{text-align:center;padding:24px 0;color:var(--text-muted);font-size:13px}
+.no-assignment .big{font-family:'Barlow Condensed',sans-serif;font-size:32px;color:var(--text-muted);opacity:.4;margin-bottom:8px}
+
+/* RATE CON */
+.rc-load-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;color:var(--white-pure);margin-bottom:4px}
+.rc-rate{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:36px;color:var(--green);margin-bottom:12px}
+.rc-route{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.rc-city{font-weight:600;font-size:13px;color:var(--white)}
+.rc-arrow{color:var(--orange);font-size:16px}
+.rc-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rc-detail-item{background:rgba(0,0,0,0.3);padding:8px 10px;border:1px solid var(--border)}
+.rc-detail-item .lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px}
+.rc-detail-item .val{font-size:12px;font-weight:600;color:var(--white)}
+
+/* BOL UPLOAD */
+.upload-zone{border:2px dashed var(--border-bright);padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;margin-bottom:12px}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--orange);background:rgba(232,100,10,0.05)}
+.upload-zone.verified-zone:hover,.upload-zone.verified-zone.drag-over{border-color:var(--green);background:rgba(34,197,94,0.05)}
+.upload-ico{font-size:32px;margin-bottom:8px;opacity:.7}
+.upload-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.05em;color:var(--white);margin-bottom:4px}
+.upload-sub{font-size:12px;color:var(--text-muted)}
+input[type="file"]{display:none}
+.bol-thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-top:8px}
+.bol-thumb{position:relative;aspect-ratio:3/4;overflow:hidden;border:1px solid var(--border);cursor:pointer}
+.bol-thumb img{width:100%;height:100%;object-fit:cover}
+.bol-thumb .thumb-ts{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.7);font-size:9px;color:var(--text-mid);padding:3px 5px;font-family:'JetBrains Mono',monospace}
+.bol-thumb .thumb-del{position:absolute;top:3px;right:3px;width:18px;height:18px;background:rgba(239,68,68,0.85);border:none;color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s}
+.bol-thumb:hover .thumb-del{opacity:1}
+.verified-badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green);background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);padding:4px 10px;margin-bottom:12px}
+
+/* MESSAGES */
+.messages-card{display:flex;flex-direction:column;height:480px;grid-column:1/-1}
+@media(max-width:640px){.messages-card{height:400px}}
+.messages-thread{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background:rgba(0,0,0,0.25)}
+.msg-bubble{max-width:80%;display:flex;flex-direction:column}
+.msg-bubble.mine{align-self:flex-end;align-items:flex-end}
+.msg-bubble.theirs{align-self:flex-start;align-items:flex-start}
+.msg-meta{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.msg-from{color:var(--steel-blue-light)}
+.msg-mine-from{color:var(--orange)}
+.msg-text{padding:10px 13px;font-size:13px;line-height:1.5}
+.msg-bubble.mine .msg-text{background:rgba(232,100,10,0.15);border:1px solid rgba(232,100,10,0.3);border-radius:12px 12px 2px 12px;color:var(--white)}
+.msg-bubble.theirs .msg-text{background:var(--gunmetal-light);border:1px solid var(--border);border-radius:12px 12px 12px 2px;color:var(--white)}
+.msg-img{max-width:200px;max-height:200px;object-fit:cover;border:1px solid var(--border);cursor:pointer;margin-top:4px}
+.msg-compose{padding:12px;border-top:1px solid var(--border);background:var(--gunmetal)}
+.compose-attachments{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.attach-preview{position:relative;width:56px;height:56px;border:1px solid var(--border);overflow:hidden}
+.attach-preview img{width:100%;height:100%;object-fit:cover}
+.attach-preview .del{position:absolute;top:0;right:0;width:16px;height:16px;background:rgba(239,68,68,0.9);border:none;color:#fff;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.compose-row{display:flex;gap:8px;align-items:flex-end}
+.compose-input{flex:1;background:rgba(0,0,0,0.3);border:1px solid var(--border);color:var(--white);padding:10px 12px;font-family:'Barlow',sans-serif;font-size:13px;resize:none;min-height:40px;max-height:100px;outline:none;transition:border .2s}
+.compose-input:focus{border-color:var(--steel-blue-light)}
+.compose-input::placeholder{color:var(--text-muted)}
+.btn-attach{width:40px;height:40px;background:var(--gunmetal-light);border:1px solid var(--border);color:var(--text-mid);cursor:pointer;font-size:16px;transition:all .2s;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.btn-attach:hover{border-color:var(--steel-blue-light);color:var(--white)}
+.btn-send{height:40px;padding:0 18px;background:var(--orange);border:none;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;flex-shrink:0}
+.btn-send:hover{background:var(--orange-bright)}
+.btn-send:disabled{opacity:.4;pointer-events:none}
+.unread-pill{background:var(--pink);color:#fff;font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center}
+.empty-messages{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px}
+
+/* LIGHTBOX */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;align-items:center;justify-content:center}
+.lightbox.open{display:flex}
+.lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border:1px solid var(--border)}
+.lightbox-close{position:fixed;top:20px;right:20px;width:36px;height:36px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* SECTION SEPARATOR */
+.section-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:.15em;text-transform:uppercase;padding:8px 0 4px;margin-top:4px;border-top:1px solid var(--border)}
+
+/* LOADING */
+.loading-overlay{position:fixed;inset:0;background:#0a0b0e;z-index:9998;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.loading-overlay.hidden{display:none}
+.loading-spinner{width:32px;height:32px;border:3px solid rgba(46,109,164,0.2);border-top-color:var(--orange);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:.1em}
+
+/* REFRESH BTN */
+.refresh-btn{background:none;border:1px solid var(--border);color:var(--text-muted);width:26px;height:26px;cursor:pointer;font-size:12px;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.refresh-btn:hover{border-color:var(--steel-blue-light);color:var(--white)}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">LOADING DRIVER PORTAL...</div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">â</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+      <path d="M18 2L32 10V26L18 34L4 26V10L18 2Z" stroke="#2e6da4" stroke-width="1.5" fill="rgba(46,109,164,0.08)"/>
+      <path d="M4 14H12L16 10H28" stroke="#e8640a" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="8" cy="24" r="2.5" fill="#e8640a"/>
+      <circle cx="18" cy="24" r="2.5" fill="#2e6da4"/>
+    </svg>
+    CARRIER NEXUS <span style="color:rgba(255,255,255,0.4);margin:0 6px">|</span> DRIVER PORTAL
+  </div>
+  <div class="topbar-right">
+    <div class="driver-badge" id="topDriverName">DRIVER</div>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="portal-wrap">
+  <div class="portal-grid" id="portalGrid">
+    <!-- Populated by JS -->
+  </div>
+</div>
+
+<script src="nexus-config.js?v=2"></script>
+<script src="nexus-db.js"></script>
+<script>
+// âââ AUTH GUARD âââââââââââââââââââââââââââââââââââââââââââââââ
+const session = JSON.parse(localStorage.getItem('nexus_session') || 'null');
+if (!session) { window.location.href = 'login.html'; }
+// Allow admin/dispatch to preview driver portal â don't hard-block
+
+// âââ STATE ââââââââââââââââââââââââââââââââââââââââââââââââââââ
+let driverProfile = null;
+let assignedTruck  = null;
+let assignedLoad   = null;
+let pendingImages  = []; // pending attach images before send
+let pollTimer      = null;
+
+// âââ HELPERS ââââââââââââââââââââââââââââââââââââââââââââââââââ
+function fmt(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  const now = new Date();
+  const diffMs = now - d;
+  if (diffMs < 60000) return 'just now';
+  if (diffMs < 3600000) return Math.floor(diffMs/60000) + 'm ago';
+  if (diffMs < 86400000) return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  return d.toLocaleDateString([],{month:'short',day:'numeric'}) + ' ' + d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+function uid() { return 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,7); }
+function getFleet() { return JSON.parse(localStorage.getItem('nexus_fleet') || '[]'); }
+function getLoads() { return JSON.parse(localStorage.getItem('nexus_loads') || '[]'); }
+function getAssignments() { return JSON.parse(localStorage.getItem('nexus_assignments') || '[]'); }
+function getBOLs() { return JSON.parse(localStorage.getItem('nexus_bols') || '[]'); }
+function getMessages() { return JSON.parse(localStorage.getItem('nexus_messages') || '[]'); }
+function saveMessages(msgs) { localStorage.setItem('nexus_messages', JSON.stringify(msgs)); }
+function saveBOLs(bols) { localStorage.setItem('nexus_bols', JSON.stringify(bols)); }
+
+function eldBadge(eld) {
+  if (!eld || eld === 'Not Connected') return '<span class="eld-badge eld-off">NOT CONNECTED</span>';
+  if (eld === 'ELD Exempt') return '<span class="eld-badge eld-exempt">ELD EXEMPT</span>';
+  return '<span class="eld-badge eld-on">' + eld.toUpperCase() + '</span>';
+}
+
+// âââ INIT âââââââââââââââââââââââââââââââââââââââââââââââââââââ
+function init() {
+  driverProfile = session;
+  document.getElementById('topDriverName').textContent = (driverProfile.name || driverProfile.email).toUpperCase();
+
+  // Find assignment for this driver
+  const assignments = getAssignments();
+  const myAssign = assignments.find(a => a.driverId === driverProfile.email && a.active !== false);
+  if (myAssign) {
+    const fleet = getFleet();
+    assignedTruck = fleet.find(t => t.id === myAssign.truckId) || null;
+    const loads = getLoads();
+    assignedLoad = loads.find(l => l.id === myAssign.rateConId) || null;
+  }
+
+  renderPortal();
+  document.getElementById('loadingOverlay').classList.add('hidden');
+  scrollToBottom();
+  startPolling();
+}
+
+// âââ RENDER âââââââââââââââââââââââââââââââââââââââââââââââââââ
+function renderPortal() {
+  const grid = document.getElementById('portalGrid');
+  grid.innerHTML = renderProfileCard() + renderTruckCard() + renderRateConCard() +
+                   renderBOLCard() + renderVerifiedBOLCard() + renderMessagesCard();
+  // Bind events
+  bindUpload('bolDropZone','bolInput', 'bol');
+  bindUpload('vbolDropZone','vbolInput','verified');
+  bindDrop('bolDropZone','bol');
+  bindDrop('vbolDropZone','verified');
+  renderBOLThumbs();
+  renderMessages();
+}
+
+function renderProfileCard() {
+  const u = driverProfile;
+  const phone = u.phone || 'â';
+  const wa = u.whatsapp || null;
+  return `<div class="card">
+    <div class="card-head">
+      <div class="card-title"><span class="ico">ð¤</span> MY PROFILE</div>
+      <span class="role-pill role-driver">DRIVER</span>
+    </div>
+    <div class="card-body">
+      <div class="profile-name">${escHtml(u.name || 'Driver')}</div>
+      <div class="profile-email">${escHtml(u.email)}</div>
+      <div class="profile-row"><span class="truck-detail-label">Phone</span>&nbsp;<strong>${escHtml(phone)}</strong></div>
+      ${wa ? `<div class="profile-row"><span style="color:#25d366">ð± WhatsApp</span>&nbsp;<strong>${escHtml(wa)}</strong></div>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderTruckCard() {
+  if (!assignedTruck) {
+    return `<div class="card">
+      <div class="card-head"><div class="card-title"><span class="ico">ð</span> MY EQUIPMENT</div></div>
+      <div class="card-body">
+        <div class="no-assignment">
+          <div class="big">ð</div>
+          <div>No truck assigned yet</div>
+          <div style="font-size:11px;margin-top:4px">Contact dispatch</div>
+        </div>
+      </div>
+    </div>`;
+  }
+  const t = assignedTruck;
+  return `<div class="card">
+    <div class="card-head"><div class="card-title"><span class="ico">ð</span> MY EQUIPMENT</div></div>
+    <div class="card-body">
+      <div class="truck-unit">#${escHtml(t.unit)}</div>
+      <div class="truck-unit-label">UNIT NUMBER</div>
+      <div class="truck-detail-row">
+        <span class="truck-detail-label">Year / Make</span>
+        <span class="truck-detail-val">${t.year} ${escHtml(t.make)}</span>
+      </div>
+      <div class="truck-detail-row">
+        <span class="truck-detail-label">Model</span>
+        <span class="truck-detail-val">${escHtml(t.model)}</span>
+      </div>
+      <div class="truck-detail-row">
+        <span class="truck-detail-label">VIN</span>
+        <span class="truck-detail-val" style="font-family:'JetBrains Mono',monospace;font-size:11px">${escHtml(t.vin || 'â')}</span>
+      </div>
+      <div class="truck-detail-row">
+        <span class="truck-detail-label">ELD</span>
+        <span>${eldBadge(t.eld)}</span>
+      </div>
+      ${t.eldSource ? `<div class="truck-detail-row"><span class="truck-detail-label">Source</span><span class="truck-detail-val" style="font-size:11px">${escHtml(t.eldSource)}</span></div>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderRateConCard() {
+  if (!assignedLoad) {
+    return `<div class="card">
+      <div class="card-head"><div class="card-title"><span class="ico">ð</span> MY RATE CON</div></div>
+      <div class="card-body">
+        <div class="no-assignment">
+          <div class="big">ð</div>
+          <div>No load assigned</div>
+          <div style="font-size:11px;margin-top:4px">Contact dispatch for your next load</div>
+        </div>
+      </div>
+    </div>`;
+  }
+  const l = assignedLoad;
+  const rate = l.rate ? '$' + Number(l.rate).toLocaleString() : 'â';
+  return `<div class="card">
+    <div class="card-head"><div class="card-title"><span class="ico">ð</span> MY RATE CON</div>${l.id ? `<span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted)">#${escHtml(l.id)}</span>` : ''}</div>
+    <div class="card-body">
+      <div class="rc-load-num">Load ${escHtml(l.loadNumber || l.id || 'â')}</div>
+      <div class="rc-rate">${rate}</div>
+      <div class="rc-route">
+        <span class="rc-city">${escHtml(l.origin || 'â')}</span>
+        <span class="rc-arrow">â</span>
+        <span class="rc-city">${escHtml(l.destination || 'â')}</span>
+      </div>
+      <div class="rc-detail-grid">
+        <div class="rc-detail-item"><div class="lbl">Miles</div><div class="val">${escHtml(String(l.miles || 'â'))}</div></div>
+        <div class="rc-detail-item"><div class="lbl">Commodity</div><div class="val">${escHtml(l.commodity || 'â')}</div></div>
+        <div class="rc-detail-item"><div class="lbl">Pickup</div><div class="val">${escHtml(l.pickupDate || 'â')}</div></div>
+        <div class="rc-detail-item"><div class="lbl">Delivery</div><div class="val">${escHtml(l.deliveryDate || 'â')}</div></div>
+        ${l.broker ? `<div class="rc-detail-item" style="grid-column:span 2"><div class="lbl">Broker</div><div class="val">${escHtml(l.broker)}</div></div>` : ''}
+      </div>
+      ${l.rateConUrl ? `<a href="${l.rateConUrl}" target="_blank" style="display:inline-block;margin-top:12px;font-size:12px;color:var(--steel-blue-light);text-decoration:none">ð View Rate Con PDF</a>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderBOLCard() {
+  return `<div class="card">
+    <div class="card-head"><div class="card-title"><span class="ico">ð¸</span> BILL OF LADING</div></div>
+    <div class="card-body">
+      <div class="upload-zone" id="bolDropZone" onclick="document.getElementById('bolInput').click()">
+        <div class="upload-ico">ð·</div>
+        <div class="upload-title">Take Photo or Upload</div>
+        <div class="upload-sub">Tap to use camera â¢ Or drag & drop image</div>
+      </div>
+      <input type="file" id="bolInput" accept="image/*" capture="environment" multiple>
+      <div class="bol-thumbs" id="bolThumbs"></div>
+    </div>
+  </div>`;
+}
+
+function renderVerifiedBOLCard() {
+  return `<div class="card">
+    <div class="card-head"><div class="card-title"><span class="ico">â</span> VERIFIED COMPLETE BOL</div></div>
+    <div class="card-body">
+      <div class="verified-badge">â SIGNED & VERIFIED COPIES</div>
+      <div class="upload-zone verified-zone" id="vbolDropZone" onclick="document.getElementById('vbolInput').click()">
+        <div class="upload-ico">â</div>
+        <div class="upload-title">Upload Signed BOL</div>
+        <div class="upload-sub">Signed & completed copies only</div>
+      </div>
+      <input type="file" id="vbolInput" accept="image/*" capture="environment" multiple>
+      <div class="bol-thumbs" id="vbolThumbs"></div>
+    </div>
+  </div>`;
+}
+
+function renderMessagesCard() {
+  const msgs = getMessages().filter(m => m.threadId === driverProfile.email);
+  const unread = msgs.filter(m => m.fromRole !== 'driver' && !(m.readBy||[]).includes(driverProfile.email)).length;
+  return `<div class="card messages-card">
+    <div class="card-head">
+      <div class="card-title">
+        <span class="ico">ð¬</span> DISPATCH MESSAGES
+        ${unread > 0 ? `<span class="unread-pill" id="unreadPill">${unread}</span>` : '<span class="unread-pill" id="unreadPill" style="display:none">0</span>'}
+      </div>
+      <button class="refresh-btn" onclick="refreshMessages()" title="Refresh">â»</button>
+    </div>
+    <div class="messages-thread" id="messagesThread"></div>
+    <div class="msg-compose">
+      <div class="compose-attachments" id="composeAttachments" style="display:none"></div>
+      <div class="compose-row">
+        <textarea class="compose-input" id="msgInput" placeholder="Message dispatch..." rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
+          oninput="autoResize(this)"></textarea>
+        <button class="btn-attach" onclick="document.getElementById('msgPhotoInput').click()" title="Attach photo">ð</button>
+        <button class="btn-send" id="sendBtn" onclick="sendMessage()">SEND</button>
+      </div>
+      <input type="file" id="msgPhotoInput" accept="image/*" capture="environment" multiple onchange="handleMsgAttach(this)">
+    </div>
+  </div>`;
+}
+
+// âââ BOL HANDLERS âââââââââââââââââââââââââââââââââââââââââââââ
+function bindUpload(zoneId, inputId, type) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  input.onchange = function() { handleBOLFiles(this.files, type); };
+}
+function bindDrop(zoneId, type) {
+  const zone = document.getElementById(zoneId);
+  if (!zone) return;
+  zone.ondragover = e => { e.preventDefault(); zone.classList.add('drag-over'); };
+  zone.ondragleave = () => zone.classList.remove('drag-over');
+  zone.ondrop = e => { e.preventDefault(); zone.classList.remove('drag-over'); handleBOLFiles(e.dataTransfer.files, type); };
+}
+
+function handleBOLFiles(files, type) {
+  if (!files || !files.length) return;
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const bols = getBOLs();
+      bols.push({
+        id: uid(),
+        driverId: driverProfile.email,
+        type: type,
+        imageData: ev.target.result,
+        filename: file.name,
+        timestamp: new Date().toISOString(),
+        rateConId: assignedLoad ? assignedLoad.id : null
+      });
+      saveBOLs(bols);
+      renderBOLThumbs();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderBOLThumbs() {
+  const bols = getBOLs().filter(b => b.driverId === driverProfile.email);
+  const bolEl = document.getElementById('bolThumbs');
+  const vbolEl = document.getElementById('vbolThumbs');
+  if (!bolEl || !vbolEl) return;
+
+  function thumbHtml(b) {
+    return `<div class="bol-thumb" id="thumb-${b.id}">
+      <img src="${b.imageData}" onclick="openLightbox('${b.id}')" alt="BOL">
+      <div class="thumb-ts">${fmt(b.timestamp)}</div>
+      <button class="thumb-del" onclick="deleteBOL('${b.id}',event)">â</button>
+    </div>`;
+  }
+  bolEl.innerHTML  = bols.filter(b=>b.type==='bol').map(thumbHtml).join('') || '<div style="font-size:11px;color:var(--text-muted);padding:4px 0">No BOLs uploaded yet</div>';
+  vbolEl.innerHTML = bols.filter(b=>b.type==='verified').map(thumbHtml).join('') || '<div style="font-size:11px;color:var(--text-muted);padding:4px 0">No verified BOLs yet</div>';
+}
+
+function deleteBOL(id, e) {
+  e.stopPropagation();
+  const bols = getBOLs().filter(b => b.id !== id);
+  saveBOLs(bols);
+  renderBOLThumbs();
+}
+
+function openLightbox(bolId) {
+  const b = getBOLs().find(x => x.id === bolId);
+  if (!b) return;
+  document.getElementById('lightboxImg').src = b.imageData;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+// âââ MESSAGES âââââââââââââââââââââââââââââââââââââââââââââââââ
+function renderMessages() {
+  const thread = document.getElementById('messagesThread');
+  if (!thread) return;
+  const allMsgs = getMessages();
+  const msgs = allMsgs.filter(m => m.threadId === driverProfile.email);
+
+  if (!msgs.length) {
+    thread.innerHTML = `<div class="empty-messages">ð¡ No messages yet<br><span style="font-size:11px;margin-top:4px;display:block">Your conversation with dispatch will appear here</span></div>`;
+    return;
+  }
+
+  thread.innerHTML = msgs.map(m => {
+    const mine = m.fromRole === 'driver';
+    const cls = mine ? 'mine' : 'theirs';
+    const nameColor = mine ? 'msg-mine-from' : 'msg-from';
+    return `<div class="msg-bubble ${cls}">
+      <div class="msg-meta">
+        <span class="${nameColor}">${escHtml(m.fromName || m.from)}</span>
+        <span>${fmt(m.timestamp)}</span>
+      </div>
+      ${m.content ? `<div class="msg-text">${escHtml(m.content)}</div>` : ''}
+      ${m.imageData ? `<img class="msg-img" src="${m.imageData}" onclick="openImgLightbox('${m.id}')" alt="photo">` : ''}
+    </div>`;
+  }).join('');
+
+  // Mark messages as read
+  let changed = false;
+  const updated = allMsgs.map(m => {
+    if (m.threadId === driverProfile.email && m.fromRole !== 'driver' && !(m.readBy||[]).includes(driverProfile.email)) {
+      changed = true;
+      return {...m, readBy: [...(m.readBy||[]), driverProfile.email]};
+    }
+    return m;
+  });
+  if (changed) saveMessages(updated);
+
+  // Update unread badge
+  const pill = document.getElementById('unreadPill');
+  if (pill) { pill.textContent = '0'; pill.style.display = 'none'; }
+}
+
+function scrollToBottom() {
+  const t = document.getElementById('messagesThread');
+  if (t) t.scrollTop = t.scrollHeight;
+}
+
+let lastMsgCount = 0;
+function refreshMessages() {
+  const msgs = getMessages().filter(m => m.threadId === driverProfile.email);
+  if (msgs.length !== lastMsgCount) {
+    lastMsgCount = msgs.length;
+    renderMessages();
+    scrollToBottom();
+  }
+}
+
+function startPolling() {
+  pollTimer = setInterval(refreshMessages, 4000);
+}
+
+function handleMsgAttach(input) {
+  Array.from(input.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      pendingImages.push({ id: uid(), src: ev.target.result, name: file.name });
+      updateAttachPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function updateAttachPreview() {
+  const el = document.getElementById('composeAttachments');
+  if (!el) return;
+  if (!pendingImages.length) { el.style.display='none'; el.innerHTML=''; return; }
+  el.style.display = 'flex';
+  el.innerHTML = pendingImages.map(img =>
+    `<div class="attach-preview"><img src="${img.src}" alt=""><button class="del" onclick="removeAttach('${img.id}')">â</button></div>`
+  ).join('');
+}
+function removeAttach(id) {
+  pendingImages = pendingImages.filter(i => i.id !== id);
+  updateAttachPreview();
+}
+
+function sendMessage() {
+  const input = document.getElementById('msgInput');
+  const text = (input.value || '').trim();
+  if (!text && !pendingImages.length) return;
+
+  const msgs = getMessages();
+  // Send one message per image + combined text
+  if (text || pendingImages.length === 0) {
+    msgs.push({ id: uid(), threadId: driverProfile.email, from: driverProfile.email, fromName: driverProfile.name || 'Driver', fromRole: 'driver', content: text, imageData: null, timestamp: new Date().toISOString(), readBy: [] });
+  }
+  pendingImages.forEach(img => {
+    msgs.push({ id: uid(), threadId: driverProfile.email, from: driverProfile.email, fromName: driverProfile.name || 'Driver', fromRole: 'driver', content: text && !pendingImages.indexOf(img) ? text : '', imageData: img.src, timestamp: new Date().toISOString(), readBy: [] });
+  });
+
+  saveMessages(msgs);
+  input.value = '';
+  input.style.height = '';
+  pendingImages = [];
+  updateAttachPreview();
+  lastMsgCount = msgs.filter(m=>m.threadId===driverProfile.email).length;
+  renderMessages();
+  scrollToBottom();
+}
+
+function openImgLightbox(msgId) {
+  const m = getMessages().find(x => x.id === msgId);
+  if (!m || !m.imageData) return;
+  document.getElementById('lightboxImg').src = m.imageData;
+  document.getElementById('lightbox').classList.add('open');
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+// âââ LOGOUT âââââââââââââââââââââââââââââââââââââââââââââââââââ
+function logout() {
+  clearInterval(pollTimer);
+  localStorage.removeItem('nexus_session');
+  window.location.href = 'login.html';
+}
+
+// âââ UTIL âââââââââââââââââââââââââââââââââââââââââââââââââââââ
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// âââ CLOSE LIGHTBOX ON CLICK OUTSIDE ââââââââââââââââââââââââââ
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+
+// âââ START ââââââââââââââââââââââââââââââââââââââââââââââââââââ
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
