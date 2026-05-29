@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>User Management â Carrier Nexus</title>
+<title>User Management ? Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -59,9 +59,10 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
 .user-email{font-size:11px;color:var(--text-muted);margin-top:1px;font-family:'JetBrains Mono',monospace;}
 .role-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.06em;}
 .role-admin{background:rgba(232,100,10,0.2);color:var(--orange);border:1px solid rgba(232,100,10,0.35);}
-.role-dispatcher{background:rgba(46,109,164,0.2);color:#60a5fa;border:1px solid rgba(46,109,164,0.35);}
+.role-operations{background:rgba(46,109,164,0.2);color:#60a5fa;border:1px solid rgba(46,109,164,0.35);}
+.role-dispatch{background:rgba(99,102,241,0.2);color:#a5b4fc;border:1px solid rgba(99,102,241,0.35);}
 .role-driver{background:rgba(34,197,94,0.2);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
-.role-viewer{background:rgba(107,122,153,0.2);color:var(--text-mid);border:1px solid rgba(107,122,153,0.3);}
+
 .status-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;}
 .status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .status-active .status-dot{background:var(--green);}
@@ -146,7 +147,7 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
   <div class="sidebar-section">
     <div class="sidebar-section-label">Documents</div>
     <a href="documents.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm5 0v4h4"/></svg>Document Vault</a>
-    <a href="pods.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm-.5 2v4.5l3.5 2-.5-.87-3-1.63V5h-1z"/></svg>Missing PODs</a>
+    <a href="pods.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm-.5 2v4.5l3.5 2-.5-.87-3-1.63V5h-1z"/></svf>Missing PODs</a>
   </div>
 
   <div class="sidebar-section">
@@ -199,13 +200,14 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
           <tr>
             <th>User</th>
             <th>Role</th>
+            <th>Contact</th>
             <th>Status</th>
             <th>Created</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody id="user-tbody">
-          <tr><td colspan="5" class="empty-state"><p>Loading users...</p></td></tr>
+          <tr><td colspan="6" class="empty-state"><p>Loading users...</p></td></tr>
         </tbody>
       </table>
     </div>
@@ -221,16 +223,16 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
           <p style="font-size:12px;color:var(--text-muted);line-height:1.5;">Full access to all pages, user management, settings, and financial data.</p>
         </div>
         <div style="background:#0f172a;border:1px solid var(--border);border-radius:8px;padding:14px;">
-          <span class="role-badge role-dispatcher" style="margin-bottom:8px;display:inline-block;">DISPATCHER</span>
+          <span class="role-badge role-operations" style="margin-bottom:8px;display:inline-block;">OPERATIONS</span>
           <p style="font-size:12px;color:var(--text-muted);line-height:1.5;">Access to loads, settlements, documents, drivers, and permits.</p>
         </div>
         <div style="background:#0f172a;border:1px solid var(--border);border-radius:8px;padding:14px;">
           <span class="role-badge role-driver" style="margin-bottom:8px;display:inline-block;">DRIVER</span>
-          <p style="font-size:12px;color:var(--text-muted);line-height:1.5;">Limited to driver command view â their loads and documents only.</p>
+          <p style="font-size:12px;color:var(--text-muted);line-height:1.5;">Limited to driver command view ? their loads and documents only.</p>
         </div>
         <div style="background:#0f172a;border:1px solid var(--border);border-radius:8px;padding:14px;">
-          <span class="role-badge role-viewer" style="margin-bottom:8px;display:inline-block;">VIEWER</span>
-          <p style="font-size:12px;color:var(--text-muted);line-height:1.5;">Read-only access to dashboard, loads, ldocuments.</p>
+          <span class="role-badge role-dispatch" style="margin-bottom:8px;display:inline-block;">DISPATCH</span>
+          <p style="font-size:12px;color:var(--text-muted);line-height:1.5;">Dispatch coordination ? loads, drivers, and permit management.</p>
         </div>
       </div>
     </div>
@@ -255,9 +257,9 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
           <label class="form-label">Role</label>
           <select id="u-role" class="form-select">
             <option value="admin">Admin</option>
-            <option value="dispatcher" selected>Dispatcher</option>
+            <option value="operations">Operations</option>
+            <option value="dispatch" selected>Dispatch</option>
             <option value="driver">Driver</option>
-            <option value="viewer">Viewer</option>
           </select>
         </div>
       </div>
@@ -265,6 +267,17 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
         <label class="form-label">Email Address</label>
         <input type="email" id="u-email" class="form-input" placeholder="user@example.com">
         <div class="form-error" id="email-err">Enter a valid email address</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" id="u-phone" class="form-input" placeholder="+1 (555) 000-0000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp</label>
+          <input type="tel" id="u-whatsapp" class="form-input" placeholder="+1 (555) 000-0000">
+          <div class="form-hint">Leave blank if same as phone</div>
+        </div>
       </div>
       <div class="form-group" id="pwd-group">
         <label class="form-label" id="pwd-label">Password</label>
@@ -383,8 +396,17 @@ function saveUsersToStorage(users) {
 }
 
 function roleBadge(role) {
-  var cls = { admin:'role-admin', dispatcher:'role-dispatcher', driver:'role-driver', viewer:'role-viewer' }[role] || 'role-viewer';
-  return '<span class="role-badge ' + cls + '">' + (role || 'viewer').toUpperCase() + '</span>';
+  var cls = {
+    admin:'role-admin',
+    operations:'role-operations',
+    dispatch:'role-dispatch',
+    driver:'role-driver',
+    // legacy compat
+    dispatcher:'role-operations',
+    viewer:'role-dispatch'
+  }[role] || 'role-dispatch';
+  var label = role === 'dispatcher' ? 'OPERATIONS' : role === 'viewer' ? 'DISPATCH' : (role || 'dispatch').toUpperCase();
+  return '<span class="role-badge ' + cls + '">' + label + '</span>';
 }
 
 function statusBadge(active) {
@@ -395,12 +417,16 @@ function statusBadge(active) {
 function renderTable(users) {
   var tbody = document.getElementById('user-tbody');
   if (!users.length) {
-    tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><p>No users found.</p></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><p>No users found.</p></td></tr>';
     return;
   }
   tbody.innerHTML = users.map(function(u) {
     var ac = avatarColor(u.email);
     var ini = initials(u.name, u.email);
+    var contactHtml = '';
+    if (u.phone) contactHtml += '<div style="font-size:11px;color:var(--text-mid);font-family:\'JetBrains Mono\',monospace;">' + u.phone + '</div>';
+    if (u.whatsapp) contactHtml += '<div style="font-size:11px;color:#25d366;font-family:\'JetBrains Mono\',monospace;">WA: ' + u.whatsapp + '</div>';
+    if (!u.phone && !u.whatsapp) contactHtml = '<span style="font-size:11px;color:var(--text-muted);">&#8212;</span>';
     return '<tr>' +
       '<td><div class="user-info">' +
         '<div class="avatar" style="background:' + ac.bg + ';color:' + ac.color + ';">' + ini + '</div>' +
@@ -408,8 +434,9 @@ function renderTable(users) {
         '<div class="user-email">' + u.email + '</div></div>' +
       '</div></td>' +
       '<td>' + roleBadge(u.role) + '</td>' +
+      '<td>' + contactHtml + '</td>' +
       '<td>' + statusBadge(u.active) + '</td>' +
-      '<td class="ts-cell">' + (u.createdAt || 'â') + '</td>' +
+      '<td class="ts-cell">' + (u.createdAt || '?') + '</td>' +
       '<td><div class="action-btns">' +
         '<button class="btn btn-ghost btn-sm" onclick="openEditModal(\'' + u.id + '\')">Edit</button>' +
         '<button class="btn btn-ghost btn-sm" onclick="openResetModal(\'' + u.id + '\')">Password</button>' +
@@ -446,8 +473,10 @@ function openAddModal() {
   document.getElementById('edit-user-id').value = '';
   document.getElementById('u-name').value = '';
   document.getElementById('u-email').value = '';
+  document.getElementById('u-phone').value = '';
+  document.getElementById('u-whatsapp').value = '';
   document.getElementById('u-pwd').value = '';
-  document.getElementById('u-role').value = 'dispatcher';
+  document.getElementById('u-role').value = 'dispatch';
   document.getElementById('u-active').value = 'true';
   document.getElementById('status-group').style.display = 'none';
   document.getElementById('pwd-hint').style.display = 'none';
@@ -468,7 +497,9 @@ function openEditModal(id) {
   document.getElementById('u-name').value = u.name || '';
   document.getElementById('u-email').value = u.email;
   document.getElementById('u-pwd').value = '';
-  document.getElementById('u-role').value = u.role || 'viewer';
+  document.getElementById('u-role').value = u.role || 'dispatch';
+  document.getElementById('u-phone').value = u.phone || '';
+  document.getElementById('u-whatsapp').value = u.whatsapp || '';
   document.getElementById('u-active').value = u.active === false ? 'false' : 'true';
   document.getElementById('status-group').style.display = 'block';
   document.getElementById('pwd-hint').style.display = 'block';
@@ -482,12 +513,14 @@ function openEditModal(id) {
 function closeModal() { document.getElementById('user-modal').classList.remove('open'); }
 
 async function saveUser() {
-  var name  = document.getElementById('u-name').value.trim();
-  var email = document.getElementById('u-email').value.trim().toLowerCase();
-  var pwd   = document.getElementById('u-pwd').value;
-  var role  = document.getElementById('u-role').value;
-  var active = document.getElementById('u-active').value !== 'false';
-  var id    = document.getElementById('edit-user-id').value;
+  var name     = document.getElementById('u-name').value.trim();
+  var email    = document.getElementById('u-email').value.trim().toLowerCase();
+  var phone    = document.getElementById('u-phone').value.trim();
+  var whatsapp = document.getElementById('u-whatsapp').value.trim();
+  var pwd      = document.getElementById('u-pwd').value;
+  var role     = document.getElementById('u-role').value;
+  var active   = document.getElementById('u-active').value !== 'false';
+  var id       = document.getElementById('edit-user-id').value;
   var valid = true;
 
   if (!email.includes('@')) {
@@ -513,8 +546,10 @@ async function saveUser() {
     if (idx >= 0) {
       users[idx].name   = name || users[idx].name;
       users[idx].email  = email;
-      users[idx].role   = role;
-      users[idx].active = active;
+      users[idx].role     = role;
+      users[idx].phone    = phone || users[idx].phone || '';
+      users[idx].whatsapp = whatsapp || users[idx].whatsapp || '';
+      users[idx].active   = active;
       if (hash) users[idx].passwordHash = hash;
     }
   } else {
@@ -528,6 +563,7 @@ async function saveUser() {
     users.push({
       id: newId, email: email, passwordHash: hash,
       role: role, name: name || email.split('@')[0],
+      phone: phone, whatsapp: whatsapp,
       active: true, createdAt: new Date().toISOString().split('T')[0]
     });
   }
@@ -541,7 +577,7 @@ async function saveUser() {
   btn.textContent = _editMode ? 'Save Changes' : 'Add User'; btn.disabled = false;
 }
 
-// === RESET PASSWORD MODAL ===
+// === RESET PASSWORD MODAL -==
 function openResetModal(id) {
   var u = allUsers.find(function(x){ return x.id === id; });
   if (!u) return;
