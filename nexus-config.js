@@ -1,34 +1,59 @@
 // ============================================================
-// CARRIER NEXUS — CONFIGURATION  (nexus-config.js)
+// CARRIER NEXUS â CONFIG  (nexus-config.js)
 //
-// SUPABASE: https://supabase.com → Project Settings → API
-// GOOGLE:   https://console.cloud.google.com → Credentials
+// SUPABASE (optional â leave placeholder to use local auth):
+// 1. Create a project at https://supabase.com
+// 2. Go to Project Settings â API
+// 3. Copy Project URL â NEXUS_SUPABASE_URL
+// 4. Copy anon/public key â NEXUS_SUPABASE_KEY
 // ============================================================
 
-// --- SUPABASE ---
 window.NEXUS_SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
 window.NEXUS_SUPABASE_KEY = 'YOUR_ANON_KEY';
 
-// --- GOOGLE OAUTH (paste Client ID from Google Cloud Console) ---
+// ============================================================
+// LOCAL USER STORE  (used when Supabase is not configured)
+// Passwords are stored as SHA-256 hashes â NEVER plaintext.
+// Manage users via Admin > Users in the app.
+// ============================================================
+window.NEXUS_LOCAL_USERS = (function () {
+  var SEED = [
+    {
+      id:           'usr_001',
+      email:        'crtruckus@gmail.com',
+      passwordHash: 'a1d53f92e807716715a0cb4458299c8e25175f5c5c9644af3ef640538a830069',
+      role:         'admin',
+      name:         'Admin',
+      active:       true,
+      createdAt:    '2026-05-28'
+    }
+  ];
+  try {
+    var stored = JSON.parse(localStorage.getItem('nexus_users') || '[]');
+    var map = {};
+    stored.forEach(function(u){ map[u.email.toLowerCase()] = u; });
+    SEED.forEach(function(u){
+      if (!map[u.email.toLowerCase()]) map[u.email.toLowerCase()] = u;
+    });
+    return Object.values(map);
+  } catch(e) {
+    return SEED;
+  }
+})();
+
+// ============================================================
+// GOOGLE DRIVE VAULT CONFIG
+// ============================================================
+window.NEXUS_VAULT_ROOT_ID = '1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0';
+
+// ============================================================
+// GOOGLE OAUTH CLIENT ID
+// ============================================================
 window.NEXUS_GOOGLE_CLIENT_ID = '';
 
-// --- GOOGLE DRIVE FOLDERS (add as many as needed) ---
-window.NEXUS_DRIVE_FOLDERS = [
-  { name: 'Main Vault', id: '1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0', url: 'https://drive.google.com/drive/folders/1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0' }
-  // Add more folders:
-  // { name: 'Driver Docs', id: 'FOLDER_ID_HERE', url: 'https://drive.google.com/drive/folders/FOLDER_ID_HERE' },
-];
-
-// --- GMAIL ACCOUNTS (add as many as needed) ---
+// ============================================================
+// GMAIL / WHATSAPP SYNC ACCOUNTS
+// ============================================================
 window.NEXUS_GMAIL_ACCOUNTS = [
-  { name: 'Operations', email: '' }
-  // Add more accounts:
-  // { name: 'Billing', email: 'billing@yourco.com' },
-];
-
-// --- WHATSAPP SOURCES via Make.com (add as many as needed) ---
-window.NEXUS_WHATSAPP_SOURCES = [
-  { name: 'documentos', makeWebhook: '' }
-  // Add more sources:
-  // { name: 'Driver Group', makeWebhook: 'https://hook.make.com/YOUR_WEBHOOK' },
+  { email: 'crtruckus@gmail.com', label: 'CRT Truck US' }
 ];
