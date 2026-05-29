@@ -57,3 +57,16 @@ window.NEXUS_GOOGLE_CLIENT_ID = '';
 window.NEXUS_GMAIL_ACCOUNTS = [
   { email: 'crtruckus@gmail.com', label: 'CRT Truck US' }
 ];
+
+
+// ============================================================
+// LOCAL FLEET DATA
+// ============================================================
+window.NEXUS_LOCAL_FLEET = [
+  { id: 'unit-75',   unit: '75',   year: 2020, make: 'INTERNATIONAL', model: 'LS532',   vin: '3HSLGAPR6LN263275', eld: 'Connected',     eldSource: '2BRO' },
+  { id: 'unit-1022', unit: '1022', year: 2019, make: 'INTERNATIONAL', model: 'LT625',   vin: '3HSDZAPR9KN470465', eld: 'Connected',     eldSource: '2BRO' },
+  { id: 'unit-24',   unit: '24',   year: 2007, make: 'PETERBILT',     model: '379',     vin: '1XP5DB9XT7D665562', eld: 'Not Connected', eldSource: '2BRO' },
+  { id: 'unit-007',  unit: '007',  year: 2019, make: 'PETERBILT',     model: '579',     vin: '1XPBD49X6KD480527', eld: 'Not Connected', eldSource: 'Top Tracking System ELD' },
+  { id: 'unit-035',  unit: '035',  year: 2013, make: 'PETERBILT',     model: '386',     vin: '1XPHDP9X5DD194697', eld: 'Not Connected', eldSource: 'COI' },
+  { id: 'unit-ex',   unit: '—', year: 1993, make: 'PETERBILT', model: '379', vin: '1XP5DB9X0PN334269', eld: 'ELD Exempt', eldSource: 'COI' }
+];
