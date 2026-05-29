@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drivers Hub â Carrier Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--black:#090a0c;--gunmetal:#1a1f2e;--gunmetal-light:#232a3a;--steel:#2a3a52;--steel-blue:#2e6da4;--steel-blue-light:#3d87c8;--orange:#e8640a;--orange-bright:#ff7518;--white:#f0f4f8;--white-pure:#ffffff;--text-muted:#6b7a99;--text-mid:#8a9bbf;--border:rgba(46,109,164,0.18);--border-bright:rgba(46,109,164,0.4);--error:#ef4444;--green:#22c55e;--yellow:#f59e0b;--pink:#e91e8c}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0b0e;color:var(--white);font-family:'Barlow',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+
+/* TOPBAR */
+.topbar{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-shrink:0}
+.topbar-brand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;letter-spacing:.1em;color:#fff;display:flex;align-items:center;gap:10px}
+.topbar-nav{display:flex;gap:4px}
+.tnav-btn{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.8);padding:6px 14px;cursor:pointer;text-decoration:none;transition:all .2s}
+.tnav-btn:hover,.tnav-btn.active{background:rgba(255,255,255,0.18);color:#fff;border-color:rgba(255,255,255,0.35)}
+.user-badge{font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);padding:4px 10px;color:#fff}
+
+/* HUB LAYOUT */
+.hub-layout{flex:1;display:flex;overflow:hidden;height:calc(100vh - 56px)}
+
+/* LEFT PANEL â DRIVER LIST */
+.drivers-panel{width:280px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;background:#0d0f14}
+.drivers-panel-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-mid)}
+.driver-search{width:100%;padding:8px 12px;background:rgba(0,0,0,0.4);border:1px solid var(--border);color:var(--white);font-size:12px;outline:none;font-family:'Barlow',sans-serif;margin:8px 12px;width:calc(100% - 24px)}
+.driver-search::placeholder{color:var(--text-muted)}
+.driver-search:focus{border-color:var(--steel-blue-light)}
+.driver-list{flex:1;overflow-y:auto}
+.driver-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:all .2s;position:relative}
+.driver-item:hover{background:rgba(46,109,164,0.08)}
+.driver-item.selected{background:rgba(232,100,10,0.1);border-left:3px solid var(--orange);padding-left:13px}
+.driver-item-name{font-weight:600;font-size:13px;color:var(--white);margin-bottom:2px}
+.driver-item-sub{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:6px}
+.driver-unread{position:absolute;top:12px;right:12px;background:var(--pink);color:#fff;font-size:9px;font-family:'JetBrains Mono',monospace;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center}
+.driver-item-role{font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 6px;border:1px solid;text-transform:uppercase;letter-spacing:.06em}
+.role-driver{color:var(--steel-blue-light);border-color:var(--steel-blue)}
+.role-dispatch{color:var(--yellow);border-color:rgba(245,158,11,0.4)}
+.role-admin{color:var(--orange);border-color:rgba(232,100,10,0.4)}
+.no-drivers{padding:24px;text-align:center;color:var(--text-muted);font-size:12px}
+.add-driver-btn{margin:10px 12px;width:calc(100% - 24px);padding:8px;background:rgba(46,109,164,0.1);border:1px dashed var(--border-bright);color:var(--steel-blue-light);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.add-driver-btn:hover{background:rgba(46,109,164,0.18);border-color:var(--steel-blue-light)}
+
+/* RIGHT PANEL â DRIVER DETAIL */
+.detail-panel{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.detail-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--text-muted)}
+.detail-empty-ico{font-size:48px;opacity:.3}
+.detail-empty-text{font-family:'Barlow Condensed',sans-serif;font-size:18px;letter-spacing:.08em}
+
+/* DETAIL HEADER */
+.detail-head{padding:18px 24px;border-bottom:1px solid var(--border);background:#0d0f14;flex-shrink:0;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.detail-driver-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:28px;color:var(--white-pure);margin-bottom:2px}
+.detail-driver-email{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-bottom:8px}
+.detail-driver-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* INFO GRID */
+.detail-info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border);flex-shrink:0}
+@media(max-width:900px){.detail-info-grid{grid-template-columns:1fr 1fr}}
+.info-block{padding:16px 20px;border-right:1px solid var(--border)}
+.info-block:last-child{border-right:none}
+.info-block-title{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.15em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.info-val-big{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:28px;color:var(--orange);line-height:1;margin-bottom:2px}
+.info-val-label{font-size:11px;color:var(--text-muted)}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:12px;border-bottom:1px solid rgba(46,109,164,0.08)}
+.info-row:last-child{border-bottom:none}
+.info-row-label{color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase}
+.info-row-val{color:var(--white);font-weight:600;font-size:12px;text-align:right;max-width:60%}
+
+/* ASSIGN ROW */
+.assign-row{padding:12px 20px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.2);display:flex;gap:10px;flex-wrap:wrap;align-items:center;flex-shrink:0}
+.assign-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-right:4px}
+.assign-select{background:var(--gunmetal);border:1px solid var(--border);color:var(--white);padding:6px 10px;font-family:'Barlow',sans-serif;font-size:12px;outline:none;cursor:pointer;min-width:160px}
+.assign-select:focus{border-color:var(--steel-blue-light)}
+.btn-assign{padding:6px 14px;background:var(--steel-blue);border:none;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;cursor:pointer;transition:all .2s}
+.btn-assign:hover{background:var(--steel-blue-light)}
+
+/* BOLS SECTION */
+.bols-section{padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.bols-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-mid);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.bols-type-row{margin-bottom:12py}
+.bols-type-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.bols-type-label .count{background:rgba(46,109,164,0.2);color:var(--steel-blue-light);padding:1px 6px;border-radius:8px;font-size:9px}
+.bol-grid{display:flex;gap:8px;flex-wrap:wrap}
+.bol-admin-thumb{position:relative;width:80px;height:100px;border:1px solid var(--border);cursor:pointer;overflow:hidden;flex-shrink:0;transition:border .2s}
+.bol-admin-thumb:hover{border-color:var(--steel-blue-light)}
+.bol-admin-thumb img{width:100%;height:100%;object-fit:cover}
+.bol-admin-thumb .ts{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.7);font-size:8px;color:var(--text-mid);padding:2px 4px;font-family:'JetBrains Mono',monospace}
+.bol-verified-badge{position:absolute;top:4px;right:4px;background:rgba(34,197,94,0.85);color:#fff;font-size:8px;padding:1px 4px;font-family:'JetBrains Mono',monospace}
+.no-bols{font-size:12px;color:var(--text-muted);font-style:italic;padding:4px 0}
+
+/* MESSAGES SECTION */
+.messages-section{flex:1;display:flex;flex-direction:column;min-height:340px}
+.messages-head{padding:12px 20px;border-bottom:1px solid var(--border);background:var(--gunmetal);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.messages-head-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-mid);display:flex;align-items:center;gap:8px}
+.messages-thread{flex:1;overflow-y:auto;padding:12px 20px;display:flex;flex-direction:column;gap:10px;background:rgba(0,0,0,0.2)}
+.msg-bubble{max-width:70%;display:flex;flex-direction:column}
+.msg-bubble.mine{align-self:flex-end;align-items:flex-end}
+.msg-bubble.theirs{align-self:flex-start;align-items:flex-start}
+.msg-meta{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.msg-from-dispatch{color:var(--orange)}
+.msg-from-driver{color:var(--steel-blue-light)}
+.msg-text{padding:10px 14px;font-size:13px;line-height:1.5}
+.msg-bubble.mine .msg-text{background:rgba(232,100,10,0.12);border:1px solid rgba(232,100,10,0.25);border-radius:12px 12px 2px 12px;color:var(--white)}
+.msg-bubble.theirs .msg-text{background:var(--gunmetal-light);border:1px solid var(--border);border-radius:12px 12px 12px 2px;color:var(--white)}
+.msg-img{max-width:200px;max-height:200px;object-fit:cover;border:1px solid var(--border);cursor:pointer;margin-top:4px}
+.msg-compose-admin{padding:12px 20px;border-top:1px solid var(--border);background:var(--gunmetal);flex-shrink:0}
+.compose-row{display:flex;gap:8px;align-items:flex-end}
+.compose-input{flex:1;background:rgba(0,0,0,0.35);border:1px solid var(--border);color:var(--white);padding:10px 14px;font-family:'Barlow',sans-serif;font-size:13px;resize:none;min-height:40px;max-height:100px;outline:none;transition:border .2s}
+.compose-input:focus{border-color:var(--steel-blue-light)}
+.compose-input::placeholder{color:var(--text-muted)}
+.btn-attach{width:40px;height:40px;background:var(--gunmetal-light);border:1px solid var(--border);color:var(--text-mid);cursor:pointer;font-size:16px;transition:all .2s;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.btn-attach:hover{border-color:var(--steel-blue-light);color:var(--white)}
+.btn-send{height:40px;padding:0 18px;background:var(--orange);border:none;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;flex-shrink:0}
+.btn-send:hover{background:var(--orange-bright)}
+.attach-preview-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.attach-preview{position:relative;width:50px;height:50px;border:1px solid var(--border);overflow:hidden;flex-shrink:0}
+.attach-preview img{width:100%;height:100%;object-fit:cover}
+.attach-preview .del{position:absolute;top:0;right:0;width:15px;height:15px;background:rgba(239,68,68,0.9);border:none;color:#fff;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.empty-thread{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:12px}
+.unread-pill{background:var(--pink);color:#fff;font-size:9px;font-family:'JetBrains Mono',monospace;padding:2px 6px;border-radius:10px;min-width:16px;text-align:center}
+
+/* LIGHTBOX */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;align-items:center;justify-content:center}
+.lightbox.open{display:flex}
+.lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border:1px solid var(--border)}
+.lightbox-close{position:fixed;top:20px;right:20px;width:36px;height:36px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* ELD BADGE */
+.eld-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 6px;border:1px solid}
+.eld-on{color:var(--green);border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.08)}
+.eld-off{color:var(--text-muted);border-color:rgba(107,122,153,0.3)}
+.eld-exempt{color:var(--yellow);border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.08)}
+.refresh-btn{background:none;border:1px solid var(--border);color:var(--text-muted);width:26px;height:26px;cursor:pointer;font-size:12px;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.refresh-btn:hover{border-color:var(--steel-blue-light);color:var(--white)}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">â</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <svg width="26" height="26" viewBox="0 0 36 36" fill="none">
+      <path d="M18 2L32 10V26L18 34L4 26V10L18 2Z" stroke="#2e6da4" stroke-width="1.5" fill="rgba(46,109,164,0.08)"/>
+      <path d="M4 14H12L16 10H28" stroke="#e8640a" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="8" cy="24" r="2.5" fill="#e8640a"/>
+      <circle cx="18" cy="24" r="2.5" fill="#2e6da4"/>
+    </svg>
+    CARRIER NEXUS <span style="color:rgba(255,255,255,0.4);margin:0 6px">|</span> DRIVERS HUB
+  </div>
+  <div class="topbar-nav">
+    <a href="fleet-command.html" class="tnav-btn">Fleet</a>
+    <a href="drivers-hub.html" class="tnav-btn active">Drivers</a>
+    <a href="admin-users.html" class="tnav-btn">Users</a>
+  </div>
+  <div class="user-badge" id="adminBadge">ADMIN</div>
+</div>
+
+<!-- HUB LAYOUT -->
+<div class="hub-layout">
+  <!-- LEFT: Driver list -->
+  <div class="drivers-panel">
+    <div class="drivers-panel-head">
+      <div class="panel-title">DRIVERS</div>
+      <button class="refresh-btn" onclick="loadDrivers()" title="Refresh">â»</button>
+    </div>
+    <input class="driver-search" id="driverSearch" placeholder="Search drivers..." oninput="filterDrivers(this.value)">
+    <div class="driver-list" id="driverList"></div>
+    <button class="add-driver-btn" onclick="window.location.href='admin-users.html'">+ Add Driver</button>
+  </div>
+
+  <!-- RIGHT: Detail panel -->
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-empty">
+      <div class="detail-empty-ico">ð¥</div>
+      <div class="detail-empty-text">SELECT A DRIVER</div>
+      <div style="font-size:12px;color:var(--text-muted)">Choose a driver from the list to view details, BOLs, and messages</div>
+    </div>
+  </div>
+</div>
+
+<script src="nexus-config.js?v=2"></script>
+<script src="nexus-db.js"></script>
+<script>
+// âââ AUTH âââââââââââââââââââââââââââââââââââââââââââââââââââââ
+const session = JSON.parse(localStorage.getItem('nexus_session') || 'null');
+if (!session) window.location.href = 'login.html';
+const allowedRoles = ['admin','operations','dispatch'];
+if (session && !allowedRoles.includes(session.role)) window.location.href = 'driver-portal.html';
+document.getElementById('adminBadge').textContent = (session?.name || session?.email || 'ADMIN').toUpperCase();
+
+// âââ STATE ââââââââââââââââââââââââââââââââââââââââââââââââââââ
+let allDrivers = [];
+let selectedDriverEmail = null;
+let pendingImages = [];
+let pollTimer = null;
+
+// âââ HELPERS ââââââââââââââââââââââââââââââââââââââââââââââââââ
+function uid() { return 'id_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
+function fmt(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  const diffMs = Date.now()-d;
+  if (diffMs<60000) return 'just now';
+  if (diffMs<3600000) return Math.floor(diffMs/60000)+'m ago';
+  if (diffMs<86400000) return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  return d.toLocaleDateString([],{month:'short',day:'numeric'})+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+function escHtml(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
+function getUsers() { return JSON.parse(localStorage.getItem('nexus_users') || '[]'); }
+function getFleet() { return JSON.parse(localStorage.getItem('nexus_fleet') || '[]'); }
+function getLoads() { return JSON.parse(localStorage.getItem('nexus_loads') || '[]'); }
+function getAssignments() { return JSON.parse(localStorage.getItem('nexus_assignments') || '[]'); }
+function saveAssignments(a) { localStorage.setItem('nexus_assignments', JSON.stringify(a)); }
+function getBOLs() { return JSON.parse(localStorage.getItem('nexus_bols') || '[]'); }
+function getMessages() { return JSON.parse(localStorage.getItem('nexus_messages') || '[]'); }
+function saveMessages(m) { localStorage.setItem('nexus_messages', JSON.stringify(m)); }
+function getUnreadCount(driverEmail) {
+  return getMessages().filter(m => m.threadId===driverEmail && m.fromRole==='driver' && !(m.readBy||[]).includes(session.email)).length;
+}
+function eldBadge(eld) {
+  if (!eld||eld==='Not Connected') return '<span class="eld-badge eld-off">NOT CONNECTED</span>';
+  if (eld==='ELD Exempt') return '<span class="eld-badge eld-exempt">ELD EXEMPT</span>';
+  return '<span class="eld-badge eld-on">'+eld.toUpperCase()+'</span>';
+}
+
+// âââ LOAD DRIVERS âââââââââââââââââââââââââââââââââââââââââââââ
+function loadDrivers() {
+  // Merge seed users + stored users
+  const seed = window.NEXUS_LOCAL_USERS || [];
+  const stored = getUsers();
+  const map = {};
+  seed.forEach(u => map[u.email.toLowerCase()] = u);
+  stored.forEach(u => map[u.email.toLowerCase()] = u);
+  allDrivers = Object.values(map).filter(u => u.role === 'driver' && u.active !== false);
+  renderDriverList(allDrivers);
+}
+
+function filterDrivers(q) {
+  const filtered = allDrivers.filter(d => !q || d.name?.toLowerCase().includes(q.toLowerCase()) || d.email.toLowerCase().includes(q.toLowerCase()));
+  renderDriverList(filtered);
+}
+
+function renderDriverList(drivers) {
+  const el = document.getElementById('driverList');
+  if (!drivers.length) {
+    el.innerHTML = `<div class="no-drivers">No drivers found.<br><a href="admin-users.html" style="color:var(--steel-blue-light);font-size:11px">+ Create driver account</a></div>`;
+    return;
+  }
+  el.innerHTML = drivers.map(d => {
+    const unread = getUnreadCount(d.email);
+    const assignments = getAssignments();
+    const myAssign = assignments.find(a => a.driverId===d.email && a.active!==false);
+    const fleet = getFleet();
+    const truck = myAssign ? fleet.find(t=>t.id===myAssign.truckId) : null;
+    return `<div class="driver-item${selectedDriverEmail===d.email?' selected':''}" onclick="selectDriver('${escHtml(d.email)}')">
+      <div class="driver-item-name">${escHtml(d.name||d.email)}</div>
+      <div class="driver-item-sub">
+        ${truck ? `ð #${escHtml(truck.unit)}` : '<span style="color:var(--text-muted)">No truck</span>'}
+      </div>
+      ${unread>0?`<div class="driver-unread">${unread}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// âââ SELECT DRIVER ââââââââââââââââââââââââââââââââââââââââââââ
+function selectDriver(email) {
+  selectedDriverEmail = email;
+  const driver = allDrivers.find(d => d.email === email);
+  if (!driver) return;
+  renderDriverList(allDrivers); // re-render to update selected
+  renderDriverDetail(driver);
+  startPolling();
+}
+
+function renderDriverDetail(driver) {
+  const assignments = getAssignments();
+  const myAssign = assignments.find(a => a.driverId===driver.email && a.active!==false);
+  const fleet = getFleet();
+  const loads = getLoads();
+  const truck = myAssign ? fleet.find(t=>t.id===myAssign.truckId) : null;
+  const load  = myAssign ? loads.find(l=>l.id===myAssign.rateConId) : null;
+
+  const panel = document.getElementById('detailPanel');
+  panel.innerHTML = `
+    <!-- DETAIL HEAD -->
+    <div class="detail-head">
+      <div>
+        <div class="detail-driver-name">${escHtml(driver.name||driver.email)}</div>
+        <div class="detail-driver-email">${escHtml(driver.email)}</div>
+        <div class="detail-driver-meta">
+          <span class="driver-item-role role-driver">DRIVER</span>
+          ${driver.phone?`<span style="font-size:12px;color:var(--text-mid)">ð ${escHtml(driver.phone)}</span>`:''}
+          ${driver.whatsapp?`<span style="font-size:12px;color:#25d366">ð± WA: ${escHtml(driver.whatsapp)}</span>`:''}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-assign" style="background:rgba(46,109,164,0.2);border:1px solid var(--steel-blue);color:var(--steel-blue-light)" onclick="window.location.href='admin-users.html'">Edit Profile</button>
+      </div>
+    </div>
+
+    <!-- INFO GRID -->
+    <div class="detail-info-grid">
+      <!-- Truck -->
+      <div class="info-block">
+        <div class="info-block-title">ð ASSIGNED TRUCK</div>
+        ${truck ? `
+          <div class="info-val-big">#${escHtml(truck.unit)}</div>
+          <div class="info-val-label">${truck.year} ${escHtml(truck.make)} ${escHtml(truck.model)}</div>
+          <div style="margin-top:8px">${eldBadge(truck.eld)}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);margin-top:6px">${escHtml(truck.vin||'')}</div>
+        ` : `<div style="font-size:12px;color:var(--text-muted);padding:8px 0">Not assigned</div>`}
+      </div>
+      <!-- Rate Con -->
+      <div class="info-block">
+        <div class="info-block-title">ð CURRENT LOAD</div>
+        ${load ? `
+          <div class="info-val-big" style="font-size:20px;color:var(--green)">${load.rate?'$'+Number(load.rate).toLocaleString():'â'}</div>
+          <div class="info-val-label">Load ${escHtml(load.loadNumber||load.id||'â')}</div>
+          <div style="margin-top:8px;font-size:12px;color:var(--white)">${escHtml(load.origin||'â')} â ${escHtml(load.destination||'â')}</div>
+          ${load.pickupDate?`<div style="font-size:11px;color:var(--text-muted);margin-top:4px">Pickup: ${escHtml(load.pickupDate)}</div>`:''}
+        ` : `<div style="font-size:12px;color:var(--text-muted);padding:8px 0">No load assigned</div>`}
+      </div>
+      <!-- BOL Status -->
+      <div class="info-block">
+        <div class="info-block-title">ð¸ BOL STATUS</div>
+        ${renderBOLStatus(driver.email)}
+      </div>
+    </div>
+
+    <!-- ASSIGN ROW -->
+    <div class="assign-row">
+      <span class="assign-label">Assign Truck:</span>
+      <select class="assign-select" id="truckSelect">
+        <option value="">â Select Truck â</option>
+        ${fleet.map(t=>`<option value="${t.id}" ${myAssign&&myAssign.truckId===t.id?'selected':''}>Unit #${t.unit} â ${t.year} ${t.make} ${t.model}</option>`).join('')}
+      </select>
+      <span class="assign-label" style="margin-left:8px">Rate Con:</span>
+      <select class="assign-select" id="loadSelect">
+        <option value="">â Select Load â</option>
+        ${loads.map(l=>`<option value="${l.id}" ${myAssign&&myAssign.rateConId===l.id?'selected':''}>Load ${l.loadNumber||l.id} â ${l.origin||'?'} â ${l.destination||'?'}</option>`).join('')}
+      </select>
+      <button class="btn-assign" onclick="saveAssignment('${escHtml(driver.email)}')">Save Assignment</button>
+      ${myAssign?`<button class="btn-assign" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:var(--error)" onclick="clearAssignment('${escHtml(driver.email)}')">Clear</button>`:''}
+    </div>
+
+    <!-- BOLS -->
+    <div class="bols-section">
+      <div class="bols-title">ð¸ DOCUMENT UPLOADS</div>
+      <div class="bols-type-row">
+        <div class="bols-type-label">BILL OF LADING <span class="count" id="bolCount">0</span></div>
+        <div class="bol-grid" id="adminBolGrid"></div>
+      </div>
+      <div class="bols-type-row">
+        <div class="bols-type-label" style="color:var(--green)">â VERIFIED COMPLETE BOL <span class="count" id="vbolCount">0</span></div>
+        <div class="bol-grid" id="adminVbolGrid"></div>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="messages-section">
+      <div class="messages-head">
+        <div class="messages-head-title">ð¬ MESSAGES WITH ${escHtml((driver.name||driver.email).toUpperCase())}
+          <span class="unread-pill" id="adminUnreadPill" style="display:none">0</span>
+        </div>
+        <button class="refresh-btn" onclick="refreshDetail()" title="Refresh">â»</button>
+      </div>
+      <div class="messages-thread" id="adminMsgThread"></div>
+      <div class="msg-compose-admin">
+        <div class="attach-preview-row" id="adminAttachRow" style="display:none"></div>
+        <div class="compose-row">
+          <textarea class="compose-input" id="adminMsgInput" placeholder="Message ${escHtml(driver.name||'driver')}..." rows="1"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();adminSendMessage()}"
+            oninput="autoResize(this)"></textarea>
+          <button class="btn-attach" onclick="document.getElementById('adminPhotoInput').click()" title="Attach photo">ð</button>
+          <button class="btn-send" onclick="adminSendMessage()">SEND</button>
+        </div>
+        <input type="file" id="adminPhotoInput" accept="image/*" multiple onchange="handleAdminAttach(this)">
+      </div>
+    </div>
+  `;
+  renderAdminBOLs(driver.email);
+  renderAdminMessages(driver.email);
+}
+
+function renderBOLStatus(email) {
+  const bols = getBOLs().filter(b=>b.driverId===email);
+  const bol = bols.filter(b=>b.type==='bol').length;
+  const vbol = bols.filter(b=>b.type==='verified').length;
+  return `
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px">
+        <span style="color:var(--text-muted)">BOL uploads</span>
+        <span style="font-weight:700;color:${bol>0?'var(--white)':'var(--text-muted)'}">${bol}</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px">
+        <span style="color:var(--text-muted)">Verified BOLs</span>
+        <span style="font-weight:700;color:${vbol>0?'var(--green)':'var(--text-muted)'}">${vbol}</span>
+      </div>
+    </div>`;
+}
+
+function renderAdminBOLs(email) {
+  const bols = getBOLs().filter(b=>b.driverId===email);
+  const bolEl = document.getElementById('adminBolGrid');
+  const vbolEl = document.getElementById('adminVbolGrid');
+  const bolCnt = document.getElementById('bolCount');
+  const vbolCnt = document.getElementById('vbolCount');
+  if (!bolEl) return;
+
+  const bolItems = bols.filter(b=>b.type==='bol');
+  const vbolItems = bols.filter(b=>b.type==='verified');
+  if (bolCnt) bolCnt.textContent = bolItems.length;
+  if (vbolCnt) vbolCnt.textContent = vbolItems.length;
+
+  function thumb(b, verified) {
+    return `<div class="bol-admin-thumb" onclick="openBOLLightbox('${b.id}')">
+      <img src="${b.imageData}" alt="BOL">
+      <div class="ts">${fmt(b.timestamp)}</div>
+      ${verified?'<div class="bol-verified-badge">â</div>':''}
+    </div>`;
+  }
+  bolEl.innerHTML = bolItems.length ? bolItems.map(b=>thumb(b,false)).join('') : '<div class="no-bols">None uploaded</div>';
+  vbolEl.innerHTML = vbolItems.length ? vbolItems.map(b=>thumb(b,true)).join('') : '<div class="no-bols">None uploaded</div>';
+}
+
+let bolDataCache = {};
+function openBOLLightbox(id) {
+  const b = getBOLs().find(x=>x.id===id);
+  if (!b) return;
+  document.getElementById('lightboxImg').src = b.imageData;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+document.getElementById('lightbox').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeLightbox(); });
+
+// âââ ASSIGNMENT âââââââââââââââââââââââââââââââââââââââââââââââ
+function saveAssignment(driverEmail) {
+  const truckId = document.getElementById('truckSelect')?.value || '';
+  const loadId  = document.getElementById('loadSelect')?.value  || '';
+  const assignments = getAssignments().filter(a => !(a.driverId===driverEmail && a.active!==false));
+  assignments.push({ id: uid(), driverId: driverEmail, truckId, rateConId: loadId, active: true, assignedAt: new Date().toISOString(), assignedBy: session.email });
+  saveAssignments(assignments);
+  const driver = allDrivers.find(d=>d.email===driverEmail);
+  if (driver) renderDriverDetail(driver);
+}
+function clearAssignment(driverEmail) {
+  const assignments = getAssignments().map(a => a.driverId===driverEmail && a.active!==false ? {...a,active:false} : a);
+  saveAssignments(assignments);
+  const driver = allDrivers.find(d=>d.email===driverEmail);
+  if (driver) renderDriverDetail(driver);
+}
+
+// âââ MESSAGES âââââââââââââââââââââââââââââââââââââââââââââââââ
+function renderAdminMessages(driverEmail) {
+  const thread = document.getElementById('adminMsgThread');
+  if (!thread) return;
+  const allMsgs = getMessages();
+  const msgs = allMsgs.filter(m=>m.threadId===driverEmail);
+
+  if (!msgs.length) {
+    thread.innerHTML = `<div class="empty-thread">ð¡ No messages yet<br><span style="font-size:10px;margin-top:4px;display:block">Send a message to start the conversation</span></div>`;
+    return;
+  }
+
+  thread.innerHTML = msgs.map(m => {
+    const mine = m.fromRole !== 'driver';
+    const cls = mine ? 'mine+ : 'theirs';
+    const nameColor = mine ? 'msg-from-dispatch' : 'msg-from-driver';
+    return `<div class="msg-bubble ${cls}">
+      <div class="msg-meta">
+        <span class="${nameColor}">${escHtml(m.fromName||m.from)}</span>
+        <span>${fmt(m.timestamp)}</span>
+      </div>
+      ${m.content?`<div class="msg-text">${escHtml(m.content)}</div>`:''}
+      ${m.imageData?`<img class="msg-img" src="${m.imageData}" onclick="openMsgImgLightbox('${m.id}')" alt="photo">`:''}
+    </div>`;
+  }).join('');
+
+  // Mark driver messages as read
+  let changed = false;
+  const updated = allMsgs.map(m=>{
+    if(m.threadId===driverEmail && m.fromRole==='driver' && !(m.readBy||[]).includes(session.email)){
+      changed=true; return {...m,readBy:[...(m.readBy||[]),session.email]};
+    }
+    return m;
+  });
+  if(changed){ saveMessages(updated); loadDrivers(); } // refresh unread badges
+
+  const pill = document.getElementById('adminUnreadPill');
+  if(pill){ pill.style.display='none'; }
+  thread.scrollTop = thread.scrollHeight;
+}
+
+function openMsgImgLightbox(msgId) {
+  const m = getMessages().find(x=>x.id===msgId);
+  if(!m||!m.imageData) return;
+  document.getElementById('lightboxImg').src = m.imageData;
+  document.getElementById('lightbox').classList.add('open');
+}
+
+function handleAdminAttach(input) {
+  Array.from(input.files).forEach(file=>{
+    const reader = new FileReader();
+    reader.onload = ev=>{
+      pendingImages.push({id:uid(),src:ev.target.result,name:file.name});
+      updateAdminAttachPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value='';
+}
+function updateAdminAttachPreview() {
+  const el = document.getElementById('adminAttachRow');
+  if(!el) return;
+  if(!pendingImages.length){el.style.display='none';el.innerHTML='';return;}
+  el.style.display='flex';
+  el.innerHTML = pendingImages.map(img=>`<div class="attach-preview"><img src="${img.src}" alt=""><button class="del" onclick="removeAdminAttach('${img.id}')">â</button></div>`).join('');
+}
+function removeAdminAttach(id){pendingImages=pendingImages.filter(i=>i.id!==id);updateAdminAttachPreview();}
+
+function adminSendMessage() {
+  if (!selectedDriverEmail) return;
+  const input = document.getElementById('adminMsgInput');
+  const text = (input?.value||'').trim();
+  if(!text && !pendingImages.length) return;
+
+  const senderRole = session.role || 'dispatch';
+  const msgs = getMessages();
+  if(text||!pendingImages.length){
+    msgs.push({id:uid(),threadId:selectedDriverEmail,from:session.email,fromName:session.name||session.email,fromRole:senderRole,content:text,imageData:null,timestamp:new Date().toISOString(),readBy:[session.email]});
+  }
+  pendingImages.forEach((img,i)=>{
+    msgs.push({id:uid(),threadId:selectedDriverEmail,from:session.email,fromName:session.name||session.email,fromRole:senderRole,content:i===0&&!text?'':i===0?text:'',imageData:img.src,timestamp:new Date().toISOString(),²eadBy:[session.email]});
+  });
+  saveMessages(msgs);
+  if(input){input.value='';input.style.height='';}
+  pendingImages=[];updateAdminAttachPreview();
+  renderAdminMessages(selectedDriverEmail);
+}
+
+function refreshDetail() {
+  if(!selectedDriverEmail) return;
+  const driver = allDrivers.find(d=>d.email===selectedDriverEmail);
+  if(driver){ renderAdminBOLs(driver.email); renderAdminMessages(driver.email); loadDrivers(); }
+}
+
+let lastAdminMsgCount = 0;
+function startPolling() {
+  clearInterval(pollTimer);
+  pollTimer = setInterval(()=>{
+    if(!selectedDriverEmail) return;
+    const cnt = getMessages().filter(m=>m.threadId===selectedDriverEmail).length;
+    if(cnt!==lastAdminMsgCount){ lastAdminMsgCount=cnt; renderAdminMessages(selectedDriverEmail); loadDrivers(); }
+  }, 4000);
+}
+
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+
+// âââ INIT âââââââââââââââââââââââââââââââââââââââââââââââââââââ
+loadDrivers();
+</script>
+</body>
+</html>
