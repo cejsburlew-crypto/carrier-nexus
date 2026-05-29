@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Document Vault — Carrier Nexus</title>
+<title>Document Vault â Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -101,7 +101,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 
 /* TYPE BADGES */
 .type-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;letter-spacing:0.04em;white-space:nowrap;}
-.type-bol{background:rgba(46,109,164,0.25);color:var(--ice);border:1px solid rgba(46,109,164,0.4);}
+.type-bol{background:rgba(46,109,164,0.25);color: #1e3a6e;border:1px solid rgba(46,109,164,0.4);}
 .type-lc{background:rgba(232,100,10,0.2);color:var(--orange);border:1px solid rgba(232,100,10,0.35);}
 .type-permit{background:rgba(192,132,252,0.2);color:#c084fc;border:1px solid rgba(192,132,252,0.35);}
 .type-scan{background:rgba(107,122,153,0.2);color:var(--text-mid);border:1px solid rgba(107,122,153,0.35);}
@@ -115,10 +115,10 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .row-count{font-size:12px;color:var(--text-muted);padding:0 28px 12px;}
 .no-results{padding:40px;text-align:center;color:var(--text-muted);font-size:14px;}
 
-/* ═══════════════════════════════════════════════
-   MOBILE RESPONSIVE — Carrier Nexus Admin Pages
+/* âââââââââââââââââââââââââââââââââââââââââââââââ
+   MOBILE RESPONSIVE â Carrier Nexus Admin Pages
    Breakpoint: 768px
-═══════════════════════════════════════════════ */
+âââââââââââââââââââââââââââââââââââââââââââââââ */
 
 /* Mobile bottom nav */
 .mobile-nav {
@@ -255,38 +255,64 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
   .kpi-value { font-size: 22px !important; }
 }
 
+
+/* VAULT TREE */
+.vault-tree{display:flex;flex-direction:column;gap:12px;}
+.vault-dispatcher{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.vault-dispatcher-header{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);}
+.vault-dispatcher-header:hover{background:var(--gunmetal-light);}
+.vault-dispatcher-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:.06em;color:var(--white);}
+.vault-dispatcher-count{font-size:11px;color:var(--text-muted);margin-left:auto;}
+.vault-dispatcher-chevron{color:var(--text-muted);transition:transform .2s;}
+.vault-dispatcher-chevron.open{transform:rotate(90deg);}
+.vault-drivers{display:flex;flex-direction:column;gap:0;}
+.vault-driver-row{display:flex;align-items:center;gap:10px;padding:10px 16px 10px 32px;border-bottom:1px solid var(--border);cursor:pointer;text-decoration:none;transition:background .1s;}
+.vault-driver-row:last-child{border-bottom:none;}
+.vault-driver-row:hover{background:var(--gunmetal-light);}
+.vault-driver-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;flex-shrink:0;}
+.vault-driver-name{font-size:13px;font-weight:600;color:var(--white);}
+.vault-driver-meta{font-size:11px;color:var(--text-muted);margin-left:auto;}
+.vault-subcats{display:flex;gap:6px;flex-wrap:wrap;margin-left:8px;}
+.vault-subcat{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--steel);color:var(--text-mid);letter-spacing:.04em;}
+.vault-connect-box{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:48px 28px;background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;text-align:center;}
+.vault-connect-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--white);}
+.vault-connect-sub{font-size:12px;color:var(--text-muted);max-width:320px;}
+.vault-loading{display:flex;align-items:center;gap:10px;padding:28px;color:var(--text-muted);font-size:13px;}
+.vault-loading-spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--steel-blue);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
 </style>
 <style id="nexus-unified">
-/* ── SIDEBAR BLACK ── */
+/* ââ SIDEBAR BLACK ââ */
 .sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
-/* ── LOGO AREA ── */
+/* ââ LOGO AREA ââ */
 .sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
 .sidebar-logo .logo-hex { flex-shrink:0 !important; }
 .sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
 .sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
 .sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
 .sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
-/* ── NAV LINKS ── */
+/* ââ NAV LINKS ââ */
 .sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
 .sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
 .sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
 .sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
 .sidebar-link.active svg { opacity:1 !important; }
-/* ── SECTION LABELS ── */
+/* ââ SECTION LABELS ââ */
 .sidebar-section { padding:12px 0 4px !important; }
 .sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
-/* ── TOPBAR ── */
+/* ââ TOPBAR ââ */
 .topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
 .topbar *, .top-bar * { color:#ffffff !important; }
 .topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
-/* ── MOBILE NAV ── */
+/* ââ MOBILE NAV ââ */
 .mobile-nav { background:#000000 !important; }
 .mobile-nav-tab.active { color:#e91e8c !important; }
-/* ── SIDEBAR USER ── */
+/* ââ SIDEBAR USER ââ */
 .sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
 .sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
 .sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
-/* ── NAV BADGE ── */
+/* ââ NAV BADGE ââ */
 .nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
 </head>
@@ -431,7 +457,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 
   <div class="sidebar-spacer"></div>
   <div class="sidebar-user">
-    <div class="user-name">Jim Burlew · ADMIN</div>
+    <div class="user-name">Jim Burlew Â· ADMIN</div>
     <div class="user-role">Carrier Trucking US, LLC</div>
   </div>
 </nav>
@@ -441,10 +467,10 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
   <div class="topbar">
     <div>
       <div class="page-title">DOCUMENT VAULT</div>
-      <div class="page-subtitle">BOLs, load confirmations, permits &amp; scans · WhatsApp Documentos</div>
+      <div class="page-subtitle">BOLs, load confirmations, permits &amp; scans Â· WhatsApp Documentos</div>
     </div>
     <div class="topbar-actions">
-      <button class="btn btn-ghost" onclick="openSyncModal()" style="display:flex;align-items:center;gap:6px;">
+      <button class="btn btn-ghost" onclick="openSyncModal()">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
         Sync NEXUS Docs
       </button>
@@ -514,9 +540,24 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
     </div>
     <div class="filter-divider"></div>
     <input type="date" class="filter-select" id="f-date-from" onchange="applyFilters()" style="font-family:'Barlow',sans-serif;color-scheme:dark;">
-    <span style="font-size:12px;color:var(--text-muted)">–</span>
+    <span style="font-size:12px;color:var(--text-muted)">â</span>
     <input type="date" class="filter-select" id="f-date-to" onchange="applyFilters()" style="font-family:'Barlow',sans-serif;color-scheme:dark;">
     <button class="btn btn-ghost" onclick="clearFilters()">Clear</button>
+  </div>
+
+
+  <!-- VIEW TOGGLE -->
+  <div style="padding:0 28px 12px;display:flex;gap:8px;align-items:center;">
+    <div class="toggle-group">
+      <button class="toggle-btn active" id="view-list-btn" onclick="setView('list')">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:4px;"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Document List
+      </button>
+      <button class="toggle-btn" id="view-vault-btn" onclick="setView('vault')">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:4px;"><path d="M3 3h18v4H3zM3 10h8v11H3zM14 10h7v4h-7zM14 17h7v4h-7z"/></svg>
+        Drive Vault
+      </button>
+    </div>
   </div>
 
   <div class="row-count" id="row-count">Showing 60 of 60 documents</div>
@@ -721,7 +762,215 @@ function renderTable(data){
 
 // Initial render
 renderTable(documents);
+
+
+function openSyncModal(){ document.getElementById('sync-modal').style.display='flex'; }
+function closeSyncModal(){ document.getElementById('sync-modal').style.display='none'; }
+function openAddDocModal(){
+  document.getElementById('nd-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('add-doc-modal').style.display='flex';
+}
+function closeAddDocModal(){ document.getElementById('add-doc-modal').style.display='none'; }
+function submitAddDoc(e){
+  e.preventDefault();
+  const doc = {
+    date: document.getElementById('nd-date').value,
+    filename: document.getElementById('nd-filename').value,
+    driver: document.getElementById('nd-driver').value,
+    type: document.getElementById('nd-type').value,
+    add_deduct: document.getElementById('nd-ad').value,
+    driveId: document.getElementById('nd-drive').value || ''
+  };
+  documents.unshift(doc);
+  if(typeof NexusDB !== 'undefined') NexusDB.Documents && NexusDB.Documents.create(doc).catch(()=>{});
+  closeAddDocModal();
+  applyFilters();
+}
+
+// Close modals on backdrop click
+document.getElementById('sync-modal').addEventListener('click', function(e){ if(e.target===this) closeSyncModal(); });
+document.getElementById('add-doc-modal').addEventListener('click', function(e){ if(e.target===this) closeAddDocModal(); });
+
+
+/* ââ VAULT TREE ââââââââââââââââââââââââââââââââââââââââââââ */
+var _currentView = 'list';
+
+function setView(v) {
+  _currentView = v;
+  var listEls = [document.querySelector('.filter-bar'), document.getElementById('row-count'),
+                 document.querySelector('.table-wrap')];
+  var vaultEl = document.getElementById('vault-panel');
+  if (v === 'list') {
+    listEls.forEach(function(el){ if(el) el.style.display=''; });
+    vaultEl.style.display = 'none';
+    document.getElementById('view-list-btn').classList.add('active');
+    document.getElementById('view-vault-btn').classList.remove('active');
+  } else {
+    listEls.forEach(function(el){ if(el) el.style.display='none'; });
+    vaultEl.style.display = 'block';
+    document.getElementById('view-vault-btn').classList.add('active');
+    document.getElementById('view-list-btn').classList.remove('active');
+    if (typeof NexusDrive !== 'undefined' && !NexusDrive.isAuthed) {
+      // already initialized, try silent auth
+    } else if (typeof NexusDrive !== 'undefined' && NexusDrive.isAuthed) {
+      loadVaultTree();
+    }
+  }
+}
+
+function vaultConnect() {
+  if (typeof NexusDrive === 'undefined') {
+    alert('NexusDrive not loaded. Make sure nexus-config.js and nexus-drive.js are present.');
+    return;
+  }
+  var btn = document.getElementById('vault-auth-btn');
+  btn.textContent = 'Connecting...';
+  btn.disabled = true;
+  NexusDrive.requireAuth(function(token) {
+    if (!token) {
+      btn.textContent = 'Connect Drive';
+      btn.disabled = false;
+      return;
+    }
+    loadVaultTree();
+  }, { prompt: 'consent' });
+}
+
+var DRIVER_COLORS = {
+  AVIS:      { bg:'#D6E4F0', color:'#1a3a5c' },
+  DAVID:     { bg:'#F8D7DA', color:'#5c1a1e' },
+  MIGUEL:    { bg:'#D5E8D4', color:'#1e4021' },
+  NELSON:    { bg:'#D1ECF1', color:'#0c3d47' },
+  YOSVIEL:   { bg:'#E8D5F5', color:'#3a1a5c' },
+  LAURA:     { bg:'#FFF3CD', color:'#5a3e00' },
+  GUILLERMO: { bg:'#D4EDDA', color:'#1a4a28' },
+};
+
+async function loadVaultTree() {
+  document.getElementById('vault-connect').style.display = 'none';
+  document.getElementById('vault-tree').style.display = 'none';
+  document.getElementById('vault-error').style.display = 'none';
+  document.getElementById('vault-loading').style.display = 'flex';
+
+  try {
+    var tree = await NexusDrive.vault.getVaultTree();
+    document.getElementById('vault-loading').style.display = 'none';
+    renderVaultTree(tree);
+  } catch(e) {
+    document.getElementById('vault-loading').style.display = 'none';
+    var errEl = document.getElementById('vault-error');
+    errEl.textContent = 'Drive error: ' + e.message;
+    errEl.style.display = 'block';
+  }
+}
+
+function renderVaultTree(tree) {
+  var container = document.getElementById('vault-tree');
+  container.innerHTML = '';
+  container.style.display = 'flex';
+
+  var FOLDER_MIME = 'application/vnd.google-apps.folder';
+
+  tree.forEach(function(dispatcher) {
+    if (dispatcher.mimeType !== FOLDER_MIME) return;
+
+    var drivers = (dispatcher.children || []).filter(function(c){
+      return c.mimeType === FOLDER_MIME || c.mimeType === 'application/vnd.google-apps.shortcut';
+    });
+    var isCompany = dispatcher.name.startsWith('_');
+
+    var block = document.createElement('div');
+    block.className = 'vault-dispatcher';
+
+    // Header
+    var header = document.createElement('div');
+    header.className = 'vault-dispatcher-header';
+    header.innerHTML =
+      '<svg width="14" height="14" fill="none" stroke="' + (isCompany ? '#fbbf24' : 'var(--steel-blue)') + '" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>' +
+      '<span class="vault-dispatcher-name">' + dispatcher.name + '</span>' +
+      '<span class="vault-dispatcher-count">' + drivers.length + ' ' + (isCompany ? 'folders' : 'drivers') + '</span>' +
+      '<svg class="vault-dispatcher-chevron open" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>';
+
+    var driversDiv = document.createElement('div');
+    driversDiv.className = 'vault-drivers';
+
+    header.addEventListener('click', function() {
+      var chev = header.querySelector('.vault-dispatcher-chevron');
+      var isOpen = chev.classList.contains('open');
+      chev.classList.toggle('open');
+      driversDiv.style.display = isOpen ? 'none' : 'flex';
+      driversDiv.style.flexDirection = 'column';
+    });
+
+    // Driver rows
+    drivers.forEach(function(driver) {
+      var dc = DRIVER_COLORS[driver.name] || { bg:'#f0f4f8', color:'#334155' };
+      var isShortcut = driver.mimeType === 'application/vnd.google-apps.shortcut';
+      var driveUrl = driver.webViewLink || ('https://drive.google.com/drive/folders/' + driver.id);
+      var targetId = isShortcut && driver.shortcutDetails ? driver.shortcutDetails.targetId : driver.id;
+
+      var row = document.createElement('a');
+      row.className = 'vault-driver-row';
+      row.href = driveUrl;
+      row.target = '_blank';
+      row.innerHTML =
+        '<div class="vault-driver-icon" style="background:' + dc.bg + ';color:' + dc.color + ';">' +
+          driver.name.substring(0,2) +
+        '</div>' +
+        '<div>' +
+          '<div class="vault-driver-name">' + driver.name + (isShortcut ? ' <span style="font-size:10px;color:var(--text-muted);font-weight:400;">(shortcut)</span>' : '') + '</div>' +
+        '</div>' +
+        '<svg style="margin-left:auto;opacity:0.35;flex-shrink:0;" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+
+      driversDiv.appendChild(row);
+    });
+
+    block.appendChild(header);
+    block.appendChild(driversDiv);
+    container.appendChild(block);
+  });
+
+  // "Provision Vault" CTA if tree is empty
+  if (tree.filter(function(t){ return t.mimeType === 'application/vnd.google-apps.folder'; }).length === 0) {
+    var cta = document.createElement('div');
+    cta.className = 'vault-connect-box';
+    cta.innerHTML =
+      '<div class="vault-connect-title">VAULT IS EMPTY</div>' +
+      '<div class="vault-connect-sub">Run provisionAll() to create the dispatcher â driver folder structure.</div>' +
+      '<button class="btn btn-orange" onclick="runProvisionAll()">Provision Vault Now</button>';
+    container.appendChild(cta);
+  }
+}
+
+async function runProvisionAll() {
+  if (typeof NexusDrive === 'undefined' || !NexusDrive.isAuthed) { vaultConnect(); return; }
+  var btn = event.target;
+  btn.textContent = 'Provisioning...';
+  btn.disabled = true;
+  try {
+    var results = await NexusDrive.vault.provisionAll();
+    var ok = results.filter(function(r){ return r.ok; }).length;
+    alert('Done! ' + ok + ' of ' + results.length + ' items provisioned.');
+    loadVaultTree();
+  } catch(e) {
+    alert('Error: ' + e.message);
+    btn.textContent = 'Provision Vault Now';
+    btn.disabled = false;
+  }
+}
+
+// Init NexusDrive on page load
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof NexusDrive !== 'undefined') {
+    NexusDrive.init(function() {
+      console.log('NexusDrive ready');
+    });
+  }
+});
+
 </script>
+<script src="nexus-config.js"></script>
+<script src="nexus-drive.js"></script>
 <script src="nexus-lang.js"></script>
 
 <!-- Mobile Bottom Nav -->
@@ -755,109 +1004,138 @@ renderTable(documents);
 <script>
 (async()=>{
   if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
-  renderTable(documents);
+  renderTable(documents); // re-render after auth check in case of page state
 })();
 </script>
 
 <!-- SYNC NEXUS DOCS MODAL -->
-<div id="sync-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;">
-  <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:32px;width:560px;max-width:94vw;max-height:85vh;overflow-y:auto;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-      <h2 style="color:#f1f5f9;font-size:18px;font-weight:700;letter-spacing:1px;">SYNC NEXUS DOCS</h2>
-      <button onclick="closeSyncModal()" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;">&#x2715;</button>
+<div id="sync-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid #334155;">
+      <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#f1f5f9;letter-spacing:.06em;">SYNC NEXUS DOCUMENTS</span>
+      <button onclick="closeSyncModal()" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;line-height:1;">â</button>
     </div>
-    <p style="color:#94a3b8;font-size:13px;margin-bottom:24px;">Open each source below, collect new files, and save them to your Drive vault. Then use the Add Document button to log them in NEXUS.</p>
-    <!-- WHATSAPP SOURCES -->
-    <div style="margin-bottom:20px;">
-      <div style="color:#64748b;font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:10px;">WHATSAPP CHATS</div>
-      <div id="sync-wa-list"></div>
-    </div>
-    <!-- GMAIL ACCOUNTS -->
-    <div style="margin-bottom:20px;">
-      <div style="color:#64748b;font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:10px;">GMAIL ACCOUNTS</div>
-      <div id="sync-gmail-list"></div>
-    </div>
-    <!-- DRIVE FOLDERS -->
-    <div style="margin-bottom:24px;">
-      <div style="color:#64748b;font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:10px;">GOOGLE DRIVE FOLDERS</div>
-      <div id="sync-drive-list"></div>
-    </div>
-    <div style="display:flex;gap:12px;justify-content:flex-end;">
-      <button onclick="closeSyncModal()" style="padding:10px 20px;background:#334155;border:none;border-radius:6px;color:#94a3b8;cursor:pointer;font-size:13px;">CLOSE</button>
-      <button onclick="addSyncSource()" style="padding:10px 20px;background:#ff6b35;border:none;border-radius:6px;color:#fff;cursor:pointer;font-size:13px;font-weight:700;">+ ADD SOURCE</button>
+    <div style="padding:24px;">
+      <p style="font-size:13px;color:#94a3b8;margin:0 0 20px;">Pull new files from Gmail and WhatsApp into the NEXUS Data Vault (Google Drive). Click a source below to open it, then download files and add them here.</p>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
+        <a href="https://mail.google.com/mail/u/0/#search/has:attachment+carrier+OR+BOL+OR+load" target="_blank"
+           style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;transition:border-color 0.15s;"
+           onmouseover="this.style.borderColor='#2e6da4'" onmouseout="this.style.borderColor='#334155'">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#ea4335"/><path d="M4 8l8 5 8-5V18H4V8z" fill="white"/><path d="M4 8l8 5 8-5" stroke="white" stroke-width="1.5"/></svg>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;letter-spacing:.04em;">GMAIL â Search Attachments</div>
+            <div style="font-size:11px;color:#64748b;margin-top:2px;">BOL, load confirmations, permits</div>
+          </div>
+          <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+
+        <a href="https://web.whatsapp.com" target="_blank"
+           style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;"
+           onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#334155'">
+          <svg width="28" height="28" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#25d366"/><path d="M12 4a8 8 0 100 16 8 8 0 000-16zm0 14.5A6.5 6.5 0 015.5 12 6.5 6.5 0 0112 5.5 6.5 6.5 0 0118.5 12 6.5 6.5 0 0112 18.5z" fill="white"/><path d="M9 9.5s1-1.5 3.5-.5 2 4 0 5-4.5-1-4.5-1L9 15.5" stroke="white" stroke-width="1.2" fill="none"/></svg>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;letter-spacing:.04em;">WHATSAPP WEB â Download Files</div>
+            <div style="font-size:11px;color:#64748b;margin-top:2px;">Open chats â download PDFs shared by drivers</div>
+          </div>
+          <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+
+        <a href="https://drive.google.com" target="_blank"
+           style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;"
+           onmouseover="this.style.borderColor='#4285f4'" onmouseout="this.style.borderColor='#334155'">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#1a73e8"/><path d="M6 18l3.5-6L12 18H6zM12 18l3.5-6L18 7.5 16 6l-4 7-1.5 2.5L12 18zm6 0l-2-3.5L12 6h2.5l5.5 9.5L18 18z" fill="white"/></svg>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;letter-spacing:.04em;">GOOGLE DRIVE â Data Vault</div>
+            <div style="font-size:11px;color:#64748b;margin-top:2px;">Upload downloaded files to your shared vault folder</div>
+          </div>
+          <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+
+      <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px 18px;margin-bottom:20px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#e8640a;letter-spacing:.06em;margin-bottom:8px;">SYNC WORKFLOW</div>
+        <ol style="margin:0;padding-left:18px;font-size:12px;color:#94a3b8;line-height:2;">
+          <li>Open Gmail â download BOLs / load confirmations as PDFs</li>
+          <li>Open WhatsApp Web â download files drivers sent</li>
+          <li>Upload all files to Google Drive vault folder</li>
+          <li>Click <strong style="color:#f1f5f9;">Add Document</strong> above to log each file in NEXUS</li>
+        </ol>
+      </div>
+
+      <button onclick="closeSyncModal()" style="width:100%;padding:11px;background:#2e6da4;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;cursor:pointer;">DONE</button>
     </div>
   </div>
 </div>
 
+
+  <!-- DRIVE VAULT TREE PANEL -->
+  <div id="vault-panel" style="display:none;padding:0 28px 28px;">
+    <div id="vault-connect" class="vault-connect-box">
+      <svg width="40" height="40" fill="none" stroke="var(--steel-blue)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.7A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.09a16 16 0 006 6l.55-.55a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      <div class="vault-connect-title">CONNECT GOOGLE DRIVE</div>
+      <div class="vault-connect-sub">Authorize once to browse your dispatcher &rarr; driver vault structure and open folders directly.</div>
+      <button class="btn btn-orange" id="vault-auth-btn" onclick="vaultConnect()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Connect Drive
+      </button>
+    </div>
+    <div id="vault-loading" class="vault-loading" style="display:none;">
+      <div class="vault-loading-spinner"></div>
+      Loading vault structure from Google Drive...
+    </div>
+    <div id="vault-tree" class="vault-tree" style="display:none;"></div>
+    <div id="vault-error" style="display:none;padding:24px;background:var(--gunmetal);border:1px solid var(--red);border-radius:10px;color:var(--red);font-size:13px;"></div>
+  </div>
+
+<!-- ADD DOCUMENT MODAL -->
 <div id="add-doc-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9999;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;width:100%;max-width:480px;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid #334155;">
       <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#f1f5f9;letter-spacing:.06em;">ADD DOCUMENT</span>
-      <button onclick="closeAddDocModal()" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;">&#x2715;</button>
+      <button onclick="closeAddDocModal()" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;">â</button>
     </div>
     <form id="add-doc-form" onsubmit="submitAddDoc(event)" style="padding:24px;display:flex;flex-direction:column;gap:14px;">
-      <div><label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DATE</label><input type="date" id="nd-date" required style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;box-sizing:border-box;color-scheme:dark;"></div>
-      <div><label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">FILENAME</label><input type="text" id="nd-filename" required placeholder="AMET - BROKER BOL 12345.pdf" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;"></div>
-      <div><label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DRIVER</label>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DATE</label>
+        <input type="date" id="nd-date" required style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;box-sizing:border-box;color-scheme:dark;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">FILENAME</label>
+        <input type="text" id="nd-filename" required placeholder="AMET - BROKER BOL 12345.pdf" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DRIVER</label>
         <select id="nd-driver" required style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
-          <option value="">Select driver...</option><option value="AMET">Amet Abreu</option><option value="AVIS">Avis Modesto</option><option value="DAVID">David Fonseca</option><option value="GUILLERMO">Guillermo Pinera</option><option value="MIGUEL">Miguel Fonseca</option><option value="NELSON">Nelson</option><option value="YOSVIEL">Yosviel Pinera</option><option value="UNKNOWN">Unknown / General</option>
-        </select></div>
-      <div><label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">TYPE</label>
+          <option value="">Select driver...</option>
+          <option value="AMET">Amet Abreu</option><option value="AVIS">Avis Modesto</option>
+          <option value="DAVID">David Fonseca</option><option value="GUILLERMO">Guillermo Pinera</option>
+          <option value="MIGUEL">Miguel Fonseca</option><option value="NELSON">Nelson</option>
+          <option value="YOSVIEL">Yosviel Pinera</option><option value="UNKNOWN">Unknown / General</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">TYPE</label>
         <select id="nd-type" required style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
-          <option value="BOL">BOL</option><option value="Load Confirmation">Load Confirmation</option><option value="Oversize Permit">Oversize Permit</option><option value="State Permit">State Permit</option><option value="Scan">Scan</option><option value="Other">Other</option>
-        </select></div>
-      <div><label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">ADD / DEDUCT</label>
-        <select id="nd-ad" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;"><option value="ADD">ADD</option><option value="DEDUCT">DEDUCT</option><option value="REVIEW">REVIEW</option></select></div>
-      <div><label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">GOOGLE DRIVE LINK (optional)</label><input type="url" id="nd-drive" placeholder="https://drive.google.com/file/d/..." style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;"></div>
-      <button type="submit" style="padding:11px;background:#2e6da4;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-top:4px;">ADD TO VAULT</button>
+          <option value="BOL">BOL</option><option value="Load Confirmation">Load Confirmation</option>
+          <option value="Oversize Permit">Oversize Permit</option><option value="State Permit">State Permit</option>
+          <option value="Scan">Scan</option><option value="Other">Other</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">ADD / DEDUCT</label>
+        <select id="nd-ad" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
+          <option value="ADD">ADD</option><option value="DEDUCT">DEDUCT</option><option value="REVIEW">REVIEW</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">GOOGLE DRIVE LINK (optional)</label>
+        <input type="url" id="nd-drive" placeholder="https://drive.google.com/file/d/..." style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
+      </div>
+      <button type="submit" style="padding:11px;background:#2e6da4;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;cursor:pointer;margin-top:4px;">ADD TO VAULT</button>
     </form>
   </div>
 </div>
-<script>
-    function openSyncModal() {
-      var modal = document.getElementById("sync-modal");
-      modal.style.display = "flex";
-      // Build WhatsApp list
-      var waSources = window.NEXUS_WHATSAPP_SOURCES || [{name:"documentos",makeWebhook:""}];
-      var waHtml = "";
-      waSources.forEach(function(s) {
-        waHtml += "<a href=\"https://web.whatsapp.com/\" target=\"_blank\" style=\"display:flex;align-items:center;gap:12px;padding:12px;background:#0f172a;border:1px solid #25d366;border-radius:8px;text-decoration:none;margin-bottom:8px;\">";
-        waHtml += "<span style=\"color:#25d366;font-size:18px;\">&#x1F4AC;</span>";
-        waHtml += "<div><div style=\"color:#f1f5f9;font-size:13px;font-weight:700;\">" + s.name + "</div>";
-        waHtml += "<div style=\"color:#64748b;font-size:11px;\">Open WhatsApp Web &rarr; save new photos &amp; files to Drive</div></div></a>";
-      });
-      document.getElementById("sync-wa-list").innerHTML = waHtml;
-      // Build Gmail list
-      var gmailAccts = window.NEXUS_GMAIL_ACCOUNTS || [{name:"Operations",email:""}];
-      var gmailHtml = "";
-      gmailAccts.forEach(function(g) {
-        var gmailUrl = g.email ? "https://mail.google.com/mail/u/0/#search/has:attachment+label:inbox" : "https://mail.google.com";
-        gmailHtml += "<a href=\"" + gmailUrl + "\" target=\"_blank\" style=\"display:flex;align-items:center;gap:12px;padding:12px;background:#0f172a;border:1px solid #ef4444;border-radius:8px;text-decoration:none;margin-bottom:8px;\">";
-        gmailHtml += "<span style=\"color:#ef4444;font-size:18px;\">&#x2709;</span>";
-        gmailHtml += "<div><div style=\"color:#f1f5f9;font-size:13px;font-weight:700;\">" + g.name + (g.email ? " (" + g.email + ")" : "") + "</div>";
-        gmailHtml += "<div style=\"color:#64748b;font-size:11px;\">Search attachments &rarr; save to Drive</div></div></a>";
-      });
-      document.getElementById("sync-gmail-list").innerHTML = gmailHtml;
-      // Build Drive list
-      var driveFolders = window.NEXUS_DRIVE_FOLDERS || [{name:"Main Vault",id:"1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0",url:"https://drive.google.com/drive/folders/1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0"}];
-      var driveHtml = "";
-      driveFolders.forEach(function(f) {
-        driveHtml += "<a href=\"" + f.url + "\" target=\"_blank\" style=\"display:flex;align-items:center;gap:12px;padding:12px;background:#0f172a;border:1px solid #22c55e;border-radius:8px;text-decoration:none;margin-bottom:8px;\">";
-        driveHtml += "<span style=\"color:#22c55e;font-size:18px;\">&#x1F4C1;</span>";
-        driveHtml += "<div><div style=\"color:#f1f5f9;font-size:13px;font-weight:700;\">" + f.name + "</div>";
-        driveHtml += "<div style=\"color:#64748b;font-size:11px;\">Open Drive vault &rarr; verify files arrived</div></div></a>";
-      });
-      document.getElementById("sync-drive-list").innerHTML = driveHtml;
-    }
-    function closeSyncModal() { document.getElementById("sync-modal").style.display="none"; }
-    function addSyncSource() {
-      alert("To add a new source:\n\n1. Open nexus-config.js\n2. Add an entry to NEXUS_WHATSAPP_SOURCES, NEXUS_GMAIL_ACCOUNTS, or NEXUS_DRIVE_FOLDERS\n3. Save and redeploy");
-    }
-    function openAddDocModal(){ document.getElementById('nd-date').value=new Date().toISOString().split('T')[0]; document.getElementById('add-doc-modal').style.display='flex'; }
-function closeAddDocModal(){ document.getElementById('add-doc-modal').style.display='none'; }
-function submitAddDoc(e){ e.preventDefault(); var doc={date:document.getElementById('nd-date').value,filename:document.getElementById('nd-filename').value,driver:document.getElementById('nd-driver').value,type:document.getElementById('nd-type').value,add_deduct:document.getElementById('nd-ad').value,driveId:document.getElementById('nd-drive').value||''}; documents.unshift(doc); closeAddDocModal(); applyFilters(); }
-document.getElementById('sync-modal').addEventListener('click',function(e){if(e.target===this)closeSyncModal();});
-document.getElementById('add-doc-modal').addEventListener('click',function(e){if(e.target===this)closeAddDocModal();});
-</script>
+
 </body>
 </html>
