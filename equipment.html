@@ -1121,7 +1121,7 @@ async function openEditModal(id) {
 // ── SAVE (Add or Edit) ──
 async function saveUnit(e) {
   e.preventDefault();
-  const fleet = loadFleet();
+  const fleet = await loadFleet();
   const editId = document.getElementById('equip-edit-id').value;
   const eqTypeKey = document.getElementById('eq-type').value || 'TRUCK';
   const group = EQUIP_GROUPS[eqTypeKey] || 'TRUCK';
@@ -1206,6 +1206,66 @@ function reportIssue(id, unit) {
 document.getElementById('equip-modal-overlay').addEventListener('click', function(e){
   if(e.target===this) closeEquipModal();
 });
+
+
+// ── RENDER FLEET CARDS ──────────────────────────────────────────────────────
+async function renderFleet() {
+  const grid = document.getElementById('trucks-grid');
+  if (!grid) return;
+  grid.innerHTML = '<div style="color:var(--text-muted);padding:40px;text-align:center;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;">LOADING FLEET...</div>';
+  let fleet;
+  try { fleet = await loadFleet(); } catch(e) { fleet = []; }
+  if (!fleet.length) {
+    grid.innerHTML = '<div style="color:var(--text-muted);padding:40px;text-align:center;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;">NO UNITS — CLICK + ADD UNIT TO BEGIN</div>';
+    return;
+  }
+  const statusMap = {'ACTIVE':'badge-green','IN-TRANSIT':'badge-blue','DOWN':'badge-red','INACTIVE':'badge-yellow'};
+  grid.innerHTML = fleet.map(u => {
+    const unitNum = u.unit || '??';
+    const ymm = [u.year && u.year > 0 ? u.year : '', u.make, u.model].filter(Boolean).join(' ') || 'Unit ' + unitNum;
+    const vin = u.vin ? 'VIN: ' + u.vin : 'VIN: —';
+    const driver = u.driver || '—';
+    const status = u.status || 'ACTIVE';
+    const badgeCls = statusMap[status] || 'badge-gray';
+    const odo = u.odometer ? Number(u.odometer).toLocaleString() : '—';
+    const lastPM = u.lastPM || '—';
+    const nextPM = u.nextPM || '—';
+    const notes = u.notes || '—';
+    const typeLabel = u.equipType || u.type || 'UNIT';
+    return `
+    <div class="truck-card">
+      <div class="truck-card-header">
+        <div class="unit-circle">
+          <span class="unit-label">${u.type||'UNIT'}</span>
+          <span class="unit-number">${unitNum}</span>
+        </div>
+        <div class="truck-header-info">
+          <div class="truck-ymm">${ymm}</div>
+          <div class="truck-vin">${vin}</div>
+          <div class="truck-driver-badge">
+            <span class="label">DRIVER</span>
+            <span class="value">${driver}</span>
+          </div>
+        </div>
+        <span class="badge ${badgeCls}">${status}</span>
+      </div>
+      <div class="truck-card-body">
+        <div class="truck-stats-grid">
+          <div class="truck-stat"><div class="truck-stat-label">TYPE</div><div class="truck-stat-value" style="font-size:12px;">${typeLabel}</div></div>
+          <div class="truck-stat"><div class="truck-stat-label">ODO</div><div class="truck-stat-value ${odo==='—'?'na':''}">${odo}</div></div>
+          <div class="truck-stat"><div class="truck-stat-label">LAST PM</div><div class="truck-stat-value ${lastPM==='—'?'na':''}" style="font-size:11px;">${lastPM}</div></div>
+          <div class="truck-stat"><div class="truck-stat-label">NEXT PM</div><div class="truck-stat-value ${nextPM==='—'?'na':''}" style="font-size:11px;">${nextPM}</div></div>
+        </div>
+        ${notes !== '—' ? '<div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:4px;border-left:2px solid var(--steel-blue);">' + notes + '</div>' : ''}
+        <div class="truck-actions">
+          <button class="btn-action" onclick="openEditModal('${u.id}')">EDIT</button>
+          <button class="btn-action" onclick="reportIssue('${u.id}')">ISSUE</button>
+          <button class="btn-action" onclick="updatePM('${u.id}')">LOG PM</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
 
 // Initial render
 (async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); await renderFleet(); })();
