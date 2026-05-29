@@ -1164,7 +1164,6 @@ async function saveUnit(e) {
     });
   }
   // Persist each changed unit
-  const editId = document.getElementById('equip-edit-id').value;
   if (editId) { await NexusDB.Fleet.update(editId, fleet.find(u=>u.id===editId)); }
   else { await NexusDB.Fleet.create(fleet[fleet.length-1]); }
   _fleetCache = fleet;
