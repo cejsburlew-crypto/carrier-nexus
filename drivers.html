@@ -1223,9 +1223,9 @@ function renderDriverCards(filter) {
       '</div>' +
       violationRows +
       '<div class="driver-card-actions">' +
-        '<button class="btn-driver-action settle" data-i18n="SETTLEMENTS">SETTLEMENTS</button>' +
-        '<button class="btn-driver-action" data-i18n="CONTACT">CONTACT</button>' +
-        '<button class="btn-driver-action" data-i18n="DOCUMENTS">DOCUMENTS</button>' +
+        '<button class="btn-driver-action settle" data-i18n="SETTLEMENTS" onclick="window.location.href=\'settlements.html\'">SETTLEMENTS</button>' +
+        '<button class="btn-driver-action" data-i18n="CONTACT" onclick="openContactModal(\'' + d.id + '\')">CONTACT</button>' +
+        '<button class="btn-driver-action" data-i18n="DOCUMENTS" onclick="openDriverDocs(\'' + d.id + '\')">DOCUMENTS</button>' +
         '<button class="btn-edit-compliance' + (hasStoredData ? ' has-stored' : '') + '" onclick="openComplianceModal(\''+d.id+'\')">' +
           (hasStoredData ? '✓ EDIT' : '✏️ ENTER') +
         '</button>' +
@@ -1248,6 +1248,15 @@ function filterDrivers(filter, btn) {
 
 // ─── Initialize ────────────────────────────────────────────────────────────
 renderComplianceAlert();
+function openContactModal(driverId) {
+  const d = (window.NEXUS && NEXUS.drivers || []).find(x => x.id === driverId);
+  if (!d) return;
+  alert('CONTACT\n\n' + (d.name||driverId) + '\nPhone: ' + (d.phone||'Not on file') + '\nEmail: ' + (d.email||'Not on file'));
+}
+function openDriverDocs(driverId) {
+  window.location.href = 'documents.html?driver=' + encodeURIComponent(driverId);
+}
+
 // Auth guard + NexusDB driver sync
 (async () => {
   if (typeof NexusDB !== 'undefined') {
