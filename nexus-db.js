@@ -12,7 +12,7 @@
 
   // ── CONFIG ────────────────────────────────────────────────
   // Overridden by nexus-config.js loaded before this file.
-  const CFG = {
+  const CFG = 
     url:  global.NEXUS_SUPABASE_URL  || '',
     key:  global.NEXUS_SUPABASE_KEY  || '',
     get configured() { return !!(this.url && this.key); }
@@ -41,7 +41,11 @@
       await sb().auth.signOut();
     },
     async getSession() {
-      if (!sb()) return null;
+      if (!sb()) {
+        // Dev mode — return localStorage session
+        const raw = localStorage.getItem('nexus_session');
+        return raw ? JSON.parse(raw) : null;
+      }
       const { data } = await sb().auth.getSession();
       return data.session;
     },
