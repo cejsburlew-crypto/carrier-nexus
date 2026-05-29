@@ -12,7 +12,7 @@
 
   // ── CONFIG ────────────────────────────────────────────────
   // Overridden by nexus-config.js loaded before this file.
-  const CFG = 
+  const CFG = {
     url:  global.NEXUS_SUPABASE_URL  || '',
     key:  global.NEXUS_SUPABASE_KEY  || '',
     get configured() { return !!(this.url && this.key); }
