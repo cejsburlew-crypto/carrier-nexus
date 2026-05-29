@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>User Management ? Carrier Nexus</title>
+<title>User Management — Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -147,7 +147,7 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
   <div class="sidebar-section">
     <div class="sidebar-section-label">Documents</div>
     <a href="documents.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm5 0v4h4"/></svg>Document Vault</a>
-    <a href="pods.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm-.5 2v4.5l3.5 2-.5-.87-3-1.63V5h-1z"/></svf>Missing PODs</a>
+    <a href="pods.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm-.5 2v4.5l3.5 2-.5-.87-3-1.63V5h-1z"/></svg>Missing PODs</a>
   </div>
 
   <div class="sidebar-section">
@@ -228,16 +228,31 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
         </div>
         <div style="background:#0f172a;border:1px solid var(--border);border-radius:8px;padding:14px;">
           <span class="role-badge role-driver" style="margin-bottom:8px;display:inline-block;">DRIVER</span>
-          <p style="font-size:12px;color:var(--text-muted);line-height:1.5;">Limited to driver command view ? their loads and documents only.</p>
+          <p style="font-size:12px;color:var(--text-muted);line-height:1.5;">Limited to driver command view — their loads and documents only.</p>
         </div>
         <div style="background:#0f172a;border:1px solid var(--border);border-radius:8px;padding:14px;">
           <span class="role-badge role-dispatch" style="margin-bottom:8px;display:inline-block;">DISPATCH</span>
-          <p style="font-size:12px;color:var(--text-muted);line-height:1.5;">Dispatch coordination ? loads, drivers, and permit management.</p>
+          <p style="font-size:12px;color:var(--text-muted);line-height:1.5;">Dispatch coordination — loads, drivers, and permit management.</p>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+    <!-- DISPATCHER ASSIGNMENTS -->
+    <div class="section-card" id="dispatcher-assignments-card">
+      <div class="section-header">
+        <div>
+          <div class="section-title">DISPATCHER ↔ DRIVER ASSIGNMENTS</div>
+          <div class="section-sub">Assign drivers to dispatchers. Dispatchers only see their assigned drivers.</div>
+        </div>
+        <button onclick="openAssignModal()" style="background:#3b7eff;color:#fff;border:none;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.04em;">+ ADD ASSIGNMENT</button>
+      </div>
+      <div style="padding:16px 20px;">
+        <div id="assign-list"></div>
+      </div>
+    </div>
+
 
 <!-- ADD / EDIT USER MODAL -->
 <div class="modal-overlay" id="user-modal">
@@ -436,7 +451,7 @@ function renderTable(users) {
       '<td>' + roleBadge(u.role) + '</td>' +
       '<td>' + contactHtml + '</td>' +
       '<td>' + statusBadge(u.active) + '</td>' +
-      '<td class="ts-cell">' + (u.createdAt || '?') + '</td>' +
+      '<td class="ts-cell">' + (u.createdAt || '—') + '</td>' +
       '<td><div class="action-btns">' +
         '<button class="btn btn-ghost btn-sm" onclick="openEditModal(\'' + u.id + '\')">Edit</button>' +
         '<button class="btn btn-ghost btn-sm" onclick="openResetModal(\'' + u.id + '\')">Password</button>' +
@@ -577,7 +592,7 @@ async function saveUser() {
   btn.textContent = _editMode ? 'Save Changes' : 'Add User'; btn.disabled = false;
 }
 
-// === RESET PASSWORD MODAL -==
+// === RESET PASSWORD MODAL ===
 function openResetModal(id) {
   var u = allUsers.find(function(x){ return x.id === id; });
   if (!u) return;
@@ -662,5 +677,138 @@ function checkAuth() {
 checkAuth();
 loadUsers();
 </script>
+<!-- DISPATCHER ASSIGNMENT MODAL -->
+<div class="modal-overlay" id="assign-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="assign-modal-title">ASSIGN DRIVER TO DISPATCHER</span>
+      <button class="modal-close" onclick="closeAssignModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="assign-edit-id">
+      <div class="form-row">
+        <label class="form-label">Dispatcher</label>
+        <select class="form-input" id="assign-dispatcher" style="width:100%;"></select>
+      </div>
+      <div class="form-row" style="margin-top:14px;">
+        <label class="form-label">Driver</label>
+        <select class="form-input" id="assign-driver" style="width:100%;"></select>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:16px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">
+      <button onclick="closeAssignModal()" style="background:transparent;border:1px solid var(--border);color:var(--white);border-radius:6px;padding:7px 18px;font-size:13px;cursor:pointer;">Cancel</button>
+      <button onclick="saveAssignment()" style="background:#3b7eff;color:#fff;border:none;border-radius:6px;padding:7px 18px;font-size:13px;font-weight:700;cursor:pointer;">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DISPATCHER ASSIGNMENTS ────────────────────────────────────────────────
+function loadAssignments() {
+  var users = JSON.parse(localStorage.getItem('nexus_users') || '[]');
+  var assignments = JSON.parse(localStorage.getItem('nexus_dispatcher_assignments') || '[]');
+  var dispatchers = users.filter(function(u){ return u.role === 'dispatcher' || u.role === 'dispatch' || u.role === 'operations'; });
+  var drivers = users.filter(function(u){ return u.role === 'driver'; });
+
+  var list = document.getElementById('assign-list');
+  if (!list) return;
+
+  if (!assignments.length) {
+    list.innerHTML = '<p style="color:var(--text-muted);font-size:13px;padding:8px 0;">No assignments yet. Click + ADD ASSIGNMENT to get started.</p>';
+    return;
+  }
+
+  // Group by dispatcher
+  var byDispatcher = {};
+  dispatchers.forEach(function(d){ byDispatcher[d.email] = { disp: d, drivers: [] }; });
+  assignments.forEach(function(a) {
+    if (!byDispatcher[a.dispatcherEmail]) {
+      byDispatcher[a.dispatcherEmail] = { disp: { email: a.dispatcherEmail, name: a.dispatcherEmail }, drivers: [] };
+    }
+    var drv = users.find(function(u){ return u.email === a.driverEmail; });
+    byDispatcher[a.dispatcherEmail].drivers.push({ assignment: a, driver: drv });
+  });
+
+  var html = Object.values(byDispatcher).filter(function(g){ return g.drivers.length > 0; }).map(function(group) {
+    var rows = group.drivers.map(function(item) {
+      var d = item.driver;
+      var name = d ? (d.name || d.email) : item.assignment.driverEmail;
+      var email = item.assignment.driverEmail;
+      var date = item.assignment.assignedAt ? new Date(item.assignment.assignedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+      return '<tr><td style="padding:9px 14px;font-size:13px;">' + name + '</td>' +
+             '<td style="padding:9px 14px;font-size:11px;color:var(--text-muted);">' + email + '</td>' +
+             '<td style="padding:9px 14px;font-size:11px;color:var(--text-muted);">' + date + '</td>' +
+             '<td style="padding:9px 14px;text-align:right;"><button onclick="removeAssignment('' + item.assignment.id + '')" style="background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25);border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer;">Remove</button></td></tr>';
+    }).join('');
+    var dispName = group.disp.name || group.disp.email;
+    return '<div style="margin-bottom:16px;">' +
+      '<div style="font-size:12px;font-weight:700;color:#3b7eff;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border);">' + dispName + ' <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0;">' + group.disp.email + '</span></div>' +
+      '<table style="width:100%;border-collapse:collapse;"><thead><tr>' +
+      '<th style="text-align:left;font-size:10px;color:var(--text-muted);padding:6px 14px;letter-spacing:.08em;text-transform:uppercase;">Driver</th>' +
+      '<th style="text-align:left;font-size:10px;color:var(--text-muted);padding:6px 14px;letter-spacing:.08em;text-transform:uppercase;">Email</th>' +
+      '<th style="text-align:left;font-size:10px;color:var(--text-muted);padding:6px 14px;letter-spacing:.08em;text-transform:uppercase;">Assigned</th>' +
+      '<th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  }).join('');
+
+  list.innerHTML = html || '<p style="color:var(--text-muted);font-size:13px;">No assignments found.</p>';
+}
+
+function openAssignModal(id) {
+  var users = JSON.parse(localStorage.getItem('nexus_users') || '[]');
+  var dispatchers = users.filter(function(u){ return u.role === 'dispatcher' || u.role === 'dispatch' || u.role === 'operations' || u.role === 'admin'; });
+  var drivers = users.filter(function(u){ return u.role === 'driver'; });
+
+  var dSel = document.getElementById('assign-dispatcher');
+  var drSel = document.getElementById('assign-driver');
+  dSel.innerHTML = '<option value="">Select dispatcher…</option>' + dispatchers.map(function(u){
+    return '<option value="' + u.email + '">' + (u.name || u.email) + ' (' + u.email + ')</option>';
+  }).join('');
+  drSel.innerHTML = '<option value="">Select driver…</option>' + drivers.map(function(u){
+    return '<option value="' + u.email + '">' + (u.name || u.email) + ' (' + u.email + ')</option>';
+  }).join('');
+
+  document.getElementById('assign-edit-id').value = '';
+  document.getElementById('assign-modal').classList.add('open');
+}
+
+function closeAssignModal() {
+  document.getElementById('assign-modal').classList.remove('open');
+}
+
+function saveAssignment() {
+  var dEmail = document.getElementById('assign-dispatcher').value;
+  var drEmail = document.getElementById('assign-driver').value;
+  if (!dEmail || !drEmail) { alert('Select both a dispatcher and a driver.'); return; }
+
+  var assignments = JSON.parse(localStorage.getItem('nexus_dispatcher_assignments') || '[]');
+  var exists = assignments.find(function(a){ return a.dispatcherEmail === dEmail && a.driverEmail === drEmail; });
+  if (exists) { alert('This driver is already assigned to that dispatcher.'); return; }
+
+  assignments.push({
+    id: Date.now().toString(),
+    dispatcherEmail: dEmail,
+    driverEmail: drEmail,
+    assignedAt: new Date().toISOString()
+  });
+  localStorage.setItem('nexus_dispatcher_assignments', JSON.stringify(assignments));
+  closeAssignModal();
+  loadAssignments();
+}
+
+function removeAssignment(id) {
+  var assignments = JSON.parse(localStorage.getItem('nexus_dispatcher_assignments') || '[]');
+  assignments = assignments.filter(function(a){ return a.id !== id; });
+  localStorage.setItem('nexus_dispatcher_assignments', JSON.stringify(assignments));
+  loadAssignments();
+}
+
+// Wire up modal backdrop click
+document.getElementById('assign-modal').addEventListener('click', function(e){ if(e.target===this) closeAssignModal(); });
+
+// Load assignments on init (call after loadUsers)
+loadAssignments();
+</script>
+
+
 </body>
 </html>

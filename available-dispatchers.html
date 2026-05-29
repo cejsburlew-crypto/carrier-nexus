@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Available Dispatchers — Carrier Nexus</title>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161a24;
+    --surface2: #1e2435;
+    --border: #2a3150;
+    --accent: #3b7eff;
+    --accent2: #00d4aa;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --green: #22c55e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+  nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .nav-brand { font-weight: 700; font-size: 1.1rem; color: var(--accent); letter-spacing: .5px; }
+  .nav-brand span { color: var(--text); }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .btn-nav { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 6px; padding: 6px 14px; font-size: .82rem; cursor: pointer; text-decoration: none; transition: all .2s; display: inline-flex; align-items: center; }
+  .btn-nav:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .page-header { padding: 28px 32px 20px; border-bottom: 1px solid var(--border); background: var(--surface); display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  .page-title { font-size: 1.4rem; font-weight: 700; }
+  .page-sub { font-size: .85rem; color: var(--muted); margin-top: 4px; }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 28px 32px; }
+
+  .filter-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; align-items: center; }
+  .search-box { flex: 1; min-width: 200px; position: relative; }
+  .search-box input { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 9px 14px 9px 38px; font-size: .85rem; }
+  .search-box input:focus { outline: none; border-color: var(--accent2); }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+  .filter-select { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 9px 14px; font-size: .82rem; cursor: pointer; }
+  .filter-select:focus { outline: none; border-color: var(--accent2); }
+
+  .stats-row { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .stat-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
+  .stat-chip-val { font-size: 1.1rem; font-weight: 700; }
+  .stat-chip-label { font-size: .75rem; color: var(--muted); }
+
+  .disp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; }
+
+  .disp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color .2s; }
+  .disp-card:hover { border-color: rgba(0,212,170,.35); }
+  .card-top { padding: 18px 18px 14px; display: flex; align-items: flex-start; gap: 14px; border-bottom: 1px solid var(--border); }
+  .d-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--surface2); border: 2px solid rgba(0,212,170,.3); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 700; color: var(--accent2); flex-shrink: 0; }
+  .d-header { flex: 1; min-width: 0; }
+  .d-name { font-size: 1rem; font-weight: 700; }
+  .d-contact { font-size: .78rem; color: var(--muted); margin-top: 3px; }
+  .avail-badge { padding: 4px 10px; border-radius: 20px; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; flex-shrink: 0; cursor: pointer; }
+  .avail-available { background: rgba(34,197,94,.15); color: var(--green); border: 1px solid rgba(34,197,94,.3); }
+  .avail-unavailable { background: rgba(239,68,68,.1); color: var(--danger); border: 1px solid rgba(239,68,68,.25); }
+  .avail-date { background: rgba(245,158,11,.1); color: var(--warn); border: 1px solid rgba(245,158,11,.25); }
+
+  .card-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 12px; }
+  .section-label { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: var(--muted); margin-bottom: 5px; }
+  .tag-wrap { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 20px; padding: 3px 10px; font-size: .75rem; }
+  .tag-teal { background: rgba(0,212,170,.08); border-color: rgba(0,212,170,.3); color: var(--accent2); }
+  .info-row { display: flex; justify-content: space-between; font-size: .8rem; padding: 4px 0; border-bottom: 1px solid var(--border); }
+  .info-row:last-child { border-bottom: none; }
+  .info-row-label { color: var(--muted); }
+  .card-actions { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
+  .btn-sm { padding: 6px 14px; font-size: .8rem; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: var(--surface2); color: var(--text); transition: all .2s; }
+  .btn-sm:hover { border-color: var(--accent2); color: var(--accent2); }
+  .btn-edit { background: rgba(0,212,170,.08); border-color: rgba(0,212,170,.3); color: var(--accent2); }
+  .btn-delete { background: rgba(239,68,68,.05); border-color: rgba(239,68,68,.25); color: var(--danger); }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 500; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; width: 680px; max-width: 100%; }
+  .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 22px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label { font-size: .73rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .3px; }
+  .form-input, .form-select, .form-textarea { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 7px; padding: 9px 12px; font-size: .85rem; width: 100%; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--accent2); }
+  .cb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .cb-item { display: flex; align-items: center; gap: 7px; font-size: .82rem; cursor: pointer; }
+  .cb-item input { accent-color: var(--accent2); width: 15px; height: 15px; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+  .btn-primary { background: var(--accent2); color: #0d0f14; border: none; border-radius: 7px; padding: 9px 22px; font-size: .85rem; font-weight: 700; cursor: pointer; transition: opacity .2s; }
+  .btn-primary:hover { opacity: .85; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: 7px; padding: 9px 20px; font-size: .85rem; font-weight: 600; cursor: pointer; }
+  .section-divider { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--accent2); margin: 4px 0 2px; grid-column: 1 / -1; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+  .avail-date-row { display: none; }
+  .avail-date-row.show { display: flex; }
+  .empty-state { text-align: center; padding: 80px 20px; color: var(--muted); }
+
+  #toast { position: fixed; bottom: 28px; right: 28px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 20px; font-size: .85rem; color: var(--text); box-shadow: 0 8px 24px rgba(0,0,0,.4); z-index: 9999; opacity: 0; transform: translateY(10px); transition: all .3s; pointer-events: none; }
+  #toast.show { opacity: 1; transform: none; }
+  #toast.success { border-color: var(--green); }
+  #toast.error { border-color: var(--danger); }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 768px) {
+    .container { padding: 16px; }
+    .disp-grid { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">CARRIER <span>NEXUS</span></div>
+  <div class="nav-right">
+    <a class="btn-nav" href="fleet-command.html">← Command</a>
+    <a class="btn-nav" href="available-drivers.html">Drivers</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div>
+    <div class="page-title">Available Dispatchers</div>
+    <div class="page-sub">External dispatchers — not company employees. Manage availability and experience.</div>
+  </div>
+  <div>
+    <button class="btn-primary" onclick="openModal()">+ Add Dispatcher</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="stats-row" id="statsRow"></div>
+
+  <div class="filter-bar">
+    <div class="search-box">
+      <svg class="search-icon" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Search by name, contact, language…" oninput="renderCards()">
+    </div>
+    <select class="filter-select" id="filterAvail" onchange="renderCards()">
+      <option value="">All Availability</option>
+      <option value="available">Available</option>
+      <option value="unavailable">Not Available</option>
+      <option value="date">Available on Date</option>
+    </select>
+    <select class="filter-select" id="filterExp" onchange="renderCards()">
+      <option value="">All Experience</option>
+      <option value="RGN">RGN / Heavy Haul</option>
+      <option value="Reefer">Reefer</option>
+      <option value="Flatbed">Flatbed</option>
+      <option value="Dry Van">Dry Van</option>
+      <option value="Oversized">Oversized / Permits</option>
+      <option value="Hazmat">Hazmat</option>
+      <option value="LTL">LTL / FTL Brokerage</option>
+      <option value="OTR">OTR Long Haul</option>
+    </select>
+    <select class="filter-select" id="filterLang" onchange="renderCards()">
+      <option value="">All Languages</option>
+      <option value="English">English</option>
+      <option value="Spanish">Spanish</option>
+      <option value="Portuguese">Portuguese</option>
+      <option value="French">French</option>
+      <option value="Russian">Russian</option>
+      <option value="Mandarin">Mandarin</option>
+    </select>
+  </div>
+
+  <div class="disp-grid" id="dispGrid"></div>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Add Available Dispatcher</div>
+    <div class="form-grid">
+
+      <div class="section-divider">Personal Info</div>
+
+      <div class="form-group">
+        <label class="form-label">Full Name *</label>
+        <input class="form-input" id="fName" placeholder="Jane Doe">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contact Phone *</label>
+        <input class="form-input" id="fPhone" placeholder="(555) 000-0000" type="tel">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contact Email</label>
+        <input class="form-input" id="fEmail" placeholder="dispatcher@email.com" type="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Years Dispatching</label>
+        <input class="form-input" id="fYears" type="number" placeholder="e.g. 5" min="0">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Language(s) Spoken</label>
+        <input class="form-input" id="fLanguages" placeholder="e.g. English, Spanish, Portuguese">
+      </div>
+
+      <div class="section-divider">Freight Experience</div>
+
+      <div class="form-group full">
+        <label class="form-label" style="margin-bottom:6px">Freight Types Dispatched</label>
+        <div class="cb-grid" id="expCheckboxes"></div>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Other / Specialty</label>
+        <input class="form-input" id="fExpOther" placeholder="e.g. Military moves, Windmills, Transformers…">
+      </div>
+
+      <div class="section-divider">Trailer Knowledge</div>
+
+      <div class="form-group full">
+        <label class="form-label" style="margin-bottom:6px">Trailer Types Known</label>
+        <div class="cb-grid" id="trailerCheckboxes"></div>
+      </div>
+
+      <div class="section-divider">Software & Tools</div>
+
+      <div class="form-group full">
+        <div class="cb-grid" id="softwareCheckboxes"></div>
+      </div>
+
+      <div class="section-divider">Availability</div>
+
+      <div class="form-group">
+        <label class="form-label">Availability Status</label>
+        <select class="form-select" id="fAvail" onchange="toggleAvailDate()">
+          <option value="available">Available</option>
+          <option value="unavailable">Not Available</option>
+          <option value="date">Available on Date</option>
+        </select>
+      </div>
+      <div class="form-group avail-date-row" id="availDateRow">
+        <label class="form-label">Available Starting</label>
+        <input class="form-input" id="fAvailDate" type="date">
+      </div>
+
+      <div class="section-divider">Additional</div>
+
+      <div class="form-group">
+        <label class="form-label">Time Zone</label>
+        <select class="form-select" id="fTz">
+          <option value="">Select…</option>
+          <option value="ET">Eastern (ET)</option>
+          <option value="CT">Central (CT)</option>
+          <option value="MT">Mountain (MT)</option>
+          <option value="PT">Pacific (PT)</option>
+          <option value="AKT">Alaska (AKT)</option>
+          <option value="HT">Hawaii (HT)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rate ($/week or $/load)</label>
+        <input class="form-input" id="fRate" placeholder="e.g. $800/wk or $50/load">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Max Drivers Handled</label>
+        <input class="form-input" id="fMaxDrivers" type="number" placeholder="e.g. 10" min="1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Works Nights/Weekends?</label>
+        <select class="form-select" id="fNights">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+          <option value="limited">Limited</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Notes</label>
+        <textarea class="form-input" id="fNotes" rows="2" placeholder="Any additional info, references, specialties…"></textarea>
+      </div>
+
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveDispatcher()">Save Dispatcher</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const EXP_TYPES = ['RGN / Heavy Haul','Super Heavy (>150k)','Flatbed','Step Deck','Lowboy','Double Drop','Reefer','Dry Van','Box Truck','Auto-Transport','Tanker','Hazmat','Oversized / Permits','LTL / FTL Brokerage','OTR Long Haul','Regional / Local','Intermodal','Power Only'];
+const TRAILER_TYPES = ['RGN','Lowboy','Flatbed','Step Deck','Conestoga','Reefer','Dry Van','Box Truck','Auto Carrier','Tanker','Extendable RGN','Double Drop'];
+const SOFTWARE_TYPES = ['DAT Load Board','Truckstop.com','McLeod','Samsara','KeepTruckin','PCS','Mercury Gate','RoseRocket','Turvo','Microsoft Excel','QuickBooks'];
+
+let dispatchers = JSON.parse(localStorage.getItem('nexus_avail_dispatchers') || '[]');
+let editingId = null;
+
+document.getElementById('expCheckboxes').innerHTML = EXP_TYPES.map(t =>
+  `<label class="cb-item"><input type="checkbox" class="exp-cb" value="${t}"> ${t}</label>`).join('');
+document.getElementById('trailerCheckboxes').innerHTML = TRAILER_TYPES.map(t =>
+  `<label class="cb-item"><input type="checkbox" class="trailer-cb" value="${t}"> ${t}</label>`).join('');
+document.getElementById('softwareCheckboxes').innerHTML = SOFTWARE_TYPES.map(t =>
+  `<label class="cb-item"><input type="checkbox" class="sw-cb" value="${t}"> ${t}</label>`).join('');
+
+function toggleAvailDate() {
+  const val = document.getElementById('fAvail').value;
+  document.getElementById('availDateRow').classList.toggle('show', val === 'date');
+}
+
+function openModal(id = null) {
+  editingId = id;
+  document.getElementById('modalTitle').textContent = id ? 'Edit Dispatcher' : 'Add Available Dispatcher';
+  ['fName','fPhone','fEmail','fYears','fLanguages','fExpOther','fAvailDate','fRate','fMaxDrivers','fNotes'].forEach(f => { const el=document.getElementById(f); if(el) el.value=''; });
+  document.getElementById('fAvail').value='available';
+  document.getElementById('fTz').value='';
+  document.getElementById('fNights').value='yes';
+  document.querySelectorAll('.exp-cb,.trailer-cb,.sw-cb').forEach(c=>c.checked=false);
+  document.getElementById('availDateRow').classList.remove('show');
+
+  if (id) {
+    const d = dispatchers.find(x=>x.id===id);
+    if (!d) return;
+    document.getElementById('fName').value=d.name||'';
+    document.getElementById('fPhone').value=d.phone||'';
+    document.getElementById('fEmail').value=d.email||'';
+    document.getElementById('fYears').value=d.years||'';
+    document.getElementById('fLanguages').value=(d.languages||[]).join(', ');
+    document.getElementById('fExpOther').value=d.expOther||'';
+    document.getElementById('fAvail').value=d.avail||'available';
+    document.getElementById('fAvailDate').value=d.availDate||'';
+    document.getElementById('fTz').value=d.tz||'';
+    document.getElementById('fRate').value=d.rate||'';
+    document.getElementById('fMaxDrivers').value=d.maxDrivers||'';
+    document.getElementById('fNights').value=d.nights||'yes';
+    document.getElementById('fNotes').value=d.notes||'';
+    (d.expTypes||[]).forEach(t=>{const cb=document.querySelector(`.exp-cb[value="${t}"]`);if(cb)cb.checked=true;});
+    (d.trailerTypes||[]).forEach(t=>{const cb=document.querySelector(`.trailer-cb[value="${t}"]`);if(cb)cb.checked=true;});
+    (d.software||[]).forEach(t=>{const cb=document.querySelector(`.sw-cb[value="${t}"]`);if(cb)cb.checked=true;});
+    toggleAvailDate();
+  }
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); editingId=null; }
+
+function saveDispatcher() {
+  const name=document.getElementById('fName').value.trim();
+  const phone=document.getElementById('fPhone').value.trim();
+  if(!name||!phone){toast('Name and phone required','error');return;}
+  const langRaw=document.getElementById('fLanguages').value;
+  const data = {
+    id: editingId||Date.now().toString(),
+    name, phone,
+    email: document.getElementById('fEmail').value.trim(),
+    years: document.getElementById('fYears').value||null,
+    languages: langRaw?langRaw.split(',').map(s=>s.trim()).filter(Boolean):[],
+    expTypes: [...document.querySelectorAll('.exp-cb:checked')].map(c=>c.value),
+    expOther: document.getElementById('fExpOther').value.trim(),
+    trailerTypes: [...document.querySelectorAll('.trailer-cb:checked')].map(c=>c.value),
+    software: [...document.querySelectorAll('.sw-cb:checked')].map(c=>c.value),
+    avail: document.getElementById('fAvail').value,
+    availDate: document.getElementById('fAvailDate').value||null,
+    tz: document.getElementById('fTz').value,
+    rate: document.getElementById('fRate').value.trim(),
+    maxDrivers: document.getElementById('fMaxDrivers').value||null,
+    nights: document.getElementById('fNights').value,
+    notes: document.getElementById('fNotes').value.trim(),
+    updatedAt: new Date().toISOString(),
+    createdAt: editingId?(dispatchers.find(d=>d.id===editingId)||{}).createdAt:new Date().toISOString()
+  };
+  if(editingId) dispatchers=dispatchers.map(d=>d.id===editingId?data:d);
+  else dispatchers.push(data);
+  localStorage.setItem('nexus_avail_dispatchers',JSON.stringify(dispatchers));
+  closeModal();
+  renderCards();
+  updateStats();
+  toast(editingId?'Dispatcher updated':'Dispatcher added','success');
+}
+
+function deleteDispatcher(id) {
+  if(!confirm('Remove this dispatcher from the roster?'))return;
+  dispatchers=dispatchers.filter(d=>d.id!==id);
+  localStorage.setItem('nexus_avail_dispatchers',JSON.stringify(dispatchers));
+  renderCards();updateStats();toast('Dispatcher removed');
+}
+
+function cycleAvail(id) {
+  const d=dispatchers.find(x=>x.id===id); if(!d)return;
+  const cycle={available:'unavailable',unavailable:'date',date:'available'};
+  d.avail=cycle[d.avail]||'available';
+  if(d.avail==='date'&&!d.availDate)d.availDate=new Date(Date.now()+86400000).toISOString().slice(0,10);
+  d.updatedAt=new Date().toISOString();
+  localStorage.setItem('nexus_avail_dispatchers',JSON.stringify(dispatchers));
+  renderCards();updateStats();
+}
+
+function updateStats() {
+  const total=dispatchers.length;
+  const avail=dispatchers.filter(d=>d.avail==='available').length;
+  const unavail=dispatchers.filter(d=>d.avail==='unavailable').length;
+  const onDate=dispatchers.filter(d=>d.avail==='date').length;
+  document.getElementById('statsRow').innerHTML=`
+    <div class="stat-chip"><span class="stat-chip-val">${total}</span><span class="stat-chip-label">Total</span></div>
+    <div class="stat-chip" style="border-color:rgba(34,197,94,.3)"><span class="stat-chip-val" style="color:var(--green)">${avail}</span><span class="stat-chip-label">Available</span></div>
+    <div class="stat-chip" style="border-color:rgba(239,68,68,.25)"><span class="stat-chip-val" style="color:var(--danger)">${unavail}</span><span class="stat-chip-label">Unavailable</span></div>
+    <div class="stat-chip" style="border-color:rgba(245,158,11,.3)"><span class="stat-chip-val" style="color:var(--warn)">${onDate}</span><span class="stat-chip-label">Available on Date</span></div>`;
+}
+
+function renderCards() {
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const fAvail=document.getElementById('filterAvail').value;
+  const fExp=document.getElementById('filterExp').value;
+  const fLang=document.getElementById('filterLang').value;
+
+  let filtered=dispatchers.filter(d=>{
+    if(q){const hay=`${d.name} ${d.phone} ${d.email} ${(d.languages||[]).join(' ')}`.toLowerCase();if(!hay.includes(q))return false;}
+    if(fAvail&&d.avail!==fAvail)return false;
+    if(fExp&&!(d.expTypes||[]).some(t=>t.toLowerCase().includes(fExp.toLowerCase())))return false;
+    if(fLang&&!(d.languages||[]).some(l=>l.toLowerCase().includes(fLang.toLowerCase())))return false;
+    return true;
+  });
+
+  const grid=document.getElementById('dispGrid');
+  if(filtered.length===0){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1">
+      <svg width="56" height="56" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      <p style="font-size:1rem;margin-top:12px">No dispatchers found</p>
+      <p style="font-size:.82rem;margin-top:6px">Adjust filters or add a new dispatcher</p>
+    </div>`;
+    return;
+  }
+
+  const availClass={available:'avail-available',unavailable:'avail-unavailable',date:'avail-date'};
+  const availLabel={available:'Available',unavailable:'Not Available',date:'Avail. on Date'};
+
+  grid.innerHTML=filtered.map(d=>{
+    const initials=d.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const ac=availClass[d.avail]||'avail-available';
+    const al=d.avail==='date'&&d.availDate?`Avail. ${fmtDate(d.availDate)}`:availLabel[d.avail];
+    const expTags=[...(d.expTypes||[]),...(d.expOther?[d.expOther]:[])].map(t=>`<span class="tag tag-teal">${t}</span>`).join('');
+    const trailerTags=(d.trailerTypes||[]).map(t=>`<span class="tag">${t}</span>`).join('');
+    const langTags=(d.languages||[]).map(l=>`<span class="tag">${l}</span>`).join('');
+    const swTags=(d.software||[]).map(s=>`<span class="tag" style="font-size:.7rem">${s}</span>`).join('');
+
+    return `<div class="disp-card">
+      <div class="card-top">
+        <div class="d-avatar">${initials}</div>
+        <div class="d-header">
+          <div class="d-name">${escHtml(d.name)}</div>
+          <div class="d-contact">${escHtml(d.phone)}${d.email?' · '+escHtml(d.email):''}</div>
+          <div class="d-contact" style="margin-top:3px">${d.years?d.years+' yrs dispatching':''} ${d.tz?'· '+d.tz:''} ${d.maxDrivers?'· Up to '+d.maxDrivers+' drivers':''}</div>
+        </div>
+        <div>
+          <div class="avail-badge ${ac}" onclick="cycleAvail('${d.id}')" title="Click to change">${al}</div>
+        </div>
+      </div>
+      <div class="card-body">
+        ${expTags?`<div><div class="section-label">Freight Experience</div><div class="tag-wrap">${expTags}</div></div>`:''}
+        ${trailerTags?`<div><div class="section-label">Trailer Knowledge</div><div class="tag-wrap">${trailerTags}</div></div>`:''}
+        ${langTags?`<div><div class="section-label">Languages</div><div class="tag-wrap">${langTags}</div></div>`:''}
+        ${swTags?`<div><div class="section-label">Software</div><div class="tag-wrap">${swTags}</div></div>`:''}
+        ${d.rate||d.nights?`<div>
+          ${d.rate?`<div class="info-row"><span class="info-row-label">Rate</span><span>${escHtml(d.rate)}</span></div>`:''}
+          ${d.nights?`<div class="info-row"><span class="info-row-label">Nights/Weekends</span><span>${d.nights==='yes'?'Yes':d.nights==='limited'?'Limited':'No'}</span></div>`:''}
+        </div>`:''}
+        ${d.notes?`<div style="font-size:.78rem;color:var(--muted);padding:6px 10px;background:var(--surface2);border-radius:6px;border:1px solid var(--border);">${escHtml(d.notes)}</div>`:''}
+      </div>
+      <div class="card-actions">
+        <button class="btn-sm btn-edit" onclick="openModal('${d.id}')">Edit</button>
+        <button class="btn-sm btn-delete" onclick="deleteDispatcher('${d.id}')">Remove</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtDate(d){if(!d)return'';return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+let toastTimer;
+function toast(msg,type=''){const el=document.getElementById('toast');el.textContent=msg;el.className='show'+(type?' '+type:'');clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.className='';},3000);}
+
+updateStats();
+renderCards();
+</script>
+</body>
+</html>

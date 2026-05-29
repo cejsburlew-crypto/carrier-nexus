@@ -1167,10 +1167,10 @@
   (async () => {
     if (NexusDB && NexusDB.isConfigured) {
       const session = await NexusDB.Auth.getSession();
-      if (session) { const r=session.user?.user_metadata?.role||'staff'; window.location.href = r==='driver'?'driver-portal.html':'fleet-command.html'; return; }
+      if (session) { const _sr=session.user?.user_metadata?.role||'staff'; window.location.href = _sr==='driver'?'driver-portal.html':_sr==='dispatcher'?'dispatcher-hub.html':'fleet-command.html'; return; }
     } else {
       const local = localStorage.getItem('nexus_session');
-      if (local) { const r=JSON.parse(local).role||'staff'; window.location.href = r==='driver'?'driver-portal.html':'fleet-command.html'; return; }
+      if (local) { const _lr=JSON.parse(local).role||'staff'; window.location.href = _lr==='driver'?'driver-portal.html':_lr==='dispatcher'?'dispatcher-hub.html':'fleet-command.html'; return; }
     }
   })();
 
@@ -1266,7 +1266,9 @@
         await new Promise(r => setTimeout(r, 400));
       }
       loginBtn.classList.remove('loading');
-      window.location.href = (match.role === 'driver') ? 'driver-portal.html' : 'fleet-command.html';
+      const _sess = JSON.parse(localStorage.getItem('nexus_session')||'{}');
+      const _role = _sess.role || 'staff';
+      window.location.href = _role==='driver'?'driver-portal.html':_role==='dispatcher'?'dispatcher-hub.html':'fleet-command.html';
     } catch (err) {
       loginBtn.classList.remove('loading');
       // Show error under password field
@@ -1308,7 +1310,7 @@
   });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="nexus-config.js?v=2"></script>
+<script src="nexus-config.js"></script>
 <script src="nexus-db.js"></script>
 <script src="nexus-lang.js"></script>
 </body>

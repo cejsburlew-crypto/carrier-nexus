@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dispatcher Hub — Carrier Nexus</title>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161a24;
+    --surface2: #1e2435;
+    --border: #2a3150;
+    --accent: #3b7eff;
+    --accent2: #00d4aa;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --green: #22c55e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* NAV */
+  nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .nav-brand { font-weight: 700; font-size: 1.1rem; color: var(--accent); letter-spacing: .5px; }
+  .nav-brand span { color: var(--text); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-role { background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: .75rem; color: var(--accent2); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+  .nav-user { font-size: .85rem; color: var(--muted); }
+  .btn-logout { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 6px; padding: 6px 12px; font-size: .8rem; cursor: pointer; transition: all .2s; }
+  .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* LAYOUT */
+  .main-layout { display: flex; flex: 1; height: calc(100vh - 56px); overflow: hidden; }
+
+  /* SIDEBAR */
+  .sidebar { width: 280px; min-width: 220px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+  .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border); }
+  .sidebar-title { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; }
+  .driver-list { flex: 1; overflow-y: auto; }
+  .driver-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .15s; display: flex; align-items: center; gap: 10px; }
+  .driver-item:hover { background: var(--surface2); }
+  .driver-item.active { background: rgba(59,126,255,.12); border-left: 3px solid var(--accent); }
+  .driver-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--surface2); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: .9rem; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+  .driver-info { flex: 1; min-width: 0; }
+  .driver-name { font-size: .9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .driver-sub { font-size: .75rem; color: var(--muted); }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-active { background: var(--green); }
+  .dot-inactive { background: var(--muted); }
+  .dot-load { background: var(--warn); }
+  .no-drivers { padding: 24px 16px; text-align: center; color: var(--muted); font-size: .85rem; }
+
+  /* CONTENT */
+  .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* TABS */
+  .tab-bar { background: var(--surface); border-bottom: 1px solid var(--border); display: flex; padding: 0 24px; gap: 4px; overflow-x: auto; }
+  .tab { padding: 14px 16px; font-size: .85rem; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all .2s; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+
+  /* PANELS */
+  .panel { display: none; flex: 1; overflow-y: auto; padding: 24px; }
+  .panel.active { display: block; }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+  .card-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: .85rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
+  .card-body { padding: 18px; }
+
+  /* GRID */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+  /* STAT BOXES */
+  .stat-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .stat-label { font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 4px; }
+  .stat-value { font-size: 1.3rem; font-weight: 700; color: var(--text); }
+  .stat-sub { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+
+  /* EQUIPMENT TABLE */
+  .eq-table { width: 100%; border-collapse: collapse; }
+  .eq-table th { background: var(--surface2); padding: 8px 12px; text-align: left; font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .eq-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: .85rem; }
+  .eq-table tr:last-child td { border-bottom: none; }
+  .eq-table tr:hover td { background: var(--surface2); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: .7rem; font-weight: 600; }
+  .badge-green { background: rgba(34,197,94,.15); color: var(--green); }
+  .badge-warn { background: rgba(245,158,11,.15); color: var(--warn); }
+  .badge-red { background: rgba(239,68,68,.15); color: var(--danger); }
+  .badge-blue { background: rgba(59,126,255,.15); color: var(--accent); }
+  .badge-muted { background: var(--surface2); color: var(--muted); }
+
+  /* MESSAGING */
+  .msg-container { display: flex; flex-direction: column; height: 420px; }
+  .msg-history { flex: 1; overflow-y: auto; padding: 16px; background: var(--surface2); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+  .msg-bubble { max-width: 72%; padding: 10px 14px; border-radius: 12px; font-size: .85rem; line-height: 1.5; }
+  .msg-sent { background: rgba(59,126,255,.2); border: 1px solid rgba(59,126,255,.3); align-self: flex-end; }
+  .msg-received { background: var(--surface); border: 1px solid var(--border); align-self: flex-start; }
+  .msg-meta { font-size: .7rem; color: var(--muted); margin-bottom: 3px; }
+  .msg-compose { display: flex; gap: 10px; }
+  .msg-input { flex: 1; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 10px 14px; font-size: .85rem; resize: none; }
+  .msg-input:focus { outline: none; border-color: var(--accent); }
+  .btn-send { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 10px 18px; font-size: .85rem; font-weight: 600; cursor: pointer; transition: opacity .2s; }
+  .btn-send:hover { opacity: .85; }
+
+  /* LOADS */
+  .load-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label { font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .3px; }
+  .form-input, .form-select, .form-textarea { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 8px 12px; font-size: .85rem; width: 100%; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--accent); }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .btn-primary { background: var(--accent); color: #fff; border: none; border-radius: 7px; padding: 9px 20px; font-size: .85rem; font-weight: 600; cursor: pointer; transition: opacity .2s; }
+  .btn-primary:hover { opacity: .85; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: 7px; padding: 9px 20px; font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .2s; }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { background: rgba(239,68,68,.1); color: var(--danger); border: 1px solid rgba(239,68,68,.3); border-radius: 7px; padding: 7px 14px; font-size: .8rem; font-weight: 600; cursor: pointer; transition: all .2s; }
+  .btn-danger:hover { background: rgba(239,68,68,.2); }
+
+  /* LOADS TABLE */
+  .loads-table { width: 100%; border-collapse: collapse; }
+  .loads-table th { background: var(--surface2); padding: 9px 12px; text-align: left; font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .loads-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); font-size: .83rem; vertical-align: middle; }
+  .loads-table tr:hover td { background: rgba(255,255,255,.02); }
+
+  /* BOL */
+  .bol-list { display: flex; flex-direction: column; gap: 10px; }
+  .bol-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; display: flex; align-items: center; justify-content: space-between; }
+  .bol-name { font-size: .9rem; font-weight: 600; }
+  .bol-meta { font-size: .75rem; color: var(--muted); margin-top: 3px; }
+  .btn-sm { padding: 5px 12px; font-size: .78rem; border-radius: 5px; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text); transition: all .2s; }
+  .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* SELECT PROMPT */
+  .select-prompt { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--muted); gap: 12px; }
+  .select-prompt svg { opacity: .3; }
+  .select-prompt p { font-size: 1rem; }
+
+  /* TOAST */
+  #toast { position: fixed; bottom: 28px; right: 28px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 20px; font-size: .85rem; color: var(--text); box-shadow: 0 8px 24px rgba(0,0,0,.4); z-index: 9999; opacity: 0; transform: translateY(10px); transition: all .3s; pointer-events: none; }
+  #toast.show { opacity: 1; transform: none; }
+  #toast.success { border-color: var(--green); }
+  #toast.error { border-color: var(--danger); }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 500; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; width: 560px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+  .modal-title { font-size: 1rem; font-weight: 700; margin-bottom: 20px; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+  /* EMPTY */
+  .empty { text-align: center; color: var(--muted); padding: 40px 20px; font-size: .9rem; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 768px) {
+    .sidebar { width: 200px; }
+    .grid2, .grid3, .grid4 { grid-template-columns: 1fr; }
+    .load-form { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">CARRIER <span>NEXUS</span></div>
+  <div class="nav-right">
+    <span class="nav-role">Dispatcher</span>
+    <span class="nav-user" id="navUser">—</span>
+    <button class="btn-logout" onclick="logout()">Sign Out</button>
+  </div>
+</nav>
+
+<div class="main-layout">
+
+  <!-- SIDEBAR: Assigned Drivers -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">My Drivers</div>
+      <div id="driverCount" style="font-size:.75rem;color:var(--muted);">Loading…</div>
+    </div>
+    <div class="driver-list" id="driverList">
+      <div class="no-drivers">Loading drivers…</div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="content">
+    <!-- No driver selected prompt -->
+    <div id="noSelection" style="display:flex;flex:1;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--muted);">
+      <svg width="64" height="64" fill="none" viewBox="0 0 24 24" stroke="currentColor" opacity=".25"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
+      <p>Select a driver from the sidebar</p>
+    </div>
+
+    <!-- Driver workspace (shown when driver selected) -->
+    <div id="driverWorkspace" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+
+      <!-- Driver header -->
+      <div style="padding:16px 24px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;">
+        <div id="wsAvatar" style="width:44px;height:44px;border-radius:50%;background:var(--surface2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:var(--accent);flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div id="wsName" style="font-size:1.05rem;font-weight:700;"></div>
+          <div id="wsSub" style="font-size:.78rem;color:var(--muted);"></div>
+        </div>
+        <div id="wsStatus" style=""></div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-bar">
+        <div class="tab active" onclick="switchTab('overview',this)">Overview</div>
+        <div class="tab" onclick="switchTab('equipment',this)">Equipment</div>
+        <div class="tab" onclick="switchTab('messages',this)">Messages</div>
+        <div class="tab" onclick="switchTab('loads',this)">Loads / Rate Cons</div>
+        <div class="tab" onclick="switchTab('bols',this)">BOLs & Docs</div>
+      </div>
+
+      <!-- OVERVIEW PANEL -->
+      <div class="panel active" id="panel-overview">
+        <div class="grid4" style="margin-bottom:20px;" id="overviewStats"></div>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-header"><span class="card-title">Driver Info</span></div>
+            <div class="card-body" id="driverInfoBody"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Current Assignment</span></div>
+            <div class="card-body" id="currentAssignmentBody"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Recent Activity</span></div>
+          <div class="card-body" id="recentActivityBody"></div>
+        </div>
+      </div>
+
+      <!-- EQUIPMENT PANEL -->
+      <div class="panel" id="panel-equipment">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Assigned Truck</span>
+            <span id="truckUnit" class="badge badge-blue"></span>
+          </div>
+          <div class="card-body" id="truckBody"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Trailers & Attachments</span>
+            <button class="btn-sm" onclick="openAddEquipModal()">+ Add Equipment</button>
+          </div>
+          <div class="card-body">
+            <table class="eq-table" id="equipTable">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>ID / Unit</th>
+                  <th>Weight Cap.</th>
+                  <th>Well Length</th>
+                  <th>Notes</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="equipTableBody">
+                <tr><td colspan="6" class="empty">No equipment recorded</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- MESSAGES PANEL -->
+      <div class="panel" id="panel-messages">
+        <div class="card" style="flex:1;">
+          <div class="card-header">
+            <span class="card-title">Direct Messages</span>
+            <span id="msgDriverName" style="font-size:.8rem;color:var(--accent);"></span>
+          </div>
+          <div class="card-body">
+            <div class="msg-container">
+              <div class="msg-history" id="msgHistory">
+                <div class="empty">No messages yet</div>
+              </div>
+              <div class="msg-compose">
+                <textarea class="msg-input" id="msgInput" rows="2" placeholder="Type a message…" onkeydown="handleMsgKey(event)"></textarea>
+                <button class="btn-send" onclick="sendMessage()">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOADS PANEL -->
+      <div class="panel" id="panel-loads">
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card-header">
+            <span class="card-title">Assign Load / Rate Con</span>
+          </div>
+          <div class="card-body">
+            <div class="load-form" id="loadForm">
+              <div class="form-group">
+                <label class="form-label">Load Number</label>
+                <input class="form-input" id="loadNum" placeholder="e.g. LD-2024-001">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Rate Con #</label>
+                <input class="form-input" id="rateConNum" placeholder="e.g. RC-5678">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Origin</label>
+                <input class="form-input" id="loadOrigin" placeholder="City, ST">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Destination</label>
+                <input class="form-input" id="loadDest" placeholder="City, ST">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Pickup Date</label>
+                <input class="form-input" id="loadPickup" type="date">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Delivery Date</label>
+                <input class="form-input" id="loadDelivery" type="date">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Rate ($)</label>
+                <input class="form-input" id="loadRate" type="number" placeholder="0.00">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Commodity</label>
+                <input class="form-input" id="loadCommodity" placeholder="e.g. Heavy Equipment">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Weight (lbs)</label>
+                <input class="form-input" id="loadWeight" type="number" placeholder="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Status</label>
+                <select class="form-select" id="loadStatus">
+                  <option value="pending">Pending</option>
+                  <option value="assigned">Assigned</option>
+                  <option value="in_transit">In Transit</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+              <div class="form-group full">
+                <label class="form-label">Notes</label>
+                <textarea class="form-textarea" id="loadNotes" placeholder="Special instructions, hazmat info, etc."></textarea>
+              </div>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:10px;">
+              <button class="btn-primary" onclick="saveLoad()">Assign Load</button>
+              <button class="btn-secondary" onclick="clearLoadForm()">Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">Load History</span></div>
+          <div class="card-body" style="padding:0;overflow:auto;">
+            <table class="loads-table">
+              <thead>
+                <tr>
+                  <th>Load #</th>
+                  <th>Rate Con</th>
+                  <th>Origin → Dest</th>
+                  <th>Pickup</th>
+                  <th>Rate</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="loadsTableBody">
+                <tr><td colspan="7" class="empty">No loads assigned</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOLs PANEL -->
+      <div class="panel" id="panel-bols">
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card-header">
+            <span class="card-title">Upload BOL / Document</span>
+          </div>
+          <div class="card-body">
+            <div class="load-form">
+              <div class="form-group">
+                <label class="form-label">Document Name</label>
+                <input class="form-input" id="bolName" placeholder="e.g. BOL #12345">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Document Type</label>
+                <select class="form-select" id="bolType">
+                  <option value="bol">Bill of Lading</option>
+                  <option value="ratecon">Rate Confirmation</option>
+                  <option value="pod">Proof of Delivery</option>
+                  <option value="permit">Oversize Permit</option>
+                  <option value="inspection">Inspection Report</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Related Load #</label>
+                <input class="form-input" id="bolLoad" placeholder="Optional">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date</label>
+                <input class="form-input" id="bolDate" type="date">
+              </div>
+              <div class="form-group full">
+                <label class="form-label">Notes / Reference</label>
+                <input class="form-input" id="bolNotes" placeholder="Optional notes">
+              </div>
+            </div>
+            <div style="margin-top:16px;">
+              <button class="btn-primary" onclick="saveBol()">Add Document Record</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">Documents</span></div>
+          <div class="card-body">
+            <div class="bol-list" id="bolList">
+              <div class="empty">No documents on file</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /driverWorkspace -->
+  </div><!-- /content -->
+</div><!-- /main-layout -->
+
+<!-- ADD EQUIPMENT MODAL -->
+<div class="modal-overlay" id="equipModal">
+  <div class="modal">
+    <div class="modal-title">Add Equipment</div>
+    <div class="load-form">
+      <div class="form-group">
+        <label class="form-label">Equipment Type</label>
+        <select class="form-select" id="eqType">
+          <option value="trailer">Trailer (RGN/Lowboy)</option>
+          <option value="flatbed">Flatbed Trailer</option>
+          <option value="step-deck">Step Deck</option>
+          <option value="rgn">RGN Trailer</option>
+          <option value="jeep">Jeep</option>
+          <option value="spreader">Spreader Bar</option>
+          <option value="dolly">Dolly</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Unit / ID</label>
+        <input class="form-input" id="eqUnit" placeholder="e.g. TRL-042">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Weight Capacity (lbs)</label>
+        <input class="form-input" id="eqWeightCap" type="number" placeholder="e.g. 48000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Well Length (ft)</label>
+        <input class="form-input" id="eqWellLen" placeholder="e.g. 29'6&quot; or N/A">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Notes</label>
+        <input class="form-input" id="eqNotes" placeholder="e.g. Aluminum, 19 axle positions">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeEquipModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveEquipment()">Save Equipment</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  AUTH & SESSION
+// ═══════════════════════════════════════════════════════
+let currentDispatcher = null;
+let assignedDriverEmails = [];
+let selectedDriver = null;
+let msgPollInterval = null;
+
+(function init() {
+  const s = localStorage.getItem('nexus_session');
+  if (!s) { window.location.href = 'login.html'; return; }
+  const sess = JSON.parse(s);
+  if (!sess || (sess.role !== 'dispatcher' && sess.role !== 'admin')) {
+    window.location.href = 'login.html'; return;
+  }
+  currentDispatcher = sess;
+  document.getElementById('navUser').textContent = sess.name || sess.email || 'Dispatcher';
+  loadAssignedDrivers();
+})();
+
+function logout() {
+  localStorage.removeItem('nexus_session');
+  window.location.href = 'login.html';
+}
+
+// ═══════════════════════════════════════════════════════
+//  ASSIGNED DRIVERS
+// ═══════════════════════════════════════════════════════
+function loadAssignedDrivers() {
+  const assignments = JSON.parse(localStorage.getItem('nexus_dispatcher_assignments') || '[]');
+  const myEmail = currentDispatcher.email;
+  assignedDriverEmails = assignments
+    .filter(a => a.dispatcherEmail === myEmail)
+    .map(a => a.driverEmail);
+
+  const users = JSON.parse(localStorage.getItem('nexus_users') || '[]');
+  const myDrivers = users.filter(u => u.role === 'driver' && assignedDriverEmails.includes(u.email));
+
+  document.getElementById('driverCount').textContent = `${myDrivers.length} driver${myDrivers.length !== 1 ? 's' : ''} assigned`;
+
+  const list = document.getElementById('driverList');
+  if (myDrivers.length === 0) {
+    list.innerHTML = '<div class="no-drivers">No drivers assigned yet.<br>Contact your admin.</div>';
+    return;
+  }
+
+  list.innerHTML = myDrivers.map(d => {
+    const loads = JSON.parse(localStorage.getItem('nexus_loads') || '[]');
+    const activeLoad = loads.find(l => l.driverEmail === d.email && l.status === 'in_transit');
+    const initials = (d.name || d.email).split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+    const dotClass = activeLoad ? 'dot-load' : (d.active !== false ? 'dot-active' : 'dot-inactive');
+    const sub = activeLoad ? `On Load: ${activeLoad.loadNum || '—'}` : (d.phone || d.email);
+    return `<div class="driver-item" id="di-${d.email.replace(/[^a-z0-9]/gi,'_')}" onclick="selectDriver('${d.email}')">
+      <div class="driver-avatar">${initials}</div>
+      <div class="driver-info">
+        <div class="driver-name">${d.name || d.email}</div>
+        <div class="driver-sub">${sub}</div>
+      </div>
+      <div class="status-dot ${dotClass}"></div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  SELECT DRIVER
+// ═══════════════════════════════════════════════════════
+function selectDriver(email) {
+  const users = JSON.parse(localStorage.getItem('nexus_users') || '[]');
+  selectedDriver = users.find(u => u.email === email);
+  if (!selectedDriver) return;
+
+  // Sidebar highlight
+  document.querySelectorAll('.driver-item').forEach(el => el.classList.remove('active'));
+  const key = email.replace(/[^a-z0-9]/gi,'_');
+  const el = document.getElementById('di-' + key);
+  if (el) el.classList.add('active');
+
+  // Show workspace
+  document.getElementById('noSelection').style.display = 'none';
+  const ws = document.getElementById('driverWorkspace');
+  ws.style.display = 'flex';
+
+  const initials = (selectedDriver.name || email).split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('wsAvatar').textContent = initials;
+  document.getElementById('wsName').textContent = selectedDriver.name || email;
+  document.getElementById('wsSub').textContent = selectedDriver.phone ? `${selectedDriver.phone} · ${email}` : email;
+
+  const loads = JSON.parse(localStorage.getItem('nexus_loads') || '[]');
+  const activeLoad = loads.find(l => l.driverEmail === email && l.status === 'in_transit');
+  document.getElementById('wsStatus').innerHTML = activeLoad
+    ? `<span class="badge badge-warn">On Load</span>`
+    : `<span class="badge badge-green">Available</span>`;
+
+  document.getElementById('msgDriverName').textContent = selectedDriver.name || email;
+
+  // Reset to overview tab
+  switchTab('overview', document.querySelector('.tab'));
+
+  renderOverview();
+}
+
+// ═══════════════════════════════════════════════════════
+//  TAB SWITCHING
+// ═══════════════════════════════════════════════════════
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  if (el) el.classList.add('active');
+  else {
+    const tabs = document.querySelectorAll('.tab');
+    const names = ['overview','equipment','messages','loads','bols'];
+    const idx = names.indexOf(name);
+    if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active');
+  }
+  const panel = document.getElementById('panel-' + name);
+  if (panel) panel.classList.add('active');
+  if (name === 'overview') renderOverview();
+  if (name === 'equipment') renderEquipment();
+  if (name === 'messages') renderMessages();
+  if (name === 'loads') renderLoads();
+  if (name === 'bols') renderBols();
+}
+
+// ═══════════════════════════════════════════════════════
+//  OVERVIEW
+// ═══════════════════════════════════════════════════════
+function renderOverview() {
+  if (!selectedDriver) return;
+  const email = selectedDriver.email;
+  const loads = JSON.parse(localStorage.getItem('nexus_loads') || '[]');
+  const driverLoads = loads.filter(l => l.driverEmail === email);
+  const msgs = JSON.parse(localStorage.getItem('nexus_messages') || '[]');
+  const driverMsgs = msgs.filter(m => m.driverEmail === email);
+  const bols = JSON.parse(localStorage.getItem('nexus_bols') || '[]');
+  const driverBols = bols.filter(b => b.driverEmail === email);
+
+  document.getElementById('overviewStats').innerHTML = `
+    <div class="stat-box"><div class="stat-label">Total Loads</div><div class="stat-value">${driverLoads.length}</div></div>
+    <div class="stat-box"><div class="stat-label">In Transit</div><div class="stat-value">${driverLoads.filter(l=>l.status==='in_transit').length}</div></div>
+    <div class="stat-box"><div class="stat-label">Messages</div><div class="stat-value">${driverMsgs.length}</div></div>
+    <div class="stat-box"><div class="stat-label">Documents</div><div class="stat-value">${driverBols.length}</div></div>
+  `;
+
+  const fleet = JSON.parse(localStorage.getItem('nexus_fleet') || '[]');
+  const localFleet = (window.NEXUS_LOCAL_FLEET || []);
+  const allFleet = [...fleet, ...localFleet];
+  const truck = allFleet.find(t => t.id === selectedDriver.truckId || t.unit === selectedDriver.truckUnit);
+
+  document.getElementById('driverInfoBody').innerHTML = `
+    <table style="width:100%;font-size:.83rem;border-collapse:collapse;">
+      <tr><td style="color:var(--muted);padding:5px 0;width:40%">Email</td><td>${selectedDriver.email}</td></tr>
+      <tr><td style="color:var(--muted);padding:5px 0">Phone</td><td>${selectedDriver.phone || '—'}</td></tr>
+      <tr><td style="color:var(--muted);padding:5px 0">CDL Class</td><td>${selectedDriver.cdl || '—'}</td></tr>
+      <tr><td style="color:var(--muted);padding:5px 0">License State</td><td>${selectedDriver.licenseState || '—'}</td></tr>
+      <tr><td style="color:var(--muted);padding:5px 0">HazMat</td><td>${selectedDriver.hazmat ? '<span class="badge badge-green">Yes</span>' : '<span class="badge badge-muted">No</span>'}</td></tr>
+      <tr><td style="color:var(--muted);padding:5px 0">TWIC</td><td>${selectedDriver.twic ? '<span class="badge badge-green">Yes</span>' : '<span class="badge badge-muted">No</span>'}</td></tr>
+    </table>`;
+
+  const activeLoad = driverLoads.find(l => l.status === 'in_transit') || driverLoads[0];
+  document.getElementById('currentAssignmentBody').innerHTML = activeLoad
+    ? `<table style="width:100%;font-size:.83rem;border-collapse:collapse;">
+        <tr><td style="color:var(--muted);padding:5px 0;width:40%">Load #</td><td>${activeLoad.loadNum || '—'}</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Rate Con</td><td>${activeLoad.rateConNum || '—'}</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Route</td><td>${activeLoad.origin || '—'} → ${activeLoad.dest || '—'}</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Commodity</td><td>${activeLoad.commodity || '—'}</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Status</td><td><span class="badge badge-warn">${activeLoad.status}</span></td></tr>
+      </table>`
+    : '<div class="empty" style="padding:20px 0">No active load</div>';
+
+  const recent = [...driverLoads.slice(-3).reverse(), ...driverMsgs.slice(-2).reverse()]
+    .sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0)).slice(0,5);
+  document.getElementById('recentActivityBody').innerHTML = recent.length
+    ? `<div style="display:flex;flex-direction:column;gap:8px;">${recent.map(item => `
+        <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--surface2);border-radius:6px;border:1px solid var(--border);">
+          <div style="width:6px;height:6px;border-radius:50%;background:${item.loadNum ? 'var(--warn)' : 'var(--accent)'};flex-shrink:0;"></div>
+          <div style="flex:1;font-size:.82rem;">${item.loadNum ? `Load ${item.loadNum}: ${item.origin||''} → ${item.dest||''}` : `Message: ${(item.text||'').slice(0,60)}…`}</div>
+          <div style="font-size:.72rem;color:var(--muted);">${fmtDate(item.createdAt)}</div>
+        </div>`).join('')}</div>`
+    : '<div class="empty">No recent activity</div>';
+}
+
+// ═══════════════════════════════════════════════════════
+//  EQUIPMENT
+// ═══════════════════════════════════════════════════════
+function renderEquipment() {
+  if (!selectedDriver) return;
+  const fleet = [...JSON.parse(localStorage.getItem('nexus_fleet')||'[]'), ...(window.NEXUS_LOCAL_FLEET||[])];
+  const truck = fleet.find(t => t.id === selectedDriver.truckId || t.unit === selectedDriver.truckUnit);
+
+  document.getElementById('truckUnit').textContent = truck ? `Unit ${truck.unit}` : 'No Truck Assigned';
+  document.getElementById('truckBody').innerHTML = truck
+    ? `<table style="width:100%;font-size:.83rem;border-collapse:collapse;">
+        <tr><td style="color:var(--muted);padding:5px 0;width:30%">Year</td><td>${truck.year}</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Make</td><td>${truck.make}</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">Model</td><td>${truck.model}</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">VIN</td><td style="font-family:monospace;font-size:.8rem;">${truck.vin}</td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">ELD</td><td><span class="badge ${truck.eld==='Connected'?'badge-green':'badge-muted'}">${truck.eld||'—'}</span></td></tr>
+        <tr><td style="color:var(--muted);padding:5px 0">ELD Source</td><td>${truck.eldSource||'—'}</td></tr>
+      </table>`
+    : '<div class="empty">No truck assigned to this driver</div>';
+
+  const equipment = JSON.parse(localStorage.getItem('nexus_equipment') || '[]');
+  const driverEquip = equipment.filter(e => e.driverEmail === selectedDriver.email);
+
+  document.getElementById('equipTableBody').innerHTML = driverEquip.length
+    ? driverEquip.map(e => `
+        <tr>
+          <td>${e.type}</td>
+          <td>${e.unit || '—'}</td>
+          <td>${e.weightCap ? Number(e.weightCap).toLocaleString() + ' lbs' : '—'}</td>
+          <td>${e.wellLen || '—'}</td>
+          <td style="color:var(--muted);font-size:.78rem;">${e.notes || '—'}</td>
+          <td><button class="btn-danger" onclick="deleteEquipment('${e.id}')">✕</button></td>
+        </tr>`).join('')
+    : '<tr><td colspan="6" class="empty">No equipment recorded</td></tr>';
+}
+
+function openAddEquipModal() { document.getElementById('equipModal').classList.add('open'); }
+function closeEquipModal() { document.getElementById('equipModal').classList.remove('open'); }
+
+function saveEquipment() {
+  if (!selectedDriver) return;
+  const eq = {
+    id: Date.now().toString(),
+    driverEmail: selectedDriver.email,
+    type: document.getElementById('eqType').value,
+    unit: document.getElementById('eqUnit').value,
+    weightCap: document.getElementById('eqWeightCap').value,
+    wellLen: document.getElementById('eqWellLen').value,
+    notes: document.getElementById('eqNotes').value,
+    createdAt: new Date().toISOString()
+  };
+  const equipment = JSON.parse(localStorage.getItem('nexus_equipment') || '[]');
+  equipment.push(eq);
+  localStorage.setItem('nexus_equipment', JSON.stringify(equipment));
+  closeEquipModal();
+  renderEquipment();
+  toast('Equipment saved', 'success');
+}
+
+function deleteEquipment(id) {
+  let equipment = JSON.parse(localStorage.getItem('nexus_equipment') || '[]');
+  equipment = equipment.filter(e => e.id !== id);
+  localStorage.setItem('nexus_equipment', JSON.stringify(equipment));
+  renderEquipment();
+  toast('Equipment removed');
+}
+
+// ═══════════════════════════════════════════════════════
+//  MESSAGES
+// ═══════════════════════════════════════════════════════
+function renderMessages() {
+  if (!selectedDriver) return;
+  const msgs = JSON.parse(localStorage.getItem('nexus_messages') || '[]');
+  const thread = msgs.filter(m => m.driverEmail === selectedDriver.email);
+  const hist = document.getElementById('msgHistory');
+  if (thread.length === 0) {
+    hist.innerHTML = '<div class="empty">No messages yet</div>';
+    return;
+  }
+  hist.innerHTML = thread.map(m => {
+    const isSent = m.from === 'dispatcher';
+    return `<div>
+      <div class="msg-meta" style="text-align:${isSent?'right':'left'}">${isSent ? 'You' : (selectedDriver.name||selectedDriver.email)} · ${fmtDate(m.createdAt)}</div>
+      <div class="msg-bubble ${isSent?'msg-sent':'msg-received'}">${escHtml(m.text)}</div>
+    </div>`;
+  }).join('');
+  hist.scrollTop = hist.scrollHeight;
+}
+
+function handleMsgKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+
+function sendMessage() {
+  if (!selectedDriver) return;
+  const text = document.getElementById('msgInput').value.trim();
+  if (!text) return;
+  const msgs = JSON.parse(localStorage.getItem('nexus_messages') || '[]');
+  msgs.push({
+    id: Date.now().toString(),
+    driverEmail: selectedDriver.email,
+    dispatcherEmail: currentDispatcher.email,
+    from: 'dispatcher',
+    text,
+    createdAt: new Date().toISOString(),
+    read: false
+  });
+  localStorage.setItem('nexus_messages', JSON.stringify(msgs));
+  document.getElementById('msgInput').value = '';
+  renderMessages();
+  toast('Message sent', 'success');
+}
+
+// ═══════════════════════════════════════════════════════
+//  LOADS
+// ═══════════════════════════════════════════════════════
+function renderLoads() {
+  if (!selectedDriver) return;
+  const loads = JSON.parse(localStorage.getItem('nexus_loads') || '[]');
+  const driverLoads = loads.filter(l => l.driverEmail === selectedDriver.email);
+  const statusMap = { pending:'badge-muted', assigned:'badge-blue', in_transit:'badge-warn', delivered:'badge-green', cancelled:'badge-red' };
+  document.getElementById('loadsTableBody').innerHTML = driverLoads.length
+    ? driverLoads.map(l => `
+        <tr>
+          <td>${l.loadNum || '—'}</td>
+          <td>${l.rateConNum || '—'}</td>
+          <td>${l.origin||'—'} → ${l.dest||'—'}</td>
+          <td>${l.pickup ? fmtDate(l.pickup) : '—'}</td>
+          <td>${l.rate ? '$' + Number(l.rate).toLocaleString() : '—'}</td>
+          <td><span class="badge ${statusMap[l.status]||'badge-muted'}">${l.status}</span></td>
+          <td><button class="btn-danger" onclick="deleteLoad('${l.id}')">✕</button></td>
+        </tr>`).join('')
+    : '<tr><td colspan="7" class="empty">No loads assigned</td></tr>';
+}
+
+function saveLoad() {
+  if (!selectedDriver) return;
+  const load = {
+    id: Date.now().toString(),
+    driverEmail: selectedDriver.email,
+    dispatcherEmail: currentDispatcher.email,
+    loadNum: document.getElementById('loadNum').value,
+    rateConNum: document.getElementById('rateConNum').value,
+    origin: document.getElementById('loadOrigin').value,
+    dest: document.getElementById('loadDest').value,
+    pickup: document.getElementById('loadPickup').value,
+    delivery: document.getElementById('loadDelivery').value,
+    rate: document.getElementById('loadRate').value,
+    commodity: document.getElementById('loadCommodity').value,
+    weight: document.getElementById('loadWeight').value,
+    status: document.getElementById('loadStatus').value,
+    notes: document.getElementById('loadNotes').value,
+    createdAt: new Date().toISOString()
+  };
+  const loads = JSON.parse(localStorage.getItem('nexus_loads') || '[]');
+  loads.push(load);
+  localStorage.setItem('nexus_loads', JSON.stringify(loads));
+  clearLoadForm();
+  renderLoads();
+  loadAssignedDrivers();
+  toast('Load assigned', 'success');
+}
+
+function clearLoadForm() {
+  ['loadNum','rateConNum','loadOrigin','loadDest','loadPickup','loadDelivery','loadRate','loadCommodity','loadWeight','loadNotes'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('loadStatus').value = 'pending';
+}
+
+function deleteLoad(id) {
+  let loads = JSON.parse(localStorage.getItem('nexus_loads') || '[]');
+  loads = loads.filter(l => l.id !== id);
+  localStorage.setItem('nexus_loads', JSON.stringify(loads));
+  renderLoads();
+  toast('Load removed');
+}
+
+// ═══════════════════════════════════════════════════════
+//  BOLs
+// ═══════════════════════════════════════════════════════
+function renderBols() {
+  if (!selectedDriver) return;
+  const bols = JSON.parse(localStorage.getItem('nexus_bols') || '[]');
+  const driverBols = bols.filter(b => b.driverEmail === selectedDriver.email);
+  const typeLabels = { bol:'Bill of Lading', ratecon:'Rate Confirmation', pod:'Proof of Delivery', permit:'Oversize Permit', inspection:'Inspection Report', other:'Document' };
+  document.getElementById('bolList').innerHTML = driverBols.length
+    ? driverBols.map(b => `
+        <div class="bol-item">
+          <div>
+            <div class="bol-name">${escHtml(b.name)}</div>
+            <div class="bol-meta">${typeLabels[b.type]||'Document'} · ${b.loadNum ? 'Load ' + b.loadNum + ' · ' : ''}${fmtDate(b.date||b.createdAt)} ${b.notes ? '· ' + escHtml(b.notes) : ''}</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-danger" onclick="deleteBol('${b.id}')">✕</button>
+          </div>
+        </div>`).join('')
+    : '<div class="empty">No documents on file</div>';
+}
+
+function saveBol() {
+  if (!selectedDriver) return;
+  const bol = {
+    id: Date.now().toString(),
+    driverEmail: selectedDriver.email,
+    dispatcherEmail: currentDispatcher.email,
+    name: document.getElementById('bolName').value,
+    type: document.getElementById('bolType').value,
+    loadNum: document.getElementById('bolLoad').value,
+    date: document.getElementById('bolDate').value,
+    notes: document.getElementById('bolNotes').value,
+    createdAt: new Date().toISOString()
+  };
+  if (!bol.name) { toast('Enter a document name', 'error'); return; }
+  const bols = JSON.parse(localStorage.getItem('nexus_bols') || '[]');
+  bols.push(bol);
+  localStorage.setItem('nexus_bols', JSON.stringify(bols));
+  ['bolName','bolLoad','bolDate','bolNotes'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('bolType').value = 'bol';
+  renderBols();
+  toast('Document added', 'success');
+}
+
+function deleteBol(id) {
+  let bols = JSON.parse(localStorage.getItem('nexus_bols') || '[]');
+  bols = bols.filter(b => b.id !== id);
+  localStorage.setItem('nexus_bols', JSON.stringify(bols));
+  renderBols();
+  toast('Document removed');
+}
+
+// ═══════════════════════════════════════════════════════
+//  UTILITIES
+// ═══════════════════════════════════════════════════════
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+let toastTimer;
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+}
+</script>
+</body>
+</html>
