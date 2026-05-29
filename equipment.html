@@ -1179,7 +1179,7 @@ async function removeUnit(id, unit) {
 }
 
 // ── LOG PM ──
-function logPM(id) {
+async function logPM(id) {
   const today = new Date().toISOString().split('T')[0];
   const fleet = await loadFleet();
   const u = fleet.find(x=>x.id===id);
