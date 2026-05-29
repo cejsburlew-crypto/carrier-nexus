@@ -760,45 +760,35 @@ renderTable(documents);
 </script>
 
 <!-- SYNC NEXUS DOCS MODAL -->
-<div id="sync-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9999;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid #334155;">
-      <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#f1f5f9;letter-spacing:.06em;">SYNC NEXUS DOCUMENTS</span>
+<div id="sync-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:32px;width:560px;max-width:94vw;max-height:85vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <h2 style="color:#f1f5f9;font-size:18px;font-weight:700;letter-spacing:1px;">SYNC NEXUS DOCS</h2>
       <button onclick="closeSyncModal()" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;">&#x2715;</button>
     </div>
-    <div style="padding:24px;">
-      <p style="font-size:13px;color:#94a3b8;margin:0 0 20px;">Pull new files from Gmail and WhatsApp into the NEXUS Data Vault. Click a source to open it, then download files and add them here.</p>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
-        <a href="https://mail.google.com/mail/u/0/#search/has:attachment+carrier+OR+BOL+OR+load" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;">
-          <svg width="28" height="28" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#ea4335"/><path d="M4 8l8 5 8-5V18H4V8z" fill="white"/></svg>
-          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">GMAIL — Search Attachments</div><div style="font-size:11px;color:#64748b;margin-top:2px;">BOL, load confirmations, permits</div></div>
-          <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        </a>
-        <a href="https://web.whatsapp.com" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;">
-          <svg width="28" height="28" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#25d366"/><text x="5" y="17" font-size="12" fill="white" font-weight="bold">W</text></svg>
-          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">WHATSAPP WEB — Download Files</div><div style="font-size:11px;color:#64748b;margin-top:2px;">Open chats, download PDFs from drivers</div></div>
-          <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        </a>
-        <a href="https://drive.google.com" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;">
-          <svg width="28" height="28" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#1a73e8"/><path d="M6 18l3.5-6L12 18H6zM12 18l3.5-6L18 7.5 16 6l-4 7-1.5 2.5L12 18zm6 0l-2-3.5L12 6h2.5l5.5 9.5L18 18z" fill="white"/></svg>
-          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">GOOGLE DRIVE — Data Vault</div><div style="font-size:11px;color:#64748b;margin-top:2px;">Upload downloaded files to your vault folder</div></div>
-          <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        </a>
-      </div>
-      <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px 18px;margin-bottom:20px;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#e8640a;letter-spacing:.06em;margin-bottom:8px;">SYNC WORKFLOW</div>
-        <ol style="margin:0;padding-left:18px;font-size:12px;color:#94a3b8;line-height:2;">
-          <li>Open Gmail &#x2192; download BOLs / load confirmations as PDFs</li>
-          <li>Open WhatsApp Web &#x2192; download files drivers sent</li>
-          <li>Upload all files to Google Drive vault folder</li>
-          <li>Click <strong style="color:#f1f5f9;">Add Document</strong> above to log each file in NEXUS</li>
-        </ol>
-      </div>
-      <button onclick="closeSyncModal()" style="width:100%;padding:11px;background:#2e6da4;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">DONE</button>
+    <p style="color:#94a3b8;font-size:13px;margin-bottom:24px;">Open each source below, collect new files, and save them to your Drive vault. Then use the Add Document button to log them in NEXUS.</p>
+    <!-- WHATSAPP SOURCES -->
+    <div style="margin-bottom:20px;">
+      <div style="color:#64748b;font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:10px;">WHATSAPP CHATS</div>
+      <div id="sync-wa-list"></div>
+    </div>
+    <!-- GMAIL ACCOUNTS -->
+    <div style="margin-bottom:20px;">
+      <div style="color:#64748b;font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:10px;">GMAIL ACCOUNTS</div>
+      <div id="sync-gmail-list"></div>
+    </div>
+    <!-- DRIVE FOLDERS -->
+    <div style="margin-bottom:24px;">
+      <div style="color:#64748b;font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:10px;">GOOGLE DRIVE FOLDERS</div>
+      <div id="sync-drive-list"></div>
+    </div>
+    <div style="display:flex;gap:12px;justify-content:flex-end;">
+      <button onclick="closeSyncModal()" style="padding:10px 20px;background:#334155;border:none;border-radius:6px;color:#94a3b8;cursor:pointer;font-size:13px;">CLOSE</button>
+      <button onclick="addSyncSource()" style="padding:10px 20px;background:#ff6b35;border:none;border-radius:6px;color:#fff;cursor:pointer;font-size:13px;font-weight:700;">+ ADD SOURCE</button>
     </div>
   </div>
 </div>
-<!-- ADD DOCUMENT MODAL -->
+
 <div id="add-doc-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9999;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;width:100%;max-width:480px;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid #334155;">
@@ -824,9 +814,46 @@ renderTable(documents);
   </div>
 </div>
 <script>
-function openSyncModal(){ document.getElementById('sync-modal').style.display='flex'; }
-function closeSyncModal(){ document.getElementById('sync-modal').style.display='none'; }
-function openAddDocModal(){ document.getElementById('nd-date').value=new Date().toISOString().split('T')[0]; document.getElementById('add-doc-modal').style.display='flex'; }
+    function openSyncModal() {
+      var modal = document.getElementById("sync-modal");
+      modal.style.display = "flex";
+      // Build WhatsApp list
+      var waSources = window.NEXUS_WHATSAPP_SOURCES || [{name:"documentos",makeWebhook:""}];
+      var waHtml = "";
+      waSources.forEach(function(s) {
+        waHtml += "<a href=\"https://web.whatsapp.com/\" target=\"_blank\" style=\"display:flex;align-items:center;gap:12px;padding:12px;background:#0f172a;border:1px solid #25d366;border-radius:8px;text-decoration:none;margin-bottom:8px;\">";
+        waHtml += "<span style=\"color:#25d366;font-size:18px;\">&#x1F4AC;</span>";
+        waHtml += "<div><div style=\"color:#f1f5f9;font-size:13px;font-weight:700;\">" + s.name + "</div>";
+        waHtml += "<div style=\"color:#64748b;font-size:11px;\">Open WhatsApp Web &rarr; save new photos &amp; files to Drive</div></div></a>";
+      });
+      document.getElementById("sync-wa-list").innerHTML = waHtml;
+      // Build Gmail list
+      var gmailAccts = window.NEXUS_GMAIL_ACCOUNTS || [{name:"Operations",email:""}];
+      var gmailHtml = "";
+      gmailAccts.forEach(function(g) {
+        var gmailUrl = g.email ? "https://mail.google.com/mail/u/0/#search/has:attachment+label:inbox" : "https://mail.google.com";
+        gmailHtml += "<a href=\"" + gmailUrl + "\" target=\"_blank\" style=\"display:flex;align-items:center;gap:12px;padding:12px;background:#0f172a;border:1px solid #ef4444;border-radius:8px;text-decoration:none;margin-bottom:8px;\">";
+        gmailHtml += "<span style=\"color:#ef4444;font-size:18px;\">&#x2709;</span>";
+        gmailHtml += "<div><div style=\"color:#f1f5f9;font-size:13px;font-weight:700;\">" + g.name + (g.email ? " (" + g.email + ")" : "") + "</div>";
+        gmailHtml += "<div style=\"color:#64748b;font-size:11px;\">Search attachments &rarr; save to Drive</div></div></a>";
+      });
+      document.getElementById("sync-gmail-list").innerHTML = gmailHtml;
+      // Build Drive list
+      var driveFolders = window.NEXUS_DRIVE_FOLDERS || [{name:"Main Vault",id:"1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0",url:"https://drive.google.com/drive/folders/1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0"}];
+      var driveHtml = "";
+      driveFolders.forEach(function(f) {
+        driveHtml += "<a href=\"" + f.url + "\" target=\"_blank\" style=\"display:flex;align-items:center;gap:12px;padding:12px;background:#0f172a;border:1px solid #22c55e;border-radius:8px;text-decoration:none;margin-bottom:8px;\">";
+        driveHtml += "<span style=\"color:#22c55e;font-size:18px;\">&#x1F4C1;</span>";
+        driveHtml += "<div><div style=\"color:#f1f5f9;font-size:13px;font-weight:700;\">" + f.name + "</div>";
+        driveHtml += "<div style=\"color:#64748b;font-size:11px;\">Open Drive vault &rarr; verify files arrived</div></div></a>";
+      });
+      document.getElementById("sync-drive-list").innerHTML = driveHtml;
+    }
+    function closeSyncModal() { document.getElementById("sync-modal").style.display="none"; }
+    function addSyncSource() {
+      alert("To add a new source:\n\n1. Open nexus-config.js\n2. Add an entry to NEXUS_WHATSAPP_SOURCES, NEXUS_GMAIL_ACCOUNTS, or NEXUS_DRIVE_FOLDERS\n3. Save and redeploy");
+    }
+    function openAddDocModal(){ document.getElementById('nd-date').value=new Date().toISOString().split('T')[0]; document.getElementById('add-doc-modal').style.display='flex'; }
 function closeAddDocModal(){ document.getElementById('add-doc-modal').style.display='none'; }
 function submitAddDoc(e){ e.preventDefault(); var doc={date:document.getElementById('nd-date').value,filename:document.getElementById('nd-filename').value,driver:document.getElementById('nd-driver').value,type:document.getElementById('nd-type').value,add_deduct:document.getElementById('nd-ad').value,driveId:document.getElementById('nd-drive').value||''}; documents.unshift(doc); closeAddDocModal(); applyFilters(); }
 document.getElementById('sync-modal').addEventListener('click',function(e){if(e.target===this)closeSyncModal();});
