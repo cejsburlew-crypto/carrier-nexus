@@ -1213,7 +1213,11 @@ function renderDriverCards(filter) {
   const shieldSVG = '<svg width="9" height="9" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l6 2v5c0 4-6 7-6 7S2 12 2 8V3l6-2z"/></svg>';
   const warnSVG = '<svg width="9" height="9" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L1 14h14L8 1zm0 3l5.5 9H2.5L8 4zm-1 3v3h2V7H7zm0 4v2h2v-2H7z"/></svg>';
 
-  let drivers = NEXUS.drivers.filter(d => d.role !== 'dispatcher');
+  // Dispatcher IDs are authoritative from nexus-data.js — localStorage cannot override role
+  const _dispatcherIds = new Set(NEXUS.drivers.filter(d => d.role === 'dispatcher').map(d => d.id));
+  const dispatcherList2 = NEXUS.drivers.filter(d => _dispatcherIds.has(d.id));
+  renderDispatcherCards(dispatcherList2);
+  let drivers = NEXUS.drivers.filter(d => !_dispatcherIds.has(d.id));
   if (filter === 'active') drivers = drivers.filter(d => d.status === 'active');
   else if (filter === 'inactive') drivers = drivers.filter(d => d.status === 'inactive');
   else if (filter === 'issues') drivers = drivers.filter(d => complianceClass(d) !== 'c-ok' && complianceClass(d) !== 'c-pending');
