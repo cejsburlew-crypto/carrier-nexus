@@ -172,6 +172,10 @@ tr:hover td{background:#f8fafc;}
       <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 5a3 3 0 11-6 0 3 3 0 016 0zM2 13c0-2.761 2.686-5 6-5s6 2.239 6 5H2z"/></svg>
       Directory
     </a>
+    <a href="contacts.html?tab=broker" class="sidebar-link ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Brokers</span>
+    </a>
   </div>
 
   <div class="sidebar-section">
@@ -309,7 +313,7 @@ async function saveContact(){const n=document.getElementById('c-name').value;if(
 function editContact(id){const c=_contactCache.find(x=>x.id===id);if(!c)return;document.getElementById('contact-modal-title').textContent='EDIT CONTACT';document.getElementById('contact-edit-id').value=id;document.getElementById('c-name').value=c.name||'';document.getElementById('c-type').value=c.contact_type||c.type||'broker';document.getElementById('c-person').value=c.contact_person||c.person||'';document.getElementById('c-phone').value=c.phone||'';document.getElementById('c-email').value=c.email||'';document.getElementById('c-mc').value=c.mc_number||c.mc||'';document.getElementById('c-address').value=c.address||'';document.getElementById('c-notes').value=c.notes||'';document.getElementById('contact-modal').classList.add('open');}
 async function delContact(id){if(confirm('Delete contact?')){await NexusDB.Contacts.delete(id);await renderContacts();}}
 document.getElementById('contact-modal').addEventListener('click',function(e){if(e.target===this)closeContactModal();});
-(async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); await renderContacts(); })();
+(async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); const _urlTab=new URLSearchParams(window.location.search).get('tab'); if(_urlTab) setTab(_urlTab); await renderContacts(); })();
 </script>
   </div>
 </div>
