@@ -82,7 +82,7 @@ const NEXUS = {
       violations: []
     },
     {
-      id: "002", name: "Amet Abreu", short: "AMET", truck: "04", status: "active", phone: "", dispatch_pct: 0.13,
+      id: "002", name: "Amet Abreu", short: "AMET", role: "dispatcher", truck: "04", status: "active", phone: "", dispatch_pct: 0.13,
       loads: "310+", revenue: "$420K+", avatar_bg: "#d4edda",
       cdl_number: "ENTER CDL #", cdl_class: "A", cdl_state: "FL", cdl_expires: "YYYY-MM-DD",
       med_cert_expires: "YYYY-MM-DD", med_examiner: "Enter Examiner",
@@ -115,7 +115,7 @@ const NEXUS = {
       violations: []
     },
     {
-      id: "008", name: "Betty", short: "BETTY", truck: null, status: "inactive", phone: "", dispatch_pct: 0.00,
+      id: "008", name: "Betty", short: "BETTY", role: "dispatcher", truck: null, status: "inactive", phone: "", dispatch_pct: 0.00,
       loads: null, revenue: null, avatar_bg: "#f0e6ff",
       cdl_number: "ENTER CDL #", cdl_class: "B", cdl_state: "FL", cdl_expires: "YYYY-MM-DD",
       med_cert_expires: "YYYY-MM-DD", med_examiner: "Enter Examiner",

@@ -1027,6 +1027,16 @@ body {
     <!-- DRIVER CARDS GRID — JS Rendered -->
     <div class="drivers-grid" id="drivers-grid"></div>
 
+    <!-- DISPATCHERS SECTION -->
+    <div id="dispatchers-section" style="margin-top:32px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;">Dispatchers</span>
+        <span class="driver-count-label" id="dispatcher-count"></span>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
+      </div>
+      <div class="drivers-grid" id="dispatchers-grid"></div>
+    </div>
+
     <!-- SUMMARY FOOTER -->
     <div class="summary-footer">
       <div class="footer-stat">
@@ -1153,13 +1163,57 @@ function violationBadge(severity) {
   return '<span class="badge badge-gray">WARNING</span>';
 }
 
+// ─── Render Dispatcher Cards ───────────────────────────────────────────────
+function renderDispatcherCards(dispatchers) {
+  const headsetSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>';
+  const el = document.getElementById('dispatchers-grid');
+  const countEl = document.getElementById('dispatcher-count');
+  if (!el) return;
+  if (!dispatchers || dispatchers.length === 0) {
+    el.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:16px 0;">No dispatchers on file.</div>';
+    if (countEl) countEl.textContent = '0 DISPATCHERS';
+    return;
+  }
+  const html = dispatchers.map(dRaw => {
+    const d = mergeDriver(dRaw);
+    const initials = d.name.split(' ').map(p => p[0]).join('').substring(0,2).toUpperCase();
+    const statusBadge = d.status === 'active'
+      ? '<span class="badge badge-green">ACTIVE</span>'
+      : '<span class="badge badge-gray">INACTIVE</span>';
+    return '<div class="driver-card ' + (d.status === 'inactive' ? 'inactive' : '') + '" style="border-top:3px solid #e91e8c;">' +
+      '<div class="driver-card-top">' +
+        '<div class="driver-avatar" style="background:#4a1030;color:#e91e8c;">' + initials + '</div>' +
+        '<div>' +
+          '<div class="driver-name">' + d.name + '</div>' +
+          '<div style="margin-top:4px;display:flex;align-items:center;gap:6px;">' +
+            '<span class="driver-id-badge">ID #' + d.id + '</span>' +
+            '<span style="font-size:9px;font-family:'JetBrains Mono',monospace;background:#4a1030;color:#e91e8c;padding:2px 6px;border-radius:3px;letter-spacing:1px;">DISPATCHER</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="driver-meta-row">' + statusBadge + '</div>' +
+      '</div>' +
+      '<div class="driver-card-stats">' +
+        '<div class="stat-block"><div class="stat-block-label">Dispatch %</div><div class="stat-block-value">' + (d.dispatch_pct ? Math.round(d.dispatch_pct*100)+'%' : '—') + '</div></div>' +
+        '<div class="stat-block"><div class="stat-block-label">Phone</div><div class="stat-block-value' + (d.phone ? '' : ' na') + '">' + (d.phone || '—') + '</div></div>' +
+      '</div>' +
+      '<div class="driver-card-actions">' +
+        '<button class="btn-driver-action settle" onclick="window.location.href='dispatcher-hub.html'">HUB</button>' +
+        '<button class="btn-driver-action" onclick="openContactModal('' + d.id + '')">CONTACT</button>' +
+        '<button class="btn-driver-action" onclick="openDriverDocs('' + d.id + '')">DOCUMENTS</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  el.innerHTML = html;
+  if (countEl) countEl.textContent = dispatchers.length + ' DISPATCHER' + (dispatchers.length !== 1 ? 'S' : '');
+}
+
 // ─── Render Driver Cards ───────────────────────────────────────────────────
 function renderDriverCards(filter) {
   const truckSVG = '<svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="4" width="8" height="5" rx="1"/><rect x="8" y="5" width="3" height="3" rx="0.5"/><circle cx="3" cy="9.5" r="1.2"/><circle cx="9" cy="9.5" r="1.2"/></svg>';
   const shieldSVG = '<svg width="9" height="9" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l6 2v5c0 4-6 7-6 7S2 12 2 8V3l6-2z"/></svg>';
   const warnSVG = '<svg width="9" height="9" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L1 14h14L8 1zm0 3l5.5 9H2.5L8 4zm-1 3v3h2V7H7zm0 4v2h2v-2H7z"/></svg>';
 
-  let drivers = NEXUS.drivers;
+  let drivers = NEXUS.drivers.filter(d => d.role !== 'dispatcher');
   if (filter === 'active') drivers = drivers.filter(d => d.status === 'active');
   else if (filter === 'inactive') drivers = drivers.filter(d => d.status === 'inactive');
   else if (filter === 'issues') drivers = drivers.filter(d => complianceClass(d) !== 'c-ok' && complianceClass(d) !== 'c-pending');
