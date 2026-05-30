@@ -170,6 +170,13 @@
       <option value="Tanker">Tanker</option>
       <option value="LTL">LTL</option>
     </select>
+    <select class="filter-select" id="filterType" onchange="renderCards()">
+      <option value="">All Types</option>
+      <option value="owner-operator">Owner Operator</option>
+      <option value="company-driver">Company Driver</option>
+      <option value="lease-operator">Lease Operator</option>
+      <option value="team-driver">Team Driver</option>
+    </select>
     <select class="filter-select" id="filterTrans" onchange="renderCards()">
       <option value="">All Transmissions</option>
       <option value="Manual">Manual</option>
@@ -248,6 +255,65 @@
         <input class="form-input" id="fAvailDate" type="date">
       </div>
 
+      <div class="section-divider">Driver Type</div>
+
+      <div class="form-group">
+        <label class="form-label">Driver Classification *</label>
+        <select class="form-select" id="fDriverType" onchange="toggleOOFields()">
+          <option value="company-driver">Company Driver</option>
+          <option value="owner-operator">Owner Operator (Own Truck)</option>
+          <option value="lease-operator">Lease Operator</option>
+          <option value="team-driver">Team Driver</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">CDL State</label>
+        <input class="form-input" id="fCdlState" placeholder="e.g. TX, FL, CA">
+      </div>
+
+      <div id="ooFields" style="display:none;grid-column:1/-1;">
+        <div class="form-grid" style="margin-top:0;">
+          <div class="section-divider">Owner Operator — Equipment Owned</div>
+          <div class="form-group">
+            <label class="form-label">Truck Year</label>
+            <input class="form-input" id="fTruckYear" type="number" placeholder="e.g. 2019" min="1990" max="2030">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Truck Make</label>
+            <select class="form-select" id="fTruckMake">
+              <option value="">— Select —</option>
+              <option>Peterbilt</option><option>Kenworth</option><option>Freightliner</option>
+              <option>International</option><option>Volvo</option><option>Mack</option>
+              <option>Western Star</option><option>Ford</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Truck Model</label>
+            <input class="form-input" id="fTruckModel" placeholder="e.g. 389, T680, Cascadia">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Truck VIN (optional)</label>
+            <input class="form-input" id="fTruckVin" placeholder="17-char VIN">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Own Authority (DOT#)</label>
+            <input class="form-input" id="fOwnDot" placeholder="DOT #">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Own Authority (MC#)</label>
+            <input class="form-input" id="fOwnMc" placeholder="MC #">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Trailer(s) Owned</label>
+            <input class="form-input" id="fTrailersOwned" placeholder="e.g. 48ft RGN, 53ft Flatbed, Step Deck">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Equipment Notes</label>
+            <input class="form-input" id="fEquipNotes" placeholder="Axle count, special features, permits held…">
+          </div>
+        </div>
+      </div>
+
       <div class="section-divider">Additional</div>
 
       <div class="form-group">
@@ -305,6 +371,11 @@ function updateExpYears() {
     </div>`).join('');
 }
 
+function toggleOOFields() {
+  const v = document.getElementById('fDriverType').value;
+  document.getElementById('ooFields').style.display = v === 'owner-operator' || v === 'lease-operator' ? 'block' : 'none';
+}
+
 function toggleAvailDate() {
   const val = document.getElementById('fAvail').value;
   document.getElementById('availDateRow').classList.toggle('show', val === 'date');
@@ -314,7 +385,9 @@ function openModal(id = null) {
   editingId = id;
   document.getElementById('modalTitle').textContent = id ? 'Edit Driver' : 'Add Available Driver';
   // Reset
-  ['fName','fPhone','fEmail','fCdlYears','fLanguages','fExpOther','fAvailDate','fHomeState','fNotes'].forEach(f => { const el=document.getElementById(f); if(el) el.value=''; });
+  ['fName','fPhone','fEmail','fCdlYears','fCdlState','fLanguages','fExpOther','fAvailDate','fHomeState','fNotes','fTruckYear','fTruckModel','fTruckVin','fOwnDot','fOwnMc','fTrailersOwned','fEquipNotes'].forEach(f => { const el=document.getElementById(f); if(el) el.value=''; });
+  document.getElementById('fDriverType').value = 'company-driver';
+  document.getElementById('ooFields').style.display = 'none';
   document.getElementById('fAvail').value = 'available';
   document.getElementById('fOtr').value = 'yes';
   document.querySelectorAll('.exp-cb,.trans-cb').forEach(c => c.checked = false);
@@ -333,6 +406,17 @@ function openModal(id = null) {
     document.getElementById('fAvail').value = d.avail || 'available';
     document.getElementById('fAvailDate').value = d.availDate || '';
     document.getElementById('fHomeState').value = d.homeState || '';
+    document.getElementById('fDriverType').value = d.driverType || 'company-driver';
+    document.getElementById('fCdlState').value = d.cdlState || '';
+    document.getElementById('fTruckYear').value = d.truckYear || '';
+    const mkEl = document.getElementById('fTruckMake'); if(mkEl) mkEl.value = d.truckMake || '';
+    document.getElementById('fTruckModel').value = d.truckModel || '';
+    document.getElementById('fTruckVin').value = d.truckVin || '';
+    document.getElementById('fOwnDot').value = d.ownDot || '';
+    document.getElementById('fOwnMc').value = d.ownMc || '';
+    document.getElementById('fTrailersOwned').value = d.trailersOwned || '';
+    document.getElementById('fEquipNotes').value = d.equipNotes || '';
+    toggleOOFields();
     document.getElementById('fOtr').value = d.otr || 'yes';
     document.getElementById('fNotes').value = d.notes || '';
     (d.expTypes||[]).forEach(t => { const cb=document.querySelector(`.exp-cb[value="${t}"]`); if(cb) cb.checked=true; });
@@ -379,6 +463,16 @@ function saveDriver() {
     avail: document.getElementById('fAvail').value,
     availDate: document.getElementById('fAvailDate').value || null,
     homeState: document.getElementById('fHomeState').value.trim(),
+    driverType: document.getElementById('fDriverType').value,
+    cdlState: document.getElementById('fCdlState').value.trim(),
+    truckYear: document.getElementById('fTruckYear').value || null,
+    truckMake: (document.getElementById('fTruckMake')||{}).value || '',
+    truckModel: document.getElementById('fTruckModel').value.trim(),
+    truckVin: document.getElementById('fTruckVin').value.trim(),
+    ownDot: document.getElementById('fOwnDot').value.trim(),
+    ownMc: document.getElementById('fOwnMc').value.trim(),
+    trailersOwned: document.getElementById('fTrailersOwned').value.trim(),
+    equipNotes: document.getElementById('fEquipNotes').value.trim(),
     otr: document.getElementById('fOtr').value,
     notes: document.getElementById('fNotes').value.trim(),
     updatedAt: new Date().toISOString(),
@@ -441,6 +535,8 @@ function renderCards() {
       const hay = `${d.name} ${d.phone} ${d.email} ${(d.languages||[]).join(' ')}`.toLowerCase();
       if (!hay.includes(q)) return false;
     }
+    const fType = document.getElementById('filterType').value;
+    if (fType && d.driverType !== fType) return false;
     if (fAvail && d.avail !== fAvail) return false;
     if (fExp && !(d.expTypes||[]).some(t => t.toLowerCase().includes(fExp.toLowerCase()))) return false;
     if (fTrans && !(d.transTypes||[]).some(t => t.toLowerCase().includes(fTrans.toLowerCase()))) return false;
@@ -475,6 +571,10 @@ function renderCards() {
         <div class="d-avatar">${initials}</div>
         <div class="d-header">
           <div class="d-name">${escHtml(d.name)}</div>
+          <div style="display:flex;gap:6px;align-items:center;margin-top:3px;">
+            <span style="font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:20px;background:${d.driverType==='owner-operator'?'rgba(232,100,10,0.15)':d.driverType==='lease-operator'?'rgba(59,130,246,0.12)':'rgba(255,255,255,0.07)'};color:${d.driverType==='owner-operator'?'#fb923c':d.driverType==='lease-operator'?'#93c5fd':'#94a3b8'};letter-spacing:.4px;text-transform:uppercase;">${(d.driverType||'company-driver').replace(/-/g,' ')}</span>
+            ${d.cdlState?`<span style="font-size:.68rem;color:var(--muted);font-family:monospace;">CDL: ${d.cdlState}</span>`:''}
+          </div>
           <div class="d-contact">${escHtml(d.phone)}${d.email?' · '+escHtml(d.email):''}</div>
           ${d.homeState ? `<div class="d-contact" style="margin-top:2px">📍 ${d.homeState}${d.otr==='yes'?' · OTR Ready':d.otr==='local'?' · Local/Regional':''}</div>` : ''}
         </div>
@@ -492,6 +592,14 @@ function renderCards() {
           ${yearsRows}
           ${!d.cdlYears && !yearsRows ? '<div style="color:var(--muted);font-size:.78rem;">No details on file</div>' : ''}
         </div>
+        ${(d.driverType==='owner-operator'||d.driverType==='lease-operator') && (d.truckYear||d.truckMake||d.trailersOwned) ? `
+        <div>
+          <div class="section-label">Equipment</div>
+          ${d.truckYear||d.truckMake||d.truckModel ? `<div class="info-row"><span class="info-row-label">Truck</span><span>${[d.truckYear,d.truckMake,d.truckModel].filter(Boolean).join(' ')}</span></div>` : ''}
+          ${d.trailersOwned ? `<div class="info-row"><span class="info-row-label">Trailers</span><span>${escHtml(d.trailersOwned)}</span></div>` : ''}
+          ${d.ownDot ? `<div class="info-row"><span class="info-row-label">DOT#</span><span style="font-family:monospace;font-size:.78rem;">${d.ownDot}</span></div>` : ''}
+          ${d.ownMc ? `<div class="info-row"><span class="info-row-label">MC#</span><span style="font-family:monospace;font-size:.78rem;">${d.ownMc}</span></div>` : ''}
+        </div>` : ''}
         ${d.notes ? `<div style="font-size:.78rem;color:var(--muted);padding:6px 10px;background:var(--surface2);border-radius:6px;border:1px solid var(--border);">${escHtml(d.notes)}</div>` : ''}
       </div>
       <div class="card-actions">

@@ -147,6 +147,14 @@
       <option value="unavailable">Not Available</option>
       <option value="date">Available on Date</option>
     </select>
+    <select class="filter-select" id="filterType" onchange="renderCards()">
+      <option value="">All Types</option>
+      <option value="independent">Independent Dispatcher</option>
+      <option value="inhouse">In-House / Staff</option>
+      <option value="freight-agent">Freight Agent / Broker Agent</option>
+      <option value="owner-authority">Owner w/ Authority</option>
+      <option value="recruiter-dispatcher">Dispatcher / Recruiter</option>
+    </select>
     <select class="filter-select" id="filterExp" onchange="renderCards()">
       <option value="">All Experience</option>
       <option value="RGN">RGN / Heavy Haul</option>
@@ -199,6 +207,91 @@
       <div class="form-group full">
         <label class="form-label">Language(s) Spoken</label>
         <input class="form-input" id="fLanguages" placeholder="e.g. English, Spanish, Portuguese">
+      </div>
+
+      <div class="section-divider">Dispatcher Classification</div>
+
+      <div class="form-group">
+        <label class="form-label">Dispatcher Type *</label>
+        <select class="form-select" id="fDispType">
+          <option value="independent">Independent Dispatcher</option>
+          <option value="inhouse">In-House / Staff Dispatcher</option>
+          <option value="freight-agent">Freight Agent / Broker Agent</option>
+          <option value="owner-authority">Owner w/ Own Authority (MC/DOT)</option>
+          <option value="recruiter-dispatcher">Dispatcher + Recruiter</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rate Structure</label>
+        <select class="form-select" id="fRateType">
+          <option value="pct">% of Gross Load</option>
+          <option value="per-load">Flat Rate Per Load</option>
+          <option value="weekly">Weekly Flat Rate</option>
+          <option value="per-truck">Per Truck / Per Week</option>
+          <option value="salary">Salary (In-House)</option>
+          <option value="negotiable">Negotiable</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rate Amount</label>
+        <input class="form-input" id="fRate" placeholder="e.g. 5%, $50/load, $800/wk">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Max Drivers / Trucks</label>
+        <input class="form-input" id="fMaxDrivers" type="number" placeholder="e.g. 10" min="1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Own MC# (if applicable)</label>
+        <input class="form-input" id="fOwnMc" placeholder="MC #">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Own DOT# (if applicable)</label>
+        <input class="form-input" id="fOwnDot" placeholder="DOT #">
+      </div>
+
+      <div class="section-divider">Skills &amp; Capabilities</div>
+
+      <div class="form-group">
+        <label class="form-label">Can Recruit Drivers?</label>
+        <select class="form-select" id="fCanRecruit">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+          <option value="limited">Limited</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Can Book Loads (Brokerage)?</label>
+        <select class="form-select" id="fCanBroker">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Permit Coordination?</label>
+        <select class="form-select" id="fCanPermits">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">References Available?</label>
+        <select class="form-select" id="fRefs">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Freight Broker License (if any)</label>
+        <input class="form-input" id="fBrokerLic" placeholder="License # or N/A">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Preferred Communication</label>
+        <select class="form-select" id="fComms">
+          <option value="phone">Phone / Text</option>
+          <option value="email">Email</option>
+          <option value="tms">TMS / Portal Only</option>
+          <option value="any">Any</option>
+        </select>
       </div>
 
       <div class="section-divider">Freight Experience</div>
@@ -255,14 +348,6 @@
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Rate ($/week or $/load)</label>
-        <input class="form-input" id="fRate" placeholder="e.g. $800/wk or $50/load">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Max Drivers Handled</label>
-        <input class="form-input" id="fMaxDrivers" type="number" placeholder="e.g. 10" min="1">
-      </div>
-      <div class="form-group">
         <label class="form-label">Works Nights/Weekends?</label>
         <select class="form-select" id="fNights">
           <option value="yes">Yes</option>
@@ -308,7 +393,8 @@ function toggleAvailDate() {
 function openModal(id = null) {
   editingId = id;
   document.getElementById('modalTitle').textContent = id ? 'Edit Dispatcher' : 'Add Available Dispatcher';
-  ['fName','fPhone','fEmail','fYears','fLanguages','fExpOther','fAvailDate','fRate','fMaxDrivers','fNotes'].forEach(f => { const el=document.getElementById(f); if(el) el.value=''; });
+  ['fName','fPhone','fEmail','fYears','fLanguages','fExpOther','fAvailDate','fRate','fMaxDrivers','fOwnMc','fOwnDot','fBrokerLic','fNotes'].forEach(f => { const el=document.getElementById(f); if(el) el.value=''; });
+  ['fDispType','fRateType','fCanRecruit','fCanBroker','fCanPermits','fRefs','fComms'].forEach(f => { const el=document.getElementById(f); if(el) el.selectedIndex=0; });
   document.getElementById('fAvail').value='available';
   document.getElementById('fTz').value='';
   document.getElementById('fNights').value='yes';
@@ -330,6 +416,16 @@ function openModal(id = null) {
     document.getElementById('fRate').value=d.rate||'';
     document.getElementById('fMaxDrivers').value=d.maxDrivers||'';
     document.getElementById('fNights').value=d.nights||'yes';
+    const dtEl=document.getElementById('fDispType'); if(dtEl) dtEl.value=d.dispType||'independent';
+    const rtEl=document.getElementById('fRateType'); if(rtEl) rtEl.value=d.rateType||'pct';
+    const mcEl=document.getElementById('fOwnMc'); if(mcEl) mcEl.value=d.ownMc||'';
+    const dotEl=document.getElementById('fOwnDot'); if(dotEl) dotEl.value=d.ownDot||'';
+    const blEl=document.getElementById('fBrokerLic'); if(blEl) blEl.value=d.brokerLic||'';
+    const crEl=document.getElementById('fCanRecruit'); if(crEl) crEl.value=d.canRecruit||'yes';
+    const cbEl=document.getElementById('fCanBroker'); if(cbEl) cbEl.value=d.canBroker||'no';
+    const cpEl=document.getElementById('fCanPermits'); if(cpEl) cpEl.value=d.canPermits||'no';
+    const rfEl=document.getElementById('fRefs'); if(rfEl) rfEl.value=d.refs||'yes';
+    const cmEl=document.getElementById('fComms'); if(cmEl) cmEl.value=d.comms||'any';
     document.getElementById('fNotes').value=d.notes||'';
     (d.expTypes||[]).forEach(t=>{const cb=document.querySelector(`.exp-cb[value="${t}"]`);if(cb)cb.checked=true;});
     (d.trailerTypes||[]).forEach(t=>{const cb=document.querySelector(`.trailer-cb[value="${t}"]`);if(cb)cb.checked=true;});
@@ -362,6 +458,16 @@ function saveDispatcher() {
     rate: document.getElementById('fRate').value.trim(),
     maxDrivers: document.getElementById('fMaxDrivers').value||null,
     nights: document.getElementById('fNights').value,
+    dispType: (document.getElementById('fDispType')||{}).value||'independent',
+    rateType: (document.getElementById('fRateType')||{}).value||'pct',
+    ownMc: (document.getElementById('fOwnMc')||{}).value||'',
+    ownDot: (document.getElementById('fOwnDot')||{}).value||'',
+    brokerLic: (document.getElementById('fBrokerLic')||{}).value||'',
+    canRecruit: (document.getElementById('fCanRecruit')||{}).value||'no',
+    canBroker: (document.getElementById('fCanBroker')||{}).value||'no',
+    canPermits: (document.getElementById('fCanPermits')||{}).value||'no',
+    refs: (document.getElementById('fRefs')||{}).value||'no',
+    comms: (document.getElementById('fComms')||{}).value||'any',
     notes: document.getElementById('fNotes').value.trim(),
     updatedAt: new Date().toISOString(),
     createdAt: editingId?(dispatchers.find(d=>d.id===editingId)||{}).createdAt:new Date().toISOString()
@@ -412,6 +518,8 @@ function renderCards() {
 
   let filtered=dispatchers.filter(d=>{
     if(q){const hay=`${d.name} ${d.phone} ${d.email} ${(d.languages||[]).join(' ')}`.toLowerCase();if(!hay.includes(q))return false;}
+    const fType=document.getElementById('filterType').value;
+    if(fType&&d.dispType!==fType)return false;
     if(fAvail&&d.avail!==fAvail)return false;
     if(fExp&&!(d.expTypes||[]).some(t=>t.toLowerCase().includes(fExp.toLowerCase())))return false;
     if(fLang&&!(d.languages||[]).some(l=>l.toLowerCase().includes(fLang.toLowerCase())))return false;
@@ -433,6 +541,8 @@ function renderCards() {
 
   grid.innerHTML=filtered.map(d=>{
     const initials=d.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const dispTypeLabel={'independent':'Independent','inhouse':'In-House','freight-agent':'Freight Agent','owner-authority':'Own Authority','recruiter-dispatcher':'Dispatcher+Recruiter'};
+    const dispTypeColor={'independent':'#e91e8c','inhouse':'#2e6da4','freight-agent':'#0e7490','owner-authority':'#e8640a','recruiter-dispatcher':'#7c3aed'};
     const ac=availClass[d.avail]||'avail-available';
     const al=d.avail==='date'&&d.availDate?`Avail. ${fmtDate(d.availDate)}`:availLabel[d.avail];
     const expTags=[...(d.expTypes||[]),...(d.expOther?[d.expOther]:[])].map(t=>`<span class="tag tag-teal">${t}</span>`).join('');
@@ -445,6 +555,10 @@ function renderCards() {
         <div class="d-avatar">${initials}</div>
         <div class="d-header">
           <div class="d-name">${escHtml(d.name)}</div>
+          <div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+            <span style="font-size:.68rem;font-weight:700;padding:2px 9px;border-radius:20px;background:${dispTypeColor[d.dispType]||'#475569'}22;color:${dispTypeColor[d.dispType]||'#94a3b8'};letter-spacing:.4px;text-transform:uppercase;">${dispTypeLabel[d.dispType]||d.dispType||'Dispatcher'}</span>
+            ${d.tz?`<span style="font-size:.65rem;color:var(--muted);font-family:monospace;">${d.tz}</span>`:''}
+          </div>
           <div class="d-contact">${escHtml(d.phone)}${d.email?' · '+escHtml(d.email):''}</div>
           <div class="d-contact" style="margin-top:3px">${d.years?d.years+' yrs dispatching':''} ${d.tz?'· '+d.tz:''} ${d.maxDrivers?'· Up to '+d.maxDrivers+' drivers':''}</div>
         </div>
@@ -461,6 +575,25 @@ function renderCards() {
           ${d.rate?`<div class="info-row"><span class="info-row-label">Rate</span><span>${escHtml(d.rate)}</span></div>`:''}
           ${d.nights?`<div class="info-row"><span class="info-row-label">Nights/Weekends</span><span>${d.nights==='yes'?'Yes':d.nights==='limited'?'Limited':'No'}</span></div>`:''}
         </div>`:''}
+        <div>
+          <div class="section-label">Capabilities</div>
+          <div class="tag-wrap" style="margin-top:4px;">
+            ${d.canRecruit==='yes'?'<span class="tag tag-accent">✓ Recruits Drivers</span>':''}
+            ${d.canBroker==='yes'?'<span class="tag tag-accent">✓ Books Loads</span>':''}
+            ${d.canPermits==='yes'?'<span class="tag tag-accent">✓ Permit Coord.</span>':''}
+            ${d.refs==='yes'?'<span class="tag">References ✓</span>':''}
+            ${d.nights==='yes'?'<span class="tag">Nights/Wknd</span>':''}
+            ${d.maxDrivers?`<span class="tag">Max ${d.maxDrivers} trucks</span>`:''}
+            ${d.comms&&d.comms!=='any'?`<span class="tag">${d.comms.toUpperCase()}</span>`:''}
+          </div>
+        </div>
+        ${(d.ownMc||d.ownDot||d.brokerLic)?`<div>
+          <div class="section-label">Authority / Licensing</div>
+          ${d.ownMc?`<div class="info-row"><span class="info-row-label">MC#</span><span style="font-family:monospace;font-size:.78rem;">${d.ownMc}</span></div>`:''}
+          ${d.ownDot?`<div class="info-row"><span class="info-row-label">DOT#</span><span style="font-family:monospace;font-size:.78rem;">${d.ownDot}</span></div>`:''}
+          ${d.brokerLic?`<div class="info-row"><span class="info-row-label">Broker Lic</span><span style="font-family:monospace;font-size:.78rem;">${d.brokerLic}</span></div>`:''}
+        </div>`:''}
+        ${d.rate?`<div class="info-row"><span class="info-row-label">Rate</span><span style="color:var(--green);font-weight:600;">${escHtml(d.rate)} <span style="color:var(--muted);font-size:.75rem;">(${(d.rateType||'').replace(/-/g,' ')})</span></span></div>`:''}
         ${d.notes?`<div style="font-size:.78rem;color:var(--muted);padding:6px 10px;background:var(--surface2);border-radius:6px;border:1px solid var(--border);">${escHtml(d.notes)}</div>`:''}
       </div>
       <div class="card-actions">
