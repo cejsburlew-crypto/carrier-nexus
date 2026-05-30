@@ -205,6 +205,112 @@
     background: linear-gradient(90deg, transparent, var(--orange) 20%, var(--steel-blue) 50%, var(--orange) 80%, transparent);
     opacity: 0.6;
   }
+  /* ── HERO NETWORK PANEL ── */
+  .hero-network-panel {
+    position: absolute;
+    right: 6%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 10;
+  }
+  .hnp-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .hnp-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(26,31,46,0.85);
+    border: 1px solid var(--border-bright);
+    border-radius: 12px;
+    padding: 16px 18px;
+    text-decoration: none;
+    transition: all 0.2s;
+    backdrop-filter: blur(8px);
+    position: relative;
+    overflow: hidden;
+  }
+  .hnp-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .hnp-driver::before { background: linear-gradient(90deg, #0072B2, #56B4E9); }
+  .hnp-dispatch::before { background: linear-gradient(90deg, #c2185b, #e91e8c); }
+  .hnp-card:hover {
+    border-color: var(--orange);
+    transform: translateX(-4px);
+    background: rgba(26,31,46,0.96);
+  }
+  .hnp-card-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .hnp-card-body { flex: 1; min-width: 0; }
+  .hnp-card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 1px;
+    color: var(--white-pure);
+    margin-bottom: 5px;
+  }
+  .hnp-card-desc {
+    font-size: 12px;
+    color: var(--text-mid);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .hnp-card-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .hnp-card-chips span {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-muted);
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .hnp-arrow {
+    color: var(--text-muted);
+    flex-shrink: 0;
+    margin-top: 6px;
+    transition: transform 0.2s;
+  }
+  .hnp-card:hover .hnp-arrow { transform: translateX(4px); color: var(--orange); }
+  .hnp-privacy {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    padding: 0 4px;
+  }
+
+  @media (max-width: 1100px) {
+    .hero-network-panel { display: none; }
+  }
+
 
   .hero-content {
     position: relative;
@@ -1477,8 +1583,10 @@
   </a>
   <ul class="nav-links">
     <li><a href="#platform">Platform</a></li>
+    <li><a href="#network">Network</a></li>
+    <li><a href="#marketplace">Marketplace</a></li>
     <li><a href="#integrations">Integrations</a></li>
-    <li><a href="#platform">Platform</a><a href="#network">Network</a><a href="#marketplace">Marketplace</a><a href="#modules">Modules</a></li>
+    <li><a href="#modules">Modules</a></li>
     <li><a href="#benefits">Why CN</a></li>
   </ul>
   <div class="nav-cta">
@@ -1514,18 +1622,19 @@
   <div class="hero-content">
     <div class="hero-badge">
       <div class="hero-badge-dot"></div>
-      <span>Operational Intelligence Platform · Fleet Command</span>
+      <span>Fleet · Network · Market · Intelligence · One Platform</span>
     </div>
 
     <h1 class="hero-headline">
-      Your fleet<br>
-      <span class="line-accent">already creates</span><br>
-      <span class="word-orange">the data.</span><br>
-      Carrier Nexus<br>makes it work.
+      Own the Road.<br>
+      <span class="line-accent">Own the Data.</span><br>
+      <span class="word-orange">Own the Network.</span>
     </h1>
 
     <p class="hero-subheadline">
-      Connect <strong>rate cons, ELD mileage, drivers, repairs, tires, fuel, PODs, Gmail, Google Drive,</strong> and <strong>WhatsApp</strong> into one operational intelligence platform built specifically for carriers.
+      Fleet intelligence, industry connections, and daily equipment sourcing —
+      <strong>built for trucking, not adapted for it.</strong>
+      One login for carriers, drivers, and dispatchers.
     </p>
 
     <div class="hero-actions">
@@ -1540,19 +1649,47 @@
     </div>
   </div>
 
-  <div class="hero-stats">
-    <div class="hero-stat">
-      <div class="hero-stat-num">1<span>x</span></div>
-      <div class="hero-stat-label">Connected Platform</div>
+  <!-- HERO RIGHT — Network Hub Cards -->
+  <div class="hero-network-panel">
+
+    <div class="hnp-label">JOIN THE NETWORK</div>
+
+    <!-- Driver Hub -->
+    <a href="available-drivers.html" class="hnp-card hnp-driver">
+      <div class="hnp-card-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#56B4E9" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+      </div>
+      <div class="hnp-card-body">
+        <div class="hnp-card-title">DRIVER HUB</div>
+        <div class="hnp-card-desc">Post your availability. Upload CDL, medical, equipment. Get found by carriers and dispatchers looking for exactly your skills and lanes.</div>
+        <div class="hnp-card-chips">
+          <span>Availability</span><span>CDL + Endorsements</span><span>OO Equipment</span><span>Preferred Lanes</span><span>Private / Public</span>
+        </div>
+      </div>
+      <svg class="hnp-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </a>
+
+    <!-- Dispatcher Hub -->
+    <a href="available-dispatchers.html" class="hnp-card hnp-dispatch">
+      <div class="hnp-card-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e91e8c" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+      <div class="hnp-card-body">
+        <div class="hnp-card-title">DISPATCHER HUB</div>
+        <div class="hnp-card-desc">List your services, freight specialty, and rates. Match with drivers whose skills and equipment fit your freight — and carriers who need your expertise.</div>
+        <div class="hnp-card-chips">
+          <span>Freight Specialty</span><span>Rate Structure</span><span>Broker Authority</span><span>Driver Matching</span><span>References</span>
+        </div>
+      </div>
+      <svg class="hnp-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </a>
+
+    <!-- Privacy note -->
+    <div class="hnp-privacy">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1L2 4v4c0 3.3 2.5 6.4 6 7.2C12 14.4 14 11.3 14 8V4L8 1z"/></svg>
+      Your data, your rules — each field public, private, or shared with specific roles
     </div>
-    <div class="hero-stat">
-      <div class="hero-stat-num"><span>&lt;</span>60s</div>
-      <div class="hero-stat-label">Driver Action Time</div>
-    </div>
-    <div class="hero-stat">
-      <div class="hero-stat-num">100<span>%</span></div>
-      <div class="hero-stat-label">Operational Traceability</div>
-    </div>
+
   </div>
 
   <div class="hero-road-line"></div>
