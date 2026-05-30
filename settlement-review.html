@@ -46,11 +46,10 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 
 /* MAIN */
 .main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
-.topbar{height:56px;display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50;}
-.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:1px;color:#fff;flex:1;}
-/* ROLE BAR — below topbar, not inside it */
-.role-bar{display:flex;align-items:center;gap:10px;padding:12px 28px 0;}
-.role-bar-label{font-size:12px;color:var(--text-muted);font-weight:600;}
+.topbar{padding:20px 28px 0;display:flex;align-items:flex-start;justify-content:space-between;}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;letter-spacing:0.03em;}
+.page-subtitle{font-size:13px;margin-top:2px;}
+.topbar-actions{display:flex;gap:10px;align-items:center;padding-top:4px;}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
 .btn-orange{background:var(--orange);color:#fff;}
 .btn-orange:hover{background:#d05508;}
@@ -338,11 +337,10 @@ body{font-family:'Barlow',sans-serif;font-size:12px;color:#0f172a;background:#ff
 /* REVIEW-SPECIFIC STYLES */
 .kpi-value.red{color:#ef4444;}
 /* ROLE SWITCHER */
-.role-chip{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.06em;cursor:pointer;border:2px solid transparent;transition:all 0.15s;font-family:'Barlow',sans-serif;}
-.role-chip.ops{background:rgba(46,109,164,0.1)!important;color:#1e3a6e!important;border-color:rgba(46,109,164,0.3)!important;}
-.role-chip.ops.active,.role-chip.ops:hover{background:#1e3a5f!important;color:#fff!important;border-color:#1e3a5f!important;}
-.role-chip.exec{background:rgba(233,30,140,0.1)!important;color:#c2185b!important;border-color:rgba(233,30,140,0.3)!important;}
-.role-chip.exec.active,.role-chip.exec:hover{background:#e91e8c!important;color:#fff!important;border-color:#e91e8c!important;}
+.role-chip{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.06em;cursor:pointer;border:2px solid rgba(255,255,255,0.3);transition:all 0.15s;font-family:'Barlow',sans-serif;background:rgba(255,255,255,0.12)!important;color:#fff!important;}
+.role-chip:hover{background:rgba(255,255,255,0.22)!important;border-color:rgba(255,255,255,0.6)!important;}
+.role-chip.ops.active{background:rgba(255,255,255,0.95)!important;color:#1e3a5f!important;border-color:#fff!important;}
+.role-chip.exec.active{background:#e91e8c!important;color:#fff!important;border-color:#e91e8c!important;}
 /* TABS */
 .tab-bar{padding:0 28px;display:flex;border-bottom:2px solid var(--border);}
 .tab{padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.15s;font-family:'Barlow',sans-serif;}
@@ -600,7 +598,7 @@ body{font-family:'Barlow',sans-serif;font-size:12px;color:#0f172a;background:#ff
     </a>
     <div class="sidebar-spacer"></div>
   <div class="sidebar-user">
-    <div class="user-name" id="roleDisplay">Jim Burlew · ADMIN</div>
+    <div class="user-name">Jim Burlew · ADMIN</div>
     <div class="user-role">Carrier Trucking US, LLC</div>
   </div>
 </nav>
@@ -608,14 +606,15 @@ body{font-family:'Barlow',sans-serif;font-size:12px;color:#0f172a;background:#ff
 <!-- MAIN -->
 <main class="main">
   <div class="topbar">
-    <div class="topbar-title">SETTLEMENT REVIEW</div>
-    <span style="font-size:12px;color:rgba(255,255,255,0.6);">Operations → Executive approval workflow</span>
-  </div>
-  <div class="role-bar">
-    <span class="role-bar-label">Viewing as:</span>
-    <button class="role-chip ops active" id="chipOps" onclick="switchRole('ops')">Operations</button>
-    <button class="role-chip exec" id="chipExec" onclick="switchRole('exec')">Executive</button>
-    <span style="font-size:12px;color:var(--text-muted);margin-left:8px;" id="roleDisplay">Jim Burlew · ADMIN</span>
+    <div>
+      <div class="page-title">SETTLEMENT REVIEW</div>
+      <div class="page-subtitle">Operations → Executive approval workflow · Carrier Trucking US, LLC</div>
+    </div>
+    <div class="topbar-actions">
+      <span style="font-size:12px;font-weight:600;opacity:0.8;">View as:</span>
+      <button class="role-chip ops active" id="chipOps" onclick="switchRole('ops')">Operations</button>
+      <button class="role-chip exec" id="chipExec" onclick="switchRole('exec')">Executive</button>
+    </div>
   </div>
 
   <!-- KPI BAR -->
