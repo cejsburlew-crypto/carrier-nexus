@@ -205,112 +205,6 @@
     background: linear-gradient(90deg, transparent, var(--orange) 20%, var(--steel-blue) 50%, var(--orange) 80%, transparent);
     opacity: 0.6;
   }
-  /* ── HERO NETWORK PANEL ── */
-  .hero-network-panel {
-    position: absolute;
-    right: 6%;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 340px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    z-index: 10;
-  }
-  .hnp-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    margin-bottom: 2px;
-  }
-  .hnp-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    background: rgba(26,31,46,0.85);
-    border: 1px solid var(--border-bright);
-    border-radius: 12px;
-    padding: 16px 18px;
-    text-decoration: none;
-    transition: all 0.2s;
-    backdrop-filter: blur(8px);
-    position: relative;
-    overflow: hidden;
-  }
-  .hnp-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-  }
-  .hnp-driver::before { background: linear-gradient(90deg, #0072B2, #56B4E9); }
-  .hnp-dispatch::before { background: linear-gradient(90deg, #c2185b, #e91e8c); }
-  .hnp-card:hover {
-    border-color: var(--orange);
-    transform: translateX(-4px);
-    background: rgba(26,31,46,0.96);
-  }
-  .hnp-card-icon {
-    width: 40px; height: 40px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.06);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-  .hnp-card-body { flex: 1; min-width: 0; }
-  .hnp-card-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 15px;
-    letter-spacing: 1px;
-    color: var(--white-pure);
-    margin-bottom: 5px;
-  }
-  .hnp-card-desc {
-    font-size: 12px;
-    color: var(--text-mid);
-    line-height: 1.5;
-    margin-bottom: 8px;
-  }
-  .hnp-card-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-  .hnp-card-chips span {
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.12);
-    color: var(--text-muted);
-    border-radius: 20px;
-    padding: 2px 8px;
-    font-size: 10px;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .hnp-arrow {
-    color: var(--text-muted);
-    flex-shrink: 0;
-    margin-top: 6px;
-    transition: transform 0.2s;
-  }
-  .hnp-card:hover .hnp-arrow { transform: translateX(4px); color: var(--orange); }
-  .hnp-privacy {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 11px;
-    color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
-    padding: 0 4px;
-  }
-
-  @media (max-width: 1100px) {
-    .hero-network-panel { display: none; }
-  }
-
 
   .hero-content {
     position: relative;
@@ -1308,83 +1202,166 @@
     .cta-actions { flex-direction: column; align-items: center; }
   }
 
-  /* ── NETWORK SECTIONS ── */
-  .network-section { background: var(--gunmetal); }
-  .network-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
-  .network-card {
-    background: var(--gunmetal-light);
-    border: 1px solid var(--border-bright);
-    border-radius: 14px;
-    padding: 32px 28px;
+  /* ─── GOOGLE INFRASTRUCTURE SECTION ─── */
+  .infra-section {
+    background: linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
     position: relative;
     overflow: hidden;
-    transition: transform 0.2s, border-color 0.2s;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
   }
-  .network-card:hover { transform: translateY(-4px); border-color: var(--orange); }
-  .network-card::before {
+
+  .infra-section::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(66,133,244,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 50%, rgba(232,100,10,0.05) 0%, transparent 60%);
+    pointer-events: none;
   }
-  .network-card.drivers::before { background: linear-gradient(90deg, #0072B2, #56B4E9); }
-  .network-card.dispatchers::before { background: linear-gradient(90deg, #e91e8c, #ff6ec4); }
-  .network-card.carriers::before { background: linear-gradient(90deg, #E69F00, #ff9f00); }
-  .network-icon { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
-  .network-icon.blue { background: rgba(0,114,178,0.15); }
-  .network-icon.pink { background: rgba(233,30,140,0.15); }
-  .network-icon.orange { background: rgba(230,159,0,0.15); }
-  .network-card-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: 1px; margin-bottom: 10px; color: var(--white-pure); }
-  .network-card-desc { font-size: 14px; color: var(--text-mid); line-height: 1.6; margin-bottom: 20px; }
-  .network-features { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
-  .nf-tag { background: rgba(46,109,164,0.15); border: 1px solid rgba(46,109,164,0.25); color: var(--text-mid); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
-  .network-cta { display: inline-flex; align-items: center; gap: 8px; color: var(--orange); font-size: 13px; font-weight: 600; text-decoration: none; font-family: 'JetBrains Mono', monospace; letter-spacing: .5px; text-transform: uppercase; }
-  .network-cta svg { transition: transform .2s; }
-  .network-cta:hover svg { transform: translateX(4px); }
-  .network-stat { font-family: 'Barlow Condensed', sans-serif; font-size: 36px; font-weight: 900; color: var(--white-pure); line-height: 1; margin-bottom: 4px; }
-  .network-stat-label { font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 1px; }
-  .network-stats-row { display: flex; gap: 24px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
-  .platform-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(233,30,140,0.12); border: 1px solid rgba(233,30,140,0.30); border-radius: 20px; padding: 4px 12px; font-size: 11px; color: #e91e8c; font-family: 'JetBrains Mono', monospace; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 16px; }
 
-  /* ── MARKETPLACE SECTION ── */
-  .marketplace-section { background: var(--black); }
-  .marketplace-header { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 40px; }
-  .marketplace-filters { display: flex; gap: 10px; flex-wrap: wrap; }
-  .mf-btn { background: var(--gunmetal-light); border: 1px solid var(--border); color: var(--text-mid); border-radius: 6px; padding: 7px 16px; font-size: 12px; cursor: pointer; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: .5px; transition: all .15s; }
-  .mf-btn.active, .mf-btn:hover { background: rgba(232,100,10,0.15); border-color: var(--orange); color: var(--orange); }
-  .listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-  .listing-card {
-    background: var(--gunmetal);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: border-color .2s, transform .2s;
+  .infra-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    position: relative;
+    z-index: 2;
   }
-  .listing-card:hover { border-color: var(--orange); transform: translateY(-3px); }
-  .listing-img { height: 180px; background: var(--gunmetal-light); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-  .listing-img svg { opacity: .25; }
-  .listing-type-badge { position: absolute; top: 10px; left: 10px; background: var(--orange); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 4px; text-transform: uppercase; letter-spacing: .5px; }
-  .listing-source { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,.6); color: var(--text-muted); font-size: 10px; padding: 3px 8px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; }
-  .listing-body { padding: 16px 18px; }
-  .listing-title { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700; color: var(--white-pure); letter-spacing: .3px; margin-bottom: 4px; }
-  .listing-price { font-family: 'Barlow Condensed', sans-serif; font-size: 24px; font-weight: 800; color: var(--orange); line-height: 1; margin-bottom: 10px; }
-  .listing-price span { font-size: 13px; color: var(--text-muted); font-weight: 400; font-family: 'Barlow', sans-serif; }
-  .listing-specs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-  .spec-pill { background: var(--gunmetal-light); border: 1px solid var(--border); color: var(--text-mid); border-radius: 20px; padding: 3px 10px; font-size: 11px; font-family: 'JetBrains Mono', monospace; }
-  .listing-location { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
-  .listing-footer { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .listing-date { font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
-  .listing-btn { background: rgba(232,100,10,0.12); border: 1px solid rgba(232,100,10,0.35); color: var(--orange); border-radius: 6px; padding: 6px 14px; font-size: 12px; cursor: pointer; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: .3px; text-decoration: none; transition: all .15s; }
-  .listing-btn:hover { background: var(--orange); color: #fff; }
-  .marketplace-cta { text-align: center; margin-top: 40px; }
-  .marketplace-cta p { color: var(--text-muted); font-size: 13px; font-family: 'JetBrains Mono', monospace; margin-bottom: 16px; }
-  .scrape-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,158,115,.10); border: 1px solid rgba(0,158,115,.30); border-radius: 20px; padding: 6px 16px; font-size: 12px; color: #00c896; font-family: 'JetBrains Mono', monospace; margin-bottom: 24px; }
-  .scrape-dot { width: 7px; height: 7px; border-radius: 50%; background: #00c896; animation: pulse 2s infinite; }
+
+  .infra-left {}
+
+  .infra-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #4285F4;
+    margin-bottom: 20px;
+  }
+
+  .infra-eyebrow-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #4285F4;
+    animation: pulse-blue 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-blue {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.4); }
+  }
+
+  .infra-headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(36px, 5vw, 60px);
+    line-height: 0.95;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .infra-headline .accent-blue { color: #4285F4; }
+  .infra-headline .accent-orange { color: var(--orange); }
+
+  .infra-body {
+    font-size: 16px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 32px;
+    max-width: 480px;
+  }
+
+  .infra-body strong { color: rgba(255,255,255,0.9); }
+
+  .infra-guarantee {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: rgba(66,133,244,0.08);
+    border: 1px solid rgba(66,133,244,0.2);
+    border-radius: 8px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+    max-width: 480px;
+  }
+
+  .infra-guarantee-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .infra-right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .infra-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 24px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .infra-card:hover {
+    border-color: rgba(66,133,244,0.3);
+    background: rgba(66,133,244,0.05);
+  }
+
+  .infra-card-icon {
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    background: rgba(66,133,244,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .infra-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+    letter-spacing: 0.01em;
+  }
+
+  .infra-card-desc {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.5;
+  }
+
+  .google-wordmark {
+    display: inline-flex;
+    gap: 0px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0.01em;
+  }
+
+  .g-blue { color: #4285F4; }
+  .g-red  { color: #EA4335; }
+  .g-yellow { color: #FBBC05; }
+  .g-green { color: #34A853; }
 
   @media (max-width: 900px) {
-    .network-grid { grid-template-columns: 1fr; }
-    .listings-grid { grid-template-columns: 1fr; }
+    .infra-inner { grid-template-columns: 1fr; gap: 48px; }
   }
+
+
 </style>
 
   <style id="nexus-gradient-header">
@@ -1566,7 +1543,39 @@
   .doc-title, .alert-title { color: #0f172a !important; font-weight: 700 !important; }
   .doc-desc, .alert-desc { color: #475569 !important; }
   </style>
-
+<style id="nexus-unified">
+/* ── SIDEBAR BLACK ── */
+.sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
+/* ── LOGO AREA ── */
+.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
+.sidebar-logo .logo-hex { flex-shrink:0 !important; }
+.sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
+.sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
+.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
+.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
+/* ── NAV LINKS ── */
+.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
+.sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
+.sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
+.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
+.sidebar-link.active svg { opacity:1 !important; }
+/* ── SECTION LABELS ── */
+.sidebar-section { padding:12px 0 4px !important; }
+.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
+/* ── TOPBAR ── */
+.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
+.topbar *, .top-bar * { color:#ffffff !important; }
+.topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
+/* ── MOBILE NAV ── */
+.mobile-nav { background:#000000 !important; }
+.mobile-nav-tab.active { color:#e91e8c !important; }
+/* ── SIDEBAR USER ── */
+.sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
+.sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
+.sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
+/* ── NAV BADGE ── */
+.nav-badge { background:#e91e8c !important; color:#fff !important; }
+</style>
 </head>
 <body>
 
@@ -1574,17 +1583,15 @@
 <nav>
   <a href="#" class="nav-logo">
     <svg class="nav-logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs><linearGradient id="hg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#000000"/><stop offset="60%" stop-color="#003865"/><stop offset="100%" stop-color="#E69F00"/></linearGradient></defs>
-      <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hg1)" stroke="#E69F00" stroke-width="1.5"/>
-      <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#E69F00" opacity="0.15"/>
+      <defs><linearGradient id="hg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#000000"/><stop offset="60%" stop-color="#6b0000"/><stop offset="100%" stop-color="#e91e8c"/></linearGradient></defs>
+      <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hg1)" stroke="#e91e8c" stroke-width="1.5"/>
+      <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#e91e8c" opacity="0.15"/>
       <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff" letter-spacing="0">CN</text>
     </svg>
     <span class="nav-logo-text">CARRIER <span>NEXUS</span></span>
   </a>
   <ul class="nav-links">
     <li><a href="#platform">Platform</a></li>
-    <li><a href="#network">Network</a></li>
-    <li><a href="#marketplace">Marketplace</a></li>
     <li><a href="#integrations">Integrations</a></li>
     <li><a href="#modules">Modules</a></li>
     <li><a href="#benefits">Why CN</a></li>
@@ -1622,19 +1629,18 @@
   <div class="hero-content">
     <div class="hero-badge">
       <div class="hero-badge-dot"></div>
-      <span>Fleet · Network · Market · Intelligence · One Platform</span>
+      <span>Operational Intelligence Platform · Fleet Command</span>
     </div>
 
     <h1 class="hero-headline">
-      Own the Road.<br>
-      <span class="line-accent">Own the Data.</span><br>
-      <span class="word-orange">Own the Network.</span>
+      Your fleet<br>
+      <span class="line-accent">already creates</span><br>
+      <span class="word-orange">the data.</span><br>
+      Carrier Nexus<br>makes it work.
     </h1>
 
     <p class="hero-subheadline">
-      Fleet intelligence, industry connections, and daily equipment sourcing —
-      <strong>built for trucking, not adapted for it.</strong>
-      One login for carriers, drivers, and dispatchers.
+      Connect <strong>rate cons, ELD mileage, drivers, repairs, tires, fuel, PODs, Gmail, Google Drive,</strong> and <strong>WhatsApp</strong> into one operational intelligence platform built specifically for carriers.
     </p>
 
     <div class="hero-actions">
@@ -1649,47 +1655,19 @@
     </div>
   </div>
 
-  <!-- HERO RIGHT — Network Hub Cards -->
-  <div class="hero-network-panel">
-
-    <div class="hnp-label">JOIN THE NETWORK</div>
-
-    <!-- Driver Hub -->
-    <a href="available-drivers.html" class="hnp-card hnp-driver">
-      <div class="hnp-card-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#56B4E9" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
-      </div>
-      <div class="hnp-card-body">
-        <div class="hnp-card-title">DRIVER HUB</div>
-        <div class="hnp-card-desc">Post your availability. Upload CDL, medical, equipment. Get found by carriers and dispatchers looking for exactly your skills and lanes.</div>
-        <div class="hnp-card-chips">
-          <span>Availability</span><span>CDL + Endorsements</span><span>OO Equipment</span><span>Preferred Lanes</span><span>Private / Public</span>
-        </div>
-      </div>
-      <svg class="hnp-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-    </a>
-
-    <!-- Dispatcher Hub -->
-    <a href="available-dispatchers.html" class="hnp-card hnp-dispatch">
-      <div class="hnp-card-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e91e8c" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-      </div>
-      <div class="hnp-card-body">
-        <div class="hnp-card-title">DISPATCHER HUB</div>
-        <div class="hnp-card-desc">List your services, freight specialty, and rates. Match with drivers whose skills and equipment fit your freight — and carriers who need your expertise.</div>
-        <div class="hnp-card-chips">
-          <span>Freight Specialty</span><span>Rate Structure</span><span>Broker Authority</span><span>Driver Matching</span><span>References</span>
-        </div>
-      </div>
-      <svg class="hnp-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-    </a>
-
-    <!-- Privacy note -->
-    <div class="hnp-privacy">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1L2 4v4c0 3.3 2.5 6.4 6 7.2C12 14.4 14 11.3 14 8V4L8 1z"/></svg>
-      Your data, your rules — each field public, private, or shared with specific roles
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">1<span>x</span></div>
+      <div class="hero-stat-label">Connected Platform</div>
     </div>
-
+    <div class="hero-stat">
+      <div class="hero-stat-num"><span>&lt;</span>60s</div>
+      <div class="hero-stat-label">Driver Action Time</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">100<span>%</span></div>
+      <div class="hero-stat-label">Operational Traceability</div>
+    </div>
   </div>
 
   <div class="hero-road-line"></div>
@@ -2067,9 +2045,6 @@
       <div class="module-nav-item">Visual Maintenance</div>
       <div class="module-nav-item">Tire Tracking</div>
       <div class="module-nav-item">Fuel Analytics</div>
-      <div class="module-nav-item">Driver Network</div>
-      <div class="module-nav-item">Dispatch Network</div>
-      <div class="module-nav-item">Equipment Market</div>
       <div class="module-nav-item">Nexus Intelligence</div>
     </div>
 
@@ -2145,190 +2120,59 @@
 </section>
 
 
-<!-- NETWORK SECTION -->
-<section class="section network-section" id="network">
-  <div style="text-align:center; max-width:800px; margin:0 auto;">
-    <div class="section-label">The Nexus Network</div>
-    <h2 class="section-title">One Platform. Every Player in Trucking.</h2>
-    <p class="section-sub">Carrier Nexus is more than fleet management. It's the connective tissue between every driver, dispatcher, and carrier on the road — plus the equipment marketplace that keeps them moving.</p>
-  </div>
-
-  <div class="network-grid" style="margin-top:56px;">
-    <!-- DRIVER NETWORK -->
-    <div class="network-card drivers">
-      <div class="platform-badge">
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
-        LIVE · DRIVER NETWORK
+<!-- GOOGLE INFRASTRUCTURE -->
+<section class="section infra-section" id="infrastructure">
+  <div class="infra-inner">
+    <div class="infra-left">
+      <div class="infra-eyebrow">
+        <span class="infra-eyebrow-dot"></span>
+        Powered by Infrastructure Nobody Can Touch
       </div>
-      <div class="network-icon blue">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#56B4E9" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+      <h2 class="infra-headline">
+        Your Data Lives<br>
+        <span class="accent-blue">Inside</span> <span class="accent-orange">Google.</span><br>
+        Not Our Servers.
+      </h2>
+      <p class="infra-body">
+        Every rate confirmation, settlement, permit, POD, and driver document you create or import in Carrier Nexus is written directly into <strong>your own Google Drive</strong> — in real time, automatically. Not a third-party cloud. Not our infrastructure. <strong>Google's.</strong>
+        <br><br>
+        That means if Carrier Nexus disappeared tomorrow — your entire operational history is still sitting in your Drive, organized exactly how you left it, forever. No exports. No migrations. No ransom. It was always yours.
+      </p>
+      <div class="infra-guarantee">
+        <span class="infra-guarantee-icon">🔒</span>
+        <span>Your documents are stored in <strong>your Google account</strong> — not ours. We can't access, sell, or lose what we don't hold.</span>
       </div>
-      <div class="network-stats-row">
-        <div><div class="network-stat">847</div><div class="network-stat-label">Drivers Active</div></div>
-        <div><div class="network-stat">312</div><div class="network-stat-label">Available Now</div></div>
-        <div><div class="network-stat">29</div><div class="network-stat-label">States Covered</div></div>
-      </div>
-      <div class="network-card-title">DRIVER NETWORK</div>
-      <div class="network-card-desc">Drivers post their availability, CDL class, endorsements, preferred lanes, and equipment type. Carriers find pre-vetted, available drivers instantly — no broker middleman.</div>
-      <div class="network-features">
-        <span class="nf-tag">Post Availability</span>
-        <span class="nf-tag">CDL & Endorsements</span>
-        <span class="nf-tag">Preferred Lanes</span>
-        <span class="nf-tag">OO or Company</span>
-        <span class="nf-tag">Equipment Type</span>
-        <span class="nf-tag">Safety Score</span>
-        <span class="nf-tag">Direct Contact</span>
-      </div>
-      <a href="available-drivers.html" class="network-cta">
-        Browse Driver Directory
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-      </a>
     </div>
 
-    <!-- DISPATCHER NETWORK -->
-    <div class="network-card dispatchers">
-      <div class="platform-badge" style="background:rgba(233,30,140,.12);border-color:rgba(233,30,140,.30);color:#e91e8c;">
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
-        LIVE · DISPATCH NETWORK
-      </div>
-      <div class="network-icon pink">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#e91e8c" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-      </div>
-      <div class="network-stats-row">
-        <div><div class="network-stat">214</div><div class="network-stat-label">Dispatchers</div></div>
-        <div><div class="network-stat">89</div><div class="network-stat-label">Taking Clients</div></div>
-        <div><div class="network-stat">41</div><div class="network-stat-label">Freight Types</div></div>
-      </div>
-      <div class="network-card-title">DISPATCH NETWORK</div>
-      <div class="network-card-desc">Independent dispatchers and freight agents list their services, rates, specialty freight experience, and capacity. Carriers find experienced dispatch help without headhunting.</div>
-      <div class="network-features">
-        <span class="nf-tag">Rate Structure</span>
-        <span class="nf-tag">Freight Specialty</span>
-        <span class="nf-tag">Broker Authority</span>
-        <span class="nf-tag">Driver Recruiting</span>
-        <span class="nf-tag">Own Authority</span>
-        <span class="nf-tag">Permit Runners</span>
-        <span class="nf-tag">References</span>
-      </div>
-      <a href="available-dispatchers.html" class="network-cta">
-        Browse Dispatch Directory
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-      </a>
-    </div>
-
-    <!-- CARRIER NETWORK -->
-    <div class="network-card carriers">
-      <div class="platform-badge" style="background:rgba(230,159,0,.12);border-color:rgba(230,159,0,.30);color:#E69F00;">
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
-        LIVE · CARRIER NETWORK
-      </div>
-      <div class="network-icon orange">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E69F00" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-      </div>
-      <div class="network-stats-row">
-        <div><div class="network-stat">503</div><div class="network-stat-label">Carriers</div></div>
-        <div><div class="network-stat">2.1K</div><div class="network-stat-label">Active Units</div></div>
-        <div><div class="network-stat">48</div><div class="network-stat-label">States</div></div>
-      </div>
-      <div class="network-card-title">CARRIER NETWORK</div>
-      <div class="network-card-desc">Verified MC and DOT holders network, find subhaulers, share capacity, and build relationships directly. No load board fees. No broker cut. Carrier-to-carrier connections.</div>
-      <div class="network-features">
-        <span class="nf-tag">MC Verified</span>
-        <span class="nf-tag">DOT Verified</span>
-        <span class="nf-tag">Equipment Types</span>
-        <span class="nf-tag">Lane Availability</span>
-        <span class="nf-tag">Subhauler Board</span>
-        <span class="nf-tag">Insurance COI</span>
-        <span class="nf-tag">Safety Rating</span>
-      </div>
-      <a href="contacts.html" class="network-cta">
-        Browse Carrier Directory
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-      </a>
-    </div>
-  </div>
-
-  <!-- Platform consolidation callout -->
-  <div style="margin-top:56px; background:var(--gunmetal-light); border:1px solid var(--border-bright); border-radius:14px; padding:36px 40px; display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center;">
-    <div>
-      <div class="section-label" style="text-align:left;">Platform Architecture</div>
-      <h3 style="font-family:'Barlow Condensed',sans-serif; font-size:28px; font-weight:800; color:var(--white-pure); margin-bottom:12px; letter-spacing:.5px;">Everything You Already See — Plus Everything the Industry Needs</h3>
-      <p style="color:var(--text-mid); font-size:14px; line-height:1.7; margin-bottom:20px;">Carrier Nexus is a single platform that manages your internal operations <em>and</em> connects you to a live network of drivers, dispatchers, and carriers. Internal fleet management, external networking, equipment sourcing — one login.</p>
-      <div style="display:flex; flex-direction:column; gap:10px;">
-        <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-mid);">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="#E69F00"><path d="M13 3L6 10.5 3 7.5 2 8.5l4 4 8-9z"/></svg>
-          Internal fleet, drivers, loads, maintenance, settlements — fully managed
-        </div>
-        <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-mid);">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="#56B4E9"><path d="M13 3L6 10.5 3 7.5 2 8.5l4 4 8-9z"/></svg>
-          External driver, dispatcher, and carrier directory for networking and hiring
-        </div>
-        <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-mid);">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="#e91e8c"><path d="M13 3L6 10.5 3 7.5 2 8.5l4 4 8-9z"/></svg>
-          Daily-scraped equipment marketplace — trucks, trailers, parts
-        </div>
-        <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-mid);">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="#009E73"><path d="M13 3L6 10.5 3 7.5 2 8.5l4 4 8-9z"/></svg>
-          Nexus Intelligence — predictive analytics across your fleet + the network
+    <div class="infra-right">
+      <div class="infra-card">
+        <div class="infra-card-icon">♾️</div>
+        <div>
+          <div class="infra-card-title">Zero Vendor Lock-In</div>
+          <div class="infra-card-desc">Your files are standard PDFs and folders in Google Drive. Open them on your phone, share with your accountant, or download everything in one click — no proprietary formats, ever.</div>
         </div>
       </div>
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-      <div style="background:var(--gunmetal); border:1px solid var(--border); border-radius:10px; padding:18px; text-align:center;">
-        <div style="font-family:'Barlow Condensed',sans-serif; font-size:32px; font-weight:900; color:var(--orange);">1</div>
-        <div style="font-size:12px; color:var(--text-muted); font-family:'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.5px;">Login</div>
+      <div class="infra-card">
+        <div class="infra-card-icon">⚡</div>
+        <div>
+          <div class="infra-card-title">99.99% Uptime Guarantee — Google's, Not Ours</div>
+          <div class="infra-card-desc">We don't promise uptime — Google does. With 2.9 billion users and a $100B+ infrastructure budget behind your documents, your data is better protected than any TMS on the market.</div>
+        </div>
       </div>
-      <div style="background:var(--gunmetal); border:1px solid var(--border); border-radius:10px; padding:18px; text-align:center;">
-        <div style="font-family:'Barlow Condensed',sans-serif; font-size:32px; font-weight:900; color:#56B4E9;">4</div>
-        <div style="font-size:12px; color:var(--text-muted); font-family:'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.5px;">Networks</div>
+      <div class="infra-card">
+        <div class="infra-card-icon">📂</div>
+        <div>
+          <div class="infra-card-title">Auto-Organized, Always Searchable</div>
+          <div class="infra-card-desc">Every document lands in the right folder automatically — by driver, by load, by document type. Google's search finds any file in under a second. No manual filing. No lost paperwork.</div>
+        </div>
       </div>
-      <div style="background:var(--gunmetal); border:1px solid var(--border); border-radius:10px; padding:18px; text-align:center;">
-        <div style="font-family:'Barlow Condensed',sans-serif; font-size:32px; font-weight:900; color:#e91e8c;">12</div>
-        <div style="font-size:12px; color:var(--text-muted); font-family:'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.5px;">Modules</div>
+      <div class="infra-card">
+        <div class="infra-card-icon">🛡️</div>
+        <div>
+          <div class="infra-card-title">Compliant by Default</div>
+          <div class="infra-card-desc">FMCSA requires 6-year document retention. Your Drive is the audit trail — every load, every signature, every date-stamped automatically and permanently accessible.</div>
+        </div>
       </div>
-      <div style="background:var(--gunmetal); border:1px solid var(--border); border-radius:10px; padding:18px; text-align:center;">
-        <div style="font-family:'Barlow Condensed',sans-serif; font-size:32px; font-weight:900; color:#009E73;">∞</div>
-        <div style="font-size:12px; color:var(--text-muted); font-family:'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.5px;">Connections</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- EQUIPMENT MARKETPLACE -->
-<section class="section marketplace-section" id="marketplace">
-  <div class="marketplace-header">
-    <div>
-      <div class="section-label" style="text-align:left; margin-bottom:8px;">Equipment Marketplace</div>
-      <h2 class="section-title" style="text-align:left; font-size:clamp(28px,4vw,44px);">Buy. Sell. Source. Daily.</h2>
-      <p style="color:var(--text-mid); font-size:14px; margin-top:8px; max-width:500px;">Listings scraped daily from TruckPaper, Equipment Trader, IronPlanet, and private sellers. Trucks, trailers, and specialty equipment — one feed.</p>
-    </div>
-    <div style="text-align:right;">
-      <div class="scrape-badge">
-        <span class="scrape-dot"></span>
-        LAST SCRAPED: TODAY 6:00 AM EST
-      </div>
-      <div style="font-size:12px; color:var(--text-muted); font-family:'JetBrains Mono',monospace;">1,847 ACTIVE LISTINGS · 23 NEW TODAY</div>
-    </div>
-  </div>
-
-  <div class="marketplace-filters">
-    <button class="mf-btn active" onclick="filterListings('all',this)">All Equipment</button>
-    <button class="mf-btn" onclick="filterListings('rgn',this)">RGN Lowboy</button>
-    <button class="mf-btn" onclick="filterListings('flatbed',this)">Flatbed</button>
-    <button class="mf-btn" onclick="filterListings('truck',this)">Semi Trucks</button>
-    <button class="mf-btn" onclick="filterListings('step',this)">Step Deck</button>
-    <button class="mf-btn" onclick="filterListings('reefer',this)">Reefer</button>
-  </div>
-
-  <div class="listings-grid" id="listings-grid">
-    <!-- JS rendered -->
-  </div>
-
-  <div class="marketplace-cta">
-    <p>Showing 6 of 1,847 listings · Updated daily at 6:00 AM EST</p>
-    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-      <a href="equipment.html" class="btn-cta-primary" style="font-size:14px; padding:12px 28px;">View All Equipment Listings</a>
-      <a href="#" class="btn-cta-secondary" style="font-size:14px; padding:12px 28px;">List Your Equipment</a>
     </div>
   </div>
 </section>
@@ -2355,9 +2199,9 @@
     <div class="footer-brand">
       <a href="#" class="footer-logo">
         <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
-          <defs><linearGradient id="hg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#000000"/><stop offset="60%" stop-color="#003865"/><stop offset="100%" stop-color="#E69F00"/></linearGradient></defs>
-          <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hg2)" stroke="#E69F00" stroke-width="1.5"/>
-          <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#E69F00" opacity="0.15"/>
+          <defs><linearGradient id="hg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#000000"/><stop offset="60%" stop-color="#6b0000"/><stop offset="100%" stop-color="#e91e8c"/></linearGradient></defs>
+          <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hg2)" stroke="#e91e8c" stroke-width="1.5"/>
+          <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#e91e8c" opacity="0.15"/>
           <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff" letter-spacing="0">CN</text>
         </svg>
         <span class="footer-logo-text">CARRIER <span>NEXUS</span></span>
@@ -2405,98 +2249,6 @@
 </footer>
 
 <script>
-
-  // ── EQUIPMENT LISTINGS DATA (demo — daily scrape populates this) ──
-  const LISTINGS = [
-    {
-      id: 1, type: 'rgn', category: 'RGN LOWBOY',
-      title: '2019 Talbert 55GN RGN Lowboy — 55 Ton',
-      price: '$87,500', priceNote: 'or best offer',
-      specs: ['55 Ton Cap', '3 Axle', "29.5' Well", 'Air Ride', 'Flip Axle', 'LED Lights'],
-      location: 'Houston, TX', source: 'TruckPaper', date: 'Listed May 28, 2026',
-      detail: 'Air ride suspension, new tires on all axles, removable gooseneck, winches, clean title.'
-    },
-    {
-      id: 2, type: 'rgn', category: 'RGN LOWBOY',
-      title: '2021 XL Specialized XL 80 RGN — 55 Ton',
-      price: '$112,000', priceNote: 'firm',
-      specs: ['55 Ton Cap', '3 Axle', "30' Well", 'Air Ride', 'Hydraulic Detach', 'LED'],
-      location: 'Dallas, TX', source: 'Equipment Trader', date: 'Listed May 29, 2026',
-      detail: 'Low hours, hydraulic detach neck, air ride all axles, beavertail, toolboxes, excellent condition.'
-    },
-    {
-      id: 3, type: 'rgn', category: 'RGN LOWBOY',
-      title: '2017 Trail King TK55RGN — 55 Ton 3 Axle',
-      price: '$64,900', priceNote: '',
-      specs: ['55 Ton Cap', '3 Axle', "28' Well", 'Spring Ride', 'Winch', 'New Tires'],
-      location: 'Atlanta, GA', source: 'IronPlanet', date: 'Listed May 25, 2026',
-      detail: 'Spring suspension, mechanical detach, new rubber, two winches, beavertail, ready to work.'
-    },
-    {
-      id: 4, type: 'rgn', category: 'RGN LOWBOY',
-      title: '2015 Rogers 55 Ton RGN — 3 Axle Lowboy',
-      price: '$48,500', priceNote: 'negotiable',
-      specs: ['55 Ton Cap', '3 Axle', "27' Well", 'Spring Ride', 'Winch Plate', 'Rear Ramps'],
-      location: 'Memphis, TN', source: 'BigIron', date: 'Listed May 22, 2026',
-      detail: 'Solid work trailer, minor cosmetic wear, clean title, all lights functional, rear swing ramps.'
-    },
-    {
-      id: 5, type: 'truck', category: 'SEMI TRUCK',
-      title: '2020 Peterbilt 389 — 550HP Cummins X15',
-      price: '$139,000', priceNote: '',
-      specs: ['550HP', '18 Speed', '3.55 Ratio', '835K Miles', 'Double Bunk', 'APU'],
-      location: 'Miami, FL', source: 'TruckPaper', date: 'Listed May 27, 2026',
-      detail: 'Full service records, APU, double bunk sleeper, new steer tires, recent DOT pass.'
-    },
-    {
-      id: 6, type: 'flatbed', category: 'FLATBED',
-      title: '2022 Fontaine Magnitude 55C Flatbed',
-      price: '$34,500', priceNote: '',
-      specs: ["48' x 102\"", 'Aluminum', 'Air Ride', 'Slider', '5 Winches', 'LED'],
-      location: 'Nashville, TN', source: 'Equipment Trader', date: 'Listed May 30, 2026',
-      detail: 'Like new, only 2 years old, aluminum construction, 5 chain winches, full LED lighting package.'
-    }
-  ];
-
-  function renderListings(filter) {
-    const grid = document.getElementById('listings-grid');
-    if (!grid) return;
-    const filtered = filter === 'all' ? LISTINGS : LISTINGS.filter(l => l.type === filter);
-    grid.innerHTML = filtered.map(l => `
-      <div class="listing-card" data-type="${l.type}">
-        <div class="listing-img">
-          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-            <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/>
-            <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-          </svg>
-          <div class="listing-type-badge">${l.category}</div>
-          <div class="listing-source">${l.source}</div>
-        </div>
-        <div class="listing-body">
-          <div class="listing-title">${l.title}</div>
-          <div class="listing-price">${l.price} <span>${l.priceNote}</span></div>
-          <div class="listing-specs">${l.specs.map(s => `<span class="spec-pill">${s}</span>`).join('')}</div>
-          <div class="listing-location">
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a5 5 0 00-5 5c0 3.5 5 9 5 9s5-5.5 5-9a5 5 0 00-5-5zm0 7a2 2 0 110-4 2 2 0 010 4z"/></svg>
-            ${l.location}
-          </div>
-        </div>
-        <div class="listing-footer">
-          <div class="listing-date">${l.date}</div>
-          <a href="#" class="listing-btn">View Listing</a>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  function filterListings(type, btn) {
-    document.querySelectorAll('.mf-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderListings(type);
-  }
-
-  renderListings('all');
-
   // Module nav interaction
   const navItems = document.querySelectorAll('.module-nav-item');
   navItems.forEach(item => {
