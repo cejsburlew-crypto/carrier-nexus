@@ -904,7 +904,7 @@ function viewPDF(id){
   <div class="stmt-title">${isDisp ? 'Statement of Account' : 'Driver Settlement Statement'}</div>
   <div class="stmt-period">${isDisp ? 'Start Date: '+fmtLong(s.start)+'&nbsp;&nbsp;End Date: '+fmtLong(s.end) : 'Pay period '+fmtLong(s.start)+' – '+fmtLong(s.end)}</div>
 
-  ${isDisp ? \`<table class="info-tbl">
+  ${isDisp ? `<table class="info-tbl">
     <thead><tr><th>DISPATCHER</th><th>STATEMENT #</th><th>RATE</th><th>TOTAL PAY</th></tr></thead>
     <tbody><tr>
       <td><strong>\${s.driver}</strong></td>
@@ -912,7 +912,7 @@ function viewPDF(id){
       <td>\${Math.round((s.dispatcher_rate||0.05)*100)}%</td>
       <td class="net-val"><strong>\${fmtMoney(netDisplay)}</strong></td>
     </tr></tbody>
-  </table>\` : \`<table class="info-tbl">
+  </table>` : `<table class="info-tbl">
     <thead><tr><th>DRIVER</th><th>TRUCK</th><th>STATEMENT #</th><th>NET PAY</th></tr></thead>
     <tbody><tr>
       <td><strong>\${s.driver}</strong></td>
@@ -920,7 +920,7 @@ function viewPDF(id){
       <td>\${s.id}</td>
       <td class="net-val"><strong>\${fmtMoney(netDisplay,true)}</strong></td>
     </tr></tbody>
-  </table>\`}
+  </table>`}
 
   <table class="main-tbl">
     <thead><tr><th>Date</th><th>Load ID</th><th>Cargo / Description</th><th class="ra">Deductions</th><th class="ra">Additions</th></tr></thead>
