@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financials — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --black: #0a0a0a;
+    --black-2: #111;
+    --black-3: #1a1a1a;
+    --black-4: #222;
+    --border: rgba(255,255,255,0.08);
+    --orange: #E8640A;
+    --orange-dim: rgba(232,100,10,0.15);
+    --white-pure: #fff;
+    --text-muted: rgba(255,255,255,0.4);
+    --text-dim: rgba(255,255,255,0.65);
+    --green: #22c55e;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --yellow: #eab308;
+    --teal: #14b8a6;
+    --sidebar-w: 220px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--black); color: var(--white-pure); font-family: 'Barlow', sans-serif; display: flex; min-height: 100vh; }
+
+  /* ── SIDEBAR ── */
+  .sidebar { width: var(--sidebar-w); background: var(--black-2); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 100; }
+  .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 20px 16px; border-bottom: 1px solid var(--border); text-decoration: none; }
+  .sidebar-logo-mark { width: 28px; height: 28px; background: var(--orange); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 16px; color: #fff; flex-shrink: 0; }
+  .sidebar-logo-text { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--white-pure); }
+  .sidebar-nav { flex: 1; padding: 12px 0; }
+  .sidebar-section-label { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); padding: 12px 16px 4px; }
+  .sidebar-link { display: flex; align-items: center; gap: 10px; padding: 8px 16px; font-size: 13px; font-weight: 500; color: var(--text-dim); text-decoration: none; border-radius: 0; transition: background 0.15s, color 0.15s; }
+  .sidebar-link:hover { background: rgba(255,255,255,0.05); color: var(--white-pure); }
+  .sidebar-link.active { background: var(--orange-dim); color: var(--orange); border-left: 2px solid var(--orange); }
+  .sidebar-icon { font-size: 14px; width: 16px; text-align: center; flex-shrink: 0; }
+
+  /* ── MAIN ── */
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* ── TOP BAR ── */
+  .topbar { background: var(--black-2); border-bottom: 1px solid var(--border); padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .topbar-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 20px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .topbar-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(232,100,10,0.3); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+  /* ── TOGGLE ROW ── */
+  .view-toggle { display: flex; gap: 4px; background: var(--black-3); border: 1px solid var(--border); border-radius: 8px; padding: 3px; }
+  .toggle-btn { padding: 6px 14px; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border: none; border-radius: 5px; cursor: pointer; transition: all 0.15s; background: transparent; color: var(--text-muted); }
+  .toggle-btn.active { background: var(--orange); color: #fff; }
+
+  .period-select { background: var(--black-3); border: 1px solid var(--border); color: var(--white-pure); padding: 6px 12px; font-size: 12px; border-radius: 6px; font-family: 'Barlow', sans-serif; cursor: pointer; }
+
+  /* ── CONTENT ── */
+  .content { padding: 24px 28px; flex: 1; }
+
+  /* ── KPI ROW ── */
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+  .kpi-card { background: var(--black-2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .kpi-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  .kpi-value { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 26px; letter-spacing: 0.02em; }
+  .kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+  .kpi-delta { font-size: 11px; font-weight: 600; margin-top: 4px; }
+  .kpi-delta.up { color: var(--green); }
+  .kpi-delta.down { color: var(--red); }
+  .kpi-card.highlight { border-color: rgba(232,100,10,0.3); background: linear-gradient(135deg, rgba(232,100,10,0.06) 0%, var(--black-2) 100%); }
+
+  /* ── CHART PANELS ── */
+  .chart-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .chart-panel { background: var(--black-2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+  .chart-panel.full { grid-column: 1 / -1; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .panel-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .panel-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .chart-wrap { position: relative; }
+
+  /* ── VARIABLE TABLE ── */
+  .var-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .var-table th { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); padding: 6px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+  .var-table td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .var-table tr:last-child td { border-bottom: none; }
+  .var-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
+  .var-name { display: flex; align-items: center; font-weight: 500; }
+  .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .range-bar { height: 4px; background: var(--black-4); border-radius: 2px; position: relative; margin-top: 3px; width: 100%; }
+  .range-fill { position: absolute; top: 0; height: 4px; border-radius: 2px; }
+  .mean-tick { position: absolute; top: -2px; width: 2px; height: 8px; background: rgba(255,255,255,0.6); border-radius: 1px; }
+
+  /* ── DRIVER SECTION ── */
+  .driver-section { background: var(--black-2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+  .driver-tabs { display: flex; gap: 4px; background: var(--black-3); border: 1px solid var(--border); border-radius: 8px; padding: 3px; margin-bottom: 16px; overflow-x: auto; }
+  .driver-tab { padding: 5px 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; border: none; border-radius: 5px; cursor: pointer; transition: all 0.15s; background: transparent; color: var(--text-muted); white-space: nowrap; }
+  .driver-tab.active { background: var(--black-4); color: var(--white-pure); }
+
+  /* ── LEGEND ── */
+  .chart-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim); cursor: pointer; }
+  .legend-swatch { width: 20px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+
+  @media (max-width: 900px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .chart-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <a href="landing.html" class="sidebar-logo">
+    <div class="sidebar-logo-mark">CN</div>
+    <span class="sidebar-logo-text">Carrier Nexus</span>
+  </a>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="fleet-command.html" class="sidebar-link"><span class="sidebar-icon">⚡</span>Fleet Command</a>
+    <a href="active-loads.html" class="sidebar-link"><span class="sidebar-icon">🚛</span>Active Loads</a>
+    <a href="settlements.html" class="sidebar-link"><span class="sidebar-icon">💰</span>Settlements</a>
+    <a href="drivers.html" class="sidebar-link"><span class="sidebar-icon">👤</span>Drivers</a>
+    <a href="permits.html" class="sidebar-link"><span class="sidebar-icon">📋</span>Permits</a>
+    <div class="sidebar-section-label">Finance</div>
+    <a href="financials.html" class="sidebar-link active"><span class="sidebar-icon">📊</span>P&amp;L / Cash Flow</a>
+    <a href="invoicing.html" class="sidebar-link"><span class="sidebar-icon">🧾</span>Invoicing</a>
+    <a href="expenses.html" class="sidebar-link"><span class="sidebar-icon">💳</span>Expenses</a>
+    <div class="sidebar-section-label">Documents</div>
+    <a href="documents.html" class="sidebar-link"><span class="sidebar-icon">📁</span>Document Vault</a>
+    <a href="pods.html" class="sidebar-link"><span class="sidebar-icon">📸</span>PODs</a>
+    <div class="sidebar-section-label">Dispatch</div>
+    <a href="dispatcher-hub.html" class="sidebar-link"><span class="sidebar-icon">🎯</span>Dispatcher Hub</a>
+    <a href="available-dispatchers.html" class="sidebar-link"><span class="sidebar-icon">📡</span>Dispatchers</a>
+    <a href="available-drivers.html" class="sidebar-link"><span class="sidebar-icon">🗺️</span>Available Drivers</a>
+    <div class="sidebar-section-label">CRM</div>
+    <a href="issues.html" class="sidebar-link"><span class="sidebar-icon">⚠️</span>Issues</a>
+    <a href="contacts.html" class="sidebar-link"><span class="sidebar-icon">📞</span>Contacts</a>
+    <a href="contacts.html?tab=broker" class="sidebar-link"><span class="sidebar-icon">🤝</span>Brokers</a>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-title">P&amp;L / Cash Flow</span>
+      <span class="topbar-badge">Live</span>
+    </div>
+    <div class="topbar-right">
+      <div class="view-toggle" id="viewToggle">
+        <button class="toggle-btn active" data-view="company">Company</button>
+        <button class="toggle-btn" data-view="driver">Driver</button>
+        <button class="toggle-btn" data-view="pnl">P&amp;L</button>
+        <button class="toggle-btn" data-view="cashflow">Cash Flow</button>
+      </div>
+      <select class="period-select" id="periodSelect">
+        <option value="7">Last 7 Days</option>
+        <option value="30" selected>Last 30 Days</option>
+        <option value="90">Last 90 Days</option>
+        <option value="365">Last 12 Months</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- KPI ROW -->
+    <div class="kpi-row" id="kpiRow">
+      <div class="kpi-card highlight">
+        <div class="kpi-label">Gross Revenue (RC)</div>
+        <div class="kpi-value" style="color:var(--orange)">$147,200</div>
+        <div class="kpi-sub">30 rate cons</div>
+        <div class="kpi-delta up">↑ 12% vs prior period</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Net Margin</div>
+        <div class="kpi-value" style="color:var(--green)">$18,640</div>
+        <div class="kpi-sub">12.7% of gross</div>
+        <div class="kpi-delta up">↑ 1.4pts vs prior</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Driver Payouts</div>
+        <div class="kpi-value" style="color:var(--blue)">$103,040</div>
+        <div class="kpi-sub">70.0% avg of RC</div>
+        <div class="kpi-delta down">↓ range: 65–75%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Dispatch Fees</div>
+        <div class="kpi-value" style="color:var(--purple)">$14,720</div>
+        <div class="kpi-sub">10.0% avg of RC</div>
+        <div class="kpi-delta down">range: 8–12%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Operating Exp.</div>
+        <div class="kpi-value" style="color:var(--yellow)">$10,800</div>
+        <div class="kpi-sub">Fuel + ins + misc</div>
+        <div class="kpi-delta down">7.3% of RC</div>
+      </div>
+    </div>
+
+    <!-- MAIN CHART + VARIABLE TABLE -->
+    <div class="chart-grid">
+      <div class="chart-panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title" id="mainChartTitle">Daily Revenue &amp; Cost Breakdown</div>
+            <div class="panel-sub">Rate confirmation = baseline (100%). All costs shown as % of RC.</div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="mainChart" height="260"></canvas>
+        </div>
+        <div class="chart-legend" id="mainLegend"></div>
+      </div>
+
+      <div class="chart-panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Cost Variable Ranges</div>
+            <div class="panel-sub">Low / Mean / High % of rate con</div>
+          </div>
+        </div>
+        <table class="var-table" id="varTable">
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Mean %</th>
+              <th>Range</th>
+            </tr>
+          </thead>
+          <tbody id="varTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- NET MARGIN CHART -->
+    <div class="chart-grid" style="grid-template-columns:1fr 1fr; margin-bottom:20px;">
+      <div class="chart-panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Net Margin Daily</div>
+            <div class="panel-sub">After all payouts and expenses</div>
+          </div>
+        </div>
+        <canvas id="marginChart" height="180"></canvas>
+      </div>
+      <div class="chart-panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Cash Flow (Cumulative)</div>
+            <div class="panel-sub">Rolling 30-day cash position</div>
+          </div>
+        </div>
+        <canvas id="cashChart" height="180"></canvas>
+      </div>
+    </div>
+
+    <!-- DRIVER SECTION -->
+    <div class="driver-section" id="driverSection">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Driver Settlement Tracker</div>
+          <div class="panel-sub">Per-driver earnings across all carriers. Toggle driver or view all combined.</div>
+        </div>
+      </div>
+      <div class="driver-tabs" id="driverTabs"></div>
+      <canvas id="driverChart" height="200"></canvas>
+      <div class="chart-legend" id="driverLegend"></div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+// ─── DATA MODEL ───────────────────────────────────────────────────────────────
+const VARIABLES = [
+  { key: 'driverPay',   label: 'Driver Pay',       color: '#3b82f6', low: 65, mean: 70,  high: 75 },
+  { key: 'dispatch',    label: 'Dispatch Fee',      color: '#a855f7', low: 8,  mean: 10,  high: 12 },
+  { key: 'fuel',        label: 'Fuel Surcharge',    color: '#eab308', low: 3,  mean: 6,   high: 10 },
+  { key: 'insurance',   label: 'Insurance/Riders',  color: '#14b8a6', low: 2,  mean: 3.5, high: 6  },
+  { key: 'lumper',      label: 'Lumper/Access.',    color: '#f97316', low: 0,  mean: 2,   high: 8  },
+  { key: 'tolls',       label: 'Tolls / Permits',   color: '#6366f1', low: 0.5,mean: 1.5, high: 3  },
+];
+const NET_COLOR = '#22c55e';
+const RC_COLOR  = '#E8640A';
+
+const DRIVERS = ['All Combined', 'David', 'Nelson', 'Avis', 'Miguel', 'Guillermo', 'Yosviel', 'Maikel', 'Pedro', 'Hector'];
+
+// Generate synthetic daily data for 30 days
+function genDays(n) {
+  const days = [];
+  const now = new Date();
+  for (let i = n-1; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    days.push(d.toLocaleDateString('en-US', { month:'short', day:'numeric' }));
+  }
+  return days;
+}
+
+function rand(min, max) { return min + Math.random() * (max - min); }
+
+function genRCData(n) {
+  return Array.from({length: n}, () => rand(3200, 8500));
+}
+
+function genVarPcts(varDef, n) {
+  return Array.from({length: n}, () => rand(varDef.low, varDef.high));
+}
+
+let PERIOD = 30;
+let labels = genDays(PERIOD);
+let rcData = genRCData(PERIOD);
+
+// Per-variable percentage arrays
+let varData = {};
+VARIABLES.forEach(v => { varData[v.key] = genVarPcts(v, PERIOD); });
+
+// Net = 100% - sum of all var pcts
+function netPcts() {
+  return rcData.map((rc, i) => {
+    const total = VARIABLES.reduce((s, v) => s + varData[v.key][i], 0);
+    return Math.max(0, 100 - total);
+  });
+}
+
+function netDollars() {
+  return rcData.map((rc, i) => rc * netPcts()[i] / 100);
+}
+
+function cumulative(arr) {
+  let cum = 0;
+  return arr.map(v => { cum += v; return cum; });
+}
+
+// Driver data: each driver has earnings per day (subset of RC)
+function genDriverData(n) {
+  const d = {};
+  DRIVERS.slice(1).forEach(name => {
+    d[name] = Array.from({length: n}, () => rand(0, 900));
+  });
+  d['All Combined'] = labels.map((_, i) =>
+    DRIVERS.slice(1).reduce((s, name) => s + d[name][i], 0)
+  );
+  return d;
+}
+let driverData = genDriverData(PERIOD);
+
+// ─── CHARTS ───────────────────────────────────────────────────────────────────
+Chart.defaults.color = 'rgba(255,255,255,0.45)';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
+Chart.defaults.font.family = "'Barlow', sans-serif";
+
+let mainChart, marginChart, cashChart, driverChart;
+
+function buildMainChart() {
+  const ctx = document.getElementById('mainChart').getContext('2d');
+  if (mainChart) mainChart.destroy();
+
+  const datasets = [
+    {
+      label: 'Rate Con (Gross $)',
+      data: rcData,
+      borderColor: RC_COLOR,
+      backgroundColor: 'rgba(232,100,10,0.08)',
+      fill: true,
+      borderWidth: 2.5,
+      pointRadius: 2,
+      tension: 0.35,
+      yAxisID: 'y',
+    },
+    ...VARIABLES.map(v => ({
+      label: v.label + ' %',
+      data: varData[v.key],
+      borderColor: v.color,
+      backgroundColor: 'transparent',
+      borderWidth: 1.5,
+      pointRadius: 1.5,
+      tension: 0.35,
+      borderDash: [],
+      yAxisID: 'y2',
+    })),
+    {
+      label: 'Net Margin %',
+      data: netPcts(),
+      borderColor: NET_COLOR,
+      backgroundColor: 'rgba(34,197,94,0.07)',
+      fill: true,
+      borderWidth: 2,
+      pointRadius: 2,
+      tension: 0.35,
+      yAxisID: 'y2',
+    }
+  ];
+
+  mainChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const isY2 = ctx.dataset.yAxisID === 'y2';
+              return ` ${ctx.dataset.label}: ${isY2 ? ctx.parsed.y.toFixed(1)+'%' : '$'+ctx.parsed.y.toLocaleString('en-US',{maximumFractionDigits:0})}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { maxTicksLimit: 8, font: { size: 10 } } },
+        y:  { position: 'left',  title: { display: true, text: 'RC $ Value', font:{size:10} }, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { callback: v => '$'+v.toLocaleString() } },
+        y2: { position: 'right', title: { display: true, text: '% of RC', font:{size:10} }, grid: { display: false }, min: 0, max: 100, ticks: { callback: v => v+'%' } }
+      }
+    }
+  });
+
+  // Build legend
+  const legendEl = document.getElementById('mainLegend');
+  legendEl.innerHTML = '';
+  datasets.forEach(ds => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<span class="legend-swatch" style="background:${ds.borderColor}"></span>${ds.label}`;
+    legendEl.appendChild(item);
+  });
+}
+
+function buildMarginChart() {
+  const ctx = document.getElementById('marginChart').getContext('2d');
+  if (marginChart) marginChart.destroy();
+  const nd = netDollars();
+  marginChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Net Margin $',
+        data: nd,
+        backgroundColor: nd.map(v => v >= 0 ? 'rgba(34,197,94,0.6)' : 'rgba(239,68,68,0.6)'),
+        borderColor: nd.map(v => v >= 0 ? '#22c55e' : '#ef4444'),
+        borderWidth: 1,
+        borderRadius: 3,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' $'+c.parsed.y.toLocaleString('en-US',{maximumFractionDigits:0}) } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { maxTicksLimit: 8, font: { size: 9 } } },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { callback: v => '$'+v.toLocaleString() } }
+      }
+    }
+  });
+}
+
+function buildCashChart() {
+  const ctx = document.getElementById('cashChart').getContext('2d');
+  if (cashChart) cashChart.destroy();
+  const cum = cumulative(netDollars());
+  cashChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Cumulative Cash',
+        data: cum,
+        borderColor: '#14b8a6',
+        backgroundColor: 'rgba(20,184,166,0.08)',
+        fill: true,
+        borderWidth: 2,
+        pointRadius: 1.5,
+        tension: 0.4,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' $'+c.parsed.y.toLocaleString('en-US',{maximumFractionDigits:0}) } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { maxTicksLimit: 8, font: { size: 9 } } },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { callback: v => '$'+v.toLocaleString() } }
+      }
+    }
+  });
+}
+
+let activeDriver = 'All Combined';
+function buildDriverChart() {
+  const ctx = document.getElementById('driverChart').getContext('2d');
+  if (driverChart) driverChart.destroy();
+
+  const driversToShow = activeDriver === 'All Combined'
+    ? DRIVERS.slice(1)
+    : [activeDriver];
+
+  const colors = ['#3b82f6','#a855f7','#22c55e','#eab308','#f97316','#14b8a6','#6366f1','#ec4899','#ef4444'];
+
+  const datasets = driversToShow.map((name, i) => ({
+    label: name,
+    data: driverData[name],
+    borderColor: colors[i % colors.length],
+    backgroundColor: 'transparent',
+    borderWidth: activeDriver === 'All Combined' ? 1.5 : 2.5,
+    pointRadius: 1.5,
+    tension: 0.35,
+  }));
+
+  driverChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.dataset.label}: $${c.parsed.y.toLocaleString('en-US',{maximumFractionDigits:0})}` } } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { maxTicksLimit: 8, font: { size: 10 } } },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { callback: v => '$'+v.toLocaleString() } }
+      }
+    }
+  });
+
+  // Legend
+  const legendEl = document.getElementById('driverLegend');
+  legendEl.innerHTML = '';
+  datasets.forEach(ds => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<span class="legend-swatch" style="background:${ds.borderColor}"></span>${ds.label}`;
+    legendEl.appendChild(item);
+  });
+}
+
+function buildDriverTabs() {
+  const tabs = document.getElementById('driverTabs');
+  tabs.innerHTML = '';
+  DRIVERS.forEach(name => {
+    const btn = document.createElement('button');
+    btn.className = 'driver-tab' + (name === activeDriver ? ' active' : '');
+    btn.textContent = name;
+    btn.onclick = () => {
+      activeDriver = name;
+      document.querySelectorAll('.driver-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      buildDriverChart();
+    };
+    tabs.appendChild(btn);
+  });
+}
+
+function buildVarTable() {
+  const tbody = document.getElementById('varTableBody');
+  tbody.innerHTML = '';
+  VARIABLES.forEach(v => {
+    const vals = varData[v.key];
+    const actualLow  = Math.min(...vals).toFixed(1);
+    const actualHigh = Math.max(...vals).toFixed(1);
+    const actualMean = (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(1);
+    const totalRange = v.high - v.low;
+    const fillStart  = ((v.low / 100) * 100).toFixed(1);
+    const fillWidth  = (totalRange / 100 * 100).toFixed(1);
+    const meanPos    = (((v.mean - v.low) / totalRange) * 100).toFixed(1);
+
+    tbody.innerHTML += `
+      <tr>
+        <td><span class="var-name"><span class="var-dot" style="background:${v.color}"></span>${v.label}</span></td>
+        <td class="mono" style="color:${v.color}">${actualMean}%</td>
+        <td style="min-width:100px;">
+          <div style="display:flex;gap:6px;font-size:10px;color:var(--text-muted);">
+            <span>${actualLow}%</span>
+            <span style="margin-left:auto;">${actualHigh}%</span>
+          </div>
+          <div class="range-bar">
+            <div class="range-fill" style="left:${fillStart}%;width:${fillWidth}%;background:${v.color};opacity:0.5;"></div>
+            <div class="mean-tick" style="left:calc(${(parseFloat(actualMean)/100*100).toFixed(1)}% - 1px);background:${v.color};"></div>
+          </div>
+        </td>
+      </tr>`;
+  });
+
+  // Net row
+  const nets = netPcts();
+  const netLow  = Math.min(...nets).toFixed(1);
+  const netHigh = Math.max(...nets).toFixed(1);
+  const netMean = (nets.reduce((a,b)=>a+b,0)/nets.length).toFixed(1);
+  tbody.innerHTML += `
+    <tr style="border-top:1px solid rgba(255,255,255,0.1);">
+      <td><span class="var-name"><span class="var-dot" style="background:${NET_COLOR}"></span><strong>Net Margin</strong></span></td>
+      <td class="mono" style="color:${NET_COLOR}"><strong>${netMean}%</strong></td>
+      <td style="min-width:100px;">
+        <div style="display:flex;gap:6px;font-size:10px;color:var(--text-muted);">
+          <span>${netLow}%</span><span style="margin-left:auto;">${netHigh}%</span>
+        </div>
+        <div class="range-bar">
+          <div class="range-fill" style="left:${netLow}%;width:${netHigh - netLow}%;background:${NET_COLOR};opacity:0.5;"></div>
+          <div class="mean-tick" style="left:${netMean}%;background:${NET_COLOR};"></div>
+        </div>
+      </td>
+    </tr>`;
+}
+
+// ─── INIT & CONTROLS ──────────────────────────────────────────────────────────
+function rebuildAll() {
+  labels   = genDays(PERIOD);
+  rcData   = genRCData(PERIOD);
+  VARIABLES.forEach(v => { varData[v.key] = genVarPcts(v, PERIOD); });
+  driverData = genDriverData(PERIOD);
+  buildMainChart();
+  buildMarginChart();
+  buildCashChart();
+  buildVarTable();
+  buildDriverChart();
+  buildDriverTabs();
+}
+
+document.getElementById('periodSelect').addEventListener('change', e => {
+  PERIOD = parseInt(e.target.value);
+  rebuildAll();
+});
+
+document.getElementById('viewToggle').addEventListener('click', e => {
+  if (!e.target.classList.contains('toggle-btn')) return;
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  // Visual toggle adjustments
+  const view = e.target.dataset.view;
+  const ds = document.getElementById('driverSection');
+  if (view === 'driver') {
+    ds.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+});
+
+rebuildAll();
+</script>
+</body>
+</html>
