@@ -239,7 +239,8 @@ body {
   background: var(--gunmetal);
   border: 1px solid var(--border);
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
   transition: border-color 0.2s, transform 0.15s;
 }
 .driver-card:hover {
@@ -799,6 +800,31 @@ body {
 }
 .btn-edit-compliance:hover { background: rgba(46,109,164,0.25); color: #fff; border-color: #2e6da4; }
 .has-stored { background: rgba(34,197,94,0.12) !important; border-color: rgba(34,197,94,0.3) !important; color: #22c55e !important; }
+.card-edit-btn{position:absolute;top:10px;right:10px;background:rgba(46,109,164,0.12);border:1px solid rgba(46,109,164,0.25);border-radius:4px;padding:3px 8px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:#a8c4e0;letter-spacing:1px;cursor:pointer;transition:all .15s;z-index:2;}
+.card-edit-btn:hover{background:rgba(46,109,164,0.25);color:#fff;border-color:#2e6da4;}
+.card-edit-btn.has-stored{background:rgba(34,197,94,0.12)!important;border-color:rgba(34,197,94,0.3)!important;color:#22c55e!important;}
+.sheet-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9000;align-items:flex-end;justify-content:center;}
+.sheet-overlay.open{display:flex;}
+.sheet-box{background:#111827;border-radius:14px 14px 0 0;width:100%;max-width:680px;max-height:82vh;overflow-y:auto;padding:26px 28px 36px;position:relative;}
+.sheet-close{position:absolute;top:14px;right:16px;background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;line-height:1;}
+.sheet-close:hover{color:#fff;}
+.sheet-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:21px;color:#fff;margin-bottom:2px;}
+.sheet-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:#64748b;letter-spacing:1.5px;margin-bottom:20px;}
+.settle-tbl{width:100%;border-collapse:collapse;margin-bottom:4px;}
+.settle-tbl th{font-family:'JetBrains Mono',monospace;font-size:9px;color:#64748b;letter-spacing:1px;text-align:left;padding:6px 10px;border-bottom:1px solid #1e293b;}
+.settle-tbl td{padding:9px 10px;border-bottom:1px solid #0f172a;color:#cbd5e1;font-size:13px;}
+.settle-tbl tr:hover td{background:rgba(46,109,164,0.07);}
+.btn-vs{padding:3px 12px;background:rgba(46,109,164,0.15);border:1px solid rgba(46,109,164,0.3);border-radius:4px;color:#93c5fd;font-size:11px;font-family:'Barlow Condensed',sans-serif;font-weight:600;cursor:pointer;}
+.btn-vs:hover{background:rgba(46,109,164,0.3);color:#fff;}
+.add-settle-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;padding-top:16px;border-top:1px solid #1e293b;align-items:end;}
+.add-settle-row input{background:#0f172a;border:1px solid #334155;border-radius:4px;padding:6px 10px;color:#e2e8f0;font-size:13px;width:100%;}
+.add-settle-row input::placeholder{color:#475569;}
+.add-settle-row label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#64748b;letter-spacing:1px;display:block;margin-bottom:4px;}
+.btn-add-settle{padding:8px 16px;background:#e8640a;border:none;border-radius:4px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+.cinfo-row{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid #1e293b;}
+.cinfo-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:#64748b;letter-spacing:1px;min-width:75px;padding-top:2px;}
+.cinfo-val{color:#e2e8f0;font-size:14px;}
+
 </style>
 <style id="nexus-unified">
 /* ── SIDEBAR BLACK ── */
@@ -931,6 +957,10 @@ body {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
       <span>Available Drivers</span>
     </a>
+    <a href="issues.html" class="sidebar-link ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>Issues</span>
+    </a>
   </div>
   <div class="sidebar-section">
     <div class="sidebar-section-label">Contacts</div>
@@ -1019,7 +1049,7 @@ body {
       <button class="filter-btn active" data-i18n="All" onclick="filterDrivers('all', this)">All</button>
       <button class="filter-btn" data-i18n="Active" onclick="filterDrivers('active', this)">Active</button>
       <button class="filter-btn" data-i18n="Inactive" onclick="filterDrivers('inactive', this)">Inactive</button>
-      <button class="filter-btn" onclick="filterDrivers('issues', this)" style="color:var(--red);border-color:rgba(239,68,68,0.3);" data-i18n="Issues">Issues</button>
+      <button class="filter-btn" onclick="scrollToDispatchers(this)" style="color:#e91e8c;border-color:rgba(233,30,140,0.3);" data-i18n="Dispatchers">Dispatchers</button>
       <div class="filter-spacer"></div>
       <span class="driver-count-label" id="driver-count">9 DRIVERS</span>
     </div>
@@ -1301,13 +1331,11 @@ function renderDriverCards(filter) {
       '</div>' +
       violationRows +
       '<div class="driver-card-actions">' +
-        '<button class="btn-driver-action settle" data-i18n="SETTLEMENTS" onclick="window.location.href=\'settlements.html\'">SETTLEMENTS</button>' +
-        '<button class="btn-driver-action" data-i18n="CONTACT" onclick="openContactModal(\''+ d.id +'\')">CONTACT</button>' +
+        '<button class="btn-driver-action settle" data-i18n="SETTLEMENTS" onclick="openSettlements(\''+ d.id +'\')">SETTLEMENTS</button>' +
+        '<button class="btn-driver-action" data-i18n="CONTACT" onclick="openDriverContact(\''+ d.id +'\')">CONTACT</button>' +
         '<button class="btn-driver-action" data-i18n="DOCUMENTS" onclick="openDriverDocs(\''+ d.id +'\')">DOCUMENTS</button>' +
-        '<button class="btn-edit-compliance' + (hasStoredData ? ' has-stored' : '') + '" onclick="openComplianceModal(\''+d.id+'\')">' +
-          (hasStoredData ? '✓ EDIT' : '✏️ ENTER') +
-        '</button>' +
       '</div>' +
+      '<button class="card-edit-btn ' + (hasStoredData ? 'has-stored' : '') + '" onclick="openComplianceModal(\''+ d.id +'\')">&#9998; EDIT</button>' +
     '</div>';
   }).join('');
 
@@ -1644,6 +1672,131 @@ function saveComplianceForm() {
     </div>
   </div>
 </div>
+
+
+<!-- SETTLEMENT SHEET -->
+<div class="sheet-overlay" id="settle-overlay" onclick="if(event.target===this)closeSettle()">
+  <div class="sheet-box">
+    <button class="sheet-close" onclick="closeSettle()">&#10005;</button>
+    <div class="sheet-title" id="settle-name"></div>
+    <div class="sheet-sub">SETTLEMENT LOG</div>
+    <table class="settle-tbl">
+      <thead><tr><th>WEEK ENDING</th><th>PAYMENT DUE</th><th></th></tr></thead>
+      <tbody id="settle-tbody"></tbody>
+    </table>
+    <div class="add-settle-row">
+      <div><label>WEEK ENDING DATE</label><input type="date" id="ns-week"></div>
+      <div><label>PAYMENT DUE ($)</label><input type="number" id="ns-amt" placeholder="0.00" step="0.01"></div>
+      <button class="btn-add-settle" onclick="addSettle()">+ ADD</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTLEMENT DETAIL POPUP -->
+<div class="sheet-overlay" id="settle-detail-overlay" onclick="if(event.target===this)closeSettleDetail()">
+  <div class="sheet-box" style="max-width:480px;">
+    <button class="sheet-close" onclick="closeSettleDetail()">&#10005;</button>
+    <div class="sheet-title">Settlement Detail</div>
+    <div id="settle-detail-body" style="margin-top:16px;"></div>
+  </div>
+</div>
+
+<!-- CONTACT SHEET -->
+<div class="sheet-overlay" id="contact-overlay" onclick="if(event.target===this)closeDriverContact()">
+  <div class="sheet-box" style="max-width:480px;">
+    <button class="sheet-close" onclick="closeDriverContact()">&#10005;</button>
+    <div class="sheet-title" id="contact-sheet-name"></div>
+    <div class="sheet-sub">CONTACT INFO</div>
+    <div id="contact-sheet-body"></div>
+  </div>
+</div>
+
+<script>
+// ── Settlement sheet ──────────────────────────────────────────────────────────
+const LS_SETTLE = 'nexus_settle_';
+let _settleDriverId = null;
+
+function openSettlements(driverId) {
+  _settleDriverId = driverId;
+  const d = mergeDriver(NEXUS.drivers.find(x => x.id === driverId) || {});
+  document.getElementById('settle-name').textContent = d.name || driverId;
+  renderSettleTable();
+  document.getElementById('settle-overlay').classList.add('open');
+}
+function closeSettle() { document.getElementById('settle-overlay').classList.remove('open'); }
+
+function getSettles(id) {
+  try { return JSON.parse(localStorage.getItem(LS_SETTLE + id)) || []; } catch { return []; }
+}
+function saveSettles(id, arr) { localStorage.setItem(LS_SETTLE + id, JSON.stringify(arr)); }
+
+function renderSettleTable() {
+  const rows = getSettles(_settleDriverId);
+  const tbody = document.getElementById('settle-tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="3" style="color:#475569;text-align:center;padding:20px;">No settlements logged yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.slice().reverse().map((r,i) =>
+    '<tr>' +
+      '<td>' + r.week + '</td>' +
+      '<td style="color:#22c55e;font-weight:700;">$' + parseFloat(r.amt).toLocaleString('en-US',{minimumFractionDigits:2}) + '</td>' +
+      '<td><button class="btn-vs" onclick="viewSettle(' + (rows.length-1-i) + ')">VIEW</button></td>' +
+    '</tr>'
+  ).join('');
+}
+
+function addSettle() {
+  const week = document.getElementById('ns-week').value;
+  const amt  = document.getElementById('ns-amt').value;
+  if (!week || !amt) { alert('Enter week ending date and amount.'); return; }
+  const rows = getSettles(_settleDriverId);
+  rows.push({ week, amt: parseFloat(amt).toFixed(2), logged: new Date().toISOString() });
+  saveSettles(_settleDriverId, rows);
+  document.getElementById('ns-week').value = '';
+  document.getElementById('ns-amt').value = '';
+  renderSettleTable();
+}
+
+function viewSettle(idx) {
+  const r = getSettles(_settleDriverId)[idx];
+  if (!r) return;
+  const d = mergeDriver(NEXUS.drivers.find(x => x.id === _settleDriverId) || {});
+  document.getElementById('settle-detail-body').innerHTML =
+    '<div class="cinfo-row"><span class="cinfo-lbl">DRIVER</span><span class="cinfo-val">' + (d.name||_settleDriverId) + '</span></div>' +
+    '<div class="cinfo-row"><span class="cinfo-lbl">WEEK ENDING</span><span class="cinfo-val">' + r.week + '</span></div>' +
+    '<div class="cinfo-row"><span class="cinfo-lbl">PAYMENT DUE</span><span class="cinfo-val" style="color:#22c55e;font-weight:700;font-size:22px;">$' + parseFloat(r.amt).toLocaleString('en-US',{minimumFractionDigits:2}) + '</span></div>' +
+    '<div class="cinfo-row"><span class="cinfo-lbl">LOGGED</span><span class="cinfo-val">' + new Date(r.logged).toLocaleString() + '</span></div>';
+  document.getElementById('settle-detail-overlay').classList.add('open');
+}
+function closeSettleDetail() { document.getElementById('settle-detail-overlay').classList.remove('open'); }
+
+// ── Contact sheet ─────────────────────────────────────────────────────────────
+function openDriverContact(driverId) {
+  const d = mergeDriver(NEXUS.drivers.find(x => x.id === driverId) || {});
+  document.getElementById('contact-sheet-name').textContent = d.name || driverId;
+  const row = (lbl, val) => val
+    ? '<div class="cinfo-row"><span class="cinfo-lbl">' + lbl + '</span><span class="cinfo-val">' + val + '</span></div>'
+    : '';
+  document.getElementById('contact-sheet-body').innerHTML =
+    row('PHONE',   d.phone   || '—') +
+    row('EMAIL',   d.email   || '—') +
+    row('ADDRESS', d.address || '—') +
+    row('CDL #',   (!d.cdl_number || d.cdl_number.includes('ENTER')) ? '—' : d.cdl_number) +
+    row('CDL STATE', d.cdl_state || '—') +
+    row('STATUS',  d.status  || '—');
+  document.getElementById('contact-overlay').classList.add('open');
+}
+function closeDriverContact() { document.getElementById('contact-overlay').classList.remove('open'); }
+
+// ── Dispatchers scroll ────────────────────────────────────────────────────────
+function scrollToDispatchers(btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const sec = document.getElementById('dispatchers-section');
+  if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
 
 </body>
 </html>

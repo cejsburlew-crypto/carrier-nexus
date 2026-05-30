@@ -1,0 +1,356 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Issues — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<style>
+:root{--bg:#0a0f1a;--gunmetal:#111827;--border:rgba(255,255,255,0.07);--text-muted:rgba(255,255,255,0.3);--text-mid:#94a3b8;--white:#e2e8f0;--white-pure:#fff;--orange:#e8640a;--red:#ef4444;--green:#22c55e;--ice:#b8d4f0;--steel-blue:#2e6da4;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+/* sidebar */
+.sidebar{width:220px;min-height:100vh;background:#000;border-right:1px solid #1a1a1a;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sidebar-logo{padding:16px;display:flex;align-items:center;gap:10px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.07);}
+.brand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;color:#fff;letter-spacing:1px;}
+.sidebar-section{padding:12px 0 4px;}
+.sidebar-section-label{color:rgba(255,255,255,0.3);font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.5px;padding:16px 16px 6px;text-transform:uppercase;display:block;}
+.sidebar-link{display:flex;align-items:center;gap:10px;padding:7px 16px;text-decoration:none;color:#a0aec0;font-size:13px;border-left:3px solid transparent;transition:all .15s;}
+.sidebar-link:hover{background:rgba(233,30,140,0.14);border-left-color:#c2185b;color:#fff;}
+.sidebar-link.active{background:rgba(233,30,140,0.22);border-left:3px solid #e91e8c;color:#fff;}
+.sidebar-link svg{width:14px;height:14px;flex-shrink:0;opacity:.7;}
+/* main */
+.main{flex:1;padding:32px 36px;max-width:1100px;}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;letter-spacing:1px;color:#fff;margin-bottom:4px;}
+.page-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:2px;margin-bottom:24px;}
+/* toolbar */
+.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:20px;flex-wrap:wrap;}
+.search-box{flex:1;min-width:220px;background:#111827;border:1px solid var(--border);border-radius:6px;padding:8px 14px;color:#e2e8f0;font-size:13px;font-family:'Barlow',sans-serif;}
+.search-box::placeholder{color:#475569;}
+.filter-pill{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-mid);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;letter-spacing:.5px;cursor:pointer;transition:all .15s;}
+.filter-pill:hover{border-color:var(--steel-blue);color:#fff;}
+.filter-pill.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+.filter-pill.red.active{background:#dc2626;border-color:#dc2626;}
+.filter-pill.green.active{background:#16a34a;border-color:#16a34a;}
+.filter-pill.blue.active{background:#1d4ed8;border-color:#1d4ed8;}
+.btn-add{padding:8px 18px;background:var(--orange);border:none;border-radius:6px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;}
+.btn-add:hover{background:#c55508;}
+/* issue cards */
+.issues-list{display:flex;flex-direction:column;gap:10px;}
+.issue-card{background:#111827;border:1px solid var(--border);border-radius:8px;padding:16px 20px;border-left:4px solid #334155;cursor:pointer;transition:border-color .15s,transform .1s;}
+.issue-card:hover{border-left-color:var(--steel-blue);transform:translateX(2px);}
+.issue-card.open{border-left-color:#ef4444;}
+.issue-card.in-progress{border-left-color:#f59e0b;}
+.issue-card.follow-up{border-left-color:#3b82f6;}
+.issue-card.closed{border-left-color:#22c55e;opacity:.7;}
+.issue-card.deleted{display:none;}
+.issue-top{display:flex;align-items:flex-start;gap:12px;}
+.issue-status-badge{padding:2px 10px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1px;white-space:nowrap;flex-shrink:0;margin-top:2px;}
+.badge-open{background:rgba(239,68,68,0.15);color:#f87171;}
+.badge-progress{background:rgba(245,158,11,0.15);color:#fbbf24;}
+.badge-followup{background:rgba(59,130,246,0.15);color:#93c5fd;}
+.badge-closed{background:rgba(34,197,94,0.15);color:#4ade80;}
+.issue-subject{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:#fff;flex:1;}
+.issue-meta{font-family:'JetBrains Mono',monospace;font-size:9px;color:#475569;margin-top:6px;display:flex;gap:16px;flex-wrap:wrap;}
+.issue-desc{margin-top:10px;font-size:13px;color:#94a3b8;line-height:1.5;}
+.issue-tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.issue-tag{padding:2px 8px;background:rgba(46,109,164,0.12);border:1px solid rgba(46,109,164,0.2);border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#93c5fd;}
+/* modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#111827;border-radius:12px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;padding:28px 32px;}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:#fff;margin-bottom:20px;}
+.form-row{margin-bottom:14px;}
+.form-row label{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;color:#64748b;letter-spacing:1px;margin-bottom:5px;}
+.form-row input,.form-row textarea,.form-row select{width:100%;background:#0f172a;border:1px solid #334155;border-radius:5px;padding:8px 12px;color:#e2e8f0;font-size:13px;font-family:'Barlow',sans-serif;}
+.form-row textarea{min-height:90px;resize:vertical;}
+.form-row select{cursor:pointer;}
+.form-row input::placeholder,.form-row textarea::placeholder{color:#475569;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
+.btn-save{padding:8px 22px;background:var(--orange);border:none;border-radius:5px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;cursor:pointer;}
+.btn-cancel{padding:8px 18px;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text-mid);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:14px;cursor:pointer;}
+.btn-cancel:hover{border-color:#fff;color:#fff;}
+.status-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+.btn-status{padding:5px 14px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text-mid);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
+.btn-status:hover{color:#fff;border-color:#fff;}
+.btn-status.danger{color:#f87171;border-color:rgba(239,68,68,0.3);}
+.btn-status.danger:hover{background:rgba(239,68,68,0.15);}
+.empty-state{text-align:center;padding:60px 20px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:12px;}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <a href="landing.html" class="sidebar-logo">
+    <svg width="28" height="28" viewBox="0 0 40 40"><polygon points="20,2 38,12 38,28 20,38 2,28 2,12" fill="#e8640a" stroke="none"/><text x="20" y="26" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="16" fill="#fff">CN</text></svg>
+    <span class="brand">CARRIER NEXUS</span>
+  </a>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="fleet-command.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span>Dashboard</span></a>
+    <a href="active-loads.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Active Loads</span></a>
+    <a href="settlements.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Settlements</span></a>
+    <a href="drivers.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Drivers</span></a>
+    <a href="permits.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Permits</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Finance</div>
+    <a href="invoicing.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Invoicing</span></a>
+    <a href="expenses.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Expenses</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Documents</div>
+    <a href="documents.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Documents</span></a>
+    <a href="pods.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>PODs</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Dispatch</div>
+    <a href="dispatcher-hub.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span>Dispatcher Hub</span></a>
+    <a href="available-dispatchers.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Available Dispatchers</span></a>
+    <a href="available-drivers.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg><span>Available Drivers</span></a>
+    <a href="issues.html" class="sidebar-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Issues</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Contacts</div>
+    <a href="contacts.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Contacts</span></a>
+    <a href="contacts.html?tab=broker" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Brokers</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Maintenance</div>
+    <a href="equipment.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Equipment</span></a>
+    <a href="maintenance.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Maintenance</span></a>
+  </div>
+</nav>
+
+<main class="main">
+  <div class="page-title">ISSUES</div>
+  <div class="page-sub">TRACK · RESOLVE · CLOSE OUT</div>
+
+  <div class="toolbar">
+    <input class="search-box" id="issue-search" placeholder="Search issues, subject, notes..." oninput="renderIssues()">
+    <button class="filter-pill active" id="pill-all"       onclick="setFilter('all',this)">All</button>
+    <button class="filter-pill red"    id="pill-open"      onclick="setFilter('open',this)">Open</button>
+    <button class="filter-pill"        id="pill-progress"  onclick="setFilter('in-progress',this)">In Progress</button>
+    <button class="filter-pill blue"   id="pill-followup"  onclick="setFilter('follow-up',this)">Follow Up</button>
+    <button class="filter-pill green"  id="pill-closed"    onclick="setFilter('closed',this)">Closed</button>
+    <button class="btn-add" onclick="openIssueModal()">+ NEW ISSUE</button>
+  </div>
+
+  <div class="issues-list" id="issues-list"></div>
+</main>
+
+<!-- NEW / EDIT ISSUE MODAL -->
+<div class="modal-overlay" id="issue-modal" onclick="if(event.target===this)closeIssueModal()">
+  <div class="modal-box">
+    <div class="modal-title" id="issue-modal-title">NEW ISSUE</div>
+    <input type="hidden" id="iss-edit-id">
+    <div class="form-row">
+      <label>SUBJECT / TITLE</label>
+      <input type="text" id="iss-subject" placeholder="Brief description of the issue">
+    </div>
+    <div class="form-row">
+      <label>SOURCE</label>
+      <select id="iss-source">
+        <option value="email">Email</option>
+        <option value="phone">Phone Call</option>
+        <option value="internal">Internal</option>
+        <option value="driver">Driver Report</option>
+        <option value="broker">Broker</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>STATUS</label>
+      <select id="iss-status">
+        <option value="open">Open</option>
+        <option value="in-progress">In Progress</option>
+        <option value="follow-up">Follow Up</option>
+        <option value="closed">Closed</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>ASSIGNED TO</label>
+      <input type="text" id="iss-assigned" placeholder="Name or email">
+    </div>
+    <div class="form-row">
+      <label>DESCRIPTION / NOTES</label>
+      <textarea id="iss-desc" placeholder="Full details, email content, or context..."></textarea>
+    </div>
+    <div class="form-row">
+      <label>GOOGLE DRIVE LINK (optional)</label>
+      <input type="url" id="iss-drive" placeholder="https://drive.google.com/...">
+    </div>
+    <div class="form-row">
+      <label>TAGS (comma separated)</label>
+      <input type="text" id="iss-tags" placeholder="e.g. load, billing, compliance">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeIssueModal()">Cancel</button>
+      <button class="btn-save" onclick="saveIssue()">Save Issue</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW ISSUE MODAL -->
+<div class="modal-overlay" id="view-modal" onclick="if(event.target===this)closeViewModal()">
+  <div class="modal-box">
+    <div id="view-modal-body"></div>
+    <div class="status-actions">
+      <button class="btn-status" onclick="setIssueStatus(_viewId,'in-progress')">Mark In Progress</button>
+      <button class="btn-status" onclick="setIssueStatus(_viewId,'follow-up')">Follow Up</button>
+      <button class="btn-status" onclick="setIssueStatus(_viewId,'closed')">Close Out</button>
+      <button class="btn-status" onclick="editIssue(_viewId)">&#9998; Edit</button>
+      <button class="btn-status danger" onclick="deleteIssue(_viewId)">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const LS_ISSUES = 'nexus_issues';
+let _activeFilter = 'all';
+let _viewId = null;
+
+function getIssues() { try { return JSON.parse(localStorage.getItem(LS_ISSUES)) || []; } catch { return []; } }
+function saveIssues(arr) { localStorage.setItem(LS_ISSUES, JSON.stringify(arr)); }
+
+function setFilter(f, btn) {
+  _activeFilter = f;
+  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderIssues();
+}
+
+function statusBadge(s) {
+  const map = { open:'badge-open', 'in-progress':'badge-progress', 'follow-up':'badge-followup', closed:'badge-closed' };
+  const label = { open:'OPEN', 'in-progress':'IN PROGRESS', 'follow-up':'FOLLOW UP', closed:'CLOSED' };
+  return '<span class="issue-status-badge ' + (map[s]||'badge-open') + '">' + (label[s]||s.toUpperCase()) + '</span>';
+}
+
+function renderIssues() {
+  const q = (document.getElementById('issue-search').value||'').toLowerCase();
+  let issues = getIssues().filter(i => i.status !== 'deleted');
+  if (_activeFilter !== 'all') issues = issues.filter(i => i.status === _activeFilter);
+  if (q) issues = issues.filter(i =>
+    (i.subject||'').toLowerCase().includes(q) ||
+    (i.desc||'').toLowerCase().includes(q) ||
+    (i.assigned||'').toLowerCase().includes(q) ||
+    (i.tags||'').toLowerCase().includes(q)
+  );
+  issues = issues.slice().reverse();
+  const el = document.getElementById('issues-list');
+  if (!issues.length) {
+    el.innerHTML = '<div class="empty-state">No issues found.</div>';
+    return;
+  }
+  el.innerHTML = issues.map(iss => {
+    const tags = (iss.tags||'').split(',').map(t=>t.trim()).filter(Boolean);
+    return '<div class="issue-card ' + (iss.status||'open') + '" onclick="viewIssue(\'' + iss.id + '\')">' +
+      '<div class="issue-top">' +
+        statusBadge(iss.status||'open') +
+        '<div style="flex:1;">' +
+          '<div class="issue-subject">' + (iss.subject||'(No subject)') + '</div>' +
+          '<div class="issue-meta">' +
+            '<span>SOURCE: ' + (iss.source||'—').toUpperCase() + '</span>' +
+            (iss.assigned ? '<span>ASSIGNED: ' + iss.assigned + '</span>' : '') +
+            '<span>' + new Date(iss.created).toLocaleDateString() + '</span>' +
+            (iss.drive ? '<span><a href="' + iss.drive + '" target="_blank" onclick="event.stopPropagation()" style="color:#93c5fd;">&#128196; DRIVE DOC</a></span>' : '') +
+          '</div>' +
+          (iss.desc ? '<div class="issue-desc">' + iss.desc.substring(0,180) + (iss.desc.length>180?'…':'') + '</div>' : '') +
+          (tags.length ? '<div class="issue-tags">' + tags.map(t=>'<span class="issue-tag">'+t+'</span>').join('') + '</div>' : '') +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function openIssueModal(id) {
+  document.getElementById('issue-modal-title').textContent = id ? 'EDIT ISSUE' : 'NEW ISSUE';
+  document.getElementById('iss-edit-id').value = id || '';
+  if (id) {
+    const iss = getIssues().find(i => i.id === id) || {};
+    document.getElementById('iss-subject').value = iss.subject||'';
+    document.getElementById('iss-source').value  = iss.source||'email';
+    document.getElementById('iss-status').value  = iss.status||'open';
+    document.getElementById('iss-assigned').value= iss.assigned||'';
+    document.getElementById('iss-desc').value    = iss.desc||'';
+    document.getElementById('iss-drive').value   = iss.drive||'';
+    document.getElementById('iss-tags').value    = iss.tags||'';
+  } else {
+    ['iss-subject','iss-assigned','iss-desc','iss-drive','iss-tags'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('iss-source').value='email';
+    document.getElementById('iss-status').value='open';
+  }
+  document.getElementById('issue-modal').classList.add('open');
+}
+function closeIssueModal() { document.getElementById('issue-modal').classList.remove('open'); }
+
+function saveIssue() {
+  const subject = document.getElementById('iss-subject').value.trim();
+  if (!subject) { alert('Subject is required.'); return; }
+  const issues = getIssues();
+  const editId = document.getElementById('iss-edit-id').value;
+  const rec = {
+    id: editId || Date.now().toString(),
+    subject,
+    source:   document.getElementById('iss-source').value,
+    status:   document.getElementById('iss-status').value,
+    assigned: document.getElementById('iss-assigned').value.trim(),
+    desc:     document.getElementById('iss-desc').value.trim(),
+    drive:    document.getElementById('iss-drive').value.trim(),
+    tags:     document.getElementById('iss-tags').value.trim(),
+    created:  editId ? (issues.find(i=>i.id===editId)||{}).created || new Date().toISOString() : new Date().toISOString(),
+    updated:  new Date().toISOString()
+  };
+  if (editId) {
+    const idx = issues.findIndex(i=>i.id===editId);
+    if (idx>-1) issues[idx]=rec; else issues.push(rec);
+  } else {
+    issues.push(rec);
+  }
+  saveIssues(issues);
+  closeIssueModal();
+  closeViewModal();
+  renderIssues();
+}
+
+function viewIssue(id) {
+  _viewId = id;
+  const iss = getIssues().find(i=>i.id===id);
+  if (!iss) return;
+  const tags = (iss.tags||'').split(',').map(t=>t.trim()).filter(Boolean);
+  document.getElementById('view-modal-body').innerHTML =
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">' +
+      statusBadge(iss.status||'open') +
+      '<div class="modal-title" style="margin:0;">' + (iss.subject||'Issue') + '</div>' +
+    '</div>' +
+    '<div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:#475569;display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;">' +
+      '<span>SOURCE: ' + (iss.source||'—').toUpperCase() + '</span>' +
+      (iss.assigned ? '<span>ASSIGNED: ' + iss.assigned + '</span>' : '') +
+      '<span>CREATED: ' + new Date(iss.created).toLocaleString() + '</span>' +
+    '</div>' +
+    (iss.desc ? '<div style="background:#0f172a;border-radius:6px;padding:14px;color:#cbd5e1;font-size:13px;line-height:1.6;margin-bottom:14px;white-space:pre-wrap;">' + iss.desc + '</div>' : '') +
+    (iss.drive ? '<div style="margin-bottom:10px;"><a href="' + iss.drive + '" target="_blank" style="color:#93c5fd;font-size:13px;">&#128196; Open Google Drive Document</a></div>' : '') +
+    (tags.length ? '<div class="issue-tags">' + tags.map(t=>'<span class="issue-tag">'+t+'</span>').join('') + '</div>' : '');
+  document.getElementById('view-modal').classList.add('open');
+}
+function closeViewModal() { document.getElementById('view-modal').classList.remove('open'); _viewId=null; }
+
+function setIssueStatus(id, status) {
+  const issues = getIssues();
+  const idx = issues.findIndex(i=>i.id===id);
+  if (idx>-1) { issues[idx].status=status; issues[idx].updated=new Date().toISOString(); }
+  saveIssues(issues);
+  closeViewModal();
+  renderIssues();
+}
+
+function deleteIssue(id) {
+  if (!confirm('Delete this issue?')) return;
+  setIssueStatus(id, 'deleted');
+}
+
+function editIssue(id) { closeViewModal(); openIssueModal(id); }
+
+renderIssues();
+</script>
+</body></html>
