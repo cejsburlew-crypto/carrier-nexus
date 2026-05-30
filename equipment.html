@@ -707,7 +707,7 @@ body {
   <div class="topbar">
     <div class="topbar-title">FLEET &amp; EQUIPMENT</div>
     <div class="status-live"><span class="status-dot"></span>LIVE</div>
-    <button class="btn btn-ghost">Export Fleet Report</button>
+    <button class="btn btn-ghost" onclick="exportFleetCSV()">Export Fleet Report</button>
     <button class="btn btn-primary" onclick="openAddModal()">+ Add Unit</button>
   </div>
 
@@ -1256,6 +1256,21 @@ async function updatePM(unitId) {
   await Fleet.update(unitId, u);
   renderFleet();
   alert('PM logged for Unit ' + (u.unit || unitId) + ' on ' + now);
+}
+
+
+function exportFleetCSV() {
+  const fleet = getFleetCache();
+  const headers = ['Unit','Type','Year','Make','Model','VIN','Status','Driver','Odometer','Last PM','Next PM'];
+  const rows = fleet.map(u => [
+    u.unit||'', u.equipType||u.type||'', u.year||'', u.make||'', u.model||'',
+    u.vin||'', u.status||'', u.driver||'', u.odometer||'', u.lastPM||'', u.nextPM||''
+  ]);
+  const csv = [headers,...rows].map(r=>r.map(v=>'"'+(v||'').toString().replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='fleet-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
 }
 
 </script>
@@ -1970,7 +1985,7 @@ body {
   <div class="topbar">
     <div class="topbar-title">FLEET &amp; EQUIPMENT</div>
     <div class="status-live"><span class="status-dot"></span>LIVE</div>
-    <button class="btn btn-ghost">Export Fleet Report</button>
+    <button class="btn btn-ghost" onclick="exportFleetCSV()">Export Fleet Report</button>
     <button class="btn btn-primary" onclick="openAddModal()">+ Add Unit</button>
   </div>
 
