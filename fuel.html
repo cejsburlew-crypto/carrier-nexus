@@ -79,16 +79,53 @@ tr:hover td{background:#f8fafc;}
 .mobile-nav-tab.active{color:#e91e8c;}
 @media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;}.content{padding:14px 12px 80px;}.kpi-row{grid-template-columns:1fr 1fr;gap:10px;}.mobile-nav{display:flex;}}
 </style>
+<style id="nexus-unified">
+/* CARRIER NEXUS — Sidebar/Topbar brand only. Content CSS untouched. */
+.sidebar, nav.sidebar { background:#000000 !important; border-right:1px solid #1a1a1a !important; }
+.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:12px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.08) !important; }
+.sidebar-logo .logo-hex svg, .sidebar-logo > svg { width:43px !important; height:43px !important; }
+.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:18px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
+.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:11px !important; color:#e91e8c !important; letter-spacing:1px !important; display:block !important; }
+.sidebar-section { padding:12px 0 4px !important; }
+.sidebar-section-label, .snl { color:rgba(255,255,255,0.45) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
+.sidebar-link, .sl { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:rgba(255,255,255,0.85) !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; transition:all .15s !important; text-transform:uppercase !important; letter-spacing:.5px !important; }
+.sidebar-link:hover, .sl:hover { background:rgba(233,30,140,0.20) !important; border-left-color:#e91e8c !important; color:#ffffff !important; }
+.sidebar-link.active, .sl.active { background:rgba(233,30,140,0.28) !important; border-left:3px solid #e91e8c !important; color:#ffffff !important; font-weight:600 !important; }
+.sidebar-link svg, .sl svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.75 !important; }
+.sidebar-link.active svg, .sl.active svg { opacity:1 !important; }
+.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; border-bottom:none !important; }
+.topbar *, .top-bar * { color:#ffffff !important; }
+.topbar-title, .top-bar-title { color:#ffffff !important; font-weight:700 !important; }
+.topbar-sub { color:rgba(255,255,255,0.72) !important; }
+.topbar .btn-ghost, .top-bar .btn-ghost { border-color:rgba(255,255,255,0.40) !important; color:#ffffff !important; background:transparent !important; }
+.topbar .btn-primary, .top-bar .btn-primary, .btn-add { background:#ffffff !important; color:#c2185b !important; font-weight:700 !important; border:none !important; }
+.status-live { color:#ffffff !important; font-weight:700 !important; }
+.status-dot { background:#ffffff !important; box-shadow:0 0 0 3px rgba(255,255,255,0.28) !important; }
+.mobile-nav { background:#000000 !important; border-top:1px solid #1a1a1a !important; }
+.mobile-nav-tab.active { color:#e91e8c !important; }
+</style>
 </head>
 <body>
 <nav class="sidebar">
-  <a href="landing.html" class="sidebar-logo">
-    <svg viewBox="0 0 36 36" fill="none" width="36" height="36">
-      <defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#000"/><stop offset="60%" stop-color="#003865"/><stop offset="100%" stop-color="#E69F00"/></linearGradient></defs>
-      <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hg)" stroke="#E69F00" stroke-width="1.5"/>
-      <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#fff">CN</text>
-    </svg>
-    <div><span class="brand">CARRIER NEXUS</span><span class="sub">OPS INTELLIGENCE</span></div>
+    <a href="landing.html" class="sidebar-logo">
+    <div class="logo-hex">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hexGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#000000"/>
+            <stop offset="60%" stop-color="#003865"/>
+            <stop offset="100%" stop-color="#E69F00"/>
+          </linearGradient>
+        </defs>
+        <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hexGrad)" stroke="#E69F00" stroke-width="1.5"/>
+        <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#E69F00" opacity="0.15"/>
+        <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff" letter-spacing="0">CN</text>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <span class="brand">CARRIER NEXUS</span>
+      <span class="sub">OPS INTELLIGENCE</span>
+    </div>
   </a>
   <div class="snl">Operations</div>
   <a href="fleet-command.html" class="sl"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h7v2H2z"/></svg>Dashboard</a>
