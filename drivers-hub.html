@@ -472,7 +472,7 @@ function renderAdminMessages(driverEmail) {
 
   thread.innerHTML = msgs.map(m => {
     const mine = m.fromRole !== 'driver';
-    const cls = mine ? 'mine+ : 'theirs';
+    const cls = mine ? 'mine' : 'theirs';
     const nameColor = mine ? 'msg-from-dispatch' : 'msg-from-driver';
     return `<div class="msg-bubble ${cls}">
       <div class="msg-meta">
@@ -538,7 +538,7 @@ function adminSendMessage() {
     msgs.push({id:uid(),threadId:selectedDriverEmail,from:session.email,fromName:session.name||session.email,fromRole:senderRole,content:text,imageData:null,timestamp:new Date().toISOString(),readBy:[session.email]});
   }
   pendingImages.forEach((img,i)=>{
-    msgs.push({id:uid(),threadId:selectedDriverEmail,from:session.email,fromName:session.name||session.email,fromRole:senderRole,content:i===0&&!text?'':i===0?text:'',imageData:img.src,timestamp:new Date().toISOString(),²eadBy:[session.email]});
+    msgs.push({id:uid(),threadId:selectedDriverEmail,from:session.email,fromName:session.name||session.email,fromRole:senderRole,content:i===0&&!text?'':i===0?text:'',imageData:img.src,timestamp:new Date().toISOString(),readBy:[session.email]});
   });
   saveMessages(msgs);
   if(input){input.value='';input.style.height='';}

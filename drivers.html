@@ -972,8 +972,8 @@ body {
   <div class="topbar">
     <div class="topbar-title">DRIVERS</div>
     <div class="status-live"><span class="status-dot"></span>LIVE</div>
-    <button class="btn btn-ghost">Export Roster</button>
-    <button class="btn btn-primary">+ Add Driver</button>
+    <button class="btn btn-ghost" onclick="exportRoster()">Export Roster</button>
+    <button class="btn btn-primary" onclick="openAddDriverModal()">+ Add Driver</button>
   </div>
 
   <div class="content">
@@ -1315,6 +1315,56 @@ renderComplianceAlert();
   }
   renderDriverCards('all');
 })();
+
+function openAddDriverModal() {
+  // Open the compliance modal pre-cleared as an "Add Driver" form
+  // or use a simple prompt flow
+  const name = prompt('Driver full name:');
+  if (!name || !name.trim()) return;
+  const email = prompt('Driver email (optional):') || '';
+  const phone = prompt('Driver phone (optional):') || '';
+  const cdl = prompt('CDL number (optional):') || '';
+  const newDriver = {
+    id: 'DRV-' + Date.now(),
+    name: name.trim(),
+    email: email.trim(),
+    phone: phone.trim(),
+    cdl,
+    status: 'active',
+    role: 'driver',
+    createdAt: new Date().toISOString()
+  };
+  NexusDB.Drivers.create(newDriver).catch(()=>{});
+  alert('Driver "' + newDriver.name + '" added. Refresh to see updated roster.');
+  location.reload();
+}
+
+function exportRoster() {
+  const cards = document.querySelectorAll('.driver-card');
+  const headers = ['Name','Status','CDL','Phone','Email'];
+  const rows = [];
+  document.querySelectorAll('[data-driver-id]').forEach(el => {
+    const name = el.querySelector('.driver-name')?.textContent || '';
+    rows.push([name,'','','','']);
+  });
+  const allDrivers = window.ALL_DRIVERS_CACHE || [];
+  const csv = [headers, ...allDrivers.map(d => [
+    d.name||'', d.status||'active', d.cdl||'', d.phone||'', d.email||''
+  ])].map(r => r.map(v => '"'+(v||'').toString().replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'driver-roster-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+function openContactModal(driverId) {
+  openDriverContact(driverId);
+}
+
+function openDriverDocs(driverId) {
+  window.location.href = 'documents.html?driver=' + encodeURIComponent(driverId);
+}
+
 </script>
 <script>
 // ─── Modal state ────────────────────────────────────────────────────────────

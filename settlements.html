@@ -415,7 +415,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
     </div>
     <div class="topbar-actions">
       <button class="btn btn-ghost" onclick="exportCSV()">⬇ Export CSV</button>
-      <button class="btn btn-orange">+ New Settlement</button>
+      <button class="btn btn-orange" onclick="openNewSettlement()">+ New Settlement</button>
     </div>
   </div>
 
@@ -907,18 +907,18 @@ function viewPDF(id){
   ${isDisp ? `<table class="info-tbl">
     <thead><tr><th>DISPATCHER</th><th>STATEMENT #</th><th>RATE</th><th>TOTAL PAY</th></tr></thead>
     <tbody><tr>
-      <td><strong>\${s.driver}</strong></td>
-      <td>\${s.id}</td>
-      <td>\${Math.round((s.dispatcher_rate||0.05)*100)}%</td>
-      <td class="net-val"><strong>\${fmtMoney(netDisplay)}</strong></td>
+      <td><strong>${s.driver}</strong></td>
+      <td>${s.id}</td>
+      <td>${Math.round((s.dispatcher_rate||0.05)*100)}%</td>
+      <td class="net-val"><strong>${fmtMoney(netDisplay)}</strong></td>
     </tr></tbody>
   </table>` : `<table class="info-tbl">
     <thead><tr><th>DRIVER</th><th>TRUCK</th><th>STATEMENT #</th><th>NET PAY</th></tr></thead>
     <tbody><tr>
-      <td><strong>\${s.driver}</strong></td>
-      <td>\${truck}</td>
-      <td>\${s.id}</td>
-      <td class="net-val"><strong>\${fmtMoney(netDisplay,true)}</strong></td>
+      <td><strong>${s.driver}</strong></td>
+      <td>${truck}</td>
+      <td>${s.id}</td>
+      <td class="net-val"><strong>${fmtMoney(netDisplay,true)}</strong></td>
     </tr></tbody>
   </table>`}
 
@@ -1016,6 +1016,52 @@ function emailSettlement(){
   populateWeeks();
   renderTable();
 })();
+
+function exportCSV() {
+  const headers = ['ID','Driver','Role','Period Start','Period End','Loads','Gross','Overhead','Permits','Expenses','Net Pay','Status'];
+  const rows = _settleCache.map(s => [
+    s.id, s.driver, s.role||'driver',
+    s.start, s.end, s.loads,
+    s.total_adds, s.overhead, s.permits, s.expenses, s.net_pay, s.status
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => '"'+(v||'').toString().replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'settlements-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+function openNewSettlement() {
+  const drivers = (window.FLEET_DRIVERS || []);
+  const name = drivers.length
+    ? drivers.map(d => d.name).join('\n— ')
+    : 'Enter driver name';
+  const driverName = prompt('Driver name:\n— ' + name) || '';
+  if (!driverName.trim()) return;
+  const today = new Date().toISOString().slice(0,10);
+  const weekAgo = new Date(Date.now()-7*864e5).toISOString().slice(0,10);
+  const newS = {
+    id: 'SET-' + Date.now(),
+    driver: driverName.trim(),
+    role: 'driver',
+    start: weekAgo,
+    end: today,
+    loads: 0,
+    total_adds: 0,
+    overhead: 0,
+    permits: 0,
+    expenses: 0,
+    net_pay: 0,
+    status: 'draft'
+  };
+  NexusDB.Settlements.create(newS).catch(()=>{
+    _settleCache.unshift(newS);
+  });
+  _settleCache.unshift(newS);
+  applyFilters();
+  renderTable();
+}
+
 </script>
 <script src="nexus-lang.js"></script>
 

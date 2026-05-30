@@ -731,8 +731,8 @@ body {
   <div class="topbar">
     <div class="topbar-title">FLEET COMMAND</div>
     <div class="status-live"><span class="status-dot"></span>LIVE</div>
-    <button class="btn btn-ghost">Export Report</button>
-    <button class="btn btn-primary">+ New Load</button>
+    <button class="btn btn-ghost" onclick="exportFleetReport()">Export Report</button>
+    <button class="btn btn-primary" onclick="window.location.href='active-loads.html'">+ New Load</button>
   </div>
 
   <!-- CONTENT -->
@@ -1114,6 +1114,24 @@ body {
 (async()=>{
   if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
 })();
+</script>
+<script>
+function exportFleetReport() {
+  const rows = document.querySelectorAll('table tbody tr');
+  const headers = ['Driver','Truck','Status','Load','Origin','Destination','Miles','ETA'];
+  const data = [];
+  rows.forEach(tr => {
+    const cells = tr.querySelectorAll('td');
+    if (cells.length >= 4) {
+      data.push(Array.from(cells).slice(0,8).map(td => td.textContent.trim()));
+    }
+  });
+  const csv = [headers,...data].map(r=>r.map(v=>'"'+v.replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='fleet-report-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
 </script>
 </body>
 </html>
