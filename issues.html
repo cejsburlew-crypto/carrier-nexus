@@ -77,6 +77,150 @@ body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;dis
 .btn-status.danger:hover{background:rgba(239,68,68,0.15);}
 .empty-state{text-align:center;padding:60px 20px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:12px;}
 </style>
+<style id="nexus-unified">
+/* ═══════════════════════════════════════════════════════════════
+   CARRIER NEXUS THEME
+   Sidebar/Topbar : Black → Pink brand gradient
+   Content area   : Wong colorblind-safe palette
+   Wong palette   : Blue #0072B2 · Sky #56B4E9 · Teal #009E73
+                    Orange #E69F00 · Vermilion #D55E00
+                    Purple #CC79A7 · Yellow #F0E442
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── SIDEBAR ── */
+.sidebar, nav.sidebar { background:#000000 !important; border-right:1px solid #1a1a1a !important; }
+.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:12px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.08) !important; }
+.sidebar-logo .logo-hex svg, .sidebar-logo > svg { width:43px !important; height:43px !important; }
+.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:18px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
+.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:11px !important; color:#e91e8c !important; letter-spacing:1px !important; display:block !important; }
+.sidebar-section { padding:12px 0 4px !important; }
+.sidebar-section-label { color:rgba(255,255,255,0.45) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
+.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:rgba(255,255,255,0.85) !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; transition:all .15s !important; text-transform:uppercase !important; letter-spacing:.5px !important; }
+.sidebar-link:hover { background:rgba(233,30,140,0.20) !important; border-left-color:#e91e8c !important; color:#ffffff !important; }
+.sidebar-link.active { background:rgba(233,30,140,0.28) !important; border-left:3px solid #e91e8c !important; color:#ffffff !important; font-weight:600 !important; }
+.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.75 !important; }
+.sidebar-link.active svg { opacity:1 !important; }
+.sidebar-user { border-top:1px solid rgba(255,255,255,0.08) !important; }
+.sidebar-user .user-name { color:rgba(255,255,255,0.85) !important; }
+.sidebar-user .user-role { color:rgba(255,255,255,0.40) !important; }
+.nav-badge { background:#e91e8c !important; color:#fff !important; }
+
+/* ── TOPBAR — black-to-pink gradient ── */
+.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; border-bottom:none !important; }
+.topbar *, .top-bar * { color:#ffffff !important; }
+.topbar-title, .top-bar-title { color:#ffffff !important; font-weight:700 !important; }
+.topbar-sub { color:rgba(255,255,255,0.72) !important; }
+.topbar .btn-ghost, .top-bar .btn-ghost { border-color:rgba(255,255,255,0.40) !important; color:#ffffff !important; background:transparent !important; }
+.topbar .btn-primary, .top-bar .btn-primary { background:#ffffff !important; color:#c2185b !important; font-weight:700 !important; border:none !important; }
+/* LIVE dot — white on pink = WCAG AA */
+.status-live { color:#ffffff !important; font-weight:700 !important; letter-spacing:1px !important; }
+.status-dot { background:#ffffff !important; box-shadow:0 0 0 3px rgba(255,255,255,0.28) !important; }
+
+/* ── MOBILE NAV ── */
+.mobile-nav { background:#000000 !important; }
+.mobile-nav-tab.active { color:#e91e8c !important; }
+
+/* ════════════════════════════════════════════════════════════
+   CONTENT AREA — Wong colorblind-safe palette
+   ════════════════════════════════════════════════════════════ */
+
+/* Page background */
+body { background:#f4f6f9 !important; }
+.main { background:#f4f6f9 !important; }
+.content { background:#f4f6f9 !important; }
+
+/* ── KPI CARDS ── */
+.kpi-card { background:#ffffff !important; border:1px solid #dde3ec !important; border-radius:8px !important; }
+.kpi-card.kpi-blue, .kpi-card[class*="blue"] { border-left:4px solid #0072B2 !important; }
+.kpi-card.kpi-green, .kpi-card[class*="green"] { border-left:4px solid #009E73 !important; }
+.kpi-card.kpi-orange, .kpi-card[class*="orange"] { border-left:4px solid #E69F00 !important; }
+.kpi-card.kpi-red, .kpi-card[class*="red"] { border-left:4px solid #D55E00 !important; }
+.kpi-card.kpi-teal, .kpi-card[class*="teal"] { border-left:4px solid #009E73 !important; }
+.kpi-label { color:#64748b !important; }
+.kpi-value { color:#1e293b !important; }
+.kpi-sub { color:#94a3b8 !important; }
+
+/* ── PANELS / CARDS ── */
+.panel, .card, .disp-card, .driver-card, .nx-card,
+.stat-chip, .kpi-card { background:#ffffff !important; border-color:#dde3ec !important; }
+.panel-header, .card-header { border-bottom-color:#dde3ec !important; }
+.panel-header h2, .panel-header h3 { color:#1e293b !important; }
+.panel-count { color:#64748b !important; font-family:'JetBrains Mono',monospace !important; font-size:11px !important; }
+
+/* ── TABLES ── */
+.nx-table thead th { background:#f1f5f9 !important; color:#475569 !important; border-bottom:2px solid #dde3ec !important; }
+.nx-table tbody tr:hover { background:#f8fafc !important; }
+.nx-table td, .nx-table th { border-bottom-color:#e9eef5 !important; color:#1e293b !important; }
+
+/* ── STATUS BADGES ── */
+.badge-blue, .badge[class*="blue"] { background:rgba(0,114,178,0.12) !important; color:#005a8e !important; border:1px solid rgba(0,114,178,0.30) !important; }
+.badge-green, .badge[class*="green"], .status-delivered { background:rgba(0,158,115,0.12) !important; color:#00614a !important; border:1px solid rgba(0,158,115,0.30) !important; }
+.badge-orange, .badge[class*="orange"], .badge-warn { background:rgba(230,159,0,0.12) !important; color:#7a5200 !important; border:1px solid rgba(230,159,0,0.35) !important; }
+.badge-red, .badge[class*="red"], .badge-danger { background:rgba(213,94,0,0.12) !important; color:#a03800 !important; border:1px solid rgba(213,94,0,0.30) !important; }
+.badge-yellow { background:rgba(240,228,66,0.20) !important; color:#5a5200 !important; border:1px solid rgba(240,228,66,0.50) !important; }
+
+/* ── DRIVER/LOAD CHIPS ── */
+.driver-chip { background:#0072B2 !important; color:#ffffff !important; border-radius:4px !important; padding:2px 7px !important; font-size:11px !important; }
+.load-id { color:#0072B2 !important; font-family:'JetBrains Mono',monospace !important; font-weight:600 !important; }
+.rate-cell { color:#009E73 !important; font-weight:700 !important; }
+
+/* ── BUTTONS in content ── */
+.btn-primary:not(.topbar .btn-primary):not(.top-bar .btn-primary) { background:#0072B2 !important; color:#ffffff !important; }
+.btn-primary:not(.topbar .btn-primary):not(.top-bar .btn-primary):hover { background:#005a8e !important; }
+.btn-danger { background:#D55E00 !important; color:#fff !important; }
+.btn-danger:hover { background:#b44500 !important; }
+.btn-teal, .btn-success { background:#009E73 !important; color:#fff !important; }
+.btn-teal:hover, .btn-success:hover { background:#007a5a !important; }
+.btn-ghost:not(.topbar .btn-ghost):not(.top-bar .btn-ghost) { border-color:#cbd5e1 !important; color:#475569 !important; }
+.btn-ghost:not(.topbar .btn-ghost):not(.top-bar .btn-ghost):hover { border-color:#0072B2 !important; color:#0072B2 !important; }
+
+/* ── FORMS ── */
+.form-input, .form-select, .form-textarea, input[type="text"], input[type="email"],
+input[type="date"], input[type="number"], select, textarea {
+  background:#ffffff !important; border-color:#cbd5e1 !important; color:#1e293b !important;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus,
+input:focus, select:focus, textarea:focus { border-color:#0072B2 !important; box-shadow:0 0 0 2px rgba(0,114,178,0.15) !important; }
+.form-label { color:#64748b !important; }
+
+/* ── MODAL ── */
+.modal, .modal-box { background:#ffffff !important; border-color:#dde3ec !important; }
+.modal-title { color:#1e293b !important; }
+.section-divider { color:#0072B2 !important; border-color:#dde3ec !important; }
+
+/* ── AVAILABILITY BADGES ── */
+.avail-available { background:rgba(0,158,115,0.12) !important; color:#00614a !important; border-color:rgba(0,158,115,0.35) !important; }
+.avail-unavailable { background:rgba(213,94,0,0.10) !important; color:#a03800 !important; border-color:rgba(213,94,0,0.30) !important; }
+.avail-date { background:rgba(230,159,0,0.12) !important; color:#7a5200 !important; border-color:rgba(230,159,0,0.35) !important; }
+
+/* ── TAGS ── */
+.tag { background:#f1f5f9 !important; border-color:#e2e8f0 !important; color:#475569 !important; }
+.tag-teal { background:rgba(0,158,115,0.10) !important; color:#007a5a !important; border-color:rgba(0,158,115,0.30) !important; }
+.tag-blue { background:rgba(0,114,178,0.10) !important; color:#005a8e !important; border-color:rgba(0,114,178,0.30) !important; }
+
+/* ── DISPATCHER HUB CARDS ── */
+.disp-card-header { background:linear-gradient(135deg,#003865 0%,#0072B2 100%) !important; }
+.driver-row { background:#f8fafc !important; border-color:#e2e8f0 !important; }
+.driver-row:hover { background:#eef2f8 !important; }
+.unassigned-panel { background:#ffffff !important; border-color:#dde3ec !important; }
+.unassigned-driver { background:#f8fafc !important; border-color:#e2e8f0 !important; }
+
+/* ── MISSING DOCS SECTION LABELS ── */
+.missing-doc-row { border-bottom-color:#e9eef5 !important; }
+.doc-load { color:#1e293b !important; font-weight:600 !important; }
+.doc-desc { color:#64748b !important; }
+.missing-doc-action { color:#0072B2 !important; font-weight:600 !important; }
+
+/* ── DRIVER/DISPATCHER CARDS on drivers.html ── */
+.card-edit-btn { background:rgba(0,114,178,0.10) !important; color:#0072B2 !important; border-color:rgba(0,114,178,0.30) !important; }
+.card-edit-btn:hover { background:#0072B2 !important; color:#fff !important; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:3px; }
+::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
+</style>
 </head>
 <body>
 
@@ -93,6 +237,27 @@ body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;dis
     <a href="drivers.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Drivers</span></a>
     <a href="permits.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Permits</span></a>
   </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Dispatch</div>
+    <a href="dispatcher-hub.html" class="sidebar-link ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      <span>Dispatcher Hub</span>
+    </a>
+    <a href="available-dispatchers.html" class="sidebar-link ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Available Dispatchers</span>
+    </a>
+    <a href="available-drivers.html" class="sidebar-link ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+      <span>Available Drivers</span>
+    </a>
+    <a href="issues.html" class="sidebar-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>Issues</span>
+    </a>
+  </div>
+
   <div class="sidebar-section">
     <div class="sidebar-section-label">Finance</div>
     <a href="invoicing.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Invoicing</span></a>
@@ -102,92 +267,6 @@ body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;dis
     <div class="sidebar-section-label">Documents</div>
     <a href="documents.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Documents</span></a>
     <a href="pods.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>PODs</span></a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Dispatch</div>
-    <a href="dispatcher-hub.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span>Dispatcher Hub</span></a>
-    <a href="available-dispatchers.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Available Dispatchers</span></a>
-    <a href="available-drivers.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg><span>Available Drivers</span></a>
-    <a href="issues.html" class="sidebar-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Issues</span></a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Contacts</div>
-    <a href="contacts.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Contacts</span></a>
-    <a href="contacts.html?tab=broker" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Brokers</span></a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Maintenance</div>
-    <a href="equipment.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Equipment</span></a>
-    <a href="maintenance.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Maintenance</span></a>
-  </div>
-</nav>
-
-<main class="main">
-  <div class="page-title">ISSUES</div>
-  <div class="page-sub">TRACK · RESOLVE · CLOSE OUT</div>
-
-  <div class="toolbar">
-    <input class="search-box" id="issue-search" placeholder="Search issues, subject, notes..." oninput="renderIssues()">
-    <button class="filter-pill active" id="pill-all"       onclick="setFilter('all',this)">All</button>
-    <button class="filter-pill red"    id="pill-open"      onclick="setFilter('open',this)">Open</button>
-    <button class="filter-pill"        id="pill-progress"  onclick="setFilter('in-progress',this)">In Progress</button>
-    <button class="filter-pill blue"   id="pill-followup"  onclick="setFilter('follow-up',this)">Follow Up</button>
-    <button class="filter-pill green"  id="pill-closed"    onclick="setFilter('closed',this)">Closed</button>
-    <button class="btn-add" onclick="openIssueModal()">+ NEW ISSUE</button>
-  </div>
-
-  <div class="issues-list" id="issues-list"></div>
-</main>
-
-<!-- NEW / EDIT ISSUE MODAL -->
-<div class="modal-overlay" id="issue-modal" onclick="if(event.target===this)closeIssueModal()">
-  <div class="modal-box">
-    <div class="modal-title" id="issue-modal-title">NEW ISSUE</div>
-    <input type="hidden" id="iss-edit-id">
-    <div class="form-row">
-      <label>SUBJECT / TITLE</label>
-      <input type="text" id="iss-subject" placeholder="Brief description of the issue">
-    </div>
-    <div class="form-row">
-      <label>SOURCE</label>
-      <select id="iss-source">
-        <option value="email">Email</option>
-        <option value="phone">Phone Call</option>
-        <option value="internal">Internal</option>
-        <option value="driver">Driver Report</option>
-        <option value="broker">Broker</option>
-        <option value="other">Other</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <label>STATUS</label>
-      <select id="iss-status">
-        <option value="open">Open</option>
-        <option value="in-progress">In Progress</option>
-        <option value="follow-up">Follow Up</option>
-        <option value="closed">Closed</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <label>ASSIGNED TO</label>
-      <input type="text" id="iss-assigned" placeholder="Name or email">
-    </div>
-    <div class="form-row">
-      <label>DESCRIPTION / NOTES</label>
-      <textarea id="iss-desc" placeholder="Full details, email content, or context..."></textarea>
-    </div>
-    <div class="form-row">
-      <label>GOOGLE DRIVE LINK (optional)</label>
-      <input type="url" id="iss-drive" placeholder="https://drive.google.com/...">
-    </div>
-    <div class="form-row">
-      <label>TAGS (comma separated)</label>
-      <input type="text" id="iss-tags" placeholder="e.g. load, billing, compliance">
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeIssueModal()">Cancel</button>
-      <button class="btn-save" onclick="saveIssue()">Save Issue</button>
-    </div>
   </div>
 </div>
 
