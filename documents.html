@@ -46,7 +46,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 
 /* MAIN */
 .main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
-.topbar{padding:20px 28px 0;display:flex;align-items:flex-start;justify-content:space-between;}
+.topbar{padding:20px 28px 0;display:flex;align-items:flex-start;justify-content:space-between;;position:sticky;top:0;z-index:50}
 .page-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;letter-spacing:0.03em;}
 .page-subtitle{font-size:13px;color:var(--text-muted);margin-top:2px;}
 .topbar-actions{display:flex;gap:10px;align-items:center;}
@@ -282,35 +282,38 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 @keyframes spin{to{transform:rotate(360deg);}}
 
 </style>
-
 <style id="nexus-unified">
-/* CARRIER NEXUS — Sidebar/Topbar brand only. Content CSS untouched. */
-.sidebar, nav.sidebar { background:#000000 !important; border-right:1px solid #1a1a1a !important; }
-.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:12px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.08) !important; }
-.sidebar-logo .logo-hex svg, .sidebar-logo > svg { width:43px !important; height:43px !important; }
-.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:18px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
-.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:11px !important; color:#e91e8c !important; letter-spacing:1px !important; display:block !important; }
-.sidebar-section { padding:12px 0 4px !important; }
-.sidebar-section-label { color:rgba(255,255,255,0.45) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
-.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:rgba(255,255,255,0.85) !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; transition:all .15s !important; text-transform:uppercase !important; letter-spacing:.5px !important; }
-.sidebar-link:hover { background:rgba(233,30,140,0.20) !important; border-left-color:#e91e8c !important; color:#ffffff !important; }
-.sidebar-link.active { background:rgba(233,30,140,0.28) !important; border-left:3px solid #e91e8c !important; color:#ffffff !important; font-weight:600 !important; }
-.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.75 !important; }
+/* ── SIDEBAR BLACK ── */
+.sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
+/* ── LOGO AREA ── */
+.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
+.sidebar-logo .logo-hex { flex-shrink:0 !important; }
+.sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
+.sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
+.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
+.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
+/* ── NAV LINKS ── */
+.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
+.sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
+.sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
+.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
 .sidebar-link.active svg { opacity:1 !important; }
-.sidebar-user { border-top:1px solid rgba(255,255,255,0.08) !important; }
-.sidebar-user .user-name { color:rgba(255,255,255,0.85) !important; }
-.sidebar-user .user-role { color:rgba(255,255,255,0.40) !important; }
-.nav-badge { background:#e91e8c !important; color:#fff !important; }
-.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; border-bottom:none !important; }
+/* ── SECTION LABELS ── */
+.sidebar-section { padding:12px 0 4px !important; }
+.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
+/* ── TOPBAR ── */
+.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
 .topbar *, .top-bar * { color:#ffffff !important; }
-.topbar-title, .top-bar-title { color:#ffffff !important; font-weight:700 !important; }
-.topbar-sub { color:rgba(255,255,255,0.72) !important; }
-.topbar .btn-ghost, .top-bar .btn-ghost { border-color:rgba(255,255,255,0.40) !important; color:#ffffff !important; background:transparent !important; }
-.topbar .btn-primary, .top-bar .btn-primary { background:#ffffff !important; color:#c2185b !important; font-weight:700 !important; border:none !important; }
-.status-live { color:#ffffff !important; font-weight:700 !important; }
-.status-dot { background:#ffffff !important; box-shadow:0 0 0 3px rgba(255,255,255,0.28) !important; }
+.topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
+/* ── MOBILE NAV ── */
 .mobile-nav { background:#000000 !important; }
 .mobile-nav-tab.active { color:#e91e8c !important; }
+/* ── SIDEBAR USER ── */
+.sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
+.sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
+.sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
+/* ── NAV BADGE ── */
+.nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
 </head>
 <body>
@@ -323,12 +326,12 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
         <defs>
           <linearGradient id="hexGrad" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stop-color="#000000"/>
-            <stop offset="60%" stop-color="#003865"/>
-            <stop offset="100%" stop-color="#E69F00"/>
+            <stop offset="60%" stop-color="#6b0000"/>
+            <stop offset="100%" stop-color="#e91e8c"/>
           </linearGradient>
         </defs>
-        <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hexGrad)" stroke="#E69F00" stroke-width="1.5"/>
-        <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#E69F00" opacity="0.15"/>
+        <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hexGrad)" stroke="#e91e8c" stroke-width="1.5"/>
+        <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#e91e8c" opacity="0.15"/>
         <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff" letter-spacing="0">CN</text>
       </svg>
     </div>
@@ -367,27 +370,6 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
     </a>
   </div>
 
-
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Dispatch</div>
-    <a href="dispatcher-hub.html" class="sidebar-link ">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-      <span>Dispatcher Hub</span>
-    </a>
-    <a href="available-dispatchers.html" class="sidebar-link ">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span>Available Dispatchers</span>
-    </a>
-    <a href="available-drivers.html" class="sidebar-link ">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
-      <span>Available Drivers</span>
-    </a>
-    <a href="issues.html" class="sidebar-link ">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <span>Issues</span>
-    </a>
-  </div>
-
   <div class="sidebar-section">
     <div class="sidebar-section-label">Finance</div>
     <a href="invoicing.html" class="sidebar-link ">
@@ -416,10 +398,91 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
     </a>
   </div>
 
+  
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Dispatch</div>
+    <a href="dispatcher-hub.html" class="sidebar-link ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      <span>Dispatcher Hub</span>
+    </a>
+    <a href="available-dispatchers.html" class="sidebar-link ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Available Dispatchers</span>
+    </a>
+    <a href="available-drivers.html" class="sidebar-link ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+      <span>Available Drivers</span>
+    </a>
+    <a href="issues.html" class="sidebar-link ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>Issues</span>
+    </a>
+  </div>
   <div class="sidebar-section">
     <div class="sidebar-section-label">Contacts</div>
-    <a href="contacts.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>All Contacts</a>
-    <a href="contacts.html?tab=broker" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 5h5v2H2zm0 4h5v2H2zm7-6h5v2H9zm0 4h5v2H9zm0 4h5v2H9z"/></svg>Brokers</a>
+    <a href="contacts.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 5a3 3 0 11-6 0 3 3 0 016 0zM2 13c0-2.761 2.686-5 6-5s6 2.239 6 5H2z"/></svg>
+      Directory
+      
+    </a>
+    <a href="contacts.html?tab=broker" class="sidebar-link ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Brokers</span>
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Maintenance</div>
+    <a href="equipment.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8 4 10l1-3.5L2 4h4.5z"/></svg>
+      Fleet &amp; Equipment
+      
+    </a>
+    <a href="maintenance.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.5 2.5l-1.4 1.4A4 4 0 106.1 9.8L4.7 11.2A6 6 0 1113.5 2.5zm-3 3A2 2 0 108 10a2 2 0 002.5-2.5z"/></svg>
+      Maintenance Log
+      
+    </a>
+    <a href="pm-schedule.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h10v2H3zm0 4h10v2H3zm0 4h6v2H3z"/></svg>
+      PM Schedule
+      
+    </a>
+    <a href="tires.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>
+      Tires
+      
+    </a>
+    <a href="fuel.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h7l3 3v10a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 6h6V6H4zm0 3h4V9H4z"/></svg>
+      Fuel
+      
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Intelligence</div>
+    <a href="nexus-ai.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v5l4.5 2.7-.7-1.2-3.8-2.3V5z"/></svg>
+      Nexus AI
+      
+    </a>
+    <a href="analysis.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h2v-4H2zm3 0h2V6H5zm3 0h2V4H8zm3 0h2V2h-2z"/></svg>
+      Analytics
+      
+    </a>
+    <a href="eld-settings.html" class="sidebar-link ">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 00-3 3c0 1.3.83 2.4 2 2.82V8H5v2h2v1.18A3 3 0 108 14.93V10h2V8H8V6.82A3.001 3.001 0 008 1zm0 12a1 1 0 110-2 1 1 0 010 2zm0-8a1 1 0 110-2 1 1 0 010 2z"/></svg>
+      ELD Integration
+      
+    </a>
+  </div>
+
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-user">
+    <div class="user-name">Jim Burlew · ADMIN</div>
+    <div class="user-role">Carrier Trucking US, LLC</div>
   </div>
 </nav>
 
@@ -435,7 +498,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
         Sync NEXUS Docs
       </button>
-      <button class="btn btn-ghost" onclick="exportDocList()">Export List</button>
+      <button class="btn btn-ghost">Export List</button>
       <button class="btn btn-orange" onclick="openAddDocModal()">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add Document
@@ -928,21 +991,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
-
-
-function exportDocList() {
-  const items = document.querySelectorAll('.doc-item, .file-row, [data-file]');
-  const rows = [['Document Name','Type','Driver','Date']];
-  items.forEach(el => {
-    const name = el.querySelector('.doc-name, .file-name')?.textContent?.trim() || el.textContent.trim().split('\n')[0];
-    rows.push([name,'','','']);
-  });
-  const csv = rows.map(r=>r.map(v=>'"'+v.replace(/"/g,'""')+'"').join(',')).join('\n');
-  const a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download='documents-'+new Date().toISOString().slice(0,10)+'.csv';
-  a.click();
-}
 
 </script>
 <script src="nexus-config.js"></script>
