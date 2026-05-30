@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settlement Review — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--black:#f1f5f9;--gunmetal:#ffffff;--gunmetal-light:#f8fafc;--steel:#f0f4f8;--steel-blue:#2e6da4;--steel-blue-light:#3d87c8;--ice:#1e3a5f;--white:#0f172a;--orange:#e8640a;--text-muted:#64748b;--text-mid:#475569;--border:#e2e8f0;--red:#ef4444;--green:#22c55e;--yellow:#fbbf24;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+/* SIDEBAR RESET */
+.sidebar{width:220px;min-height:100vh;background:#000;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;}
+.sidebar-logo{padding:16px;display:flex;align-items:center;gap:10px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.07);}
+.sidebar-logo .brand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:2px;color:#fff;}
+.sidebar-logo .sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:1px;}
+.sidebar-section{padding:12px 0 4px;}
+.sidebar-section-label{color:rgba(255,255,255,0.3);font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.5px;padding:16px 16px 6px;text-transform:uppercase;display:block;}
+.sidebar-link{display:flex;align-items:center;gap:10px;padding:8px 16px;color:#a0aec0;border-left:3px solid transparent;text-decoration:none;font-size:13px;}
+.sidebar-link:hover{background:rgba(232,100,10,0.12);border-left-color:var(--orange);color:#fff;}
+.sidebar-link.active{background:rgba(232,100,10,0.18);border-left:3px solid var(--orange);color:#fff;}
+.sidebar-link svg{width:14px;height:14px;flex-shrink:0;opacity:0.7;}
+.sidebar-link.active svg{opacity:1;}
+.sidebar-user{border-top:1px solid rgba(255,255,255,0.07);padding:14px 16px;margin-top:auto;}
+.sidebar-user .user-name{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange);}
+.sidebar-user .user-role{font-size:10px;color:rgba(255,255,255,0.35);margin-top:2px;}
+/* MAIN */
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{padding:20px 28px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;letter-spacing:0.03em;color:#0f172a;}
+.page-subtitle{font-size:13px;color:var(--text-muted);margin-top:2px;}
+.topbar-actions{display:flex;gap:10px;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
+.btn-orange{background:var(--orange);color:#fff;}
+.btn-orange:hover{background:#d05508;}
+.btn-ghost{background:transparent;color:var(--text-mid);border:1px solid var(--border);}
+.btn-ghost:hover{color:var(--white);border-color:var(--steel-blue);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:#16a34a;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-red:hover{background:#dc2626;}
+/* KPI BAR */
+.kpi-bar{display:flex;gap:16px;padding:20px 28px;flex-wrap:wrap;}
+.kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;flex:1;min-width:140px;}
+.kpi-label{font-size:11px;font-weight:700;letter-spacing:0.1em;color:#475569;text-transform:uppercase;margin-bottom:6px;}
+.kpi-value{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#0f172a;}
+.kpi-value.orange{color:var(--orange);}
+.kpi-value.green{color:var(--green);}
+.kpi-value.yellow{color:var(--yellow);}
+.kpi-value.red{color:var(--red);}
+.kpi-sub{font-size:11px;color:#64748b;margin-top:3px;}
+/* ROLE SWITCHER */
+.role-bar{padding:0 28px 16px;display:flex;gap:8px;align-items:center;}
+.role-chip{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.06em;cursor:pointer;border:2px solid transparent;transition:all 0.15s;}
+.role-chip.ops{background:rgba(46,109,164,0.1);color:#1e3a6e;border-color:rgba(46,109,164,0.3);}
+.role-chip.ops.active{background:var(--ice);color:#fff;border-color:var(--ice);}
+.role-chip.exec{background:rgba(232,100,10,0.1);color:var(--orange);border-color:rgba(232,100,10,0.3);}
+.role-chip.exec.active{background:var(--orange);color:#fff;}
+.role-label{font-size:12px;color:var(--text-muted);margin-right:4px;}
+/* TABS */
+.tab-bar{padding:0 28px 0;display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:0;}
+.tab{padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.15s;}
+.tab:hover{color:var(--white);}
+.tab.active{color:var(--orange);border-bottom-color:var(--orange);}
+.tab-badge{display:inline-flex;align-items:center;justify-content:center;background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px;margin-left:6px;}
+/* TABLE */
+.table-wrap{padding:0 28px 28px;overflow-x:auto;}
+.table{width:100%;border-collapse:collapse;font-size:13px;}
+.table thead th{padding:10px 12px;text-align:left;font-size:11px;font-weight:700;letter-spacing:0.1em;color:#fff;text-transform:uppercase;border-bottom:1px solid var(--border);background:#1e3a5f;}
+.table tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;}
+.table tbody tr:hover td{background:#f8fafc;}
+.table td{padding:10px 12px;vertical-align:middle;}
+.table td.mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:#1e3a6e;font-weight:600;}
+.table td.num{font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right;}
+.table td.num.pos{color:var(--green);}
+/* BADGES */
+.badge{display:inline-block;padding:3px 9px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
+.badge-draft{background:rgba(100,116,139,0.15);color:#475569;border:1px solid rgba(100,116,139,0.3);}
+.badge-pending-ops{background:rgba(46,109,164,0.15);color:#1e3a6e;border:1px solid rgba(46,109,164,0.3);}
+.badge-pending-exec{background:rgba(251,191,36,0.15);color:#b45309;border:1px solid rgba(251,191,36,0.3);}
+.badge-needs-revision{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
+.badge-approved{background:rgba(34,197,94,0.15);color:#15803d;border:1px solid rgba(34,197,94,0.3);}
+.badge-paid{background:rgba(34,197,94,0.25);color:#14532d;border:1px solid rgba(34,197,94,0.5);}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:12px;width:700px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#0f172a;}
+.modal-subtitle{font-size:12px;color:var(--text-muted);margin-top:2px;}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);padding:0 4px;}
+.modal-body{padding:20px 24px;}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+/* DETAIL GRID */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.detail-item{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+.detail-item-label{font-size:10px;font-weight:700;letter-spacing:0.1em;color:#64748b;text-transform:uppercase;margin-bottom:4px;}
+.detail-item-value{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:#0f172a;}
+.detail-item-value.big{font-size:20px;}
+.detail-item-value.green{color:var(--green);}
+/* REVISION HISTORY */
+.rev-section{margin-top:16px;}
+.rev-section-title{font-size:12px;font-weight:700;letter-spacing:0.08em;color:#475569;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.rev-item{border-left:3px solid var(--border);padding:10px 14px;margin-bottom:8px;background:#fafafa;border-radius:0 6px 6px 0;}
+.rev-item.approval{border-left-color:var(--green);}
+.rev-item.revision{border-left-color:var(--red);}
+.rev-item.ops-submit{border-left-color:var(--ice);}
+.rev-item.created{border-left-color:#94a3b8;}
+.rev-meta{font-size:11px;color:var(--text-muted);margin-bottom:4px;display:flex;gap:12px;}
+.rev-author{font-weight:700;color:var(--text-mid);}
+.rev-note{font-size:13px;color:#0f172a;}
+.rev-changes{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--steel-blue);margin-top:4px;}
+/* EXEC REVIEW AREA */
+.exec-panel{background:linear-gradient(135deg,#1e3a5f 0%,#0f172a 100%);border-radius:10px;padding:20px;margin-bottom:20px;color:#fff;}
+.exec-panel-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:0.05em;margin-bottom:4px;}
+.exec-panel-sub{font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:16px;}
+.exec-panel textarea{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:12px;color:#fff;font-family:'Barlow',sans-serif;font-size:13px;resize:vertical;min-height:100px;}
+.exec-panel textarea::placeholder{color:rgba(255,255,255,0.35);}
+.exec-panel textarea:focus{outline:none;border-color:rgba(255,255,255,0.5);}
+.exec-actions{display:flex;gap:10px;margin-top:12px;}
+/* OPS SUBMIT AREA */
+.ops-panel{background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:16px 20px;margin-bottom:20px;}
+.ops-panel-title{font-size:14px;font-weight:700;color:#0c4a6e;margin-bottom:4px;}
+.ops-panel-sub{font-size:12px;color:#0369a1;margin-bottom:12px;}
+/* LEARNING INSIGHT */
+.learn-panel{background:#fefce8;border:1px solid #fde68a;border-radius:10px;padding:16px 20px;margin-bottom:20px;}
+.learn-panel-title{font-size:13px;font-weight:700;color:#92400e;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.learn-panel-body{font-size:12px;color:#78350f;}
+.learn-pattern{margin-top:8px;padding:8px 12px;background:#fffbeb;border-radius:6px;border-left:3px solid #f59e0b;}
+.learn-pattern-label{font-size:10px;font-weight:700;letter-spacing:0.1em;color:#b45309;text-transform:uppercase;margin-bottom:3px;}
+.learn-pattern-text{font-size:12px;color:#92400e;}
+/* EMPTY */
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-muted);}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+.empty-title{font-size:15px;font-weight:600;color:var(--text-mid);margin-bottom:6px;}
+.empty-sub{font-size:13px;}
+/* CONTENT */
+.content{padding:20px 28px 28px;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.06em;color:#0f172a;text-transform:uppercase;margin-bottom:12px;}
+/* NOTIFY TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#0f172a;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;display:none;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+.toast.show{display:flex;}
+.toast.success{background:#15803d;}
+.toast.warning{background:#b45309;}
+@media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;}.kpi-bar{flex-wrap:wrap;}.detail-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <a href="landing.html" class="sidebar-logo">
+    <div>
+      <svg viewBox="0 0 36 36" fill="none" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hexGrad2)" stroke="#e91e8c" stroke-width="1.5"/>
+        <defs><linearGradient id="hexGrad2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#000000"/><stop offset="60%" stop-color="#6b0000"/><stop offset="100%" stop-color="#e91e8c"/></linearGradient></defs>
+        <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff">CN</text>
+      </svg>
+    </div>
+    <div>
+      <div class="brand">CARRIER NEXUS</div>
+      <div class="sub">OPS INTELLIGENCE</div>
+    </div>
+  </a>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="fleet-command.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h7v2H2z"/></svg>Dashboard</a>
+    <a href="active-loads.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V3zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V9zm4 4h6v2H5z"/></svg>Active Loads</a>
+    <a href="settlements.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h6V4H5zm0 3v1h6V7H5zm0 3v1h4v-1H5z"/></svg>Settlements</a>
+    <a href="settlement-review.html" class="sidebar-link active"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M13 2H3a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1zM8 11l-3-3 1.4-1.4L8 8.2l3.6-3.6L13 6l-5 5z"/></svg>Settlement Review<span id="sidebarBadge" style="display:none;margin-left:auto;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px;"></span></a>
+    <a href="drivers.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>Drivers</a>
+    <a href="permits.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3h3.5l-2.8 2 1 3.3L8 8 4.8 9.3l1-3.3L3 4h3.5zm0 9a3 3 0 100 6 3 3 0 000-6z"/></svg>Permits</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Finance</div>
+    <a href="invoicing.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h10a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h8V4H4zm0 3v1h8V7H4zm0 3v1h5v-1H4z"/></svg>Invoicing</a>
+    <a href="financials.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h2v-4H2zm3 0h2V6H5zm3 0h2V4H8zm3 0h2V2h-2z"/></svg>P&amp;L / Cash Flow</a>
+    <a href="tax-forms.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h6V4H5zm0 3v1h6V7H5zm0 3v1h4v-1H5z"/></svg>1099-NEC Forms</a>
+    <a href="w9.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M9 1H4a1 1 0 00-1 1v12a1 1 0 001 1h8a1 1 0 001-1V5l-4-4zm-1 4V2l4 4h-3a1 1 0 01-1-1z"/></svg>W-9 Generator</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Documents</div>
+    <a href="documents.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm5 0v4h4"/></svg>Document Vault</a>
+    <a href="emails.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12l-6 5-6-5zm0 2.5V13h12V5.5L8 10.5 2 5.5z"/></svg>Email Hub</a>
+  </div>
+  <div class="sidebar-spacer" style="flex:1;"></div>
+  <div class="sidebar-user">
+    <div class="user-name" id="roleDisplay">Jim Burlew · ADMIN</div>
+    <div class="user-role">Carrier Trucking US, LLC</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div>
+      <div class="page-title">SETTLEMENT REVIEW</div>
+      <div class="page-subtitle">Operations → Executive approval workflow · Carrier Trucking US, LLC</div>
+    </div>
+    <div class="topbar-actions">
+      <div class="role-label">Viewing as:</div>
+      <button class="role-chip ops active" id="chipOps" onclick="switchRole('ops')">Operations</button>
+      <button class="role-chip exec" id="chipExec" onclick="switchRole('exec')">Executive</button>
+    </div>
+  </div>
+
+  <!-- KPI BAR -->
+  <div class="kpi-bar">
+    <div class="kpi-card"><div class="kpi-label">Pending Ops Review</div><div class="kpi-value orange" id="kpiDraft">0</div><div class="kpi-sub">Settlements to submit</div></div>
+    <div class="kpi-card"><div class="kpi-label">Awaiting Exec</div><div class="kpi-value yellow" id="kpiPendingExec">0</div><div class="kpi-sub">In executive queue</div></div>
+    <div class="kpi-card"><div class="kpi-label">Needs Revision</div><div class="kpi-value red" id="kpiRevision">0</div><div class="kpi-sub">Returned by exec</div></div>
+    <div class="kpi-card"><div class="kpi-label">Approved</div><div class="kpi-value green" id="kpiApproved">0</div><div class="kpi-sub">Ready to pay</div></div>
+    <div class="kpi-card"><div class="kpi-label">Total Reviewed</div><div class="kpi-value" id="kpiTotal">0</div><div class="kpi-sub">All time</div></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-bar" id="tabBar">
+    <div class="tab active" data-tab="queue" onclick="switchTab('queue')">Review Queue <span class="tab-badge" id="tabBadge">0</span></div>
+    <div class="tab" data-tab="approved" onclick="switchTab('approved')">Approved</div>
+    <div class="tab" data-tab="history" onclick="switchTab('history')">Revision History</div>
+    <div class="tab" data-tab="insights" onclick="switchTab('insights')">Learning Insights</div>
+  </div>
+
+  <!-- QUEUE TAB -->
+  <div id="tabQueue" class="tab-content">
+    <div class="table-wrap" style="padding-top:16px;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Settlement ID</th>
+            <th>Driver</th>
+            <th>Role</th>
+            <th>Period</th>
+            <th>Net Pay</th>
+            <th>Status</th>
+            <th>Last Action</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="queueBody"></tbody>
+      </table>
+      <div id="queueEmpty" class="empty-state" style="display:none;">
+        <div class="empty-icon">✅</div>
+        <div class="empty-title">Queue is clear</div>
+        <div class="empty-sub">No settlements pending review in this view.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPROVED TAB -->
+  <div id="tabApproved" class="tab-content" style="display:none;">
+    <div class="table-wrap" style="padding-top:16px;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Settlement ID</th>
+            <th>Driver</th>
+            <th>Role</th>
+            <th>Period</th>
+            <th>Net Pay</th>
+            <th>Approved By</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="approvedBody"></tbody>
+      </table>
+      <div id="approvedEmpty" class="empty-state" style="display:none;">
+        <div class="empty-icon">📋</div>
+        <div class="empty-title">No approved settlements yet</div>
+        <div class="empty-sub">Approved settlements will appear here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY TAB -->
+  <div id="tabHistory" class="tab-content" style="display:none;">
+    <div class="content">
+      <div class="section-title">Full Revision Log</div>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <!-- INSIGHTS TAB -->
+  <div id="tabInsights" class="tab-content" style="display:none;">
+    <div class="content">
+      <div class="learn-panel">
+        <div class="learn-panel-title">🧠 Learning Feedback Loop</div>
+        <div class="learn-panel-body">
+          Every revision and approval is stored as structured feedback. This builds a training dataset the system uses to flag settlements that are likely to need changes — before they reach Executive Leadership. The more reviews completed, the smarter the pre-screening becomes.
+          <br><br>
+          <strong>How it works:</strong> When Exec returns a settlement with notes, the system logs what was flagged. Over time it identifies patterns — e.g., "overtime loads above $X are always questioned" or "specific drivers have consistent mileage discrepancies" — and surfaces those as warnings during Operations review.
+        </div>
+      </div>
+      <div class="section-title">Detected Patterns</div>
+      <div id="insightsList"></div>
+    </div>
+  </div>
+</main>
+
+<!-- REVIEW MODAL -->
+<div class="modal-overlay" id="reviewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle">Settlement Review</div>
+        <div class="modal-subtitle" id="modalSubtitle"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Settlement Details -->
+      <div class="detail-grid" id="detailGrid"></div>
+
+      <!-- OPS SUBMIT PANEL (ops role, draft/needs-revision status) -->
+      <div class="ops-panel" id="opsPanelSubmit" style="display:none;">
+        <div class="ops-panel-title">📤 Submit for Executive Review</div>
+        <div class="ops-panel-sub">Review the settlement details above. Add any notes before sending to Executive Leadership.</div>
+        <textarea id="opsNote" placeholder="Optional: add context or notes for executive review..." style="width:100%;border:1px solid #bae6fd;border-radius:6px;padding:10px;font-family:'Barlow',sans-serif;font-size:13px;resize:vertical;min-height:70px;background:#fff;color:#0c4a6e;"></textarea>
+      </div>
+
+      <!-- REVISION RETURNED PANEL (ops role, needs-revision) -->
+      <div id="revisionReturnedPanel" style="display:none;background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:16px 20px;margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:700;color:#991b1b;margin-bottom:6px;">⚠️ Returned for Revision</div>
+        <div style="font-size:13px;color:#7f1d1d;" id="revisionNote"></div>
+        <div style="margin-top:10px;">
+          <textarea id="opsRevisionReply" placeholder="Add your response or corrections here..." style="width:100%;border:1px solid #fca5a5;border-radius:6px;padding:10px;font-family:'Barlow',sans-serif;font-size:13px;resize:vertical;min-height:70px;background:#fff;color:#7f1d1d;"></textarea>
+        </div>
+      </div>
+
+      <!-- EXEC PANEL (exec role, pending-exec status) -->
+      <div class="exec-panel" id="execPanel" style="display:none;">
+        <div class="exec-panel-title">⚖️ Executive Review</div>
+        <div class="exec-panel-sub">Approve this settlement or return it to operations with revision notes.</div>
+        <textarea id="execNote" placeholder="Revision notes for Operations (required if returning)..."></textarea>
+        <div class="exec-actions">
+          <button class="btn btn-red" onclick="returnRevision()">↩ Return for Revision</button>
+          <button class="btn btn-green" onclick="approveSettlement()">✓ Approve Settlement</button>
+        </div>
+      </div>
+
+      <!-- APPROVED READONLY BANNER -->
+      <div id="approvedBanner" style="display:none;background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:14px 18px;margin-bottom:16px;display:none;">
+        <div style="font-size:13px;font-weight:700;color:#15803d;">✅ Approved — Ready for Payment</div>
+        <div style="font-size:12px;color:#166534;margin-top:4px;" id="approvedByLine"></div>
+      </div>
+
+      <!-- REVISION HISTORY -->
+      <div class="rev-section">
+        <div class="rev-section-title">📋 Revision History <span id="revCount" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#94a3b8;font-weight:400;letter-spacing:0;"></span></div>
+        <div id="revHistory"></div>
+      </div>
+    </div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="nexus-db.js"></script>
+<script src="nexus-config.js"></script>
+<script>
+// ─── STATE ────────────────────────────────────────────────────────────
+let currentRole = 'ops'; // 'ops' | 'exec'
+let currentTab = 'queue';
+let activeSettlement = null;
+let reviewData = {}; // loaded from localStorage
+
+const REVIEW_KEY = 'nexus_settlement_reviews';
+const INSIGHTS_KEY = 'nexus_review_insights';
+
+// ─── DATA ─────────────────────────────────────────────────────────────
+function loadReviews() {
+  try { reviewData = JSON.parse(localStorage.getItem(REVIEW_KEY) || '{}'); } catch(e) { reviewData = {}; }
+}
+function saveReviews() {
+  localStorage.setItem(REVIEW_KEY, JSON.stringify(reviewData));
+}
+function getReview(id) {
+  return reviewData[id] || { id, status: 'draft', history: [], submittedBy: null, approvedBy: null };
+}
+
+function getAllSettlements() {
+  const raw = localStorage.getItem('nexus_settlements');
+  if (raw) { try { return JSON.parse(raw); } catch(e){} }
+  // Seed data
+  return [
+    {id:'S-001',driver:'Avis Modesto',role:'driver',start:'2026-01-06',end:'2026-01-12',loads:4,total_adds:4800,overhead:320,permits:0,expenses:120,net_pay:4360,status:'pending'},
+    {id:'S-002',driver:'David Fonseca',role:'driver',start:'2026-01-06',end:'2026-01-12',loads:3,total_adds:3600,overhead:280,permits:55,expenses:80,net_pay:3185,status:'pending'},
+    {id:'S-003',driver:'Guillermo Pinera',role:'driver',start:'2026-01-06',end:'2026-01-12',loads:5,total_adds:6200,overhead:380,permits:55,expenses:200,net_pay:5565,status:'pending'},
+    {id:'S-004',driver:'Miguel Fonseca',role:'driver',start:'2026-01-13',end:'2026-01-19',loads:4,total_adds:5100,overhead:310,permits:0,expenses:150,net_pay:4640,status:'pending'},
+    {id:'S-005',driver:'Nelson',role:'driver',start:'2026-01-13',end:'2026-01-19',loads:3,total_adds:3900,overhead:270,permits:55,expenses:90,net_pay:3485,status:'pending'},
+    {id:'S-006',driver:'Amet Abreu',role:'dispatcher',start:'2026-01-06',end:'2026-01-19',loads:16,total_adds:2800,overhead:0,permits:0,expenses:0,net_pay:2800,status:'pending'},
+    {id:'S-007',driver:'Betty',role:'dispatcher',start:'2026-01-06',end:'2026-01-19',loads:12,total_adds:1900,overhead:0,permits:0,expenses:0,net_pay:1900,status:'pending'},
+  ];
+}
+
+function fmt(n){ return '$' + Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtDate(d){ return d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : ''; }
+function now(){ return new Date().toISOString(); }
+function nowLabel(){ return new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}); }
+
+// ─── KPIs ─────────────────────────────────────────────────────────────
+function refreshKPIs() {
+  const settlements = getAllSettlements();
+  let draft=0, pendExec=0, revision=0, approved=0;
+  settlements.forEach(s => {
+    const r = getReview(s.id);
+    const st = r.status;
+    if(st === 'draft' || st === 'pending_ops') draft++;
+    else if(st === 'pending_exec') pendExec++;
+    else if(st === 'needs_revision') revision++;
+    else if(st === 'approved' || st === 'paid') approved++;
+  });
+  document.getElementById('kpiDraft').textContent = draft;
+  document.getElementById('kpiPendingExec').textContent = pendExec;
+  document.getElementById('kpiRevision').textContent = revision;
+  document.getElementById('kpiApproved').textContent = approved;
+  document.getElementById('kpiTotal').textContent = settlements.length;
+
+  const queueCount = currentRole === 'ops' ? (draft + revision) : pendExec;
+  document.getElementById('tabBadge').textContent = queueCount;
+  if(queueCount > 0) document.getElementById('tabBadge').style.display='inline-flex';
+  else document.getElementById('tabBadge').style.display='none';
+
+  // Sidebar badge
+  const total = pendExec + revision;
+  const sb = document.getElementById('sidebarBadge');
+  if(total > 0){ sb.textContent = total; sb.style.display='inline-block'; }
+  else sb.style.display='none';
+}
+
+// ─── ROLE SWITCH ──────────────────────────────────────────────────────
+function switchRole(role) {
+  currentRole = role;
+  document.getElementById('chipOps').classList.toggle('active', role==='ops');
+  document.getElementById('chipExec').classList.toggle('active', role==='exec');
+  document.getElementById('roleDisplay').textContent = role==='exec' ? 'Executive Leadership' : 'Jim Burlew · ADMIN';
+  renderAll();
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.tab-content').forEach(el => el.style.display='none');
+  const map = {queue:'tabQueue',approved:'tabApproved',history:'tabHistory',insights:'tabInsights'};
+  document.getElementById(map[tab]).style.display='block';
+  if(tab==='queue') renderQueue();
+  else if(tab==='approved') renderApproved();
+  else if(tab==='history') renderHistory();
+  else if(tab==='insights') renderInsights();
+}
+
+// ─── QUEUE ────────────────────────────────────────────────────────────
+function statusLabel(st) {
+  const map = {
+    draft:'<span class="badge badge-draft">Draft</span>',
+    pending_ops:'<span class="badge badge-pending-ops">Ops Review</span>',
+    pending_exec:'<span class="badge badge-pending-exec">Awaiting Exec</span>',
+    needs_revision:'<span class="badge badge-needs-revision">Needs Revision</span>',
+    approved:'<span class="badge badge-approved">Approved</span>',
+    paid:'<span class="badge badge-paid">Paid</span>',
+  };
+  return map[st] || '<span class="badge badge-draft">Draft</span>';
+}
+
+function renderQueue() {
+  const settlements = getAllSettlements();
+  const tbody = document.getElementById('queueBody');
+  let rows = '';
+  let count = 0;
+  settlements.forEach(s => {
+    const r = getReview(s.id);
+    const st = r.status || 'draft';
+    // Ops sees: draft, pending_ops, needs_revision
+    // Exec sees: pending_exec
+    const show = currentRole === 'ops'
+      ? ['draft','pending_ops','needs_revision'].includes(st)
+      : ['pending_exec'].includes(st);
+    if(!show) return;
+    count++;
+    const lastAction = r.history && r.history.length ? r.history[r.history.length-1] : null;
+    const lastActionText = lastAction ? `${lastAction.actor} · ${fmtDate(lastAction.ts)}` : '—';
+    let actionBtns = '';
+    if(currentRole === 'ops') {
+      if(st==='draft'||st==='pending_ops') actionBtns=`<button class="btn btn-orange" style="padding:5px 12px;font-size:12px;" onclick="openModal('${s.id}');event.stopPropagation();">Review &amp; Submit</button>`;
+      else if(st==='needs_revision') actionBtns=`<button class="btn btn-red" style="padding:5px 12px;font-size:12px;" onclick="openModal('${s.id}');event.stopPropagation();">Address Revision</button>`;
+    } else {
+      if(st==='pending_exec') actionBtns=`<button class="btn btn-orange" style="padding:5px 12px;font-size:12px;" onclick="openModal('${s.id}');event.stopPropagation();">Review</button>`;
+    }
+    rows += `<tr onclick="openModal('${s.id}')">
+      <td class="mono">${s.id}</td>
+      <td>${s.driver}</td>
+      <td style="text-transform:capitalize;">${s.role}</td>
+      <td>${fmtDate(s.start)} – ${fmtDate(s.end)}</td>
+      <td class="num pos">${fmt(s.net_pay)}</td>
+      <td>${statusLabel(st)}</td>
+      <td style="font-size:11px;color:var(--text-muted);">${lastActionText}</td>
+      <td>${actionBtns}</td>
+    </tr>`;
+  });
+  tbody.innerHTML = rows;
+  document.getElementById('queueEmpty').style.display = count===0 ? 'block' : 'none';
+}
+
+function renderApproved() {
+  const settlements = getAllSettlements();
+  const tbody = document.getElementById('approvedBody');
+  let rows = ''; let count = 0;
+  settlements.forEach(s => {
+    const r = getReview(s.id);
+    if(r.status !== 'approved' && r.status !== 'paid') return;
+    count++;
+    const approvalEntry = (r.history||[]).slice().reverse().find(h=>h.action==='approved');
+    rows += `<tr onclick="openModal('${s.id}')">
+      <td class="mono">${s.id}</td>
+      <td>${s.driver}</td>
+      <td style="text-transform:capitalize;">${s.role}</td>
+      <td>${fmtDate(s.start)} – ${fmtDate(s.end)}</td>
+      <td class="num pos">${fmt(s.net_pay)}</td>
+      <td>${approvalEntry ? approvalEntry.actor : '—'}</td>
+      <td style="font-size:11px;color:var(--text-muted);">${approvalEntry ? fmtDate(approvalEntry.ts) : '—'}</td>
+      <td><button class="btn btn-ghost" style="padding:5px 12px;font-size:12px;" onclick="openModal('${s.id}');event.stopPropagation();">View</button></td>
+    </tr>`;
+  });
+  tbody.innerHTML = rows;
+  document.getElementById('approvedEmpty').style.display = count===0 ? 'block' : 'none';
+}
+
+function renderHistory() {
+  const settlements = getAllSettlements();
+  const all = [];
+  settlements.forEach(s => {
+    const r = getReview(s.id);
+    (r.history||[]).forEach(h => all.push({...h, settlementId:s.id, driver:s.driver}));
+  });
+  all.sort((a,b) => new Date(b.ts)-new Date(a.ts));
+  if(all.length===0){ document.getElementById('historyList').innerHTML='<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No history yet</div><div class="empty-sub">Review actions will appear here.</div></div>'; return; }
+  document.getElementById('historyList').innerHTML = all.map(h => {
+    const cls = h.action==='approved'?'approval':h.action==='returned'?'revision':h.action==='submitted'?'ops-submit':'created';
+    const icon = h.action==='approved'?'✅':h.action==='returned'?'↩':h.action==='submitted'?'📤':'📝';
+    return `<div class="rev-item ${cls}">
+      <div class="rev-meta"><span class="rev-author">${icon} ${h.actor}</span><span>${fmtDate(h.ts)}</span><span class="mono" style="font-size:11px;">${h.settlementId} · ${h.driver}</span></div>
+      <div class="rev-note">${h.note||''}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderInsights() {
+  const insights = getInsights();
+  const el = document.getElementById('insightsList');
+  if(insights.length===0){
+    el.innerHTML='<div class="empty-state"><div class="empty-icon">🧠</div><div class="empty-title">No patterns detected yet</div><div class="empty-sub">Complete at least 3 revision cycles to unlock pattern detection.</div></div>';
+    return;
+  }
+  el.innerHTML = insights.map(ins => `
+    <div class="learn-pattern">
+      <div class="learn-pattern-label">${ins.type}</div>
+      <div class="learn-pattern-text">${ins.message}</div>
+      <div style="font-size:10px;color:#b45309;margin-top:4px;">Seen ${ins.count} time${ins.count>1?'s':''} · Last: ${fmtDate(ins.lastSeen)}</div>
+    </div>`).join('');
+}
+
+// ─── INSIGHTS ENGINE ──────────────────────────────────────────────────
+function getInsights() {
+  try { return JSON.parse(localStorage.getItem(INSIGHTS_KEY)||'[]'); } catch(e){ return []; }
+}
+function saveInsight(note, settlementId) {
+  if(!note) return;
+  const insights = getInsights();
+  const lower = note.toLowerCase();
+  const patterns = [
+    {test:/permit/i, type:'Permit Discrepancy', msg:'Executive frequently flags permit cost inconsistencies.'},
+    {test:/mileage/i, type:'Mileage Issue', msg:'Mileage discrepancies flagged during exec review.'},
+    {test:/overtime|over time/i, type:'Overtime Review', msg:'High overtime loads require exec verification.'},
+    {test:/deduction|overhead/i, type:'Overhead Concern', msg:'Overhead/deduction amounts questioned by exec.'},
+    {test:/missing|attach|document/i, type:'Missing Documentation', msg:'Settlements missing supporting documents.'},
+    {test:/rate|pay rate/i, type:'Rate Discrepancy', msg:'Pay rate mismatches flagged by exec.'},
+  ];
+  patterns.forEach(p => {
+    if(p.test.test(lower)) {
+      const idx = insights.findIndex(i=>i.type===p.type);
+      if(idx>=0){ insights[idx].count++; insights[idx].lastSeen=now(); insights[idx].examples=(insights[idx].examples||[]).concat(note).slice(-3); }
+      else insights.push({type:p.type, message:p.msg, count:1, lastSeen:now(), examples:[note]});
+    }
+  });
+  localStorage.setItem(INSIGHTS_KEY, JSON.stringify(insights));
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────────
+function openModal(id) {
+  const settlements = getAllSettlements();
+  const s = settlements.find(x=>x.id===id);
+  if(!s) return;
+  activeSettlement = s;
+  const r = getReview(s.id);
+  const st = r.status || 'draft';
+
+  document.getElementById('modalTitle').textContent = `Settlement ${s.id} — ${s.driver}`;
+  document.getElementById('modalSubtitle').textContent = `${fmtDate(s.start)} – ${fmtDate(s.end)} · ${s.role}`;
+
+  // Detail grid
+  document.getElementById('detailGrid').innerHTML = `
+    <div class="detail-item"><div class="detail-item-label">Driver / Dispatcher</div><div class="detail-item-value">${s.driver}</div></div>
+    <div class="detail-item"><div class="detail-item-label">Role</div><div class="detail-item-value" style="text-transform:capitalize;">${s.role}</div></div>
+    <div class="detail-item"><div class="detail-item-label">Period</div><div class="detail-item-value">${fmtDate(s.start)} – ${fmtDate(s.end)}</div></div>
+    <div class="detail-item"><div class="detail-item-label">Loads</div><div class="detail-item-value">${s.loads}</div></div>
+    <div class="detail-item"><div class="detail-item-label">Gross Adds</div><div class="detail-item-value">${fmt(s.total_adds)}</div></div>
+    <div class="detail-item"><div class="detail-item-label">Overhead</div><div class="detail-item-value">${fmt(s.overhead)}</div></div>
+    <div class="detail-item"><div class="detail-item-label">Permits</div><div class="detail-item-value">${fmt(s.permits||0)}</div></div>
+    <div class="detail-item"><div class="detail-item-label">Expenses</div><div class="detail-item-value">${fmt(s.expenses||0)}</div></div>
+    <div class="detail-item" style="grid-column:1/-1;background:#f0fdf4;border-color:#86efac;"><div class="detail-item-label">Net Pay</div><div class="detail-item-value big green">${fmt(s.net_pay)}</div></div>
+    <div class="detail-item" style="grid-column:1/-1;"><div class="detail-item-label">Status</div><div>${statusLabel(st)}</div></div>
+  `;
+
+  // Panel visibility
+  document.getElementById('opsPanelSubmit').style.display = (currentRole==='ops' && (st==='draft'||st==='pending_ops')) ? 'block' : 'none';
+  document.getElementById('execPanel').style.display = (currentRole==='exec' && st==='pending_exec') ? 'block' : 'none';
+
+  const revPanel = document.getElementById('revisionReturnedPanel');
+  if(currentRole==='ops' && st==='needs_revision') {
+    revPanel.style.display='block';
+    const lastReturn = (r.history||[]).slice().reverse().find(h=>h.action==='returned');
+    document.getElementById('revisionNote').textContent = lastReturn ? lastReturn.note : '';
+    document.getElementById('opsRevisionReply').value = '';
+  } else { revPanel.style.display='none'; }
+
+  const appBanner = document.getElementById('approvedBanner');
+  if(st==='approved'||st==='paid'){
+    appBanner.style.display='block';
+    const ae = (r.history||[]).slice().reverse().find(h=>h.action==='approved');
+    document.getElementById('approvedByLine').textContent = ae ? `Approved by ${ae.actor} on ${fmtDate(ae.ts)}` : '';
+  } else { appBanner.style.display='none'; }
+
+  // Revision history
+  const hist = r.history || [];
+  document.getElementById('revCount').textContent = hist.length ? `(${hist.length} action${hist.length>1?'s':''})` : '';
+  if(hist.length===0){
+    document.getElementById('revHistory').innerHTML='<div style="font-size:12px;color:#94a3b8;font-style:italic;">No history — this is a new settlement.</div>';
+  } else {
+    document.getElementById('revHistory').innerHTML = [...hist].reverse().map(h => {
+      const cls = h.action==='approved'?'approval':h.action==='returned'?'revision':h.action==='submitted'?'ops-submit':'created';
+      const icon = h.action==='approved'?'✅':h.action==='returned'?'↩':h.action==='submitted'?'📤':'📝';
+      return `<div class="rev-item ${cls}"><div class="rev-meta"><span class="rev-author">${icon} ${h.actor}</span><span>${fmtDate(h.ts)}</span></div><div class="rev-note">${h.note||'No notes added.'}</div></div>`;
+    }).join('');
+  }
+
+  // Footer buttons
+  let footer = '';
+  if(currentRole==='ops' && (st==='draft'||st==='pending_ops')){
+    footer = `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-orange" onclick="submitToExec()">📤 Submit to Executive Review</button>`;
+  } else if(currentRole==='ops' && st==='needs_revision'){
+    footer = `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-orange" onclick="resubmitToExec()">📤 Resubmit to Exec</button>`;
+  } else {
+    footer = `<button class="btn btn-ghost" onclick="closeModal()">Close</button>`;
+  }
+  document.getElementById('modalFooter').innerHTML = footer;
+
+  document.getElementById('reviewModal').classList.add('open');
+  document.getElementById('opsNote').value = '';
+  document.getElementById('execNote').value = '';
+}
+
+function closeModal(){ document.getElementById('reviewModal').classList.remove('open'); activeSettlement=null; }
+
+// ─── WORKFLOW ACTIONS ─────────────────────────────────────────────────
+function submitToExec() {
+  if(!activeSettlement) return;
+  const note = document.getElementById('opsNote').value.trim();
+  const r = getReview(activeSettlement.id);
+  r.status = 'pending_exec';
+  r.history = r.history || [];
+  r.history.push({action:'submitted', actor:'Operations', ts:now(), note: note || 'Submitted for executive review.'});
+  reviewData[activeSettlement.id] = r;
+  saveReviews();
+  closeModal();
+  showToast('✅ Submitted to Executive Leadership', 'success');
+  renderAll();
+}
+
+function resubmitToExec() {
+  if(!activeSettlement) return;
+  const note = document.getElementById('opsRevisionReply').value.trim();
+  if(!note){ showToast('Please add revision notes before resubmitting', 'warning'); return; }
+  const r = getReview(activeSettlement.id);
+  r.status = 'pending_exec';
+  r.history = r.history || [];
+  r.history.push({action:'submitted', actor:'Operations (Revised)', ts:now(), note});
+  reviewData[activeSettlement.id] = r;
+  saveReviews();
+  closeModal();
+  showToast('✅ Resubmitted with revisions', 'success');
+  renderAll();
+}
+
+function approveSettlement() {
+  if(!activeSettlement) return;
+  const r = getReview(activeSettlement.id);
+  r.status = 'approved';
+  r.history = r.history || [];
+  r.history.push({action:'approved', actor:'Executive Leadership', ts:now(), note:'Settlement reviewed and approved for payment.'});
+  reviewData[activeSettlement.id] = r;
+  saveReviews();
+  closeModal();
+  showToast('✅ Settlement approved', 'success');
+  renderAll();
+}
+
+function returnRevision() {
+  if(!activeSettlement) return;
+  const note = document.getElementById('execNote').value.trim();
+  if(!note){ showToast('Please add revision notes before returning', 'warning'); return; }
+  const r = getReview(activeSettlement.id);
+  r.status = 'needs_revision';
+  r.history = r.history || [];
+  r.history.push({action:'returned', actor:'Executive Leadership', ts:now(), note});
+  reviewData[activeSettlement.id] = r;
+  saveReviews();
+  saveInsight(note, activeSettlement.id);
+  closeModal();
+  showToast('↩ Returned to Operations for revision', 'warning');
+  renderAll();
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast show ${type}`;
+  setTimeout(()=>{ t.className='toast'; }, 3000);
+}
+
+// ─── RENDER ALL ───────────────────────────────────────────────────────
+function renderAll() {
+  refreshKPIs();
+  if(currentTab==='queue') renderQueue();
+  else if(currentTab==='approved') renderApproved();
+  else if(currentTab==='history') renderHistory();
+  else if(currentTab==='insights') renderInsights();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadReviews();
+  renderAll();
+});
+
+// Close modal on overlay click
+document.getElementById('reviewModal').addEventListener('click', function(e){
+  if(e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
