@@ -398,6 +398,12 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
       
     </a>
   </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Contacts</div>
+    <a href="contacts.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>All Contacts</a>
+    <a href="contacts.html?tab=broker" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 5h5v2H2zm0 4h5v2H2zm7-6h5v2H9zm0 4h5v2H9zm0 4h5v2H9z"/></svg>Brokers</a>
+  </div>
 </nav>
 
 <!-- MAIN CONTENT -->
@@ -876,7 +882,6 @@ function viewPDF(id){
 
   const html = `
 <div class="stmt-doc">
-  <!-- HEADER -->
   <div class="hdr">
     <div class="hdr-left">
       <div class="hdr-logo">
@@ -896,11 +901,9 @@ function viewPDF(id){
     FEIN 33-1925253 &nbsp;·&nbsp; MC 1688495-C &nbsp;·&nbsp; US DOT 4326039 &nbsp;·&nbsp; SCAC CTUN
   </div>
 
-  <!-- TITLE -->
   <div class="stmt-title">${isDisp ? 'Statement of Account' : 'Driver Settlement Statement'}</div>
   <div class="stmt-period">${isDisp ? 'Start Date: '+fmtLong(s.start)+'&nbsp;&nbsp;End Date: '+fmtLong(s.end) : 'Pay period '+fmtLong(s.start)+' – '+fmtLong(s.end)}</div>
 
-  <!-- INFO TABLE -->
   ${isDisp ? \`<table class="info-tbl">
     <thead><tr><th>DISPATCHER</th><th>STATEMENT #</th><th>RATE</th><th>TOTAL PAY</th></tr></thead>
     <tbody><tr>
@@ -919,7 +922,6 @@ function viewPDF(id){
     </tr></tbody>
   </table>\`}
 
-  <!-- MAIN TABLE -->
   <table class="main-tbl">
     <thead><tr><th>Date</th><th>Load ID</th><th>Cargo / Description</th><th class="ra">Deductions</th><th class="ra">Additions</th></tr></thead>
     <tbody>
@@ -930,14 +932,12 @@ function viewPDF(id){
 
   ${s.expenses>0?'<div class="ops-note">Operational expenses detail on the following page.</div>':''}
 
-  <!-- SIGNATURE -->
   <div class="sig-row">
     <div class="sig-box"><div class="sig-line"></div><div class="sig-label">Driver signature</div></div>
     <div class="sig-box"><div class="sig-line"></div><div class="sig-label">Date</div></div>
     <div class="sig-box"><div class="sig-line"></div><div class="sig-label">Carrier representative</div></div>
   </div>
 
-  <!-- FOOTER -->
   <div class="stmt-footer">
     <span>WOMAN-OWNED BUSINESS</span>
     <span>${isDisp ? 'Statement of Account' : 'Driver Settlement Statement'}</span>

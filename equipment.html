@@ -694,6 +694,12 @@ body {
       
     </a>
   </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Contacts</div>
+    <a href="contacts.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>All Contacts</a>
+    <a href="contacts.html?tab=broker" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 5h5v2H2zm0 4h5v2H2zm7-6h5v2H9zm0 4h5v2H9zm0 4h5v2H9z"/></svg>Brokers</a>
+  </div>
 </nav>
 
 <!-- MAIN -->
@@ -1119,7 +1125,6 @@ async function saveUnit(e) {
     });
   }
   // Persist each changed unit
-  const editId = document.getElementById('equip-edit-id').value;
   if (editId) { await NexusDB.Fleet.update(editId, fleet.find(u=>u.id===editId)); }
   else { await NexusDB.Fleet.create(fleet[fleet.length-1]); }
   _fleetCache = fleet;
