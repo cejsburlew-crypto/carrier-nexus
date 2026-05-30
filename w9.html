@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W-9 Generator — Carrier Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="nexus-config.js"><\/script>
+<script src="nexus-db.js"><\/script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script>
+<style>
+:root{--bg:#0a0e1a;--surface:#111827;--border:#1e2d45;--accent:#2e6da4;--accent2:#1a4a7a;--white:#f0f4ff;--muted:#6b7a99;--danger:#ef4444;--success:#22c55e;--warn:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;display:flex;min-height:100vh}
+.sidebar{width:200px;min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:18px 16px;text-decoration:none;border-bottom:1px solid var(--border)}
+.sidebar-logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:var(--white);letter-spacing:1px}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-section{padding:12px 0 4px}
+.sidebar-section-label{font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);padding:0 16px 4px;text-transform:uppercase}
+.sidebar-link{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:12px;font-weight:500;color:var(--muted);text-decoration:none;transition:all .15s}
+.sidebar-link:hover{color:var(--white);background:rgba(46,109,164,.08)}
+.sidebar-link.active{color:var(--white);background:rgba(46,109,164,.15);border-right:2px solid var(--accent)}
+.sidebar-link svg{width:14px;height:14px;opacity:.7;flex-shrink:0}
+.sidebar-link.active svg{opacity:1}
+.main{flex:1;display:flex;flex-direction:column}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:1px}
+.topbar-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.content{padding:28px;flex:1}
+.controls-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px}
+.select-wrap{position:relative}
+select{background:var(--surface);border:1px solid var(--border);color:var(--white);padding:8px 32px 8px 12px;border-radius:6px;font-size:13px;font-family:'Barlow',sans-serif;appearance:none;cursor:pointer;min-width:240px}
+select:focus{outline:none;border-color:var(--accent)}
+.select-wrap::after{content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:12px}
+.btn{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;font-family:'Barlow',sans-serif;border:none;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#3a7fc4}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-outline:hover{border-color:var(--accent);color:var(--white)}
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;max-width:880px}
+.form-hdr{background:linear-gradient(135deg,var(--accent2),var(--accent));padding:18px 24px;display:flex;justify-content:space-between;align-items:flex-start}
+.form-hdr-left h2{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:1px}
+.form-hdr-left p{font-size:10px;opacity:.8;margin-top:3px}
+.form-hdr-right{font-size:10px;opacity:.75;text-align:right}
+.form-body{padding:24px}
+.field-group{margin-bottom:16px}
+.field-row{display:grid;gap:14px;margin-bottom:14px}
+.r2{grid-template-columns:1fr 1fr}
+.r3{grid-template-columns:1fr 1fr 1fr}
+label{display:block;font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--muted);text-transform:uppercase;margin-bottom:5px}
+input[type=text],input[type=date]{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--white);padding:8px 12px;border-radius:5px;font-size:13px;font-family:'Barlow',sans-serif}
+input:focus{outline:none;border-color:var(--accent)}
+.hint{font-size:10px;color:var(--muted);margin-top:3px}
+.divider{border:none;border-top:1px solid var(--border);margin:18px 0}
+.sec-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.tax-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin-bottom:8px}
+.tax-opt{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;transition:all .15s}
+.tax-opt:hover{border-color:var(--accent)}
+.tax-opt.sel{border-color:var(--accent);background:rgba(46,109,164,.12)}
+.chk{width:14px;height:14px;border:1.5px solid var(--muted);border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px}
+.tax-opt.sel .chk{background:var(--accent);border-color:var(--accent);color:#fff}
+.tin-row{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:start}
+.tin-or{padding-top:24px;color:var(--muted);font-size:12px;font-weight:700;text-align:center}
+.cert-box{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px;padding:14px}
+.cert-text{font-size:11px;color:var(--muted);line-height:1.65}
+.status-bar{padding:9px 14px;border-radius:6px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px}
+.s-ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--success)}
+.s-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--danger)}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <a href="landing.html" class="sidebar-logo">
+    <svg width="28" height="28" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#1a4a7a"/><path d="M6 22L12 10l5 8 4-5 5 7" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="sidebar-logo-text">NEXUS</span>
+  </a>
+  <div class="sidebar-nav">
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Operations</div>
+      <a href="fleet-command.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l7 4v6l-7 4L1 11V5l7-4z"/></svg>Fleet Command</a>
+      <a href="settlements.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v2H5v2h2v2h2V9h2V7H9V5z"/></svg>Settlements</a>
+      <a href="drivers.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 7a5 5 0 0110 0H3z"/></svg>Drivers</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Finance</div>
+      <a href="invoicing.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h10a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1z"/></svg>Invoicing</a>
+      <a href="expenses.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1z"/></svg>Expenses</a>
+      <a href="financials.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12l3-4 3 2 3-5 3 3" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>P&amp;L / Cash Flow</a>
+      <a href="w9.html" class="sidebar-link active"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8l3 3v10a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm8 0v3h3"/></svg>W-9 Generator</a>
+      <a href="tax-forms.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8l3 3v10a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm8 0v3h3M5 7h6M5 9h6M5 11h4"/></svg>1099 Generator</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Documents</div>
+      <a href="documents.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1z"/></svg>Document Vault</a>
+      <a href="emails.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3h14v10H1V3zm0 0l7 6 7-6"/></svg>Email Inbox</a>
+    </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">W-9 GENERATOR</div>
+      <div class="topbar-sub">IRS Form W-9 · Request for Taxpayer Identification Number and Certification</div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline" onclick="clearForm()">Clear</button>
+      <button class="btn btn-primary" onclick="exportPDF()">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1v9M4 7l4 4 4-4M2 13h12v2H2v-2z"/></svg>
+        Export PDF
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="controls-bar">
+      <div class="select-wrap">
+        <select id="drv-sel" onchange="loadDriver()">
+          <option value="">— Select Driver to Auto-Fill —</option>
+        </select>
+      </div>
+      <div id="status-msg"></div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-hdr">
+        <div class="form-hdr-left">
+          <h2>Form W-9</h2>
+          <p>Department of the Treasury · Internal Revenue Service</p>
+        </div>
+        <div class="form-hdr-right">
+          Request for Taxpayer<br>Identification Number<br>and Certification<br><br>
+          Give form to the requester.<br>Do not send to the IRS.
+        </div>
+      </div>
+      <div class="form-body">
+
+        <div class="field-row r2">
+          <div>
+            <label>1 · Name (as shown on income tax return)</label>
+            <input type="text" id="f-name" placeholder="Full legal name">
+            <div class="hint">Name is required — do not leave blank.</div>
+          </div>
+          <div>
+            <label>2 · Business name / disregarded entity name (if different)</label>
+            <input type="text" id="f-biz" placeholder="Business or DBA name">
+          </div>
+        </div>
+
+        <hr class="divider">
+        <div class="sec-title">3 · Federal Tax Classification</div>
+        <div class="tax-grid" id="tax-grid">
+          <div class="tax-opt" data-v="individual" onclick="selTax(this)"><div class="chk"></div>Individual / Sole Proprietor</div>
+          <div class="tax-opt" data-v="llc_single" onclick="selTax(this)"><div class="chk"></div>Single-Member LLC</div>
+          <div class="tax-opt" data-v="c_corp" onclick="selTax(this)"><div class="chk"></div>C Corporation</div>
+          <div class="tax-opt" data-v="s_corp" onclick="selTax(this)"><div class="chk"></div>S Corporation</div>
+          <div class="tax-opt" data-v="partnership" onclick="selTax(this)"><div class="chk"></div>Partnership</div>
+          <div class="tax-opt" data-v="trust" onclick="selTax(this)"><div class="chk"></div>Trust / Estate</div>
+          <div class="tax-opt" data-v="llc_c" onclick="selTax(this)"><div class="chk"></div>LLC (C corp tax)</div>
+          <div class="tax-opt" data-v="llc_s" onclick="selTax(this)"><div class="chk"></div>LLC (S corp tax)</div>
+          <div class="tax-opt" data-v="llc_p" onclick="selTax(this)"><div class="chk"></div>LLC (Partnership tax)</div>
+          <div class="tax-opt" data-v="other" onclick="selTax(this)"><div class="chk"></div>Other ▶</div>
+        </div>
+        <div id="other-row" style="display:none;margin-top:6px">
+          <label>Specify other type</label>
+          <input type="text" id="f-other" placeholder="Describe entity type" style="max-width:300px">
+        </div>
+
+        <hr class="divider">
+        <div class="sec-title">4 · Exemptions (entities only)</div>
+        <div class="field-row r2">
+          <div><label>Exempt payee code (if any)</label><input type="text" id="f-ep" placeholder="Leave blank if not applicable"></div>
+          <div><label>Exemption from FATCA reporting code (if any)</label><input type="text" id="f-fatca" placeholder="Leave blank if not applicable"></div>
+        </div>
+
+        <hr class="divider">
+        <div class="sec-title">5 & 6 · Address</div>
+        <div class="field-row" style="margin-bottom:12px">
+          <div><label>Street address, apt / suite no.</label><input type="text" id="f-addr" placeholder="123 Main St, Suite 100"></div>
+        </div>
+        <div class="field-row r3">
+          <div><label>City</label><input type="text" id="f-city" placeholder="City"></div>
+          <div><label>State</label><input type="text" id="f-state" placeholder="FL" maxlength="2" style="text-transform:uppercase"></div>
+          <div><label>ZIP Code</label><input type="text" id="f-zip" placeholder="33172"></div>
+        </div>
+
+        <hr class="divider">
+        <div class="sec-title">7 · Account Numbers (optional)</div>
+        <div><label>List account numbers here (optional)</label><input type="text" id="f-acct" placeholder="Optional"></div>
+
+        <hr class="divider">
+        <div class="sec-title">Part I · Taxpayer Identification Number (TIN)</div>
+        <div class="tin-row">
+          <div>
+            <label>Social Security Number (SSN) — Individuals / Sole Proprietors</label>
+            <input type="text" id="f-ssn" placeholder="___-__-____" oninput="fmtSSN(this)" maxlength="11">
+            <div class="hint">Use SSN for individuals. For a sole proprietor who is also an LLC, use EIN if you have one.</div>
+          </div>
+          <div class="tin-or">OR</div>
+          <div>
+            <label>Employer Identification Number (EIN) — Corporations / LLCs / Partnerships</label>
+            <input type="text" id="f-ein" placeholder="__-_______" oninput="fmtEIN(this)" maxlength="10">
+            <div class="hint">Use EIN for corporations, LLCs, partnerships, and trusts/estates.</div>
+          </div>
+        </div>
+
+        <hr class="divider">
+        <div class="sec-title">Part II · Certification</div>
+        <div class="cert-box">
+          <div class="cert-text">Under penalties of perjury, I certify that: (1) The number shown on this form is my correct taxpayer identification number; (2) I am not subject to backup withholding; (3) I am a U.S. citizen or other U.S. person; (4) The FATCA code(s) entered on this form (if any) indicating that I am exempt from FATCA reporting is correct.</div>
+          <div class="field-row r2" style="margin-top:14px">
+            <div><label>Signature of U.S. person ▶</label><input type="text" id="f-sig" placeholder="Full legal name (typed)"></div>
+            <div><label>Date ▶</label><input type="date" id="f-date"></div>
+          </div>
+        </div>
+
+        <hr class="divider">
+        <div class="sec-title">Requester Information (Carrier Trucking US, LLC)</div>
+        <div class="field-row r2">
+          <div><label>Requester name</label><input type="text" id="f-rname" value="Carrier Trucking US, LLC"></div>
+          <div><label>Requester address</label><input type="text" id="f-raddr" value="2001 NW 107th Ave, Suite 405, Doral, FL 33172"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const{jsPDF}=window.jspdf;
+let taxClass='';
+
+async function init(){
+  await NexusDB.init();
+  document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
+  const drivers=await NexusDB.Drivers.list();
+  const sel=document.getElementById('drv-sel');
+  drivers.forEach(d=>{
+    const o=document.createElement('option');
+    o.value=d.id;
+    const entity=(d.entity_type||'owner_operator');
+    const badge=entity.toLowerCase().includes('corp')||entity.toLowerCase().includes('llc')?'[Corp/LLC]':'[Owner Op]';
+    o.textContent=`${d.name||d.full_name||'?'} ${badge}`;
+    sel.appendChild(o);
+  });
+}
+
+async function loadDriver(){
+  const id=document.getElementById('drv-sel').value;
+  if(!id)return;
+  const drivers=await NexusDB.Drivers.list();
+  const d=drivers.find(x=>x.id===id);
+  if(!d)return;
+  set('f-name',d.name||d.full_name||'');
+  set('f-biz',d.business_name||d.company_name||'');
+  set('f-addr',d.address||d.street||'');
+  set('f-city',d.city||'');
+  set('f-state',(d.state||'').toUpperCase());
+  set('f-zip',d.zip||d.zip_code||'');
+  set('f-ssn',d.ssn||'');
+  set('f-ein',d.ein||d.fein||'');
+  set('f-sig',d.name||d.full_name||'');
+  const et=(d.entity_type||'owner_operator').toLowerCase();
+  if(et.includes('owner')||et==='individual'||et==='sole_prop')selTaxV('individual');
+  else if(et==='c_corp'||et==='corporation')selTaxV('c_corp');
+  else if(et==='s_corp')selTaxV('s_corp');
+  else if(et==='llc')selTaxV('llc_single');
+  else if(et==='partnership')selTaxV('partnership');
+  status('Driver data loaded — verify all fields before exporting.','s-ok');
+}
+
+function set(id,v){const el=document.getElementById(id);if(el)el.value=v||'';}
+function selTax(el){
+  document.querySelectorAll('.tax-opt').forEach(o=>{o.classList.remove('sel');o.querySelector('.chk').textContent='';});
+  el.classList.add('sel');el.querySelector('.chk').textContent='✓';
+  taxClass=el.dataset.v;
+  document.getElementById('other-row').style.display=taxClass==='other'?'block':'none';
+}
+function selTaxV(v){const el=document.querySelector('.tax-opt[data-v="'+v+'"]');if(el)selTax(el);}
+function fmtSSN(el){let v=el.value.replace(/\D/g,'');if(v.length>3&&v.length<=5)v=v.slice(0,3)+'-'+v.slice(3);else if(v.length>5)v=v.slice(0,3)+'-'+v.slice(3,5)+'-'+v.slice(5,9);el.value=v;}
+function fmtEIN(el){let v=el.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+'-'+v.slice(2,9);el.value=v;}
+function status(msg,cls){document.getElementById('status-msg').innerHTML=msg?`<div class="status-bar ${cls}">${msg}</div>`:''}
+function clearForm(){
+  document.getElementById('drv-sel').value='';
+  document.querySelectorAll('input[type=text],input[type=date]').forEach(i=>{
+    if(i.id==='f-rname')i.value='Carrier Trucking US, LLC';
+    else if(i.id==='f-raddr')i.value='2001 NW 107th Ave, Suite 405, Doral, FL 33172';
+    else i.value='';
+  });
+  document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
+  document.querySelectorAll('.tax-opt').forEach(o=>{o.classList.remove('sel');o.querySelector('.chk').textContent='';});
+  taxClass='';
+  status('','');
+}
+
+function exportPDF(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){status('Enter a name before exporting.','s-err');return;}
+  const doc=new jsPDF({orientation:'portrait',unit:'pt',format:'letter'});
+  const W=612,ml=40,mr=572,lw=mr-ml;
+  let y=40;
+
+  // helpers
+  const box=(x,yy,w,h)=>doc.rect(x,yy,w,h);
+  const fill=(x,yy,w,h,r,g,b)=>{doc.setFillColor(r,g,b);doc.rect(x,yy,w,h,'F');};
+  const t=(s,x,yy,a)=>doc.text(s||'',x,yy,a||{});
+  const lbl=(s,x,yy)=>{doc.setFontSize(6.5);doc.setFont('helvetica','normal');doc.setTextColor(100,100,100);t(s,x,yy);};
+  const val=(s,x,yy)=>{doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(0,0,0);t(s,x,yy);};
+  const hdr=(s,x,yy)=>{doc.setFontSize(8.5);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);t(s,x,yy);};
+
+  // Header bar
+  fill(ml,y,lw,38,26,74,164);
+  doc.setFontSize(16);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+  t('Form W-9',ml+6,y+14);
+  doc.setFontSize(7);doc.setFont('helvetica','normal');
+  t('(Rev. March 2024)',ml+6,y+24);
+  doc.setFontSize(9);doc.setFont('helvetica','bold');
+  t('Request for Taxpayer Identification Number and Certification',ml+110,y+13);
+  doc.setFontSize(7);doc.setFont('helvetica','normal');
+  t('Department of the Treasury · Internal Revenue Service  |  Give form to the requester. Do not send to the IRS.',ml+110,y+24);
+  doc.setTextColor(255,220,80);
+  t('► www.irs.gov/FormW9',ml+110,y+33);
+  y+=44;
+
+  const rowH=26;
+  // Line 1 Name
+  box(ml,y,lw,rowH); lbl('1  Name (as shown on your income tax return). Name is required on this line; do not leave this line blank.',ml+3,y+8); val(document.getElementById('f-name').value,ml+3,y+20); y+=rowH;
+  // Line 2 Business
+  box(ml,y,lw,rowH); lbl('2  Business name/disregarded entity name, if different from above',ml+3,y+8); val(document.getElementById('f-biz').value,ml+3,y+20); y+=rowH;
+
+  // Line 3+4
+  const tcH=74;
+  const tcW=lw*0.62;
+  box(ml,y,tcW,tcH); box(ml+tcW,y,lw-tcW,tcH);
+  lbl('3  Check appropriate box for federal tax classification:',ml+3,y+9);
+  const taxLabels={individual:'Individual/sole proprietor',llc_single:'Single-member LLC',c_corp:'C Corporation',s_corp:'S Corporation',partnership:'Partnership',trust:'Trust/estate',llc_c:'LLC taxed as C corp',llc_s:'LLC taxed as S corp',llc_p:'LLC taxed as partnership',other:'Other'};
+  let cx=ml+4,cy=y+22;let col=0;
+  Object.entries(taxLabels).forEach(([v,lbl2],i)=>{
+    if(i===5){cx=ml+4;cy=y+50;}
+    const chk=taxClass===v;
+    doc.setFontSize(7);doc.setTextColor(0,0,0);
+    if(chk){fill(cx,cy-7,8,8,26,74,164);doc.setTextColor(255,255,255);t('✓',cx+1,cy);doc.setTextColor(0,0,0);}else{box(cx,cy-7,8,8);}
+    t(lbl2,cx+11,cy);
+    cx+=i<4?105:105;
+  });
+  // Exemptions
+  const ex=ml+tcW+4;
+  lbl('4  Exemptions (codes apply only to certain entities):',ex,y+9);
+  lbl('Exempt payee code (if any)',ex,y+22); box(ex,y+24,lw-tcW-8,14); val(document.getElementById('f-ep').value,ex+3,y+34);
+  lbl('Exemption from FATCA reporting code (if any)',ex,y+44); box(ex,y+46,lw-tcW-8,14); val(document.getElementById('f-fatca').value,ex+3,y+56);
+  y+=tcH;
+
+  // Address
+  box(ml,y,lw,rowH); lbl('5  Street address (number, street, and apt. or suite no.)',ml+3,y+8); val(document.getElementById('f-addr').value,ml+3,y+20); y+=rowH;
+  const cw=lw*0.5,sw=lw*0.15,zw=lw*0.35;
+  box(ml,y,cw,rowH); box(ml+cw,y,sw,rowH); box(ml+cw+sw,y,zw,rowH);
+  lbl('6  City',ml+3,y+8); val(document.getElementById('f-city').value,ml+3,y+20);
+  lbl('State',ml+cw+3,y+8); val(document.getElementById('f-state').value,ml+cw+3,y+20);
+  lbl('ZIP code',ml+cw+sw+3,y+8); val(document.getElementById('f-zip').value,ml+cw+sw+3,y+20);
+  y+=rowH;
+  box(ml,y,lw,rowH); lbl('7  Account number(s) (optional)',ml+3,y+8); val(document.getElementById('f-acct').value,ml+3,y+20); y+=rowH+8;
+
+  // Part I TIN
+  fill(ml,y,lw,14,220,230,255); doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(0,0,80); t('Part I    Taxpayer Identification Number (TIN)',ml+4,y+10); y+=14;
+  const tinH=56;
+  box(ml,y,lw/2,tinH); box(ml+lw/2,y,lw/2,tinH);
+  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(0,0,0); t('Social security number',ml+3,y+11);
+  doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(80,80,80);
+  t('For individuals. For resident alien, sole proprietor, or disregarded',ml+3,y+21);
+  t('entity — see instructions.',ml+3,y+29);
+  const ssn=document.getElementById('f-ssn').value.replace(/\D/g,'');
+  let bx=ml+4;
+  [[3,'-'],[2,'-'],[4,'']].forEach(([n,sep])=>{
+    for(let k=0;k<n;k++){box(bx,y+36,13,13);if(ssn.length>bx-ml-4){doc.setFontSize(9);doc.setTextColor(0,0,0);t(ssn[bx-ml-4]||'',bx+3,y+45);}bx+=14;}
+    if(sep){doc.setFontSize(9);doc.setTextColor(60,60,60);t(sep,bx+1,y+45);bx+=10;}
+  });
+
+  const ex2=ml+lw/2+3;
+  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(0,0,0); t('Employer identification number',ex2,y+11);
+  doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(80,80,80);
+  t('For corporations, LLCs, partnerships, and estates/trusts.',ex2,y+21);
+  const ein=document.getElementById('f-ein').value.replace(/\D/g,'');
+  let ebx=ex2;
+  [[2,'-'],[7,'']].forEach(([n,sep])=>{
+    for(let k=0;k<n;k++){box(ebx,y+36,13,13);if(ein[ebx-ex2]){doc.setFontSize(9);doc.setTextColor(0,0,0);t(ein[ebx-ex2]||'',ebx+3,y+45);}ebx+=14;}
+    if(sep){doc.setFontSize(9);doc.setTextColor(60,60,60);t(sep,ebx+1,y+45);ebx+=10;}
+  });
+  y+=tinH+8;
+
+  // Part II Certification
+  fill(ml,y,lw,14,220,230,255); doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(0,0,80); t('Part II    Certification',ml+4,y+10); y+=14;
+  box(ml,y,lw,64);
+  doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(0,0,0);
+  ['Under penalties of perjury, I certify that:',
+   '1. The number shown on this form is my correct taxpayer identification number (or I am waiting for a number to be issued to me); and',
+   '2. I am not subject to backup withholding because: (a) I am exempt, or (b) I have not been notified by the IRS that I am subject to backup withholding as a result of a',
+   '   failure to report all interest or dividends, or (c) the IRS has notified me that I am no longer subject to backup withholding; and',
+   '3. I am a U.S. citizen or other U.S. person; and',
+   '4. The FATCA code(s) on this form (if any) indicating I am exempt from FATCA reporting is correct.'
+  ].forEach((l,i)=>t(l,ml+4,y+11+i*8.5));
+  y+=64;
+  box(ml,y,lw*0.65,24); box(ml+lw*0.65,y,lw*0.35,24);
+  lbl('Signature of U.S. person ►',ml+3,y+8); val(document.getElementById('f-sig').value,ml+3,y+20);
+  lbl('Date ►',ml+lw*0.65+3,y+8); val(document.getElementById('f-date').value,ml+lw*0.65+3,y+20);
+  y+=32;
+
+  doc.setFontSize(7);doc.setTextColor(140,140,140);
+  t('Cat. No. 10231X   Form W-9 (Rev. 3-2024)   Generated by Carrier Nexus Platform',ml,y);
+
+  const safe=name.replace(/[^a-zA-Z0-9]/g,'_');
+  doc.save('W9_'+safe+'_'+new Date().toISOString().slice(0,10)+'.pdf');
+  status('PDF exported: W9_'+safe+'.pdf','s-ok');
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>

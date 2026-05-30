@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1099-NEC Generator - Carrier Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--bg:#0a0e1a;--surface:#111827;--border:#1e2d45;--accent:#2e6da4;--accent2:#1a4a7a;--white:#f0f4ff;--muted:#6b7a99;--danger:#ef4444;--success:#22c55e;--warn:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--white);font-family:Barlow,sans-serif;display:flex;min-height:100vh}
+.sidebar{width:200px;min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:18px 16px;text-decoration:none;border-bottom:1px solid var(--border)}
+.sidebar-logo-text{font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:18px;color:var(--white);letter-spacing:1px}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-section{padding:12px 0 4px}
+.sidebar-section-label{font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);padding:0 16px 4px;text-transform:uppercase}
+.sidebar-link{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:12px;font-weight:500;color:var(--muted);text-decoration:none;transition:all .15s}
+.sidebar-link:hover{color:var(--white);background:rgba(46,109,164,.08)}
+.sidebar-link.active{color:var(--white);background:rgba(46,109,164,.15);border-right:2px solid var(--accent)}
+.sidebar-link svg{width:14px;height:14px;opacity:.7;flex-shrink:0}
+.main{flex:1;display:flex;flex-direction:column}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-family:Barlow Condensed,sans-serif;font-size:22px;font-weight:800;letter-spacing:1px}
+.topbar-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.content{padding:28px;flex:1}
+.controls-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px}
+.select-wrap{position:relative}
+select{background:var(--surface);border:1px solid var(--border);color:var(--white);padding:8px 32px 8px 12px;border-radius:6px;font-size:13px;font-family:Barlow,sans-serif;appearance:none;cursor:pointer;min-width:180px}
+select:focus{outline:none;border-color:var(--accent)}
+.select-wrap::after{content:"chevron";font-size:10px;position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.btn{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;font-family:Barlow,sans-serif;border:none;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#3a7fc4}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-outline:hover{border-color:var(--accent);color:var(--white)}
+.btn-success{background:var(--success);color:#fff}
+.driver-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;max-width:900px;margin-bottom:24px}
+.driver-table th{background:var(--accent2);color:var(--white);padding:10px 14px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-align:left}
+.driver-table td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+.driver-table tr:last-child td{border-bottom:none}
+.driver-table tr:hover td{background:rgba(46,109,164,.06)}
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.5px}
+.badge-oo{background:rgba(46,109,164,.15);color:#60a5fa;border:1px solid rgba(46,109,164,.3)}
+.badge-corp{background:rgba(251,191,36,.12);color:var(--warn);border:1px solid rgba(251,191,36,.3)}
+.badge-exempt{background:rgba(100,100,100,.15);color:var(--muted);border:1px solid rgba(100,100,100,.3)}
+.amount{font-family:JetBrains Mono,monospace;font-size:13px}
+.amount.high{color:var(--success)}
+.amount.low{color:var(--muted)}
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;max-width:700px;margin-top:20px}
+.form-hdr{background:linear-gradient(135deg,var(--accent2),var(--accent));padding:16px 22px}
+.form-hdr h2{font-family:Barlow Condensed,sans-serif;font-size:20px;font-weight:800;letter-spacing:1px}
+.form-hdr p{font-size:10px;opacity:.8;margin-top:2px}
+.form-body{padding:22px}
+.field-row{display:grid;gap:12px;margin-bottom:14px}
+.r2{grid-template-columns:1fr 1fr}
+.r3{grid-template-columns:1fr 1fr 1fr}
+label{display:block;font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--muted);text-transform:uppercase;margin-bottom:5px}
+input[type=text],input[type=number]{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--white);padding:8px 12px;border-radius:5px;font-size:13px;font-family:Barlow,sans-serif}
+input:focus{outline:none;border-color:var(--accent)}
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+.sec-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.info-note{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:6px;padding:12px;font-size:12px;color:var(--warn);margin-bottom:16px}
+.status-bar{padding:9px 14px;border-radius:6px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px}
+.s-ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--success)}
+.s-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--danger)}
+.s-warn{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:var(--warn)}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;max-width:900px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px}
+.stat-val{font-size:22px;font-weight:800;font-family:Barlow Condensed,sans-serif;color:var(--white)}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:.5px;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <a href="landing.html" class="sidebar-logo">
+    <svg width="28" height="28" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#1a4a7a"/><path d="M6 22L12 10l5 8 4-5 5 7" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="sidebar-logo-text">NEXUS</span>
+  </a>
+  <div class="sidebar-nav">
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Operations</div>
+      <a href="fleet-command.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l7 4v6l-7 4L1 11V5l7-4z"/></svg>Fleet Command</a>
+      <a href="settlements.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v2H5v2h2v2h2V9h2V7H9V5z"/></svg>Settlements</a>
+      <a href="drivers.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 7a5 5 0 0110 0H3z"/></svg>Drivers</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Finance</div>
+      <a href="invoicing.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h10a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1z"/></svg>Invoicing</a>
+      <a href="financials.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12l3-4 3 2 3-5 3 3" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>P&amp;L / Cash Flow</a>
+      <a href="w9.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8l3 3v10a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1z"/></svg>W-9 Generator</a>
+      <a href="tax-forms.html" class="sidebar-link active"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8l3 3v10a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm8 0v3h3M5 7h6M5 9h6M5 11h4"/></svg>1099 Generator</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Documents</div>
+      <a href="documents.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1z"/></svg>Document Vault</a>
+      <a href="emails.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3h14v10H1V3zm0 0l7 6 7-6"/></svg>Email Inbox</a>
+    </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">1099-NEC GENERATOR</div>
+      <div class="topbar-sub">IRS Form 1099-NEC · Nonemployee Compensation · Per driver, per tax year</div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <div class="select-wrap"><select id="yr-sel" onchange="buildTable()"></select></div>
+      <button class="btn btn-primary" id="btn-all" onclick="exportAll()">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1v9M4 7l4 4 4-4M2 13h12v2H2v-2z"/></svg>Export All PDFs
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="info-note">
+      <strong>IRS Rule:</strong> Owner operators (sole proprietors, individuals) who received   or more must receive a 1099-NEC.
+      Corporations (C-Corp, S-Corp, LLC taxed as corp) are generally <strong>exempt</strong> from 1099-NEC filing.
+      1099s are based on total settlements paid in the calendar year.
+    </div>
+
+    <div class="summary-grid" id="summary-grid">
+      <div class="stat-card"><div class="stat-val" id="s-total">--</div><div class="stat-lbl">Total Recipients</div></div>
+      <div class="stat-card"><div class="stat-val" id="s-required">--</div><div class="stat-lbl">1099s Required</div></div>
+      <div class="stat-card"><div class="stat-val" id="s-exempt">--</div><div class="stat-lbl">Corp Exempt</div></div>
+      <div class="stat-card"><div class="stat-val" id="s-paid">--</div><div class="stat-lbl">Total Compensation</div></div>
+    </div>
+
+    <table class="driver-table" id="driver-table">
+      <thead>
+        <tr>
+          <th>Driver / Contractor</th>
+          <th>Entity Type</th>
+          <th>Total Compensation</th>
+          <th>1099 Required</th>
+          <th>TIN on File</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+
+    <!-- Individual 1099 preview / edit form -->
+    <div class="form-card" id="form-panel" style="display:none">
+      <div class="form-hdr">
+        <h2>1099-NEC &nbsp;·&nbsp; Nonemployee Compensation</h2>
+        <p>Tax Year <span id="fp-year"></span> &nbsp;|&nbsp; Department of the Treasury · Internal Revenue Service</p>
+      </div>
+      <div class="form-body">
+        <div class="sec-title">PAYER Information (Carrier Trucking US, LLC)</div>
+        <div class="field-row r2">
+          <div><label>Payer Name</label><input type="text" id="p-name" value="Carrier Trucking US, LLC"></div>
+          <div><label>Payer Street Address</label><input type="text" id="p-addr" value="2001 NW 107th Ave, Suite 405"></div>
+        </div>
+        <div class="field-row r3">
+          <div><label>City</label><input type="text" id="p-city" value="Doral"></div>
+          <div><label>State</label><input type="text" id="p-state" value="FL"></div>
+          <div><label>ZIP</label><input type="text" id="p-zip" value="33172"></div>
+        </div>
+        <div class="field-row r2">
+          <div><label>Payer TIN (FEIN)</label><input type="text" id="p-tin" value="33-1925253"></div>
+          <div><label>Phone</label><input type="text" id="p-phone" value="(346) 471-8512"></div>
+        </div>
+
+        <hr class="divider">
+        <div class="sec-title">RECIPIENT Information</div>
+        <div class="field-row r2">
+          <div><label>Recipient Name</label><input type="text" id="r-name"></div>
+          <div><label>Business Name / DBA (if different)</label><input type="text" id="r-biz"></div>
+        </div>
+        <div class="field-row">
+          <div><label>Street Address</label><input type="text" id="r-addr"></div>
+        </div>
+        <div class="field-row r3">
+          <div><label>City</label><input type="text" id="r-city"></div>
+          <div><label>State</label><input type="text" id="r-state"></div>
+          <div><label>ZIP</label><input type="text" id="r-zip"></div>
+        </div>
+        <div class="field-row r2">
+          <div><label>Recipient TIN (SSN or EIN)</label><input type="text" id="r-tin"></div>
+          <div><label>Account Number (optional)</label><input type="text" id="r-acct"></div>
+        </div>
+
+        <hr class="divider">
+        <div class="sec-title">Box Amounts</div>
+        <div class="field-row r3">
+          <div><label>Box 1 · Nonemployee Compensation (\$)</label><input type="number" id="b1" step="0.01" placeholder="0.00"></div>
+          <div><label>Box 4 · Federal Income Tax Withheld (\$)</label><input type="number" id="b4" step="0.01" value="0"></div>
+          <div><label>Box 5 · State Tax Withheld (\$)</label><input type="number" id="b5" step="0.01" value="0"></div>
+        </div>
+        <div class="field-row r2">
+          <div><label>Box 6 · State / Payer State No.</label><input type="text" id="b6" value="FL"></div>
+          <div><label>Box 7 · State Income (\$)</label><input type="number" id="b7" step="0.01" value="0"></div>
+        </div>
+
+        <hr class="divider">
+        <div style="display:flex;gap:10px;justify-content:flex-end">
+          <button class="btn btn-outline" onclick="document.getElementById('form-panel').style.display='none'">Cancel</button>
+          <button class="btn btn-primary" onclick="exportSingle()">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1v9M4 7l4 4 4-4M2 13h12v2H2v-2z"/></svg>
+            Export PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const{jsPDF}=window.jspdf;
+let allData=[];
+
+const SEED_SETTLEMENTS=[
+  {id:'AMT-2026-11',driver:'Amet Abreu',role:'dispatcher',start:'2026-05-12',total_adds:47400,net_pay:2370,status:'draft'},
+  {id:'AMT-2026-10',driver:'Amet Abreu',role:'dispatcher',start:'2026-01-20',total_adds:29600,net_pay:1480,status:'draft'},
+  {id:'AMT-2025-07',driver:'Amet Abreu',role:'dispatcher',start:'2025-12-23',total_adds:14750,net_pay:737.5,status:'approved'},
+  {id:'AVI-2025-03',driver:'Avis Modesto',role:'driver',start:'2025-12-16',total_adds:8000,net_pay:4000,status:'approved'},
+  {id:'AVI-2025-02',driver:'Avis Modesto',role:'driver',start:'2025-11-10',total_adds:51700,net_pay:25850,status:'approved'},
+  {id:'DAV-2026-09',driver:'David Fonseca',role:'driver',start:'2026-01-20',total_adds:7600,net_pay:3800,status:'approved'},
+  {id:'GUI-2026-08',driver:'Guillermo Pinera',role:'driver',start:'2026-01-13',total_adds:8500,net_pay:4250,status:'approved'},
+  {id:'GUI-2025-06',driver:'Guillermo Pinera',role:'driver',start:'2025-12-09',total_adds:17000,net_pay:8500,status:'approved'},
+  {id:'MIG-2025-05',driver:'Miguel Fonseca',role:'driver',start:'2025-12-03',total_adds:17000,net_pay:8500,status:'approved'},
+  {id:'NEL-2025-05',driver:'Nelson',role:'driver',start:'2025-12-09',total_adds:12650,net_pay:6325,status:'approved'},
+];
+
+async function init(){
+  await NexusDB.init();
+  // Populate year selector
+  const yrSel=document.getElementById('yr-sel');
+  const curYear=new Date().getFullYear();
+  for(let y=curYear;y>=curYear-4;y--){
+    const o=document.createElement('option');
+    o.value=y;o.textContent='Tax Year '+y;
+    if(y===curYear-1)o.selected=true;
+    yrSel.appendChild(o);
+  }
+  await buildTable();
+}
+
+async function buildTable(){
+  const year=parseInt(document.getElementById('yr-sel').value);
+  let settlements=[];
+  try{settlements=await NexusDB.Settlements.list();}catch(e){}
+  if(!settlements.length)settlements=SEED_SETTLEMENTS;
+  let drivers=[];
+  try{drivers=await NexusDB.Drivers.list();}catch(e){}
+
+  // Group settlements by driver for the selected year
+  const byDriver={};
+  settlements.forEach(s=>{
+    const d=new Date(s.start||s.created_at||'');
+    if(isNaN(d)||d.getFullYear()!==year)return;
+    const key=s.driver||s.driver_name||'Unknown';
+    if(!byDriver[key])byDriver[key]={name:key,total:0,settlements:[]};
+    byDriver[key].total+=(s.net_pay||s.total_adds||0);
+    byDriver[key].settlements.push(s);
+  });
+
+  // Merge driver profile data
+  allData=Object.values(byDriver).map(d=>{
+    const profile=drivers.find(p=>(p.name||p.full_name||'').toLowerCase()===d.name.toLowerCase())||{};
+    const et=(profile.entity_type||'owner_operator').toLowerCase();
+    const isCorp=et.includes('corp')||et.includes('llc_c')||et.includes('llc_s');
+    return{
+      name:d.name,total:d.total,
+      entityType:profile.entity_type||'owner_operator',
+      isCorp,
+      requires1099:!isCorp&&d.total>=600,
+      tin:profile.ssn||profile.ein||profile.fein||'',
+      address:profile.address||'',city:profile.city||'',
+      state:profile.state||'',zip:profile.zip||'',
+      biz:profile.business_name||'',
+      profile
+    };
+  });
+
+  // Stats
+  document.getElementById('s-total').textContent=allData.length;
+  document.getElementById('s-required').textContent=allData.filter(d=>d.requires1099).length;
+  document.getElementById('s-exempt').textContent=allData.filter(d=>d.isCorp).length;
+  const totalPaid=allData.reduce((a,d)=>a+d.total,0);
+  document.getElementById('s-paid').textContent='\$'+totalPaid.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+
+  const tbody=document.getElementById('table-body');
+  tbody.innerHTML='';
+  allData.sort((a,b)=>b.total-a.total).forEach((d,i)=>{
+    const tr=document.createElement('tr');
+    const reqBadge=d.requires1099?'<span class="badge badge-oo">REQUIRED</span>':d.isCorp?'<span class="badge badge-corp">CORP EXEMPT</span>':'<span class="badge badge-exempt">UNDER  </span>';
+    const tinBadge=d.tin?'<span style="color:#22c55e;font-size:11px">✓ On File</span>':'<span style="color:#ef4444;font-size:11px">✗ Missing</span>';
+    tr.innerHTML=;
+    tbody.appendChild(tr);
+  });
+}
+
+function openForm(i){
+  const d=allData[i];
+  const year=document.getElementById('yr-sel').value;
+  document.getElementById('fp-year').textContent=year;
+  document.getElementById('r-name').value=d.name;
+  document.getElementById('r-biz').value=d.biz||'';
+  document.getElementById('r-addr').value=d.address||'';
+  document.getElementById('r-city').value=d.city||'';
+  document.getElementById('r-state').value=(d.state||'').toUpperCase();
+  document.getElementById('r-zip').value=d.zip||'';
+  document.getElementById('r-tin').value=d.tin||'';
+  document.getElementById('b1').value=d.total.toFixed(2);
+  document.getElementById('form-panel').style.display='block';
+  document.getElementById('form-panel').scrollIntoView({behavior:'smooth'});
+}
+
+function build1099PDF(data){
+  const doc=new jsPDF({orientation:'landscape',unit:'pt',format:[612,396]});
+  const W=612,H=396;
+  const fill=(x,y,w,h,r,g,b)=>{doc.setFillColor(r,g,b);doc.rect(x,y,w,h,'F');};
+  const box=(x,y,w,h)=>doc.rect(x,y,w,h);
+  const t=(s,x,y,opts)=>doc.text(s||'',x,y,opts||{});
+  const lbl=(s,x,y)=>{doc.setFontSize(6);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);t(s,x,y);};
+  const val=(s,x,y)=>{doc.setFontSize(9.5);doc.setFont('helvetica','normal');doc.setTextColor(0,0,0);t(s,x,y);};
+
+  // Outer border
+  box(10,10,W-20,H-20);
+
+  // Header
+  fill(10,10,W-20,28,26,74,164);
+  doc.setFontSize(14);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+  t('Form 1099-NEC',18,28);
+  doc.setFontSize(8);doc.setFont('helvetica','normal');
+  t('Nonemployee Compensation',18,38);
+  doc.setFontSize(9);doc.setFont('helvetica','bold');
+  t('Tax Year '+data.year,W-80,26,{align:'right'});
+  doc.setFontSize(7);doc.setFont('helvetica','normal');
+  t('Department of the Treasury · Internal Revenue Service',W-10,38,{align:'right'});
+
+  let y=44;
+  // COPY A notice
+  fill(W-100,10,90,34,220,40,40);
+  doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+  t('COPY B',W-56,26,{align:'center'});
+  doc.setFontSize(6);doc.setFont('helvetica','normal');
+  t('For Recipient',W-56,36,{align:'center'});
+
+  // PAYER box
+  box(10,y,280,60);
+  lbl('PAYER'S name, street address, city or town, state or province, country, ZIP or foreign postal code, and telephone no.',13,y+8);
+  val(data.payer.name,13,y+19);
+  val(data.payer.addr+', '+data.payer.city+', '+data.payer.state+' '+data.payer.zip,13,y+29);
+  val('Tel: '+data.payer.phone,13,y+39);
+  lbl('PAYER'S TIN',13,y+52); val(data.payer.tin,60,y+52);
+
+  // RECIPIENT box
+  box(10,y+60,280,60);
+  lbl('RECIPIENT'S name',13,y+68);
+  val(data.recipient.name,13,y+78);
+  if(data.recipient.biz){lbl('Business name',13,y+88);val(data.recipient.biz,13,y+98);}
+  lbl('Street address (including apt. no.)',13,y+108);
+  val(data.recipient.addr||'',13,y+116);
+
+  box(10,y+120,280,22);
+  lbl('City or town, state or province, country, and ZIP or foreign postal code',13,y+128);
+  val((data.recipient.city||'')+', '+(data.recipient.state||'')+' '+(data.recipient.zip||''),13,y+138);
+
+  box(10,y+142,140,18); box(150,y+142,140,18);
+  lbl('RECIPIENT'S TIN',13,y+150); val(data.recipient.tin||'NOT PROVIDED',13,y+158);
+  lbl('Account number (see instructions)',153,y+150); val(data.recipient.acct||'',153,y+158);
+
+  // BOXES on right
+  const rx=300;
+  // Box 1
+  fill(rx,y,160,30,240,248,255);
+  box(rx,y,160,30);
+  lbl('1 Nonemployee compensation',rx+3,y+8);
+  doc.setFontSize(14);doc.setFont('helvetica','bold');doc.setTextColor(0,80,0);
+  t('\$'+parseFloat(data.boxes.b1||0).toLocaleString('en-US',{minimumFractionDigits:2}),rx+3,y+24);
+
+  // Box 2
+  box(rx+160,y,142,30);
+  lbl('2 Payer made direct sales totaling \,000 or more',rx+163,y+8);
+  doc.setFontSize(8);doc.setTextColor(0,0,0);
+  t('[ ] Check if applicable',rx+163,y+22);
+
+  // Box 4
+  box(rx,y+30,160,22);
+  lbl('4 Federal income tax withheld',rx+3,y+38);
+  val('\$'+(parseFloat(data.boxes.b4||0)).toFixed(2),rx+3,y+48);
+
+  // Box 5/6/7
+  box(rx+160,y+30,142,22);
+  lbl('5 State tax withheld',rx+163,y+38); val('\$'+(parseFloat(data.boxes.b5||0)).toFixed(2),rx+163,y+48);
+
+  box(rx,y+52,90,18); box(rx+90,y+52,72,18); box(rx+162,y+52,140,18);
+  lbl('6 State / Payer's state no.',rx+3,y+58); val(data.boxes.b6||'FL',rx+3,y+66);
+  lbl('State tax withheld',rx+93,y+58); val('\$'+(parseFloat(data.boxes.b5||0)).toFixed(2),rx+93,y+66);
+  lbl('7 State income',rx+165,y+58); val('\$'+(parseFloat(data.boxes.b7||0)).toFixed(2),rx+165,y+66);
+
+  // Footer
+  y=H-30;
+  fill(10,y,W-20,20,240,240,240);
+  doc.setFontSize(6.5);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
+  t('Form 1099-NEC (Rev. January 2024)  Cat. No. 72590P  Generated by Carrier Nexus Platform  |  This is important tax information and is being furnished to the IRS.',18,y+13);
+
+  return doc;
+}
+
+function exportSingle(){
+  const year=document.getElementById('yr-sel').value;
+  const data={
+    year,
+    payer:{name:document.getElementById('p-name').value,addr:document.getElementById('p-addr').value,city:document.getElementById('p-city').value,state:document.getElementById('p-state').value,zip:document.getElementById('p-zip').value,tin:document.getElementById('p-tin').value,phone:document.getElementById('p-phone').value},
+    recipient:{name:document.getElementById('r-name').value,biz:document.getElementById('r-biz').value,addr:document.getElementById('r-addr').value,city:document.getElementById('r-city').value,state:document.getElementById('r-state').value,zip:document.getElementById('r-zip').value,tin:document.getElementById('r-tin').value,acct:document.getElementById('r-acct').value},
+    boxes:{b1:document.getElementById('b1').value,b4:document.getElementById('b4').value,b5:document.getElementById('b5').value,b6:document.getElementById('b6').value,b7:document.getElementById('b7').value}
+  };
+  const doc=build1099PDF(data);
+  const safe=(data.recipient.name||'recipient').replace(/[^a-zA-Z0-9]/g,'_');
+  doc.save('1099-NEC_'+safe+'_'+year+'.pdf');
+}
+
+function exportAll(){
+  const year=document.getElementById('yr-sel').value;
+  const required=allData.filter(d=>d.requires1099);
+  if(!required.length){alert('No 1099-NEC required for '+year+' (no owner operators over  ).');return;}
+  required.forEach(d=>{
+    const data={
+      year,
+      payer:{name:'Carrier Trucking US, LLC',addr:'2001 NW 107th Ave, Suite 405',city:'Doral',state:'FL',zip:'33172',tin:'33-1925253',phone:'(346) 471-8512'},
+      recipient:{name:d.name,biz:d.biz||'',addr:d.address||'',city:d.city||'',state:(d.state||'').toUpperCase(),zip:d.zip||'',tin:d.tin||'',acct:''},
+      boxes:{b1:d.total.toFixed(2),b4:'0.00',b5:'0.00',b6:'FL',b7:'0.00'}
+    };
+    const doc=build1099PDF(data);
+    const safe=d.name.replace(/[^a-zA-Z0-9]/g,'_');
+    doc.save('1099-NEC_'+safe+'_'+year+'.pdf');
+  });
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
