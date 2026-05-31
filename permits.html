@@ -106,6 +106,25 @@ tr:hover td{background:#f8fafc;}
   .mn-tab{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:rgba(168,196,224,0.45);font-size:9px;font-family:'JetBrains Mono',monospace;flex:1;padding:6px 0;}
   .mn-tab svg{width:20px;height:20px;opacity:.6;}.mn-tab.active{color:#e91e8c;}.mn-tab.active svg{opacity:1;}
 }
+
+/* ── PDF IMPORT ── */
+.import-zone{border:2px dashed #e2e8f0;border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:4px;background:#fafafa;grid-column:1/-1;}
+.import-zone:hover,.import-zone.drag-over{border-color:#e91e8c;background:#fdf2f8;}
+.import-zone-text{font-size:12px;color:#64748b;}
+.import-zone-text strong{color:#e91e8c;}
+.import-status{margin-top:6px;font-size:11px;font-weight:700;}
+.import-status.extracting{color:#f59e0b;}
+.import-status.success{color:#22c55e;}
+.import-status.error{color:#ef4444;}
+.extracted-badge{font-size:10px;font-weight:700;color:#15803d;background:#dcfce7;padding:2px 10px;border-radius:20px;display:inline-block;margin-bottom:2px;grid-column:1/-1;}
+.rc-suggest{grid-column:1/-1;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:10px 14px;}
+.rc-suggest-label{font-size:10px;font-weight:700;color:#15803d;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+.rc-suggest-item{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #dcfce7;cursor:pointer;}
+.rc-suggest-item:last-child{border-bottom:none;}
+.rc-suggest-item:hover{background:#dcfce7;border-radius:4px;padding-left:4px;}
+.rc-suggest-info{font-size:12px;color:#0f172a;font-weight:600;}
+.rc-suggest-sub{font-size:10px;color:#64748b;}
+.rc-suggest-btn{font-size:10px;font-weight:700;color:#e91e8c;background:none;border:none;cursor:pointer;text-decoration:underline;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 </style>
 </head>
@@ -218,6 +237,22 @@ tr:hover td{background:#f8fafc;}
   <div class="modal-box">
     <div class="modal-hdr"><span class="modal-hdr-title" id="perm-modal-title">ADD PERMIT</span><button class="modal-close" onclick="closePermModal()">&#x2715;</button></div>
     <div class="modal-body">
+
+      <!-- PDF IMPORT ZONE -->
+      <div class="import-zone" id="perm-import-zone" onclick="document.getElementById('perm-pdf-input').click()"
+           ondragover="event.preventDefault();this.classList.add('drag-over')"
+           ondragleave="this.classList.remove('drag-over')"
+           ondrop="permHandleDrop(event)">
+        📄 <span class="import-zone-text"><strong>Import Permit PDF</strong> — drag & drop or click to browse<br>Auto-extracts state, permit #, driver, dates, cost</span>
+        <div class="import-status" id="perm-import-status"></div>
+      </div>
+      <input type="file" id="perm-pdf-input" accept=".pdf" style="display:none" onchange="permHandleFile(this.files[0])">
+      <div id="perm-extracted-badge" style="display:none;" class="extracted-badge">✓ Fields extracted from PDF — review and confirm below</div>
+      <!-- RATE CON SUGGESTIONS -->
+      <div id="perm-rc-suggestions" style="display:none;" class="rc-suggest">
+        <div class="rc-suggest-label">📋 Matching Rate Cons from Active Loads</div>
+        <div id="perm-rc-list"></div>
+      </div>
       <input type="hidden" id="perm-edit-id">
       <div class="form-group"><label class="form-label">Issue Date *</label><input type="date" id="perm-date" class="form-input" required></div>
       <div class="form-group"><label class="form-label">State *</label>
@@ -286,6 +321,7 @@ tr:hover td{background:#f8fafc;}
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="nexus-config.js"></script>
 <script src="nexus-db.js"></script>
@@ -530,6 +566,225 @@ function openDetail(id) {
 }
 function closeDetail() { document.getElementById('detail-overlay').classList.remove('open'); }
 
+
+// ─── PDF IMPORT FOR PERMITS ──────────────────────────────────────────────
+if (typeof pdfjsLib !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+function permHandleDrop(e) {
+  e.preventDefault();
+  document.getElementById('perm-import-zone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type === 'application/pdf') permHandleFile(file);
+}
+
+async function permHandleFile(file) {
+  if (!file) return;
+  const status = document.getElementById('perm-import-status');
+  status.className = 'import-status extracting';
+  status.textContent = '⏳ Reading permit PDF…';
+  try {
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({data: buf}).promise;
+    let text = '';
+    for (let i = 1; i <= Math.min(pdf.numPages, 3); i++) {
+      const pg = await pdf.getPage(i);
+      const ct = await pg.getTextContent();
+      text += ct.items.map(it => it.str).join(' ') + '\n';
+    }
+    status.className = 'import-status success';
+    status.textContent = '✓ Extracted — filling fields…';
+    permFillFromText(text, file.name);
+    document.getElementById('perm-extracted-badge').style.display = 'block';
+  } catch(err) {
+    status.className = 'import-status error';
+    status.textContent = '✗ Could not read — fill manually.';
+    console.error(err);
+  }
+}
+
+const STATE_FULL_MAP = {
+  'TEXAS':'TX','ALABAMA':'AL','ARIZONA':'AZ','ARKANSAS':'AR','CALIFORNIA':'CA','COLORADO':'CO',
+  'FLORIDA':'FL','GEORGIA':'GA','IDAHO':'ID','ILLINOIS':'IL','INDIANA':'IN','IOWA':'IA',
+  'KANSAS':'KS','KENTUCKY':'KY','LOUISIANA':'LA','MINNESOTA':'MN','MISSISSIPPI':'MS',
+  'MISSOURI':'MO','MONTANA':'MT','NEBRASKA':'NE','NEVADA':'NV','NEW MEXICO':'NM',
+  'NORTH CAROLINA':'NC','NORTH DAKOTA':'ND','OHIO':'OH','OKLAHOMA':'OK','OREGON':'OR',
+  'SOUTH CAROLINA':'SC','SOUTH DAKOTA':'SD','TENNESSEE':'TN','UTAH':'UT','VIRGINIA':'VA',
+  'WASHINGTON':'WA','WEST VIRGINIA':'WV','WISCONSIN':'WI','WYOMING':'WY'
+};
+
+function permFillFromText(text, filename) {
+  const T = text;
+  const U = T.toUpperCase();
+
+  // ── STATE ──
+  let detectedState = null;
+  for (const [full, abbr] of Object.entries(STATE_FULL_MAP)) {
+    if (U.includes(full) && (U.includes('DEPARTMENT OF TRANSPORTATION') || U.includes('OVERSIZE') || U.includes('PERMIT'))) {
+      detectedState = abbr; break;
+    }
+  }
+  if (!detectedState) {
+    const fnP = parsePermitFilename(filename);
+    if (fnP.state) detectedState = fnP.state;
+  }
+  if (detectedState) {
+    const sel = document.getElementById('perm-state');
+    if ([...sel.options].some(o => o.value === detectedState)) sel.value = detectedState;
+  }
+
+  // ── PERMIT NUMBER ──
+  const permNumPats = [
+    /permit\s*(?:number|no\.?|#)[:\s]+([A-Z0-9\-]{6,30})/i,
+    /\b([A-Z]{2}\d{12,16})\b/,
+    /(?:number|no\.?|#)[:\s]+([A-Z0-9]{8,20})\b/i,
+  ];
+  for (const p of permNumPats) {
+    const m = T.match(p);
+    if (m && m[1]) { setPermVal('perm-num', m[1]); break; }
+  }
+
+  // ── ISSUE DATE ──
+  const issuePats = [
+    /(?:issue\s*date|date\s*issued|date\s*effective|issued\s*on)[:\s]+(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
+    /(?:effective\s*date|valid\s*from)[:\s]+(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
+  ];
+  for (const p of issuePats) {
+    const m = T.match(p);
+    if (m) { setPermVal('perm-date', permParseISO(m[1])); break; }
+  }
+  if (!document.getElementById('perm-date').value) {
+    const fnP = parsePermitFilename(filename);
+    if (fnP.date) setPermVal('perm-date', fnP.date);
+  }
+
+  // ── EXPIRY DATE ──
+  const expPats = [
+    /(?:expir(?:y|ation|es)\s*date|expires|valid\s*(?:thru|through|until|to)|date\s*expires)[:\s]+(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
+    /(?:exp\.\s*date|exp\s*date)[:\s]+(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
+  ];
+  for (const p of expPats) {
+    const m = T.match(p);
+    if (m) { setPermVal('perm-expires', permParseISO(m[1])); break; }
+  }
+
+  // ── PERMIT TYPE ──
+  const typeMap = [
+    ['superload','Superload'],
+    ['over.?size.*over.?weight','OSOW — Oversize/Overweight'],
+    ['over.?size','OS — Oversize'],['over.?weight','OW — Overweight'],
+    ['single.?trip','OSOW — Oversize/Overweight'],
+    ['trip permit','Trip Permit'],['ifta','Fuel Permit (IFTA)'],
+  ];
+  for (const [pat, label] of typeMap) {
+    if (new RegExp(pat,'i').test(T)) {
+      const sel = document.getElementById('perm-type');
+      if ([...sel.options].some(o => o.value === label)) { sel.value = label; break; }
+    }
+  }
+
+  // ── COST ──
+  const costM = T.match(/(?:fee|amount|cost|total)[:\s]*\$?\s*([\d]+(?:[\.,]\d{2})?)/i);
+  if (costM) setPermVal('perm-cost', costM[1].replace(',',''));
+
+  // ── DRIVER ──
+  const fnP2 = parsePermitFilename(filename);
+  if (fnP2.driver) {
+    const sel = document.getElementById('perm-driver');
+    const opt = [...sel.options].find(o => o.value.toUpperCase().startsWith(fnP2.driver.toUpperCase().split(' ')[0]));
+    if (opt) sel.value = opt.value;
+  } else {
+    for (const d of ['AVIS','MIGUEL','GUILLERMO','DAVID','NELSON','YOSVIEL']) {
+      if (U.includes(d)) {
+        const sel = document.getElementById('perm-driver');
+        const opt = [...sel.options].find(o => o.value.toUpperCase().startsWith(d));
+        if (opt) { sel.value = opt.value; break; }
+      }
+    }
+  }
+
+  // ── NOTES: route/dimensions ──
+  const dimM = T.match(/(?:width|height|length|weight)[:\s]+[^\n]{5,50}/gi);
+  if (dimM) setPermVal('perm-notes', dimM.slice(0,2).join(' | ').replace(/\s+/g,' ').substring(0,120));
+
+  // ── SUGGEST RATE CONS ──
+  permSuggestRateCons(detectedState, document.getElementById('perm-driver').value);
+}
+
+function setPermVal(id, val) {
+  if (val && String(val).trim()) {
+    const el = document.getElementById(id);
+    if (el) el.value = String(val).trim();
+  }
+}
+
+function permParseISO(dateStr) {
+  try {
+    const parts = dateStr.split(/[\/\-]/);
+    if (parts.length < 3) return '';
+    let [m, d, y] = parts;
+    if (y && y.length === 2) y = '20' + y;
+    return y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+  } catch(e) { return ''; }
+}
+
+function permSuggestRateCons(state, driverFull) {
+  try {
+    const loads = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]');
+    if (!loads.length) return;
+    const driverFirst = (driverFull || '').toUpperCase().split(' ')[0];
+    const matches = loads.filter(l => {
+      const dMatch = driverFirst && (l.driver || '').toUpperCase() === driverFirst;
+      const sMatch = state && (
+        (l.originState || '').toUpperCase() === state ||
+        (l.destState || '').toUpperCase() === state ||
+        (l.permits || '').toUpperCase().includes(state)
+      );
+      return dMatch || sMatch;
+    }).slice(0, 5);
+    if (!matches.length) return;
+    const box = document.getElementById('perm-rc-suggestions');
+    const list = document.getElementById('perm-rc-list');
+    list.innerHTML = matches.map(l => {
+      const loadNum = (l.loadNum || '').replace(/'/g, "\'");
+      const broker = (l.broker || '').replace(/'/g, "\'");
+      return `<div class="rc-suggest-item" onclick="permLinkLoad('${l.id}','${loadNum}','${broker}')">
+        <div>
+          <div class="rc-suggest-info">${l.loadNum} — ${l.broker || '—'}</div>
+          <div class="rc-suggest-sub">${l.originCity || '?'}, ${l.originState || '?'} → ${l.destCity || '?'}, ${l.destState || '?'} · ${l.driver || '?'} · $${Number(l.rate || 0).toLocaleString()}</div>
+        </div>
+        <button class="rc-suggest-btn">Link →</button>
+      </div>`;
+    }).join('');
+    box.style.display = 'block';
+  } catch(e) { console.error('RC suggest error:', e); }
+}
+
+function permLinkLoad(loadId, loadNum, broker) {
+  setPermVal('perm-load', loadNum);
+  document.getElementById('perm-rc-suggestions').style.display = 'none';
+  const input = document.getElementById('perm-load');
+  input.style.borderColor = '#22c55e';
+  input.style.background = '#f0fdf4';
+  setTimeout(() => { input.style.borderColor = ''; input.style.background = ''; }, 2000);
+}
+
+// Reset import UI when modal opens
+const _origOpenPermModal = typeof openPermModal === 'function' ? openPermModal : null;
+window.openPermModal = function() {
+  if (_origOpenPermModal) _origOpenPermModal();
+  const st = document.getElementById('perm-import-status');
+  if (st) { st.textContent = ''; st.className = 'import-status'; }
+  const badge = document.getElementById('perm-extracted-badge');
+  if (badge) badge.style.display = 'none';
+  const sug = document.getElementById('perm-rc-suggestions');
+  if (sug) sug.style.display = 'none';
+  const inp = document.getElementById('perm-pdf-input');
+  if (inp) inp.value = '';
+};
+
+
 document.getElementById('perm-modal').addEventListener('click', function(e){ if(e.target===this) closePermModal(); });
 document.getElementById('detail-overlay').addEventListener('click', function(e){ if(e.target===this) closeDetail(); });
 
@@ -546,6 +801,25 @@ document.getElementById('detail-overlay').addEventListener('click', function(e){
   <a href="permits.html" class="mn-tab active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v12a2 2 0 01-2 2z"/></svg>PERMITS</a>
   <a href="drivers.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>TEAM</a>
 </nav>
-<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
+<style>
+/* ── PDF IMPORT ── */
+.import-zone{border:2px dashed #e2e8f0;border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:4px;background:#fafafa;grid-column:1/-1;}
+.import-zone:hover,.import-zone.drag-over{border-color:#e91e8c;background:#fdf2f8;}
+.import-zone-text{font-size:12px;color:#64748b;}
+.import-zone-text strong{color:#e91e8c;}
+.import-status{margin-top:6px;font-size:11px;font-weight:700;}
+.import-status.extracting{color:#f59e0b;}
+.import-status.success{color:#22c55e;}
+.import-status.error{color:#ef4444;}
+.extracted-badge{font-size:10px;font-weight:700;color:#15803d;background:#dcfce7;padding:2px 10px;border-radius:20px;display:inline-block;margin-bottom:2px;grid-column:1/-1;}
+.rc-suggest{grid-column:1/-1;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:10px 14px;}
+.rc-suggest-label{font-size:10px;font-weight:700;color:#15803d;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+.rc-suggest-item{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #dcfce7;cursor:pointer;}
+.rc-suggest-item:last-child{border-bottom:none;}
+.rc-suggest-item:hover{background:#dcfce7;border-radius:4px;padding-left:4px;}
+.rc-suggest-info{font-size:12px;color:#0f172a;font-weight:600;}
+.rc-suggest-sub{font-size:10px;color:#64748b;}
+.rc-suggest-btn{font-size:10px;font-weight:700;color:#e91e8c;background:none;border:none;cursor:pointer;text-decoration:underline;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
 </body>
 </html>
