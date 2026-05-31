@@ -77,179 +77,75 @@ body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;dis
 .btn-status.danger:hover{background:rgba(239,68,68,0.15);}
 .empty-state{text-align:center;padding:60px 20px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:12px;}
 </style>
-<style id="nexus-unified">
-/* CARRIER NEXUS — Sidebar/Topbar brand only. Content CSS untouched. */
-.sidebar, nav.sidebar { background:#000000 !important; border-right:1px solid #1a1a1a !important; }
-.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:12px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.08) !important; }
-.sidebar-logo .logo-hex svg, .sidebar-logo > svg { width:43px !important; height:43px !important; }
-.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:18px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
-.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:11px !important; color:#e91e8c !important; letter-spacing:1px !important; display:block !important; }
-.sidebar-section { padding:12px 0 4px !important; }
-.sidebar-section-label { color:rgba(255,255,255,0.45) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
-.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:rgba(255,255,255,0.85) !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; transition:all .15s !important; text-transform:uppercase !important; letter-spacing:.5px !important; }
-.sidebar-link:hover { background:rgba(233,30,140,0.20) !important; border-left-color:#e91e8c !important; color:#ffffff !important; }
-.sidebar-link.active { background:rgba(233,30,140,0.28) !important; border-left:3px solid #e91e8c !important; color:#ffffff !important; font-weight:600 !important; }
-.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.75 !important; }
-.sidebar-link.active svg { opacity:1 !important; }
-.sidebar-user { border-top:1px solid rgba(255,255,255,0.08) !important; }
-.sidebar-user .user-name { color:rgba(255,255,255,0.85) !important; }
-.sidebar-user .user-role { color:rgba(255,255,255,0.40) !important; }
-.nav-badge { background:#e91e8c !important; color:#fff !important; }
-.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; border-bottom:none !important; }
-.topbar *, .top-bar * { color:#ffffff !important; }
-.topbar-title, .top-bar-title { color:#ffffff !important; font-weight:700 !important; }
-.topbar-sub { color:rgba(255,255,255,0.72) !important; }
-.topbar .btn-ghost, .top-bar .btn-ghost { border-color:rgba(255,255,255,0.40) !important; color:#ffffff !important; background:transparent !important; }
-.topbar .btn-primary, .top-bar .btn-primary { background:#ffffff !important; color:#c2185b !important; font-weight:700 !important; border:none !important; }
-.status-live { color:#ffffff !important; font-weight:700 !important; }
-.status-dot { background:#ffffff !important; box-shadow:0 0 0 3px rgba(255,255,255,0.28) !important; }
-.mobile-nav { background:#000000 !important; }
-.mobile-nav-tab.active { color:#e91e8c !important; }
-</style>
 </head>
 <body>
 
-<nav class="sidebar">
-    <a href="landing.html" class="sidebar-logo">
-    <div class="logo-hex">
-      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="hexGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#000000"/>
-            <stop offset="60%" stop-color="#003865"/>
-            <stop offset="100%" stop-color="#E69F00"/>
-          </linearGradient>
-        </defs>
-        <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hexGrad)" stroke="#E69F00" stroke-width="1.5"/>
-        <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#E69F00" opacity="0.15"/>
-        <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff" letter-spacing="0">CN</text>
-      </svg>
-    </div>
-    <div class="logo-text">
-      <span class="brand">CARRIER NEXUS</span>
-      <span class="sub">OPS INTELLIGENCE</span>
-    </div>
-  </a>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Operations</div>
-    <a href="fleet-command.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span>Dashboard</span></a>
-    <a href="active-loads.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Active Loads</span></a>
-    <a href="settlements.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Settlements</span></a>
-    <a href="drivers.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Drivers</span></a>
-    <a href="permits.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Permits</span></a>
-  </div>
-
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Dispatch</div>
-    <a href="dispatcher-hub.html" class="sidebar-link ">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-      <span>Dispatcher Hub</span>
-    </a>
-    <a href="available-dispatchers.html" class="sidebar-link ">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span>Available Dispatchers</span>
-    </a>
-    <a href="available-drivers.html" class="sidebar-link ">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
-      <span>Available Drivers</span>
-    </a>
-    <a href="issues.html" class="sidebar-link active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <span>Issues</span>
-    </a>
-  </div>
-
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Finance</div>
-    <a href="invoicing.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Invoicing</span></a>
-    <a href="expenses.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Expenses</span></a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Documents</div>
-    <a href="documents.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Documents</span></a>
-    <a href="pods.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>PODs</span></a>
-  </div>
-</div>
-
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Contacts</div>
-    <a href="contacts.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>All Contacts</a>
-    <a href="contacts.html?tab=broker" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 5h5v2H2zm0 4h5v2H2zm7-6h5v2H9zm0 4h5v2H9zm0 4h5v2H9z"/></svg>Brokers</a>
-  </div>
-</nav>
-
-<div class="main">
-  <div class="topbar">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <div class="topbar-title">ISSUES</div>
-      <div class="topbar-sub" style="font-size:11px;opacity:.7;">Driver &amp; Dispatch Tracking</div>
-    </div>
-    <div class="status-live"><span class="status-dot"></span>LIVE</div>
-    <button class="btn-add" onclick="openIssueModal()">+ New Issue</button>
-  </div>
+<script src="nexus-sidebar.js"></script>
+<main class="main">
+  <div class="page-title">ISSUES</div>
+  <div class="page-sub">TRACK · RESOLVE · CLOSE OUT</div>
 
   <div class="toolbar">
-    <input class="search-box" id="issue-search" placeholder="Search issues..." oninput="renderIssues()">
-    <button class="filter-pill active" onclick="setFilter('all',this)">ALL</button>
-    <button class="filter-pill red" onclick="setFilter('open',this)">OPEN</button>
-    <button class="filter-pill blue" onclick="setFilter('in-progress',this)">IN PROGRESS</button>
-    <button class="filter-pill" onclick="setFilter('follow-up',this)">FOLLOW UP</button>
-    <button class="filter-pill green" onclick="setFilter('closed',this)">CLOSED</button>
+    <input class="search-box" id="issue-search" placeholder="Search issues, subject, notes..." oninput="renderIssues()">
+    <button class="filter-pill active" id="pill-all"       onclick="setFilter('all',this)">All</button>
+    <button class="filter-pill red"    id="pill-open"      onclick="setFilter('open',this)">Open</button>
+    <button class="filter-pill"        id="pill-progress"  onclick="setFilter('in-progress',this)">In Progress</button>
+    <button class="filter-pill blue"   id="pill-followup"  onclick="setFilter('follow-up',this)">Follow Up</button>
+    <button class="filter-pill green"  id="pill-closed"    onclick="setFilter('closed',this)">Closed</button>
+    <button class="btn-add" onclick="openIssueModal()">+ NEW ISSUE</button>
   </div>
 
-  <div id="issues-list"></div>
-</div>
+  <div class="issues-list" id="issues-list"></div>
+</main>
 
-<!-- ADD / EDIT ISSUE MODAL -->
+<!-- NEW / EDIT ISSUE MODAL -->
 <div class="modal-overlay" id="issue-modal" onclick="if(event.target===this)closeIssueModal()">
   <div class="modal-box">
     <div class="modal-title" id="issue-modal-title">NEW ISSUE</div>
     <input type="hidden" id="iss-edit-id">
-    <div class="form-group">
-      <label class="form-label">Subject *</label>
-      <input class="form-input" id="iss-subject" placeholder="Brief description of issue">
+    <div class="form-row">
+      <label>SUBJECT / TITLE</label>
+      <input type="text" id="iss-subject" placeholder="Brief description of the issue">
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div class="form-group">
-        <label class="form-label">Source</label>
-        <select class="form-input" id="iss-source">
-          <option value="email">Email</option>
-          <option value="call">Phone Call</option>
-          <option value="driver">Driver Report</option>
-          <option value="dispatch">Dispatch</option>
-          <option value="broker">Broker</option>
-          <option value="internal">Internal</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Status</label>
-        <select class="form-input" id="iss-status">
-          <option value="open">Open</option>
-          <option value="in-progress">In Progress</option>
-          <option value="follow-up">Follow Up</option>
-          <option value="closed">Closed</option>
-        </select>
-      </div>
+    <div class="form-row">
+      <label>SOURCE</label>
+      <select id="iss-source">
+        <option value="email">Email</option>
+        <option value="phone">Phone Call</option>
+        <option value="internal">Internal</option>
+        <option value="driver">Driver Report</option>
+        <option value="broker">Broker</option>
+        <option value="other">Other</option>
+      </select>
     </div>
-    <div class="form-group">
-      <label class="form-label">Assigned To</label>
-      <input class="form-input" id="iss-assigned" placeholder="Name or role">
+    <div class="form-row">
+      <label>STATUS</label>
+      <select id="iss-status">
+        <option value="open">Open</option>
+        <option value="in-progress">In Progress</option>
+        <option value="follow-up">Follow Up</option>
+        <option value="closed">Closed</option>
+      </select>
     </div>
-    <div class="form-group">
-      <label class="form-label">Description</label>
-      <textarea class="form-input" id="iss-desc" rows="4" placeholder="Full details, context, resolution steps..." style="resize:vertical;"></textarea>
+    <div class="form-row">
+      <label>ASSIGNED TO</label>
+      <input type="text" id="iss-assigned" placeholder="Name or email">
     </div>
-    <div class="form-group">
-      <label class="form-label">Google Drive Link (optional)</label>
-      <input class="form-input" id="iss-drive" placeholder="https://drive.google.com/...">
+    <div class="form-row">
+      <label>DESCRIPTION / NOTES</label>
+      <textarea id="iss-desc" placeholder="Full details, email content, or context..."></textarea>
     </div>
-    <div class="form-group">
-      <label class="form-label">Tags (comma-separated)</label>
-      <input class="form-input" id="iss-tags" placeholder="billing, driver, broker, compliance...">
+    <div class="form-row">
+      <label>GOOGLE DRIVE LINK (optional)</label>
+      <input type="url" id="iss-drive" placeholder="https://drive.google.com/...">
     </div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;">
-      <button style="padding:8px 18px;border:1px solid rgba(255,255,255,0.2);background:transparent;color:#94a3b8;border-radius:6px;cursor:pointer;" onclick="closeIssueModal()">Cancel</button>
-      <button class="btn-add" onclick="saveIssue()">Save Issue</button>
+    <div class="form-row">
+      <label>TAGS (comma separated)</label>
+      <input type="text" id="iss-tags" placeholder="e.g. load, billing, compliance">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeIssueModal()">Cancel</button>
+      <button class="btn-save" onclick="saveIssue()">Save Issue</button>
     </div>
   </div>
 </div>

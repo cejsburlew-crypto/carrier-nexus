@@ -826,154 +826,51 @@ body {
 .cinfo-val{color:#e2e8f0;font-size:14px;}
 
 </style>
-
 <style id="nexus-unified">
-/* CARRIER NEXUS — Sidebar/Topbar brand only. Content CSS untouched. */
-.sidebar, nav.sidebar { background:#000000 !important; border-right:1px solid #1a1a1a !important; }
-.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:12px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.08) !important; }
-.sidebar-logo .logo-hex svg, .sidebar-logo > svg { width:43px !important; height:43px !important; }
-.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:18px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
-.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:11px !important; color:#e91e8c !important; letter-spacing:1px !important; display:block !important; }
-.sidebar-section { padding:12px 0 4px !important; }
-.sidebar-section-label { color:rgba(255,255,255,0.45) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
-.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:rgba(255,255,255,0.85) !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; transition:all .15s !important; text-transform:uppercase !important; letter-spacing:.5px !important; }
-.sidebar-link:hover { background:rgba(233,30,140,0.20) !important; border-left-color:#e91e8c !important; color:#ffffff !important; }
-.sidebar-link.active { background:rgba(233,30,140,0.28) !important; border-left:3px solid #e91e8c !important; color:#ffffff !important; font-weight:600 !important; }
-.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.75 !important; }
+/* ── SIDEBAR BLACK ── */
+.sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
+/* ── LOGO AREA ── */
+.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
+.sidebar-logo .logo-hex { flex-shrink:0 !important; }
+.sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
+.sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
+.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
+.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
+/* ── NAV LINKS ── */
+.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
+.sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
+.sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
+.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
 .sidebar-link.active svg { opacity:1 !important; }
-.sidebar-user { border-top:1px solid rgba(255,255,255,0.08) !important; }
-.sidebar-user .user-name { color:rgba(255,255,255,0.85) !important; }
-.sidebar-user .user-role { color:rgba(255,255,255,0.40) !important; }
-.nav-badge { background:#e91e8c !important; color:#fff !important; }
-.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; border-bottom:none !important; }
+/* ── SECTION LABELS ── */
+.sidebar-section { padding:12px 0 4px !important; }
+.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
+/* ── TOPBAR ── */
+.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
 .topbar *, .top-bar * { color:#ffffff !important; }
-.topbar-title, .top-bar-title { color:#ffffff !important; font-weight:700 !important; }
-.topbar-sub { color:rgba(255,255,255,0.72) !important; }
-.topbar .btn-ghost, .top-bar .btn-ghost { border-color:rgba(255,255,255,0.40) !important; color:#ffffff !important; background:transparent !important; }
-.topbar .btn-primary, .top-bar .btn-primary { background:#ffffff !important; color:#c2185b !important; font-weight:700 !important; border:none !important; }
-.status-live { color:#ffffff !important; font-weight:700 !important; }
-.status-dot { background:#ffffff !important; box-shadow:0 0 0 3px rgba(255,255,255,0.28) !important; }
+.topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
+/* ── MOBILE NAV ── */
 .mobile-nav { background:#000000 !important; }
 .mobile-nav-tab.active { color:#e91e8c !important; }
+/* ── SIDEBAR USER ── */
+.sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
+.sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
+.sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
+/* ── NAV BADGE ── */
+.nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
 </head>
 <body>
 
 <!-- SIDEBAR -->
-<nav class="sidebar">
-  <a href="landing.html" class="sidebar-logo">
-    <div class="logo-hex">
-      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="hexGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#000000"/>
-            <stop offset="60%" stop-color="#003865"/>
-            <stop offset="100%" stop-color="#E69F00"/>
-          </linearGradient>
-        </defs>
-        <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hexGrad)" stroke="#E69F00" stroke-width="1.5"/>
-        <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#E69F00" opacity="0.15"/>
-        <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff" letter-spacing="0">CN</text>
-      </svg>
-    </div>
-    <div class="logo-text">
-      <span class="brand">CARRIER NEXUS</span>
-      <span class="sub">OPS INTELLIGENCE</span>
-    </div>
-  </a>
-
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Operations</div>
-    <a href="fleet-command.html" class="sidebar-link ">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h7v2H2z"/></svg>
-      Dashboard
-      
-    </a>
-    <a href="active-loads.html" class="sidebar-link ">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V3zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V9zm4 4h6v2H5z"/></svg>
-      Active Loads
-      
-    </a>
-    <a href="settlements.html" class="sidebar-link ">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h6V4H5zm0 3v1h6V7H5zm0 3v1h4v-1H5z"/></svg>
-      Settlements
-      
-    </a>
-    <a href="drivers.html" class="sidebar-link active">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>
-      Drivers
-      
-    </a>
-    <a href="permits.html" class="sidebar-link ">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3h3.5l-2.8 2 1 3.3L8 8 4.8 9.3l1-3.3L3 4h3.5zm0 9a3 3 0 100 6 3 3 0 000-6z"/></svg>
-      Permits
-      
-    </a>
-  </div>
-
-
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Dispatch</div>
-    <a href="dispatcher-hub.html" class="sidebar-link ">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-      <span>Dispatcher Hub</span>
-    </a>
-    <a href="available-dispatchers.html" class="sidebar-link ">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span>Available Dispatchers</span>
-    </a>
-    <a href="available-drivers.html" class="sidebar-link ">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
-      <span>Available Drivers</span>
-    </a>
-    <a href="issues.html" class="sidebar-link ">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <span>Issues</span>
-    </a>
-  </div>
-
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Finance</div>
-    <a href="invoicing.html" class="sidebar-link ">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h10a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h8V4H4zm0 3v1h8V7H4zm0 3v1h5v-1H4z"/></svg>
-      Invoicing
-      
-    </a>
-    <a href="expenses.html" class="sidebar-link ">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v2H5v2h2v2h2V9h2V7H9V5z"/></svg>
-      Expenses
-      
-    </a>
-  </div>
-
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Documents</div>
-    <a href="documents.html" class="sidebar-link ">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm5 0v4h4"/></svg>
-      Document Vault
-      
-    </a>
-    <a href="pods.html" class="sidebar-link ">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm-.5 2v4.5l3.5 2-.5-.87-3-1.63V5h-1z"/></svg>
-      Missing PODs
-      
-    </a>
-  </div>
-
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Contacts</div>
-    <a href="contacts.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>All Contacts</a>
-    <a href="contacts.html?tab=broker" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 5h5v2H2zm0 4h5v2H2zm7-6h5v2H9zm0 4h5v2H9zm0 4h5v2H9z"/></svg>Brokers</a>
-  </div>
-</nav>
-
+<script src="nexus-sidebar.js"></script>
 <!-- MAIN -->
 <div class="main">
   <div class="topbar">
     <div class="topbar-title">DRIVERS</div>
     <div class="status-live"><span class="status-dot"></span>LIVE</div>
-    <button class="btn btn-ghost" onclick="exportRoster()">Export Roster</button>
-    <button class="btn btn-primary" onclick="openAddDriverModal()">+ Add Driver</button>
+    <button class="btn btn-ghost">Export Roster</button>
+    <button class="btn btn-primary">+ Add Driver</button>
   </div>
 
   <div class="content">
@@ -1315,56 +1212,6 @@ renderComplianceAlert();
   }
   renderDriverCards('all');
 })();
-
-function openAddDriverModal() {
-  // Open the compliance modal pre-cleared as an "Add Driver" form
-  // or use a simple prompt flow
-  const name = prompt('Driver full name:');
-  if (!name || !name.trim()) return;
-  const email = prompt('Driver email (optional):') || '';
-  const phone = prompt('Driver phone (optional):') || '';
-  const cdl = prompt('CDL number (optional):') || '';
-  const newDriver = {
-    id: 'DRV-' + Date.now(),
-    name: name.trim(),
-    email: email.trim(),
-    phone: phone.trim(),
-    cdl,
-    status: 'active',
-    role: 'driver',
-    createdAt: new Date().toISOString()
-  };
-  NexusDB.Drivers.create(newDriver).catch(()=>{});
-  alert('Driver "' + newDriver.name + '" added. Refresh to see updated roster.');
-  location.reload();
-}
-
-function exportRoster() {
-  const cards = document.querySelectorAll('.driver-card');
-  const headers = ['Name','Status','CDL','Phone','Email'];
-  const rows = [];
-  document.querySelectorAll('[data-driver-id]').forEach(el => {
-    const name = el.querySelector('.driver-name')?.textContent || '';
-    rows.push([name,'','','','']);
-  });
-  const allDrivers = window.ALL_DRIVERS_CACHE || [];
-  const csv = [headers, ...allDrivers.map(d => [
-    d.name||'', d.status||'active', d.cdl||'', d.phone||'', d.email||''
-  ])].map(r => r.map(v => '"'+(v||'').toString().replace(/"/g,'""')+'"').join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-  a.download = 'driver-roster-' + new Date().toISOString().slice(0,10) + '.csv';
-  a.click();
-}
-
-function openContactModal(driverId) {
-  openDriverContact(driverId);
-}
-
-function openDriverDocs(driverId) {
-  window.location.href = 'documents.html?driver=' + encodeURIComponent(driverId);
-}
-
 </script>
 <script>
 // ─── Modal state ────────────────────────────────────────────────────────────
