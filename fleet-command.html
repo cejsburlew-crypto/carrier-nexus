@@ -639,23 +639,23 @@ body {
     <div class="kpi-row">
       <div class="kpi-card kpi-blue">
         <div class="kpi-label">Active Trucks</div>
-        <div class="kpi-value">6</div>
-        <div class="kpi-sub">0 units down · All operational</div>
+        <div class="kpi-value" id="kpi-trucks">6</div>
+        <div class="kpi-sub" id="kpi-trucks-sub">0 units down · All operational</div>
       </div>
       <div class="kpi-card kpi-green">
         <div class="kpi-label">Active Drivers</div>
-        <div class="kpi-value">7</div>
-        <div class="kpi-sub">2 inactive · 9 total roster</div>
+        <div class="kpi-value" id="kpi-drivers">7</div>
+        <div class="kpi-sub" id="kpi-drivers-sub">2 inactive · 9 total roster</div>
       </div>
       <div class="kpi-card kpi-orange">
         <div class="kpi-label">Week Revenue</div>
-        <div class="kpi-value">$36.8K</div>
-        <div class="kpi-sub">6 loads this settlement period</div>
+        <div class="kpi-value" id="kpi-revenue">$36.8K</div>
+        <div class="kpi-sub" id="kpi-revenue-sub">6 loads this settlement period</div>
       </div>
       <div class="kpi-card kpi-red">
         <div class="kpi-label">Open Documents</div>
-        <div class="kpi-value">3</div>
-        <div class="kpi-sub">Missing PODs · Action required</div>
+        <div class="kpi-value" id="kpi-docs">3</div>
+        <div class="kpi-sub" id="kpi-docs-sub">Missing PODs · Action required</div>
       </div>
     </div>
 
@@ -1004,5 +1004,52 @@ body {
   if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
 })();
 </script>
+
+<script>
+// ── DASHBOARD KPIs FROM LOCALSTORAGE ──────────────────────────────
+(function() {
+  try {
+    const loads = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]');
+    const permits = JSON.parse(localStorage.getItem('nexus_permits_v1') || '[]');
+
+    // Revenue
+    const totalRev = loads.reduce((s, l) => s + (Number(l.rate) || 0), 0);
+    const revEl = document.getElementById('kpi-revenue');
+    const revSub = document.getElementById('kpi-revenue-sub');
+    if (revEl) {
+      revEl.textContent = totalRev >= 1000
+        ? '$' + (totalRev / 1000).toFixed(1) + 'K'
+        : '$' + totalRev.toLocaleString();
+    }
+    if (revSub) {
+      const activeCount = loads.filter(l => l.status === 'active' || l.status === 'transit').length;
+      revSub.textContent = activeCount + ' active loads · ' + loads.length + ' total';
+    }
+
+    // Active drivers (unique drivers on active/transit loads)
+    const activeDrivers = new Set(
+      loads.filter(l => l.status === 'active' || l.status === 'transit').map(l => l.driver).filter(Boolean)
+    );
+    const drvEl = document.getElementById('kpi-drivers');
+    const drvSub = document.getElementById('kpi-drivers-sub');
+    if (drvEl && activeDrivers.size > 0) {
+      drvEl.textContent = activeDrivers.size;
+    }
+    if (drvSub && activeDrivers.size > 0) {
+      const allDrivers = new Set(loads.map(l => l.driver).filter(Boolean));
+      drvSub.textContent = (allDrivers.size - activeDrivers.size) + ' inactive · ' + allDrivers.size + ' total roster';
+    }
+
+    // Missing PODs
+    const missingPods = loads.filter(l => l.pod === 'missing').length;
+    const docsEl = document.getElementById('kpi-docs');
+    const docsSub = document.getElementById('kpi-docs-sub');
+    if (docsEl) docsEl.textContent = missingPods;
+    if (docsSub) docsSub.textContent = missingPods + ' missing POD' + (missingPods !== 1 ? 's' : '') + ' · Action required';
+
+  } catch(e) { console.warn('KPI load error:', e); }
+})();
+</script>
+
 </body>
 </html>
