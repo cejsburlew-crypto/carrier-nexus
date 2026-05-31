@@ -6,524 +6,706 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--black:#0f172a;--gunmetal:#1e293b;--steel-blue:#2e6da4;--orange:#e8640a;--border:rgba(15,23,42,0.10);--white:#ffffff;--text-muted:#64748b;--red:#ef4444;--green:#22c55e;--yellow:#fbbf24;}
+:root{--black:#f1f5f9;--gunmetal:#ffffff;--steel-blue:#2e6da4;--orange:#e8640a;--border:rgba(15,23,42,0.10);--white:#0f172a;--text-muted:#64748b;--red:#ef4444;--green:#22c55e;--yellow:#fbbf24;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
-.sidebar{width:220px;min-height:100vh;background:#000;border-right:1px solid #1a1a1a;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;overflow-y:auto;}
-.sidebar-logo{padding:16px;display:flex;align-items:center;gap:12px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.08);}
-.sidebar-logo .brand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:2px;color:#fff;display:block;}
-.sidebar-logo .sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:#e91e8c;letter-spacing:1px;display:block;}
-.sidebar-section-label{color:rgba(255,255,255,0.45);font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.5px;padding:16px 16px 6px;text-transform:uppercase;display:block;}
-.sidebar-link{display:flex;align-items:center;gap:10px;padding:8px 16px;color:rgba(255,255,255,0.85);border-left:3px solid transparent;text-decoration:none;font-size:13px;transition:all .15s;text-transform:uppercase;letter-spacing:.5px;}
-.sidebar-link:hover{background:rgba(233,30,140,0.20);border-left-color:#e91e8c;color:#fff;}
-.sidebar-link.active{background:rgba(233,30,140,0.28);border-left:3px solid #e91e8c;color:#fff;font-weight:600;}
-.sidebar-link svg{width:14px;height:14px;flex-shrink:0;opacity:.75;}
+.sidebar{width:220px;min-height:100vh;background:#1a2744;border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
+.sidebar-logo{padding:20px 20px 12px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:#2e6da4;letter-spacing:.08em;text-decoration:none;display:block;}
+.sidebar-section{font-size:9px;font-weight:700;color:#4a6080;letter-spacing:.12em;padding:16px 20px 6px;text-transform:uppercase;}
+.sidebar-link{display:flex;align-items:center;gap:10px;padding:8px 20px;font-size:13px;color:#c8d8ea;text-decoration:none;transition:all .15s;}
+.sidebar-link:hover{background:rgba(255,255,255,0.07);color:#fff;}
+.sidebar-link.active{background:rgba(46,109,164,0.35);color:#fff;border-right:2px solid #2e6da4;}
+.sidebar-link svg{width:14px;height:14px;opacity:.7;flex-shrink:0;}
+.sidebar-link.active svg{opacity:1;}
 .main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
-.topbar{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:50;}
-.topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:.04em;}
-.status-live{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#fff;letter-spacing:.06em;}
-.status-dot{width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,0.28);animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-.btn-add{padding:8px 16px;background:#fff;color:#c2185b;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.5px;cursor:pointer;transition:opacity .15s;}
-.btn-add:hover{opacity:.9;}
+.topbar{height:56px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:#0f172a;letter-spacing:.04em;}
 .content{padding:24px 28px;}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
 .kpi-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;}
 .kpi-label{font-size:10px;font-weight:700;color:#64748b;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
-.kpi-val{font-size:28px;font-weight:700;color:#0f172a;line-height:1;font-family:'Barlow Condensed',sans-serif;}
+.kpi-val{font-size:28px;font-weight:700;color:#0f172a;line-height:1;}
 .kpi-sub{font-size:11px;color:#2e6da4;margin-top:4px;}
 .panel{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:20px;}
-.toolbar{padding:12px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.search-box{flex:1;min-width:180px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;outline:none;}
-.search-box:focus{border-color:#2e6da4;}
-.filter-pill{padding:5px 14px;border-radius:20px;border:1px solid #e2e8f0;background:#fff;font-size:11px;font-weight:700;letter-spacing:.04em;cursor:pointer;color:#64748b;transition:all .15s;text-transform:uppercase;}
-.filter-pill:hover{border-color:#2e6da4;color:#2e6da4;}
-.filter-pill.active{background:#0f172a;color:#fff;border-color:#0f172a;}
-.filter-pill.blue.active{background:#1d4ed8;border-color:#1d4ed8;color:#fff;}
-.filter-pill.yellow.active{background:#a16207;border-color:#a16207;color:#fff;}
-.filter-pill.green.active{background:#15803d;border-color:#15803d;color:#fff;}
-.filter-pill.red.active{background:#dc2626;border-color:#dc2626;color:#fff;}
+.panel-head{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:#0f172a;letter-spacing:.04em;text-transform:uppercase;}
 table{width:100%;border-collapse:collapse;}
 th{font-size:10px;font-weight:700;color:#64748b;letter-spacing:.08em;text-transform:uppercase;padding:10px 16px;text-align:left;background:#f8fafc;border-bottom:1px solid #e2e8f0;}
-td{padding:11px 16px;font-size:13px;color:#0f172a;border-bottom:1px solid #f8fafc;}
-tr:last-child td{border-bottom:none;}
+td{padding:12px 16px;font-size:13px;color:#0f172a;border-bottom:1px solid #f8fafc;}
 tr:hover td{background:#f8fafc;}
+.status-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em;}
+.status-active{background:#dcfce7;color:#15803d;}
+.status-pending{background:#fef9c3;color:#a16207;}
+.status-transit{background:#dbeafe;color:#1d4ed8;}
+.status-delivered{background:#f1f5f9;color:#64748b;}
+.driver-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;}
 .load-num{font-family:'JetBrains Mono',monospace;font-size:12px;color:#2e6da4;font-weight:600;}
-.driver-chip{font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;letter-spacing:.04em;}
-.status-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase;}
-.s-transit{background:#dbeafe;color:#1d4ed8;}
-.s-active{background:#dcfce7;color:#15803d;}
-.s-pending{background:#fef9c3;color:#a16207;}
-.s-delivered{background:#f1f5f9;color:#64748b;}
-.s-problem{background:#fee2e2;color:#dc2626;}
-.pod-ok{color:#22c55e;font-size:11px;font-weight:600;}
-.pod-miss{color:#ef4444;font-size:11px;font-weight:600;}
-.pod-pend{color:#f59e0b;font-size:11px;font-weight:600;}
-.pod-na{color:#94a3b8;font-size:11px;}
-.btn-act{padding:3px 10px;font-size:11px;font-weight:600;border-radius:4px;cursor:pointer;border:1px solid #e2e8f0;background:#fff;color:#475569;transition:all .15s;}
-.btn-act:hover{border-color:#2e6da4;color:#2e6da4;}
-.btn-del{color:#ef4444;border-color:rgba(239,68,68,.2);}
-.btn-del:hover{background:#fef2f2;border-color:#ef4444;}
-.empty-state{padding:48px;text-align:center;color:#94a3b8;font-size:13px;}
-/* Modal */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;letter-spacing:.04em;transition:all .15s;}
+.btn-primary{background:#e91e8c;color:#fff;}
+.btn-primary:hover{background:#c2185b;}
+.btn-outline{background:transparent;color:#0f172a;border:1px solid #e2e8f0;}
+.btn-outline:hover{background:#f8fafc;}
+.btn-sm{padding:5px 10px;font-size:11px;}
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;display:none;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
-.modal-box{background:#fff;border-radius:12px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
-.modal-head{padding:20px 24px 16px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;}
-.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
-.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;line-height:1;padding:4px;}
-.modal-close:hover{color:#0f172a;}
+.modal{background:#fff;border-radius:14px;width:700px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.modal-head{padding:20px 24px 16px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:5;}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:#0f172a;letter-spacing:.04em;}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;line-height:1;padding:4px 8px;}
 .modal-body{padding:20px 24px;}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
-.form-row.full{grid-template-columns:1fr;}
-.form-group{display:flex;flex-direction:column;gap:4px;}
+/* ── PDF IMPORT ZONE ── */
+.import-zone{border:2px dashed #e2e8f0;border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:20px;background:#fafafa;}
+.import-zone:hover,.import-zone.drag-over{border-color:#e91e8c;background:#fdf2f8;}
+.import-zone-icon{font-size:32px;margin-bottom:8px;}
+.import-zone-text{font-size:13px;color:#64748b;}
+.import-zone-text strong{color:#e91e8c;}
+.import-status{margin-top:10px;font-size:12px;font-weight:600;}
+.import-status.extracting{color:#f59e0b;}
+.import-status.success{color:#22c55e;}
+.import-status.error{color:#ef4444;}
+/* ── FORM GRID ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-full{grid-column:1/-1;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
 .form-label{font-size:11px;font-weight:700;color:#64748b;letter-spacing:.06em;text-transform:uppercase;}
-.form-input,.form-select{padding:9px 12px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;font-family:'Barlow',sans-serif;outline:none;width:100%;}
-.form-input:focus,.form-select:focus{border-color:#2e6da4;}
-.modal-foot{padding:16px 24px;border-top:1px solid #f1f5f9;display:flex;justify-content:flex-end;gap:10px;}
-.btn-cancel{padding:9px 20px;border:1px solid #e2e8f0;border-radius:6px;background:#fff;color:#475569;font-size:13px;font-weight:600;cursor:pointer;}
-.btn-save{padding:9px 24px;border:none;border-radius:6px;background:#0f172a;color:#fff;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.03em;}
-.btn-save:hover{background:#1e293b;}
+.form-input,.form-select{padding:9px 12px;border:1px solid #e2e8f0;border-radius:7px;font-size:13px;font-family:'Barlow',sans-serif;color:#0f172a;background:#fff;transition:border .15s;}
+.form-input:focus,.form-select:focus{outline:none;border-color:#e91e8c;}
+.form-row{display:flex;gap:8px;}
+.form-row .form-input{flex:1;}
+.extracted-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:#15803d;background:#dcfce7;padding:2px 8px;border-radius:20px;margin-bottom:4px;}
+.modal-footer{padding:16px 24px;border-top:1px solid #f1f5f9;display:flex;align-items:center;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:#fff;}
+/* ── ACTION ICONS ── */
+.action-btns{display:flex;gap:6px;}
+.icon-btn{background:none;border:1px solid #e2e8f0;border-radius:5px;padding:4px 7px;cursor:pointer;font-size:12px;color:#64748b;transition:all .15s;}
+.icon-btn:hover{border-color:#e91e8c;color:#e91e8c;}
+/* ── PERMIT TAGS ── */
+.permit-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;margin:1px;}
+/* ── MOBILE ── */
+.mobile-nav{display:none;}
 @media(max-width:768px){
-  .sidebar{display:none;}
-  .main{margin-left:0;}
-  .content{padding:14px 12px 80px;}
-  .kpi-row{grid-template-columns:1fr 1fr;gap:10px;}
-  .mobile-nav{display:flex!important;}
-  th:nth-child(n+4),td:nth-child(n+4){display:none;}
+  .sidebar{display:none!important;}
+  .main{margin-left:0!important;}
+  .content{padding:14px 12px 80px!important;}
+  .kpi-row{grid-template-columns:1fr 1fr!important;gap:10px!important;}
+  .mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;height:56px;background:#fff;border-top:1px solid #e2e8f0;z-index:200;}
+  .mobile-nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;font-size:9px;font-weight:700;color:#94a3b8;letter-spacing:.06em;}
+  .mobile-nav-tab.active{color:#2e6da4;border-top:2px solid #2e6da4;}
+  .form-grid{grid-template-columns:1fr!important;}
+  .modal{width:98vw!important;}
 }
-.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:#000;border-top:1px solid #1a1a1a;z-index:200;}
-.mobile-nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;font-size:9px;font-weight:700;color:#666;letter-spacing:.06em;}
-.mobile-nav-tab.active{color:#e91e8c;}
 </style>
 <style id="nexus-unified">
-/* CARRIER NEXUS — Sidebar/Topbar brand only. Content CSS untouched. */
-.sidebar, nav.sidebar { background:#000000 !important; border-right:1px solid #1a1a1a !important; }
-.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:12px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.08) !important; }
-.sidebar-logo .logo-hex svg, .sidebar-logo > svg { width:43px !important; height:43px !important; }
-.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:18px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
-.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:11px !important; color:#e91e8c !important; letter-spacing:1px !important; display:block !important; }
+.sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
+.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
+.sidebar-logo .logo-hex { flex-shrink:0 !important; }
+.sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
+.sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
+.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
+.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
+.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
+.sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
+.sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
+.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
+.sidebar-link.active svg { opacity:1 !important; }
 .sidebar-section { padding:12px 0 4px !important; }
-.sidebar-section-label, .snl { color:rgba(255,255,255,0.45) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
-.sidebar-link, .sl { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:rgba(255,255,255,0.85) !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; transition:all .15s !important; text-transform:uppercase !important; letter-spacing:.5px !important; }
-.sidebar-link:hover, .sl:hover { background:rgba(233,30,140,0.20) !important; border-left-color:#e91e8c !important; color:#ffffff !important; }
-.sidebar-link.active, .sl.active { background:rgba(233,30,140,0.28) !important; border-left:3px solid #e91e8c !important; color:#ffffff !important; font-weight:600 !important; }
-.sidebar-link svg, .sl svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.75 !important; }
-.sidebar-link.active svg, .sl.active svg { opacity:1 !important; }
-.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; border-bottom:none !important; }
+.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
+.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
 .topbar *, .top-bar * { color:#ffffff !important; }
-.topbar-title, .top-bar-title { color:#ffffff !important; font-weight:700 !important; }
-.topbar-sub { color:rgba(255,255,255,0.72) !important; }
-.topbar .btn-ghost, .top-bar .btn-ghost { border-color:rgba(255,255,255,0.40) !important; color:#ffffff !important; background:transparent !important; }
-.topbar .btn-primary, .top-bar .btn-primary, .btn-add { background:#ffffff !important; color:#c2185b !important; font-weight:700 !important; border:none !important; }
-.status-live { color:#ffffff !important; font-weight:700 !important; }
-.status-dot { background:#ffffff !important; box-shadow:0 0 0 3px rgba(255,255,255,0.28) !important; }
-.mobile-nav { background:#000000 !important; border-top:1px solid #1a1a1a !important; }
+.topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
+.mobile-nav { background:#000000 !important; }
 .mobile-nav-tab.active { color:#e91e8c !important; }
+.sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
+.sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
+.sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
+.nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
 </head>
 <body>
 <nav class="sidebar">
-    <a href="landing.html" class="sidebar-logo">
+  <a href="landing.html" class="sidebar-logo">
     <div class="logo-hex">
       <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="hexGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#000000"/>
-            <stop offset="60%" stop-color="#003865"/>
-            <stop offset="100%" stop-color="#E69F00"/>
-          </linearGradient>
-        </defs>
-        <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hexGrad)" stroke="#E69F00" stroke-width="1.5"/>
-        <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#E69F00" opacity="0.15"/>
+        <defs><linearGradient id="hexGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#000000"/><stop offset="60%" stop-color="#6b0000"/><stop offset="100%" stop-color="#e91e8c"/></linearGradient></defs>
+        <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#hexGrad)" stroke="#e91e8c" stroke-width="1.5"/>
+        <polygon points="18,7 27,12.5 27,23.5 18,29 9,23.5 9,12.5" fill="#e91e8c" opacity="0.15"/>
         <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#ffffff" letter-spacing="0">CN</text>
       </svg>
     </div>
-    <div class="logo-text">
-      <span class="brand">CARRIER NEXUS</span>
-      <span class="sub">OPS INTELLIGENCE</span>
-    </div>
+    <div class="logo-text"><span class="brand">CARRIER NEXUS</span><span class="sub">OPS INTELLIGENCE</span></div>
   </a>
-  <div class="sidebar-section-label" style="padding-top:20px;">Operations</div>
-  <a href="fleet-command.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h7v2H2z"/></svg>Dashboard</a>
-  <a href="active-loads.html" class="sidebar-link active"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V3zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V9zm4 4h6v2H5z"/></svg>Active Loads</a>
-  <a href="settlements.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h6V4H5zm0 3v1h6V7H5zm0 3v1h4v-1H5z"/></svg>Settlements</a>
-  <a href="drivers.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>Drivers</a>
-  <a href="permits.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3h3.5l-2.8 2 1 3.3L8 8 4.8 9.3l1-3.3L3 4h3.5z"/></svg>Permits</a>
-  <div class="sidebar-section-label" style="margin-top:8px;">Dispatch</div>
-  <a href="dispatcher-hub.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Dispatcher Hub</a>
-  <a href="available-dispatchers.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Available Dispatchers</a>
-  <a href="available-drivers.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>Available Drivers</a>
-  <a href="issues.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Issues</a>
-  <div class="sidebar-section-label" style="margin-top:8px;">Finance</div>
-  <a href="invoicing.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h10a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h8V4H4zm0 3v1h8V7H4zm0 3v1h5v-1H4z"/></svg>Invoicing</a>
-  <a href="expenses.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v2H5v2h2v2h2V9h2V7H9V5z"/></svg>Expenses</a>
-  <div class="sidebar-section-label" style="margin-top:8px;">Documents</div>
-  <a href="documents.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm5 0v4h4"/></svg>Document Vault</a>
-  <a href="pods.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm-.5 2v4.5l3.5 2-.5-.87-3-1.63V5h-1z"/></svg>Missing PODs</a>
-  <div class="sidebar-section-label" style="margin-top:8px;">Fleet</div>
-  <a href="equipment.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Equipment</a>
-  <a href="maintenance.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 5V3.07A4.01 4.01 0 0112 7H9zm-2 0H4A4.01 4.01 0 017 3.07V6zm0 1v3l-2.6 2.6A4 4 0 017 7zm1 0h3a4 4 0 01-3 5.87V7z"/></svg>Maintenance</a>
-  <a href="fuel.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h7l3 3v10a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 7v2h5V8H4zm0-3v2h5V5H4z"/></svg>Fuel</a>
-  <a href="tires.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm0 2a3 3 0 100 6 3 3 0 000-6z"/></svg>Tires</a>
-  <div class="sidebar-section-label" style="margin-top:8px;">Contacts</div>
-  <a href="contacts.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>All Contacts</a>
-  <a href="contacts.html?tab=broker" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 5h5v2H2zm0 4h5v2H2zm7-6h5v2H9zm0 4h5v2H9zm0 4h5v2H9z"/></svg>Brokers</a>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="fleet-command.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h7v2H2z"/></svg>Dashboard</a>
+    <a href="active-loads.html" class="sidebar-link active"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V3zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V9zm4 4h6v2H5z"/></svg>Active Loads</a>
+    <a href="settlements.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h6V4H5zm0 3v1h6V7H5zm0 3v1h4v-1H5z"/></svg>Settlements</a>
+    <a href="drivers.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>Drivers</a>
+    <a href="permits.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3h3.5l-2.8 2 1 3.3L8 8 4.8 9.3l1-3.3L3 4h3.5zm0 9a3 3 0 100 6 3 3 0 000-6z"/></svg>Permits</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Finance</div>
+    <a href="invoicing.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h10a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h8V4H4zm0 3v1h8V7H4zm0 3v1h5v-1H4z"/></svg>Invoicing</a>
+    <a href="expenses.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v2H5v2h2v2h2V9h2V7H9V5z"/></svg>Expenses</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Documents</div>
+    <a href="documents.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm5 0v4h4"/></svg>Document Vault</a>
+    <a href="pods.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm-.5 2v4.5l3.5 2-.5-.87-3-1.63V5h-1z"/></svg>Missing PODs</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Dispatch</div>
+    <a href="dispatcher-hub.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span>Dispatcher Hub</span></a>
+    <a href="available-dispatchers.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Available Dispatchers</span></a>
+    <a href="available-drivers.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg><span>Available Drivers</span></a>
+    <a href="issues.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Issues</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Contacts</div>
+    <a href="contacts.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 5a3 3 0 11-6 0 3 3 0 016 0zM2 13c0-2.761 2.686-5 6-5s6 2.239 6 5H2z"/></svg>Directory</a>
+    <a href="contacts.html?tab=broker" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Brokers</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Maintenance</div>
+    <a href="equipment.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8 4 10l1-3.5L2 4h4.5z"/></svg>Fleet &amp; Equipment</a>
+    <a href="maintenance.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.5 2.5l-1.4 1.4A4 4 0 106.1 9.8L4.7 11.2A6 6 0 1113.5 2.5zm-3 3A2 2 0 108 10a2 2 0 002.5-2.5z"/></svg>Maintenance Log</a>
+    <a href="pm-schedule.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h10v2H3zm0 4h10v2H3zm0 4h6v2H3z"/></svg>PM Schedule</a>
+    <a href="tires.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>Tires</a>
+    <a href="fuel.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h7l3 3v10a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 6h6V6H4zm0 3h4V9H4z"/></svg>Fuel</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Intelligence</div>
+    <a href="nexus-ai.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v5l4.5 2.7-.7-1.2-3.8-2.3V5z"/></svg>Nexus AI</a>
+    <a href="analysis.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h2v-4H2zm3 0h2V6H5zm3 0h2V4H8zm3 0h2V2h-2z"/></svg>Analytics</a>
+    <a href="eld-settings.html" class="sidebar-link"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 00-3 3c0 1.3.83 2.4 2 2.82V8H5v2h2v1.18A3 3 0 108 14.93V10h2V8H8V6.82A3.001 3.001 0 008 1zm0 12a1 1 0 110-2 1 1 0 010 2zm0-8a1 1 0 110-2 1 1 0 010 2z"/></svg>ELD Integration</a>
+  </div>
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-user" style="padding:12px 16px;">
+    <div class="user-name" style="font-size:12px;color:#c8d8ea;font-weight:600;">Jim Burlew · ADMIN</div>
+    <div class="user-role" style="font-size:10px;color:#4a6080;margin-top:2px;">Carrier Trucking US, LLC</div>
+  </div>
 </nav>
 
 <div class="main">
   <div class="topbar">
-    <div class="topbar-title">ACTIVE LOADS</div>
-    <div class="status-live"><span class="status-dot"></span>LIVE</div>
-    <button class="btn-add" onclick="openLoadModal()">+ New Load</button>
+    <span class="topbar-title">ACTIVE LOADS</span>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:12px;color:rgba(255,255,255,0.7);" id="weekLabel"></span>
+      <button class="btn btn-primary btn-sm" onclick="openModal()">＋ Add / Import Load</button>
+    </div>
   </div>
   <div class="content">
     <div class="kpi-row">
-      <div class="kpi-card"><div class="kpi-label">In Transit</div><div class="kpi-val" id="kpi-transit">—</div><div class="kpi-sub">Moving now</div></div>
+      <div class="kpi-card"><div class="kpi-label">Active Loads</div><div class="kpi-val" id="kpi-active">—</div><div class="kpi-sub">In transit now</div></div>
       <div class="kpi-card"><div class="kpi-label">Pending Pickup</div><div class="kpi-val" id="kpi-pending">—</div><div class="kpi-sub">Scheduled</div></div>
-      <div class="kpi-card"><div class="kpi-label">Delivered</div><div class="kpi-val" id="kpi-delivered">—</div><div class="kpi-sub">Awaiting POD: <span id="kpi-pod-miss">—</span></div></div>
-      <div class="kpi-card"><div class="kpi-label">Total Revenue</div><div class="kpi-val" id="kpi-revenue">—</div><div class="kpi-sub">Active loads</div></div>
+      <div class="kpi-card"><div class="kpi-label">Delivered</div><div class="kpi-val" id="kpi-delivered">—</div><div class="kpi-sub">This period</div></div>
+      <div class="kpi-card"><div class="kpi-label">Total Revenue</div><div class="kpi-val" id="kpi-revenue">—</div><div class="kpi-sub">All loads</div></div>
     </div>
     <div class="panel">
-      <div class="toolbar">
-        <input class="search-box" id="load-search" placeholder="Search loads, drivers, brokers..." oninput="renderLoads()">
-        <button class="filter-pill active" onclick="setFilter('all',this)">ALL</button>
-        <button class="filter-pill blue" onclick="setFilter('transit',this)">IN TRANSIT</button>
-        <button class="filter-pill green" onclick="setFilter('active',this)">ACTIVE</button>
-        <button class="filter-pill yellow" onclick="setFilter('pending',this)">PENDING</button>
-        <button class="filter-pill green" onclick="setFilter('delivered',this)">DELIVERED</button>
-        <button class="filter-pill red" onclick="setFilter('problem',this)">PROBLEM</button>
+      <div class="panel-head">
+        <span class="panel-title">Current Loads</span>
+        <span style="font-size:11px;color:#64748b;">Tap row to edit · <span id="load-count">0</span> loads</span>
       </div>
-      <div id="loads-list"></div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr>
+            <th>Load #</th><th>Driver</th><th>Origin</th><th>Destination</th>
+            <th>Broker</th><th>Rate</th><th>Pickup</th><th>Delivery</th>
+            <th>Status</th><th>POD</th><th></th>
+          </tr></thead>
+          <tbody id="loads-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- LOAD MODAL -->
-<div class="modal-overlay" id="load-modal" onclick="if(event.target===this)closeLoadModal()">
-  <div class="modal-box">
+<!-- ADD/EDIT/IMPORT MODAL -->
+<div class="modal-overlay" id="loadModal">
+  <div class="modal">
     <div class="modal-head">
-      <div class="modal-title" id="modal-title">NEW LOAD</div>
-      <button class="modal-close" onclick="closeLoadModal()">✕</button>
+      <span class="modal-title" id="modalTitle">NEW LOAD</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
-      <input type="hidden" id="edit-id">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Load # / BOL</label>
-          <input class="form-input" id="f-loadnum" placeholder="e.g. L10483">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Status</label>
-          <select class="form-select" id="f-status">
-            <option value="pending">Pending Pickup</option>
-            <option value="active">Active</option>
-            <option value="transit">In Transit</option>
-            <option value="delivered">Delivered</option>
-            <option value="problem">Problem</option>
-          </select>
-        </div>
+
+      <!-- PDF IMPORT ZONE -->
+      <div class="import-zone" id="importZone" onclick="document.getElementById('pdfInput').click()"
+           ondragover="event.preventDefault();this.classList.add('drag-over')"
+           ondragleave="this.classList.remove('drag-over')"
+           ondrop="handleDrop(event)">
+        <div class="import-zone-icon">📄</div>
+        <div class="import-zone-text"><strong>Import Rate Confirmation PDF</strong><br>Click to browse or drag &amp; drop a rate con PDF — fields auto-extract</div>
+        <div class="import-status" id="importStatus"></div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Driver</label>
-          <input class="form-input" id="f-driver" placeholder="Driver name" list="driver-list">
-          <datalist id="driver-list"></datalist>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Broker / Customer</label>
-          <input class="form-input" id="f-broker" placeholder="e.g. Expressway Logistics">
-        </div>
+      <input type="file" id="pdfInput" accept=".pdf" style="display:none" onchange="handleFile(this.files[0])">
+
+      <div id="extractedBadge" style="display:none;margin-bottom:12px;">
+        <span class="extracted-badge">✓ Extracted from PDF — review and confirm below</span>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Origin</label>
-          <input class="form-input" id="f-origin" placeholder="City, State">
+
+      <!-- LOAD FORM -->
+      <form id="loadForm" onsubmit="saveLoad(event)">
+        <input type="hidden" id="fId">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Load / Reference #</label>
+            <input class="form-input" id="fLoadNum" placeholder="e.g. RC-332500" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Broker / Customer</label>
+            <input class="form-input" id="fBroker" placeholder="e.g. SET Logistics" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Driver</label>
+            <select class="form-select" id="fDriver">
+              <option value="">— Unassigned —</option>
+              <option>AVIS</option><option>DAVID</option><option>GUILLERMO</option>
+              <option>MIGUEL</option><option>NELSON</option><option>YOSVIEL</option>
+              <option>AMET</option><option>BETTY</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Rate</label>
+            <input class="form-input" id="fRate" placeholder="e.g. 2850" type="number" step="0.01">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Origin City</label>
+            <div class="form-row">
+              <input class="form-input" id="fOriginCity" placeholder="City" style="flex:2">
+              <input class="form-input" id="fOriginState" placeholder="ST" maxlength="2" style="flex:1;text-transform:uppercase">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Destination City</label>
+            <div class="form-row">
+              <input class="form-input" id="fDestCity" placeholder="City" style="flex:2">
+              <input class="form-input" id="fDestState" placeholder="ST" maxlength="2" style="flex:1;text-transform:uppercase">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pickup Date</label>
+            <input class="form-input" id="fPickupDate" type="date">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Delivery Date</label>
+            <input class="form-input" id="fDeliveryDate" type="date">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="fStatus">
+              <option value="pending">Pending</option>
+              <option value="active">Active</option>
+              <option value="transit">In Transit</option>
+              <option value="delivered">Delivered</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">POD Status</label>
+            <select class="form-select" id="fPod">
+              <option value="none">—</option>
+              <option value="pending">Pending</option>
+              <option value="on_file">On File</option>
+              <option value="missing">Missing</option>
+            </select>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Commodity / Notes</label>
+            <input class="form-input" id="fNotes" placeholder="e.g. Heavy equipment, oversize load">
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Permits Attached (comma-separated state abbreviations)</label>
+            <input class="form-input" id="fPermits" placeholder="e.g. TX, NM, AZ, GA">
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Destination</label>
-          <input class="form-input" id="f-dest" placeholder="City, State">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Rate ($)</label>
-          <input class="form-input" id="f-rate" type="number" placeholder="0.00">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Miles</label>
-          <input class="form-input" id="f-miles" type="number" placeholder="0">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Pickup Date</label>
-          <input class="form-input" id="f-pickup" type="date">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Delivery Date</label>
-          <input class="form-input" id="f-delivery" type="date">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">POD Status</label>
-          <select class="form-select" id="f-pod">
-            <option value="none">— Not Applicable —</option>
-            <option value="pending">Pending</option>
-            <option value="received">Received ✓</option>
-            <option value="missing">Missing !</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Commodity</label>
-          <input class="form-input" id="f-commodity" placeholder="e.g. Heavy Equipment">
-        </div>
-      </div>
-      <div class="form-row full">
-        <div class="form-group">
-          <label class="form-label">Notes</label>
-          <input class="form-input" id="f-notes" placeholder="Any special instructions or notes">
-        </div>
-      </div>
+      </form>
     </div>
-    <div class="modal-foot">
-      <button class="btn-cancel" onclick="closeLoadModal()">Cancel</button>
-      <button class="btn-save" onclick="saveLoad()">Save Load</button>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLoad(event)" id="saveBtn">Save Load</button>
     </div>
   </div>
 </div>
 
 <nav class="mobile-nav">
-  <a href="fleet-command.html" class="mobile-nav-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>DASH</a>
-  <a href="active-loads.html" class="mobile-nav-tab active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>LOADS</a>
-  <a href="settlements.html" class="mobile-nav-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>PAY</a>
-  <a href="equipment.html" class="mobile-nav-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>FLEET</a>
-  <a href="drivers.html" class="mobile-nav-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>TEAM</a>
+  <a href="fleet-command.html" class="mobile-nav-tab">DASH</a>
+  <a href="settlements.html" class="mobile-nav-tab">PAY</a>
+  <a href="documents.html" class="mobile-nav-tab">DOCS</a>
+  <a href="equipment.html" class="mobile-nav-tab">FLEET</a>
+  <a href="drivers.html" class="mobile-nav-tab">TEAM</a>
 </nav>
 
+<!-- PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="nexus-lang.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="nexus-config.js"></script>
 <script src="nexus-db.js"></script>
-<script src="nexus-lang.js"></script>
 <script>
-const LS_KEY = 'nexus_active_loads';
-let _loads = [];
-let _filter = 'all';
-
-const DRIVER_COLORS = {
-  'david':   {bg:'#dbeafe',fg:'#1d4ed8'},
-  'nelson':  {bg:'#fce7f3',fg:'#9d174d'},
-  'avis':    {bg:'#dcfce7',fg:'#15803d'},
-  'miguel':  {bg:'#fef9c3',fg:'#a16207'},
-  'guillermo':{bg:'#ede9fe',fg:'#6d28d9'},
-  'yosviel': {bg:'#ffedd5',fg:'#c2410c'},
-  'amet':    {bg:'#e0f2fe',fg:'#0369a1'},
-  'betty':   {bg:'#fce7f3',fg:'#db2777'},
-};
-
-const SEED = [
-  {id:'load-1',loadNum:'L10483',driver:'David',origin:'Miami, FL',dest:'Houston, TX',broker:'Expressway Logistics',rate:2850,miles:1188,pickup:'2026-05-23',delivery:'2026-05-26',status:'transit',pod:'missing',commodity:'Flatbed Freight',notes:''},
-  {id:'load-2',loadNum:'L10399',driver:'Nelson',origin:'Atlanta, GA',dest:'Dallas, TX',broker:'Expressway Logistics',rate:3100,miles:781,pickup:'2026-05-24',delivery:'2026-05-26',status:'transit',pod:'missing',commodity:'Heavy Equipment',notes:''},
-  {id:'load-3',loadNum:'BOL-36159',driver:'Avis',origin:'Orlando, FL',dest:'Chicago, IL',broker:'Allquip',rate:4200,miles:1285,pickup:'2026-05-25',delivery:'2026-05-28',status:'active',pod:'received',commodity:'Machinery',notes:''},
-  {id:'load-4',loadNum:'BOL-35544',driver:'Miguel',origin:'Jacksonville, FL',dest:'Phoenix, AZ',broker:'Allquip',rate:3750,miles:1830,pickup:'2026-05-25',delivery:'2026-05-29',status:'transit',pod:'pending',commodity:'Construction Equipment',notes:''},
-  {id:'load-5',loadNum:'332500',driver:'Guillermo',origin:'Tampa, FL',dest:'Nashville, TN',broker:'Set Logistics',rate:2400,miles:652,pickup:'2026-05-26',delivery:'2026-05-28',status:'active',pod:'received',commodity:'General Cargo',notes:''},
-  {id:'load-6',loadNum:'130209',driver:'Yosviel',origin:'Ft Lauderdale, FL',dest:'Los Angeles, CA',broker:'LRS Logistics',rate:5100,miles:2750,pickup:'2026-05-22',delivery:'2026-05-27',status:'transit',pod:'missing',commodity:'Oversized Load',notes:''},
-  {id:'load-7',loadNum:'120630',driver:'Amet',origin:'Miami, FL',dest:'New York, NY',broker:'Coast to Coast',rate:4800,miles:1280,pickup:'2026-05-20',delivery:'2026-05-24',status:'delivered',pod:'received',commodity:'Flatbed Freight',notes:''},
-  {id:'load-8',loadNum:'WLE-2070',driver:'Nelson',origin:'Doral, FL',dest:'Seattle, WA',broker:'WLE',rate:6200,miles:3220,pickup:'2026-05-23',delivery:'2026-05-28',status:'active',pod:'pending',commodity:'Heavy Machinery',notes:''},
-  {id:'load-9',loadNum:'32840',driver:'David',origin:'Hialeah, FL',dest:'Denver, CO',broker:'STT Logistics',rate:3900,miles:1990,pickup:'2026-05-27',delivery:'2026-05-30',status:'pending',pod:'none',commodity:'Equipment',notes:''},
-  {id:'load-10',loadNum:'STT-L10399',driver:'Avis',origin:'Chicago, IL',dest:'Miami, FL',broker:'STT Logistics',rate:4050,miles:1373,pickup:'2026-05-28',delivery:'2026-05-31',status:'pending',pod:'none',commodity:'General Cargo',notes:''},
+// ─── SEED DATA (existing loads) ───────────────────────────────────────────
+const SEED_LOADS = [
+  {id:'s1',loadNum:'L10483',driver:'DAVID',originCity:'Miami',originState:'FL',destCity:'Houston',destState:'TX',broker:'Expressway Logistics',rate:2850,status:'transit',pod:'missing',pickupDate:'',deliveryDate:'',notes:'',permits:''},
+  {id:'s2',loadNum:'L10399',driver:'NELSON',originCity:'Atlanta',originState:'GA',destCity:'Dallas',destState:'TX',broker:'Expressway Logistics',rate:3100,status:'transit',pod:'missing',pickupDate:'',deliveryDate:'',notes:'',permits:''},
+  {id:'s3',loadNum:'BOL-36159',driver:'AVIS',originCity:'Orlando',originState:'FL',destCity:'Chicago',destState:'IL',broker:'Allquip',rate:4200,status:'active',pod:'on_file',pickupDate:'',deliveryDate:'',notes:'',permits:''},
+  {id:'s4',loadNum:'BOL-35544',driver:'MIGUEL',originCity:'Jacksonville',originState:'FL',destCity:'Phoenix',destState:'AZ',broker:'Allquip',rate:3750,status:'transit',pod:'pending',pickupDate:'',deliveryDate:'',notes:'',permits:''},
+  {id:'s5',loadNum:'332500',driver:'GUILLERMO',originCity:'Tampa',originState:'FL',destCity:'Nashville',destState:'TN',broker:'Set Logistics',rate:2400,status:'active',pod:'on_file',pickupDate:'',deliveryDate:'',notes:'',permits:''},
+  {id:'s6',loadNum:'130209',driver:'YOSVIEL',originCity:'Ft Lauderdale',originState:'FL',destCity:'Los Angeles',destState:'CA',broker:'LRS Logistics',rate:5100,status:'transit',pod:'missing',pickupDate:'',deliveryDate:'',notes:'',permits:''},
+  {id:'s7',loadNum:'120630',driver:'AMET',originCity:'Miami',originState:'FL',destCity:'New York',destState:'NY',broker:'Coast to Coast',rate:4800,status:'delivered',pod:'on_file',pickupDate:'',deliveryDate:'',notes:'',permits:''},
+  {id:'s8',loadNum:'WLE-2070',driver:'NELSON',originCity:'Doral',originState:'FL',destCity:'Seattle',destState:'WA',broker:'WLE',rate:6200,status:'active',pod:'pending',pickupDate:'',deliveryDate:'',notes:'',permits:''},
+  {id:'s9',loadNum:'32840',driver:'DAVID',originCity:'Hialeah',originState:'FL',destCity:'Denver',destState:'CO',broker:'STT Logistics',rate:3900,status:'pending',pod:'none',pickupDate:'',deliveryDate:'',notes:'',permits:''},
+  {id:'s10',loadNum:'L10483-B',driver:'DAVID',originCity:'Houston',originState:'TX',destCity:'Miami',destState:'FL',broker:'Expressway Logistics',rate:2650,status:'pending',pod:'none',pickupDate:'',deliveryDate:'',notes:'',permits:''},
+  {id:'s11',loadNum:'STT-L10399',driver:'AVIS',originCity:'Chicago',originState:'IL',destCity:'Miami',destState:'FL',broker:'STT Logistics',rate:4050,status:'pending',pod:'none',pickupDate:'',deliveryDate:'',notes:'',permits:''}
 ];
 
-function loadData() {
+// ─── STORAGE ─────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'nexus_loads_v2';
+
+function getLoads() {
   try {
-    const raw = localStorage.getItem(LS_KEY);
-    _loads = raw ? JSON.parse(raw) : null;
-    if (!_loads || !_loads.length) {
-      _loads = JSON.parse(JSON.stringify(SEED));
-      save();
-    }
-  } catch(e) { _loads = JSON.parse(JSON.stringify(SEED)); }
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e){}
+  // First run — seed with existing data
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED_LOADS));
+  return SEED_LOADS;
 }
 
-function save() {
-  localStorage.setItem(LS_KEY, JSON.stringify(_loads));
+function saveLoads(loads) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(loads));
 }
 
-function setFilter(f, el) {
-  _filter = f;
-  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-  if (el) el.classList.add('active');
-  renderLoads();
-}
+// ─── DRIVER COLORS ───────────────────────────────────────────────────────
+const DRIVER_COLORS = {
+  DAVID:     {bg:'#dbeafe',color:'#1d4ed8'},
+  NELSON:    {bg:'#fce7f3',color:'#9d174d'},
+  AVIS:      {bg:'#dcfce7',color:'#15803d'},
+  MIGUEL:    {bg:'#fef9c3',color:'#a16207'},
+  GUILLERMO: {bg:'#ede9fe',color:'#6d28d9'},
+  YOSVIEL:   {bg:'#ffedd5',color:'#c2410c'},
+  AMET:      {bg:'#e0f2fe',color:'#0369a1'},
+  BETTY:     {bg:'#fdf4ff',color:'#86198f'},
+};
 
-function driverChip(name) {
-  const key = (name||'').toLowerCase().split(' ')[0];
-  const c = DRIVER_COLORS[key] || {bg:'#f1f5f9',fg:'#475569'};
-  return `<span class="driver-chip" style="background:${c.bg};color:${c.fg};">${(name||'—').toUpperCase()}</span>`;
+function driverBadge(name) {
+  if (!name) return '<span style="color:#94a3b8;font-size:11px;">—</span>';
+  const c = DRIVER_COLORS[name.toUpperCase()] || {bg:'#f1f5f9',color:'#475569'};
+  return `<span class="driver-badge" style="background:${c.bg};color:${c.color};">${name.toUpperCase()}</span>`;
 }
 
 function statusBadge(s) {
-  const map = {transit:'s-transit',active:'s-active',pending:'s-pending',delivered:'s-delivered',problem:'s-problem'};
-  const label = {transit:'In Transit',active:'Active',pending:'Pending',delivered:'Delivered',problem:'Problem'};
-  return `<span class="status-badge ${map[s]||'s-pending'}">${label[s]||s}</span>`;
+  const map = {
+    active:    {cls:'status-active',label:'Active'},
+    transit:   {cls:'status-transit',label:'In Transit'},
+    pending:   {cls:'status-pending',label:'Pending'},
+    delivered: {cls:'status-delivered',label:'Delivered'},
+  };
+  const m = map[s] || {cls:'status-pending',label:s||'Pending'};
+  return `<span class="status-badge ${m.cls}">${m.label}</span>`;
 }
 
 function podBadge(p) {
-  if (p === 'received') return `<span class="pod-ok">✓ On File</span>`;
-  if (p === 'missing')  return `<span class="pod-miss">! Missing</span>`;
-  if (p === 'pending')  return `<span class="pod-pend">Pending</span>`;
-  return `<span class="pod-na">—</span>`;
+  if (p==='on_file') return '<span style="color:#22c55e;font-size:11px;">✓ On file</span>';
+  if (p==='missing') return '<span style="color:#ef4444;font-size:11px;">Missing</span>';
+  if (p==='pending') return '<span style="color:#f59e0b;font-size:11px;">Pending</span>';
+  return '<span style="color:#94a3b8;font-size:11px;">—</span>';
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  try { return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}); } catch(e){ return d; }
 }
 
 function fmtRate(r) {
   if (!r) return '—';
-  return '$' + Number(r).toLocaleString();
+  return '$' + Number(r).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
 }
 
+// ─── RENDER TABLE ────────────────────────────────────────────────────────
 function renderLoads() {
-  const q = (document.getElementById('load-search')?.value || '').toLowerCase();
-  let data = _loads.filter(l => {
-    if (_filter !== 'all' && l.status !== _filter) return false;
-    if (q) {
-      const blob = [l.loadNum,l.driver,l.broker,l.origin,l.dest,l.commodity,l.notes].join(' ').toLowerCase();
-      if (!blob.includes(q)) return false;
-    }
-    return true;
-  });
+  const loads = getLoads();
+  const tbody = document.getElementById('loads-tbody');
+  document.getElementById('load-count').textContent = loads.length;
 
-  // KPIs from full dataset
-  const transit = _loads.filter(l => l.status === 'transit').length;
-  const pending = _loads.filter(l => l.status === 'pending').length;
-  const delivered = _loads.filter(l => l.status === 'delivered').length;
-  const podMiss = _loads.filter(l => l.pod === 'missing').length;
-  const revenue = _loads.filter(l => ['transit','active'].includes(l.status)).reduce((s,l) => s + Number(l.rate||0), 0);
-  document.getElementById('kpi-transit').textContent = transit;
+  // KPIs
+  let active=0, pending=0, delivered=0, revenue=0;
+  loads.forEach(l => {
+    if (l.status==='active'||l.status==='transit') active++;
+    if (l.status==='pending') pending++;
+    if (l.status==='delivered') delivered++;
+    revenue += Number(l.rate)||0;
+  });
+  document.getElementById('kpi-active').textContent = active;
   document.getElementById('kpi-pending').textContent = pending;
   document.getElementById('kpi-delivered').textContent = delivered;
-  document.getElementById('kpi-pod-miss').textContent = podMiss;
-  document.getElementById('kpi-revenue').textContent = revenue >= 1000 ? '$' + (revenue/1000).toFixed(1) + 'K' : '$' + revenue;
+  document.getElementById('kpi-revenue').textContent = '$'+revenue.toLocaleString();
 
-  const container = document.getElementById('loads-list');
-  if (!data.length) {
-    container.innerHTML = '<div class="empty-state">No loads found.</div>';
+  if (!loads.length) {
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:40px;color:#94a3b8;">No loads yet — click "+ Add / Import Load" to get started.</td></tr>';
     return;
   }
 
-  container.innerHTML = `
-    <table>
-      <thead><tr>
-        <th>Load #</th><th>Driver</th><th>Origin → Dest</th><th>Broker</th>
-        <th>Rate</th><th>Status</th><th>POD</th><th></th>
-      </tr></thead>
-      <tbody>
-        ${data.map(l => `
-          <tr>
-            <td><span class="load-num">${l.loadNum||'—'}</span></td>
-            <td>${driverChip(l.driver)}</td>
-            <td style="font-size:12px;color:#334155;">${l.origin||'—'} → ${l.dest||'—'}</td>
-            <td style="font-size:12px;color:#475569;">${l.broker||'—'}</td>
-            <td style="color:#22c55e;font-weight:600;">${fmtRate(l.rate)}</td>
-            <td>${statusBadge(l.status)}</td>
-            <td>${podBadge(l.pod)}</td>
-            <td style="white-space:nowrap;">
-              <button class="btn-act" onclick="editLoad('${l.id}')">Edit</button>
-              <button class="btn-act btn-del" onclick="deleteLoad('${l.id}')">✕</button>
-            </td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
+  tbody.innerHTML = loads.map(l => {
+    const permits = l.permits ? l.permits.split(',').map(p=>p.trim()).filter(Boolean).map(p=>`<span class="permit-tag">${p}</span>`).join('') : '';
+    return `<tr style="cursor:pointer;" onclick="editLoad('${l.id}')">
+      <td><span class="load-num">${l.loadNum||'—'}</span></td>
+      <td>${driverBadge(l.driver)}</td>
+      <td>${l.originCity||'—'}${l.originState?', '+l.originState:''}</td>
+      <td>${l.destCity||'—'}${l.destState?', '+l.destState:''}</td>
+      <td style="font-size:12px;">${l.broker||'—'}</td>
+      <td style="color:#22c55e;font-weight:600;">${fmtRate(l.rate)}</td>
+      <td style="font-size:12px;">${fmtDate(l.pickupDate)}</td>
+      <td style="font-size:12px;">${fmtDate(l.deliveryDate)}</td>
+      <td>${statusBadge(l.status)}</td>
+      <td>${podBadge(l.pod)}</td>
+      <td onclick="event.stopPropagation()">
+        <div class="action-btns">
+          <button class="icon-btn" title="Edit" onclick="editLoad('${l.id}')">✏️</button>
+          <button class="icon-btn" title="Delete" onclick="deleteLoad('${l.id}')">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
 }
 
-function openLoadModal(id) {
-  document.getElementById('edit-id').value = '';
-  document.getElementById('modal-title').textContent = 'NEW LOAD';
-  ['loadnum','driver','broker','origin','dest','notes','commodity'].forEach(f => {
-    document.getElementById('f-' + f).value = '';
-  });
-  document.getElementById('f-rate').value = '';
-  document.getElementById('f-miles').value = '';
-  document.getElementById('f-pickup').value = '';
-  document.getElementById('f-delivery').value = '';
-  document.getElementById('f-status').value = 'pending';
-  document.getElementById('f-pod').value = 'none';
-  // Populate driver datalist
-  const dl = document.getElementById('driver-list');
-  const names = [...new Set(_loads.map(l => l.driver).filter(Boolean))];
-  dl.innerHTML = names.map(n => `<option value="${n}">`).join('');
-  document.getElementById('load-modal').classList.add('open');
+// ─── MODAL OPEN/CLOSE ────────────────────────────────────────────────────
+let editingId = null;
+
+function openModal(load=null) {
+  editingId = load ? load.id : null;
+  document.getElementById('modalTitle').textContent = load ? 'EDIT LOAD' : 'NEW LOAD';
+  document.getElementById('fId').value = load ? load.id : '';
+  document.getElementById('fLoadNum').value = load?.loadNum || '';
+  document.getElementById('fBroker').value = load?.broker || '';
+  document.getElementById('fDriver').value = load?.driver || '';
+  document.getElementById('fRate').value = load?.rate || '';
+  document.getElementById('fOriginCity').value = load?.originCity || '';
+  document.getElementById('fOriginState').value = load?.originState || '';
+  document.getElementById('fDestCity').value = load?.destCity || '';
+  document.getElementById('fDestState').value = load?.destState || '';
+  document.getElementById('fPickupDate').value = load?.pickupDate || '';
+  document.getElementById('fDeliveryDate').value = load?.deliveryDate || '';
+  document.getElementById('fStatus').value = load?.status || 'pending';
+  document.getElementById('fPod').value = load?.pod || 'none';
+  document.getElementById('fNotes').value = load?.notes || '';
+  document.getElementById('fPermits').value = load?.permits || '';
+  document.getElementById('importStatus').textContent = '';
+  document.getElementById('extractedBadge').style.display = 'none';
+  document.getElementById('loadModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('loadModal').classList.remove('open');
+  editingId = null;
 }
 
 function editLoad(id) {
-  const l = _loads.find(x => x.id === id);
-  if (!l) return;
-  document.getElementById('edit-id').value = id;
-  document.getElementById('modal-title').textContent = 'EDIT LOAD';
-  document.getElementById('f-loadnum').value = l.loadNum || '';
-  document.getElementById('f-driver').value = l.driver || '';
-  document.getElementById('f-broker').value = l.broker || '';
-  document.getElementById('f-origin').value = l.origin || '';
-  document.getElementById('f-dest').value = l.dest || '';
-  document.getElementById('f-rate').value = l.rate || '';
-  document.getElementById('f-miles').value = l.miles || '';
-  document.getElementById('f-pickup').value = l.pickup || '';
-  document.getElementById('f-delivery').value = l.delivery || '';
-  document.getElementById('f-status').value = l.status || 'pending';
-  document.getElementById('f-pod').value = l.pod || 'none';
-  document.getElementById('f-commodity').value = l.commodity || '';
-  document.getElementById('f-notes').value = l.notes || '';
-  document.getElementById('load-modal').classList.add('open');
-}
-
-function closeLoadModal() {
-  document.getElementById('load-modal').classList.remove('open');
-}
-
-function saveLoad() {
-  const id = document.getElementById('edit-id').value;
-  const data = {
-    id: id || 'load-' + Date.now(),
-    loadNum: document.getElementById('f-loadnum').value.trim(),
-    driver:  document.getElementById('f-driver').value.trim(),
-    broker:  document.getElementById('f-broker').value.trim(),
-    origin:  document.getElementById('f-origin').value.trim(),
-    dest:    document.getElementById('f-dest').value.trim(),
-    rate:    parseFloat(document.getElementById('f-rate').value) || 0,
-    miles:   parseInt(document.getElementById('f-miles').value) || 0,
-    pickup:  document.getElementById('f-pickup').value,
-    delivery: document.getElementById('f-delivery').value,
-    status:  document.getElementById('f-status').value,
-    pod:     document.getElementById('f-pod').value,
-    commodity: document.getElementById('f-commodity').value.trim(),
-    notes:   document.getElementById('f-notes').value.trim(),
-  };
-  if (!data.loadNum) { alert('Load # is required.'); return; }
-  if (id) {
-    const idx = _loads.findIndex(x => x.id === id);
-    if (idx > -1) _loads[idx] = data;
-  } else {
-    _loads.unshift(data);
-  }
-  save();
-  closeLoadModal();
-  renderLoads();
+  const load = getLoads().find(l => l.id === id);
+  if (load) openModal(load);
 }
 
 function deleteLoad(id) {
-  const l = _loads.find(x => x.id === id);
-  if (!confirm('Remove load ' + (l?.loadNum || id) + '?')) return;
-  _loads = _loads.filter(x => x.id !== id);
-  save();
+  if (!confirm('Delete this load?')) return;
+  const loads = getLoads().filter(l => l.id !== id);
+  saveLoads(loads);
   renderLoads();
 }
 
-(async () => {
-  if (typeof NexusDB !== 'undefined') await NexusDB.Auth.requireAuth().catch(() => {});
-  loadData();
+// ─── SAVE LOAD ───────────────────────────────────────────────────────────
+function saveLoad(e) {
+  e.preventDefault();
+  const load = {
+    id: editingId || ('L' + Date.now()),
+    loadNum: document.getElementById('fLoadNum').value.trim(),
+    broker:  document.getElementById('fBroker').value.trim(),
+    driver:  document.getElementById('fDriver').value,
+    rate:    parseFloat(document.getElementById('fRate').value) || 0,
+    originCity:   document.getElementById('fOriginCity').value.trim(),
+    originState:  document.getElementById('fOriginState').value.trim().toUpperCase(),
+    destCity:     document.getElementById('fDestCity').value.trim(),
+    destState:    document.getElementById('fDestState').value.trim().toUpperCase(),
+    pickupDate:   document.getElementById('fPickupDate').value,
+    deliveryDate: document.getElementById('fDeliveryDate').value,
+    status: document.getElementById('fStatus').value,
+    pod:    document.getElementById('fPod').value,
+    notes:  document.getElementById('fNotes').value.trim(),
+    permits: document.getElementById('fPermits').value.trim(),
+  };
+
+  let loads = getLoads();
+  const idx = loads.findIndex(l => l.id === load.id);
+  if (idx >= 0) loads[idx] = load;
+  else loads.unshift(load);
+
+  saveLoads(loads);
   renderLoads();
+  closeModal();
+}
+
+// ─── PDF IMPORT ───────────────────────────────────────────────────────────
+if (typeof pdfjsLib !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('importZone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type === 'application/pdf') handleFile(file);
+}
+
+async function handleFile(file) {
+  if (!file) return;
+  const status = document.getElementById('importStatus');
+  status.className = 'import-status extracting';
+  status.textContent = '⏳ Extracting text from PDF…';
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+    let fullText = '';
+    for (let i = 1; i <= Math.min(pdf.numPages, 4); i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      fullText += content.items.map(item => item.str).join(' ') + '\n';
+    }
+    status.className = 'import-status success';
+    status.textContent = '✓ Text extracted — filling fields…';
+    fillFromText(fullText, file.name);
+    document.getElementById('extractedBadge').style.display = 'block';
+  } catch(err) {
+    status.className = 'import-status error';
+    status.textContent = '✗ Could not read PDF — fill fields manually.';
+    console.error(err);
+  }
+}
+
+function fillFromText(text, filename) {
+  const t = text;
+
+  // ── LOAD / REFERENCE NUMBER ──
+  const loadPatterns = [
+    /(?:load|reference|ref|rc|order|confirmation|conf|job|shipment)\s*[#:\-\s]+([A-Z0-9\-]{3,20})/i,
+    /(?:load\s*#|RC\s*#|Order\s*#|Ref\s*#)\s*([A-Z0-9\-]{3,20})/i,
+    /\b(\d{5,10})\b/,
+  ];
+  for (const p of loadPatterns) {
+    const m = t.match(p);
+    if (m && m[1]) { setVal('fLoadNum', m[1].trim()); break; }
+  }
+
+  // ── BROKER / COMPANY ──
+  const brokerPatterns = [
+    /(?:broker|carrier\s*broker|load\s*broker|arranged\s*by|booked\s*by|dispatched\s*by)[:\s]+([A-Za-z][A-Za-z0-9\s&,\.]+?)(?:\n|LLC|Inc|Corp|Ltd|,)/i,
+    /(SET\s+(?:Logistics|Freight)[^,\n]*)/i,
+    /(Expressway\s+Logistics[^,\n]*)/i,
+    /(STT\s+Logistics[^,\n]*)/i,
+    /(LRS\s+Logistics[^,\n]*)/i,
+    /(Allquip[^,\n]*)/i,
+    /(WLE[^,\n]{0,20})/i,
+    /(ATS[^,\n]{0,20})/i,
+    /(Artisan[^,\n]{0,20})/i,
+    /(Heavy\s+Iron[^,\n]*)/i,
+    /(Coast\s+to\s+Coast[^,\n]*)/i,
+  ];
+  for (const p of brokerPatterns) {
+    const m = t.match(p);
+    if (m) { setVal('fBroker', (m[1]||m[0]).trim().replace(/\s+/g,' ')); break; }
+  }
+
+  // ── RATE ──
+  const ratePatterns = [
+    /(?:carrier\s*(?:pay|rate)|total\s*(?:pay|amount|rate)|rate)[:\s]*\$\s*([\d,]+(?:\.\d{1,2})?)/i,
+    /(?:flat\s*rate|agreed\s*rate|load\s*rate)[:\s]*\$\s*([\d,]+(?:\.\d{1,2})?)/i,
+    /\$\s*([\d,]{4,}(?:\.\d{1,2})?)/,
+  ];
+  for (const p of ratePatterns) {
+    const m = t.match(p);
+    if (m) { setVal('fRate', m[1].replace(/,/g,'')); break; }
+  }
+
+  // ── ORIGIN / PICKUP ──
+  const originPatterns = [
+    /(?:pickup|pick\s*up|ship\s*from|origin|shipper|pick)[:\s]+(?:[^\n]*\n){0,3}?([A-Za-z\s]+),\s*([A-Z]{2})\s+\d{5}/i,
+    /(?:from|origin)[:\s]+([A-Za-z][A-Za-z\s]+),\s*([A-Z]{2})/i,
+  ];
+  for (const p of originPatterns) {
+    const m = t.match(p);
+    if (m) {
+      setVal('fOriginCity', m[1].trim());
+      setVal('fOriginState', m[2].trim().toUpperCase());
+      break;
+    }
+  }
+
+  // ── DESTINATION / DELIVERY ──
+  const destPatterns = [
+    /(?:deliver(?:y)?|drop|consignee|ship\s*to|destination|deliver\s*to)[:\s]+(?:[^\n]*\n){0,3}?([A-Za-z\s]+),\s*([A-Z]{2})\s+\d{5}/i,
+    /(?:to|destination)[:\s]+([A-Za-z][A-Za-z\s]+),\s*([A-Z]{2})/i,
+  ];
+  for (const p of destPatterns) {
+    const m = t.match(p);
+    if (m) {
+      setVal('fDestCity', m[1].trim());
+      setVal('fDestState', m[2].trim().toUpperCase());
+      break;
+    }
+  }
+
+  // ── DATES ──
+  // Pickup date
+  const pickupM = t.match(/(?:pickup|pick\s*up|ship\s*date|pu\s*date)[:\s]+(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i);
+  if (pickupM) setVal('fPickupDate', parseToISO(pickupM[1]));
+
+  // Delivery date
+  const delivM = t.match(/(?:deliver(?:y)?\s*date|drop\s*date|del\s*date)[:\s]+(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i);
+  if (delivM) setVal('fDeliveryDate', parseToISO(delivM[1]));
+
+  // ── DRIVER (if named in RC) ──
+  const drivers = ['AVIS','DAVID','GUILLERMO','MIGUEL','NELSON','YOSVIEL','AMET','BETTY'];
+  for (const d of drivers) {
+    if (t.toUpperCase().includes(d)) {
+      setVal('fDriver', d);
+      break;
+    }
+  }
+
+  // ── PERMITS (states mentioned in permit section) ──
+  const permitM = t.match(/(?:permit|oversize|overdimensional)[^.]*?states?[:\s]+([A-Z,\s]+)/i);
+  if (permitM) setVal('fPermits', permitM[1].trim());
+
+  // ── NOTES / COMMODITY ──
+  const commM = t.match(/(?:commodity|freight|cargo|description)[:\s]+([^\n]{5,60})/i);
+  if (commM) setVal('fNotes', commM[1].trim());
+
+  // Auto-set status to pending (new import)
+  document.getElementById('fStatus').value = 'pending';
+}
+
+function setVal(id, val) {
+  if (val && val.trim()) document.getElementById(id).value = val.trim();
+}
+
+function parseToISO(dateStr) {
+  try {
+    const parts = dateStr.split(/[\/\-]/);
+    if (parts.length < 3) return '';
+    let [m,d,y] = parts;
+    if (y.length===2) y = '20'+y;
+    return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+  } catch(e){ return ''; }
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────
+document.getElementById('weekLabel').textContent = 'Week of ' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+// Click outside modal to close
+document.getElementById('loadModal').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+
+renderLoads();
+
+(async()=>{
+  if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
 })();
 </script>
-</body>
-</html>
+</body></html>
