@@ -8,8 +8,8 @@
 // 4. Copy anon/public key → NEXUS_SUPABASE_KEY
 // ============================================================
 
-window.NEXUS_SUPABASE_URL = '';
-window.NEXUS_SUPABASE_KEY = '';
+window.NEXUS_SUPABASE_URL = 'https://qcznatakapbknqafiszy.supabase.co';
+window.NEXUS_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjem5hdGFrYXBia25xYWZpc3p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNzczOTcsImV4cCI6MjA5NTg1MzM5N30.Yb6XURoJbWinc50pSCsFWukZcRPGL9lniOM2h8Ypgbg';
 
 // ============================================================
 // LOCAL USER STORE  (used when Supabase is not configured)
@@ -34,26 +34,3 @@ window.NEXUS_LOCAL_USERS = (function () {
     stored.forEach(function(u){ map[u.email.toLowerCase()] = u; });
     SEED.forEach(function(u){
       if (!map[u.email.toLowerCase()]) map[u.email.toLowerCase()] = u;
-    });
-    return Object.values(map);
-  } catch(e) {
-    return SEED;
-  }
-})();
-
-// ============================================================
-// GOOGLE DRIVE VAULT CONFIG
-// ============================================================
-window.NEXUS_VAULT_ROOT_ID = '1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0';
-
-// ============================================================
-// GOOGLE OAUTH CLIENT ID
-// ============================================================
-window.NEXUS_GOOGLE_CLIENT_ID = '';
-
-// ============================================================
-// GMAIL / WHATSAPP SYNC ACCOUNTS
-// ============================================================
-window.NEXUS_GMAIL_ACCOUNTS = [
-  { email: 'crtruckus@gmail.com', label: 'CRT Truck US' }
-];
