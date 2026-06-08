@@ -617,6 +617,7 @@ body {
 /* ── NAV BADGE ── */
 .nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
+  <script src="nexus-gdrive-sync.js"></script>
 </head>
 <body>
 
@@ -630,6 +631,8 @@ body {
     <div class="status-live"><span class="status-dot"></span>LIVE</div>
     <button class="btn btn-ghost">Export Report</button>
     <button class="btn btn-primary">+ New Load</button>
+    <button id="nexus-update-btn" class="btn btn-ghost" onclick="runNexusUpdate()" style="background:#e8a000;color:#000;font-weight:700;">↻ Update Nexus</button>
+    <span id="nexus-sync-status" style="display:none;font-size:12px;margin-left:8px;padding:4px 8px;border-radius:4px;background:rgba(0,0,0,0.3);"></span>
   </div>
 
   <!-- CONTENT -->
