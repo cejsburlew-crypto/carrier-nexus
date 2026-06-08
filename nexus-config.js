@@ -1,11 +1,11 @@
 // ============================================================
-// CARRIER NEXUS — CONFIG (nexus-config.js)
+// CARRIER NEXUS â CONFIG (nexus-config.js)
 //
-// SUPABASE (optional — leave placeholder to use local auth):
+// SUPABASE (optional â leave placeholder to use local auth):
 // 1. Create a project at https://supabase.com
-// 2. Go to Project Settings → API
-// 3. Copy Project URL → NEXUS_SUPABASE_URL
-// 4. Copy anon/public key → NEXUS_SUPABASE_KEY
+// 2. Go to Project Settings â API
+// 3. Copy Project URL â NEXUS_SUPABASE_URL
+// 4. Copy anon/public key â NEXUS_SUPABASE_KEY
 // ============================================================
 
 window.NEXUS_SUPABASE_URL = 'https://qcznatakapbknqafiszy.supabase.co';
@@ -15,7 +15,7 @@ window.NEXUS_VAULT_ROOT_ID = '1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0';
 
 // ============================================================
 // LOCAL USER STORE (used when Supabase is not configured)
-// Passwords are stored as SHA-256 hashes — NEVER plaintext.
+// Passwords are stored as SHA-256 hashes â NEVER plaintext.
 // Manage users via Admin > Users in the app.
 // ============================================================
 window.NEXUS_LOCAL_USERS = (function () {
@@ -23,7 +23,7 @@ window.NEXUS_LOCAL_USERS = (function () {
     {
       id: 'usr_001',
       email: 'crtruckus@gmail.com',
-      passwordHash: 'a1d53f92e807716715a0cb4458299c8e25175f5c5c9644af3ef640538a830069',
+      passwordHash: '86eaffe8d41c665078e53d2ac4af426a6cfff4ba6121e641d72e86cd8e989264',
       role: 'admin',
       name: 'Admin',
       active: true,
