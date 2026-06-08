@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drive Settings — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--black:#0a0a0a;--gunmetal:#111111;--gunmetal-light:#1a1a1a;--steel:#1e1e1e;--steel-blue:#2e6da4;--steel-blue-light:#3d87c8;--white:#f1f5f9;--white-pure:#ffffff;--orange:#e8640a;--pink:#e91e8c;--pink-dark:#c2185b;--text-muted:#64748b;--text-mid:#94a3b8;--border:#1e1e1e;--red:#ef4444;--green:#22c55e;--yellow:#fbbf24;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--gunmetal);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:.12em;color:var(--white-pure);}
+.page-subtitle{font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.topbar-actions{display:flex;gap:8px;}
+.content{padding:24px;flex:1;}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;font-family:'Barlow',sans-serif;cursor:pointer;border:none;transition:all .15s;letter-spacing:.04em;white-space:nowrap;}
+.btn-pink{background:linear-gradient(135deg,#c2185b,#e91e8c);color:#fff;}
+.btn-pink:hover{filter:brightness(1.1);}
+.btn-orange{background:linear-gradient(135deg,#e8640a,#ff7518);color:#fff;}
+.btn-orange:hover{filter:brightness(1.1);}
+.btn-ghost{background:transparent;color:var(--text-mid);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--gunmetal-light);color:var(--white);}
+.btn-green{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3);}
+.btn-green:hover{background:rgba(34,197,94,.25);}
+.btn-red{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);}
+.btn-red:hover{background:rgba(239,68,68,.22);}
+.btn-sm{padding:5px 10px;font-size:11px;}
+/* CARDS */
+.card{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden;}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:.12em;color:var(--white-pure);}
+.card-sub{font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.card-body{padding:20px;}
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 20px;background:var(--gunmetal);margin-bottom:20px;}
+.tab{padding:12px 18px;font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:'Barlow Condensed',sans-serif;letter-spacing:.06em;}
+.tab:hover{color:var(--white);}
+.tab.active{color:var(--pink);border-bottom-color:var(--pink);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+/* FORMS */
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.08em;margin-bottom:5px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+.form-input,.form-select,.form-textarea{width:100%;padding:9px 12px;background:#0a0a0a;border:1px solid var(--border);border-radius:6px;color:var(--white);font-size:13px;font-family:'Barlow',sans-serif;transition:border-color .15s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--steel-blue);}
+.form-select{cursor:pointer;}
+.form-textarea{resize:vertical;min-height:70px;}
+.form-hint{font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.4;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.id-row{display:flex;gap:8px;}
+.id-row .form-input{flex:1;font-family:'JetBrains Mono',monospace;font-size:12px;}
+.extracted-ok{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);margin-top:4px;padding:4px 8px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:4px;display:none;}
+/* INBOX STATUS */
+.inbox-status{display:flex;align-items:center;gap:12px;padding:14px 20px;background:rgba(233,30,140,.05);border-bottom:1px solid var(--border);}
+.inbox-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.inbox-dot.set{background:var(--green);}
+.inbox-dot.unset{background:var(--red);}
+.inbox-label{font-size:13px;font-weight:600;flex:1;}
+.inbox-id{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);}
+/* DRIVER TABLE */
+.driver-table{width:100%;border-collapse:collapse;}
+.driver-table th{padding:9px 14px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;text-align:left;background:var(--gunmetal-light);border-bottom:1px solid var(--border);}
+.driver-table td{padding:11px 14px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
+.driver-table tr:last-child td{border-bottom:none;}
+.driver-table tr:hover td{background:rgba(255,255,255,.02);}
+.driver-name{font-weight:600;color:var(--white-pure);}
+.driver-folder-id{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);}
+/* CATEGORY CHIPS */
+.cat-list{display:flex;flex-wrap:wrap;gap:6px;padding:16px 20px;}
+.cat-chip{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--gunmetal-light);border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--text-mid);}
+.cat-chip .chip-icon{font-size:14px;}
+.cat-chip .chip-del{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:0 0 0 4px;line-height:1;}
+.cat-chip .chip-del:hover{color:var(--red);}
+.add-cat-row{display:flex;gap:8px;padding:0 20px 16px;}
+.add-cat-row .form-input{flex:1;}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--gunmetal);border:1px solid var(--border);border-radius:12px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--border);}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:.08em;color:var(--white-pure);}
+.modal-close{background:none;border:none;color:var(--text-muted);font-size:22px;cursor:pointer;padding:2px 6px;}
+.modal-close:hover{color:var(--white);}
+.modal-body{padding:24px;}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;padding:16px 24px;border-top:1px solid var(--border);}
+/* BANNER */
+.banner{padding:10px 16px;border-radius:6px;font-size:12px;display:flex;gap:8px;align-items:center;margin-bottom:16px;}
+.banner-success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:var(--green);}
+.banner-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red);}
+.banner-info{background:rgba(46,109,164,.1);border:1px solid rgba(46,109,164,.25);color:#60a5fa;}
+.banner-warn{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);color:var(--yellow);}
+/* AUTH */
+.auth-row{display:flex;align-items:center;gap:16px;padding:16px 20px;}
+.auth-icon{width:40px;height:40px;border-radius:8px;background:rgba(46,109,164,.15);border:1px solid rgba(46,109,164,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.auth-info{flex:1;}
+.auth-title{font-size:14px;font-weight:600;}
+.auth-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.auth-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:3px 8px;border-radius:4px;}
+.auth-badge.ok{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25);}
+.auth-badge.no{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+/* INBOX QUEUE */
+.queue-item{display:flex;align-items:flex-start;gap:14px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04);}
+.queue-item:last-child{border-bottom:none;}
+.queue-item:hover{background:rgba(255,255,255,.02);}
+.q-icon{width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.q-icon.pdf{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.q-icon.doc{background:rgba(46,109,164,.15);color:#60a5fa;border:1px solid rgba(46,109,164,.2);}
+.q-icon.img{background:rgba(233,30,140,.12);color:var(--pink);border:1px solid rgba(233,30,140,.2);}
+.q-icon.other{background:rgba(100,116,139,.12);color:var(--text-mid);border:1px solid rgba(100,116,139,.2);}
+.q-info{flex:1;min-width:0;}
+.q-name{font-size:13px;font-weight:600;color:var(--white-pure);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.q-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:2px;}
+.q-guess{margin-top:6px;display:flex;flex-wrap:wrap;gap:5px;}
+.q-guess-chip{font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:2px 7px;border-radius:4px;}
+.guess-load{background:rgba(46,109,164,.15);color:#60a5fa;border:1px solid rgba(46,109,164,.2);}
+.guess-driver{background:rgba(233,30,140,.12);color:var(--pink);border:1px solid rgba(233,30,140,.2);}
+.guess-cat{background:rgba(232,100,10,.12);color:var(--orange);border:1px solid rgba(232,100,10,.2);}
+.guess-date{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2);}
+.guess-unknown{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.q-actions{display:flex;gap:6px;align-items:flex-start;flex-shrink:0;}
+/* EMPTY */
+.empty-state{padding:48px;text-align:center;color:var(--text-muted);}
+.empty-icon{font-size:36px;margin-bottom:12px;opacity:.4;}
+.empty-text{font-size:14px;margin-bottom:4px;}
+.empty-sub{font-size:12px;}
+/* SPINNER */
+.spinner{width:16px;height:16px;border:2px solid rgba(233,30,140,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-row{display:flex;align-items:center;gap:10px;padding:20px;color:var(--text-muted);font-size:13px;}
+@media(max-width:768px){.main{margin-left:0;}.content{padding:14px 12px 80px;}.form-row,.form-row-3{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<script src="nexus-config.js"></script>
+<script src="nexus-sidebar.js"></script>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="page-title">DRIVE FOLDER SETTINGS</div>
+      <div class="page-subtitle">Inbox routing · Driver vaults · Document categories</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="history.back()">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 12L6 8l4-4"/></svg>
+        Back
+      </button>
+      <button class="btn btn-pink" onclick="saveAllSettings()">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2 9 6 13 14 4"/></svg>
+        Save Settings
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="global-banner" style="display:none;"></div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('inbox')">📥 Document Inbox</div>
+      <div class="tab" onclick="switchTab('drivers')">👤 Driver Vaults</div>
+      <div class="tab" onclick="switchTab('categories')">🗂 Categories</div>
+      <div class="tab" onclick="switchTab('auth')">🔑 Google Auth</div>
+    </div>
+
+    <!-- ── TAB: INBOX ── -->
+    <div class="tab-content active" id="tab-inbox">
+
+      <!-- INBOX FOLDER CONFIG -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">DOCUMENT INBOX FOLDER</div>
+            <div class="card-sub">All new documents land here first before being routed</div>
+          </div>
+          <div id="inbox-badge" class="auth-badge no"><span class="dot"></span>NOT SET</div>
+        </div>
+        <div id="inbox-status-bar" style="display:none;" class="inbox-status">
+          <div class="inbox-dot" id="inbox-dot"></div>
+          <div>
+            <div class="inbox-label" id="inbox-label-text">—</div>
+            <div class="inbox-id" id="inbox-id-text">—</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="clearInbox()">Clear</button>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Inbox Folder — Drive URL or Folder ID</label>
+            <div class="id-row">
+              <input type="text" id="inbox-url" class="form-input" placeholder="https://drive.google.com/drive/folders/1abc… or paste folder ID" oninput="previewInboxId(this.value)">
+              <button class="btn btn-orange" onclick="saveInboxFolder()">Set Inbox</button>
+            </div>
+            <div class="extracted-ok" id="inbox-extracted"></div>
+            <div class="form-hint">This is the single Google Drive folder where new files are uploaded. Carrier Nexus will read this folder and try to route each document to the correct driver / load / category.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Inbox Folder Label</label>
+            <input type="text" id="inbox-label" class="form-input" placeholder="e.g. CN Document Inbox" value="CN Document Inbox">
+          </div>
+        </div>
+      </div>
+
+      <!-- ROUTING RULES -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">AUTO-ROUTING LOGIC</div>
+            <div class="card-sub">How Carrier Nexus decides where each document goes</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div style="font-size:13px;color:var(--text-mid);line-height:1.8;margin-bottom:16px;">
+            When a new document appears in the inbox, Carrier Nexus checks in this order:
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--gunmetal-light);border:1px solid var(--border);border-radius:7px;">
+              <div style="width:24px;height:24px;border-radius:5px;background:rgba(46,109,164,.2);color:#60a5fa;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">1</div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--white-pure);margin-bottom:3px;">Match to a Rate Con / Load Number</div>
+                <div style="font-size:12px;color:var(--text-muted);">Filename scanned for load numbers (e.g. 363402, RC-, BOL-). If matched → files under that load's driver folder → Rate Cons category.</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--gunmetal-light);border:1px solid var(--border);border-radius:7px;">
+              <div style="width:24px;height:24px;border-radius:5px;background:rgba(233,30,140,.15);color:var(--pink);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">2</div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--white-pure);margin-bottom:3px;">Match to a Driver by Name</div>
+                <div style="font-size:12px;color:var(--text-muted);">Filename scanned for driver names (Guillermo, Miguel, Nelson, Yosviel, etc.). If matched → that driver's folder → correct category.</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--gunmetal-light);border:1px solid var(--border);border-radius:7px;">
+              <div style="width:24px;height:24px;border-radius:5px;background:rgba(232,100,10,.15);color:var(--orange);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">3</div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--white-pure);margin-bottom:3px;">Detect Document Category</div>
+                <div style="font-size:12px;color:var(--text-muted);">Keywords in filename determine category: PERMIT → Permits, EXPENSE/EXP → Expenses, COI/INSURANCE → Personal, LEASE → Contracts, etc.</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--gunmetal-light);border:1px solid var(--border);border-radius:7px;">
+              <div style="width:24px;height:24px;border-radius:5px;background:rgba(34,197,94,.12);color:var(--green);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">4</div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--white-pure);margin-bottom:3px;">Extract Document Date</div>
+                <div style="font-size:12px;color:var(--text-muted);">Date extracted from filename or file creation date. Used to tie document to the correct settlement period (bi-weekly, monthly).</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:7px;">
+              <div style="width:24px;height:24px;border-radius:5px;background:rgba(251,191,36,.15);color:var(--yellow);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">!</div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--white-pure);margin-bottom:3px;">Unmatched → Review Queue</div>
+                <div style="font-size:12px;color:var(--text-muted);">If no driver or load can be determined, the document goes to the <strong style="color:var(--yellow);">Review Queue</strong> (Doc Inbox page) for manual routing by admin.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Settlement Period</label>
+            <select id="settlement-period" class="form-select">
+              <option value="biweekly">Bi-Weekly (every 2 weeks)</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="semimonthly">Semi-Monthly (1st and 15th)</option>
+            </select>
+            <div class="form-hint">Used to determine which settlement period a document's date falls into.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INBOX QUEUE PREVIEW -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">INBOX QUEUE</div>
+            <div class="card-sub" id="queue-sub">Files waiting to be routed from the inbox folder</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost btn-sm" onclick="refreshInboxQueue()">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="1 4 1 10 7 10"/><path d="M1.5 8A7 7 0 1014.5 8"/></svg>
+              Refresh
+            </button>
+          </div>
+        </div>
+        <div id="inbox-queue-body">
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <div class="empty-text">Set an inbox folder above to start</div>
+            <div class="empty-sub">Documents dropped into the inbox folder will appear here for review</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: DRIVER VAULTS ── -->
+    <div class="tab-content" id="tab-drivers">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">DRIVER VAULT FOLDERS</div>
+            <div class="card-sub">Each driver's root Google Drive folder — same sub-structure for all</div>
+          </div>
+          <button class="btn btn-pink btn-sm" onclick="openDriverModal()">+ Add Driver Vault</button>
+        </div>
+        <div style="padding:12px 20px 16px;font-size:12px;color:var(--text-muted);background:rgba(46,109,164,.04);border-bottom:1px solid var(--border);line-height:1.6;">
+          Each driver vault has the <strong style="color:var(--white);">same folder categories</strong> (configured in the Categories tab). The app uses the categories to route incoming documents. Map the root Drive folder ID for each driver — the sub-folders are referenced by name.
+        </div>
+        <div id="driver-vaults-body">
+          <div class="empty-state">
+            <div class="empty-icon">👤</div>
+            <div class="empty-text">No driver vaults mapped yet</div>
+            <div class="empty-sub">Add a driver vault to enable automatic document routing</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: CATEGORIES ── -->
+    <div class="tab-content" id="tab-categories">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">STANDARD FOLDER CATEGORIES</div>
+            <div class="card-sub">Same folder structure applied to every driver vault</div>
+          </div>
+        </div>
+        <div style="padding:14px 20px 10px;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border);">
+          These are the sub-folder names inside every driver's vault. The routing engine uses the <strong style="color:var(--white);">keywords</strong> to classify incoming documents. Folder name must match exactly what's in Google Drive.
+        </div>
+        <div id="categories-list" class="cat-list"></div>
+        <div class="add-cat-row">
+          <input type="text" id="new-cat-name" class="form-input" placeholder="Folder name (e.g. Permits)" style="max-width:200px;">
+          <input type="text" id="new-cat-emoji" class="form-input" placeholder="Emoji" style="max-width:70px;">
+          <input type="text" id="new-cat-keywords" class="form-input" placeholder="Match keywords: permit, prmt, oversize" style="flex:1;">
+          <button class="btn btn-orange btn-sm" onclick="addCategory()">Add</button>
+        </div>
+        <div style="padding:0 20px 16px;">
+          <div class="form-hint">Keywords are comma-separated. If any keyword appears in a filename → document goes into this folder. Case-insensitive.</div>
+        </div>
+      </div>
+
+      <!-- KEYWORD RULES -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">LOAD NUMBER PATTERNS</div>
+          <div class="card-sub">Patterns used to detect load/rate con numbers in filenames</div>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Load Number Pattern (Regex)</label>
+            <input type="text" id="load-pattern" class="form-input" value="\b\d{6,7}\b|RC-\d+|BOL-\d+|LOAD\s*\d+" placeholder="\b\d{6,7}\b|RC-\d+|BOL-\d+">
+            <div class="form-hint">JavaScript regex to extract load numbers from filenames. Multiple patterns separated by |</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date Pattern in Filename</label>
+            <input type="text" id="date-pattern" class="form-input" value="(\d{2})(\d{2})(\d{4})|(\d{4})-(\d{2})-(\d{2})|(\w+ \d+, \d{4})" placeholder="MMDDYYYY or YYYY-MM-DD">
+            <div class="form-hint">Patterns to extract dates from filenames. Used for settlement period matching.</div>
+          </div>
+          <button class="btn btn-orange" onclick="savePatterns()">Save Patterns</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: GOOGLE AUTH ── -->
+    <div class="tab-content" id="tab-auth">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">GOOGLE DRIVE AUTHORIZATION</div>
+            <div class="card-sub">Read-only access to your Drive folders</div>
+          </div>
+          <div id="auth-badge-main" class="auth-badge no"><span class="dot"></span>NOT CONNECTED</div>
+        </div>
+        <div class="auth-row">
+          <div class="auth-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M8.56 2h6.88L22 15H2L8.56 2z" fill="#3d87c8" opacity=".7"/>
+              <path d="M2 15l4 7h12l4-7H2z" fill="#2e6da4" opacity=".6"/>
+              <path d="M8.56 2L2 15l4.56 0L12 5.5 8.56 2z" fill="#60a5fa" opacity=".5"/>
+            </svg>
+          </div>
+          <div class="auth-info">
+            <div class="auth-title" id="auth-title-main">Connect Google Drive</div>
+            <div class="auth-sub" id="auth-sub-main">Authorize read access to crtruckus@gmail.com Drive. Files are never downloaded — only metadata and document text is read.</div>
+          </div>
+          <button class="btn btn-pink" id="auth-btn-main" onclick="handleAuthClick()">Connect Drive</button>
+        </div>
+        <div id="cid-warn" style="padding:0 20px 18px;display:none;">
+          <div style="background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);border-radius:7px;padding:12px 14px;">
+            <div style="font-size:11px;color:var(--yellow);font-weight:700;margin-bottom:6px;font-family:'JetBrains Mono',monospace;">⚠ GOOGLE OAUTH CLIENT ID NOT SET</div>
+            <div style="font-size:12px;color:var(--text-mid);margin-bottom:10px;">Set <code style="color:var(--orange);">NEXUS_GOOGLE_CLIENT_ID</code> in <code style="color:var(--orange);">nexus-config.js</code>, or enter a Client ID below for this session.</div>
+            <div style="display:flex;gap:8px;">
+              <input type="text" id="temp-cid" class="form-input" placeholder="Your Google OAuth Client ID">
+              <button class="btn btn-orange" onclick="useTempCid()">Use</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- DRIVER VAULT MODAL -->
+<div class="modal-overlay" id="driver-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="driver-modal-title">ADD DRIVER VAULT</div>
+      <button class="modal-close" onclick="closeDriverModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="driver-modal-banner" style="display:none;"></div>
+      <div class="form-group">
+        <label class="form-label">Driver Name *</label>
+        <input type="text" id="dv-name" class="form-input" placeholder="e.g. Guillermo Pinera">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Short Name / Match Keywords *</label>
+        <input type="text" id="dv-short" class="form-input" placeholder="e.g. guillermo, miguel, nelson (comma-separated)">
+        <div class="form-hint">These keywords are scanned in filenames to match documents to this driver.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Root Drive Folder — URL or ID *</label>
+        <div class="id-row">
+          <input type="text" id="dv-url" class="form-input" placeholder="Drive URL or folder ID" oninput="previewDvId(this.value)">
+        </div>
+        <div class="extracted-ok" id="dv-extracted"></div>
+        <input type="hidden" id="dv-id">
+        <div class="form-hint">This is the driver's root folder. Sub-folders (Permits, Rate Cons, etc.) must exist inside it with the exact names configured in Categories.</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Truck / Unit #</label>
+          <input type="text" id="dv-truck" class="form-input" placeholder="e.g. 24, 101">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select id="dv-status" class="form-select">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeDriverModal()">Cancel</button>
+      <button class="btn btn-pink" onclick="saveDriverVault()">Save Driver Vault</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://apis.google.com/js/api.js" async></script>
+<script src="https://accounts.google.com/gsi/client" async></script>
+<script>
+// ─── STORAGE KEYS ───────────────────────────────────────
+const K = {
+  inbox:      'nexus_inbox_folder',
+  drivers:    'nexus_driver_vaults',
+  categories: 'nexus_drive_categories',
+  patterns:   'nexus_drive_patterns',
+  token:      'nexus_drive_token',
+  cache:      'nexus_inbox_cache',
+  period:     'nexus_settlement_period',
+};
+
+// ─── DEFAULT CATEGORIES ─────────────────────────────────
+const DEFAULT_CATS = [
+  { name:'Rate Cons',  emoji:'📋', keywords:'rate con,ratecon,rc-,bol,bill of lading,load' },
+  { name:'Expenses',   emoji:'💰', keywords:'expense,exp,receipt,reimburs' },
+  { name:'Permits',    emoji:'📄', keywords:'permit,prmt,oversize,overweight,permit-' },
+  { name:'Personal',   emoji:'🪪', keywords:'coi,insurance,license,cdl,medical,dot,lease,contract,agreement' },
+  { name:'Health',     emoji:'🏥', keywords:'health,medical,drug test,dac,physical' },
+  { name:'Vehicles',   emoji:'🚛', keywords:'vehicle,truck,trailer,registration,title,vin,inspection' },
+];
+
+// ─── HELPERS ────────────────────────────────────────────
+function ls(k)    { try { return JSON.parse(localStorage.getItem(k)); } catch(e) { return null; } }
+function lss(k,v) { localStorage.setItem(k, JSON.stringify(v)); }
+function esc(s)   { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function extractId(v) {
+  v = (v||'').trim();
+  const m = v.match(/\/folders\/([a-zA-Z0-9_\-]{10,})/);
+  if (m) return m[1];
+  if (/^[a-zA-Z0-9_\-]{15,}$/.test(v)) return v;
+  return '';
+}
+function showBanner(id, type, msg, auto) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = 'flex';
+  el.className = 'banner banner-' + type;
+  el.innerHTML = msg;
+  if (auto !== false) setTimeout(() => el.style.display='none', 4500);
+}
+function fmtBytes(b) {
+  if (!b) return '—';
+  b = parseInt(b);
+  if (b < 1024) return b+'B';
+  if (b < 1048576) return Math.round(b/1024)+'KB';
+  return (b/1048576).toFixed(1)+'MB';
+}
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return iso.split('T')[0];
+}
+
+// ─── TABS ───────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    const names=['inbox','drivers','categories','auth'];
+    t.classList.toggle('active', names[i]===name);
+  });
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+// ─── INBOX ──────────────────────────────────────────────
+function previewInboxId(v) {
+  const id = extractId(v);
+  const el = document.getElementById('inbox-extracted');
+  const hi = document.getElementById('inbox-hidden-id'); // will set below
+  if (id) { el.style.display='block'; el.textContent='✓ Folder ID: '+id; }
+  else     { el.style.display='none'; }
+}
+function saveInboxFolder() {
+  const v  = document.getElementById('inbox-url').value.trim();
+  const id = extractId(v) || v;
+  const lbl = document.getElementById('inbox-label').value.trim() || 'CN Document Inbox';
+  if (!id) { showBanner('global-banner','error','Enter a valid Drive folder URL or ID.'); return; }
+  lss(K.inbox, { id, label: lbl });
+  refreshInboxUI();
+  showBanner('global-banner','success','✅ Inbox folder set.');
+}
+function clearInbox() {
+  if (!confirm('Clear inbox folder configuration?')) return;
+  localStorage.removeItem(K.inbox);
+  refreshInboxUI();
+}
+function refreshInboxUI() {
+  const cfg = ls(K.inbox);
+  const bar = document.getElementById('inbox-status-bar');
+  const badge = document.getElementById('inbox-badge');
+  if (cfg && cfg.id) {
+    bar.style.display = 'flex';
+    document.getElementById('inbox-dot').className = 'inbox-dot set';
+    document.getElementById('inbox-label-text').textContent = cfg.label || 'Inbox';
+    document.getElementById('inbox-id-text').textContent = cfg.id;
+    badge.className = 'auth-badge ok';
+    badge.innerHTML = '<span class="dot"></span>SET';
+    document.getElementById('inbox-url').value = cfg.id;
+    document.getElementById('inbox-label').value = cfg.label || 'CN Document Inbox';
+  } else {
+    bar.style.display = 'none';
+    badge.className = 'auth-badge no';
+    badge.innerHTML = '<span class="dot"></span>NOT SET';
+  }
+}
+
+// ─── INBOX QUEUE ────────────────────────────────────────
+let _accessToken = localStorage.getItem(K.token) || null;
+
+async function refreshInboxQueue() {
+  const cfg = ls(K.inbox);
+  const body = document.getElementById('inbox-queue-body');
+  const sub  = document.getElementById('queue-sub');
+  if (!cfg || !cfg.id) {
+    body.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">Set an inbox folder above first</div></div>';
+    return;
+  }
+  if (!_accessToken) {
+    body.innerHTML = '<div class="empty-state"><div class="empty-icon">🔑</div><div class="empty-text">Connect Google Drive to load the queue</div><div style="margin-top:12px;"><button class="btn btn-pink btn-sm" onclick="handleAuthClick()">Connect Drive</button></div></div>';
+    return;
+  }
+  body.innerHTML = '<div class="loading-row"><div class="spinner"></div>Reading inbox folder…</div>';
+  try {
+    const files = await listFolder(cfg.id);
+    if (!files.length) {
+      body.innerHTML = '<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">Inbox is empty</div><div class="empty-sub">No documents waiting to be routed</div></div>';
+      sub.textContent = '0 documents waiting';
+      return;
+    }
+    sub.textContent = files.length + ' document(s) in inbox';
+    const cats    = loadCategories();
+    const drivers = ls(K.drivers) || [];
+    const pats    = ls(K.patterns) || {};
+    let html = '';
+    files.forEach(f => {
+      const guess = guessRouting(f, cats, drivers, pats);
+      const icon  = getFileIcon(f.mimeType);
+      html += `<div class="queue-item">
+        <div class="q-icon ${icon.cls}">${icon.lbl}</div>
+        <div class="q-info">
+          <div class="q-name">${esc(f.name)}</div>
+          <div class="q-meta">${fmtDate(f.modifiedTime)} · ${fmtBytes(f.size)}</div>
+          <div class="q-guess">
+            ${guess.driver ? `<span class="q-guess-chip guess-driver">👤 ${esc(guess.driver)}</span>` : `<span class="q-guess-chip guess-unknown">👤 UNKNOWN</span>`}
+            ${guess.load   ? `<span class="q-guess-chip guess-load">📋 Load ${esc(guess.load)}</span>`   : ''}
+            ${guess.cat    ? `<span class="q-guess-chip guess-cat">${esc(guess.cat)}</span>`              : `<span class="q-guess-chip guess-unknown">🗂 UNCATEGORIZED</span>`}
+            ${guess.date   ? `<span class="q-guess-chip guess-date">📅 ${esc(guess.date)}</span>`         : ''}
+          </div>
+        </div>
+        <div class="q-actions">
+          <a href="${f.webViewLink||'#'}" target="_blank" class="btn btn-ghost btn-sm">View ↗</a>
+          <button class="btn btn-pink btn-sm" onclick="routeDoc('${f.id}','${esc(f.name)}')">Route</button>
+        </div>
+      </div>`;
+    });
+    body.innerHTML = html;
+  } catch(e) {
+    if (e.message.includes('401')) { _accessToken=null; setAuthState(false); }
+    body.innerHTML = `<div style="padding:20px;"><div class="banner banner-error">${esc(e.message)}</div></div>`;
+  }
+}
+
+// ─── ROUTING GUESS ──────────────────────────────────────
+function guessRouting(file, cats, drivers, pats) {
+  const name = (file.name || '').toLowerCase();
+  const loadPat = new RegExp(pats.load || '\\b\\d{6,7}\\b|rc-\\d+|bol-\\d+', 'i');
+  const loadMatch = name.match(loadPat);
+  const load = loadMatch ? loadMatch[0] : null;
+
+  // Driver match
+  let driver = null;
+  for (const d of drivers) {
+    const shorts = (d.shortNames || d.name).split(',').map(s => s.trim().toLowerCase());
+    if (shorts.some(s => s && name.includes(s))) { driver = d.name; break; }
+  }
+
+  // Category match
+  let cat = null;
+  for (const c of cats) {
+    const kws = (c.keywords||'').split(',').map(k=>k.trim().toLowerCase());
+    if (kws.some(k => k && name.includes(k))) { cat = c.emoji + ' ' + c.name; break; }
+  }
+  if (!cat && load) cat = '📋 Rate Cons';
+
+  // Date from filename
+  const dateMatch = name.match(/(\d{8})|(\d{4}-\d{2}-\d{2})|(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s*\d+/i);
+  let date = null;
+  if (dateMatch) {
+    const raw = dateMatch[0];
+    if (/^\d{8}$/.test(raw)) date = raw.slice(0,2)+'/'+raw.slice(2,4)+'/'+raw.slice(4);
+    else date = raw;
+  } else if (file.modifiedTime) {
+    date = fmtDate(file.modifiedTime);
+  }
+
+  return { load, driver, cat, date };
+}
+
+function routeDoc(fileId, fileName) {
+  const msg = `Manual routing for: ${fileName}\n\nThis will open the document in Google Drive so you can move it to the correct folder manually, or build out the auto-route feature.`;
+  alert(msg);
+}
+
+// ─── DRIVER VAULTS ──────────────────────────────────────
+let _editingDv = null;
+function loadDriverVaults() { return ls(K.drivers) || []; }
+
+function refreshDriverVaultsUI() {
+  const vaults = loadDriverVaults();
+  const body   = document.getElementById('driver-vaults-body');
+  if (!vaults.length) {
+    body.innerHTML = '<div class="empty-state"><div class="empty-icon">👤</div><div class="empty-text">No driver vaults mapped yet</div><div class="empty-sub">Add a driver vault to enable automatic document routing</div></div>';
+    return;
+  }
+  const cats = loadCategories();
+  let html = `<table class="driver-table"><thead><tr><th>Driver</th><th>Root Folder</th><th>Match Keywords</th><th>Status</th><th>Actions</th></tr></thead><tbody>`;
+  vaults.forEach(v => {
+    html += `<tr>
+      <td>
+        <div class="driver-name">${esc(v.name)}</div>
+        ${v.truck ? `<div style="font-size:11px;color:var(--orange);margin-top:2px;">🚛 Unit ${esc(v.truck)}</div>` : ''}
+      </td>
+      <td>
+        <div class="driver-folder-id">${esc(v.rootId||'—')}</div>
+        <a href="https://drive.google.com/drive/folders/${esc(v.rootId||'')}" target="_blank" style="font-size:10px;color:var(--steel-blue-light);">Open ↗</a>
+      </td>
+      <td><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">${esc(v.shortNames||v.name)}</div></td>
+      <td><span class="${v.status==='inactive'?'auth-badge no':'auth-badge ok'}"><span class="dot"></span>${(v.status||'active').toUpperCase()}</span></td>
+      <td>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-ghost btn-sm" onclick="openDriverModal('${v.id}')">Edit</button>
+          <button class="btn btn-red btn-sm" onclick="deleteDriverVault('${v.id}')">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  body.innerHTML = html;
+}
+
+function openDriverModal(editId) {
+  _editingDv = editId || null;
+  const title = document.getElementById('driver-modal-title');
+  document.getElementById('driver-modal-banner').style.display = 'none';
+  if (editId) {
+    const v = loadDriverVaults().find(x=>x.id===editId);
+    if (v) {
+      title.textContent = 'EDIT DRIVER VAULT';
+      document.getElementById('dv-name').value   = v.name||'';
+      document.getElementById('dv-short').value  = v.shortNames||'';
+      document.getElementById('dv-url').value    = v.rootId||'';
+      document.getElementById('dv-id').value     = v.rootId||'';
+      document.getElementById('dv-truck').value  = v.truck||'';
+      document.getElementById('dv-status').value = v.status||'active';
+      document.getElementById('dv-extracted').style.display = v.rootId ? 'block':'none';
+      if (v.rootId) document.getElementById('dv-extracted').textContent = '✓ Folder ID: '+v.rootId;
+    }
+  } else {
+    title.textContent = 'ADD DRIVER VAULT';
+    ['dv-name','dv-short','dv-url','dv-id','dv-truck'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('dv-status').value = 'active';
+    document.getElementById('dv-extracted').style.display = 'none';
+  }
+  document.getElementById('driver-modal').classList.add('open');
+}
+
+function previewDvId(v) {
+  const id = extractId(v);
+  const el = document.getElementById('dv-extracted');
+  document.getElementById('dv-id').value = id;
+  if (id) { el.style.display='block'; el.textContent='✓ Folder ID: '+id; }
+  else    { el.style.display='none'; }
+}
+
+function closeDriverModal() { document.getElementById('driver-modal').classList.remove('open'); _editingDv=null; }
+
+function saveDriverVault() {
+  const name  = document.getElementById('dv-name').value.trim();
+  const short = document.getElementById('dv-short').value.trim();
+  const rootId= document.getElementById('dv-id').value.trim() || extractId(document.getElementById('dv-url').value);
+  const truck = document.getElementById('dv-truck').value.trim();
+  const status= document.getElementById('dv-status').value;
+  if (!name)   { showBanner('driver-modal-banner','error','Driver name is required.'); return; }
+  if (!rootId) { showBanner('driver-modal-banner','error','A valid Drive folder ID or URL is required.'); return; }
+  const vaults = loadDriverVaults();
+  if (_editingDv) {
+    const idx = vaults.findIndex(x=>x.id===_editingDv);
+    if (idx>-1) vaults[idx]={...vaults[idx],name,shortNames:short||name.split(' ')[0].toLowerCase(),rootId,truck,status};
+  } else {
+    vaults.push({id:'dv_'+Date.now(),name,shortNames:short||name.split(' ')[0].toLowerCase(),rootId,truck,status,addedAt:new Date().toISOString()});
+  }
+  lss(K.drivers, vaults);
+  refreshDriverVaultsUI();
+  closeDriverModal();
+  showBanner('global-banner','success','✅ Driver vault saved.');
+}
+
+function deleteDriverVault(id) {
+  if (!confirm('Remove this driver vault mapping?')) return;
+  lss(K.drivers, loadDriverVaults().filter(x=>x.id!==id));
+  refreshDriverVaultsUI();
+}
+
+// ─── CATEGORIES ─────────────────────────────────────────
+function loadCategories() {
+  const stored = ls(K.categories);
+  return (stored && stored.length) ? stored : DEFAULT_CATS;
+}
+
+function refreshCategoriesUI() {
+  const cats = loadCategories();
+  const el   = document.getElementById('categories-list');
+  el.innerHTML = cats.map((c,i) => `
+    <div class="cat-chip">
+      <span class="chip-icon">${c.emoji||'📁'}</span>
+      <span>${esc(c.name)}</span>
+      <span style="font-size:10px;color:var(--text-muted);margin-left:4px;">[${esc(c.keywords||'')}]</span>
+      <button class="chip-del" onclick="deleteCategory(${i})" title="Remove">×</button>
+    </div>`).join('');
+}
+
+function addCategory() {
+  const name = document.getElementById('new-cat-name').value.trim();
+  const emoji= document.getElementById('new-cat-emoji').value.trim() || '📁';
+  const kws  = document.getElementById('new-cat-keywords').value.trim();
+  if (!name) return;
+  const cats = loadCategories();
+  cats.push({ name, emoji, keywords: kws });
+  lss(K.categories, cats);
+  refreshCategoriesUI();
+  ['new-cat-name','new-cat-emoji','new-cat-keywords'].forEach(id=>document.getElementById(id).value='');
+}
+
+function deleteCategory(idx) {
+  const cats = loadCategories();
+  cats.splice(idx,1);
+  lss(K.categories, cats);
+  refreshCategoriesUI();
+}
+
+function savePatterns() {
+  const load = document.getElementById('load-pattern').value.trim();
+  const date = document.getElementById('date-pattern').value.trim();
+  lss(K.patterns, { load, date });
+  showBanner('global-banner','success','Patterns saved.');
+}
+
+// ─── GOOGLE AUTH ────────────────────────────────────────
+let _tokenClient = null;
+
+function getClientId() {
+  return (window.NEXUS_GOOGLE_CLIENT_ID||'').trim() || localStorage.getItem('nexus_temp_cid')||'';
+}
+
+function initGIS() {
+  const cid = getClientId();
+  if (!cid) { document.getElementById('cid-warn').style.display='block'; return; }
+  _tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: cid,
+    scope: 'https://www.googleapis.com/auth/drive.readonly',
+    callback: resp => {
+      if (resp.error) { showBanner('global-banner','error','Auth error: '+resp.error); return; }
+      _accessToken = resp.access_token;
+      localStorage.setItem(K.token, resp.access_token);
+      setAuthState(true);
+      showBanner('global-banner','success','✅ Connected to Google Drive.');
+      refreshInboxQueue();
+    }
+  });
+}
+
+function useTempCid() {
+  const v = document.getElementById('temp-cid').value.trim();
+  if (!v) return;
+  localStorage.setItem('nexus_temp_cid', v);
+  initGIS();
+  document.getElementById('cid-warn').style.display='none';
+  showBanner('global-banner','success','Client ID saved. Click Connect Drive.');
+}
+
+function handleAuthClick() {
+  if (!getClientId()) { switchTab('auth'); document.getElementById('cid-warn').style.display='block'; return; }
+  if (!_tokenClient) initGIS();
+  if (_tokenClient) _tokenClient.requestAccessToken({ prompt:'' });
+}
+
+function setAuthState(yes) {
+  const badge = document.getElementById('auth-badge-main');
+  const btn   = document.getElementById('auth-btn-main');
+  const title = document.getElementById('auth-title-main');
+  if (yes) {
+    badge.className='auth-badge ok'; badge.innerHTML='<span class="dot"></span>CONNECTED';
+    title.textContent='Google Drive Connected';
+    btn.textContent='Disconnect'; btn.className='btn btn-ghost'; btn.onclick=disconnectDrive;
+  } else {
+    badge.className='auth-badge no'; badge.innerHTML='<span class="dot"></span>NOT CONNECTED';
+    title.textContent='Connect Google Drive';
+    btn.textContent='Connect Drive'; btn.className='btn btn-pink'; btn.onclick=handleAuthClick;
+    _accessToken=null;
+  }
+}
+
+function disconnectDrive() {
+  if (!confirm('Disconnect Google Drive?')) return;
+  const t = localStorage.getItem(K.token);
+  if (t && window.google) google.accounts.oauth2.revoke(t, ()=>{});
+  localStorage.removeItem(K.token);
+  _accessToken=null;
+  setAuthState(false);
+}
+
+// ─── DRIVE API ──────────────────────────────────────────
+async function listFolder(folderId) {
+  const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(`'${folderId}' in parents and trashed=false`)}&fields=files(id,name,mimeType,size,modifiedTime,webViewLink)&pageSize=100&orderBy=modifiedTime+desc`;
+  const r = await fetch(url, { headers:{ Authorization:'Bearer '+_accessToken } });
+  if (!r.ok) { const txt=await r.text(); throw new Error(`Drive error ${r.status}: ${txt.substring(0,120)}`); }
+  return (await r.json()).files || [];
+}
+
+function getFileIcon(mime) {
+  if (mime==='application/pdf') return { cls:'pdf', lbl:'PDF' };
+  if ((mime||'').includes('document'))    return { cls:'doc', lbl:'DOC' };
+  if ((mime||'').includes('spreadsheet')) return { cls:'doc', lbl:'XLS' };
+  if ((mime||'').startsWith('image/'))    return { cls:'img', lbl:'IMG' };
+  return { cls:'other', lbl:'FILE' };
+}
+
+// ─── SAVE ALL ───────────────────────────────────────────
+function saveAllSettings() {
+  const period = document.getElementById('settlement-period').value;
+  lss(K.period, period);
+  lss(K.categories, loadCategories());
+  savePatterns();
+  showBanner('global-banner','success','✅ All settings saved.');
+}
+
+// ─── INIT ───────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  refreshInboxUI();
+  refreshDriverVaultsUI();
+  refreshCategoriesUI();
+
+  const sp = ls(K.period);
+  if (sp) document.getElementById('settlement-period').value = sp;
+
+  const pats = ls(K.patterns);
+  if (pats) {
+    if (pats.load) document.getElementById('load-pattern').value = pats.load;
+    if (pats.date) document.getElementById('date-pattern').value = pats.date;
+  }
+
+  if (_accessToken) setAuthState(true);
+
+  const waitGIS = setInterval(() => {
+    if (typeof google !== 'undefined' && google.accounts) {
+      clearInterval(waitGIS);
+      initGIS();
+    }
+  }, 400);
+});
+</script>
+</body>
+</html>
