@@ -1,5 +1,5 @@
 // ============================================================
-// CARRIER NEXUS — DATA LAYER  (nexus-db.js)
+// CARRIER NEXUS â DATA LAYER  (nexus-db.js)
 // Supabase backend with localStorage fallback for offline/dev.
 //
 // CONFIG: Set NEXUS_SUPABASE_URL and NEXUS_SUPABASE_KEY in
@@ -10,7 +10,7 @@
 (function (global) {
   'use strict';
 
-  // ── CONFIG ────────────────────────────────────────────────
+  // ââ CONFIG ââââââââââââââââââââââââââââââââââââââââââââââââ
   // Overridden by nexus-config.js loaded before this file.
   const CFG = {
     url:  global.NEXUS_SUPABASE_URL  || '',
@@ -18,7 +18,7 @@
     get configured() { return !!(this.url && this.key); }
   };
 
-  // ── SUPABASE CLIENT ───────────────────────────────────────
+  // ââ SUPABASE CLIENT âââââââââââââââââââââââââââââââââââââââ
   let _sb = null;
   function sb() {
     if (_sb) return _sb;
@@ -28,7 +28,7 @@
     return _sb;
   }
 
-  // ── AUTH ──────────────────────────────────────────────────
+  // ââ AUTH ââââââââââââââââââââââââââââââââââââââââââââââââââ
   const Auth = {
     async signIn(email, password) {
       if (!sb()) throw new Error('Supabase not configured');
@@ -42,12 +42,12 @@
     },
     async getSession() {
       if (!sb()) {
-        // Dev mode — return localStorage session
+        // Dev mode â return localStorage session
         const raw = localStorage.getItem('nexus_session');
         return raw ? JSON.parse(raw) : null;
       }
       const { data } = await sb().auth.getSession();
-      return data.session;
+      var _lsRaw = localStorage.getItem('nexus_session') || sessionStorage.getItem('nexus_session'); var _lsSess = null; try { _lsSess = _lsRaw ? JSON.parse(_lsRaw) : null; } catch(e){} return data.session || _lsSess;
     },
     async getUser() {
       if (!sb()) return null;
@@ -79,7 +79,7 @@
     }
   };
 
-  // ── LOCAL STORAGE FALLBACK ────────────────────────────────
+  // ââ LOCAL STORAGE FALLBACK ââââââââââââââââââââââââââââââââ
   // Simple CRUD on JSON arrays stored in localStorage.
   // Uses same key names the pages already use.
   const LS = {
@@ -106,7 +106,7 @@
     }
   };
 
-  // ── GENERIC CRUD FACTORY ──────────────────────────────────
+  // ââ GENERIC CRUD FACTORY ââââââââââââââââââââââââââââââââââ
   // For each table, builds { list, get, create, update, delete, query }
   function makeTable(tableName, lsKey) {
     return {
@@ -170,7 +170,7 @@
     };
   }
 
-  // ── TABLES ────────────────────────────────────────────────
+  // ââ TABLES ââââââââââââââââââââââââââââââââââââââââââââââââ
   const Drivers     = makeTable('drivers',            'nexus_drivers');
   const Fleet       = makeTable('fleet',              'nexus_fleet');
   const Loads       = makeTable('loads',              'nexus_loads');
@@ -182,7 +182,7 @@
   const Maintenance = makeTable('maintenance_orders', 'nexus_maintenance');
   const Documents   = makeTable('documents',          'nexus_documents');
 
-  // ── SETTLEMENTS — HELPERS ─────────────────────────────────
+  // ââ SETTLEMENTS â HELPERS âââââââââââââââââââââââââââââââââ
   Settlements.calculate = function (s) {
     if (s.role === 'dispatcher') {
       s.net_pay = Math.round(
@@ -195,7 +195,7 @@
     return s;
   };
 
-  // ── LOADS — HELPERS ───────────────────────────────────────
+  // ââ LOADS â HELPERS âââââââââââââââââââââââââââââââââââââââ
   Loads.byStatus = function (status) {
     return Loads.list({ status });
   };
@@ -203,7 +203,7 @@
     return Loads.list({ driver_id: driverId });
   };
 
-  // ── INVOICES — AUTO-NUMBER ────────────────────────────────
+  // ââ INVOICES â AUTO-NUMBER ââââââââââââââââââââââââââââââââ
   Invoices.nextNumber = async function () {
     const year = new Date().getFullYear();
     const all  = await Invoices.list();
@@ -214,7 +214,7 @@
     return `INV-${year}-${String(next).padStart(3,'0')}`;
   };
 
-  // ── MAINTENANCE — AUTO-NUMBER ─────────────────────────────
+  // ââ MAINTENANCE â AUTO-NUMBER âââââââââââââââââââââââââââââ
   Maintenance.nextWO = async function () {
     const year = new Date().getFullYear();
     const all  = await Maintenance.list();
@@ -225,7 +225,7 @@
     return `WO-${year}-${String(next).padStart(3,'0')}`;
   };
 
-  // ── REAL-TIME SUBSCRIPTIONS ───────────────────────────────
+  // ââ REAL-TIME SUBSCRIPTIONS âââââââââââââââââââââââââââââââ
   const Realtime = {
     subscribe(tableName, cb) {
       if (!sb()) return null;
@@ -240,7 +240,7 @@
     }
   };
 
-  // ── MIGRATION — localStorage → Supabase ──────────────────
+  // ââ MIGRATION â localStorage â Supabase ââââââââââââââââââ
   // Call NexusDB.migrate() once from the console to push local
   // data into Supabase after first-time setup.
   async function migrate() {
@@ -272,12 +272,12 @@
     console.log('Migration complete.');
   }
 
-  // ── STATUS INDICATOR ─────────────────────────────────────
+  // ââ STATUS INDICATOR âââââââââââââââââââââââââââââââââââââ
   function backendStatus() {
     return CFG.configured ? 'supabase' : 'localStorage';
   }
 
-  // ── EXPORT ────────────────────────────────────────────────
+  // ââ EXPORT ââââââââââââââââââââââââââââââââââââââââââââââââ
   global.NexusDB = {
     Auth,
     Drivers,
