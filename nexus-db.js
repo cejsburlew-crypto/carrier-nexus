@@ -41,13 +41,13 @@
       await sb().auth.signOut();
     },
     async getSession() {
-      if (!sb()) {
-        // Dev mode — return localStorage session
-        const raw = localStorage.getItem('nexus_session');
-        return raw ? JSON.parse(raw) : null;
+      if (sb()) {
+        const { data } = await sb().auth.getSession();
+        if (data && data.session) return data.session;
+        // Supabase has no live session — fall back to local session
       }
-      const { data } = await sb().auth.getSession();
-      return data.session;
+      const raw = localStorage.getItem('nexus_session');
+      return raw ? JSON.parse(raw) : null;
     },
     async getUser() {
       if (!sb()) return null;
