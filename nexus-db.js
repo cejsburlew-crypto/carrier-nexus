@@ -1,5 +1,5 @@
 // ============================================================
-// CARRIER NEXUS â DATA LAYER  (nexus-db.js)
+// CARRIER NEXUS — DATA LAYER  (nexus-db.js)
 // Supabase backend with localStorage fallback for offline/dev.
 //
 // CONFIG: Set NEXUS_SUPABASE_URL and NEXUS_SUPABASE_KEY in
@@ -10,7 +10,7 @@
 (function (global) {
   'use strict';
 
-  // ââ CONFIG ââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── CONFIG ────────────────────────────────────────────────
   // Overridden by nexus-config.js loaded before this file.
   const CFG = {
     url:  global.NEXUS_SUPABASE_URL  || '',
@@ -18,7 +18,7 @@
     get configured() { return !!(this.url && this.key); }
   };
 
-  // ââ SUPABASE CLIENT âââââââââââââââââââââââââââââââââââââââ
+  // ── SUPABASE CLIENT ───────────────────────────────────────
   let _sb = null;
   function sb() {
     if (_sb) return _sb;
@@ -28,7 +28,7 @@
     return _sb;
   }
 
-  // ââ AUTH ââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── AUTH ──────────────────────────────────────────────────
   const Auth = {
     async signIn(email, password) {
       if (!sb()) throw new Error('Supabase not configured');
@@ -42,12 +42,12 @@
     },
     async getSession() {
       if (!sb()) {
-        // Dev mode â return localStorage session
+        // Dev mode — return localStorage session
         const raw = localStorage.getItem('nexus_session');
         return raw ? JSON.parse(raw) : null;
       }
       const { data } = await sb().auth.getSession();
-      var _lsRaw = localStorage.getItem('nexus_session') || sessionStorage.getItem('nexus_session'); var _lsSess = null; try { _lsSess = _lsRaw ? JSON.parse(_lsRaw) : null; } catch(e){} return data.session || _lsSess;
+      return data.session;
     },
     async getUser() {
       if (!sb()) return null;
@@ -79,7 +79,7 @@
     }
   };
 
-  // ââ LOCAL STORAGE FALLBACK ââââââââââââââââââââââââââââââââ
+  // ── LOCAL STORAGE FALLBACK ────────────────────────────────
   // Simple CRUD on JSON arrays stored in localStorage.
   // Uses same key names the pages already use.
   const LS = {
@@ -106,17 +106,21 @@
     }
   };
 
-  // ââ GENERIC CRUD FACTORY ââââââââââââââââââââââââââââââââââ
+  // ── GENERIC CRUD FACTORY ──────────────────────────────────
   // For each table, builds { list, get, create, update, delete, query }
   function makeTable(tableName, lsKey) {
     return {
       async list(filters = {}) {
         if (sb()) {
-          let q = sb().from(tableName).select('*').order('created_at', { ascending: false });
-          for (const [col, val] of Object.entries(filters)) q = q.eq(col, val);
-          const { data, error } = await q;
-          if (error) throw error;
-          return data || [];
+          try {
+            let q = sb().from(tableName).select('*').order('created_at', { ascending: false });
+            for (const [col, val] of Object.entries(filters)) q = q.eq(col, val);
+            const { data, error } = await q;
+            if (error) throw error;
+            return data || [];
+          } catch(e) {
+            console.warn('[NexusDB] Supabase ' + tableName + '.list failed, using localStorage:', e.message);
+          }
         }
         let rows = LS.get(lsKey);
         for (const [col, val] of Object.entries(filters))
@@ -126,27 +130,39 @@
 
       async get(id) {
         if (sb()) {
-          const { data, error } = await sb().from(tableName).select('*').eq('id', id).single();
-          if (error) throw error;
-          return data;
+          try {
+            const { data, error } = await sb().from(tableName).select('*').eq('id', id).single();
+            if (error) throw error;
+            return data;
+          } catch(e) {
+            console.warn('[NexusDB] Supabase ' + tableName + '.get failed, using localStorage:', e.message);
+          }
         }
         return LS.get(lsKey).find(r => r.id === id) || null;
       },
 
       async create(item) {
         if (sb()) {
-          const { data, error } = await sb().from(tableName).insert(item).select().single();
-          if (error) throw error;
-          return data;
+          try {
+            const { data, error } = await sb().from(tableName).insert(item).select().single();
+            if (error) throw error;
+            return data;
+          } catch(e) {
+            console.warn('[NexusDB] Supabase ' + tableName + '.create failed, using localStorage:', e.message);
+          }
         }
         return LS.insert(lsKey, item);
       },
 
       async update(id, patch) {
         if (sb()) {
-          const { data, error } = await sb().from(tableName).update(patch).eq('id', id).select().single();
-          if (error) throw error;
-          return data;
+          try {
+            const { data, error } = await sb().from(tableName).update(patch).eq('id', id).select().single();
+            if (error) throw error;
+            return data;
+          } catch(e) {
+            console.warn('[NexusDB] Supabase ' + tableName + '.update failed, using localStorage:', e.message);
+          }
         }
         LS.update(lsKey, id, patch);
         return { id, ...patch };
@@ -154,9 +170,13 @@
 
       async delete(id) {
         if (sb()) {
-          const { error } = await sb().from(tableName).delete().eq('id', id);
-          if (error) throw error;
-          return true;
+          try {
+            const { error } = await sb().from(tableName).delete().eq('id', id);
+            if (error) throw error;
+            return true;
+          } catch(e) {
+            console.warn('[NexusDB] Supabase ' + tableName + '.delete failed, using localStorage:', e.message);
+          }
         }
         LS.delete(lsKey, id);
         return true;
@@ -170,7 +190,7 @@
     };
   }
 
-  // ââ TABLES ââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── TABLES ────────────────────────────────────────────────
   const Drivers     = makeTable('drivers',            'nexus_drivers');
   const Fleet       = makeTable('fleet',              'nexus_fleet');
   const Loads       = makeTable('loads',              'nexus_loads');
@@ -182,7 +202,7 @@
   const Maintenance = makeTable('maintenance_orders', 'nexus_maintenance');
   const Documents   = makeTable('documents',          'nexus_documents');
 
-  // ââ SETTLEMENTS â HELPERS âââââââââââââââââââââââââââââââââ
+  // ── SETTLEMENTS — HELPERS ─────────────────────────────────
   Settlements.calculate = function (s) {
     if (s.role === 'dispatcher') {
       s.net_pay = Math.round(
@@ -195,7 +215,7 @@
     return s;
   };
 
-  // ââ LOADS â HELPERS âââââââââââââââââââââââââââââââââââââââ
+  // ── LOADS — HELPERS ───────────────────────────────────────
   Loads.byStatus = function (status) {
     return Loads.list({ status });
   };
@@ -203,7 +223,7 @@
     return Loads.list({ driver_id: driverId });
   };
 
-  // ââ INVOICES â AUTO-NUMBER ââââââââââââââââââââââââââââââââ
+  // ── INVOICES — AUTO-NUMBER ────────────────────────────────
   Invoices.nextNumber = async function () {
     const year = new Date().getFullYear();
     const all  = await Invoices.list();
@@ -214,7 +234,7 @@
     return `INV-${year}-${String(next).padStart(3,'0')}`;
   };
 
-  // ââ MAINTENANCE â AUTO-NUMBER âââââââââââââââââââââââââââââ
+  // ── MAINTENANCE — AUTO-NUMBER ─────────────────────────────
   Maintenance.nextWO = async function () {
     const year = new Date().getFullYear();
     const all  = await Maintenance.list();
@@ -225,7 +245,7 @@
     return `WO-${year}-${String(next).padStart(3,'0')}`;
   };
 
-  // ââ REAL-TIME SUBSCRIPTIONS âââââââââââââââââââââââââââââââ
+  // ── REAL-TIME SUBSCRIPTIONS ───────────────────────────────
   const Realtime = {
     subscribe(tableName, cb) {
       if (!sb()) return null;
@@ -240,7 +260,7 @@
     }
   };
 
-  // ââ MIGRATION â localStorage â Supabase ââââââââââââââââââ
+  // ── MIGRATION — localStorage → Supabase ──────────────────
   // Call NexusDB.migrate() once from the console to push local
   // data into Supabase after first-time setup.
   async function migrate() {
@@ -272,12 +292,12 @@
     console.log('Migration complete.');
   }
 
-  // ââ STATUS INDICATOR âââââââââââââââââââââââââââââââââââââ
+  // ── STATUS INDICATOR ─────────────────────────────────────
   function backendStatus() {
     return CFG.configured ? 'supabase' : 'localStorage';
   }
 
-  // ââ EXPORT ââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── EXPORT ────────────────────────────────────────────────
   global.NexusDB = {
     Auth,
     Drivers,
