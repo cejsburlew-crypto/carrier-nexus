@@ -1,6 +1,6 @@
 /**
- * nexus-sidebar.js — Canonical sidebar for all Carrier Nexus pages.
- * Includes company selector, Gmail→Drive sync status, and full nav.
+ * nexus-sidebar.js â Canonical sidebar for all Carrier Nexus pages.
+ * Includes company selector, GmailâDrive sync status, and full nav.
  */
 (function() {
   const page = location.pathname.split('/').pop() || 'index.html';
@@ -89,7 +89,8 @@
     <div class="sidebar-section">
       <div class="sidebar-section-label">Documents</div>
       <a href="documents.html" class="sidebar-link${active('documents.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm5 0v4h4"/></svg>Document Vault</a>
-      <a href="emails.html" class="sidebar-link${active('emails.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="3" width="14" height="11" rx="1" fill="none" stroke="currentColor"/><path d="M1 4l7 5 7-5"/></svg>Emails</a>
+      <a href="inbox-sync.html" class="sidebar-link${active('inbox-sync.html')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Inbox Sync</a>
+    <a href="emails.html" class="sidebar-link${active('emails.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="3" width="14" height="11" rx="1" fill="none" stroke="currentColor"/><path d="M1 4l7 5 7-5"/></svg>Emails</a>
     </div>
 
     <div class="sidebar-section">
@@ -124,7 +125,7 @@
 
   <div class="sidebar-footer" style="border-top:1px solid rgba(255,255,255,0.07);padding:10px 16px;display:flex;align-items:center;gap:10px;">
     <div style="flex:1;min-width:0;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.55);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="nexus-user-label">Jim Burlew · ADMIN</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.55);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="nexus-user-label">Jim Burlew Â· ADMIN</div>
       <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.25);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="nexus-company-footer">${activeCompany.name}</div>
     </div>
     <a href="admin-users.html" title="Admin" style="color:rgba(255,255,255,.3);text-decoration:none;flex-shrink:0;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.3)'">
