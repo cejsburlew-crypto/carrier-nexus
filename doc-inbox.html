@@ -7,124 +7,127 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--black:#0a0a0a;--gunmetal:#111111;--gunmetal-light:#1a1a1a;--white:#f1f5f9;--white-pure:#ffffff;--orange:#e8640a;--pink:#e91e8c;--pink-dark:#c2185b;--text-muted:#64748b;--text-mid:#94a3b8;--border:#1e1e1e;--red:#ef4444;--green:#22c55e;--yellow:#fbbf24;--steel-blue:#2e6da4;}
+:root{--black:#0a0a0a;--gunmetal:#111111;--gunmetal-light:#1a1a1a;--white:#f1f5f9;--white-pure:#fff;--orange:#e8640a;--pink:#e91e8c;--pink-dark:#c2185b;--text-muted:#64748b;--text-mid:#94a3b8;--border:#1e1e1e;--red:#ef4444;--green:#22c55e;--yellow:#fbbf24;--blue:#3d87c8;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
 .main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--gunmetal);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:13px 22px;background:var(--gunmetal);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
 .page-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:.12em;color:var(--white-pure);}
 .page-subtitle{font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono',monospace;}
-.topbar-actions{display:flex;gap:8px;}
+.topbar-actions{display:flex;gap:7px;}
 /* STATS */
-.stats-bar{display:flex;gap:12px;padding:16px 24px;flex-wrap:wrap;border-bottom:1px solid var(--border);background:var(--gunmetal);}
-.stat{background:var(--gunmetal-light);border:1px solid var(--border);border-radius:7px;padding:10px 16px;display:flex;flex-direction:column;min-width:110px;}
+.stats-bar{display:flex;gap:10px;padding:13px 22px;flex-wrap:wrap;border-bottom:1px solid var(--border);background:var(--gunmetal);}
+.stat{background:var(--gunmetal-light);border:1px solid var(--border);border-radius:7px;padding:9px 14px;display:flex;flex-direction:column;min-width:100px;}
 .stat-num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--white-pure);}
-.stat-num.orange{color:var(--orange);}
-.stat-num.green{color:var(--green);}
-.stat-num.pink{color:var(--pink);}
-.stat-num.yellow{color:var(--yellow);}
-.stat-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);margin-top:2px;letter-spacing:.08em;text-transform:uppercase;}
-/* LAYOUT */
-.workspace{display:flex;flex:1;overflow:hidden;height:calc(100vh - 110px);}
-.list-panel{width:420px;min-width:340px;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
-.detail-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.stat-num.ora{color:var(--orange);}.stat-num.grn{color:var(--green);}.stat-num.pnk{color:var(--pink);}.stat-num.yel{color:var(--yellow);}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);margin-top:1px;letter-spacing:.06em;text-transform:uppercase;}
+/* WORKSPACE */
+.workspace{display:flex;flex:1;overflow:hidden;height:calc(100vh - 112px);}
 /* LIST PANEL */
-.list-toolbar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--gunmetal);}
-.list-search{flex:1;background:#0a0a0a;border:1px solid var(--border);border-radius:5px;color:var(--white);padding:6px 10px;font-size:12px;font-family:'Barlow',sans-serif;}
-.list-search:focus{outline:none;border-color:var(--steel-blue);}
+.list-panel{width:400px;min-width:320px;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
+.list-toolbar{display:flex;align-items:center;gap:7px;padding:10px 13px;border-bottom:1px solid var(--border);background:var(--gunmetal);}
+.list-search{flex:1;background:#0a0a0a;border:1px solid var(--border);border-radius:5px;color:var(--white);padding:6px 9px;font-size:12px;font-family:'Barlow',sans-serif;}
+.list-search:focus{outline:none;border-color:var(--blue);}
 .list-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--gunmetal);}
-.list-tab{flex:1;padding:9px;font-size:11px;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:.06em;color:var(--text-muted);cursor:pointer;text-align:center;border-bottom:2px solid transparent;transition:all .15s;}
+.list-tab{flex:1;padding:8px 4px;font-size:10px;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:.06em;color:var(--text-muted);cursor:pointer;text-align:center;border-bottom:2px solid transparent;}
 .list-tab:hover{color:var(--white);}
 .list-tab.active{color:var(--pink);border-bottom-color:var(--pink);}
-.list-tab .badge{display:inline-block;background:var(--red);color:#fff;font-size:9px;font-family:'JetBrains Mono',monospace;padding:1px 5px;border-radius:3px;margin-left:4px;}
-.list-tab .badge.green{background:rgba(34,197,94,.2);color:var(--green);}
+.list-tab .ct{background:rgba(239,68,68,.7);color:#fff;font-size:9px;padding:0 4px;border-radius:3px;margin-left:3px;font-family:'JetBrains Mono',monospace;}
+.list-tab .ct.g{background:rgba(34,197,94,.2);color:var(--green);}
 .file-list{flex:1;overflow-y:auto;}
-.file-list::-webkit-scrollbar{width:4px;}
-.file-list::-webkit-scrollbar-track{background:transparent;}
-.file-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.file-list::-webkit-scrollbar{width:3px;}
+.file-list::-webkit-scrollbar-thumb{background:var(--border);}
 /* FILE ROWS */
-.file-row{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .12s;position:relative;}
-.file-row:hover{background:rgba(255,255,255,.03);}
-.file-row.selected{background:rgba(233,30,140,.08);border-left:3px solid var(--pink);}
-.file-row.routed{opacity:.7;}
-.file-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+.frow{display:flex;align-items:flex-start;gap:9px;padding:10px 13px;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer;transition:background .1s;position:relative;}
+.frow:hover{background:rgba(255,255,255,.025);}
+.frow.sel{background:rgba(233,30,140,.08);border-left:3px solid var(--pink);}
+.frow.done{opacity:.65;}
+.ficon{width:30px;height:30px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
 .fi-pdf{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.2);}
 .fi-doc{background:rgba(46,109,164,.15);color:#60a5fa;border:1px solid rgba(46,109,164,.2);}
 .fi-xls{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.2);}
 .fi-img{background:rgba(233,30,140,.12);color:var(--pink);border:1px solid rgba(233,30,140,.2);}
-.fi-other{background:rgba(100,116,139,.12);color:var(--text-mid);border:1px solid rgba(100,116,139,.2);}
-.file-row-info{flex:1;min-width:0;}
-.file-row-name{font-size:12px;font-weight:600;color:var(--white-pure);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.file-row-meta{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);margin-top:2px;}
-.file-row-guesses{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
-.guess-chip{font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:1px 5px;border-radius:3px;}
-.gc-driver{background:rgba(233,30,140,.15);color:var(--pink);border:1px solid rgba(233,30,140,.2);}
-.gc-load{background:rgba(46,109,164,.15);color:#60a5fa;border:1px solid rgba(46,109,164,.2);}
-.gc-cat{background:rgba(232,100,10,.12);color:var(--orange);border:1px solid rgba(232,100,10,.2);}
-.gc-date{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2);}
-.gc-none{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
-.routed-stamp{position:absolute;right:10px;top:10px;font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--green);background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);padding:2px 5px;border-radius:3px;}
-/* DETAIL PANEL */
-.detail-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--text-muted);gap:12px;}
-.detail-empty-icon{font-size:40px;opacity:.3;}
-.detail-scroll{flex:1;overflow-y:auto;padding:20px;}
-.detail-scroll::-webkit-scrollbar{width:4px;}
-.detail-scroll::-webkit-scrollbar-thumb{background:var(--border);}
-/* DETAIL HEADER */
-.detail-file-header{display:flex;align-items:flex-start;gap:14px;padding:18px 20px;background:var(--gunmetal);border-bottom:1px solid var(--border);}
-.detail-file-icon{width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
-.detail-file-info{flex:1;min-width:0;}
-.detail-file-name{font-size:15px;font-weight:700;color:var(--white-pure);word-break:break-word;}
-.detail-file-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:3px;}
-.detail-actions{display:flex;gap:6px;flex-shrink:0;}
-/* ROUTING FORM */
-.routing-form{padding:20px;}
-.section-head{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--text-muted);margin-bottom:12px;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
-.section-head::after{content:'';flex:1;height:1px;background:var(--border);}
-.form-group{margin-bottom:14px;}
-.form-label{display:block;font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.08em;margin-bottom:4px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
-.form-input,.form-select,.form-textarea{width:100%;padding:8px 11px;background:#0a0a0a;border:1px solid var(--border);border-radius:5px;color:var(--white);font-size:13px;font-family:'Barlow',sans-serif;transition:border-color .15s;}
-.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--steel-blue);}
-.form-select{cursor:pointer;}
-.form-textarea{resize:vertical;min-height:60px;}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.form-hint{font-size:10px;color:var(--text-muted);margin-top:3px;}
-.auto-tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;}
-.auto-tag.matched{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2);}
-.auto-tag.unmatched{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
-/* EXTRACTED TEXT */
-.extracted-box{background:#0a0a0a;border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-size:11px;color:var(--text-mid);line-height:1.6;font-family:'JetBrains Mono',monospace;white-space:pre-wrap;max-height:140px;overflow-y:auto;margin-top:6px;}
+.fi-oth{background:rgba(100,116,139,.12);color:var(--text-mid);border:1px solid rgba(100,116,139,.2);}
+.frow-info{flex:1;min-width:0;}
+.frow-name{font-size:12px;font-weight:600;color:var(--white-pure);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.frow-meta{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);margin-top:1px;}
+.frow-chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;}
+.chip{font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:1px 5px;border-radius:3px;}
+.ch-d{background:rgba(233,30,140,.15);color:var(--pink);border:1px solid rgba(233,30,140,.2);}
+.ch-l{background:rgba(46,109,164,.15);color:#60a5fa;border:1px solid rgba(46,109,164,.2);}
+.ch-c{background:rgba(232,100,10,.12);color:var(--orange);border:1px solid rgba(232,100,10,.2);}
+.ch-dt{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2);}
+.ch-x{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.saved-stamp{position:absolute;right:8px;top:8px;font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--green);background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);padding:1px 4px;border-radius:3px;}
+/* DETAIL */
+.detail-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.detail-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--text-muted);gap:10px;}
+.detail-empty-icon{font-size:38px;opacity:.25;}
+/* FILE HEADER */
+.file-hdr{display:flex;align-items:flex-start;gap:12px;padding:16px 20px;background:var(--gunmetal);border-bottom:1px solid var(--border);}
+.fhdr-icon{width:42px;height:42px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+.fhdr-info{flex:1;min-width:0;}
+.fhdr-name{font-size:14px;font-weight:700;color:var(--white-pure);word-break:break-word;}
+.fhdr-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:2px;}
+.fhdr-tags{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;}
+.atag{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:2px 6px;border-radius:3px;}
+.atag.ok{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2);}
+.atag.warn{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+/* FORM */
+.form-scroll{flex:1;overflow-y:auto;padding:18px 20px;}
+.form-scroll::-webkit-scrollbar{width:3px;}
+.form-scroll::-webkit-scrollbar-thumb{background:var(--border);}
+.sec-head{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--text-muted);margin:14px 0 10px;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
+.sec-head::after{content:'';flex:1;height:1px;background:var(--border);}
+.sec-head:first-child{margin-top:0;}
+.fg{margin-bottom:12px;}
+.fl{display:block;font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:.07em;margin-bottom:3px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+.atag-inline{font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:1px 5px;border-radius:3px;margin-left:5px;vertical-align:middle;}
+.atag-inline.ok{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2);}
+.atag-inline.no{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.fi,.fs,.fta{width:100%;padding:7px 10px;background:#0a0a0a;border:1px solid var(--border);border-radius:5px;color:var(--white);font-size:12px;font-family:'Barlow',sans-serif;transition:border-color .12s;}
+.fi:focus,.fs:focus,.fta:focus{outline:none;border-color:var(--blue);}
+.fs{cursor:pointer;}
+.fta{resize:vertical;min-height:55px;}
+.fh{font-size:10px;color:var(--text-muted);margin-top:2px;}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.field-group{background:var(--gunmetal-light);border:1px solid var(--border);border-radius:7px;padding:14px;margin-bottom:12px;display:none;}
+.field-group.show{display:block;}
+/* PERIOD DISPLAY */
+.period-box{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:5px;padding:7px 10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);}
+/* EXTRACTED */
+.ext-box{background:#0a0a0a;border:1px solid var(--border);border-radius:5px;padding:9px 11px;font-size:10px;color:var(--text-mid);line-height:1.6;font-family:'JetBrains Mono',monospace;white-space:pre-wrap;max-height:120px;overflow-y:auto;margin-top:5px;}
 /* SAVE BAR */
-.save-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--gunmetal);border-top:1px solid var(--border);}
-.save-bar-left{font-size:12px;color:var(--text-muted);}
-.save-bar-actions{display:flex;gap:8px;}
+.save-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--gunmetal);border-top:1px solid var(--border);}
+.save-bar-l{font-size:11px;color:var(--text-muted);}
+.save-bar-r{display:flex;gap:7px;}
 /* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;font-family:'Barlow',sans-serif;cursor:pointer;border:none;transition:all .15s;letter-spacing:.04em;white-space:nowrap;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:5px;font-size:12px;font-weight:600;font-family:'Barlow',sans-serif;cursor:pointer;border:none;transition:all .13s;letter-spacing:.04em;white-space:nowrap;}
 .btn-pink{background:linear-gradient(135deg,#c2185b,#e91e8c);color:#fff;}
 .btn-pink:hover{filter:brightness(1.1);}
 .btn-orange{background:linear-gradient(135deg,#e8640a,#ff7518);color:#fff;}
-.btn-orange:hover{filter:brightness(1.1);}
 .btn-ghost{background:transparent;color:var(--text-mid);border:1px solid var(--border);}
 .btn-ghost:hover{background:var(--gunmetal-light);color:var(--white);}
 .btn-green{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3);}
-.btn-green:hover{background:rgba(34,197,94,.25);}
-.btn-sm{padding:5px 10px;font-size:11px;}
-/* PERIOD PILL */
-.period-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:3px 8px;border-radius:4px;background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2);}
+.btn-sm{padding:4px 9px;font-size:11px;}
 /* BANNER */
-.banner{padding:10px 16px;border-radius:6px;font-size:12px;display:flex;gap:8px;align-items:center;margin-bottom:12px;}
-.banner-success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:var(--green);}
-.banner-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red);}
-.banner-info{background:rgba(46,109,164,.1);border:1px solid rgba(46,109,164,.25);color:#60a5fa;}
-.spinner{width:14px;height:14px;border:2px solid rgba(233,30,140,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .7s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.loading-row{display:flex;align-items:center;gap:10px;padding:24px;color:var(--text-muted);font-size:13px;}
-/* NO FILES */
-.no-files{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px;color:var(--text-muted);}
-.no-files-icon{font-size:32px;opacity:.3;margin-bottom:10px;}
-/* DB SAVE INDICATOR */
-.db-saved{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--green);padding:3px 8px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:4px;}
-@media(max-width:768px){.main{margin-left:0;}.workspace{flex-direction:column;height:auto;}.list-panel{width:100%;height:50vh;}.detail-panel{height:50vh;}}
+.bnr{padding:9px 14px;border-radius:5px;font-size:12px;display:flex;gap:7px;align-items:center;margin-bottom:10px;}
+.bnr-ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:var(--green);}
+.bnr-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red);}
+.bnr-info{background:rgba(46,109,164,.1);border:1px solid rgba(46,109,164,.25);color:#60a5fa;}
+/* SPINNER */
+.spin{width:13px;height:13px;border:2px solid rgba(233,30,140,.2);border-top-color:var(--pink);border-radius:50%;animation:sp .7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.loading-r{display:flex;align-items:center;gap:9px;padding:20px;color:var(--text-muted);font-size:13px;}
+.no-files{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:44px 20px;color:var(--text-muted);}
+.db-saved{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--green);padding:2px 7px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:3px;}
+/* SAVED DOC GRID */
+.rec-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px;}
+.rec-field{display:flex;flex-direction:column;gap:2px;}
+.rec-field-label{font-size:9px;font-weight:700;color:var(--text-muted);font-family:'JetBrains Mono',monospace;letter-spacing:.07em;text-transform:uppercase;}
+.rec-field-val{font-size:12px;color:var(--white-pure);}
+@media(max-width:768px){.main{margin-left:0;}.workspace{flex-direction:column;height:auto;}.list-panel{width:100%;height:40vh;}.detail-panel{height:60vh;}.rec-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -136,687 +139,714 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
   <div class="topbar">
     <div>
       <div class="page-title">DOCUMENT INBOX</div>
-      <div class="page-subtitle">Review · Route · Save to Driver Database</div>
+      <div class="page-subtitle">Review · Classify · Save to Driver Records</div>
     </div>
     <div class="topbar-actions">
       <button class="btn btn-ghost btn-sm" onclick="loadInbox()">
-        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="1 4 1 10 7 10"/><path d="M1.5 8A7 7 0 1014.5 8"/></svg>
-        Refresh Inbox
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="1 4 1 10 7 10"/><path d="M1.5 8A7 7 0 1014.5 8"/></svg>
+        Refresh
       </button>
-      <button class="btn btn-orange" onclick="routeAllAuto()" id="batch-btn" style="display:none;">
-        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2 9 6 13 14 4"/></svg>
-        Route All Auto-Matched
-      </button>
-      <button class="btn btn-pink" onclick="handleAuthClick()">
-        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="7"/><polyline points="2 9 6 13 14 4"/></svg>
-        <span id="auth-btn-label">Connect Drive</span>
-      </button>
+      <button class="btn btn-orange btn-sm" id="batch-btn" onclick="routeAllAuto()" style="display:none;">Route Auto-Matched</button>
+      <button class="btn btn-pink btn-sm" id="auth-btn" onclick="handleAuthClick()">Connect Drive</button>
     </div>
   </div>
 
-  <!-- STATS -->
   <div class="stats-bar">
-    <div class="stat">
-      <div class="stat-num orange" id="s-inbox">0</div>
-      <div class="stat-label">In Inbox</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num yellow" id="s-unmatched">0</div>
-      <div class="stat-label">Needs Review</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num green" id="s-routed">0</div>
-      <div class="stat-label">Routed Today</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num" id="s-total">0</div>
-      <div class="stat-label">Total in DB</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num" id="s-drivers">0</div>
-      <div class="stat-label">Drivers w/ Docs</div>
-    </div>
-    <div id="period-display" style="display:flex;align-items:center;margin-left:auto;"></div>
+    <div class="stat"><div class="stat-num ora" id="s-inbox">0</div><div class="stat-label">In Inbox</div></div>
+    <div class="stat"><div class="stat-num yel" id="s-review">0</div><div class="stat-label">Needs Review</div></div>
+    <div class="stat"><div class="stat-num grn" id="s-today">0</div><div class="stat-label">Saved Today</div></div>
+    <div class="stat"><div class="stat-num" id="s-rc">0</div><div class="stat-label">Rate Cons DB</div></div>
+    <div class="stat"><div class="stat-num" id="s-exp">0</div><div class="stat-label">Expenses DB</div></div>
+    <div class="stat"><div class="stat-num" id="s-per">0</div><div class="stat-label">Permits DB</div></div>
+    <div class="stat"><div class="stat-num" id="s-drivers">0</div><div class="stat-label">Drivers w/Records</div></div>
   </div>
 
-  <!-- TWO-PANEL WORKSPACE -->
   <div class="workspace">
-
-    <!-- LEFT: FILE LIST -->
+    <!-- LIST -->
     <div class="list-panel">
       <div class="list-toolbar">
-        <input type="text" class="list-search" placeholder="Search files…" oninput="filterList(this.value)" id="list-search">
-        <button class="btn btn-ghost btn-sm" onclick="loadInbox()" title="Reload from Drive">
-          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="1 4 1 10 7 10"/><path d="M1.5 8A7 7 0 1014.5 8"/></svg>
+        <input class="list-search" id="srch" placeholder="Search files…" oninput="renderList(this.value)">
+        <button class="btn btn-ghost btn-sm" onclick="loadInbox()">
+          <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="1 4 1 10 7 10"/><path d="M1.5 8A7 7 0 1014.5 8"/></svg>
         </button>
       </div>
       <div class="list-tabs">
-        <div class="list-tab active" id="tab-inbox-lbl" onclick="showListTab('inbox')">INBOX <span class="badge" id="badge-inbox">0</span></div>
-        <div class="list-tab" id="tab-routed-lbl" onclick="showListTab('routed')">ROUTED <span class="badge green" id="badge-routed">0</span></div>
-        <div class="list-tab" id="tab-all-lbl" onclick="showListTab('all')">ALL DB</div>
+        <div class="list-tab active" id="tl-inbox"  onclick="switchTab('inbox')">INBOX <span class="ct" id="ct-inbox">0</span></div>
+        <div class="list-tab" id="tl-saved"  onclick="switchTab('saved')">SAVED <span class="ct g" id="ct-saved">0</span></div>
+        <div class="list-tab" id="tl-all"    onclick="switchTab('all')">ALL DB</div>
       </div>
       <div class="file-list" id="file-list">
-        <div class="loading-row"><div class="spinner"></div>Loading inbox…</div>
+        <div class="loading-r"><div class="spin"></div>Loading…</div>
       </div>
     </div>
 
-    <!-- RIGHT: DETAIL / ROUTING FORM -->
+    <!-- DETAIL -->
     <div class="detail-panel" id="detail-panel">
       <div class="detail-empty">
         <div class="detail-empty-icon">📂</div>
-        <div style="font-size:14px;font-weight:600;">Select a document to route</div>
-        <div style="font-size:12px;color:var(--text-muted);">Click any file in the inbox to review and save it to the driver database</div>
+        <div style="font-size:13px;font-weight:600;">Select a document</div>
+        <div style="font-size:12px;">Review, classify, and save it to the driver database</div>
       </div>
     </div>
-
-  </div><!-- /workspace -->
-</div><!-- /main -->
+  </div>
+</div>
 
 <script src="https://accounts.google.com/gsi/client" async></script>
 <script>
 // ─── STATE ──────────────────────────────────────────────
-const K = {
-  inbox:      'nexus_inbox_folder',
-  drivers:    'nexus_driver_vaults',
-  categories: 'nexus_drive_categories',
-  patterns:   'nexus_drive_patterns',
-  token:      'nexus_drive_token',
-  period:     'nexus_settlement_period',
-};
-
-let _token       = localStorage.getItem(K.token) || null;
-let _tokenClient = null;
-let _inboxFiles  = [];    // raw Drive files from inbox
-let _allDbDocs   = [];    // routed documents from NexusDocs
-let _activeTab   = 'inbox';
-let _selected    = null;  // currently selected file/doc
-
+const K = { inbox:'nexus_inbox_folder', drivers:'nexus_driver_vaults', categories:'nexus_drive_categories', patterns:'nexus_drive_patterns', token:'nexus_drive_token', period:'nexus_settlement_period' };
 const DEFAULT_CATS = [
-  { name:'Rate Cons',  emoji:'📋', keywords:'rate con,ratecon,rc-,bol,bill of lading,load' },
-  { name:'Expenses',   emoji:'💰', keywords:'expense,exp,receipt,reimburs' },
-  { name:'Permits',    emoji:'📄', keywords:'permit,prmt,oversize,overweight' },
-  { name:'Personal',   emoji:'🪪', keywords:'coi,insurance,license,cdl,medical,lease,contract,agreement' },
-  { name:'Health',     emoji:'🏥', keywords:'health,drug test,dac,physical' },
-  { name:'Vehicles',   emoji:'🚛', keywords:'vehicle,truck,trailer,registration,title,vin,inspection' },
+  {name:'Rate Cons',emoji:'📋',keywords:'rate con,ratecon,rc-,bol,bill of lading,load'},
+  {name:'Expenses', emoji:'💰',keywords:'expense,exp,receipt,reimburs'},
+  {name:'Permits',  emoji:'📄',keywords:'permit,prmt,oversize,overweight'},
+  {name:'Personal', emoji:'🪪',keywords:'coi,insurance,license,cdl,lease,contract,agreement'},
+  {name:'Health',   emoji:'🏥',keywords:'health,drug test,dac,physical'},
+  {name:'Vehicles', emoji:'🚛',keywords:'vehicle,truck,trailer,registration,title,vin,inspection'},
 ];
+const TYPE_LABELS = { rate_con:'Rate Con', permit:'Permit', expense:'Expense', personal:'Personal', health:'Health', vehicle:'Vehicle', other:'Other' };
 
-// ─── HELPERS ────────────────────────────────────────────
-function ls(k)  { try { return JSON.parse(localStorage.getItem(k)); } catch(e) { return null; } }
-function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function fmtBytes(b){ if(!b) return '—'; b=parseInt(b); if(b<1024) return b+'B'; if(b<1048576) return Math.round(b/1024)+'KB'; return (b/1048576).toFixed(1)+'MB'; }
-function fmtDate(iso){ return iso ? iso.split('T')[0] : '—'; }
+let _token    = localStorage.getItem(K.token) || null;
+let _tclient  = null;
+let _inbox    = [];   // drive files
+let _tab      = 'inbox';
+let _selected = null;
 
-function loadCategories() {
-  const s = ls(K.categories);
-  return (s && s.length) ? s : DEFAULT_CATS;
-}
-function loadDrivers() { return ls(K.drivers) || []; }
-function loadPatterns() { return ls(K.patterns) || {}; }
+function ls(k){ try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;} }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmt(b){ if(!b)return '—'; b=parseInt(b); if(b<1024)return b+'B'; if(b<1048576)return Math.round(b/1024)+'KB'; return (b/1048576).toFixed(1)+'MB'; }
+function fdate(s){ return s?s.split('T')[0]:'—'; }
+function cats(){ const s=ls(K.categories); return(s&&s.length)?s:DEFAULT_CATS; }
+function drivers(){ return ls(K.drivers)||[]; }
+function pats(){ return ls(K.patterns)||{}; }
 
-// ─── ROUTING GUESS ──────────────────────────────────────
-function guessRouting(file) {
-  const name    = (file.name || '').toLowerCase();
-  const cats    = loadCategories();
-  const drivers = loadDrivers();
-  const pats    = loadPatterns();
-
-  // Load number
-  const loadRx = new RegExp(pats.load || '\\b\\d{6,7}\\b|rc-\\d+|bol-\\d+', 'i');
-  const loadM  = name.match(loadRx);
+// ─── GUESS ROUTING ──────────────────────────────────────
+function guess(file){
+  const n = (file.name||'').toLowerCase();
+  const p = pats();
+  const loadRx = new RegExp(p.load||'\\b\\d{6,7}\\b|rc-\\d+|bol-\\d+','i');
+  const loadM  = n.match(loadRx);
   const load   = loadM ? loadM[0].replace(/\s/g,'') : null;
-
-  // Driver
-  let driver = null, driverId = null;
-  for (const d of drivers) {
-    const shorts = (d.shortNames || d.name||'').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
-    if (shorts.some(s => name.includes(s))) { driver = d.name; driverId = d.id; break; }
+  let driver=null, driverId=null;
+  for(const d of drivers()){
+    const ss=(d.shortNames||d.name||'').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+    if(ss.some(s=>n.includes(s))){ driver=d.name; driverId=d.id; break; }
   }
-
-  // Category
-  let cat = null;
-  for (const c of cats) {
-    const kws = (c.keywords||'').split(',').map(k=>k.trim().toLowerCase()).filter(Boolean);
-    if (kws.some(k => name.includes(k))) { cat = c.name; break; }
+  let cat=null, rtype=null;
+  if(load){ cat='Rate Cons'; rtype='rate_con'; }
+  for(const c of cats()){
+    const kws=(c.keywords||'').split(',').map(k=>k.trim().toLowerCase()).filter(Boolean);
+    if(kws.some(k=>n.includes(k))){
+      cat=c.name;
+      if(c.name.toLowerCase().includes('permit')) rtype='permit';
+      else if(c.name.toLowerCase().includes('expense')) rtype='expense';
+      else if(c.name.toLowerCase().includes('rate')) rtype='rate_con';
+      else if(c.name.toLowerCase().includes('personal')) rtype='personal';
+      else if(c.name.toLowerCase().includes('health')) rtype='health';
+      else if(c.name.toLowerCase().includes('vehicle')) rtype='vehicle';
+      else rtype=rtype||'other';
+      break;
+    }
   }
-  if (!cat && load) cat = 'Rate Cons';
-
-  // Date from filename
-  const dateRx = /(\d{2})(\d{2})(\d{4})|(\d{4})[-\/](\d{2})[-\/](\d{2})/;
-  const dateM  = name.match(dateRx);
-  let docDate  = null;
-  if (dateM) {
-    if (dateM[3]) docDate = `${dateM[3]}-${dateM[1]}-${dateM[2]}`;
-    else if (dateM[4]) docDate = `${dateM[4]}-${dateM[5]}-${dateM[6]}`;
-  } else if (file.modifiedTime) {
-    docDate = fmtDate(file.modifiedTime);
-  }
-
-  const autoConfidence = driver && cat ? 'high' : (driver || cat) ? 'medium' : 'low';
-  return { load, driver, driverId, cat, docDate, autoConfidence };
+  rtype = rtype||'expense';
+  const dateRx=/(\d{2})(\d{2})(\d{4})|(\d{4})[-\/](\d{2})[-\/](\d{2})/;
+  const dm=n.match(dateRx);
+  let docDate=null;
+  if(dm){ docDate=dm[3]?`${dm[3]}-${dm[1]}-${dm[2]}`:`${dm[4]}-${dm[5]}-${dm[6]}`; }
+  else if(file.modifiedTime){ docDate=fdate(file.modifiedTime); }
+  return { load, driver, driverId, cat, rtype, docDate, conf: driver&&cat?'high':driver||cat?'medium':'low' };
 }
 
-// ─── STATS REFRESH ──────────────────────────────────────
-function refreshStats() {
-  _allDbDocs = NexusDocs.getAll();
-  const stats  = NexusDocs.stats();
-  const today  = new Date().toISOString().split('T')[0];
-  const routedToday = _allDbDocs.filter(d => d.routedAt && d.routedAt.startsWith(today)).length;
-  const unmatched   = _inboxFiles.filter(f => { const g = guessRouting(f); return !g.driver; }).length;
-
-  document.getElementById('s-inbox').textContent     = _inboxFiles.length;
-  document.getElementById('s-unmatched').textContent = unmatched;
-  document.getElementById('s-routed').textContent    = routedToday;
-  document.getElementById('s-total').textContent     = stats.total;
-  document.getElementById('s-drivers').textContent   = stats.drivers;
-
-  document.getElementById('badge-inbox').textContent  = _inboxFiles.length;
-  document.getElementById('badge-routed').textContent = routedToday;
-
-  const batchBtn = document.getElementById('batch-btn');
-  const autoMatchCount = _inboxFiles.filter(f => { const g=guessRouting(f); return g.driver&&g.cat; }).length;
-  batchBtn.style.display = autoMatchCount > 0 ? 'flex' : 'none';
-  batchBtn.textContent = `Route All Auto-Matched (${autoMatchCount})`;
-
-  // Period display
-  const period = ls(K.period) || 'biweekly';
-  document.getElementById('period-display').innerHTML = `<span class="period-pill">📅 ${period.charAt(0).toUpperCase()+period.slice(1)} periods</span>`;
+// ─── STATS ──────────────────────────────────────────────
+function refreshStats(){
+  const st   = NexusDocs.stats();
+  const today= new Date().toISOString().split('T')[0];
+  const recs = NexusDocs.getAll();
+  document.getElementById('s-inbox').textContent   = _inbox.length;
+  document.getElementById('s-review').textContent  = _inbox.filter(f=>guess(f).conf==='low').length;
+  document.getElementById('s-today').textContent   = recs.filter(r=>r.createdAt&&r.createdAt.startsWith(today)).length;
+  document.getElementById('s-rc').textContent      = st.rateCons;
+  document.getElementById('s-exp').textContent     = st.expenses;
+  document.getElementById('s-per').textContent     = st.permits;
+  document.getElementById('s-drivers').textContent = st.drivers;
+  document.getElementById('ct-inbox').textContent  = _inbox.length;
+  document.getElementById('ct-saved').textContent  = recs.filter(r=>r.createdAt&&r.createdAt.startsWith(today)).length;
+  const autos = _inbox.filter(f=>{ const g=guess(f); return g.driver&&g.cat; }).length;
+  const bb = document.getElementById('batch-btn');
+  bb.style.display = autos>0?'flex':'none';
+  bb.textContent = `Route Auto-Matched (${autos})`;
 }
 
 // ─── FILE ICON ──────────────────────────────────────────
-function getIcon(mime) {
-  if (mime === 'application/pdf')                    return { cls:'fi-pdf', lbl:'PDF' };
-  if ((mime||'').includes('document'))               return { cls:'fi-doc', lbl:'DOC' };
-  if ((mime||'').includes('spreadsheet'))            return { cls:'fi-xls', lbl:'XLS' };
-  if ((mime||'').startsWith('image/'))               return { cls:'fi-img', lbl:'IMG' };
-  return { cls:'fi-other', lbl:'FILE' };
+function ficon(mime){
+  if(mime==='application/pdf')         return {cls:'fi-pdf',lbl:'PDF'};
+  if((mime||'').includes('document'))  return {cls:'fi-doc',lbl:'DOC'};
+  if((mime||'').includes('spreadsheet'))return {cls:'fi-xls',lbl:'XLS'};
+  if((mime||'').startsWith('image/'))  return {cls:'fi-img',lbl:'IMG'};
+  return {cls:'fi-oth',lbl:'FILE'};
 }
 
-// ─── RENDER LIST ────────────────────────────────────────
-function renderList(filter) {
-  const el = document.getElementById('file-list');
-  filter = (filter||'').toLowerCase();
+// ─── LIST ────────────────────────────────────────────────
+function switchTab(t){
+  _tab=t;
+  ['inbox','saved','all'].forEach(x=>{
+    document.getElementById('tl-'+x).classList.toggle('active',x===t);
+  });
+  renderList(document.getElementById('srch').value);
+}
 
-  if (_activeTab === 'inbox') {
-    let files = _inboxFiles;
-    if (filter) files = files.filter(f => f.name.toLowerCase().includes(filter));
-    if (!files.length) {
-      el.innerHTML = `<div class="no-files"><div class="no-files-icon">📭</div><div style="font-size:13px;">${_inboxFiles.length ? 'No matches' : 'Inbox is empty'}</div></div>`;
-      return;
-    }
-    el.innerHTML = files.map(f => {
-      const g    = guessRouting(f);
-      const icon = getIcon(f.mimeType);
-      const isSelected = _selected && _selected.type === 'inbox' && _selected.data.id === f.id;
-      let chips = '';
-      if (g.driver) chips += `<span class="guess-chip gc-driver">👤 ${esc(g.driver)}</span>`;
-      else           chips += `<span class="guess-chip gc-none">👤 ?</span>`;
-      if (g.load)   chips += `<span class="guess-chip gc-load">📋 ${esc(g.load)}</span>`;
-      if (g.cat)    chips += `<span class="guess-chip gc-cat">${esc(g.cat)}</span>`;
-      else           chips += `<span class="guess-chip gc-none">🗂 ?</span>`;
-      if (g.docDate) chips += `<span class="guess-chip gc-date">📅 ${esc(g.docDate)}</span>`;
-      return `<div class="file-row${isSelected?' selected':''}" onclick="selectFile('${f.id}','inbox')">
-        <div class="file-icon ${icon.cls}">${icon.lbl}</div>
-        <div class="file-row-info">
-          <div class="file-row-name">${esc(f.name)}</div>
-          <div class="file-row-meta">${fmtDate(f.modifiedTime)} · ${fmtBytes(f.size)}</div>
-          <div class="file-row-guesses">${chips}</div>
+function renderList(filter){
+  const el=document.getElementById('file-list');
+  filter=(filter||'').toLowerCase();
+  if(_tab==='inbox'){
+    let files=_inbox;
+    if(filter) files=files.filter(f=>f.name.toLowerCase().includes(filter));
+    if(!files.length){ el.innerHTML<`<div class="no-files"><div style="font-size:28px;opacity:.3;">📭</div><div style="font-size:12px;margin-top:8px;">${_inbox.length?'No matches':'Inbox empty'}</div></div>`; return; }
+    el.innerHTML=files.map(f=>{
+      const g=guess(f); const ic=ficon(f.mimeType);
+      const isSel=_selected&&_selected.src==='inbox'&&_selected.id===f.id;
+      let chips='';
+      chips+=g.driver?`<span class="chip ch-d">👤 ${esc(g.driver)}</span>`:`<span class="chip ch-x">👤?</span>`;
+      if(g.load)  chips+=`<span class="chip ch-l">📋 ${esc(g.load)}</span>`;
+      if(g.rtype) chips+=`<span class="chip ch-c">${esc(TYPE_LABELS[g.rtype]||g.rtype)}</span>`;
+      if(g.docDate) chips+=`<span class="chip ch-dt">📅 ${esc(g.docDate)}</span>`;
+      return `<div class="frow${isSel?' sel':''}" onclick="selFile('${f.id}')">
+        <div class="ficon ${ic.cls}">${ic.lbl}</div>
+        <div class="frow-info">
+          <div class="frow-name">${esc(f.name)}</div>
+          <div class="frow-meta">${fdate(f.modifiedTime)} · ${fmt(f.size)}</div>
+          <div class="frow-chips">${chips}</div>
         </div>
       </div>`;
     }).join('');
-
-  } else if (_activeTab === 'routed') {
-    const today   = new Date().toISOString().split('T')[0];
-    let docs = _allDbDocs.filter(d => d.routedAt && d.routedAt.startsWith(today));
-    if (filter) docs = docs.filter(d => d.fileName.toLowerCase().includes(filter));
-    if (!docs.length) {
-      el.innerHTML = `<div class="no-files"><div class="no-files-icon">✅</div><div style="font-size:13px;">No documents routed today yet</div></div>`;
-      return;
-    }
-    el.innerHTML = docs.map(d => {
-      const icon = getIcon(d.fileType === 'pdf' ? 'application/pdf' : '');
-      const isSelected = _selected && _selected.type === 'db' && _selected.data.id === d.id;
-      return `<div class="file-row routed${isSelected?' selected':''}" onclick="selectDoc('${d.id}')">
-        <div class="file-icon ${icon.cls}">${icon.lbl}</div>
-        <div class="file-row-info">
-          <div class="file-row-name">${esc(d.fileName)}</div>
-          <div class="file-row-meta">${fmtDate(d.routedAt)} · ${esc(d.driverName||'—')} · ${esc(d.category||'—')}</div>
-          <div class="file-row-guesses">
-            <span class="guess-chip gc-driver">👤 ${esc(d.driverName||'?')}</span>
-            <span class="guess-chip gc-cat">${esc(d.category||'?')}</span>
-            ${d.settlementPeriod ? `<span class="guess-chip gc-date">📅 ${esc(d.settlementPeriod)}</span>` : ''}
-          </div>
-        </div>
-        <span class="routed-stamp">SAVED</span>
-      </div>`;
-    }).join('');
-
   } else {
-    // all DB
-    let docs = _allDbDocs;
-    if (filter) docs = docs.filter(d => d.fileName.toLowerCase().includes(filter));
-    if (!docs.length) {
-      el.innerHTML = `<div class="no-files"><div class="no-files-icon">🗄</div><div style="font-size:13px;">Database is empty</div></div>`;
-      return;
-    }
-    el.innerHTML = docs.map(d => {
-      const icon = getIcon(d.fileType === 'pdf' ? 'application/pdf' : '');
-      const isSelected = _selected && _selected.type === 'db' && _selected.data.id === d.id;
-      return `<div class="file-row routed${isSelected?' selected':''}" onclick="selectDoc('${d.id}')">
-        <div class="file-icon ${icon.cls}">${icon.lbl}</div>
-        <div class="file-row-info">
-          <div class="file-row-name">${esc(d.fileName)}</div>
-          <div class="file-row-meta">${fmtDate(d.docDate||d.routedAt)} · ${esc(d.driverName||'—')} · ${esc(d.category||'—')}</div>
-          <div class="file-row-guesses">
-            <span class="guess-chip gc-driver">👤 ${esc(d.driverName||'?')}</span>
-            <span class="guess-chip gc-cat">${esc(d.category||'?')}</span>
-            ${d.settlementPeriod ? `<span class="guess-chip gc-date">📅 ${esc(d.settlementPeriod)}</span>` : ''}
+    let recs=NexusDocs.getAll();
+    if(_tab==='saved'){ const t=new Date().toISOString().split('T')[0]; recs=recs.filter(r=>r.createdAt&&r.createdAt.startsWith(t)); }
+    if(filter) recs=recs.filter(r=>(r.fileName||r.ourDriver||'').toLowerCase().includes(filter));
+    if(!recs.length){ el.innerHTML=`<div class="no-files"><div style="font-size:28px;opacity:.3;">🗄</div><div style="font-size:12px;margin-top:8px;">No records${_tab==='saved'?' saved today':''}</div></div>`; return; }
+    el.innerHTML=recs.map(r=>{
+      const ic=ficon(r.fileType==='pdf'?'application/pdf':'');
+      const isSel=_selected&&_selected.src==='db'&&_selected.id===r.id;
+      return `<div class="frow done${isSel?' sel':''}" onclick="selRec('${r.id}')">
+        <div class="ficon ${ic.cls}">${ic.lbl}</div>
+        <div class="frow-info">
+          <div class="frow-name">${esc(r.fileName||r.rateConNumber||r.id)}</div>
+          <div class="frow-meta">${fdate(r.recordDate)} · ${esc(r.ourDriver||'—')} · ${esc(r.recordType||'—')}</div>
+          <div class="frow-chips">
+            <span class="chip ch-d">👤 ${esc(r.ourDriver||'?')}</span>
+            <span class="chip ch-c">${esc(TYPE_LABELS[r.recordType]||r.recordType||'?')}</span>
+            ${r.settlementPeriod?`<span class="chip ch-dt">📅 ${esc(r.settlementPeriod)}</span>`:''}
           </div>
         </div>
-        <span class="routed-stamp">SAVED</span>
+        <span class="saved-stamp">SAVED</span>
       </div>`;
     }).join('');
   }
 }
 
-function filterList(v) { renderList(v); }
-function showListTab(tab) {
-  _activeTab = tab;
-  ['inbox','routed','all'].forEach(t => {
-    document.getElementById('tab-'+t+'-lbl').classList.toggle('active', t===tab);
-  });
-  renderList(document.getElementById('list-search').value);
+// ─── SELECT ──────────────────────────────────────────────
+function selFile(id){ const f=_inbox.find(x=>x.id===id); if(!f)return; _selected={src:'inbox',id,data:f}; renderList(document.getElementById('srch').value); buildForm(f); }
+function selRec(id){ const r=NexusDocs.getById(id); if(!r)return; _selected={src:'db',id,data:r}; renderList(document.getElementById('srch').value); showSaved(r); }
+
+// ─── PERIOD CALC ─────────────────────────────────────────
+function calcPeriod(ds){
+  if(!ds)return'';
+  const type=localStorage.getItem(K.period)||'biweekly';
+  const d=new Date(ds); if(isNaN(d))return'';
+  const y=d.getFullYear(),m=d.getMonth(),day=d.getDate();
+  if(type==='weekly'){ const s=new Date(d); s.setDate(day-d.getDay()); return 'Week of '+s.toISOString().split('T')[0]; }
+  if(type==='biweekly'){ const j=new Date(y,0,1),doy=Math.floor((d-j)/86400000),pn=Math.floor(doy/14),s=new Date(j); s.setDate(1+pn*14); const e=new Date(s); e.setDate(s.getDate()+13); return s.toISOString().split('T')[0]+' – '+e.toISOString().split('T')[0]; }
+  if(type==='semimonthly'){ return `${y}-${String(m+1).padStart(2,'0')} ${day<=15?'1st–15th':'16th–EOM'}`; }
+  return `${y}-${String(m+1).padStart(2,'0')} (Monthly)`;
 }
 
-// ─── SELECT FILE / DOC ──────────────────────────────────
-function selectFile(fileId, type) {
-  const f = _inboxFiles.find(x => x.id === fileId);
-  if (!f) return;
-  _selected = { type:'inbox', data:f };
-  renderList(document.getElementById('list-search').value);
-  renderRoutingForm(f);
-}
-function selectDoc(docId) {
-  const d = _allDbDocs.find(x => x.id === docId);
-  if (!d) return;
-  _selected = { type:'db', data:d };
-  renderList(document.getElementById('list-search').value);
-  renderSavedDoc(d);
-}
+// ─── BUILD ROUTING FORM ──────────────────────────────────
+function buildForm(f){
+  const dp=document.getElementById('detail-panel');
+  const g=guess(f);
+  const ic=ficon(f.mimeType);
+  const dvs=drivers();
+  const driverOpts='<option value="">— Unknown —</option>'+dvs.map(d=>`<option value="${esc(d.name)}" ${g.driver===d.name?'selected':''}>${esc(d.name)}${d.truck?' (Unit '+d.truck+')':''}</option>`).join('');
+  const typeOpts=Object.entries(TYPE_LABELS).map(([v,l])=>`<option value="${v}" ${g.rtype===v?'selected':''}>${l}</option>`).join('');
+  const expTypes=['Fuel','Toll','Repair','Food/Hotel','Scale','Insurance','Lumper','Advance','Other'].map(t=>`<option value="${t.toLowerCase()}">${t}</option>`).join('');
+  const truckOpts=['Flatbed','Step Deck','RGN','Lowboy','Van','Reefer','Other'].map(t=>`<option value="${t.toLowerCase()}">${t}</option>`).join('');
 
-// ─── ROUTING FORM ────────────────────────────────────────
-function renderRoutingForm(f) {
-  const dp   = document.getElementById('detail-panel');
-  const g    = guessRouting(f);
-  const icon = getIcon(f.mimeType);
-  const cats = loadCategories();
-  const drivers = loadDrivers();
-
-  const catOptions = cats.map(c => `<option value="${esc(c.name)}" ${g.cat===c.name?'selected':''}>${c.emoji} ${esc(c.name)}</option>`).join('');
-  const driverOptions = `<option value="">— Unknown —</option>` + drivers.map(d => `<option value="${esc(d.name)}" ${g.driver===d.name?'selected':''}>${esc(d.name)}${d.truck?' (Unit '+d.truck+')':''}</option>`).join('');
-
-  const confColor = g.autoConfidence === 'high' ? 'green' : g.autoConfidence === 'medium' ? 'yellow' : 'red';
-
-  dp.innerHTML = `
-    <div class="detail-file-header">
-      <div class="detail-file-icon ${icon.cls}">${icon.lbl}</div>
-      <div class="detail-file-info">
-        <div class="detail-file-name">${esc(f.name)}</div>
-        <div class="detail-file-meta">${fmtDate(f.modifiedTime)} · ${fmtBytes(f.size)} · ${f.mimeType||'unknown'}</div>
-        <div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;">
-          <span class="auto-tag ${confColor === 'green' ? 'matched' : 'unmatched'}">${confColor==='green'?'✓ AUTO-MATCH':'⚠ NEEDS REVIEW'}</span>
-          <a href="${f.webViewLink||'#'}" target="_blank" style="font-size:11px;color:#60a5fa;text-decoration:none;">View in Drive ↗</a>
+  dp.innerHTML=`
+    <div class="file-hdr">
+      <div class="fhdr-icon ${ic.cls}">${ic.lbl}</div>
+      <div class="fhdr-info">
+        <div class="fhdr-name">${esc(f.name)}</div>
+        <div class="fhdr-meta">${fdate(f.modifiedTime)} · ${fmt(f.size)}</div>
+        <div class="fhdr-tags">
+          <span class="atag ${g.conf==='high'?'ok':'warn'}">${g.conf==='high'?'✓ AUTO-MATCH':'⚠ NEEDS REVIEW'}</span>
+          ${f.webViewLink?`<a href="${f.webViewLink}" target="_blank" style="font-size:10px;color:#60a5fa;text-decoration:none;">View in Drive ↗</a>`:''}
         </div>
-      </div>
-      <div class="detail-actions">
-        <button class="btn btn-ghost btn-sm" onclick="selectFile('${f.id}','inbox')">
-          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="1 4 1 10 7 10"/><path d="M1.5 8A7 7 0 1014.5 8"/></svg>
-        </button>
       </div>
     </div>
-    <div class="detail-scroll">
-      <div id="form-banner" style="display:none;"></div>
-      <div class="routing-form">
-        <div class="section-head">Route This Document</div>
+    <div class="form-scroll">
+      <div id="form-bnr" style="display:none;"></div>
 
-        <div class="form-group">
-          <label class="form-label">Driver <span class="auto-tag ${g.driver?'matched':'unmatched'}">${g.driver?'AUTO':'MANUAL'}</span></label>
-          <select id="f-driver" class="form-select">${driverOptions}</select>
-          <div class="form-hint">Who does this document belong to?</div>
+      <div class="sec-head">Classification</div>
+      <div class="fr2">
+        <div class="fg">
+          <label class="fl">Record Type <span class="atag-inline ${g.rtype?'ok':'no'}">${g.rtype?'AUTO':'MANUAL'}</span></label>
+          <select id="f-type" class="fs" onchange="toggleFields(this.value)">${typeOpts}</select>
         </div>
+        <div class="fg">
+          <label class="fl">Driver <span class="atag-inline ${g.driver?'ok':'no'}">${g.driver?'AUTO':'MANUAL'}</span></label>
+          <select id="f-driver" class="fs">${driverOpts}</select>
+        </div>
+      </div>
+      <div class="fr2">
+        <div class="fg">
+          <label class="fl">Record Date <span class="atag-inline ${g.docDate?'ok':'no'}">${g.docDate?'AUTO':'MANUAL'}</span></label>
+          <input type="date" id="f-date" class="fi" value="${g.docDate||''}" oninput="updatePeriod(this.value)">
+        </div>
+        <div class="fg">
+          <label class="fl">Settlement Period</label>
+          <div class="period-box" id="f-period">${g.docDate?calcPeriod(g.docDate):'Set date above'}</div>
+        </div>
+      </div>
+      <div class="fr3">
+        <div class="fg">
+          <label class="fl">Our Dispatcher</label>
+          <input type="text" id="f-disp" class="fi" placeholder="Dispatcher name">
+        </div>
+        <div class="fg">
+          <label class="fl">Truck / Unit #</label>
+          <input type="text" id="f-truck" class="fi" placeholder="e.g. 24">
+        </div>
+        <div class="fg">
+          <label class="fl">Trailer Type</label>
+          <select id="f-trailer" class="fs"><option value="">—</option>${truckOpts}</select>
+        </div>
+      </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Category <span class="auto-tag ${g.cat?'matched':'unmatched'}">${g.cat?'AUTO':'MANUAL'}</span></label>
-            <select id="f-cat" class="form-select">
-              <option value="">— Select —</option>
-              ${catOptions}
+      <!-- RATE CON FIELDS -->
+      <div class="field-group ${g.rtype==='rate_con'?'show':''}" id="fg-ratecon">
+        <div class="sec-head">Rate Con / Load Details</div>
+        <div class="fr2">
+          <div class="fg">
+            <label class="fl">Rate Con # <span class="atag-inline ${g.load?'ok':'no'}">${g.load?'AUTO':'MANUAL'}</span></label>
+            <input type="text" id="f-rcnum" class="fi" placeholder="e.g. 363402" value="${esc(g.load||'')}">
+          </div>
+          <div class="fg">
+            <label class="fl">BOL Number</label>
+            <input type="text" id="f-bol" class="fi" placeholder="Bill of Lading #">
+          </div>
+        </div>
+        <div class="sec-head">Customer / Broker</div>
+        <div class="fg">
+          <label class="fl">Customer / Broker Company</label>
+          <input type="text" id="f-cust" class="fi" placeholder="e.g. Coyote Logistics, Echo Global">
+        </div>
+        <div class="fr3">
+          <div class="fg">
+            <label class="fl">Dispatch Contact Name</label>
+            <input type="text" id="f-cdname" class="fi" placeholder="First Last">
+          </div>
+          <div class="fg">
+            <label class="fl">Dispatch Phone</label>
+            <input type="text" id="f-cdphone" class="fi" placeholder="(555) 000-0000">
+          </div>
+          <div class="fg">
+            <label class="fl">Dispatch Email</label>
+            <input type="email" id="f-cdemail" class="fi" placeholder="dispatcher@broker.com">
+          </div>
+        </div>
+        <div class="sec-head">Load Details</div>
+        <div class="fg">
+          <label class="fl">Load Description / Commodity</label>
+          <input type="text" id="f-ldesc" class="fi" placeholder="e.g. Steel beams, heavy equipment, oversized load">
+        </div>
+        <div class="fr3">
+          <div class="fg">
+            <label class="fl">Weight</label>
+            <input type="text" id="f-wt" class="fi" placeholder="e.g. 48,000 lbs">
+          </div>
+          <div class="fg">
+            <label class="fl">Height</label>
+            <input type="text" id="f-ht" class="fi" placeholder="e.g. 14'6&quot;">
+          </div>
+          <div class="fg">
+            <label class="fl">Width</label>
+            <input type="text" id="f-wd" class="fi" placeholder="e.g. 8'6&quot;">
+          </div>
+        </div>
+        <div class="fr2">
+          <div class="fg">
+            <label class="fl">Origin (Pickup)</label>
+            <input type="text" id="f-orig" class="fi" placeholder="City, ST or full address">
+          </div>
+          <div class="fg">
+            <label class="fl">Destination (Delivery)</label>
+            <input type="text" id="f-dest" class="fi" placeholder="City, ST or full address">
+          </div>
+        </div>
+        <div class="fr3">
+          <div class="fg">
+            <label class="fl">Total Miles</label>
+            <input type="number" id="f-miles" class="fi" placeholder="0">
+          </div>
+          <div class="fg">
+            <label class="fl">Agreed Rate ($)</label>
+            <input type="number" id="f-rate" class="fi" placeholder="0.00" step="0.01">
+          </div>
+          <div class="fg">
+            <label class="fl">Fuel Advance ($)</label>
+            <input type="number" id="f-fadv" class="fi" placeholder="0.00" step="0.01">
+          </div>
+        </div>
+        <div class="fr2">
+          <div class="fg">
+            <label class="fl">Detention ($)</label>
+            <input type="number" id="f-det" class="fi" placeholder="0.00" step="0.01">
+          </div>
+          <div class="fg">
+            <label class="fl">Lumper Fees ($)</label>
+            <input type="number" id="f-lump" class="fi" placeholder="0.00" step="0.01">
+          </div>
+        </div>
+        <div class="sec-head">Billing / Payment</div>
+        <div class="fr3">
+          <div class="fg">
+            <label class="fl">Invoice #</label>
+            <input type="text" id="f-inv" class="fi" placeholder="INV-">
+          </div>
+          <div class="fg">
+            <label class="fl">Invoice Amount ($)</label>
+            <input type="number" id="f-invamt" class="fi" placeholder="0.00" step="0.01">
+          </div>
+          <div class="fg">
+            <label class="fl">Invoice Status</label>
+            <select id="f-invst" class="fs">
+              <option value="unbilled">Unbilled</option>
+              <option value="billed">Billed</option>
+              <option value="paid">Paid</option>
+              <option value="factored">Factored</option>
             </select>
           </div>
-          <div class="form-group">
-            <label class="form-label">Load / Rate Con # <span class="auto-tag ${g.load?'matched':'unmatched'}">${g.load?'AUTO':'MANUAL'}</span></label>
-            <input type="text" id="f-load" class="form-input" placeholder="e.g. 363402" value="${esc(g.load||'')}">
+        </div>
+        <div class="fr3">
+          <div class="fg">
+            <label class="fl">Driver Pay ($)</label>
+            <input type="number" id="f-dpay" class="fi" placeholder="0.00" step="0.01">
+          </div>
+          <div class="fg">
+            <label class="fl">Dispatch Commission ($)</label>
+            <input type="number" id="f-dcom" class="fi" placeholder="0.00" step="0.01">
+          </div>
+          <div class="fg">
+            <label class="fl">Factoring Ref #</label>
+            <input type="text" id="f-facref" class="fi" placeholder="Factor ref #">
           </div>
         </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Document Date <span class="auto-tag ${g.docDate?'matched':'unmatched'}">${g.docDate?'AUTO':'MANUAL'}</span></label>
-            <input type="date" id="f-date" class="form-input" value="${g.docDate||''}">
-            <div class="form-hint">Used to determine settlement period</div>
+        <div class="fr2">
+          <div class="fg">
+            <label class="fl">POD Received?</label>
+            <select id="f-pod" class="fs"><option value="false">No</option><option value="true">Yes</option></select>
           </div>
-          <div class="form-group">
-            <label class="form-label">Settlement Period (auto-calculated)</label>
-            <input type="text" id="f-period" class="form-input" style="font-family:'JetBrains Mono',monospace;font-size:11px;" readonly placeholder="Set document date first">
+          <div class="fg">
+            <label class="fl">POD Date</label>
+            <input type="date" id="f-poddate" class="fi">
           </div>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label class="form-label">Extract Text from Document</label>
-          <button class="btn btn-ghost btn-sm" onclick="extractText('${f.id}','${f.mimeType||''}')">
-            <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 2h10v12H3z"/><path d="M5 5h6M5 8h6M5 11h4"/></svg>
-            Extract Text (Docs/Sheets only)
-          </button>
-          <div class="extracted-box" id="extracted-text" style="display:none;"></div>
-          <input type="hidden" id="extracted-hidden">
-          <div class="form-hint">For Google Docs and Sheets — reads the text content and saves it to the database for search.</div>
+      <!-- PERMIT FIELDS -->
+      <div class="field-group ${g.rtype==='permit'?'show':''}" id="fg-permit">
+        <div class="sec-head">Permit Details</div>
+        <div class="fr3">
+          <div class="fg">
+            <label class="fl">Permit State</label>
+            <input type="text" id="f-pstate" class="fi" placeholder="e.g. TX, LA, MS">
+          </div>
+          <div class="fg">
+            <label class="fl">Permit Number</label>
+            <input type="text" id="f-pnum" class="fi" placeholder="State permit #">
+          </div>
+          <div class="fg">
+            <label class="fl">Permit Amount ($)</label>
+            <input type="number" id="f-pamt" class="fi" placeholder="0.00" step="0.01">
+          </div>
         </div>
-
-        <div class="form-group">
-          <label class="form-label">Notes</label>
-          <textarea id="f-notes" class="form-textarea" placeholder="Any notes about this document…"></textarea>
+        <div class="fg">
+          <label class="fl">Linked Rate Con #</label>
+          <input type="text" id="f-prc" class="fi" placeholder="Attach to load number (optional)">
         </div>
+      </div>
 
+      <!-- EXPENSE FIELDS -->
+      <div class="field-group ${(g.rtype&&g.rtype!=='rate_con'&&g.rtype!=='permit')?'show':''}" id="fg-expense">
+        <div class="sec-head">Expense Details</div>
+        <div class="fr3">
+          <div class="fg">
+            <label class="fl">Expense Type</label>
+            <select id="f-exptype" class="fs"><option value="">—</option>${expTypes}</select>
+          </div>
+          <div class="fg">
+            <label class="fl">Amount ($)</label>
+            <input type="number" id="f-expamt" class="fi" placeholder="0.00" step="0.01">
+          </div>
+          <div class="fg">
+            <label class="fl">Vendor / Merchant</label>
+            <input type="text" id="f-expven" class="fi" placeholder="Where was this purchased?">
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl">Linked Rate Con # (optional)</label>
+          <input type="text" id="f-exprc" class="fi" placeholder="Attach to load number if applicable">
+        </div>
+      </div>
+
+      <!-- TEXT EXTRACT -->
+      <div class="sec-head">Document Content</div>
+      <div class="fg">
+        <button class="btn btn-ghost btn-sm" onclick="extractText('${f.id}','${f.mimeType||''}')">
+          <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 2h10v12H3z"/><path d="M5 5h6M5 8h6M5 11h4"/></svg>
+          Extract Text (Google Docs / Sheets only)
+        </button>
+        <div id="ext-box" style="display:none;" class="ext-box"></div>
+        <input type="hidden" id="ext-hidden">
+        <div class="fh">PDFs are linked to Drive — text extraction applies to Docs and Sheets only.</div>
+      </div>
+      <div class="fg">
+        <label class="fl">Notes</label>
+        <textarea id="f-notes" class="fta" placeholder="Any notes about this document or record…"></textarea>
       </div>
     </div>
+
     <div class="save-bar">
-      <div class="save-bar-left">
-        <span id="save-status"></span>
-      </div>
-      <div class="save-bar-actions">
-        <a href="${f.webViewLink||'#'}" target="_blank" class="btn btn-ghost btn-sm">Open in Drive ↗</a>
-        <button class="btn btn-pink" onclick="saveToDatabase('${f.id}')">
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2 9 6 13 14 4"/></svg>
+      <div class="save-bar-l" id="save-status"></div>
+      <div class="save-bar-r">
+        ${f.webViewLink?`<a href="${f.webViewLink}" target="_blank" class="btn btn-ghost btn-sm">Open in Drive ↗</a>`:''}
+        <button class="btn btn-pink" onclick="saveRecord('${f.id}')">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2 9 6 13 14 4"/></svg>
           Save to Driver Database
         </button>
       </div>
     </div>`;
 
-  // Wire date → period calculation
-  document.getElementById('f-date').addEventListener('input', function() {
-    const period = calcPeriod(this.value);
-    document.getElementById('f-period').value = period || '';
-  });
-  if (g.docDate) {
-    const p = calcPeriod(g.docDate);
-    document.getElementById('f-period').value = p || '';
-  }
+  // Init period display
+  if(g.docDate) updatePeriod(g.docDate);
 }
 
-function calcPeriod(dateStr) {
-  if (!dateStr) return '';
-  const type = localStorage.getItem(K.period) || 'biweekly';
-  const d = new Date(dateStr);
-  if (isNaN(d)) return '';
-  const y = d.getFullYear(), m = d.getMonth(), day = d.getDate();
-  if (type === 'weekly') {
-    const ws = new Date(d); ws.setDate(day - d.getDay());
-    return 'Week of ' + ws.toISOString().split('T')[0];
-  }
-  if (type === 'biweekly') {
-    const jan1    = new Date(y,0,1);
-    const dayOfYr = Math.floor((d-jan1)/86400000);
-    const pNum    = Math.floor(dayOfYr/14)+1;
-    const pStart  = new Date(jan1); pStart.setDate(1+(pNum-1)*14);
-    const pEnd    = new Date(pStart); pEnd.setDate(pStart.getDate()+13);
-    return pStart.toISOString().split('T')[0] + ' – ' + pEnd.toISOString().split('T')[0];
-  }
-  if (type === 'semimonthly') {
-    const half = day<=15 ? '1st–15th' : '16th–EOM';
-    return `${y}-${String(m+1).padStart(2,'0')} ${half}`;
-  }
-  return `${y}-${String(m+1).padStart(2,'0')} (Monthly)`;
+function toggleFields(type){
+  document.getElementById('fg-ratecon').classList.toggle('show', type==='rate_con');
+  document.getElementById('fg-permit').classList.toggle('show',  type==='permit');
+  document.getElementById('fg-expense').classList.toggle('show', type!=='rate_con'&&type!=='permit');
+}
+
+function updatePeriod(ds){
+  const el=document.getElementById('f-period');
+  if(el) el.textContent=ds?calcPeriod(ds):'Set date above';
 }
 
 // ─── EXTRACT TEXT ────────────────────────────────────────
-async function extractText(fileId, mimeType) {
-  if (!_token) { alert('Connect Google Drive first.'); return; }
-  let exportMime = null;
-  if (mimeType.includes('document'))    exportMime = 'text/plain';
-  if (mimeType.includes('spreadsheet')) exportMime = 'text/csv';
-  if (!exportMime) {
-    document.getElementById('extracted-text').style.display = 'block';
-    document.getElementById('extracted-text').textContent = 'Text extraction is only available for Google Docs and Sheets. PDFs and images are referenced by filename only.';
-    return;
-  }
-  document.getElementById('extracted-text').style.display = 'block';
-  document.getElementById('extracted-text').textContent = 'Extracting…';
-  try {
-    const r = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/export?mimeType=${encodeURIComponent(exportMime)}`, {
-      headers: { Authorization: 'Bearer '+_token }
-    });
-    if (!r.ok) throw new Error('Export failed: '+r.status);
-    const text = (await r.text()).substring(0, 600);
-    document.getElementById('extracted-text').textContent = text || '(empty)';
-    document.getElementById('extracted-hidden').value = text;
-  } catch(e) {
-    document.getElementById('extracted-text').textContent = 'Error: '+e.message;
-  }
+async function extractText(fid, mime){
+  if(!_token){ alert('Connect Google Drive first.'); return; }
+  let em=null;
+  if(mime.includes('document')) em='text/plain';
+  if(mime.includes('spreadsheet')) em='text/csv';
+  const box=document.getElementById('ext-box');
+  box.style.display='block';
+  if(!em){ box.textContent='Text extraction available for Google Docs/Sheets only. PDF is linked by filename.'; return; }
+  box.textContent='Extracting…';
+  try{
+    const r=await fetch(`https://www.googleapis.com/drive/v3/files/${fid}/export?mimeType=${encodeURIComponent(em)}`,{headers:{Authorization:'Bearer '+_token}});
+    if(!r.ok) throw new Error('Export error '+r.status);
+    const t=(await r.text()).substring(0,600);
+    box.textContent=t||'(empty)';
+    document.getElementById('ext-hidden').value=t;
+  }catch(e){ box.textContent='Error: '+e.message; }
 }
 
-// ─── SAVE TO DATABASE ────────────────────────────────────
-async function saveToDatabase(fileId) {
-  const f = _inboxFiles.find(x => x.id === fileId);
-  if (!f) return;
+// ─── SAVE RECORD ─────────────────────────────────────────
+async function saveRecord(fileId){
+  const f=_inbox.find(x=>x.id===fileId); if(!f)return;
+  const rtype  = document.getElementById('f-type').value;
+  const driver = document.getElementById('f-driver').value;
+  const date   = document.getElementById('f-date').value;
+  const disp   = document.getElementById('f-disp').value.trim();
+  const truck  = document.getElementById('f-truck').value.trim();
+  const notes  = document.getElementById('f-notes').value.trim();
+  const ext    = document.getElementById('ext-hidden').value.trim();
 
-  const driverName = document.getElementById('f-driver').value.trim();
-  const cat        = document.getElementById('f-cat').value.trim();
-  const load       = document.getElementById('f-load').value.trim();
-  const docDate    = document.getElementById('f-date').value.trim();
-  const notes      = document.getElementById('f-notes').value.trim();
-  const extracted  = document.getElementById('extracted-hidden').value.trim();
+  if(!rtype) { showFBnr('err','Select a record type.'); return; }
 
-  if (!cat) { showFormBanner('error','Select a document category before saving.'); return; }
+  const mime=f.mimeType||'';
+  let ft='other';
+  if(mime==='application/pdf') ft='pdf';
+  else if(mime.includes('document')) ft='doc';
+  else if(mime.includes('spreadsheet')) ft='sheet';
+  else if(mime.startsWith('image/')) ft='image';
 
-  const drivers = loadDrivers();
-  const dObj    = drivers.find(d => d.name === driverName);
-
-  const mime = f.mimeType || '';
-  let fileType = 'other';
-  if (mime === 'application/pdf')      fileType = 'pdf';
-  else if (mime.includes('document'))  fileType = 'doc';
-  else if (mime.includes('spreadsheet')) fileType = 'sheet';
-  else if (mime.startsWith('image/'))  fileType = 'image';
-
-  const doc = {
-    driveFileId:   f.id,
-    driveFolderId: ls(K.inbox) ? ls(K.inbox).id : null,
-    fileName:      f.name,
-    fileType,
-    fileSizeBytes: f.size ? parseInt(f.size) : null,
-    driveUrl:      f.webViewLink || null,
-    driverName:    driverName || null,
-    driverId:      dObj ? dObj.id : null,
-    loadNumber:    load || null,
-    category:      cat,
-    docDate:       docDate || null,
-    extractedText: extracted || null,
-    notes,
-    status:        'routed',
-    routedAt:      new Date().toISOString(),
-    routedBy:      'admin',
+  const rec={
+    driveFileId: f.id, driveFolderId: ls(K.inbox)?ls(K.inbox).id:null,
+    fileName: f.name, fileType: ft,
+    fileSizeBytes: f.size?parseInt(f.size):null, driveUrl: f.webViewLink||null,
+    recordType: rtype, recordDate: date||null,
+    ourDriver: driver||null, ourDispatcher: disp||null,
+    truckUnit: truck||null, trailerType: document.getElementById('f-trailer').value||null,
+    extractedText: ext||null, notes, status:'active',
+    createdAt: new Date().toISOString(),
   };
 
-  try {
-    const saved = await NexusDocs.save(doc);
-    // Remove from inbox list (already routed)
-    _inboxFiles = _inboxFiles.filter(x => x.id !== fileId);
-    _allDbDocs  = NexusDocs.getAll();
-    _selected   = { type:'db', data:saved };
-    refreshStats();
-    renderList(document.getElementById('list-search').value);
-    renderSavedDoc(saved);
-    showFormBanner('success','✅ Saved to '+(driverName||'unassigned')+' · '+cat+(docDate?' · period: '+calcPeriod(docDate):''));
-  } catch(e) {
-    showFormBanner('error','Save failed: '+e.message);
+  // Type-specific fields
+  if(rtype==='rate_con'){
+    rec.rateConNumber        = document.getElementById('f-rcnum').value.trim()||null;
+    rec.bolNumber            = document.getElementById('f-bol').value.trim()||null;
+    rec.customerCompany      = document.getElementById('f-cust').value.trim()||null;
+    rec.customerDispatchName = document.getElementById('f-cdname').value.trim()||null;
+    rec.customerDispatchPhone= document.getElementById('f-cdphone').value.trim()||null;
+    rec.customerDispatchEmail= document.getElementById('f-cdemail').value.trim()||null;
+    rec.loadDescription      = document.getElementById('f-ldesc').value.trim()||null;
+    rec.loadWeight           = document.getElementById('f-wt').value.trim()||null;
+    rec.loadHeight           = document.getElementById('f-ht').value.trim()||null;
+    rec.loadWidth            = document.getElementById('f-wd').value.trim()||null;
+    rec.originAddress        = document.getElementById('f-orig').value.trim()||null;
+    rec.destinationAddress   = document.getElementById('f-dest').value.trim()||null;
+    rec.totalMiles           = parseInt(document.getElementById('f-miles').value)||null;
+    rec.agreedRate           = parseFloat(document.getElementById('f-rate').value)||null;
+    rec.fuelAdvance          = parseFloat(document.getElementById('f-fadv').value)||null;
+    rec.detentionAmount      = parseFloat(document.getElementById('f-det').value)||null;
+    rec.lumperFees           = parseFloat(document.getElementById('f-lump').value)||null;
+    rec.invoiceNumber        = document.getElementById('f-inv').value.trim()||null;
+    rec.invoiceAmount        = parseFloat(document.getElementById('f-invamt').value)||null;
+    rec.invoiceStatus        = document.getElementById('f-invst').value||'unbilled';
+    rec.driverPayAmount      = parseFloat(document.getElementById('f-dpay').value)||null;
+    rec.dispatcherCommission = parseFloat(document.getElementById('f-dcom').value)||null;
+    rec.factoringRef         = document.getElementById('f-facref').value.trim()||null;
+    rec.podReceived          = document.getElementById('f-pod').value==='true';
+    rec.podDate              = document.getElementById('f-poddate').value||null;
+  } else if(rtype==='permit'){
+    rec.permitState  = document.getElementById('f-pstate').value.trim()||null;
+    rec.permitNumber = document.getElementById('f-pnum').value.trim()||null;
+    rec.permitAmount = parseFloat(document.getElementById('f-pamt').value)||null;
+    rec.rateConNumber= document.getElementById('f-prc').value.trim()||null;
+  } else {
+    rec.expenseType   = document.getElementById('f-exptype').value||null;
+    rec.expenseAmount = parseFloat(document.getElementById('f-expamt').value)||null;
+    rec.expenseVendor = document.getElementById('f-expven').value.trim()||null;
+    rec.rateConNumber = document.getElementById('f-exprc').value.trim()||null;
   }
+
+  try{
+    const saved = await NexusDocs.save(rec);
+    _inbox = _inbox.filter(x=>x.id!==fileId);
+    _selected = {src:'db',id:saved.id,data:saved};
+    refreshStats();
+    renderList(document.getElementById('srch').value);
+    showSaved(saved);
+  }catch(e){ showFBnr('err','Save failed: '+e.message); }
 }
 
-function showFormBanner(type, msg) {
-  const el = document.getElementById('form-banner');
-  if (!el) return;
-  el.style.display='flex'; el.className='banner banner-'+type; el.innerHTML=msg;
-  if (type==='success'||type==='info') setTimeout(()=>el.style.display='none',5000);
+function showFBnr(type,msg){
+  const el=document.getElementById('form-bnr'); if(!el)return;
+  el.style.display='flex'; el.className='bnr bnr-'+(type==='err'?'err':type==='ok'?'ok':'info'); el.innerHTML=msg;
+  if(type!=='err') setTimeout(()=>el.style.display='none',4500);
 }
 
-// ─── SAVED DOC VIEW ──────────────────────────────────────
-function renderSavedDoc(d) {
-  const dp = document.getElementById('detail-panel');
-  dp.innerHTML = `
-    <div class="detail-file-header">
-      <div class="detail-file-icon fi-pdf" style="font-size:11px;">✅</div>
-      <div class="detail-file-info">
-        <div class="detail-file-name">${esc(d.fileName)}</div>
-        <div class="detail-file-meta">Saved ${fmtDate(d.routedAt)} · ${esc(d.driverName||'No driver')} · ${esc(d.category||'—')}</div>
-        <div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;">
+// ─── SAVED RECORD VIEW ───────────────────────────────────
+function showSaved(r){
+  const dp=document.getElementById('detail-panel');
+  const label=TYPE_LABELS[r.recordType]||r.recordType||'Record';
+  function rf(l,v){ return v?`<div class="rec-field"><div class="rec-field-label">${esc(l)}</div><div class="rec-field-val">${esc(String(v))}</div></div>`:''; }
+
+  let fields=`${rf('Date',r.recordDate)}${rf('Driver',r.ourDriver)}${rf('Dispatcher',r.ourDispatcher)}${rf('Settlement Period',r.settlementPeriod)}`;
+  if(r.recordType==='rate_con'){
+    fields+=rf('Rate Con #',r.rateConNumber)+rf('BOL #',r.bolNumber)+rf('Customer',r.customerCompany)+rf('Dispatch Contact',r.customerDispatchName)+rf('Phone',r.customerDispatchPhone)+rf('Email',r.customerDispatchEmail)+rf('Origin',r.originAddress)+rf('Destination',r.destinationAddress)+rf('Miles',r.totalMiles)+rf('Weight',r.loadWeight)+rf('Height',r.loadHeight)+rf('Width',r.loadWidth)+rf('Description',r.loadDescription)+rf('Agreed Rate','$'+r.agreedRate)+rf('Fuel Advance',r.fuelAdvance?'$'+r.fuelAdvance:null)+rf('Detention',r.detentionAmount?'$'+r.detentionAmount:null)+rf('Driver Pay',r.driverPayAmount?'$'+r.driverPayAmount:null)+rf('Dispatch Commission',r.dispatcherCommission?'$'+r.dispatcherCommission:null)+rf('Invoice #',r.invoiceNumber)+rf('Invoice Status',r.invoiceStatus)+rf('POD Received',r.podReceived?'Yes':'No');
+  } else if(r.recordType==='permit'){
+    fields+=rf('Permit State',r.permitState)+rf('Permit #',r.permitNumber)+rf('Amount','$'+r.permitAmount)+rf('Linked Load',r.rateConNumber);
+  } else {
+    fields+=rf('Expense Type',r.expenseType)+rf('Amount','$'+r.expenseAmount)+rf('Vendor',r.expenseVendor)+rf('Linked Load',r.rateConNumber);
+  }
+  fields+=rf('Truck Unit',r.truckUnit)+rf('Trailer',r.trailerType)+rf('Notes',r.notes);
+
+  dp.innerHTML=`
+    <div class="file-hdr">
+      <div class="fhdr-icon fi-doc" style="background:rgba(34,197,94,.12);color:var(--green);border-color:rgba(34,197,94,.2);">✓</div>
+      <div class="fhdr-info">
+        <div class="fhdr-name">${esc(r.fileName||label+' Record')}</div>
+        <div class="fhdr-meta">Saved ${fdate(r.createdAt)} · ${esc(r.ourDriver||'No driver')} · ${label}</div>
+        <div class="fhdr-tags">
           <span class="db-saved">✓ IN DATABASE</span>
-          ${d.driveUrl ? `<a href="${d.driveUrl}" target="_blank" style="font-size:11px;color:#60a5fa;text-decoration:none;">View in Drive ↗</a>` : ''}
+          ${r.driveUrl?`<a href="${r.driveUrl}" target="_blank" style="font-size:10px;color:#60a5fa;text-decoration:none;">View in Drive ↗</a>`:''}
         </div>
       </div>
     </div>
-    <div class="detail-scroll">
-      <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        ${field('Driver', d.driverName||'—')}
-        ${field('Category', d.category||'—')}
-        ${field('Load #', d.loadNumber||'—')}
-        ${field('Document Date', d.docDate||'—')}
-        ${field('Settlement Period', d.settlementPeriod||'—')}
-        ${field('File Type', d.fileType||'—')}
-        ${field('File Size', d.fileSizeBytes ? Math.round(d.fileSizeBytes/1024)+'KB' : '—')}
-        ${field('Status', d.status||'—')}
-        ${d.notes ? field('Notes', d.notes) : ''}
-      </div>
-      ${d.extractedText ? `<div style="padding:0 20px 20px;"><div style="font-size:10px;font-weight:700;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-bottom:6px;">EXTRACTED TEXT</div><div class="extracted-box">${esc(d.extractedText)}</div></div>` : ''}
+    <div class="form-scroll">
+      <div class="rec-grid">${fields}</div>
+      ${r.extractedText?`<div style="padding:0 20px 16px;"><div class="fl" style="margin-bottom:5px;">EXTRACTED TEXT</div><div class="ext-box">${esc(r.extractedText)}</div></div>`:''}
     </div>
     <div class="save-bar">
-      <div class="save-bar-left"><span class="db-saved">✓ Saved to database</span></div>
-      <div class="save-bar-actions">
-        <button class="btn btn-ghost btn-sm" onclick="deleteDoc('${d.id}')">Delete Record</button>
-        ${d.driveUrl ? `<a href="${d.driveUrl}" target="_blank" class="btn btn-pink btn-sm">Open in Drive ↗</a>` : ''}
+      <div class="save-bar-l"><span class="db-saved">✓ Saved to database</span></div>
+      <div class="save-bar-r">
+        <button class="btn btn-ghost btn-sm" onclick="delRec('${r.id}')">Delete Record</button>
+        ${r.driveUrl?`<a href="${r.driveUrl}" target="_blank" class="btn btn-pink btn-sm">Open in Drive ↗</a>`:''}
       </div>
     </div>`;
 }
 
-function field(label, value) {
-  return `<div><div style="font-size:9px;font-weight:700;color:var(--text-muted);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;">${esc(label)}</div><div style="font-size:13px;color:var(--white-pure);">${esc(value)}</div></div>`;
-}
-
-function deleteDoc(id) {
-  if (!confirm('Remove this record from the database? The file stays in Google Drive.')) return;
+function delRec(id){
+  if(!confirm('Delete this record from the database? File stays in Drive.'))return;
   NexusDocs.delete(id);
-  _allDbDocs = NexusDocs.getAll();
-  _selected  = null;
+  _selected=null;
   refreshStats();
-  renderList(document.getElementById('list-search').value);
-  document.getElementById('detail-panel').innerHTML = `<div class="detail-empty"><div class="detail-empty-icon">🗑</div><div style="font-size:13px;">Record deleted</div></div>`;
+  renderList(document.getElementById('srch').value);
+  document.getElementById('detail-panel').innerHTML=`<div class="detail-empty"><div class="detail-empty-icon">🗑</div><div style="font-size:13px;">Record deleted</div></div>`;
 }
 
-// ─── BATCH ROUTE ─────────────────────────────────────────
-async function routeAllAuto() {
-  const autoFiles = _inboxFiles.filter(f => { const g=guessRouting(f); return g.driver && g.cat; });
-  if (!autoFiles.length) return;
-  if (!confirm(`Auto-route ${autoFiles.length} file(s) with full driver + category matches? You can review each one in the Routed tab.`)) return;
-
-  for (const f of autoFiles) {
-    const g = guessRouting(f);
-    const mime = f.mimeType || '';
-    let fileType = 'other';
-    if (mime==='application/pdf') fileType='pdf';
-    else if (mime.includes('document')) fileType='doc';
-    else if (mime.includes('spreadsheet')) fileType='sheet';
-    else if (mime.startsWith('image/')) fileType='image';
-    await NexusDocs.save({
-      driveFileId: f.id, fileName: f.name, fileType,
-      fileSizeBytes: f.size ? parseInt(f.size) : null,
-      driveUrl: f.webViewLink||null,
-      driverName: g.driver, driverId: g.driverId,
-      loadNumber: g.load, category: g.cat,
-      docDate: g.docDate, status:'routed',
-      routedAt: new Date().toISOString(), routedBy:'admin',
-    });
+// ─── BATCH AUTO-ROUTE ────────────────────────────────────
+async function routeAllAuto(){
+  const auto=_inbox.filter(f=>{const g=guess(f);return g.driver&&g.cat;});
+  if(!auto.length)return;
+  if(!confirm(`Auto-route ${auto.length} file(s)? Records will be saved with auto-detected driver, type, and date. Review them in the Saved tab.`))return;
+  for(const f of auto){
+    const g=guess(f);
+    const mime=f.mimeType||''; let ft='other';
+    if(mime==='application/pdf')ft='pdf'; else if(mime.includes('document'))ft='doc'; else if(mime.includes('spreadsheet'))ft='sheet'; else if(mime.startsWith('image/'))ft='image';
+    await NexusDocs.save({driveFileId:f.id,fileName:f.name,fileType:ft,fileSizeBytes:f.size?parseInt(f.size):null,driveUrl:f.webViewLink||null,recordType:g.rtype||'other',recordDate:g.docDate||null,ourDriver:g.driver,rateConNumber:g.load,status:'active',createdAt:new Date().toISOString()});
   }
-  _inboxFiles = _inboxFiles.filter(f => { const g=guessRouting(f); return !(g.driver&&g.cat); });
-  _allDbDocs  = NexusDocs.getAll();
+  _inbox=_inbox.filter(f=>{const g=guess(f);return!(g.driver&&g.cat);});
   refreshStats();
-  renderList(document.getElementById('list-search').value);
-  alert(`✅ ${autoFiles.length} document(s) routed and saved to driver databases.`);
+  renderList(document.getElementById('srch').value);
+  alert(`✅ ${auto.length} record(s) saved to driver databases.`);
 }
 
-// ─── DRIVE API ───────────────────────────────────────────
-async function loadInbox() {
-  const cfg = ls(K.inbox);
-  const el  = document.getElementById('file-list');
-  if (!cfg || !cfg.id) {
-    el.innerHTML = `<div class="no-files"><div class="no-files-icon">⚙️</div><div style="font-size:13px;">No inbox folder set</div><div style="font-size:11px;margin-top:4px;"><a href="drive-settings.html" style="color:var(--pink);">Configure in Drive Settings →</a></div></div>`;
-    return;
-  }
-  if (!_token) {
-    el.innerHTML = `<div class="no-files"><div class="no-files-icon">🔑</div><div style="font-size:13px;">Connect Google Drive to load the inbox</div><div style="margin-top:10px;"><button class="btn btn-pink btn-sm" onclick="handleAuthClick()">Connect Drive</button></div></div>`;
-    return;
-  }
-  el.innerHTML = `<div class="loading-row"><div class="spinner"></div>Reading inbox folder…</div>`;
-  try {
-    const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(`'${cfg.id}' in parents and trashed=false`)}&fields=files(id,name,mimeType,size,modifiedTime,webViewLink)&pageSize=100&orderBy=modifiedTime+desc`;
-    const r   = await fetch(url, { headers:{ Authorization:'Bearer '+_token } });
-    if (!r.ok) {
-      if (r.status===401) { _token=null; setAuthLabel(false); el.innerHTML=`<div class="no-files"><div class="no-files-icon">🔑</div><div>Token expired — reconnect Drive</div></div>`; return; }
-      throw new Error('Drive error '+r.status);
-    }
-    _inboxFiles = (await r.json()).files || [];
+// ─── DRIVE ───────────────────────────────────────────────
+async function loadInbox(){
+  const cfg=ls(K.inbox);
+  const el=document.getElementById('file-list');
+  if(!cfg||!cfg.id){ el.innerHTML=`<div class="no-files"><div style="font-size:26px;opacity:.3;">⚙️</div><div style="font-size:12px;margin-top:8px;">No inbox folder set</div><a href="drive-settings.html" style="font-size:11px;color:var(--pink);margin-top:4px;">Configure →</a></div>`; return; }
+  if(!_token){ el.innerHTML=`<div class="no-files"><div style="font-size:26px;opacity:.3;">🔑</div><div style="font-size:12px;margin-top:8px;">Connect Google Drive first</div><div style="margin-top:8px;"><button class="btn btn-pink btn-sm" onclick="handleAuthClick()">Connect</button></div></div>`; return; }
+  el.innerHTML<`<div class="loading-r"><div class="spin"></div>Reading inbox…</div>`;
+  try{
+    const url=`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(`'${cfg.id}' in parents and trashed=false`)}&fields=files(id,name,mimeType,size,modifiedTime,webViewLink)&pageSize=100&orderBy=modifiedTime+desc`;
+    const r=await fetch(url,{headers:{Authorization:'Bearer '+_token}});
+    if(!r.ok){ if(r.status===401){_token=null;setAuthBtn(false);} throw new Error('Drive error '+r.status); }
+    _inbox=(await r.json()).files||[];
     refreshStats();
-    renderList(document.getElementById('list-search').value);
-  } catch(e) {
-    el.innerHTML = `<div style="padding:16px;"><div class="banner banner-error">${esc(e.message)}</div></div>`;
-  }
+    renderList(document.getElementById('srch').value);
+  }catch(e){ el.innerHTML<`<div style="padding:14px;"><div class="bnr bnr-err">${esc(e.message)}</div></div>`; }
 }
 
-// ─── GOOGLE AUTH ─────────────────────────────────────────
-function getClientId() {
-  return (window.NEXUS_GOOGLE_CLIENT_ID||'').trim() || localStorage.getItem('nexus_temp_cid')||'';
+// ─── AUTH ────────────────────────────────────────────────
+function getCid(){ return (window.NEXUS_GOOGLE_CLIENT_ID||'').trim()||localStorage.getItem('nexus_temp_cid')||''; }
+function initGIS(){
+  const cid=getCid(); if(!cid)return;
+  _tclient=google.accounts.oauth2.initTokenClient({client_id:cid,scope:'https://www.googleapis.com/auth/drive.readonly',callback:resp=>{
+    if(resp.error){alert('Auth error: '+resp.error);return;}
+    _token=resp.access_token;localStorage.setItem(K.token,resp.access_token);setAuthBtn(true);loadInbox();
+  }});
 }
-function initGIS() {
-  const cid = getClientId();
-  if (!cid) return;
-  _tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: cid,
-    scope:'https://www.googleapis.com/auth/drive.readonly',
-    callback: resp => {
-      if (resp.error) { alert('Auth error: '+resp.error); return; }
-      _token = resp.access_token;
-      localStorage.setItem(K.token, resp.access_token);
-      setAuthLabel(true);
-      loadInbox();
-    }
-  });
-}
-function handleAuthClick() {
-  if (!getClientId()) { window.open('drive-settings.html#auth','_self'); return; }
-  if (!_tokenClient) initGIS();
-  if (_tokenClient) _tokenClient.requestAccessToken({ prompt:'' });
-}
-function setAuthLabel(yes) {
-  document.getElementById('auth-btn-label').textContent = yes ? '✓ Drive Connected' : 'Connect Drive';
-}
+function handleAuthClick(){ if(!getCid()){window.open('drive-settings.html','_self');return;} if(!_tclient)initGIS(); if(_tclient)_tclient.requestAccessToken({prompt:''}); }
+function setAuthBtn(yes){ document.getElementById('auth-btn').textContent=yes?'✓ Drive Connected':'Connect Drive'; document.getElementById('auth-btn').className=yes?'btn btn-green btn-sm':'btn btn-pink btn-sm'; }
 
 // ─── INIT ────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  _allDbDocs = NexusDocs.getAll();
+document.addEventListener('DOMContentLoaded',()=>{
   refreshStats();
-  if (_token) { setAuthLabel(true); loadInbox(); }
-  else { renderList(); }
-
-  const waitGIS = setInterval(() => {
-    if (typeof google !== 'undefined' && google.accounts) { clearInterval(waitGIS); initGIS(); }
-  }, 400);
+  if(_token){setAuthBtn(true);loadInbox();}else{renderList();}
+  const w=setInterval(()=>{ if(typeof google!=='undefined'&&google.accounts){clearInterval(w);initGIS();} },400);
 });
 </script>
 </body>
