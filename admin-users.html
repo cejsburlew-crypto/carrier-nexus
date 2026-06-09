@@ -140,6 +140,7 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><line x1="8" y1="5" x2="8" y2="8"/><circle cx="8" cy="11" r=".5" fill="currentColor"/></svg>
       <span>Admin access required. <a href="login.html" style="color:var(--orange);text-decoration:none;">Sign in</a></span>
     </div>
+    <div id="vault-banner" style="display:none;padding:10px 16px;border-radius:8px;font-size:13px;align-items:center;gap:10px;margin-bottom:16px;"></div>
 
     <div class="section-card">
       <div class="section-header">
@@ -546,6 +547,75 @@ async function saveUser() {
   document.getElementById('user-count').textContent = allUsers.length + ' user' + (allUsers.length !== 1 ? 's' : '');
   closeModal();
   btn.textContent = _editMode ? 'Save Changes' : 'Add User'; btn.disabled = false;
+
+  // ── Auto-provision vault folder for new drivers ──────────────────────────
+  if (!_editMode && role === 'driver') {
+    var vaultName = (name || email.split('@')[0]).toUpperCase().replace(/[^A-Z0-9 _-]/g,'').trim();
+    provisionDriverVault(vaultName);
+  }
+}
+
+// ─── VAULT PROVISIONING ───────────────────────────────────────────────────
+var VAULT_SUBFOLDERS = ['BILLS OF LADING','RATE CONFIRMATIONS','PERMITS','DOCUMENTS','CORRESPONDENCE'];
+
+async function provisionDriverVault(driverName) {
+  var driveToken = localStorage.getItem('nexus_drive_token');
+  var rootId     = window.NEXUS_VAULT_ROOT_ID;
+
+  if (!driveToken || !rootId) {
+    _showVaultBanner(driverName, null, 'no-auth');
+    return;
+  }
+
+  try {
+    // Create driver folder at vault root
+    var r1 = await fetch('https://www.googleapis.com/drive/v3/files', {
+      method:'POST',
+      headers:{'Authorization':'Bearer '+driveToken,'Content-Type':'application/json'},
+      body: JSON.stringify({ name:driverName, mimeType:'application/vnd.google-apps.folder', parents:[rootId] })
+    });
+    if (!r1.ok) throw new Error('Drive '+r1.status);
+    var folder = await r1.json();
+
+    // Create subfolders in parallel
+    await Promise.all(VAULT_SUBFOLDERS.map(function(sub){
+      return fetch('https://www.googleapis.com/drive/v3/files',{
+        method:'POST',
+        headers:{'Authorization':'Bearer '+driveToken,'Content-Type':'application/json'},
+        body: JSON.stringify({ name:sub, mimeType:'application/vnd.google-apps.folder', parents:[folder.id] })
+      });
+    }));
+
+    _showVaultBanner(driverName, folder.id, 'ok');
+  } catch(e) {
+    console.warn('Vault provision failed:', e.message);
+    _showVaultBanner(driverName, null, 'err');
+  }
+}
+
+function _showVaultBanner(name, folderId, status) {
+  var b = document.getElementById('vault-banner');
+  if (!b) return;
+  var styles = {
+    ok:      { bg:'rgba(34,197,94,.12)', border:'rgba(34,197,94,.3)',  color:'#4ade80' },
+    'no-auth':{ bg:'rgba(59,130,246,.1)', border:'rgba(59,130,246,.25)', color:'#60a5fa' },
+    err:     { bg:'rgba(239,68,68,.1)',  border:'rgba(239,68,68,.25)', color:'#f87171' }
+  }[status] || { bg:'rgba(59,130,246,.1)', border:'rgba(59,130,246,.25)', color:'#60a5fa' };
+
+  b.style.background   = styles.bg;
+  b.style.border       = '1px solid '+styles.border;
+  b.style.color        = styles.color;
+  b.style.display      = 'flex';
+
+  if (status === 'ok' && folderId) {
+    b.innerHTML = '✅ Vault folder created for <strong style="margin:0 4px;">'+name+'</strong> — <a href="https://drive.google.com/drive/folders/'+folderId+'" target="_blank" style="color:#60a5fa;margin-left:4px;">Open in Drive ↗</a> &nbsp;<span style="color:var(--text-muted);font-size:11px;">(Move folder under dispatcher in Drive)</span>';
+  } else if (status === 'no-auth') {
+    b.innerHTML = '📁 Driver added. <a href="documents.html" style="color:#60a5fa;margin:0 4px;">Connect Drive in Documents</a> to provision their vault folder automatically.';
+  } else {
+    b.innerHTML = '⚠ Driver added, but vault provisioning failed. <a href="documents.html" style="color:#60a5fa;margin-left:4px;">Provision from Documents →</a>';
+  }
+
+  setTimeout(function(){ b.style.display='none'; }, 10000);
 }
 
 // === RESET PASSWORD MODAL ===
@@ -759,12 +829,4 @@ function removeAssignment(id) {
 }
 
 // Wire up modal backdrop click
-document.getElementById('assign-modal').addEventListener('click', function(e){ if(e.target===this) closeAssignModal(); });
-
-// Load assignments on init (call after loadUsers)
-loadAssignments();
-</script>
-
-
-</body>
-</html>
+document.getElementById('assign-modal').addEventListener('click', function(e){
