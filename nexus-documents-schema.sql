@@ -1,69 +1,129 @@
 -- ============================================================
--- CARRIER NEXUS — nexus_documents TABLE
--- Single document store: everything routed from the Drive inbox.
--- Filter by driver_name, load_number, category, settlement_period.
+-- CARRIER NEXUS — nexus_records TABLE
+-- One table: rate cons, permits, expenses, all record types.
+-- record_type determines which fields are populated.
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS nexus_documents (
-  id                    TEXT PRIMARY KEY,
-  -- Drive identity (file stays in Drive — we only store the link)
-  drive_file_id         TEXT,
-  drive_folder_id       TEXT,
-  file_name             TEXT NOT NULL,
-  file_type             TEXT,                   -- pdf | doc | sheet | image | other
-  file_size_bytes       BIGINT,
-  drive_url             TEXT,                   -- webViewLink
-  -- Routing
-  driver_name           TEXT,
-  driver_id             TEXT,
-  load_number           TEXT,
-  category              TEXT,                   -- Rate Cons | Expenses | Permits | Personal | Health | Vehicles
-  -- Dates
-  doc_date              DATE,                   -- extracted from filename/content
-  settlement_period     DATE,                   -- start of the settlement window
-  settlement_period_type TEXT DEFAULT 'biweekly', -- weekly | biweekly | semimonthly | monthly
-  -- Content (text only — PDF bytes never stored)
-  extracted_text        TEXT,
-  -- Workflow
-  status                TEXT DEFAULT 'routed',  -- inbox | routed | reviewed | archived
-  routed_at             TIMESTAMPTZ,
-  routed_by             TEXT DEFAULT 'admin',
-  reviewed_at           TIMESTAMPTZ,
-  notes                 TEXT,
-  created_at            TIMESTAMPTZ DEFAULT NOW(),
-  updated_at            TIMESTAMPTZ DEFAULT NOW()
+CREATE TABLE IF NOT EXISTS nexus_records (
+
+  -- ── IDENTITY ─────────────────────────────────────────────
+  id                      TEXT PRIMARY KEY,
+  record_type             TEXT NOT NULL,        -- rate_con | permit | expense | personal | health | vehicle | other
+
+  -- ── DATES ────────────────────────────────────────────────
+  record_date             DATE,                 -- date of the transaction / document
+  settlement_period       DATE,                 -- start date of the settlement window
+  settlement_period_type  TEXT DEFAULT 'biweekly',
+
+  -- ── OUR TEAM ─────────────────────────────────────────────
+  our_driver              TEXT,
+  our_driver_id           TEXT,
+  our_dispatcher          TEXT,
+  truck_unit              TEXT,                 -- unit / truck number
+  trailer_type            TEXT,                 -- flatbed | step deck | RGN | lowboy | van | reefer
+
+  -- ── RATE CON / LOAD ───────────────────────────────────────
+  rate_con_number         TEXT,                 -- rate con / load number
+  bol_number              TEXT,                 -- bill of lading number
+  customer_company        TEXT,
+  customer_dispatch_name  TEXT,
+  customer_dispatch_phone TEXT,
+  customer_dispatch_email TEXT,
+  load_description        TEXT,
+  load_weight             TEXT,                 -- e.g. "48,000 lbs"
+  load_height             TEXT,                 -- e.g. "14'6\""
+  load_width              TEXT,                 -- e.g. "8'6\""
+  origin_address          TEXT,
+  destination_address     TEXT,
+  total_miles             INTEGER,
+  agreed_rate             NUMERIC(12,2),        -- gross rate on the rate con
+  fuel_advance            NUMERIC(12,2),
+  detention_amount        NUMERIC(12,2),
+  lumper_fees             NUMERIC(12,2),
+
+  -- ── PERMIT ───────────────────────────────────────────────
+  permit_state            TEXT,
+  permit_number           TEXT,
+  permit_amount           NUMERIC(12,2),
+
+  -- ── EXPENSE ──────────────────────────────────────────────
+  expense_type            TEXT,                 -- fuel | toll | repair | food | hotel | scale | insurance | other
+  expense_amount          NUMERIC(12,2),
+  expense_vendor          TEXT,
+
+  -- ── FINANCIAL / BILLING ──────────────────────────────────
+  invoice_number          TEXT,
+  invoice_amount          NUMERIC(12,2),
+  invoice_status          TEXT DEFAULT 'unbilled', -- unbilled | billed | paid | factored
+  payment_received_date   DATE,
+  factoring_ref           TEXT,
+  driver_pay_amount       NUMERIC(12,2),        -- what driver receives
+  dispatcher_commission   NUMERIC(12,2),        -- what dispatcher earns
+
+  -- ── DELIVERY / POD ───────────────────────────────────────
+  pod_received            BOOLEAN DEFAULT FALSE,
+  pod_date                DATE,
+
+  -- ── DRIVE DOCUMENT (file stays in Drive — link only) ─────
+  drive_file_id           TEXT,
+  drive_folder_id         TEXT,
+  drive_url               TEXT,
+  file_name               TEXT,
+  file_type               TEXT,                 -- pdf | doc | sheet | image | other
+  file_size_bytes         BIGINT,
+  extracted_text          TEXT,                 -- text from Google Docs/Sheets only
+
+  -- ── WORKFLOW ─────────────────────────────────────────────
+  status                  TEXT DEFAULT 'active', -- inbox | active | reviewed | archived
+  notes                   TEXT,
+  created_at              TIMESTAMPTZ DEFAULT NOW(),
+  updated_at              TIMESTAMPTZ DEFAULT NOW(),
+  created_by              TEXT DEFAULT 'admin'
 );
 
--- INDEXES for common query patterns
-CREATE INDEX IF NOT EXISTS idx_ndocs_driver      ON nexus_documents(driver_name);
-CREATE INDEX IF NOT EXISTS idx_ndocs_load        ON nexus_documents(load_number);
-CREATE INDEX IF NOT EXISTS idx_ndocs_category    ON nexus_documents(category);
-CREATE INDEX IF NOT EXISTS idx_ndocs_period      ON nexus_documents(settlement_period);
-CREATE INDEX IF NOT EXISTS idx_ndocs_driver_per  ON nexus_documents(driver_name, settlement_period);
-CREATE INDEX IF NOT EXISTS idx_ndocs_status      ON nexus_documents(status);
-CREATE INDEX IF NOT EXISTS idx_ndocs_drive_file  ON nexus_documents(drive_file_id);
+-- ── INDEXES ──────────────────────────────────────────────────
+CREATE INDEX IF NOT EXISTS idx_nr_driver        ON nexus_records(our_driver);
+CREATE INDEX IF NOT EXISTS idx_nr_type          ON nexus_records(record_type);
+CREATE INDEX IF NOT EXISTS idx_nr_rc_number     ON nexus_records(rate_con_number);
+CREATE INDEX IF NOT EXISTS idx_nr_period        ON nexus_records(settlement_period);
+CREATE INDEX IF NOT EXISTS idx_nr_driver_period ON nexus_records(our_driver, settlement_period);
+CREATE INDEX IF NOT EXISTS idx_nr_status        ON nexus_records(status);
+CREATE INDEX IF NOT EXISTS idx_nr_date          ON nexus_records(record_date DESC);
+CREATE INDEX IF NOT EXISTS idx_nr_customer      ON nexus_records(customer_company);
+CREATE INDEX IF NOT EXISTS idx_nr_invoice       ON nexus_records(invoice_status);
 
--- RLS (row-level security) — enable if using Supabase
--- ALTER TABLE nexus_documents ENABLE ROW LEVEL SECURITY;
+-- ── USEFUL QUERIES ───────────────────────────────────────────
 
--- USEFUL QUERIES:
--- All docs for a driver:
---   SELECT * FROM nexus_documents WHERE driver_name = 'Guillermo Pinera' ORDER BY doc_date DESC;
+-- All records for a driver in a settlement period:
+-- SELECT * FROM nexus_records
+-- WHERE our_driver = 'Guillermo Pinera' AND settlement_period = '2026-05-26'
+-- ORDER BY record_date;
 
--- All docs for a settlement period:
---   SELECT * FROM nexus_documents WHERE settlement_period = '2026-05-26' ORDER BY driver_name, category;
+-- Driver settlement summary:
+-- SELECT
+--   record_type,
+--   COUNT(*) AS count,
+--   SUM(CASE WHEN record_type='rate_con' THEN agreed_rate     ELSE 0 END) AS gross_revenue,
+--   SUM(CASE WHEN record_type='permit'   THEN permit_amount   ELSE 0 END) AS permits,
+--   SUM(CASE WHEN record_type='expense'  THEN expense_amount  ELSE 0 END) AS expenses,
+--   SUM(driver_pay_amount) AS driver_pay,
+--   SUM(dispatcher_commission) AS dispatch_commission
+-- FROM nexus_records
+-- WHERE our_driver = 'Guillermo Pinera' AND settlement_period = '2026-05-26'
+-- GROUP BY record_type;
 
--- Driver expenses for a period:
---   SELECT * FROM nexus_documents
---   WHERE driver_name = 'Guillermo Pinera' AND category = 'Expenses'
---   AND settlement_period = '2026-05-26';
+-- All rate cons for a customer:
+-- SELECT * FROM nexus_records
+-- WHERE record_type = 'rate_con' AND customer_company ILIKE '%Brazos%'
+-- ORDER BY record_date DESC;
 
--- All rate cons tied to a load:
---   SELECT * FROM nexus_documents WHERE load_number = '363402';
+-- Unpaid invoices:
+-- SELECT our_driver, rate_con_number, customer_company, agreed_rate, invoice_status
+-- FROM nexus_records
+-- WHERE record_type = 'rate_con' AND invoice_status IN ('unbilled','billed')
+-- ORDER BY record_date;
 
--- Documents needing review:
---   SELECT * FROM nexus_documents WHERE status = 'inbox' ORDER BY created_at;
-
--- Count by category per driver:
---   SELECT driver_name, category, COUNT(*) as doc_count
---   FROM nexus_documents GROUP BY driver_name, category ORDER BY driver_name, category;
+-- All permits by state:
+-- SELECT permit_state, COUNT(*) as count, SUM(permit_amount) as total_cost
+-- FROM nexus_records WHERE record_type = 'permit'
+-- GROUP BY permit_state ORDER BY total_cost DESC;
