@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inbox Sync — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="nexus-config.js"></script>
+<script src="nexus-sidebar.js" defer></script>
+<style>
+:root{--black:#0a0a0a;--gunmetal:#111827;--gunmetal-light:#1c2535;--steel:#1e293b;--steel-blue:#3b82f6;--ice:#e0f2fe;--white:#f1f5f9;--orange:#e8640a;--pink:#e91e8c;--text-muted:#6b7280;--text-mid:#9ca3af;--border:rgba(255,255,255,0.08);--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+.main-content{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.page-header{padding:24px 28px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--gunmetal);}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:.06em;color:var(--white);}
+.page-subtitle{font-size:12px;color:var(--text-muted);margin-top:3px;font-family:'JetBrains Mono',monospace;}
+.header-actions{display:flex;gap:10px;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
+.btn-primary{background:var(--pink);color:#fff;}
+.btn-primary:hover{background:#c2185b;}
+.btn-primary:disabled{background:#6b3a56;cursor:not-allowed;opacity:.6;}
+.btn-ghost{background:transparent;color:var(--text-mid);border:1px solid var(--border);}
+.btn-ghost:hover{color:var(--white);border-color:var(--steel-blue);}
+.btn svg{width:14px;height:14px;flex-shrink:0;}
+
+/* STATUS BANNER */
+.status-bar{padding:12px 28px;background:var(--gunmetal-light);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;font-size:12px;font-family:'JetBrains Mono',monospace;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--text-muted);flex-shrink:0;}
+.status-dot.green{background:var(--green);}
+.status-dot.yellow{background:var(--yellow);animation:pulse 1s infinite;}
+.status-dot.red{background:var(--red);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.status-label{color:var(--text-mid);}
+.status-val{color:var(--white);margin-left:4px;}
+.status-sep{color:var(--border);margin:0 8px;}
+
+/* LAYOUT */
+.content-area{padding:24px 28px;flex:1;}
+.section{margin-bottom:28px;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;}
+
+/* CONFIG CARDS */
+.config-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+.config-card{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+.config-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;}
+.config-val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--white);}
+.config-val.warn{color:var(--yellow);}
+.config-val.ok{color:var(--green);}
+.config-val.err{color:var(--red);}
+
+/* PROGRESS */
+.progress-panel{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:20px;display:none;}
+.progress-panel.active{display:block;}
+.progress-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.progress-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.04em;}
+.progress-count{font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;}
+.progress-bar-wrap{background:rgba(255,255,255,.06);border-radius:4px;height:6px;margin-bottom:14px;}
+.progress-bar-fill{height:6px;border-radius:4px;background:var(--pink);transition:width .3s;}
+.log-area{background:rgba(0,0,0,.4);border-radius:6px;padding:12px;max-height:200px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mid);}
+.log-line{padding:2px 0;line-height:1.5;}
+.log-line.ok{color:var(--green);}
+.log-line.warn{color:var(--yellow);}
+.log-line.err{color:var(--red);}
+
+/* RESULTS TABLE */
+.results-panel{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;display:none;}
+.results-panel.active{display:block;}
+.results-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.results-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.04em;}
+.results-badge{font-size:11px;font-family:'JetBrains Mono',monospace;background:rgba(233,30,140,.15);color:var(--pink);padding:3px 8px;border-radius:4px;}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 16px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);}
+td{padding:10px 16px;font-size:12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.td-file{font-family:'JetBrains Mono',monospace;color:var(--white);}
+.td-driver{color:var(--text-mid);}
+.td-folder{font-size:11px;color:var(--text-muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.td-status{font-size:11px;}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+.badge-ok{background:rgba(34,197,94,.15);color:var(--green);}
+.badge-skip{background:rgba(107,114,128,.15);color:var(--text-muted);}
+.badge-err{background:rgba(239,68,68,.15);color:var(--red);}
+.badge-unmatched{background:rgba(251,191,36,.15);color:var(--yellow);}
+
+/* SECURITY RULES */
+.rules-box{background:rgba(233,30,140,.06);border:1px solid rgba(233,30,140,.2);border-radius:8px;padding:14px 18px;}
+.rules-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pink);margin-bottom:10px;}
+.rules-list{display:flex;flex-direction:column;gap:6px;}
+.rule-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text-mid);}
+.rule-item svg{flex-shrink:0;margin-top:1px;width:12px;height:12px;color:var(--pink);}
+
+/* EMPTY STATE */
+.empty-state{padding:48px 28px;text-align:center;}
+.empty-icon{width:48px;height:48px;margin:0 auto 14px;color:var(--text-muted);}
+.empty-msg{font-size:14px;color:var(--text-muted);}
+</style>
+</head>
+<body>
+<!-- Sidebar injected by nexus-sidebar.js -->
+<div class="main-content">
+  <div class="page-header">
+    <div>
+      <div class="page-title">📥 INBOX SYNC</div>
+      <div class="page-subtitle">Gmail → Google Drive • Read emails only • Direct upload</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="openSheetUrl()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v12H2zm1 1v10h10V3H3zm2 2h6v1H5zm0 2h6v1H5zm0 2h4v1H5z"/></svg>
+        View Sheet
+      </button>
+      <button class="btn btn-primary" id="syncBtn" onclick="startSync()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Sync Inbox
+      </button>
+    </div>
+  </div>
+
+  <div class="status-bar" id="statusBar">
+    <div class="status-dot" id="statusDot"></div>
+    <span class="status-label">Google Drive</span>
+    <span class="status-val" id="driveStatus">Checking...</span>
+    <span class="status-sep">|</span>
+    <span class="status-label">Last Sync</span>
+    <span class="status-val" id="lastSyncLabel">Never</span>
+    <span class="status-sep">|</span>
+    <span class="status-label">Emails Processed</span>
+    <span class="status-val" id="processedCount">0</span>
+    <span class="status-sep">|</span>
+    <span class="status-label">Files Uploaded</span>
+    <span class="status-val" id="uploadedCount">0</span>
+  </div>
+
+  <div class="content-area">
+    <!-- CONFIG OVERVIEW -->
+    <div class="section">
+      <div class="section-title">Sync Configuration</div>
+      <div class="config-grid">
+        <div class="config-card">
+          <div class="config-label">Gmail Account</div>
+          <div class="config-val" id="cfgGmail">Loading...</div>
+        </div>
+        <div class="config-card">
+          <div class="config-label">Drive Root Folder</div>
+          <div class="config-val" id="cfgDrive">Loading...</div>
+        </div>
+        <div class="config-card">
+          <div class="config-label">Date Filter</div>
+          <div class="config-val ok">After Jan 1, 2026</div>
+        </div>
+        <div class="config-card">
+          <div class="config-label">Email Filter</div>
+          <div class="config-val ok">Read only (not UNREAD)</div>
+        </div>
+        <div class="config-card">
+          <div class="config-label">Storage Target</div>
+          <div class="config-val ok">Google Drive only</div>
+        </div>
+        <div class="config-card">
+          <div class="config-label">Active Company</div>
+          <div class="config-val" id="cfgCompany">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROGRESS PANEL -->
+    <div class="progress-panel" id="progressPanel">
+      <div class="progress-header">
+        <div class="progress-title">Syncing...</div>
+        <div class="progress-count" id="progressCount">0 / 0</div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="log-area" id="logArea"></div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-panel" id="resultsPanel">
+      <div class="results-header">
+        <div class="results-title">Sync Results</div>
+        <div class="results-badge" id="resultsBadge">0 files</div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Filename</th>
+            <th>From / Subject</th>
+            <th>Driver / Category</th>
+            <th>Drive Folder</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="resultsBody"></tbody>
+      </table>
+    </div>
+
+    <!-- EMPTY STATE (before first sync) -->
+    <div class="empty-state" id="emptyState">
+      <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      <div class="empty-msg">Click <strong>Sync Inbox</strong> to scan Gmail for attachments and upload them to Google Drive.</div>
+    </div>
+
+    <!-- SECURITY RULES -->
+    <div class="section" style="margin-top:12px;">
+      <div class="section-title">Security Rules (Always Active)</div>
+      <div class="rules-box">
+        <div class="rules-title">Enforced Constraints</div>
+        <div class="rules-list">
+          <div class="rule-item">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8l-4 2 1-3.5L2 4h4.5z"/></svg>
+            Only previously <strong>opened (read)</strong> emails are processed — unread messages are never touched
+          </div>
+          <div class="rule-item">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8l-4 2 1-3.5L2 4h4.5z"/></svg>
+            Only emails <strong>after January 1, 2026</strong> — older messages are skipped
+          </div>
+          <div class="rule-item">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8l-4 2 1-3.5L2 4h4.5z"/></svg>
+            Attachments are uploaded <strong>directly to Google Drive</strong> — nothing is saved to your computer
+          </div>
+          <div class="rule-item">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8l-4 2 1-3.5L2 4h4.5z"/></svg>
+            <strong>Previously synced emails are remembered</strong> — no duplicate uploads
+          </div>
+          <div class="rule-item">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8l-4 2 1-3.5L2 4h4.5z"/></svg>
+            Unmatched files go to <strong>/Inbox Uploads/YYYY-MM/</strong> subfolder for manual review
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── GLOBALS ──────────────────────────────────────────────────────────────────
+var SYNC_STATE_KEY = 'nexus_inbox_sync_processed';
+var CUTOFF_DATE    = new Date('2026-01-01T00:00:00Z').getTime() / 1000; // Unix epoch
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  initStatusBar();
+});
+
+function getToken() {
+  try {
+    var t = localStorage.getItem('nexus_drive_token') || localStorage.getItem('nexus_google_token');
+    if (!t) return null;
+    var parsed = JSON.parse(t);
+    return parsed.access_token || t;
+  } catch(e) { return null; }
+}
+
+function initStatusBar() {
+  var token = getToken();
+  var dot = document.getElementById('statusDot');
+  var driveEl = document.getElementById('driveStatus');
+  var companyEl = document.getElementById('cfgCompany');
+  var gmailEl = document.getElementById('cfgGmail');
+  var driveRootEl = document.getElementById('cfgDrive');
+
+  if (token) {
+    dot.className = 'status-dot green';
+    driveEl.textContent = 'Connected';
+    driveEl.style.color = 'var(--green)";
+  } else {
+    dot.className = 'status-dot red';
+    driveEl.textContent = 'Not connected — go to Documents > Connect Google';
+    driveEl.style.color = 'var(--red)';
+    document.getElementById('syncBtn').disabled = true;
+  }
+
+  var co = (window.NEXUS_ACTIVE_COMPANY && window.NEXUS_ACTIVE_COMPANY()) || { name: 'Carrier Trucking US, LLC', id: 'carrier-trucking-us', driveRootId: '13hRTmF6XVSI627s5Mc1wb_zkEA3I5rXZ' };
+  companyEl.textContent = co.name;
+  driveRootEl.textContent = co.driveRootId || 'Not set';
+  gmailEl.textContent = localStorage.getItem('nexus_gmail_account') || co.gmailLabel || 'INBOX';
+
+  // Last sync time
+  var state = getSyncState();
+  var lastRun = state.lastRun;
+  if (lastRun) {
+    document.getElementById('lastSyncLabel').textContent = new Date(lastRun).toLocaleString();
+  }
+  document.getElementById('processedCount').textContent = (state.processedIds || []).length;
+  document.getElementById('uploadedCount').textContent = state.uploadedCount || 0;
+}
+
+function getSyncState() {
+  try { return JSON.parse(localStorage.getItem(SYNC_STATE_KEY) || '{}'); } catch(e) { return {}; }
+}
+function saveSyncState(s) {
+  localStorage.setItem(SYNC_STATE_KEY, JSON.stringify(s));
+}
+
+function openSheetUrl() {
+  var url = localStorage.getItem('nexus_sheets_url');
+  if (url) window.open(url, '_blank');
+  else alert('No Google Sheet linked yet. Run a sync first, or go to Drive Settings.');
+}
+
+// ── SYNC ENGINE ──────────────────────────────────────────────────────────────
+async function startSync() {
+  var token = getToken();
+  if (!token) { alert('Google Drive not connected. Please connect in Documents > Drive Settings.'); return; }
+
+  var btn = document.getElementById('syncBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Syncing...';
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('progressPanel').className = 'progress-panel active';
+  document.getElementById('resultsPanel').className = 'results-panel';
+  document.getElementById('resultsBody').innerHTML = '';
+
+  var state = getSyncState();
+  state.processedIds = state.processedIds || [];
+  var processed = new Set(state.processedIds);
+
+  var co = (window.NEXUS_ACTIVE_COMPANY && window.NEXUS_ACTIVE_COMPANY()) || { driveRootId: '13hRTmF6XVSI627s5Mc1wb_zkEA3I5rXZ' };
+  var vaultRoot = co.driveRootId || window.NEXUS_VAULT_ROOT_ID;
+
+  var uploadedFiles = [];
+  var skipped = 0;
+  var errors = 0;
+
+  addLog('Starting Gmail scan...', '');
+
+  try {
+    // 1. Search Gmail for read emails with attachments after Jan 1 2026
+    var query = 'has:attachment -label:UNREAD after:2025/12/31';
+    var threads = await gmailSearch(token, query);
+    addLog('Found ' + threads.length + ' thread(s) with attachments', 'ok');
+
+    var newThreads = threads.filter(function(t) { return !processed.has(t.id); });
+    addLog(newThreads.length + ' new (not yet synced)', newThreads.length > 0 ? 'ok' : 'warn');
+
+    if (newThreads.length === 0) {
+      addLog('Nothing new to sync.', 'warn');
+      finishSync(btn, state, uploadedFiles, skipped, errors);
+      return;
+    }
+
+    // Update progress
+    setProgress(0, newThreads.length);
+
+    // 2. Process each thread
+    for (var i = 0; i < newThreads.length; i++) {
+      var thread = newThreads[i];
+      setProgress(i + 1, newThreads.length);
+
+      try {
+        var msgs = await gmailGetThread(token, thread.id);
+        if (!msgs || msgs.length === 0) { skipped++; continue; }
+
+        for (var j = 0; j < msgs.length; j++) {
+          var msg = msgs[j];
+          // Check date filter
+          var msgDate = parseInt(msg.internalDate) / 1000;
+          if (msgDate < CUTOFF_DATE) {
+            addLog('Skipping old message from ' + new Date(msgDate * 1000).toLocaleDateString(), 'warn');
+            skipped++;
+            continue;
+          }
+
+          var parts = getAllParts(msg.payload);
+          var attachments = parts.filter(function(p) {
+            return p.filename && p.filename.length > 0 && p.body && (p.body.attachmentId || p.body.data);
+          });
+
+          if (attachments.length === 0) continue;
+
+          var fromHeader = getHeader(msg.payload.headers, 'From') || '';
+          var subjectHeader = getHeader(msg.payload.headers, 'Subject') || 'No Subject';
+
+          // Match to driver/dispatcher
+          var matchResult = matchToVaultFolder(fromHeader, subjectHeader, vaultRoot);
+
+          for (var k = 0; k < attachments.length; k++) {
+            var att = attachments[k];
+            var attId = att.body.attachmentId;
+            var attData = att.body.data;
+
+            // Get attachment data if it's a reference
+            if (attId && !attData) {
+              try {
+                var attRes = await gmailGetAttachment(token, msg.id, attId);
+                attData = attRes.data;
+              } catch(e) {
+                addLog('Error fetching attachment ' + att.filename + ': ' + e.message, 'err');
+                errors++;
+                continue;
+              }
+            }
+
+            if (!attData) { errors++; continue; }
+
+            // Convert Gmail's urlsafe base64 to standard base64
+            var b64 = attData.replace(/-/g, '+').replace(/_/g, '/');
+
+            // Upload directly to Drive
+            try {
+              var folderId = await ensureFolder(token, matchResult.folderId, matchResult.subfolderName);
+              var driveFile = await uploadToDrive(token, att.filename, att.mimeType, b64, folderId);
+              addLog('✓ ' + att.filename + ' → ' + matchResult.path, 'ok');
+              uploadedFiles.push({
+                filename: att.filename,
+                from: fromHeader.replace(/<[^>]+>/g,'').trim(),
+                subject: subjectHeader,
+                driver: matchResult.driverName,
+                folder: matchResult.path,
+                driveId: driveFile.id,
+                status: 'ok'
+              });
+            } catch(e) {
+              addLog('✗ ' + att.filename + ': ' + e.message, 'err');
+              errors++;
+              uploadedFiles.push({
+                filename: att.filename,
+                from: fromHeader,
+                subject: subjectHeader,
+                driver: matchResult.driverName,
+                folder: matchResult.path,
+                status: 'err',
+                error: e.message
+              });
+            }
+          }
+        }
+
+        // Mark thread as processed
+        processed.add(thread.id);
+      } catch(e) {
+        addLog('Thread error: ' + e.message, 'err');
+        errors++;
+      }
+    }
+
+  } catch(e) {
+    addLog('Sync error: ' + e.message, 'err');
+    errors++;
+  }
+
+  // Save updated state
+  state.processedIds = Array.from(processed);
+  state.lastRun = new Date().toISOString();
+  state.uploadedCount = (state.uploadedCount || 0) + uploadedFiles.filter(function(f){ return f.status === 'ok'; }).length;
+  saveSyncState(state);
+
+  finishSync(btn, state, uploadedFiles, skipped, errors);
+}
+
+function finishSync(btn, state, uploadedFiles, skipped, errors) {
+  btn.disabled = false;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Sync Inbox';
+
+  // Update status bar
+  document.getElementById('lastSyncLabel').textContent = new Date(state.lastRun).toLocaleString();
+  document.getElementById('processedCount').textContent = (state.processedIds || []).length;
+  document.getElementById('uploadedCount').textContent = state.uploadedCount || 0;
+
+  // Show results
+  if (uploadedFiles.length > 0) {
+    renderResults(uploadedFiles);
+  }
+
+  addLog('Done. Uploaded: ' + uploadedFiles.filter(function(f){return f.status==='ok';}).length +
+    ' | Skipped: ' + skipped + ' | Errors: ' + errors, errors > 0 ? 'warn' : 'ok');
+}
+
+// ── GMAIL API HELPERS ────────────────────────────────────────────────────────
+async function gmailSearch(token, query) {
+  var url = 'https://gmail.googleapis.com/gmail/v1/users/me/threads?q=' + encodeURIComponent(query) + '&maxResults=100';
+  var r = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
+  if (!r.ok) throw new Error('Gmail search failed: ' + r.status);
+  var data = await r.json();
+  return data.threads || [];
+}
+
+async function gmailGetThread(token, threadId) {
+  var url = 'https://gmail.googleapis.com/gmail/v1/users/me/threads/' + threadId + '?format=full';
+  var r = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
+  if (!r.ok) throw new Error('Thread fetch failed: ' + r.status);
+  var data = await r.json();
+  return data.messages || [];
+}
+
+async function gmailGetAttachment(token, msgId, attId) {
+  var url = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/' + msgId + '/attachments/' + attId;
+  var r = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
+  if (!r.ok) throw new Error('Attachment fetch failed: ' + r.status);
+  return r.json();
+}
+
+// ── DRIVE HELPERS ────────────────────────────────────────────────────────────
+async function ensureFolder(token, parentId, name) {
+  // Check if folder already exists
+  var q = 'name="' + name + '" and mimeType="application/vnd.google-apps.folder" and "' + parentId + '" in parents and trashed=false';
+  var r = await fetch('https://www.googleapis.com/drive/v3/files?q=' + encodeURIComponent(q) + '&fields=files(id,name)', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  });
+  if (r.ok) {
+    var data = await r.json();
+    if (data.files && data.files.length > 0) return data.files[0].id;
+  }
+  // Create it
+  var cr = await fetch('https://www.googleapis.com/drive/v3/files', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: name, mimeType: 'application/vnd.google-apps.folder', parents: [parentId] })
+  });
+  if (!cr.ok) throw new Error('Create folder failed: ' + cr.status);
+  var cd = await cr.json();
+  return cd.id;
+}
+
+async function uploadToDrive(token, filename, mimeType, b64Data, folderId) {
+  var boundary = 'nexus_boundary_' + Date.now();
+  var meta = JSON.stringify({ name: filename, parents: [folderId] });
+
+  // Convert b64 to Blob
+  var binary = atob(b64Data);
+  var bytes = new Uint8Array(binary.length);
+  for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  var blob = new Blob([bytes], { type: mimeType || 'application/octet-stream' });
+
+  // Multipart upload
+  var form = new FormData();
+  form.append('metadata', new Blob([meta], { type: 'application/json' }));
+  form.append('file', blob, filename);
+
+  var r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + token },
+    body: form
+  });
+  if (!r.ok) {
+    var err = await r.text();
+    throw new Error('Drive upload failed: ' + r.status + ' ' + err.slice(0,100));
+  }
+  return r.json();
+}
+
+// ── DRIVER MATCHING ──────────────────────────────────────────────────────────
+function matchToVaultFolder(from, subject, vaultRoot) {
+  // Load known drivers/dispatchers from localStorage
+  var users = [];
+  try { users = JSON.parse(localStorage.getItem('nexus_users') || '[]'); } catch(e) {}
+
+  var combined = (from + ' ' + subject).toLowerCase();
+
+  // Try to match against known user names
+  for (var i = 0; i < users.length; i++) {
+    var u = users[i];
+    var name = (u.name || '').toLowerCase();
+    if (name.length > 3 && combined.indexOf(name) >= 0) {
+      var subFolder = u.role === 'dispatcher' ? 'Dispatcher Documents' : 'Driver Documents';
+      return {
+        driverName: u.name,
+        folderId: vaultRoot,
+        subfolderName: u.name.replace(/[^a-zA-Z0-9 ]/g,'').trim(),
+        path: '/' + u.name + '/' + subFolder,
+        matched: true
+      };
+    }
+  }
+
+  // No match — put in Inbox Uploads / YYYY-MM
+  var now = new Date();
+  var monthFolder = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  return {
+    driverName: '— Unmatched —',
+    folderId: vaultRoot,
+    subfolderName: 'Inbox Uploads',
+    path: '/Inbox Uploads/' + monthFolder,
+    matched: false
+  };
+}
+
+// ── MESSAGE HELPERS ──────────────────────────────────────────────────────────
+function getAllParts(payload) {
+  var parts = [];
+  if (!payload) return parts;
+  if (payload.parts) {
+    payload.parts.forEach(function(p) {
+      parts = parts.concat(getAllParts(p));
+    });
+  } else {
+    parts.push(payload);
+  }
+  return parts;
+}
+
+function getHeader(headers, name) {
+  if (!headers) return '';
+  var h = headers.find(function(h) { return h.name.toLowerCase() === name.toLowerCase(); });
+  return h ? h.value : '';
+}
+
+// ── UI HELPERS ───────────────────────────────────────────────────────────────
+function addLog(msg, cls) {
+  var log = document.getElementById('logArea');
+  var line = document.createElement('div');
+  line.className = 'log-line' + (cls ? ' ' + cls : '');
+  line.textContent = new Date().toLocaleTimeString() + '  ' + msg;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+function setProgress(current, total) {
+  var pct = total > 0 ? Math.round(current / total * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressCount').textContent = current + ' / ' + total;
+}
+
+function renderResults(files) {
+  var panel = document.getElementById('resultsPanel');
+  panel.className = 'results-panel active';
+  document.getElementById('resultsBadge').textContent = files.length + ' file' + (files.length !== 1 ? 's' : '');
+  var tbody = document.getElementById('resultsBody');
+  tbody.innerHTML = '';
+  files.forEach(function(f) {
+    var statusBadge = f.status === 'ok'
+      ? '<span class="badge badge-ok">✓ Uploaded</span>'
+      : f.status === 'skip'
+      ? '<span class="badge badge-skip">Skipped</span>'
+      : '<span class="badge badge-err">Error</span>';
+    if (!f.driver || f.driver === '— Unmatched —') statusBadge = '<span class="badge badge-unmatched">⚠ Unmatched</span>';
+    tbody.innerHTML += '<tr>' +
+      '<td class="td-file">' + escHtml(f.filename) + '</td>' +
+      '<td class="td-driver" style="font-size:11px;color:var(--text-muted);">' + escHtml((f.from||'').slice(0,40)) + '<br><span style="color:var(--text-mid)">' + escHtml((f.subject||'').slice(0,50)) + '</span></td>' +
+      '<td class="td-driver">' + escHtml(f.driver || '—') + '</td>' +
+      '<td class="td-folder">' + escHtml(f.folder || '—') + '</td>' +
+      '<td class="td-status">' + statusBadge + '</td>' +
+    '</tr>';
+  });
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+<style>@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>
+</body>
+</html>
