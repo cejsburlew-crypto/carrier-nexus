@@ -117,7 +117,7 @@
             for (const [col, val] of Object.entries(filters)) q = q.eq(col, val);
             const { data, error } = await q;
             if (error) throw error;
-            return data || [];
+            if (data && data.length > 0) return data; // fall through to LS if empty
           } catch(e) {
             console.warn('[NexusDB] Supabase ' + tableName + '.list failed, using localStorage:', e.message);
           }
