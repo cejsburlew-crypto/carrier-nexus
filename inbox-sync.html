@@ -9,227 +9,275 @@
 <script src="nexus-config.js"></script>
 <script src="nexus-sidebar.js" defer></script>
 <style>
-:root{--black:#0a0a0a;--gunmetal:#111827;--gunmetal-light:#1c2535;--steel:#1e293b;--steel-blue:#3b82f6;--ice:#e0f2fe;--white:#f1f5f9;--orange:#e8640a;--pink:#e91e8c;--text-muted:#6b7280;--text-mid:#9ca3af;--border:rgba(255,255,255,0.08);--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;}
+:root{--black:#0a0a0a;--gunmetal:#111827;--gl:#1c2535;--steel:#1e293b;--sb:#3b82f6;--white:#f1f5f9;--pink:#e91e8c;--muted:#6b7280;--mid:#9ca3af;--border:rgba(255,255,255,0.08);--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--orange:#f97316;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
 .main-content{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
-.page-header{padding:24px 28px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--gunmetal);}
-.page-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:.06em;color:var(--white);}
-.page-subtitle{font-size:12px;color:var(--text-muted);margin-top:3px;font-family:'JetBrains Mono',monospace;}
-.header-actions{display:flex;gap:10px;align-items:center;}
+.ph{padding:24px 28px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--gunmetal);}
+.pt{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:.06em;}
+.ps{font-size:12px;color:var(--muted);margin-top:3px;font-family:'JetBrains Mono',monospace;}
+.ha{display:flex;gap:10px;align-items:center;}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
-.btn-primary{background:var(--pink);color:#fff;}
-.btn-primary:hover{background:#c2185b;}
-.btn-primary:disabled{background:#6b3a56;cursor:not-allowed;opacity:.6;}
-.btn-ghost{background:transparent;color:var(--text-mid);border:1px solid var(--border);}
-.btn-ghost:hover{color:var(--white);border-color:var(--steel-blue);}
-.btn svg{width:14px;height:14px;flex-shrink:0;}
-
-/* STATUS BANNER */
-.status-bar{padding:12px 28px;background:var(--gunmetal-light);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;font-size:12px;font-family:'JetBrains Mono',monospace;}
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--text-muted);flex-shrink:0;}
-.status-dot.green{background:var(--green);}
-.status-dot.yellow{background:var(--yellow);animation:pulse 1s infinite;}
-.status-dot.red{background:var(--red);}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-.status-label{color:var(--text-mid);}
-.status-val{color:var(--white);margin-left:4px;}
-.status-sep{color:var(--border);margin:0 8px;}
-
-/* LAYOUT */
-.content-area{padding:24px 28px;flex:1;}
-.section{margin-bottom:28px;}
-.section-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;}
-
-/* CONFIG CARDS */
-.config-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
-.config-card{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
-.config-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;}
-.config-val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--white);}
-.config-val.warn{color:var(--yellow);}
-.config-val.ok{color:var(--green);}
-.config-val.err{color:var(--red);}
-
-/* PROGRESS */
-.progress-panel{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:20px;display:none;}
-.progress-panel.active{display:block;}
-.progress-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.progress-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.04em;}
-.progress-count{font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;}
-.progress-bar-wrap{background:rgba(255,255,255,.06);border-radius:4px;height:6px;margin-bottom:14px;}
-.progress-bar-fill{height:6px;border-radius:4px;background:var(--pink);transition:width .3s;}
-.log-area{background:rgba(0,0,0,.4);border-radius:6px;padding:12px;max-height:200px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mid);}
-.log-line{padding:2px 0;line-height:1.5;}
-.log-line.ok{color:var(--green);}
-.log-line.warn{color:var(--yellow);}
-.log-line.err{color:var(--red);}
-
-/* RESULTS TABLE */
-.results-panel{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;display:none;}
-.results-panel.active{display:block;}
-.results-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.results-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.04em;}
-.results-badge{font-size:11px;font-family:'JetBrains Mono',monospace;background:rgba(233,30,140,.15);color:var(--pink);padding:3px 8px;border-radius:4px;}
+.btn-p{background:var(--pink);color:#fff;}.btn-p:hover{background:#c2185b;}.btn-p:disabled{opacity:.5;cursor:not-allowed;}
+.btn-g{background:transparent;color:var(--mid);border:1px solid var(--border);}.btn-g:hover{color:var(--white);border-color:var(--sb);}
+.btn-s{background:rgba(255,255,255,.06);color:var(--mid);border:none;}.btn-s:hover{background:rgba(255,255,255,.12);color:var(--white);}
+.btn-sm{padding:5px 10px;font-size:12px;}.btn-icon{padding:5px 8px;}.btn svg{width:14px;height:14px;flex-shrink:0;}
+.sbar{padding:12px 28px;background:var(--gl);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;font-size:12px;font-family:'JetBrains Mono',monospace;flex-wrap:wrap;}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;}.sdot.g{background:var(--green);}.sdot.r{background:var(--red);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}.sdot.y{background:var(--yellow);animation:pulse 1s infinite;}
+.sl{color:var(--mid);}.sv{color:var(--white);margin-left:4px;}.ss{color:var(--border);margin:0 6px;}
+.ca{padding:24px 28px;flex:1;}
+.secttitle{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.cfg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+.cfg-card{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.cfg-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.cfg-val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--white);}.cfg-val.ok{color:var(--green);}
+.prog-panel{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:20px;display:none;}
+.prog-panel.on{display:block;}
+.prog-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.prog-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.04em;}
+.prog-cnt{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.pbar-wrap{background:rgba(255,255,255,.06);border-radius:4px;height:6px;margin-bottom:12px;}
+.pbar-fill{height:6px;border-radius:4px;background:var(--pink);transition:width .3s;}
+.log{background:rgba(0,0,0,.4);border-radius:6px;padding:10px;max-height:150px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mid);}
+.ll{padding:2px 0;line-height:1.5;}.ll.ok{color:var(--green);}.ll.warn{color:var(--yellow);}.ll.err{color:var(--red);}
+/* STAGING */
+.stg-panel{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;display:none;}
+.stg-panel.on{display:block;}
+.stg-hdr{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.stg-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.04em;}
+.bdg{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;}
+.bdg-pink{background:rgba(233,30,140,.15);color:var(--pink);}
+.bdg-ok{background:rgba(34,197,94,.15);color:var(--green);}
+.bdg-err{background:rgba(239,68,68,.15);color:var(--red);}
+.bdg-wait{background:rgba(59,130,246,.12);color:var(--sb);}
+.bdg-up{background:rgba(233,30,140,.12);color:var(--pink);}
+.bdg-skip{background:rgba(107,114,128,.15);color:var(--muted);}
+.stg-acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.stg-stats{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);}
+.twrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;}
-th{padding:10px 16px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);}
-td{padding:10px 16px;font-size:12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
-tr:last-child td{border-bottom:none;}
-tr:hover td{background:rgba(255,255,255,.02);}
-.td-file{font-family:'JetBrains Mono',monospace;color:var(--white);}
-.td-driver{color:var(--text-mid);}
-.td-folder{font-size:11px;color:var(--text-muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.td-status{font-size:11px;}
-.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
-.badge-ok{background:rgba(34,197,94,.15);color:var(--green);}
-.badge-skip{background:rgba(107,114,128,.15);color:var(--text-muted);}
-.badge-err{background:rgba(239,68,68,.15);color:var(--red);}
-.badge-unmatched{background:rgba(251,191,36,.15);color:var(--yellow);}
-
-/* SECURITY RULES */
+th{padding:9px 12px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:8px 12px;font-size:12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top;}
+tr:last-child>td{border-bottom:none;}
+tr:hover>td{background:rgba(255,255,255,.015);}
+.td-file{font-family:'JetBrains Mono',monospace;color:var(--white);max-width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:default;}
+.td-meta{font-size:11px;color:var(--muted);max-width:170px;}
+.td-meta .mfrom{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.td-meta .msubj{color:var(--mid);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.td-meta .mdate{font-size:10px;margin-top:2px;color:var(--muted);}
+/* CONFIDENCE */
+.conf-badge{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:3px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:700;}
+.conf-hi{background:rgba(34,197,94,.15);color:var(--green);}
+.conf-mid{background:rgba(251,191,36,.15);color:var(--yellow);}
+.conf-lo{background:rgba(239,68,68,.15);color:var(--red);}
+.conf-none{background:rgba(107,114,128,.12);color:var(--muted);}
+/* SELECTS */
+select.asel{background:var(--steel);border:1px solid rgba(255,255,255,.12);color:var(--white);font-size:12px;font-family:'Barlow',sans-serif;padding:5px 7px;border-radius:5px;cursor:pointer;width:100%;min-width:130px;}
+select.asel:focus{outline:none;border-color:var(--pink);}
+select.asel option{background:#1c2535;}
+.dc{min-width:140px;}.dc .drv{display:none;}.dc .drv.on{display:block;}
+.drv-note{font-size:10px;color:var(--yellow);font-family:'JetBrains Mono',monospace;display:none;margin-top:3px;}.drv-note.on{display:block;}
+.type-cell{min-width:125px;}
+/* EDIT PANEL (inline row expansion) */
+.edit-row td{padding:0 !important;border-bottom:none !important;}
+.edit-row>td{padding:0 !important;}
+.ep{padding:14px 16px;background:rgba(59,130,246,.05);border-bottom:1px solid rgba(59,130,246,.18);display:none;}
+.ep.on{display:block;}
+.ep-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sb);margin-bottom:10px;}
+.ep-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
+.ep-field{display:flex;flex-direction:column;gap:4px;}
+.ep-label{font-size:10px;color:var(--muted);}
+.ep-input{background:var(--steel);border:1px solid rgba(255,255,255,.15);color:var(--white);font-size:12px;font-family:'JetBrains Mono',monospace;padding:6px 8px;border-radius:5px;width:100%;}
+.ep-input:focus{outline:none;border-color:var(--sb);}
+.ep-actions{display:flex;gap:8px;align-items:center;}
+/* ACTIONS CELL */
+.ac{display:flex;gap:3px;align-items:center;flex-shrink:0;}
+/* RESULTS */
+.res-panel{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;display:none;}
+.res-panel.on{display:block;}
+.res-hdr{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.res-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.04em;}
+.td-folder{font-size:11px;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* RULES */
 .rules-box{background:rgba(233,30,140,.06);border:1px solid rgba(233,30,140,.2);border-radius:8px;padding:14px 18px;}
 .rules-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pink);margin-bottom:10px;}
-.rules-list{display:flex;flex-direction:column;gap:6px;}
-.rule-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text-mid);}
-.rule-item svg{flex-shrink:0;margin-top:1px;width:12px;height:12px;color:var(--pink);}
-
-/* EMPTY STATE */
+.rule-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--mid);margin-bottom:6px;}
+.rule-item:last-child{margin-bottom:0;}
+/* EMPTY */
 .empty-state{padding:48px 28px;text-align:center;}
-.empty-icon{width:48px;height:48px;margin:0 auto 14px;color:var(--text-muted);}
-.empty-msg{font-size:14px;color:var(--text-muted);}
+.empty-icon{width:44px;height:44px;margin:0 auto 12px;color:var(--muted);}
+.empty-msg{font-size:14px;color:var(--muted);}
+/* MODAL */
+.moverlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.moverlay.hidden{display:none;}
+.mbox{background:var(--gunmetal);border:1px solid var(--border);border-radius:14px;width:min(920px,96vw);max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.6);}
+.mhdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.mtitle{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:65%;}
+.mclose{background:rgba(255,255,255,.06);border:none;color:var(--white);width:28px;height:28px;border-radius:6px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.mclose:hover{background:rgba(255,255,255,.14);}
+.mbody{flex:1;overflow:auto;display:flex;flex-direction:column;}
+.mprev{flex:1;min-height:380px;}
+.mprev iframe{width:100%;height:100%;min-height:440px;border:none;background:#fff;}
+.mprev .img-wrap{display:flex;align-items:center;justify-content:center;padding:16px;background:#1a1a1a;}
+.mprev .img-wrap img{max-width:100%;max-height:480px;object-fit:contain;}
+.mprev .no-prev{display:flex;align-items:center;justify-content:center;min-height:180px;flex-direction:column;gap:10px;color:var(--muted);}
+.massign{padding:16px 18px;border-top:1px solid var(--border);background:var(--gl);flex-shrink:0;}
+.massign-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.massign-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;}
+.mfield{display:flex;flex-direction:column;gap:4px;flex:1;min-width:125px;}
+.mfield label{font-size:11px;color:var(--muted);}
+.mfield select{background:var(--steel);border:1px solid rgba(255,255,255,.12);color:var(--white);font-size:13px;font-family:'Barlow',sans-serif;padding:7px 9px;border-radius:6px;width:100%;cursor:pointer;}
+.mfield select:focus{outline:none;border-color:var(--pink);}
+.mfield select option{background:#1c2535;}
+.mdrv-wrap{display:none;flex-direction:column;gap:4px;flex:1;min-width:125px;}
+.mdrv-wrap.on{display:flex;}
+/* EDIT RESULTS MODAL */
+.er-form{padding:20px;}
+.er-form .ep-grid{grid-template-columns:1fr 1fr;}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
-<!-- Sidebar injected by nexus-sidebar.js -->
 <div class="main-content">
-  <div class="page-header">
-    <div>
-      <div class="page-title">📥 INBOX SYNC</div>
-      <div class="page-subtitle">Gmail → Google Drive • Read emails only • Direct upload</div>
-    </div>
-    <div class="header-actions">
-      <button class="btn btn-ghost" onclick="openSheetUrl()">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v12H2zm1 1v10h10V3H3zm2 2h6v1H5zm0 2h6v1H5zm0 2h4v1H5z"/></svg>
-        View Sheet
-      </button>
-      <button class="btn btn-primary" id="syncBtn" onclick="startSync()">
+  <div class="ph">
+    <div><div class="pt">&#x1F4E5; INBOX SYNC</div><div class="ps">Gmail &#x2192; Review &amp; Assign &#x2192; Google Drive</div></div>
+    <div class="ha">
+      <button class="btn btn-g" onclick="openSheetUrl()">&#x1F4CA; View Sheet</button>
+      <button class="btn btn-p" id="syncBtn" onclick="startSync()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-        Sync Inbox
+        Scan Inbox
       </button>
     </div>
   </div>
-
-  <div class="status-bar" id="statusBar">
-    <div class="status-dot" id="statusDot"></div>
-    <span class="status-label">Google Drive</span>
-    <span class="status-val" id="driveStatus">Checking...</span>
-    <span class="status-sep">|</span>
-    <span class="status-label">Last Sync</span>
-    <span class="status-val" id="lastSyncLabel">Never</span>
-    <span class="status-sep">|</span>
-    <span class="status-label">Emails Processed</span>
-    <span class="status-val" id="processedCount">0</span>
-    <span class="status-sep">|</span>
-    <span class="status-label">Files Uploaded</span>
-    <span class="status-val" id="uploadedCount">0</span>
+  <div class="sbar">
+    <div class="sdot" id="sDot"></div>
+    <span class="sl">Drive</span><span class="sv" id="sDrive">Checking...</span>
+    <span class="ss">|</span>
+    <span class="sl">Last Scan</span><span class="sv" id="sLast">Never</span>
+    <span class="ss">|</span>
+    <span class="sl">Threads Scanned</span><span class="sv" id="sProc">0</span>
+    <span class="ss">|</span>
+    <span class="sl">Uploaded</span><span class="sv" id="sUpl">0</span>
   </div>
 
-  <div class="content-area">
-    <!-- CONFIG OVERVIEW -->
-    <div class="section">
-      <div class="section-title">Sync Configuration</div>
-      <div class="config-grid">
-        <div class="config-card">
-          <div class="config-label">Gmail Account</div>
-          <div class="config-val" id="cfgGmail">Loading...</div>
-        </div>
-        <div class="config-card">
-          <div class="config-label">Drive Root Folder</div>
-          <div class="config-val" id="cfgDrive">Loading...</div>
-        </div>
-        <div class="config-card">
-          <div class="config-label">Date Filter</div>
-          <div class="config-val ok">After Jan 1, 2026</div>
-        </div>
-        <div class="config-card">
-          <div class="config-label">Email Filter</div>
-          <div class="config-val ok">Read only (not UNREAD)</div>
-        </div>
-        <div class="config-card">
-          <div class="config-label">Storage Target</div>
-          <div class="config-val ok">Google Drive only</div>
-        </div>
-        <div class="config-card">
-          <div class="config-label">Active Company</div>
-          <div class="config-val" id="cfgCompany">Loading...</div>
-        </div>
+  <div class="ca">
+    <div style="margin-bottom:24px;">
+      <div class="secttitle">Configuration</div>
+      <div class="cfg-grid">
+        <div class="cfg-card"><div class="cfg-label">Gmail Account</div><div class="cfg-val" id="cfgGmail">...</div></div>
+        <div class="cfg-card"><div class="cfg-label">Drive Root</div><div class="cfg-val" id="cfgDrive">...</div></div>
+        <div class="cfg-card"><div class="cfg-label">Date Filter</div><div class="cfg-val ok">After Jan 1, 2026</div></div>
+        <div class="cfg-card"><div class="cfg-label">Email Filter</div><div class="cfg-val ok">Read only (not UNREAD)</div></div>
+        <div class="cfg-card"><div class="cfg-label">Storage Target</div><div class="cfg-val ok">Google Drive only</div></div>
+        <div class="cfg-card"><div class="cfg-label">Active Company</div><div class="cfg-val" id="cfgCo">...</div></div>
       </div>
     </div>
 
-    <!-- PROGRESS PANEL -->
-    <div class="progress-panel" id="progressPanel">
-      <div class="progress-header">
-        <div class="progress-title">Syncing...</div>
-        <div class="progress-count" id="progressCount">0 / 0</div>
+    <div class="prog-panel" id="progPanel">
+      <div class="prog-hdr"><div class="prog-title">Scanning Gmail...</div><div class="prog-cnt" id="progCnt">0 / 0</div></div>
+      <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+      <div class="log" id="logArea"></div>
+    </div>
+
+    <!-- STAGING TABLE -->
+    <div class="stg-panel" id="stgPanel">
+      <div class="stg-hdr">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="stg-title">Review &amp; Assign</div>
+          <span class="bdg bdg-pink" id="stgBadge">0 files</span>
+        </div>
+        <div class="stg-acts">
+          <span class="stg-stats" id="stgStats">0 assigned</span>
+          <button class="btn btn-s btn-sm" onclick="autoAssignAll()">Auto-Assign All</button>
+          <button class="btn btn-p btn-sm" onclick="uploadAllAssigned()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Upload Assigned
+          </button>
+        </div>
       </div>
-      <div class="progress-bar-wrap">
-        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      <div class="twrap">
+        <table>
+          <thead><tr>
+            <th>File</th><th>From / Subject</th><th>Confidence</th>
+            <th>Assign To</th><th>Driver</th><th>Doc Type</th>
+            <th>Status</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="stgBody"></tbody>
+        </table>
       </div>
-      <div class="log-area" id="logArea"></div>
     </div>
 
     <!-- RESULTS -->
-    <div class="results-panel" id="resultsPanel">
-      <div class="results-header">
-        <div class="results-title">Sync Results</div>
-        <div class="results-badge" id="resultsBadge">0 files</div>
+    <div class="res-panel" id="resPanel">
+      <div class="res-hdr">
+        <div class="res-title">Upload Results</div>
+        <span class="bdg bdg-pink" id="resBadge">0 files</span>
       </div>
       <table>
-        <thead>
-          <tr>
-            <th>Filename</th>
-            <th>From / Subject</th>
-            <th>Driver / Category</th>
-            <th>Drive Folder</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="resultsBody"></tbody>
+        <thead><tr><th>Filename</th><th>Assigned To</th><th>Drive Folder</th><th>Status</th><th></th></tr></thead>
+        <tbody id="resBody"></tbody>
       </table>
     </div>
 
-    <!-- EMPTY STATE (before first sync) -->
     <div class="empty-state" id="emptyState">
-      <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-      </svg>
-      <div class="empty-msg">Click <strong>Sync Inbox</strong> to scan Gmail for attachments and upload them to Google Drive.</div>
+      <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      <div class="empty-msg">Click <strong>Scan Inbox</strong> to collect Gmail attachments for review.<br>You preview, edit, and approve every file before it uploads.</div>
     </div>
 
-    <!-- SECURITY RULES -->
-    <div class="section" style="margin-top:12px;">
-      <div class="section-title">Security Rules (Always Active)</div>
+    <div style="margin-top:16px;">
+      <div class="secttitle">Active Security Rules</div>
       <div class="rules-box">
-        <div class="rules-title">Enforced Constraints</div>
-        <div class="rules-list">
-          <div class="rule-item">
-            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8l-4 2 1-3.5L2 4h4.5z"/></svg>
-            Only previously <strong>opened (read)</strong> emails are processed — unread messages are never touched
+        <div class="rules-title">Always Enforced</div>
+        <div class="rule-item"><span style="color:var(--pink)">&#x25CF;</span> Only <strong>opened/read</strong> emails — UNREAD messages are never touched</div>
+        <div class="rule-item"><span style="color:var(--pink)">&#x25CF;</span> Only emails <strong>after January 1, 2026</strong> — older messages are skipped</div>
+        <div class="rule-item"><span style="color:var(--pink)">&#x25CF;</span> Files go <strong>directly to Google Drive</strong> — nothing saved locally</div>
+        <div class="rule-item"><span style="color:var(--pink)">&#x25CF;</span> <strong>You review, edit, and approve every file</strong> before upload</div>
+        <div class="rule-item"><span style="color:var(--pink)">&#x25CF;</span> Scanned thread IDs are remembered — <strong>no duplicate uploads</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PREVIEW / ASSIGN MODAL -->
+<div class="moverlay hidden" id="prevModal">
+  <div class="mbox">
+    <div class="mhdr">
+      <div class="mtitle" id="mTitle">Preview</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-g btn-sm" onclick="openInTab()">&#x2197; New Tab</button>
+        <button class="mclose" onclick="closeModal('prevModal')">&times;</button>
+      </div>
+    </div>
+    <div class="mbody">
+      <div class="mprev" id="mPrev"></div>
+      <div class="massign">
+        <div class="massign-title">Assign This File</div>
+        <div class="massign-row">
+          <div class="mfield"><label>Assign To</label>
+            <select id="mUser" onchange="onMUser()"><option value="">— Select User —</option></select>
           </div>
-          <div class="rule-item">
-            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8l-4 2 1-3.5L2 4h4.5z"/></svg>
-            Only emails <strong>after January 1, 2026</strong> — older messages are skipped
+          <div class="mdrv-wrap" id="mDrvWrap">
+            <label style="font-size:11px;color:var(--muted);">Driver</label>
+            <select id="mDriver"><option value="">— Select Driver —</option></select>
           </div>
-          <div class="rule-item">
-            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8l-4 2 1-3.5L2 4h4.5z"/></svg>
-            Attachments are uploaded <strong>directly to Google Drive</strong> — nothing is saved to your computer
+          <div class="mfield"><label>Doc Type</label>
+            <select id="mType" onchange="onMType()">
+              <option value="other">Other / General</option>
+              <option value="rate-con">Rate Con</option>
+              <option value="settlement">Settlement</option>
+              <option value="permit">Permit</option>
+              <option value="license">License / CDL</option>
+              <option value="insurance">Insurance</option>
+              <option value="tax">Tax / W-9</option>
+            </select>
           </div>
-          <div class="rule-item">
-            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8l-4 2 1-3.5L2 4h4.5z"/></svg>
-            <strong>Previously synced emails are remembered</strong> — no duplicate uploads
-          </div>
-          <div class="rule-item">
-            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8l-4 2 1-3.5L2 4h4.5z"/></svg>
-            Unmatched files go to <strong>/Inbox Uploads/YYYY-MM/</strong> subfolder for manual review
+          <div style="display:flex;gap:6px;flex-shrink:0;">
+            <button class="btn btn-s btn-sm" onclick="applyModal(false)">Apply Only</button>
+            <button class="btn btn-p btn-sm" onclick="applyModal(true)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Assign &amp; Upload
+            </button>
           </div>
         </div>
       </div>
@@ -237,413 +285,640 @@ tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
+<!-- EDIT RESULT MODAL -->
+<div class="moverlay hidden" id="editModal">
+  <div class="mbox" style="max-width:560px;">
+    <div class="mhdr">
+      <div class="mtitle">Edit Uploaded File</div>
+      <button class="mclose" onclick="closeModal('editModal')">&times;</button>
+    </div>
+    <div class="er-form">
+      <div class="ep-grid" style="margin-bottom:12px;">
+        <div class="ep-field"><div class="ep-label">Filename</div><input class="ep-input" id="erFilename" type="text"></div>
+        <div class="ep-field"><div class="ep-label">Assigned To</div>
+          <select class="ep-input asel" id="erUser" onchange="onErUser()" style="min-width:0;"></select>
+        </div>
+        <div class="ep-field" id="erDriverWrap" style="display:none;"><div class="ep-label">Driver</div>
+          <select class="ep-input asel" id="erDriver" style="min-width:0;"></select>
+        </div>
+        <div class="ep-field"><div class="ep-label">Doc Type</div>
+          <select class="ep-input asel" id="erType" onchange="onErType()" style="min-width:0;">
+            <option value="other">Other / General</option>
+            <option value="rate-con">Rate Con</option>
+            <option value="settlement">Settlement</option>
+            <option value="permit">Permit</option>
+            <option value="license">License / CDL</option>
+            <option value="insurance">Insurance</option>
+            <option value="tax">Tax / W-9</option>
+          </select>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--yellow);margin-bottom:12px;" id="erNote">&#x26A0; Renaming or moving will update the file in Google Drive.</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-s btn-sm" onclick="closeModal('editModal')">Cancel</button>
+        <button class="btn btn-p btn-sm" onclick="saveEditResult()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save &amp; Update Drive
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-// ── GLOBALS ──────────────────────────────────────────────────────────────────
-var SYNC_STATE_KEY = 'nexus_inbox_sync_processed';
-var CUTOFF_DATE    = new Date('2026-01-01T00:00:00Z').getTime() / 1000; // Unix epoch
+var SKEY='nexus_inbox_sync_processed';
+var CUTOFF=new Date('2026-01-01T00:00:00Z').getTime()/1000;
+var _files=[];
+var _mIdx=-1;
+var _mBlob=null;
+var _erIdx=-1; // result row index for edit
+var _results=[]; // {filename, assignedTo, folder, fileId, idx}
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
-  initStatusBar();
-});
+document.addEventListener('DOMContentLoaded',init);
 
-function getToken() {
-  try {
-    var t = localStorage.getItem('nexus_drive_token') || localStorage.getItem('nexus_google_token');
-    if (!t) return null;
-    var parsed = JSON.parse(t);
-    return parsed.access_token || t;
-  } catch(e) { return null; }
+function getToken(){try{var t=localStorage.getItem('nexus_drive_token')||localStorage.getItem('nexus_google_token');if(!t)return null;var p=JSON.parse(t);return p.access_token||t;}catch(e){return null;}}
+function getUsers(){try{return JSON.parse(localStorage.getItem('nexus_users')||'[]');}catch(e){return[];}}
+function getState(){try{return JSON.parse(localStorage.getItem(SKEY)||'{}');}catch(e){return{};}}
+function saveState(s){localStorage.setItem(SKEY,JSON.stringify(s));}
+function openSheetUrl(){var u=localStorage.getItem('nexus_sheets_url');if(u)window.open(u,'_blank');else alert('No Google Sheet linked yet.');}
+
+function init(){
+  var tok=getToken();
+  var dot=document.getElementById('sDot');
+  var dEl=document.getElementById('sDrive');
+  if(tok){dot.className='sdot g';dEl.textContent='Connected';dEl.style.color='var(--green)';}
+  else{dot.className='sdot r';dEl.textContent='Not connected';dEl.style.color='var(--red)';document.getElementById('syncBtn').disabled=true;}
+  var co=getCo();
+  document.getElementById('cfgCo').textContent=co.name;
+  document.getElementById('cfgDrive').textContent=co.driveRootId||'Not set';
+  document.getElementById('cfgGmail').textContent=localStorage.getItem('nexus_gmail_account')||'INBOX';
+  var st=getState();
+  if(st.lastRun)document.getElementById('sLast').textContent=new Date(st.lastRun).toLocaleString();
+  document.getElementById('sProc').textContent=(st.processedIds||[]).length;
+  document.getElementById('sUpl').textContent=st.uploadedCount||0;
+}
+function getCo(){return(window.NEXUS_ACTIVE_COMPANY&&window.NEXUS_ACTIVE_COMPANY())||{name:'Carrier Trucking US, LLC',driveRootId:'13hRTmF6XVSI627s5Mc1wb_zkEA3I5rXZ'};}
+
+// ── CONFIDENCE ────────────────────────────────────────────────────────────────
+function calcUserConf(user,from,subject){
+  if(!user)return 0;
+  var n=(user.name||'').toLowerCase();
+  var f=from.toLowerCase();var s=subject.toLowerCase();
+  if(!n||n.length<2)return 0;
+  // Email address match (strongest)
+  if(f.replace(/.*<(.+)>/,'$1').indexOf(n.replace(' ',''))>=0)return 88;
+  // Full name in from display
+  if(f.indexOf(n)>=0)return 82;
+  // Full name in subject
+  if(s.indexOf(n)>=0)return 68;
+  // First name only in from
+  var fn=n.split(' ')[0];
+  if(fn.length>3&&f.indexOf(fn)>=0)return 52;
+  if(fn.length>3&&s.indexOf(fn)>=0)return 40;
+  return 25;
+}
+function calcTypeConf(type,filename,subject){
+  if(!type||type==='other')return 0;
+  var t=((filename||'')+' '+(subject||'')).toLowerCase();
+  var patterns={
+    'rate-con':[/rate\s*con\b/,/rate\s*confirmation/,/rc[\-\d]/,/load\s*conf/,/load\s*tender/],
+    'settlement':[/settlement/,/pay\s*stub/,/earnings\s*stmt/],
+    'permit':[/permit/,/oversize/,/ifta/,/irp\b/],
+    'tax':[/\bw[\-\s]?9\b/,/1099/,/tax\s*form/],
+    'license':[/\bcdl\b/,/license/,/medical\s*cert/,/mvr\b/],
+    'insurance':[/insurance/,/cert\s*of\s*ins/,/policy\s*#/]
+  };
+  var pts=patterns[type];if(!pts)return 0;
+  var matches=pts.filter(function(rx){return rx.test(t);}).length;
+  if(matches===0)return 0;
+  if(matches>=2)return 90;
+  return 68;
+}
+function confBadge(pct){
+  if(pct===0)return '<span class="conf-badge conf-none">No match</span>';
+  var cls=pct>=75?'conf-hi':pct>=50?'conf-mid':'conf-lo';
+  return '<span class="conf-badge '+cls+'">'+pct+'%</span>';
 }
 
-function initStatusBar() {
-  var token = getToken();
-  var dot = document.getElementById('statusDot');
-  var driveEl = document.getElementById('driveStatus');
-  var companyEl = document.getElementById('cfgCompany');
-  var gmailEl = document.getElementById('cfgGmail');
-  var driveRootEl = document.getElementById('cfgDrive');
-
-  if (token) {
-    dot.className = 'status-dot green';
-    driveEl.textContent = 'Connected';
-    driveEl.style.color = 'var(--green)";
-  } else {
-    dot.className = 'status-dot red';
-    driveEl.textContent = 'Not connected — go to Documents > Connect Google';
-    driveEl.style.color = 'var(--red)';
-    document.getElementById('syncBtn').disabled = true;
-  }
-
-  var co = (window.NEXUS_ACTIVE_COMPANY && window.NEXUS_ACTIVE_COMPANY()) || { name: 'Carrier Trucking US, LLC', id: 'carrier-trucking-us', driveRootId: '13hRTmF6XVSI627s5Mc1wb_zkEA3I5rXZ' };
-  companyEl.textContent = co.name;
-  driveRootEl.textContent = co.driveRootId || 'Not set';
-  gmailEl.textContent = localStorage.getItem('nexus_gmail_account') || co.gmailLabel || 'INBOX';
-
-  // Last sync time
-  var state = getSyncState();
-  var lastRun = state.lastRun;
-  if (lastRun) {
-    document.getElementById('lastSyncLabel').textContent = new Date(lastRun).toLocaleString();
-  }
-  document.getElementById('processedCount').textContent = (state.processedIds || []).length;
-  document.getElementById('uploadedCount').textContent = state.uploadedCount || 0;
+// ── AUTO-DETECT ───────────────────────────────────────────────────────────────
+function autoMatchUser(from,subject,users){
+  var combined=(from+' '+subject).toLowerCase();
+  var best=null,bestScore=0;
+  users.forEach(function(u){
+    var n=(u.name||'').toLowerCase();if(n.length<3)return;
+    var sc=calcUserConf(u,from,subject);
+    if(sc>bestScore){bestScore=sc;best=u;}
+  });
+  return bestScore>30?best:null;
+}
+function autoDetectType(filename,subject){
+  var t=((filename||'')+' '+(subject||'')).toLowerCase();
+  if(/rate\s*con|rate\s*confirm|rc[\-\d]|load\s*conf|load\s*tender/i.test(t))return 'rate-con';
+  if(/settlement|pay\s*stub|earnings/i.test(t))return 'settlement';
+  if(/permit|oversize|ifta|\birp\b/i.test(t))return 'permit';
+  if(/\bw[\-\s]?9\b|1099|tax\s*form/i.test(t))return 'tax';
+  if(/\bcdl\b|license|medical\s*cert|mvr\b/i.test(t))return 'license';
+  if(/insurance|cert\s*of\s*ins|policy/i.test(t))return 'insurance';
+  return 'other';
 }
 
-function getSyncState() {
-  try { return JSON.parse(localStorage.getItem(SYNC_STATE_KEY) || '{}'); } catch(e) { return {}; }
-}
-function saveSyncState(s) {
-  localStorage.setItem(SYNC_STATE_KEY, JSON.stringify(s));
-}
-
-function openSheetUrl() {
-  var url = localStorage.getItem('nexus_sheets_url');
-  if (url) window.open(url, '_blank');
-  else alert('No Google Sheet linked yet. Run a sync first, or go to Drive Settings.');
-}
-
-// ── SYNC ENGINE ──────────────────────────────────────────────────────────────
-async function startSync() {
-  var token = getToken();
-  if (!token) { alert('Google Drive not connected. Please connect in Documents > Drive Settings.'); return; }
-
-  var btn = document.getElementById('syncBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Syncing...';
-
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('progressPanel').className = 'progress-panel active';
-  document.getElementById('resultsPanel').className = 'results-panel';
-  document.getElementById('resultsBody').innerHTML = '';
-
-  var state = getSyncState();
-  state.processedIds = state.processedIds || [];
-  var processed = new Set(state.processedIds);
-
-  var co = (window.NEXUS_ACTIVE_COMPANY && window.NEXUS_ACTIVE_COMPANY()) || { driveRootId: '13hRTmF6XVSI627s5Mc1wb_zkEA3I5rXZ' };
-  var vaultRoot = co.driveRootId || window.NEXUS_VAULT_ROOT_ID;
-
-  var uploadedFiles = [];
-  var skipped = 0;
-  var errors = 0;
-
-  addLog('Starting Gmail scan...', '');
-
-  try {
-    // 1. Search Gmail for read emails with attachments after Jan 1 2026
-    var query = 'has:attachment -label:UNREAD after:2025/12/31';
-    var threads = await gmailSearch(token, query);
-    addLog('Found ' + threads.length + ' thread(s) with attachments', 'ok');
-
-    var newThreads = threads.filter(function(t) { return !processed.has(t.id); });
-    addLog(newThreads.length + ' new (not yet synced)', newThreads.length > 0 ? 'ok' : 'warn');
-
-    if (newThreads.length === 0) {
-      addLog('Nothing new to sync.', 'warn');
-      finishSync(btn, state, uploadedFiles, skipped, errors);
-      return;
-    }
-
-    // Update progress
-    setProgress(0, newThreads.length);
-
-    // 2. Process each thread
-    for (var i = 0; i < newThreads.length; i++) {
-      var thread = newThreads[i];
-      setProgress(i + 1, newThreads.length);
-
-      try {
-        var msgs = await gmailGetThread(token, thread.id);
-        if (!msgs || msgs.length === 0) { skipped++; continue; }
-
-        for (var j = 0; j < msgs.length; j++) {
-          var msg = msgs[j];
-          // Check date filter
-          var msgDate = parseInt(msg.internalDate) / 1000;
-          if (msgDate < CUTOFF_DATE) {
-            addLog('Skipping old message from ' + new Date(msgDate * 1000).toLocaleDateString(), 'warn');
-            skipped++;
-            continue;
-          }
-
-          var parts = getAllParts(msg.payload);
-          var attachments = parts.filter(function(p) {
-            return p.filename && p.filename.length > 0 && p.body && (p.body.attachmentId || p.body.data);
-          });
-
-          if (attachments.length === 0) continue;
-
-          var fromHeader = getHeader(msg.payload.headers, 'From') || '';
-          var subjectHeader = getHeader(msg.payload.headers, 'Subject') || 'No Subject';
-
-          // Match to driver/dispatcher
-          var matchResult = matchToVaultFolder(fromHeader, subjectHeader, vaultRoot);
-
-          for (var k = 0; k < attachments.length; k++) {
-            var att = attachments[k];
-            var attId = att.body.attachmentId;
-            var attData = att.body.data;
-
-            // Get attachment data if it's a reference
-            if (attId && !attData) {
-              try {
-                var attRes = await gmailGetAttachment(token, msg.id, attId);
-                attData = attRes.data;
-              } catch(e) {
-                addLog('Error fetching attachment ' + att.filename + ': ' + e.message, 'err');
-                errors++;
-                continue;
+// ── SCAN ──────────────────────────────────────────────────────────────────────
+async function startSync(){
+  var token=getToken();if(!token){alert('Google Drive not connected.');return;}
+  var btn=document.getElementById('syncBtn');
+  btn.disabled=true;
+  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Scanning...';
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('stgPanel').className='stg-panel';
+  document.getElementById('progPanel').className='prog-panel on';
+  document.getElementById('logArea').innerHTML='';
+  _files=[];
+  var st=getState();st.processedIds=st.processedIds||[];
+  var done=new Set(st.processedIds);
+  var users=getUsers();
+  try{
+    var q='has:attachment -label:UNREAD after:2025/12/31';
+    addLog('Gmail query: '+q,'');
+    var threads=await gmailSearch(token,q);
+    addLog('Found '+threads.length+' thread(s)','ok');
+    var newT=threads.filter(function(t){return !done.has(t.id);});
+    addLog(newT.length+' new threads to process',newT.length>0?'ok':'warn');
+    if(newT.length>0){
+      setProgress(0,newT.length);
+      for(var i=0;i<newT.length;i++){
+        setProgress(i+1,newT.length);
+        try{
+          var msgs=await gmailGetThread(token,newT[i].id);
+          if(!msgs||!msgs.length)continue;
+          for(var j=0;j<msgs.length;j++){
+            var msg=msgs[j];
+            var mDate=parseInt(msg.internalDate)/1000;
+            if(mDate<CUTOFF){addLog('Skip: before Jan 1 2026','warn');continue;}
+            var parts=getAllParts(msg.payload);
+            var atts=parts.filter(function(p){return p.filename&&p.filename.length>0&&p.body&&(p.body.attachmentId||p.body.data);});
+            if(!atts.length)continue;
+            var from=getHeader(msg.payload.headers,'From')||'';
+            var subj=getHeader(msg.payload.headers,'Subject')||'No Subject';
+            for(var k=0;k<atts.length;k++){
+              var att=atts[k];
+              var ad=att.body.data;
+              if(att.body.attachmentId&&!ad){
+                try{var ar=await gmailGetAtt(token,msg.id,att.body.attachmentId);ad=ar.data;}
+                catch(e){addLog('Attach err: '+att.filename,'err');continue;}
               }
-            }
-
-            if (!attData) { errors++; continue; }
-
-            // Convert Gmail's urlsafe base64 to standard base64
-            var b64 = attData.replace(/-/g, '+').replace(/_/g, '/');
-
-            // Upload directly to Drive
-            try {
-              var folderId = await ensureFolder(token, matchResult.folderId, matchResult.subfolderName);
-              var driveFile = await uploadToDrive(token, att.filename, att.mimeType, b64, folderId);
-              addLog('✓ ' + att.filename + ' → ' + matchResult.path, 'ok');
-              uploadedFiles.push({
-                filename: att.filename,
-                from: fromHeader.replace(/<[^>]+>/g,'').trim(),
-                subject: subjectHeader,
-                driver: matchResult.driverName,
-                folder: matchResult.path,
-                driveId: driveFile.id,
-                status: 'ok'
+              if(!ad)continue;
+              var b64=ad.replace(/-/g,'+').replace(/_/g,'/');
+              var au=autoMatchUser(from,subj,users);
+              var at2=autoDetectType(att.filename,subj);
+              var uc=calcUserConf(au,from,subj);
+              var tc=calcTypeConf(at2,att.filename,subj);
+              _files.push({
+                idx:_files.length,filename:att.filename,
+                mimeType:att.mimeType||'application/octet-stream',
+                b64:b64,from:from.replace(/<[^>]+>/g,'').trim(),
+                fromRaw:from,subject:subj,
+                date:new Date(mDate*1000).toLocaleDateString(),
+                threadId:newT[i].id,msgId:msg.id,
+                autoUser:au,autoType:at2,userConf:uc,typeConf:tc,
+                status:'pending',
+                editedFilename:null,editedFrom:null,editedSubject:null
               });
-            } catch(e) {
-              addLog('✗ ' + att.filename + ': ' + e.message, 'err');
-              errors++;
-              uploadedFiles.push({
-                filename: att.filename,
-                from: fromHeader,
-                subject: subjectHeader,
-                driver: matchResult.driverName,
-                folder: matchResult.path,
-                status: 'err',
-                error: e.message
-              });
+              addLog('Staged: '+att.filename,'ok');
             }
           }
-        }
-
-        // Mark thread as processed
-        processed.add(thread.id);
-      } catch(e) {
-        addLog('Thread error: ' + e.message, 'err');
-        errors++;
+        }catch(e){addLog('Thread err: '+e.message,'err');}
       }
     }
-
-  } catch(e) {
-    addLog('Sync error: ' + e.message, 'err');
-    errors++;
-  }
-
-  // Save updated state
-  state.processedIds = Array.from(processed);
-  state.lastRun = new Date().toISOString();
-  state.uploadedCount = (state.uploadedCount || 0) + uploadedFiles.filter(function(f){ return f.status === 'ok'; }).length;
-  saveSyncState(state);
-
-  finishSync(btn, state, uploadedFiles, skipped, errors);
+    threads.forEach(function(t){if(!done.has(t.id))st.processedIds.push(t.id);});
+    st.lastRun=new Date().toISOString();
+    saveState(st);
+    document.getElementById('sProc').textContent=st.processedIds.length;
+    document.getElementById('sLast').textContent=new Date(st.lastRun).toLocaleString();
+  }catch(e){addLog('Scan error: '+e.message,'err');}
+  btn.disabled=false;
+  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Scan Inbox';
+  document.getElementById('progPanel').className='prog-panel';
+  if(_files.length>0)renderStaging();
+  else document.getElementById('emptyState').style.display='';
 }
 
-function finishSync(btn, state, uploadedFiles, skipped, errors) {
-  btn.disabled = false;
-  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Sync Inbox';
-
-  // Update status bar
-  document.getElementById('lastSyncLabel').textContent = new Date(state.lastRun).toLocaleString();
-  document.getElementById('processedCount').textContent = (state.processedIds || []).length;
-  document.getElementById('uploadedCount').textContent = state.uploadedCount || 0;
-
-  // Show results
-  if (uploadedFiles.length > 0) {
-    renderResults(uploadedFiles);
-  }
-
-  addLog('Done. Uploaded: ' + uploadedFiles.filter(function(f){return f.status==='ok';}).length +
-    ' | Skipped: ' + skipped + ' | Errors: ' + errors, errors > 0 ? 'warn' : 'ok');
-}
-
-// ── GMAIL API HELPERS ────────────────────────────────────────────────────────
-async function gmailSearch(token, query) {
-  var url = 'https://gmail.googleapis.com/gmail/v1/users/me/threads?q=' + encodeURIComponent(query) + '&maxResults=100';
-  var r = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
-  if (!r.ok) throw new Error('Gmail search failed: ' + r.status);
-  var data = await r.json();
-  return data.threads || [];
-}
-
-async function gmailGetThread(token, threadId) {
-  var url = 'https://gmail.googleapis.com/gmail/v1/users/me/threads/' + threadId + '?format=full';
-  var r = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
-  if (!r.ok) throw new Error('Thread fetch failed: ' + r.status);
-  var data = await r.json();
-  return data.messages || [];
-}
-
-async function gmailGetAttachment(token, msgId, attId) {
-  var url = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/' + msgId + '/attachments/' + attId;
-  var r = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
-  if (!r.ok) throw new Error('Attachment fetch failed: ' + r.status);
-  return r.json();
-}
-
-// ── DRIVE HELPERS ────────────────────────────────────────────────────────────
-async function ensureFolder(token, parentId, name) {
-  // Check if folder already exists
-  var q = 'name="' + name + '" and mimeType="application/vnd.google-apps.folder" and "' + parentId + '" in parents and trashed=false';
-  var r = await fetch('https://www.googleapis.com/drive/v3/files?q=' + encodeURIComponent(q) + '&fields=files(id,name)', {
-    headers: { 'Authorization': 'Bearer ' + token }
+// ── STAGING TABLE ─────────────────────────────────────────────────────────────
+function renderStaging(){
+  var users=getUsers();
+  document.getElementById('stgPanel').className='stg-panel on';
+  document.getElementById('stgBadge').textContent=_files.length+' file'+(_files.length!==1?'s':'');
+  var uHtml='<option value="">— Unassigned —</option>';
+  users.forEach(function(u){uHtml+='<option value="'+esc(u.name)+'" data-role="'+esc(u.role||'')+'">'+esc(u.name+(u.role?' ('+u.role+')':''))+'</option>';});
+  var dHtml='<option value="">— Select Driver —</option>';
+  users.filter(function(u){return u.role==='driver';}).forEach(function(u){dHtml+='<option value="'+esc(u.name)+'">'+esc(u.name)+'</option>';});
+  var tbody=document.getElementById('stgBody');tbody.innerHTML='';
+  var typeLabels={'rate-con':'&#x26A1; Rate Con','settlement':'&#x1F4B0; Settlement','permit':'&#x1F4CB; Permit','tax':'&#x1F9FE; Tax','license':'&#x1FAA9; License','insurance':'&#x1F6E1; Insurance'};
+  _files.forEach(function(f){
+    var selU=f.autoUser?esc(f.autoUser.name):'';
+    var selRole=f.autoUser?(f.autoUser.role||''):'';
+    var showDrv=(selRole==='dispatcher'||f.autoType==='rate-con')?'on':'';
+    var showReq=f.autoType==='rate-con'?'on':'';
+    var uOpts=uHtml.replace('value="'+selU+'"','value="'+selU+'" selected');
+    // Confidence cell content
+    var uc=f.userConf||0,tc=f.typeConf||0;
+    var avgConf=f.autoUser?uc:0;
+    var confCell=confBadge(avgConf);
+    if(f.autoType&&f.autoType!=='other'){
+      confCell+='<br><span style="font-size:10px;color:var(--muted);font-family:\'JetBrains Mono\',monospace;margin-top:3px;display:block;">Type: '+confBadge(tc)+'</span>';
+    }
+    var displayFilename=f.editedFilename||f.filename;
+    var displayFrom=f.editedFrom||f.from;
+    var displaySubject=f.editedSubject||f.subject;
+    tbody.innerHTML+='<tr id="row-'+f.idx+'">'+
+      '<td class="td-file" title="'+esc(displayFilename)+'">'+esc(displayFilename)+'</td>'+
+      '<td class="td-meta"><div class="mfrom">'+esc(displayFrom.slice(0,42))+'</div><div class="msubj">'+esc(displaySubject.slice(0,50))+'</div><div class="mdate">'+f.date+'</div></td>'+
+      '<td style="white-space:nowrap;">'+confCell+'</td>'+
+      '<td><select class="asel" id="user-'+f.idx+'" onchange="onUser('+f.idx+')">'+uOpts+'</select></td>'+
+      '<td class="dc" id="dc-'+f.idx+'"><select class="asel drv '+showDrv+'" id="drv-'+f.idx+'">'+dHtml+'</select><div class="drv-note '+showReq+'">Required for Rate Con</div></td>'+
+      '<td class="type-cell"><select class="asel" id="type-'+f.idx+'" onchange="onType('+f.idx+')">'+
+        '<option value="other"'+(f.autoType==='other'?' selected':'')+'>Other / General</option>'+
+        '<option value="rate-con"'+(f.autoType==='rate-con'?' selected':'')+'>Rate Con</option>'+
+        '<option value="settlement"'+(f.autoType==='settlement'?' selected':'')+'>Settlement</option>'+
+        '<option value="permit"'+(f.autoType==='permit'?' selected':'')+'>Permit</option>'+
+        '<option value="license"'+(f.autoType==='license'?' selected':'')+'>License / CDL</option>'+
+        '<option value="insurance"'+(f.autoType==='insurance'?' selected':'')+'>Insurance</option>'+
+        '<option value="tax"'+(f.autoType==='tax'?' selected':'')+'>Tax / W-9</option>'+
+      '</select>'+(f.autoType&&f.autoType!=='other'?'<div style="font-size:10px;color:var(--muted);margin-top:3px;">&#x2192; '+(typeLabels[f.autoType]||'')+'</div>':'')+
+      '</td>'+
+      '<td id="stat-'+f.idx+'"><span class="bdg bdg-wait">Pending</span></td>'+
+      '<td><div class="ac">'+
+        '<button class="btn btn-s btn-icon" onclick="openEdit('+f.idx+')" title="Edit metadata">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'+
+        '</button>'+
+        '<button class="btn btn-s btn-icon" onclick="openPreview('+f.idx+')" title="Preview file">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'+
+        '</button>'+
+        '<button class="btn btn-s btn-icon" id="upbtn-'+f.idx+'" onclick="uploadRow('+f.idx+')" title="Upload to Drive">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>'+
+        '</button>'+
+      '</div></td>'+
+    '</tr>';
+    // Edit panel row (hidden by default)
+    tbody.innerHTML+='<tr class="edit-row" id="ep-row-'+f.idx+'"><td colspan="8">'+
+      '<div class="ep" id="ep-'+f.idx+'">'+
+        '<div class="ep-title">&#x270E; Edit File Information Before Uploading</div>'+
+        '<div class="ep-grid">'+
+          '<div class="ep-field"><div class="ep-label">Filename</div><input class="ep-input" id="ef-name-'+f.idx+'" value="'+esc(displayFilename)+'" type="text"></div>'+
+          '<div class="ep-field"><div class="ep-label">From</div><input class="ep-input" id="ef-from-'+f.idx+'" value="'+esc(displayFrom)+'" type="text"></div>'+
+          '<div class="ep-field"><div class="ep-label">Subject</div><input class="ep-input" id="ef-subj-'+f.idx+'" value="'+esc(displaySubject)+'" type="text"></div>'+
+        '</div>'+
+        '<div class="ep-actions">'+
+          '<button class="btn btn-p btn-sm" onclick="saveEdit('+f.idx+')">&#x2713; Save Edits</button>'+
+          '<button class="btn btn-s btn-sm" onclick="cancelEdit('+f.idx+')">Cancel</button>'+
+          '<span style="font-size:11px;color:var(--muted);margin-left:8px;">Changes affect the filename and matching shown in the table — not the original email.</span>'+
+        '</div>'+
+      '</div>'+
+    '</td></tr>';
   });
-  if (r.ok) {
-    var data = await r.json();
-    if (data.files && data.files.length > 0) return data.files[0].id;
-  }
-  // Create it
-  var cr = await fetch('https://www.googleapis.com/drive/v3/files', {
-    method: 'POST',
-    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: name, mimeType: 'application/vnd.google-apps.folder', parents: [parentId] })
-  });
-  if (!cr.ok) throw new Error('Create folder failed: ' + cr.status);
-  var cd = await cr.json();
-  return cd.id;
+  updateStats();
 }
 
-async function uploadToDrive(token, filename, mimeType, b64Data, folderId) {
-  var boundary = 'nexus_boundary_' + Date.now();
-  var meta = JSON.stringify({ name: filename, parents: [folderId] });
-
-  // Convert b64 to Blob
-  var binary = atob(b64Data);
-  var bytes = new Uint8Array(binary.length);
-  for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  var blob = new Blob([bytes], { type: mimeType || 'application/octet-stream' });
-
-  // Multipart upload
-  var form = new FormData();
-  form.append('metadata', new Blob([meta], { type: 'application/json' }));
-  form.append('file', blob, filename);
-
-  var r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
-    method: 'POST',
-    headers: { 'Authorization': 'Bearer ' + token },
-    body: form
-  });
-  if (!r.ok) {
-    var err = await r.text();
-    throw new Error('Drive upload failed: ' + r.status + ' ' + err.slice(0,100));
-  }
-  return r.json();
+function onUser(idx){
+  var s=document.getElementById('user-'+idx);var o=s&&s.options[s.selectedIndex];
+  var role=o?o.getAttribute('data-role'):'';
+  var type=document.getElementById('type-'+idx).value;
+  var dc=document.getElementById('dc-'+idx);
+  var ds=document.getElementById('drv-'+idx);
+  var req=dc&&dc.querySelector('.drv-note');
+  var need=(role==='dispatcher')||(type==='rate-con');
+  if(ds)ds.className='asel drv'+(need?' on':'');
+  if(req)req.className='drv-note'+(type==='rate-con'?' on':'');
+  updateStats();
+}
+function onType(idx){
+  var type=document.getElementById('type-'+idx).value;
+  var s=document.getElementById('user-'+idx);var o=s&&s.options[s.selectedIndex];
+  var role=o?o.getAttribute('data-role'):'';
+  var dc=document.getElementById('dc-'+idx);
+  var ds=document.getElementById('drv-'+idx);
+  var req=dc&&dc.querySelector('.drv-note');
+  var need=(type==='rate-con')||(role==='dispatcher');
+  if(ds)ds.className='asel drv'+(need?' on':'');
+  if(req)req.className='drv-note'+(type==='rate-con'?' on':'');
+  updateStats();
+}
+function updateStats(){
+  var a=0;_files.forEach(function(f){var s=document.getElementById('user-'+f.idx);if(s&&s.value)a++;});
+  document.getElementById('stgStats').textContent=a+' of '+_files.length+' assigned';
+}
+function autoAssignAll(){
+  _files.forEach(function(f){
+    if(!f.autoUser)return;
+    var s=document.getElementById('user-'+f.idx);if(s)s.value=f.autoUser.name;onUser(f.idx);
+    var t=document.getElementById('type-'+f.idx);if(t&&f.autoType)t.value=f.autoType;onType(f.idx);
+  });updateStats();
 }
 
-// ── DRIVER MATCHING ──────────────────────────────────────────────────────────
-function matchToVaultFolder(from, subject, vaultRoot) {
-  // Load known drivers/dispatchers from localStorage
-  var users = [];
-  try { users = JSON.parse(localStorage.getItem('nexus_users') || '[]'); } catch(e) {}
-
-  var combined = (from + ' ' + subject).toLowerCase();
-
-  // Try to match against known user names
-  for (var i = 0; i < users.length; i++) {
-    var u = users[i];
-    var name = (u.name || '').toLowerCase();
-    if (name.length > 3 && combined.indexOf(name) >= 0) {
-      var subFolder = u.role === 'dispatcher' ? 'Dispatcher Documents' : 'Driver Documents';
-      return {
-        driverName: u.name,
-        folderId: vaultRoot,
-        subfolderName: u.name.replace(/[^a-zA-Z0-9 ]/g,'').trim(),
-        path: '/' + u.name + '/' + subFolder,
-        matched: true
-      };
+// ── INLINE EDIT ───────────────────────────────────────────────────────────────
+function openEdit(idx){
+  // close any other open edit panels
+  _files.forEach(function(f){if(f.idx!==idx){var ep=document.getElementById('ep-'+f.idx);if(ep)ep.className='ep';}});
+  var ep=document.getElementById('ep-'+idx);
+  if(ep)ep.className=ep.className.includes('on')?'ep':'ep on';
+}
+function cancelEdit(idx){var ep=document.getElementById('ep-'+idx);if(ep)ep.className='ep';}
+function saveEdit(idx){
+  var f=_files[idx];if(!f)return;
+  var n=document.getElementById('ef-name-'+idx);
+  var fr=document.getElementById('ef-from-'+idx);
+  var su=document.getElementById('ef-subj-'+idx);
+  f.editedFilename=n?n.value.trim():null;
+  f.editedFrom=fr?fr.value.trim():null;
+  f.editedSubject=su?su.value.trim():null;
+  // Update display cells
+  var row=document.getElementById('row-'+idx);
+  if(row){
+    var fileTd=row.cells[0];if(fileTd&&f.editedFilename){fileTd.textContent=f.editedFilename;fileTd.title=f.editedFilename;}
+    var metaTd=row.cells[1];
+    if(metaTd){
+      metaTd.querySelector('.mfrom').textContent=(f.editedFrom||f.from).slice(0,42);
+      metaTd.querySelector('.msubj').textContent=(f.editedSubject||f.subject).slice(0,50);
     }
   }
-
-  // No match — put in Inbox Uploads / YYYY-MM
-  var now = new Date();
-  var monthFolder = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
-  return {
-    driverName: '— Unmatched —',
-    folderId: vaultRoot,
-    subfolderName: 'Inbox Uploads',
-    path: '/Inbox Uploads/' + monthFolder,
-    matched: false
-  };
-}
-
-// ── MESSAGE HELPERS ──────────────────────────────────────────────────────────
-function getAllParts(payload) {
-  var parts = [];
-  if (!payload) return parts;
-  if (payload.parts) {
-    payload.parts.forEach(function(p) {
-      parts = parts.concat(getAllParts(p));
-    });
-  } else {
-    parts.push(payload);
+  // Re-calc confidence if subject/from changed
+  if(f.editedFrom||f.editedSubject){
+    var users=getUsers();
+    var newFrom=f.editedFrom||f.from;
+    var newSubj=f.editedSubject||f.subject;
+    var au2=autoMatchUser(newFrom,newSubj,users);
+    f.autoUser=au2;
+    f.userConf=calcUserConf(au2,newFrom,newSubj);
+    // Update confidence cell
+    var confTd=row?row.cells[2]:null;
+    if(confTd){
+      var tc=f.typeConf||0;
+      confTd.innerHTML=confBadge(f.userConf)+(f.autoType&&f.autoType!=='other'?'<br><span style="font-size:10px;color:var(--muted);font-family:\'JetBrains Mono\',monospace;margin-top:3px;display:block;">Type: '+confBadge(tc)+'</span>':'');
+    }
   }
-  return parts;
+  cancelEdit(idx);
+  updateStats();
 }
 
-function getHeader(headers, name) {
-  if (!headers) return '';
-  var h = headers.find(function(h) { return h.name.toLowerCase() === name.toLowerCase(); });
-  return h ? h.value : '';
-}
-
-// ── UI HELPERS ───────────────────────────────────────────────────────────────
-function addLog(msg, cls) {
-  var log = document.getElementById('logArea');
-  var line = document.createElement('div');
-  line.className = 'log-line' + (cls ? ' ' + cls : '');
-  line.textContent = new Date().toLocaleTimeString() + '  ' + msg;
-  log.appendChild(line);
-  log.scrollTop = log.scrollHeight;
-}
-
-function setProgress(current, total) {
-  var pct = total > 0 ? Math.round(current / total * 100) : 0;
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressCount').textContent = current + ' / ' + total;
-}
-
-function renderResults(files) {
-  var panel = document.getElementById('resultsPanel');
-  panel.className = 'results-panel active';
-  document.getElementById('resultsBadge').textContent = files.length + ' file' + (files.length !== 1 ? 's' : '');
-  var tbody = document.getElementById('resultsBody');
-  tbody.innerHTML = '';
-  files.forEach(function(f) {
-    var statusBadge = f.status === 'ok'
-      ? '<span class="badge badge-ok">✓ Uploaded</span>'
-      : f.status === 'skip'
-      ? '<span class="badge badge-skip">Skipped</span>'
-      : '<span class="badge badge-err">Error</span>';
-    if (!f.driver || f.driver === '— Unmatched —') statusBadge = '<span class="badge badge-unmatched">⚠ Unmatched</span>';
-    tbody.innerHTML += '<tr>' +
-      '<td class="td-file">' + escHtml(f.filename) + '</td>' +
-      '<td class="td-driver" style="font-size:11px;color:var(--text-muted);">' + escHtml((f.from||'').slice(0,40)) + '<br><span style="color:var(--text-mid)">' + escHtml((f.subject||'').slice(0,50)) + '</span></td>' +
-      '<td class="td-driver">' + escHtml(f.driver || '—') + '</td>' +
-      '<td class="td-folder">' + escHtml(f.folder || '—') + '</td>' +
-      '<td class="td-status">' + statusBadge + '</td>' +
-    '</tr>';
+// ── PREVIEW MODAL ─────────────────────────────────────────────────────────────
+function openPreview(idx){
+  var f=_files[idx];if(!f)return;
+  _mIdx=idx;
+  if(_mBlob){URL.revokeObjectURL(_mBlob);_mBlob=null;}
+  document.getElementById('mTitle').textContent=f.editedFilename||f.filename;
+  var prev=document.getElementById('mPrev');prev.innerHTML='';
+  var mime=f.mimeType||'application/octet-stream';
+  try{
+    var bin=atob(f.b64);var bytes=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+    var blob=new Blob([bytes],{type:mime});
+    _mBlob=URL.createObjectURL(blob);
+    if(mime==='application/pdf'||f.filename.toLowerCase().endsWith('.pdf')){
+      prev.innerHTML='<iframe src="'+_mBlob+'" style="width:100%;height:480px;border:none;"></iframe>';
+    }else if(mime.startsWith('image/')){
+      prev.innerHTML='<div class="img-wrap"><img src="'+_mBlob+'" alt="'+esc(f.filename||'')+'"></div>';
+    }else{
+      prev.innerHTML='<div class="no-prev"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div>No preview for '+esc(mime)+'</div><a href="'+_mBlob+'" download="'+esc(f.filename||'')+'" class="btn btn-s btn-sm" style="margin-top:6px;">Download</a></div>';
+    }
+  }catch(e){prev.innerHTML='<div class="no-prev">Preview error: '+esc(e.message)+'</div>';}
+  // Populate modal selects
+  var users=getUsers();
+  var mU=document.getElementById('mUser');var mD=document.getElementById('mDriver');
+  mU.innerHTML='<option value="">— Select User —</option>';
+  mD.innerHTML='<option value="">— Select Driver —</option>';
+  users.forEach(function(u){
+    var o=new Option(u.name+(u.role?' ('+u.role+')':''),u.name);o.setAttribute('data-role',u.role||'');mU.add(o);
+    if(u.role==='driver')mD.add(new Option(u.name,u.name));
   });
+  var ru=document.getElementById('user-'+idx);var rd=document.getElementById('drv-'+idx);var rt=document.getElementById('type-'+idx);
+  if(ru)mU.value=ru.value;if(rd)mD.value=rd.value;if(rt)document.getElementById('mType').value=rt.value;
+  onMUser();onMType();
+  document.getElementById('prevModal').className='moverlay';
+}
+function onMUser(){
+  var s=document.getElementById('mUser');var o=s&&s.options[s.selectedIndex];
+  var role=o?o.getAttribute('data-role'):'';
+  var type=document.getElementById('mType').value;
+  var dw=document.getElementById('mDrvWrap');
+  dw.className='mdrv-wrap'+((role==='dispatcher'||type==='rate-con')?' on':'');
+}
+function onMType(){
+  var s=document.getElementById('mUser');var o=s&&s.options[s.selectedIndex];
+  var role=o?o.getAttribute('data-role'):'';
+  var type=document.getElementById('mType').value;
+  var dw=document.getElementById('mDrvWrap');
+  dw.className='mdrv-wrap'+((type==='rate-con'||role==='dispatcher')?' on':'');
+}
+function openInTab(){if(_mBlob)window.open(_mBlob,'_blank');}
+function closeModal(id){
+  document.getElementById(id).className='moverlay hidden';
+  if(id==='prevModal'&&_mBlob){URL.revokeObjectURL(_mBlob);_mBlob=null;_mIdx=-1;}
+}
+async function applyModal(andUpload){
+  var idx=_mIdx;if(idx<0)return;
+  var u=document.getElementById('mUser').value;
+  var d=document.getElementById('mDriver').value;
+  var tp=document.getElementById('mType').value;
+  if(!u){alert('Please select a user.');return;}
+  if(tp==='rate-con'&&!d){alert('Rate Cons need a driver.');return;}
+  var ru=document.getElementById('user-'+idx);var rd=document.getElementById('drv-'+idx);var rt=document.getElementById('type-'+idx);
+  if(ru){ru.value=u;onUser(idx);}
+  if(rd)rd.value=d;
+  if(rt){rt.value=tp;onType(idx);}
+  updateStats();closeModal('prevModal');
+  if(andUpload)await uploadRow(idx);
 }
 
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// ── UPLOAD ────────────────────────────────────────────────────────────────────
+async function uploadRow(idx){
+  var token=getToken();if(!token){alert('Not connected to Google Drive.');return;}
+  var f=_files[idx];if(!f)return;
+  if(f.status==='ok')return;
+  var uS=document.getElementById('user-'+idx);
+  var dS=document.getElementById('drv-'+idx);
+  var tS=document.getElementById('type-'+idx);
+  var assignedUser=uS?uS.value:'';
+  var drvVisible=dS&&dS.className.includes('on');
+  var assignedDriver=drvVisible?dS.value:'';
+  var docType=tS?tS.value:'other';
+  if(!assignedUser){alert('Please assign a user first.');return;}
+  if(docType==='rate-con'&&!assignedDriver){alert('Rate Cons require a driver.');return;}
+  var stat=document.getElementById('stat-'+idx);
+  var upBtn=document.getElementById('upbtn-'+idx);
+  stat.innerHTML='<span class="bdg bdg-up">Uploading...</span>';
+  if(upBtn)upBtn.disabled=true;
+  var co=getCo();var vault=co.driveRootId;
+  try{
+    var targetFolder,targetName,folderPath;
+    var filename=f.editedFilename||f.filename;
+    if(docType==='rate-con'){
+      var drvF=await ensureFolder(token,vault,assignedDriver);
+      targetFolder=await ensureFolder(token,drvF,'Rate Cons');
+      folderPath='/'+assignedDriver+'/Rate Cons';
+      targetName=assignedUser+' — '+filename;
+    }else{
+      var uF=await ensureFolder(token,vault,assignedUser);
+      var subMap={settlement:'Settlements',permit:'Permits',license:'Documents',insurance:'Documents',tax:'Tax Documents',other:'Documents'};
+      var sub=subMap[docType]||'Documents';
+      targetFolder=await ensureFolder(token,uF,sub);
+      folderPath='/'+assignedUser+'/'+sub;
+      targetName=filename;
+    }
+    var driveRes=await uploadToDrive(token,targetName,f.mimeType,f.b64,targetFolder);
+    stat.innerHTML='<span class="bdg bdg-ok">&#x2713; Uploaded</span>';
+    if(upBtn)upBtn.style.display='none';
+    f.status='ok';f.driveId=driveRes.id;f.driveName=targetName;
+    var st=getState();st.uploadedCount=(st.uploadedCount||0)+1;saveState(st);
+    document.getElementById('sUpl').textContent=st.uploadedCount;
+    var ri=_results.length;
+    _results.push({idx:ri,filename:targetName,assignedTo:assignedUser+(assignedDriver?' → '+assignedDriver:''),folder:folderPath,fileId:driveRes.id,docType:docType,driveVault:vault});
+    addToResults(_results[ri]);
+  }catch(e){
+    stat.innerHTML='<span class="bdg bdg-err">Error</span>';
+    if(upBtn)upBtn.disabled=false;
+    alert('Upload failed: '+e.message);
+  }
 }
+async function uploadAllAssigned(){
+  for(var i=0;i<_files.length;i++){
+    if(_files[i].status==='ok')continue;
+    var s=document.getElementById('user-'+_files[i].idx);
+    if(s&&s.value)await uploadRow(_files[i].idx);
+  }
+}
+
+// ── RESULTS TABLE ─────────────────────────────────────────────────────────────
+function addToResults(item){
+  var panel=document.getElementById('resPanel');panel.className='res-panel on';
+  var tbody=document.getElementById('resBody');
+  tbody.innerHTML+='<tr id="rrow-'+item.idx+'">'+
+    '<td class="td-file" title="'+esc(item.filename)+'">'+esc(item.filename)+'</td>'+
+    '<td>'+esc(item.assignedTo)+'</td>'+
+    '<td class="td-folder">'+esc(item.folder)+'</td>'+
+    '<td><span class="bdg bdg-ok">&#x2713; Uploaded</span></td>'+
+    '<td><button class="btn btn-s btn-icon" onclick="openEditResult('+item.idx+')" title="Edit this uploaded file">'+
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'+
+    '</button></td>'+
+  '</tr>';
+  var c=tbody.querySelectorAll('tr').length;
+  document.getElementById('resBadge').textContent=c+' file'+(c!==1?'s':'');
+}
+
+// ── EDIT UPLOADED RESULT ──────────────────────────────────────────────────────
+function openEditResult(ri){
+  var item=_results[ri];if(!item)return;
+  _erIdx=ri;
+  var users=getUsers();
+  var erU=document.getElementById('erUser');var erD=document.getElementById('erDriver');
+  erU.innerHTML='<option value="">— Select User —</option>';
+  erD.innerHTML='<option value="">— Select Driver —</option>';
+  users.forEach(function(u){
+    var o=new Option(u.name+(u.role?' ('+u.role+')':''),u.name);o.setAttribute('data-role',u.role||'');erU.add(o);
+    if(u.role==='driver')erD.add(new Option(u.name,u.name));
+  });
+  // Pre-fill
+  var parts=item.assignedTo.split(' → ');
+  erU.value=parts[0].trim();
+  if(parts[1])erD.value=parts[1].trim();
+  document.getElementById('erFilename').value=item.filename;
+  document.getElementById('erType').value=item.docType||'other';
+  onErUser();onErType();
+  document.getElementById('editModal').className='moverlay';
+}
+function onErUser(){
+  var s=document.getElementById('erUser');var o=s&&s.options[s.selectedIndex];
+  var role=o?o.getAttribute('data-role'):'';
+  var type=document.getElementById('erType').value;
+  document.getElementById('erDriverWrap').style.display=((role==='dispatcher'||type==='rate-con')?'flex':'none');
+  document.getElementById('erDriverWrap').style.flexDirection='column';
+}
+function onErType(){
+  var s=document.getElementById('erUser');var o=s&&s.options[s.selectedIndex];
+  var role=o?o.getAttribute('data-role'):'';
+  var type=document.getElementById('erType').value;
+  document.getElementById('erDriverWrap').style.display=((type==='rate-con'||role==='dispatcher')?'flex':'none');
+}
+async function saveEditResult(){
+  var ri=_erIdx;if(ri<0)return;
+  var item=_results[ri];if(!item)return;
+  var token=getToken();if(!token){alert('Not connected.');return;}
+  var newName=document.getElementById('erFilename').value.trim();
+  var newUser=document.getElementById('erUser').value;
+  var newDriver=document.getElementById('erDriver').value;
+  var newType=document.getElementById('erType').value;
+  if(!newUser){alert('Please select a user.');return;}
+  if(newType==='rate-con'&&!newDriver){alert('Rate Cons need a driver.');return;}
+  // Build new folder path
+  var co=getCo();var vault=item.driveVault||co.driveRootId;
+  try{
+    var newFolder,newPath,finalName;
+    if(newType==='rate-con'){
+      var df=await ensureFolder(token,vault,newDriver);
+      newFolder=await ensureFolder(token,df,'Rate Cons');
+      newPath='/'+newDriver+'/Rate Cons';
+      finalName=newUser+' — '+newName;
+    }else{
+      var uf=await ensureFolder(token,vault,newUser);
+      var sm={settlement:'Settlements',permit:'Permits',license:'Documents',insurance:'Documents',tax:'Tax Documents',other:'Documents'};
+      var sn=sm[newType]||'Documents';
+      newFolder=await ensureFolder(token,uf,sn);
+      newPath='/'+newUser+'/'+sn;
+      finalName=newName;
+    }
+    // Rename + move in Drive
+    if(item.fileId){
+      var patch={name:finalName,addParents:newFolder};
+      var pr=await fetch('https://www.googleapis.com/drive/v3/files/'+item.fileId+'?addParents='+encodeURIComponent(newFolder)+'&removeParents=&fields=id,name',{
+        method:'PATCH',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+        body:JSON.stringify({name:finalName})
+      });
+      if(!pr.ok)throw new Error('Update failed: '+pr.status);
+    }
+    // Update results table row
+    item.filename=finalName;
+    item.assignedTo=newUser+(newDriver?' → '+newDriver:'');
+    item.folder=newPath;item.docType=newType;
+    var rrow=document.getElementById('rrow-'+ri);
+    if(rrow){
+      rrow.cells[0].textContent=finalName;rrow.cells[0].title=finalName;
+      rrow.cells[1].textContent=item.assignedTo;
+      rrow.cells[2].textContent=newPath;
+    }
+    closeModal('editModal');
+  }catch(e){alert('Update failed: '+e.message);}
+}
+
+// ── GMAIL API ─────────────────────────────────────────────────────────────────
+async function gmailSearch(tok,q){var r=await fetch('https://gmail.googleapis.com/gmail/v1/users/me/threads?q='+encodeURIComponent(q)+'&maxResults=100',{headers:{'Authorization':'Bearer '+tok}});if(!r.ok)throw new Error('Gmail '+r.status);return(await r.json()).threads||[];}
+async function gmailGetThread(tok,tid){var r=await fetch('https://gmail.googleapis.com/gmail/v1/users/me/threads/'+tid+'?format=full',{headers:{'Authorization':'Bearer '+tok}});if(!r.ok)throw new Error('Thread '+r.status);return(await r.json()).messages||[];}
+async function gmailGetAtt(tok,mid,aid){var r=await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/'+mid+'/attachments/'+aid,{headers:{'Authorization':'Bearer '+tok}});if(!r.ok)throw new Error('Att '+r.status);return r.json();}
+
+// ── DRIVE API ─────────────────────────────────────────────────────────────────
+async function ensureFolder(tok,parentId,name){
+  var q='name="'+name.replace(/"/g,'\\"')+'" and mimeType="application/vnd.google-apps.folder" and "'+parentId+'" in parents and trashed=false';
+  var r=await fetch('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent(q)+'&fields=files(id,name)',{headers:{'Authorization':'Bearer '+tok}});
+  if(r.ok){var d=await r.json();if(d.files&&d.files.length>0)return d.files[0].id;}
+  var cr=await fetch('https://www.googleapis.com/drive/v3/files',{method:'POST',headers:{'Authorization':'Bearer '+tok,'Content-Type':'application/json'},body:JSON.stringify({name:name,mimeType:'application/vnd.google-apps.folder',parents:[parentId]})});
+  if(!cr.ok)throw new Error('CreateFolder '+cr.status);
+  return(await cr.json()).id;
+}
+async function uploadToDrive(tok,filename,mimeType,b64,folderId){
+  var bin=atob(b64);var bytes=new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+  var blob=new Blob([bytes],{type:mimeType||'application/octet-stream'});
+  var form=new FormData();
+  form.append('metadata',new Blob([JSON.stringify({name:filename,parents:[folderId]})],{type:'application/json'}));
+  form.append('file',blob,filename);
+  var r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',{method:'POST',headers:{'Authorization':'Bearer '+tok},body:form});
+  if(!r.ok){var e=await r.text();throw new Error('Upload '+r.status+' '+e.slice(0,80));}
+  return r.json();
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function getAllParts(p){var r=[];if(!p)return r;if(p.parts)p.parts.forEach(function(x){r=r.concat(getAllParts(x));});else r.push(p);return r;}
+function getHeader(hs,n){if(!hs)return'';var h=hs.find(function(x){return x.name.toLowerCase()===n.toLowerCase();});return h?h.value:'';}
+function setProgress(c,t){var p=t>0?Math.round(c/t*100):0;document.getElementById('pbarFill').style.width=p+'%';document.getElementById('progCnt').textContent=c+' / '+t;}
+function addLog(msg,cls){var log=document.getElementById('logArea');var d=document.createElement('div');d.className='ll'+(cls?' '+cls:'');d.textContent=new Date().toLocaleTimeString()+'  '+msg;log.appendChild(d);log.scrollTop=log.scrollHeight;}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 </script>
-<style>@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>
 </body>
 </html>
