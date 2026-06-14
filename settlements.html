@@ -607,7 +607,8 @@ function renderTable(){
     expandTr.id='exp-'+s.id;
     const detail = expandDetails[s.id];
     let panelHTML = '';
-    if(detail){
+    if(detail && detail.loads && detail.loads.length){
+      if(!detail.overhead) detail.overhead = [];
       const totalLoads = detail.loads.reduce((a,l)=>a+l.amount,0);
       const netPay = s.net_pay;
       if(isDispatcher){
