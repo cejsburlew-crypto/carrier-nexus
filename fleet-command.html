@@ -844,72 +844,10 @@ body {
       <div class="panel">
         <div class="panel-header">
           <h2>Settlement Queue</h2>
-          <span class="panel-count">7 PENDING</span>
+          <span class="panel-count" id="settle-queue-count">— PENDING</span>
         </div>
-        <div class="settlement-list">
-          <div class="settlement-row">
-            <div class="driver-avatar" style="background:#d6e4f0;">AM</div>
-            <div class="settlement-name">
-              <div class="name">Avis Modesto</div>
-              <div class="week">May 18 Ã¢ÂÂ May 24, 2026</div>
-            </div>
-            <div class="settlement-amount">$5,380</div>
-            <span class="badge badge-yellow">DRAFT</span>
-          </div>
-          <div class="settlement-row">
-            <div class="driver-avatar" style="background:#d5e8d4;">MF</div>
-            <div class="settlement-name">
-              <div class="name">Miguel Fonseca</div>
-              <div class="week">May 18 Ã¢ÂÂ May 24, 2026</div>
-            </div>
-            <div class="settlement-amount">$4,120</div>
-            <span class="badge badge-yellow">DRAFT</span>
-          </div>
-          <div class="settlement-row">
-            <div class="driver-avatar" style="background:#fff3cd;">GP</div>
-            <div class="settlement-name">
-              <div class="name">Guillermo Pinera</div>
-              <div class="week">May 18 Ã¢ÂÂ May 24, 2026</div>
-            </div>
-            <div class="settlement-amount">$5,850</div>
-            <span class="badge badge-orange">PENDING APPROVAL</span>
-          </div>
-          <div class="settlement-row">
-            <div class="driver-avatar" style="background:#f8d7da;">DF</div>
-            <div class="settlement-name">
-              <div class="name">David Fonseca</div>
-              <div class="week">May 18 Ã¢ÂÂ May 24, 2026</div>
-            </div>
-            <div class="settlement-amount">$4,060</div>
-            <span class="badge badge-orange">PENDING APPROVAL</span>
-          </div>
-          <div class="settlement-row">
-            <div class="driver-avatar" style="background:#e8d5f5;">YP</div>
-            <div class="settlement-name">
-              <div class="name">Yosviel Pinera</div>
-              <div class="week">May 18 Ã¢ÂÂ May 24, 2026</div>
-            </div>
-            <div class="settlement-amount">$1,560</div>
-            <span class="badge badge-yellow">DRAFT</span>
-          </div>
-          <div class="settlement-row">
-            <div class="driver-avatar" style="background:#d4edda;">AA</div>
-            <div class="settlement-name">
-              <div class="name">Amet Abreu</div>
-              <div class="week">May 18 Ã¢ÂÂ May 24, 2026</div>
-            </div>
-            <div class="settlement-amount">$5,590</div>
-            <span class="badge badge-green">APPROVED</span>
-          </div>
-          <div class="settlement-row">
-            <div class="driver-avatar" style="background:#d1ecf1;">NE</div>
-            <div class="settlement-name">
-              <div class="name">Nelson</div>
-              <div class="week">May 18 Ã¢ÂÂ May 24, 2026</div>
-            </div>
-            <div class="settlement-amount">$3,640</div>
-            <span class="badge badge-yellow">DRAFT</span>
-          </div>
+        <div class="settlement-list" id="settle-queue-list">
+          <div style="color:#6b7280;padding:16px;font-size:13px;">Loading settlements...</div>
         </div>
       </div>
     </div>
@@ -1051,6 +989,75 @@ body {
     if (docsSub) docsSub.textContent = missingPods + ' missing POD' + (missingPods !== 1 ? 's' : '') + ' ÃÂ· Action required';
 
   } catch(e) { console.warn('KPI load error:', e); }
+})();
+</script>
+
+<script>
+// ── SETTLEMENT QUEUE (Jan 1 2026 → today) ────────────────
+(function() {
+  try {
+    const raw = localStorage.getItem('nexus_settlements');
+    const all = raw ? JSON.parse(raw) : [];
+    
+    const cutoff = '2026-01-01';
+    const today  = new Date().toISOString().slice(0,10);
+    
+    // Filter: start >= Jan 1 2026 and end <= today
+    const rows = all.filter(s => s.start >= cutoff && s.end <= today);
+    // Sort newest first
+    rows.sort((a,b) => b.end.localeCompare(a.end));
+
+    const list  = document.getElementById('settle-queue-list');
+    const count = document.getElementById('settle-queue-count');
+    if (!list) return;
+
+    const pending = rows.filter(s => s.status === 'draft' || s.status === 'pending').length;
+    if (count) count.textContent = pending + ' PENDING';
+
+    if (!rows.length) {
+      list.innerHTML = '<div style="color:#6b7280;padding:16px;font-size:13px;">No settlements found for this period.</div>';
+      return;
+    }
+
+    const avatarColors = {
+      AMET:'#d4edda', AVIS:'#d6e4f0', DAVID:'#f8d7da',
+      GUILLERMO:'#fff3cd', MIGUEL:'#d5e8d4', NELSON:'#d1ecf1',
+      YOSVIEL:'#e8d5f5', BETTY:'#fce8d5'
+    };
+    const badgeClass = { draft:'badge-yellow', pending:'badge-yellow',
+      approved:'badge-green', 'pending approval':'badge-orange',
+      rejected:'badge-red' };
+
+    const fmt = d => {
+      if (!d) return '';
+      const [y,m,day] = d.split('-');
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      return months[+m-1] + ' ' + (+day) + ', ' + y;
+    };
+
+    const initials = name => name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
+    list.innerHTML = rows.map(s => {
+      const short = (s.short || '').toUpperCase();
+      const bg = avatarColors[short] || '#e5e7eb';
+      const status = (s.status || 'draft').toLowerCase();
+      const badge = badgeClass[status] || 'badge-yellow';
+      const label = status.replace(/\w/g, c => c.toUpperCase());
+      const net = Number(s.net_pay || 0);
+      const netStr = (net < 0 ? '-$' : '$') + Math.abs(net).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
+      const netColor = net < 0 ? 'color:#ef4444;' : '';
+      return \`<div class="settlement-row">
+        <div class="driver-avatar" style="background:\${bg};">\${initials(s.driver)}</div>
+        <div class="settlement-name">
+          <div class="name">\${s.driver}</div>
+          <div class="week">\${fmt(s.start)} &ndash; \${fmt(s.end)}</div>
+        </div>
+        <div class="settlement-amount" style="\${netColor}">\${netStr}</div>
+        <span class="badge \${badge}">\${label.toUpperCase()}</span>
+      </div>\`;
+    }).join('');
+
+  } catch(e) { console.warn('Settlement queue error:', e); }
 })();
 </script>
 
