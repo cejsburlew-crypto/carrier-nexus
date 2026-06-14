@@ -545,10 +545,10 @@ function refreshKPIs(){
   document.getElementById('kpiTotal').textContent=ss.length;
   const qc=currentRole==='ops'?(draft+revision):pendExec;
   const tb=document.getElementById('tabBadge');
-  tb.textContent=qc;tb.style.display=qc>0?'inline-flex':'none';
+  if(tb){tb.textContent=qc;tb.style.display=qc>0?'inline-flex':'none';}
   const sb=document.getElementById('sidebarBadge');
   const tot=pendExec+revision;
-  if(tot>0){sb.textContent=tot;sb.style.display='inline-block';}else{sb.style.display='none';}
+  if(sb){if(tot>0){sb.textContent=tot;sb.style.display='inline-block';}else{sb.style.display='none';}}
 }
 function switchRole(role){
   currentRole=role;
