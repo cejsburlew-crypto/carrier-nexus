@@ -318,3 +318,19 @@
   };
 
 })(window);
+
+// --- AUTO-SEED ON VERSION MISMATCH ---
+(function(){
+  try {
+    var stored = localStorage.getItem('nexus_data_version');
+    var target = window.NEXUS_DATA_VERSION;
+    if (stored !== target && target) {
+      if (window.NEXUS_SEED_LOADS && window.NEXUS_SEED_LOADS.length)
+        localStorage.setItem('nexus_loads_v2', JSON.stringify(window.NEXUS_SEED_LOADS));
+      if (window.NEXUS_SEED_SETTLEMENTS && window.NEXUS_SEED_SETTLEMENTS.length)
+        localStorage.setItem('nexus_settlements', JSON.stringify(window.NEXUS_SEED_SETTLEMENTS));
+      localStorage.setItem('nexus_data_version', target);
+      console.log('[NexusDB] Seeded to version', target);
+    }
+  } catch(e) {}
+})();
