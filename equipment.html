@@ -1031,14 +1031,14 @@ async function saveUnit(e) {
 }
 
 // ── REMOVE ──
-function removeUnit(id, unit) {
+async function removeUnit(id, unit) {
   if (!confirm('Remove Unit ' + unit + ' from fleet? This cannot be undone.')) return;
   await NexusDB.Fleet.delete(id);
   await renderFleet();
 }
 
 // ── LOG PM ──
-function logPM(id) {
+async function logPM(id) {
   const today = new Date().toISOString().split('T')[0];
   const fleet = await loadFleet();
   const u = fleet.find(x=>x.id===id);
@@ -1052,7 +1052,7 @@ function logPM(id) {
 }
 
 // ── REPORT ISSUE ──
-function reportIssue(id, unit) {
+async function reportIssue(id, unit) {
   const issue = prompt('Describe the issue for Unit ' + unit + ':');
   if (issue) alert('Issue logged for Unit ' + unit + ':\n"' + issue + '"\n\nStatus updated to DOWN.');
   const fleet = await loadFleet();
