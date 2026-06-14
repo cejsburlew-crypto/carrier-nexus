@@ -405,31 +405,36 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="nexus-config.js?v=3"></script>
-<script src="nexus-db.js?v=3"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
 <script>
 const SEED_SETTLEMENTS = [
-  {"id": "AMT-2026-04", "driver": "Amet Abreu", "short": "AMET", "role": "dispatcher", "dispatcher_rate": 0.05, "service_adj": 0, "start": "2026-01-20", "end": "2026-01-26", "loads": 9, "total_adds": 29600, "overhead": 0, "permits": 0, "expenses": 0, "net_pay": 1480, "status": "draft"},
-  {"id": "AMT-2026-03", "driver": "Amet Abreu", "short": "AMET", "role": "dispatcher", "dispatcher_rate": 0.05, "service_adj": 0, "start": "2026-01-13", "end": "2026-01-19", "loads": 4, "total_adds": 20400, "overhead": 0, "permits": 0, "expenses": 0, "net_pay": 1020, "status": "draft"},
-  {"id": "AMT-2026-02", "driver": "Amet Abreu", "short": "AMET", "role": "dispatcher", "dispatcher_rate": 0.05, "service_adj": 0, "start": "2026-01-06", "end": "2026-01-12", "loads": 6, "total_adds": 32500, "overhead": 0, "permits": 0, "expenses": 0, "net_pay": 1625, "status": "draft"},
-  {"id": "AMT-2026-01", "driver": "Amet Abreu", "short": "AMET", "role": "dispatcher", "dispatcher_rate": 0.05, "service_adj": 126.5, "start": "2025-12-30", "end": "2026-01-05", "loads": 4, "total_adds": 26100, "overhead": 0, "permits": 0, "expenses": 126.5, "net_pay": 1305, "status": "draft"},
-  {"id": "AVI-2026-01", "driver": "Avis Modesto", "short": "AVIS", "role": "driver", "start": "2026-01-20", "end": "2026-01-26", "loads": 1, "total_adds": 4300, "overhead": 0, "permits": 0, "expenses": 0, "net_pay": 4300, "status": "draft"},
-  {"id": "DAV-2026-04", "driver": "David Fonseca", "short": "DAVID", "role": "driver", "start": "2026-01-20", "end": "2026-01-26", "loads": 3, "total_adds": 7600, "overhead": 9972.3, "permits": 0, "expenses": 4304.37, "net_pay": -6676.67, "status": "draft"},
-  {"id": "DAV-2026-03", "driver": "David Fonseca", "short": "DAVID", "role": "driver", "start": "2026-01-13", "end": "2026-01-19", "loads": 1, "total_adds": 3600, "overhead": 6959.93, "permits": 0, "expenses": 3265.04, "net_pay": -6624.97, "status": "draft"},
-  {"id": "DAV-2026-02", "driver": "David Fonseca", "short": "DAVID", "role": "driver", "start": "2026-01-06", "end": "2026-01-12", "loads": 1, "total_adds": 7000, "overhead": 9876.67, "permits": 0, "expenses": 1879.26, "net_pay": -4755.93, "status": "draft"},
-  {"id": "DAV-2026-01", "driver": "David Fonseca", "short": "DAVID", "role": "driver", "start": "2025-12-30", "end": "2026-01-05", "loads": 1, "total_adds": 7000, "overhead": 10111.04, "permits": 0, "expenses": 4342.3, "net_pay": -7453.34, "status": "draft"},
-  {"id": "GUI-2026-03", "driver": "Guillermo Pinera", "short": "GUILLERMO", "role": "driver", "start": "2026-01-20", "end": "2026-01-26", "loads": 1, "total_adds": 4500, "overhead": 0, "permits": 0, "expenses": 0, "net_pay": 4500, "status": "draft"},
-  {"id": "GUI-2026-02", "driver": "Guillermo Pinera", "short": "GUILLERMO", "role": "driver", "start": "2026-01-06", "end": "2026-01-12", "loads": 2, "total_adds": 11000, "overhead": 8093.02, "permits": 0, "expenses": 3252.23, "net_pay": -345.25, "status": "draft"},
-  {"id": "GUI-2026-01", "driver": "Guillermo Pinera", "short": "GUILLERMO", "role": "driver", "start": "2025-12-30", "end": "2026-01-05", "loads": 1, "total_adds": 7000, "overhead": 8599.0, "permits": 0, "expenses": 2564.02, "net_pay": -4163.02, "status": "draft"},
-  {"id": "MIG-2026-03", "driver": "Miguel Fonseca", "short": "MIGUEL", "role": "driver", "start": "2026-01-13", "end": "2026-01-19", "loads": 1, "total_adds": 5500, "overhead": 0, "permits": 0, "expenses": 0, "net_pay": 5500, "status": "draft"},
-  {"id": "MIG-2026-02", "driver": "Miguel Fonseca", "short": "MIGUEL", "role": "driver", "start": "2026-01-06", "end": "2026-01-12", "loads": 2, "total_adds": 10000, "overhead": 0, "permits": 0, "expenses": 0, "net_pay": 10000, "status": "draft"},
-  {"id": "MIG-2026-01", "driver": "Miguel Fonseca", "short": "MIGUEL", "role": "driver", "start": "2025-12-30", "end": "2026-01-05", "loads": 1, "total_adds": 7000, "overhead": 0, "permits": 0, "expenses": 0, "net_pay": 7000, "status": "draft"},
-  {"id": "NEL-2026-04", "driver": "Nelson Veliz", "short": "NELSON", "role": "driver", "start": "2026-01-20", "end": "2026-01-26", "loads": 1, "total_adds": 6000, "overhead": 0, "permits": 0, "expenses": 0, "net_pay": 6000, "status": "draft"},
-  {"id": "NEL-2026-03", "driver": "Nelson Veliz", "short": "NELSON", "role": "driver", "start": "2026-01-13", "end": "2026-01-19", "loads": 1, "total_adds": 3300, "overhead": 0, "permits": 0, "expenses": 0, "net_pay": 3300, "status": "draft"},
-  {"id": "NEL-2026-02", "driver": "Nelson Veliz", "short": "NELSON", "role": "driver", "start": "2026-01-06", "end": "2026-01-12", "loads": 1, "total_adds": 4500, "overhead": 0, "permits": 0, "expenses": 0, "net_pay": 4500, "status": "draft"},
-  {"id": "NEL-2026-01", "driver": "Nelson Veliz", "short": "NELSON", "role": "driver", "start": "2025-12-30", "end": "2026-01-05", "loads": 1, "total_adds": 5100, "overhead": 0, "permits": 0, "expenses": 0, "net_pay": 5100, "status": "draft"},
-  {"id": "YOS-2026-02", "driver": "Yosviel Pinera", "short": "YOSVIEL", "role": "driver", "start": "2026-01-20", "end": "2026-01-26", "loads": 2, "total_adds": 3200, "overhead": 0, "permits": 0, "expenses": 0, "net_pay": 3200, "status": "draft"},
-  {"id": "YOS-2026-01", "driver": "Yosviel Pinera", "short": "YOSVIEL", "role": "driver", "start": "2026-01-13", "end": "2026-01-19", "loads": 1, "total_adds": 8000, "overhead": 0, "permits": 0, "expenses": 0, "net_pay": 8000, "status": "draft"},
+  // ── DISPATCHERS (role:"dispatcher", paid 5% of loads dispatched) ─────────
+  { id:"AMT-2026-11", driver:"Amet Abreu", short:"AMET", role:"dispatcher", dispatcher_rate:0.05, service_adj:0, start:"2026-05-12", end:"2026-05-18", loads:5, total_adds:47400, overhead:0, permits:0, expenses:0, net_pay:2370, status:"draft" },
+  { id:"AMT-2026-10", driver:"Amet Abreu", short:"AMET", role:"dispatcher", dispatcher_rate:0.05, service_adj:0, start:"2026-01-20", end:"2026-01-26", loads:9, total_adds:29600, overhead:0, permits:0, expenses:0, net_pay:1480, status:"draft" },
+  { id:"AMT-2026-09", driver:"Amet Abreu", short:"AMET", role:"dispatcher", dispatcher_rate:0.05, service_adj:0, start:"2026-01-13", end:"2026-01-19", loads:4, total_adds:20400, overhead:0, permits:0, expenses:0, net_pay:1020, status:"draft" },
+  { id:"AMT-2026-08", driver:"Amet Abreu", short:"AMET", role:"dispatcher", dispatcher_rate:0.05, service_adj:0, start:"2026-01-06", end:"2026-01-12", loads:6, total_adds:32500, overhead:0, permits:0, expenses:0, net_pay:1625, status:"draft" },
+  { id:"AMT-2025-07", driver:"Amet Abreu", short:"AMET", role:"dispatcher", dispatcher_rate:0.05, service_adj:0, start:"2025-12-23", end:"2025-12-29", loads:3, total_adds:14750, overhead:0, permits:0, expenses:0, net_pay:737.50, status:"approved" },
+  { id:"AMT-2025-06", driver:"Amet Abreu", short:"AMET", role:"dispatcher", dispatcher_rate:0.05, service_adj:0, start:"2025-12-16", end:"2025-12-22", loads:10, total_adds:46550, overhead:0, permits:0, expenses:0, net_pay:2327.50, status:"approved" },
+  { id:"BET-2026-01", driver:"Betty", short:"BETTY", role:"dispatcher", dispatcher_rate:0.05, service_adj:160, start:"2026-05-05", end:"2026-05-18", loads:2, total_adds:14150, overhead:0, permits:0, expenses:0, net_pay:867.50, status:"draft" },
+  // ── DRIVERS ──────────────────────────────────────────────────────────────
+  { id:"AVI-2025-03", driver:"Avis Modesto", short:"AVIS", role:"driver", start:"2025-12-16", end:"2025-12-22", loads:2, total_adds:8000, overhead:0, permits:0, expenses:0, net_pay:0, status:"approved" },
+  { id:"AVI-2025-02", driver:"Avis Modesto", short:"AVIS", role:"driver", start:"2025-11-10", end:"2025-11-30", loads:6, total_adds:51700, overhead:0, permits:0, expenses:0, net_pay:0, status:"approved" },
+  { id:"AVI-2025-01", driver:"Avis Modesto", short:"AVIS", role:"driver", start:"2025-09-24", end:"2025-11-09", loads:8, total_adds:47500, overhead:0, permits:0, expenses:0, net_pay:0, status:"approved" },
+  { id:"DAV-2026-09", driver:"David Fonseca", short:"DAVID", role:"driver", start:"2026-01-20", end:"2026-01-26", loads:3, total_adds:7600, overhead:9972, permits:0, expenses:4304, net_pay:-6677, status:"approved" },
+  { id:"DAV-2026-08", driver:"David Fonseca", short:"DAVID", role:"driver", start:"2026-01-13", end:"2026-01-19", loads:1, total_adds:3600, overhead:0, permits:0, expenses:0, net_pay:0, status:"approved" },
+  { id:"DAV-2026-07", driver:"David Fonseca", short:"DAVID", role:"driver", start:"2026-01-06", end:"2026-01-12", loads:1, total_adds:6000, overhead:0, permits:0, expenses:0, net_pay:0, status:"approved" },
+  { id:"DAV-2025-06", driver:"David Fonseca", short:"DAVID", role:"driver", start:"2025-12-09", end:"2025-12-15", loads:2, total_adds:18500, overhead:0, permits:0, expenses:0, net_pay:0, status:"approved" },
+  { id:"GUI-2026-08", driver:"Guillermo Pinera", short:"GUILLERMO", role:"driver", start:"2026-01-13", end:"2026-01-26", loads:2, total_adds:8500, overhead:8978, permits:0, expenses:0, net_pay:-479, status:"approved" },
+  { id:"GUI-2026-07", driver:"Guillermo Pinera", short:"GUILLERMO", role:"driver", start:"2026-01-06", end:"2026-01-12", loads:2, total_adds:11000, overhead:0, permits:0, expenses:0, net_pay:0, status:"approved" },
+  { id:"GUI-2025-06", driver:"Guillermo Pinera", short:"GUILLERMO", role:"driver", start:"2025-12-09", end:"2025-12-15", loads:2, total_adds:17000, overhead:0, permits:0, expenses:0, net_pay:0, status:"approved" },
+  { id:"MIG-2025-05", driver:"Miguel Fonseca", short:"MIGUEL", role:"driver", start:"2025-12-03", end:"2025-12-08", loads:2, total_adds:17000, overhead:8010, permits:107.95, expenses:0, net_pay:8882, status:"approved" },
+  { id:"MIG-2025-04", driver:"Miguel Fonseca", short:"MIGUEL", role:"driver", start:"2025-11-25", end:"2025-12-02", loads:1, total_adds:16000, overhead:0, permits:0, expenses:0, net_pay:0, status:"approved" },
+  { id:"MIG-2025-03", driver:"Miguel Fonseca", short:"MIGUEL", role:"driver", start:"2025-11-18", end:"2025-11-25", loads:1, total_adds:16000, overhead:0, permits:0, expenses:0, net_pay:0, status:"approved" },
+  { id:"NEL-2025-05", driver:"Nelson", short:"NELSON", role:"driver", start:"2025-12-09", end:"2025-12-15", loads:3, total_adds:12650, overhead:0, permits:0, expenses:0, net_pay:0, status:"approved" },
+  { id:"NEL-2025-04", driver:"Nelson", short:"NELSON", role:"driver", start:"2025-12-03", end:"2025-12-08", loads:2, total_adds:10600, overhead:0, permits:0, expenses:0, net_pay:0, status:"approved" },
+  { id:"NEL-2025-03", driver:"Nelson", short:"NELSON", role:"driver", start:"2025-11-25", end:"2025-12-02", loads:1, total_adds:4000, overhead:0, permits:0, expenses:0, net_pay:0, status:"approved" },
+  { id:"YOS-2025-01", driver:"Yosviel Pinera", short:"YOSVIEL", role:"driver", start:"2025-12-23", end:"2025-12-29", loads:1, total_adds:2750, overhead:0, permits:0, expenses:0, net_pay:0, status:"approved" },
 ];
 
 let _settleCache = [...SEED_SETTLEMENTS];
@@ -456,27 +461,61 @@ async function loadSettlements() {
 
 // Expanded detail data
 const expandDetails = {
-  "AMT-2026-04": { "loads": [{"date": "2026-01-20", "ref": "L10483", "broker": "Expressway Logistics", "amount": 3500}, {"date": "2026-01-20", "ref": "L10399", "broker": "Expressway Logistics", "amount": 2500}, {"date": "2026-01-21", "ref": "32840", "broker": "STT Logistics Group", "amount": 1600}, {"date": "2026-01-20", "ref": "L10399", "broker": "Expressway Logistics", "amount": 6000}, {"date": "2026-01-14", "ref": "120630", "broker": "Coast to Coast Log.", "amount": 4300}, {"date": "2026-01-22", "ref": "332500", "broker": "SET Logistics", "amount": 4500}, {"date": "2026-01-22", "ref": "130209", "broker": "LRS Logistics", "amount": 1200}, {"date": "2026-01-22", "ref": "C1", "broker": "Guilermo's Customer", "amount": 4000}, {"date": "2026-01-21", "ref": "130148", "broker": "LRS Nlogistics", "amount": 2000}] },
-  "AMT-2026-03": { "loads": [{"date": "2026-01-17", "ref": "118455", "broker": "Partner", "amount": 3300}, {"date": "2026-01-17", "ref": "L-10409", "broker": "Express Way", "amount": 5500}, {"date": "2026-01-18", "ref": "127030019", "broker": "Listo Svc", "amount": 8000}, {"date": "2026-01-18", "ref": "103246", "broker": "RLI", "amount": 3600}] },
-  "AMT-2026-02": { "loads": [{"date": "2026-01-08", "ref": "3073502", "broker": "King of Freight", "amount": 7000}, {"date": "2026-01-12", "ref": "1929467-01", "broker": "Jones", "amount": 3000}, {"date": "2026-01-08", "ref": "118150", "broker": "Partner", "amount": 7000}, {"date": "2026-01-10", "ref": "981448", "broker": "Nationwide", "amount": 4000}, {"date": "2026-01-12", "ref": "15072", "broker": "Piramid", "amount": 4500}, {"date": "2026-01-12", "ref": "115535259", "broker": "WT Logistics", "amount": 7000}] },
-  "AMT-2026-01": { "loads": [{"date": "2026-01-05", "ref": "1929469-01", "broker": "TAB", "amount": 7000}, {"date": "2026-01-05", "ref": "1929467-01", "broker": "TAB", "amount": 7000}, {"date": "2026-01-05", "ref": "1929465-01", "broker": "TAB", "amount": 7000}, {"date": "2026-01-05", "ref": "9349549", "broker": "Trinity", "amount": 5100}] },
-  "DAV-2026-04": { "loads": [{"date": "2026-01-20", "ref": "L10483", "broker": "Expressway Logistics", "amount": 3500}, {"date": "2026-01-20", "ref": "L10399", "broker": "Expressway Logistics", "amount": 2500}, {"date": "2026-01-21", "ref": "32840", "broker": "STT Logistics Group", "amount": 1600}] },
-  "DAV-2026-03": { "loads": [{"date": "2026-01-18", "ref": "103246", "broker": "RLI", "amount": 3600}] },
-  "DAV-2026-02": { "loads": [{"date": "2026-01-12", "ref": "115535259", "broker": "WT Logistics", "amount": 7000, "note": "\u26a0 Amt file $7K; David file $6K"}] },
-  "DAV-2026-01": { "loads": [{"date": "2026-01-05", "ref": "1929469-01", "broker": "TAB", "amount": 7000}] },
-  "GUI-2026-03": { "loads": [{"date": "2026-01-22", "ref": "332500", "broker": "SET Logistics", "amount": 4500}] },
-  "GUI-2026-02": { "loads": [{"date": "2026-01-08", "ref": "118150", "broker": "Partner", "amount": 7000}, {"date": "2026-01-10", "ref": "981448", "broker": "Nationwide", "amount": 4000}] },
-  "GUI-2026-01": { "loads": [{"date": "2026-01-05", "ref": "1929465-01", "broker": "TAB", "amount": 7000}] },
-  "MIG-2026-03": { "loads": [{"date": "2026-01-17", "ref": "L-10409", "broker": "Express Way", "amount": 5500}] },
-  "MIG-2026-02": { "loads": [{"date": "2026-01-08", "ref": "3073502", "broker": "King of Freight", "amount": 7000}, {"date": "2026-01-12", "ref": "1929467-01", "broker": "Jones", "amount": 3000}] },
-  "MIG-2026-01": { "loads": [{"date": "2026-01-05", "ref": "1929467-01", "broker": "TAB", "amount": 7000}] },
-  "NEL-2026-04": { "loads": [{"date": "2026-01-20", "ref": "L10399", "broker": "Expressway Logistics", "amount": 6000}] },
-  "NEL-2026-03": { "loads": [{"date": "2026-01-17", "ref": "118455", "broker": "Partner", "amount": 3300}] },
-  "NEL-2026-02": { "loads": [{"date": "2026-01-12", "ref": "15072", "broker": "Piramid", "amount": 4500}] },
-  "NEL-2026-01": { "loads": [{"date": "2026-01-05", "ref": "9349549", "broker": "Trinity", "amount": 5100}] },
-  "YOS-2026-02": { "loads": [{"date": "2026-01-22", "ref": "130209", "broker": "LRS Logistics", "amount": 1200}, {"date": "2026-01-21", "ref": "130148", "broker": "LRS Nlogistics", "amount": 2000}] },
-  "YOS-2026-01": { "loads": [{"date": "2026-01-18", "ref": "127030019", "broker": "Listo Svc", "amount": 8000}] },
-  "AVI-2026-01": { "loads": [{"date": "2026-01-14", "ref": "120630", "broker": "Coast to Coast Log.", "amount": 4300}] },
+  // ── Dispatcher detail entries ─────────────────────────────────────────
+  "AMT-2026-11": {
+    loads: [
+      { date:"2026-05-06", ref:"1390",      broker:"Land Air & Sea",     amount:5400 },
+      { date:"2026-05-11", ref:"357170",    broker:"Citation Logistics",  amount:12000 },
+      { date:"2026-05-11", ref:"10482659",  broker:"ATS",                 amount:10000 },
+      { date:"2026-05-14", ref:"1",         broker:"Witcher",             amount:15000 },
+      { date:"2026-05-15", ref:"35544",     broker:"All-Quip",            amount:5000 },
+    ],
+    overhead: []
+  },
+  "BET-2026-01": {
+    loads: [
+      { date:"2026-05-12", ref:"LGXM2959",  broker:"LGX Freight Solutions",   amount:9150 },
+      { date:"2026-05-15", ref:"U6477129",  broker:"Nationwide Logistics",    amount:5000 },
+    ],
+    overhead: []
+  },
+  // ── Driver detail entries ─────────────────────────────────────────────
+  "DAV-2026-09": {
+    loads: [
+      { ref:"L10483", broker:"Expressway Logistics", amount:3500 },
+      { ref:"L10399", broker:"Expressway Logistics", amount:2500 },
+      { ref:"32840", broker:"STT Logistics", amount:1600 },
+    ],
+    overhead: [
+      { label:"Dispatch 14%", amount:1064 },
+      { label:"Previous Pay Neg", amount:6624.97 },
+      { label:"Trailer Rental", amount:883.33 },
+      { label:"Insurance", amount:400 },
+      { label:"Zelle", amount:1000 },
+    ]
+  },
+  "GUI-2026-08": {
+    loads: [
+      { ref:"35544", broker:"Allquip", amount:4500 },
+      { ref:"332500", broker:"Set Logistics", amount:4000 },
+    ],
+    overhead: [
+      { label:"Dispatch 14%", amount:1190 },
+      { label:"Trailer Rental", amount:5788 },
+      { label:"Insurance", amount:2000 },
+    ]
+  },
+  "MIG-2025-05": {
+    loads: [
+      { ref:"35544", broker:"Allquip", amount:9000 },
+      { ref:"35545", broker:"Allquip", amount:8000 },
+    ],
+    overhead: [
+      { label:"Dispatch 14%", amount:2380 },
+      { label:"Trailer Rental", amount:3630 },
+      { label:"Insurance", amount:2000 },
+    ]
+  }
 };
 
 const driverColors = {
