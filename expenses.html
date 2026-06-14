@@ -192,14 +192,18 @@ async function renderExpenses(){
     <td style="text-align:right;font-weight:700;color:#0f172a;">${fmt(e.amount)}</td>
     <td><button class="btn btn-sm" onclick="editExp('${e.id}')">Edit</button> <button class="btn btn-sm" style="color:#ef4444" onclick="delExp('${e.id}')">Del</button></td>
   </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:32px;">No expenses recorded. Click + Add Expense to start.</td></tr>';
-  const nonRev=_expCache.filter(e=>e.category!=='Revenue');
+  const nonRev=_expCache.filter(e=>e.category!=='Revenue' && !e.is_carry_forward);
   const revCount=_expCache.filter(e=>e.category==='Revenue').length;
+  const cfCount=_expCache.filter(e=>e.is_carry_forward).length;
   const tot=nonRev.reduce((s,e)=>s+Number(e.amount),0);
   const fuel=nonRev.filter(e=>e.category==='Fuel').reduce((s,e)=>s+Number(e.amount),0);
   const rep=nonRev.filter(e=>e.category==='Repair'||e.category==='Parts').reduce((s,e)=>s+Number(e.amount),0);
   const oth=nonRev.filter(e=>!['Fuel','Repair','Parts'].includes(e.category)).reduce((s,e)=>s+Number(e.amount),0);
   document.getElementById('kpi-total').textContent=fmt(tot);
-  const countNote=revCount>0?` (${revCount} revenue entries excluded)`:'';
+  const excl=[];
+  if(revCount>0) excl.push(revCount+' revenue');
+  if(cfCount>0) excl.push(cfCount+' carry-fwd');
+  const countNote=excl.length?` (${excl.join(', ')} excluded)`:'';
   document.getElementById('kpi-count').textContent=nonRev.length+' entries'+countNote;
   document.getElementById('kpi-fuel').textContent=fmt(fuel);
   document.getElementById('kpi-repairs').textContent=fmt(rep);

@@ -161,3 +161,46 @@ window.NEXUS_SEED_SETTLEMENTS = [{"id":"AMT-2026-04","driver":"Amet Abreu","shor
     localStorage.setItem(MIGRATION_KEY, '1');
   } catch(err) { console.warn('[Nexus Migration] dispatch_desc failed:', err); }
 })();
+
+// DATA MIGRATION v20260614b: Tag carry_forward expense entries + add carry_forward to settlements
+(function patchCarryForwards(){
+  try {
+    const CF_KEY = 'nexus_migration_carry_forward_v1';
+    if(localStorage.getItem(CF_KEY)) return;
+
+    const cfRe = /previous pay negative|negative from previous|negative.*period|previous.*negative/i;
+
+    // Tag expense carry_forward entries
+    const exps = JSON.parse(localStorage.getItem('nexus_expenses')||'[]');
+    let ePatched = 0;
+    const expsFixed = exps.map(e => {
+      if(cfRe.test(e.description||'') && !e.is_carry_forward) {
+        ePatched++;
+        return {...e, is_carry_forward: true};
+      }
+      return e;
+    });
+    if(ePatched > 0) localStorage.setItem('nexus_expenses', JSON.stringify(expsFixed));
+
+    // Add carry_forward field to settlements
+    const setts = JSON.parse(localStorage.getItem('nexus_settlements')||'[]');
+    const cfEntsByDriver = {};
+    expsFixed.filter(e=>e.is_carry_forward).forEach(e=>{
+      const drv = (e.driver||'').toUpperCase().split(' ')[0];
+      if(!cfEntsByDriver[drv]) cfEntsByDriver[drv]=[];
+      cfEntsByDriver[drv].push({date:e.date, amount:parseFloat(e.amount)});
+    });
+
+    const settsFixed = setts.map(s=>{
+      if(s.carry_forward !== undefined) return s; // already set
+      const drv = (s.short || (s.driver||'').toUpperCase().split(' ')[0]);
+      const cfList = (cfEntsByDriver[drv]||[]).filter(cf=>cf.date>=s.start&&cf.date<=s.end);
+      const match = cfList[0];
+      return {...s, carry_forward: match ? -(match.amount) : 0};
+    });
+    localStorage.setItem('nexus_settlements', JSON.stringify(settsFixed));
+
+    localStorage.setItem(CF_KEY, '1');
+    console.log('[Nexus Migration] carry_forward: tagged '+ePatched+' expense entries, patched '+settsFixed.length+' settlements');
+  } catch(err) { console.warn('[Nexus Migration] carry_forward failed:', err); }
+})();
