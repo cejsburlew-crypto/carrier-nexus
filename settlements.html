@@ -765,23 +765,23 @@ function viewPDF(id){
   <div class="stmt-period">${isDisp ? 'Start Date: '+fmtLong(s.start)+'&nbsp;&nbsp;End Date: '+fmtLong(s.end) : 'Pay period '+fmtLong(s.start)+' – '+fmtLong(s.end)}</div>
 
   <!-- INFO TABLE -->
-  ${isDisp ? \`<table class="info-tbl">
+  ${isDisp ? `<table class="info-tbl">
     <thead><tr><th>DISPATCHER</th><th>STATEMENT #</th><th>RATE</th><th>TOTAL PAY</th></tr></thead>
     <tbody><tr>
-      <td><strong>\${s.driver}</strong></td>
-      <td>\${s.id}</td>
-      <td>\${Math.round((s.dispatcher_rate||0.05)*100)}%</td>
-      <td class="net-val"><strong>\${fmtMoney(netDisplay)}</strong></td>
+      <td><strong>${s.driver}</strong></td>
+      <td>${s.id}</td>
+      <td>${Math.round((s.dispatcher_rate||0.05)*100)}%</td>
+      <td class="net-val"><strong>${fmtMoney(netDisplay)}</strong></td>
     </tr></tbody>
-  </table>\` : \`<table class="info-tbl">
+  </table>` : `<table class="info-tbl">
     <thead><tr><th>DRIVER</th><th>TRUCK</th><th>STATEMENT #</th><th>NET PAY</th></tr></thead>
     <tbody><tr>
-      <td><strong>\${s.driver}</strong></td>
-      <td>\${truck}</td>
-      <td>\${s.id}</td>
-      <td class="net-val"><strong>\${fmtMoney(netDisplay,true)}</strong></td>
+      <td><strong>${s.driver}</strong></td>
+      <td>${truck}</td>
+      <td>${s.id}</td>
+      <td class="net-val"><strong>${fmtMoney(netDisplay,true)}</strong></td>
     </tr></tbody>
-  </table>\`}
+  </table>`}
 
   <!-- MAIN TABLE -->
   <table class="main-tbl">
