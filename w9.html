@@ -201,12 +201,10 @@ input:focus{outline:none;border-color:var(--accent)}
 </div>
 
 <script>
-const{jsPDF}=window.jspdf;
 let taxClass='';
 
 async function init(){
-  await NexusDB.init();
-  document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
+    document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
   const drivers=await NexusDB.Drivers.list();
   const sel=document.getElementById('drv-sel');
   drivers.forEach(d=>{
@@ -268,6 +266,7 @@ function clearForm(){
 }
 
 function exportPDF(){
+  const{jsPDF}=window.jspdf;
   const name=document.getElementById('f-name').value.trim();
   if(!name){status('Enter a name before exporting.','s-err');return;}
   const doc=new jsPDF({orientation:'portrait',unit:'pt',format:'letter'});

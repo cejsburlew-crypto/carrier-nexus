@@ -646,8 +646,8 @@ function submitAddDoc(e){
 }
 
 // Close modals on backdrop click
-document.getElementById('sync-modal').addEventListener('click', function(e){ if(e.target===this) closeSyncModal(); });
-document.getElementById('add-doc-modal').addEventListener('click', function(e){ if(e.target===this) closeAddDocModal(); });
+const _sm=document.getElementById('sync-modal'); if(_sm)_sm.addEventListener('click', function(e){ if(e.target===this) closeSyncModal(); });
+const _adm=document.getElementById('add-doc-modal'); if(_adm)_adm.addEventListener('click', function(e){ if(e.target===this) closeAddDocModal(); });
 
 
 /* ── VAULT TREE ──────────────────────────────────────────── */
