@@ -1134,13 +1134,8 @@
   const roleInfo = document.getElementById('roleInfo');
   // If already authenticated, skip login
   (async () => {
-    if (NexusDB && NexusDB.isConfigured) {
-      const session = await NexusDB.Auth.getSession();
-      if (session) { const _sr=session.user?.user_metadata?.role||'staff'; window.location.href = _sr==='driver'?'driver-portal.html':_sr==='dispatcher'?'dispatcher-hub.html':'fleet-command.html'; return; }
-    } else {
-      const local = localStorage.getItem('nexus_session');
-      if (local) { const _lr=JSON.parse(local).role||'staff'; window.location.href = _lr==='driver'?'driver-portal.html':_lr==='dispatcher'?'dispatcher-hub.html':'fleet-command.html'; return; }
-    }
+    const local = localStorage.getItem('nexus_session');
+    if (local) { const _lr=JSON.parse(local).role||'staff'; window.location.href = _lr==='driver'?'driver-portal.html':_lr==='dispatcher'?'dispatcher-hub.html':'fleet-command.html'; return; }
   })();
 
   const loginBtn = document.getElementById('loginBtn');
@@ -1215,11 +1210,7 @@
 
     loginBtn.classList.add('loading');
     try {
-      if (NexusDB.isConfigured) {
-        // Real Supabase auth
-        await NexusDB.Auth.signIn(email, password);
-      } else {
-        // Local auth: validate against NEXUS_LOCAL_USERS (SHA-256 hashed passwords)
+      // Local auth: validate against NEXUS_LOCAL_USERS (SHA-256 hashed passwords)
         const users = window.NEXUS_LOCAL_USERS || [];
         const msgBuf = new TextEncoder().encode(password);
         const hashBuf = await crypto.subtle.digest('SHA-256', msgBuf);
@@ -1233,7 +1224,6 @@
         const localSession = { email: match.email, role: match.role, name: match.name || 'User', ts: Date.now() };
         localStorage.setItem('nexus_session', JSON.stringify(localSession));
         await new Promise(r => setTimeout(r, 400));
-      }
       loginBtn.classList.remove('loading');
       const _sess = JSON.parse(localStorage.getItem('nexus_session')||'{}');
       const _role = _sess.role || 'staff';
