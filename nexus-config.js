@@ -204,3 +204,106 @@ window.NEXUS_SEED_SETTLEMENTS = [{"id":"AMT-2026-04","driver":"Amet Abreu","shor
     console.log('[Nexus Migration] carry_forward: tagged '+ePatched+' expense entries, patched '+settsFixed.length+' settlements');
   } catch(err) { console.warn('[Nexus Migration] carry_forward failed:', err); }
 })();
+
+// ============================================================
+// MEMBER ID SYSTEM
+// Format: {FI}{LI}{YY}{DDD}.{N}
+// FI = first initial, LI = last initial, YY = 2-digit year,
+// DDD = 3-digit day-of-year (Julian), N = collision counter (.0/.1/.2...)
+// Generated at first login. Never changes. Never deleted.
+// ============================================================
+window.nexusMemberId = function(firstName, lastName, loginDate) {
+  var d = loginDate ? new Date(loginDate) : new Date();
+  var yy = String(d.getFullYear()).slice(2);
+  var start = new Date(d.getFullYear(), 0, 0);
+  var diff = d - start;
+  var doy = Math.floor(diff / 86400000);
+  var base = (firstName[0]||'X').toUpperCase() + (lastName[0]||'X').toUpperCase() + yy + String(doy).padStart(3,'0');
+  // Check existing members for collision
+  var allMembers = [];
+  try { allMembers = JSON.parse(localStorage.getItem('nexus_member_profiles')||'[]'); } catch(e){}
+  var collisions = allMembers.filter(function(m){ return m.memberId && m.memberId.startsWith(base+'.'); }).length;
+  return base + '.' + collisions;
+};
+
+// ============================================================
+// SEEDED MEMBER PROFILES (universal person directory)
+// One record per human — never deleted. Company memberships are separate.
+// ============================================================
+window.NEXUS_SEED_MEMBERS = [
+  { id:'mem_001', memberId:'JB26148.0', firstName:'Jim', lastName:'Burlew', email:'jim.burlew@jbca-inc.com', phone:'', type:'admin', mc:'', dot:'', createdAt:'2026-05-28' },
+  { id:'mem_002', memberId:'AA26165.0', firstName:'Ana', lastName:'Abreu', email:'crtruckus2@gmail.com', phone:'', type:'staff', mc:'', dot:'', createdAt:'2026-06-14' },
+  { id:'mem_003', memberId:'AA26148.0', firstName:'Amet', lastName:'Abreu', email:'', phone:'', type:'dispatcher', mc:'', dot:'', createdAt:'2026-05-28' },
+  { id:'mem_004', memberId:'BG26148.0', firstName:'Betty', lastName:'Gutierrez', email:'', phone:'', type:'dispatcher', mc:'', dot:'', createdAt:'2026-05-28' },
+  { id:'mem_005', memberId:'DF26148.0', firstName:'David', lastName:'Fonseca', email:'', phone:'', type:'owner_operator', mc:'MC 1688495-C', dot:'US DOT 4326039', createdAt:'2026-05-28' },
+  { id:'mem_006', memberId:'GP26148.0', firstName:'Guillermo', lastName:'Pinera', email:'', phone:'', type:'owner_operator', mc:'', dot:'', createdAt:'2026-05-28' },
+  { id:'mem_007', memberId:'MF26148.0', firstName:'Miguel', lastName:'Fonseca', email:'', phone:'', type:'driver', mc:'', dot:'', createdAt:'2026-05-28' },
+  { id:'mem_008', memberId:'NV26148.0', firstName:'Nelson', lastName:'Veliz', email:'', phone:'', type:'driver', mc:'', dot:'', createdAt:'2026-05-28' },
+  { id:'mem_009', memberId:'YP26148.0', firstName:'Yosviel', lastName:'Pinera', email:'', phone:'', type:'driver', mc:'', dot:'', createdAt:'2026-05-28' },
+  { id:'mem_010', memberId:'AM26148.0', firstName:'Avis', lastName:'Modesto', email:'', phone:'', type:'driver', mc:'', dot:'', createdAt:'2026-05-28' }
+];
+
+// ============================================================
+// SEEDED COMPANY MEMBERSHIPS
+// status: active | inactive | terminated | pending_rejoin
+// roles: array — admin, dispatcher, driver, owner_operator, preparer, viewer
+// ============================================================
+window.NEXUS_SEED_COMPANY_MEMBERS = [
+  { id:'cm_001', memberId:'JB26148.0', companyId:'carrier-trucking-us', roles:['admin'], status:'active', joinedAt:'2026-05-28', deactivatedAt:null, terminatedAt:null, approvedBy:null, notes:'' },
+  { id:'cm_002', memberId:'AA26165.0', companyId:'carrier-trucking-us', roles:['admin','preparer'], status:'active', joinedAt:'2026-06-14', deactivatedAt:null, terminatedAt:null, approvedBy:'JB26148.0', notes:'' },
+  { id:'cm_003', memberId:'AA26148.0', companyId:'carrier-trucking-us', roles:['dispatcher'], status:'active', joinedAt:'2026-05-28', deactivatedAt:null, terminatedAt:null, approvedBy:'JB26148.0', notes:'' },
+  { id:'cm_004', memberId:'BG26148.0', companyId:'carrier-trucking-us', roles:['dispatcher'], status:'active', joinedAt:'2026-05-28', deactivatedAt:null, terminatedAt:null, approvedBy:'JB26148.0', notes:'' },
+  { id:'cm_005', memberId:'DF26148.0', companyId:'carrier-trucking-us', roles:['owner_operator'], status:'active', joinedAt:'2026-05-28', deactivatedAt:null, terminatedAt:null, approvedBy:'JB26148.0', notes:'' },
+  { id:'cm_006', memberId:'GP26148.0', companyId:'carrier-trucking-us', roles:['owner_operator'], status:'active', joinedAt:'2026-05-28', deactivatedAt:null, terminatedAt:null, approvedBy:'JB26148.0', notes:'' },
+  { id:'cm_007', memberId:'MF26148.0', companyId:'carrier-trucking-us', roles:['driver'], status:'active', joinedAt:'2026-05-28', deactivatedAt:null, terminatedAt:null, approvedBy:'JB26148.0', notes:'' },
+  { id:'cm_008', memberId:'NV26148.0', companyId:'carrier-trucking-us', roles:['driver'], status:'active', joinedAt:'2026-05-28', deactivatedAt:null, terminatedAt:null, approvedBy:'JB26148.0', notes:'' },
+  { id:'cm_009', memberId:'YP26148.0', companyId:'carrier-trucking-us', roles:['driver'], status:'active', joinedAt:'2026-05-28', deactivatedAt:null, terminatedAt:null, approvedBy:'JB26148.0', notes:'' },
+  { id:'cm_010', memberId:'AM26148.0', companyId:'carrier-trucking-us', roles:['driver'], status:'active', joinedAt:'2026-05-28', deactivatedAt:null, terminatedAt:null, approvedBy:'JB26148.0', notes:'' }
+];
+
+// Boot: write seeds to localStorage if not yet present
+(function seedMemberData(){
+  try {
+    if(!localStorage.getItem('nexus_member_profiles')) {
+      localStorage.setItem('nexus_member_profiles', JSON.stringify(window.NEXUS_SEED_MEMBERS));
+    }
+    if(!localStorage.getItem('nexus_company_members')) {
+      localStorage.setItem('nexus_company_members', JSON.stringify(window.NEXUS_SEED_COMPANY_MEMBERS));
+    }
+    // Seed Ana's login account if not present
+    var users = JSON.parse(localStorage.getItem('nexus_users')||'[]');
+    var hasAna = users.some(function(u){ return u.email === 'crtruckus2@gmail.com'; });
+    if(!hasAna) {
+      users.push({
+        id:'usr_002', email:'crtruckus2@gmail.com',
+        passwordHash:'', // no password until Ana sets it via invite flow
+        role:'admin', name:'Ana Abreu', memberId:'AA26165.0', active:false,
+        invitePending:true, createdAt:'2026-06-14'
+      });
+      localStorage.setItem('nexus_users', JSON.stringify(users));
+    }
+  } catch(e) { console.warn('[Nexus] Member seed failed:', e); }
+})();
+
+// Member helpers — used across the app
+window.NexusMembers = {
+  all: function() {
+    try { return JSON.parse(localStorage.getItem('nexus_member_profiles')||'[]'); } catch(e){ return []; }
+  },
+  save: function(arr) { localStorage.setItem('nexus_member_profiles', JSON.stringify(arr)); },
+  byId: function(mid) { return window.NexusMembers.all().find(function(m){ return m.memberId===mid; }); },
+  companyMembers: function(companyId) {
+    try {
+      var cms = JSON.parse(localStorage.getItem('nexus_company_members')||'[]');
+      return cms.filter(function(cm){ return cm.companyId===(companyId||'carrier-trucking-us'); });
+    } catch(e){ return []; }
+  },
+  saveCompanyMembers: function(arr) { localStorage.setItem('nexus_company_members', JSON.stringify(arr)); },
+  activeMembersForCompany: function(companyId) {
+    var cms = window.NexusMembers.companyMembers(companyId).filter(function(cm){ return cm.status==='active'; });
+    return cms.map(function(cm){
+      var p = window.NexusMembers.byId(cm.memberId);
+      return p ? Object.assign({}, p, { companyMember: cm }) : null;
+    }).filter(Boolean);
+  }
+};

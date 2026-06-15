@@ -115,6 +115,9 @@
     </div>
 
     <div class="sidebar-section">
+      <div class="sidebar-section-label">Admin</div>
+      <a href="member-management.html" class="sidebar-link\${active('member-management.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M10 8a3 3 0 100-6 3 3 0 000 6zm-7 6s-1 0-1-1 1-4 8-4 8 3 8 4-1 1-1 1H3zM3 5a2 2 0 110 4 2 2 0 010-4z"/></svg>Members</a>
+      <a href="admin-users.html" class="sidebar-link\${active('admin-users.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 110 6A3 3 0 018 1zm5 11c0-2.21-2.24-4-5-4S3 9.79 3 12v1h10v-1z"/></svg>User Accounts</a>
       <div class="sidebar-section-label">Intelligence</div>
       <a href="nexus-ai.html" class="sidebar-link${active('nexus-ai.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v5l4.5 2.7-.7-1.2-3.8-2.3V5z"/></svg>Nexus AI</a>
       <a href="analysis.html" class="sidebar-link${active('analysis.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h2v-4H2zm3 0h2V6H5zm3 0h2V4H8zm3 0h2V2h-2z"/></svg>Analytics</a>
