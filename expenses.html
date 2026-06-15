@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Expenses — Carrier Nexus</title>
+<title>Expenses & Payments — Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--sb:#000;--orange:#e8640a;--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
-/* SIDEBAR */
 .sidebar{width:220px;min-height:100vh;background:#000;border-right:1px solid #1a1a1a;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
 .sidebar-logo{padding:16px;display:flex;align-items:center;gap:10px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.07);}
 .sidebar-logo .logo-hex svg{width:36px;height:36px;display:block;}
@@ -23,12 +22,10 @@ body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:fl
 .sidebar-link.active{background:rgba(233,30,140,0.22);border-left:3px solid #e91e8c;color:#fff;}
 .sidebar-link svg{width:14px;height:14px;flex-shrink:0;opacity:.7;}
 .sidebar-link.active svg{opacity:1;}
-.nav-badge{margin-left:auto;background:#e91e8c;color:#fff;font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 6px;border-radius:10px;}
 .sidebar-spacer{flex:1;}
 .sidebar-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.07);}
 .user-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.6);font-weight:500;}
 .user-role{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);margin-top:2px;}
-/* MAIN */
 .main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
 .topbar{height:56px;background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50;}
 .topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#fff;flex:1;}
@@ -44,13 +41,22 @@ body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:fl
 .panel-head{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
 .panel-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:#0f172a;letter-spacing:.06em;text-transform:uppercase;}
 /* TABLE */
-table{width:100%;border-collapse:collapse;}
-th{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:10px 16px;text-align:left;background:#f8fafc;border-bottom:1px solid var(--border);}
-td{padding:11px 16px;font-size:13px;color:#0f172a;border-bottom:1px solid #f8fafc;}
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:900px;}
+th{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:10px 12px;text-align:left;background:#f8fafc;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:10px 12px;font-size:12px;color:#0f172a;border-bottom:1px solid #f8fafc;vertical-align:top;}
 tr:last-child td{border-bottom:none;}
-tr:hover td{background:#f8fafc;}
+tr:hover:not(.row-deleted) td{background:#f8fafc;}
+/* SOFT DELETE */
+tr.row-deleted td{background:#fef2f2 !important;opacity:.65;}
+tr.row-deleted td.cell-main{text-decoration:line-through;color:#94a3b8;}
+.deleted-stamp{font-family:'JetBrains Mono',monospace;font-size:9px;color:#ef4444;display:block;margin-top:3px;}
+/* AUDIT */
+.audit-cell{font-family:'JetBrains Mono',monospace;font-size:9px;color:#64748b;line-height:1.5;}
+.audit-cell span{display:block;}
+.audit-by{color:#0f172a;font-weight:600;}
 /* BADGES */
-.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;display:inline-block;}
+.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;display:inline-block;}
 .badge-green{background:#dcfce7;color:#15803d;}
 .badge-red{background:#fee2e2;color:#b91c1c;}
 .badge-yellow{background:#fef9c3;color:#a16207;}
@@ -58,204 +64,672 @@ tr:hover td{background:#f8fafc;}
 .badge-gray{background:#f1f5f9;color:#64748b;}
 .badge-orange{background:#ffedd5;color:#c2410c;}
 .badge-purple{background:#ede9fe;color:#6d28d9;}
+.badge-pink{background:#fce7f3;color:#be185d;}
+.badge-teal{background:#ccfbf1;color:#0f766e;}
 /* BTNS */
-.btn{padding:7px 16px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.8px;cursor:pointer;border:1px solid var(--border);background:#fff;color:#334155;transition:all .15s;}
+.btn{padding:7px 16px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.8px;cursor:pointer;border:1px solid var(--border);background:#fff;color:#334155;transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
 .btn:hover{background:#f1f5f9;}
 .btn-primary{background:var(--blue);color:#fff;border-color:var(--blue);}
 .btn-primary:hover{background:#1d5a8a;}
 .btn-orange{background:var(--orange);color:#fff;border-color:var(--orange);}
-.btn-sm{padding:5px 12px;font-size:11px;}
-.mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue);}
+.btn-orange:hover{background:#c2540a;}
+.btn-green{background:#16a34a;color:#fff;border-color:#16a34a;}
+.btn-sm{padding:4px 10px;font-size:11px;}
+.btn-icon{padding:5px 8px;min-width:0;}
+.mono{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue);}
+/* TOGGLE */
+.toggle-wrap{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none;}
+.toggle{width:34px;height:18px;border-radius:9px;background:#cbd5e1;position:relative;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:#e91e8c;}
+.toggle::after{content:'';width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle.on::after{left:18px;}
 /* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
-.modal-box{background:#fff;border-radius:10px;width:92%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
-.modal-hdr{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:18px 24px;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between;}
+.modal-box{background:#fff;border-radius:10px;width:96%;max-width:580px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.modal-hdr{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:18px 24px;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1;}
 .modal-hdr-title{color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:2px;}
-.modal-close{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;}
+.modal-close{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1;}
 .modal-body{padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
 .form-group.full{grid-column:1/3;}
+.form-group.thirds{grid-column:span 1;}
 .form-label{font-size:11px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:1px;}
-.form-input{width:100%;padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:6px;font-size:14px;color:#0f172a;font-family:'Barlow',sans-serif;}
-.form-input:focus{outline:none;border-color:var(--blue);}
-.modal-footer{padding:0 24px 24px;display:flex;gap:10px;justify-content:flex-end;}
+.form-label .req{color:#ef4444;}
+.form-input{width:100%;padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:6px;font-size:14px;color:#0f172a;font-family:'Barlow',sans-serif;background:#fff;}
+.form-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(46,109,164,.12);}
+select.form-input{cursor:pointer;}
+.form-hint{font-size:11px;color:var(--muted);margin-top:2px;}
+.section-divider{grid-column:1/3;border:none;border-top:1px dashed #e2e8f0;margin:4px 0;}
+.section-label{grid-column:1/3;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.modal-footer{padding:0 24px 24px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
+/* AUDIT PANEL */
+.audit-log-section{background:#f8fafc;border-top:1px solid var(--border);padding:16px 24px;}
+.audit-log-title{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+.audit-entry{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px solid #e2e8f0;font-size:12px;}
+.audit-entry:last-child{border-bottom:none;}
+.audit-dot{width:8px;height:8px;border-radius:50%;margin-top:3px;flex-shrink:0;}
+.audit-dot-create{background:#22c55e;}
+.audit-dot-edit{background:#2e6da4;}
+.audit-dot-delete{background:#ef4444;}
+.audit-dot-restore{background:#f59e0b;}
+.audit-text{flex:1;line-height:1.4;}
+.audit-ts{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap;}
+/* ZELLE badge */
+.badge-zelle{background:#6600cc22;color:#6600cc;border:1px solid #6600cc44;}
 /* MOBILE */
-.mobile-nav{display:none;}
 @media(max-width:768px){
   .sidebar{display:none;}
   .main{margin-left:0;}
   .content{padding:14px 12px 80px;}
   .kpi-row{grid-template-columns:1fr 1fr;gap:10px;}
-  .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:60px;background:rgba(0,0,0,0.97);border-top:1px solid rgba(233,30,140,0.2);justify-content:space-around;align-items:center;z-index:200;}
-  .mn-tab{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:rgba(168,196,224,0.45);font-size:9px;font-family:'JetBrains Mono',monospace;flex:1;padding:6px 0;}
-  .mn-tab svg{width:20px;height:20px;opacity:.6;}
-  .mn-tab.active{color:#e91e8c;}
-  .mn-tab.active svg{opacity:1;}
+  .modal-box{width:100%;max-height:100vh;border-radius:0;}
+  .modal-body{grid-template-columns:1fr;}
+  .form-group.full,.section-divider,.section-label{grid-column:1/2;}
 }
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 </style>
-<!-- v20260614-exp1 -->
 </head>
 <body>
 <script src="nexus-sidebar.js"></script>
 <div class="main">
   <div class="topbar">
-    <div class="topbar-title">EXPENSE TRACKER</div>
-    <div style="display:flex;gap:10px;align-items:center;">
-      <div style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#22c55e;letter-spacing:1px;"><span style="width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;display:inline-block;"></span>LIVE</div>
-      <button class="btn btn-orange" onclick="openExpModal()">+ Add Expense</button>
+    <div class="topbar-title">EXPENSES & PAYMENTS</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <label class="toggle-wrap" onclick="toggleDeleted()">
+        <div class="toggle" id="del-toggle"></div>
+        <span id="del-label">Show deleted</span>
+      </label>
+      <button class="btn btn-orange" onclick="openModal()">+ Add Entry</button>
     </div>
   </div>
   <div class="content">
-    
-<div class="kpi-row">
-  <div class="kpi-card"><div class="kpi-label">Total This Period</div><div class="kpi-val" id="kpi-total">$0</div><div class="kpi-sub" id="kpi-count">0 entries</div></div>
-  <div class="kpi-card"><div class="kpi-label">Fuel</div><div class="kpi-val" id="kpi-fuel" style="color:#2e6da4;">$0</div><div class="kpi-sub">This period</div></div>
-  <div class="kpi-card"><div class="kpi-label">Repairs</div><div class="kpi-val" id="kpi-repairs" style="color:#ef4444;">$0</div><div class="kpi-sub">This period</div></div>
-  <div class="kpi-card"><div class="kpi-label">Other</div><div class="kpi-val" id="kpi-other" style="color:#e8640a;">$0</div><div class="kpi-sub">Permits, parts, misc</div></div>
-</div>
 
-<div class="panel">
-  <div class="panel-head">
-    <span class="panel-title">Expense Log</span>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <select id="f-driver" onchange="renderExpenses()" class="btn btn-sm">
-        <option value="">All Drivers</option>
-        <option>Avis Modesto</option><option>Miguel Fonseca</option><option>Guillermo Pinera</option>
-        <option>David Fonseca</option><option>Nelson</option><option>Yosviel Pinera</option>
-        <option>Amet Abreu</option><option>Betty</option>
-      </select>
-      <select id="f-cat" onchange="renderExpenses()" class="btn btn-sm">
-        <option value="">All Categories</option>
-        <option>Fuel</option><option>Repair</option><option>Parts</option><option>Permit</option>
-        <option>Tire</option><option>Miscellaneous</option><option>Tolls</option><option>Meals</option>
-      </select>
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Payments Out</div>
+        <div class="kpi-val" id="kpi-total" style="color:#ef4444;">$0</div>
+        <div class="kpi-sub" id="kpi-count">0 active entries</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Zelle / ACH</div>
+        <div class="kpi-val" id="kpi-zelle" style="color:#6600cc;">$0</div>
+        <div class="kpi-sub">Driver & dispatcher payments</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Fuel</div>
+        <div class="kpi-val" id="kpi-fuel" style="color:#2e6da4;">$0</div>
+        <div class="kpi-sub">This period</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Overhead / Other</div>
+        <div class="kpi-val" id="kpi-other" style="color:#e8640a;">$0</div>
+        <div class="kpi-sub">Trailer, insurance, misc</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Expense & Payment Log</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <select id="f-person" onchange="render()" class="btn btn-sm" style="font-family:'Barlow',sans-serif;">
+            <option value="">All People</option>
+            <option>Avis Modesto</option><option>Miguel Fonseca</option><option>Guillermo Pinera</option>
+            <option>David Fonseca</option><option>Nelson</option><option>Yosviel Pinera</option>
+            <option>Amet Abreu</option><option>Betty</option>
+          </select>
+          <select id="f-cat" onchange="render()" class="btn btn-sm" style="font-family:'Barlow',sans-serif;">
+            <option value="">All Categories</option>
+            <option>Driver Pay</option><option>Commission</option><option>Zelle Payment</option>
+            <option>Fuel</option><option>Trailer Rental</option><option>Insurance</option>
+            <option>Repair</option><option>Parts</option><option>Permit</option>
+            <option>Tire</option><option>Advance</option><option>Tolls</option><option>Meals</option><option>Miscellaneous</option>
+          </select>
+          <select id="f-method" onchange="render()" class="btn btn-sm" style="font-family:'Barlow',sans-serif;">
+            <option value="">All Methods</option>
+            <option>Zelle</option><option>Cash</option><option>Check</option><option>ACH</option><option>Wire</option><option>Card</option>
+          </select>
+          <input type="date" id="f-from" onchange="render()" class="btn btn-sm" style="font-family:'Barlow',sans-serif;padding:4px 8px;">
+          <input type="date" id="f-to" onchange="render()" class="btn btn-sm" style="font-family:'Barlow',sans-serif;padding:4px 8px;">
+          <button class="btn btn-sm" onclick="clearFilters()">Clear</button>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>Date</th>
+            <th>For / Payee</th>
+            <th>Category</th>
+            <th>Method</th>
+            <th>Description</th>
+            <th>Load ID</th>
+            <th style="text-align:right">Amount</th>
+            <th>Added By</th>
+            <th>Modified</th>
+            <th>Actions</th>
+          </tr></thead>
+          <tbody id="exp-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
-  <table>
-    <thead><tr><th>Date</th><th>Driver</th><th>Category</th><th>Description</th><th>Load ID</th><th style="text-align:right">Amount</th><th>Actions</th></tr></thead>
-    <tbody id="expenses-tbody"></tbody>
-  </table>
 </div>
 
-<!-- Modal -->
-<div class="modal-overlay" id="exp-modal">
+<!-- ENTRY MODAL -->
+<div class="modal-overlay" id="entry-modal">
   <div class="modal-box">
-    <div class="modal-hdr"><span class="modal-hdr-title" id="exp-modal-title">ADD EXPENSE</span><button class="modal-close" onclick="closeExpModal()">✕</button></div>
+    <div class="modal-hdr">
+      <span class="modal-hdr-title" id="modal-title">ADD ENTRY</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
     <div class="modal-body">
-      <input type="hidden" id="exp-edit-id">
-      <div class="form-group"><label class="form-label">Date *</label><input type="date" id="exp-date" class="form-input" required></div>
-      <div class="form-group"><label class="form-label">Driver *</label>
-        <select id="exp-driver" class="form-input">
+      <input type="hidden" id="edit-id">
+
+      <div class="section-label">PAYMENT / ENTRY INFO</div>
+
+      <div class="form-group">
+        <label class="form-label">Date <span class="req">*</span></label>
+        <input type="date" id="e-date" class="form-input" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Time</label>
+        <input type="time" id="e-time" class="form-input" placeholder="HH:MM">
+        <div class="form-hint">Optional — for same-day ordering</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">For / Payee <span class="req">*</span></label>
+        <select id="e-person" class="form-input">
+          <option value="">— Select Person —</option>
           <option>Avis Modesto</option><option>Miguel Fonseca</option><option>Guillermo Pinera</option>
           <option>David Fonseca</option><option>Nelson</option><option>Yosviel Pinera</option>
-          <option>Amet Abreu</option><option>Betty</option>
-        </select></div>
-      <div class="form-group"><label class="form-label">Category *</label>
-        <select id="exp-cat" class="form-input">
-          <option>Fuel</option><option>Repair</option><option>Parts</option><option>Permit</option>
-          <option>Tire</option><option>Miscellaneous</option><option>Tolls</option><option>Meals</option>
-        </select></div>
-      <div class="form-group"><label class="form-label">Amount *</label><input type="number" id="exp-amount" class="form-input" step="0.01" placeholder="0.00" required></div>
-      <div class="form-group full"><label class="form-label">Description</label><input type="text" id="exp-desc" class="form-input" placeholder="e.g. Fuel Tank — Pilot Flying J"></div>
-      <div class="form-group"><label class="form-label">Load ID</label><input type="text" id="exp-load" class="form-input" placeholder="L10483"></div>
-      <div class="form-group"><label class="form-label">Vendor / Location</label><input type="text" id="exp-vendor" class="form-input" placeholder="Pilot Flying J"></div>
+          <option>Amet Abreu</option><option>Betty</option><option>Company</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Amount <span class="req">*</span></label>
+        <input type="number" id="e-amount" class="form-input" step="0.01" min="0" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category <span class="req">*</span></label>
+        <select id="e-cat" class="form-input">
+          <option value="">— Select —</option>
+          <optgroup label="Payments">
+            <option>Driver Pay</option>
+            <option>Commission</option>
+            <option>Zelle Payment</option>
+            <option>Advance</option>
+          </optgroup>
+          <optgroup label="Fixed Costs">
+            <option>Trailer Rental</option>
+            <option>Insurance</option>
+          </optgroup>
+          <optgroup label="Operations">
+            <option>Fuel</option>
+            <option>Repair</option>
+            <option>Parts</option>
+            <option>Tire</option>
+            <option>Permit</option>
+            <option>Tolls</option>
+          </optgroup>
+          <optgroup label="Other">
+            <option>Meals</option>
+            <option>Miscellaneous</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Payment Method</label>
+        <select id="e-method" class="form-input">
+          <option value="">— Select —</option>
+          <option>Zelle</option>
+          <option>Cash</option>
+          <option>Check</option>
+          <option>ACH</option>
+          <option>Wire</option>
+          <option>Card</option>
+          <option>N/A</option>
+        </select>
+      </div>
+
+      <hr class="section-divider">
+      <div class="section-label">DETAILS</div>
+
+      <div class="form-group full">
+        <label class="form-label">Description <span class="req">*</span></label>
+        <input type="text" id="e-desc" class="form-input" placeholder="e.g. Driver pay 30% — TAB Load 1929467-01 ($7,000)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Load ID</label>
+        <input type="text" id="e-load" class="form-input" placeholder="L10483">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Vendor / From</label>
+        <input type="text" id="e-vendor" class="form-input" placeholder="Pilot Flying J">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Notes</label>
+        <input type="text" id="e-notes" class="form-input" placeholder="Any additional notes">
+      </div>
+
+      <hr class="section-divider">
+      <div class="section-label">DOCUMENT (OPTIONAL — no upload required)</div>
+
+      <div class="form-group">
+        <label class="form-label">Document Title</label>
+        <input type="text" id="e-doc-title" class="form-input" placeholder="e.g. Zelle confirmation screenshot">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Document Type</label>
+        <select id="e-doc-type" class="form-input">
+          <option value="">— None —</option>
+          <option>Receipt</option><option>Invoice</option><option>Confirmation</option>
+          <option>Settlement</option><option>Rate Con</option><option>Permit</option>
+          <option>Insurance Card</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Document Link / Reference</label>
+        <input type="text" id="e-doc-link" class="form-input" placeholder="Google Drive link, file name, or reference number">
+        <div class="form-hint">Paste a Drive link or just type a reference — no file upload needed</div>
+      </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeExpModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveExpense()">SAVE EXPENSE</button>
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEntry()">SAVE ENTRY</button>
+    </div>
+  </div>
+</div>
+
+<!-- AUDIT DETAIL MODAL -->
+<div class="modal-overlay" id="audit-modal">
+  <div class="modal-box" style="max-width:480px;">
+    <div class="modal-hdr" style="background:linear-gradient(135deg,#0f172a,#1e3a5f);">
+      <span class="modal-hdr-title">AUDIT TRAIL</span>
+      <button class="modal-close" onclick="document.getElementById('audit-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="audit-log-section" style="background:#fff;">
+      <div id="audit-entries"></div>
     </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="nexus-config.js"></script>
-<script src="nexus-db.js"></script>
+<script src="nexus-config.js?v=4"></script>
+<script src="nexus-db.js?v=3"></script>
+<script src="nexus-lang.js"></script>
 <script>
-const fmt = n => '$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-let _expCache = [];
+// ── STORAGE ──────────────────────────────────────────────────────────────────
+const STORE_KEY = 'nexus_expenses_v2';
 
-function catBadge(c){return{Fuel:'badge-blue',Repair:'badge-red',Parts:'badge-orange',Permit:'badge-purple',Tire:'badge-yellow',Tolls:'badge-gray',Meals:'badge-gray',Miscellaneous:'badge-gray'}[c]||'badge-gray';}
-function openExpModal(){document.getElementById('exp-modal-title').textContent='ADD EXPENSE';document.getElementById('exp-edit-id').value='';document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];document.getElementById('exp-amount').value='';document.getElementById('exp-desc').value='';document.getElementById('exp-load').value='';document.getElementById('exp-vendor').value='';document.getElementById('exp-modal').classList.add('open');}
-function closeExpModal(){document.getElementById('exp-modal').classList.remove('open');}
-
-async function renderExpenses(){
-  _expCache = await NexusDB.Expenses.list();
-  const driver=document.getElementById('f-driver').value, cat=document.getElementById('f-cat').value;
-  let data=_expCache.filter(e=>(driver?e.driver===driver:true)&&(cat?e.category===cat:true));
-  data.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-  const tbody=document.getElementById('expenses-tbody');
-  tbody.innerHTML=data.length?data.map(e=>`<tr>
-    <td class="mono">${e.date}</td><td>${e.driver||'—'}</td>
-    <td><span class="badge ${catBadge(e.category)}">${e.category}</span></td>
-    <td>${e.desc||e.description||'—'}</td><td class="mono">${e.loadId||e.load_ref||'—'}</td>
-    <td style="text-align:right;font-weight:700;color:#0f172a;">${fmt(e.amount)}</td>
-    <td><button class="btn btn-sm" onclick="editExp('${e.id}')">Edit</button> <button class="btn btn-sm" style="color:#ef4444" onclick="delExp('${e.id}')">Del</button></td>
-  </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:32px;">No expenses recorded. Click + Add Expense to start.</td></tr>';
-  const nonRev=_expCache.filter(e=>e.category!=='Revenue' && !e.is_carry_forward);
-  const revCount=_expCache.filter(e=>e.category==='Revenue').length;
-  const cfCount=_expCache.filter(e=>e.is_carry_forward).length;
-  const tot=nonRev.reduce((s,e)=>s+Number(e.amount),0);
-  const fuel=nonRev.filter(e=>e.category==='Fuel').reduce((s,e)=>s+Number(e.amount),0);
-  const rep=nonRev.filter(e=>e.category==='Repair'||e.category==='Parts').reduce((s,e)=>s+Number(e.amount),0);
-  const oth=nonRev.filter(e=>!['Fuel','Repair','Parts'].includes(e.category)).reduce((s,e)=>s+Number(e.amount),0);
-  document.getElementById('kpi-total').textContent=fmt(tot);
-  const excl=[];
-  if(revCount>0) excl.push(revCount+' revenue');
-  if(cfCount>0) excl.push(cfCount+' carry-fwd');
-  const countNote=excl.length?` (${excl.join(', ')} excluded)`:'';
-  document.getElementById('kpi-count').textContent=nonRev.length+' entries'+countNote;
-  document.getElementById('kpi-fuel').textContent=fmt(fuel);
-  document.getElementById('kpi-repairs').textContent=fmt(rep);
-  document.getElementById('kpi-other').textContent=fmt(oth);
+function loadAll() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function saveAll(arr) {
+  localStorage.setItem(STORE_KEY, JSON.stringify(arr));
 }
 
-async function saveExpense(){
-  const d=document.getElementById('exp-date').value,a=document.getElementById('exp-amount').value;
-  if(!d||!a){alert('Date and Amount are required.');return;}
-  const editId=document.getElementById('exp-edit-id').value;
-  const rec={date:d,driver:document.getElementById('exp-driver').value,category:document.getElementById('exp-cat').value,
-    amount:parseFloat(a),description:document.getElementById('exp-desc').value,
-    load_ref:document.getElementById('exp-load').value,vendor:document.getElementById('exp-vendor').value};
-  if(editId){ await NexusDB.Expenses.update(editId, rec); }
-  else { await NexusDB.Expenses.create(rec); }
-  closeExpModal(); await renderExpenses();
+// Migrate old nexus_expenses into new format on first load
+function migrate() {
+  if (localStorage.getItem(STORE_KEY)) return;
+  try {
+    const old = JSON.parse(localStorage.getItem('nexus_expenses') || '[]');
+    if (!old.length) return;
+    const now = new Date().toISOString();
+    const sess = JSON.parse(localStorage.getItem('nexus_session') || '{}');
+    const who = sess.name || sess.email || 'System';
+    const migrated = old.map(e => ({
+      id: e.id || ('exp_' + Date.now() + Math.random().toString(36).slice(2,6)),
+      date: e.date || '',
+      time: '',
+      person: e.driver || e.person || '',
+      category: e.category || 'Miscellaneous',
+      method: e.method || '',
+      amount: Number(e.amount) || 0,
+      description: e.description || e.desc || '',
+      loadId: e.load_ref || e.loadId || '',
+      vendor: e.vendor || '',
+      notes: '',
+      docTitle: '',
+      docType: '',
+      docLink: '',
+      isDeleted: false,
+      createdBy: who,
+      createdAt: e.created_at || now,
+      modifiedBy: null,
+      modifiedAt: null,
+      deletedBy: null,
+      deletedAt: null,
+      auditLog: [{ action: 'imported', by: who, at: now, note: 'Migrated from legacy expense store' }]
+    }));
+    saveAll(migrated);
+  } catch(e) { console.warn('Migration skipped:', e); }
 }
 
-async function editExp(id){
-  const e=_expCache.find(x=>x.id===id); if(!e)return;
-  document.getElementById('exp-modal-title').textContent='EDIT EXPENSE';
-  document.getElementById('exp-edit-id').value=id;
-  document.getElementById('exp-date').value=e.date;
-  document.getElementById('exp-driver').value=e.driver||'';
-  document.getElementById('exp-cat').value=e.category||'';
-  document.getElementById('exp-amount').value=e.amount;
-  document.getElementById('exp-desc').value=e.desc||e.description||'';
-  document.getElementById('exp-load').value=e.loadId||e.load_ref||'';
-  document.getElementById('exp-vendor').value=e.vendor||'';
-  document.getElementById('exp-modal').classList.add('open');
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let _cache = [];
+let _showDeleted = false;
+
+function currentUser() {
+  try { const s = JSON.parse(localStorage.getItem('nexus_session') || '{}'); return s.name || s.email || 'Admin'; }
+  catch(e) { return 'Admin'; }
 }
 
-async function delExp(id){
-  if(confirm('Delete this expense?')){ await NexusDB.Expenses.delete(id); await renderExpenses(); }
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function catBadge(c) {
+  const map = {
+    'Driver Pay':'badge-green','Commission':'badge-purple','Zelle Payment':'badge-zelle',
+    'Advance':'badge-yellow','Trailer Rental':'badge-orange','Insurance':'badge-orange',
+    'Fuel':'badge-blue','Repair':'badge-red','Parts':'badge-red','Tire':'badge-red',
+    'Permit':'badge-purple','Tolls':'badge-gray','Meals':'badge-gray','Miscellaneous':'badge-gray'
+  };
+  return map[c] || 'badge-gray';
+}
+function methodBadge(m) {
+  if (!m) return '';
+  const map = { 'Zelle':'badge-zelle', 'Cash':'badge-green', 'Check':'badge-gray',
+                'ACH':'badge-blue', 'Wire':'badge-blue', 'Card':'badge-orange' };
+  return `<span class="badge ${map[m]||'badge-gray'}" style="margin-top:2px;">${m}</span>`;
+}
+function fmt(n) {
+  return '$' + Math.abs(Number(n)).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function fmtDT(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'2-digit'}) +
+    ' ' + d.toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit',hour12:true});
 }
 
-document.getElementById('exp-modal').addEventListener('click',function(e){if(e.target===this)closeExpModal();});
+function render() {
+  _cache = loadAll();
+  const fPerson = document.getElementById('f-person').value;
+  const fCat    = document.getElementById('f-cat').value;
+  const fMethod = document.getElementById('f-method').value;
+  const fFrom   = document.getElementById('f-from').value;
+  const fTo     = document.getElementById('f-to').value;
 
-(async()=>{
-  if(typeof NexusDB !== 'undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
-  await renderExpenses();
-})();
+  let data = _cache.filter(e => {
+    if (!_showDeleted && e.isDeleted) return false;
+    if (fPerson && e.person !== fPerson) return false;
+    if (fCat    && e.category !== fCat) return false;
+    if (fMethod && e.method !== fMethod) return false;
+    if (fFrom   && e.date < fFrom) return false;
+    if (fTo     && e.date > fTo) return false;
+    return true;
+  });
+  data.sort((a,b) => {
+    const dc = (b.date||'').localeCompare(a.date||'');
+    if (dc !== 0) return dc;
+    return (b.time||'').localeCompare(a.time||'');
+  });
+
+  const tbody = document.getElementById('exp-tbody');
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#94a3b8;padding:32px;">No entries. Click + Add Entry to begin.</td></tr>';
+  } else {
+    tbody.innerHTML = data.map(e => {
+      const deleted = e.isDeleted;
+      const mainClass = deleted ? 'cell-main' : '';
+      const docHtml = e.docTitle
+        ? `<br><span style="font-size:10px;color:var(--muted);">📎 ${e.docLink
+            ? `<a href="${e.docLink}" target="_blank" style="color:var(--blue);">${e.docTitle}</a>`
+            : e.docTitle}</span>`
+        : '';
+      return `<tr class="${deleted?'row-deleted':''}">
+        <td class="${mainClass}">
+          <span class="mono">${e.date}</span>
+          ${e.time ? `<br><span style="font-size:10px;color:var(--muted);">${e.time}</span>` : ''}
+        </td>
+        <td class="${mainClass}" style="font-weight:600;">${e.person || '—'}</td>
+        <td>
+          <span class="badge ${catBadge(e.category)}">${e.category}</span>
+        </td>
+        <td>${methodBadge(e.method)}</td>
+        <td class="${mainClass}">
+          ${e.description || '—'}
+          ${e.vendor ? `<br><span style="font-size:10px;color:var(--muted);">${e.vendor}</span>` : ''}
+          ${e.notes ? `<br><span style="font-size:10px;color:var(--muted);font-style:italic;">${e.notes}</span>` : ''}
+          ${docHtml}
+          ${deleted ? `<span class="deleted-stamp">🗑 Deleted ${fmtDT(e.deletedAt)} by ${e.deletedBy}</span>` : ''}
+        </td>
+        <td class="mono ${mainClass}">${e.loadId || '—'}</td>
+        <td style="text-align:right;font-weight:700;${deleted?'text-decoration:line-through;color:#94a3b8;':'color:#0f172a;'}">${fmt(e.amount)}</td>
+        <td class="audit-cell">
+          <span class="audit-by">${e.createdBy || '—'}</span>
+          <span>${fmtDT(e.createdAt)}</span>
+        </td>
+        <td class="audit-cell">
+          ${e.modifiedBy
+            ? `<span class="audit-by">${e.modifiedBy}</span><span>${fmtDT(e.modifiedAt)}</span>`
+            : '<span style="color:#cbd5e1;">—</span>'}
+        </td>
+        <td>
+          <div style="display:flex;gap:4px;flex-wrap:nowrap;">
+            ${!deleted
+              ? `<button class="btn btn-sm btn-icon" title="Edit" onclick="openEdit('${e.id}')">✏️</button>
+                 <button class="btn btn-sm btn-icon" title="Delete (soft)" onclick="softDelete('${e.id}')">🗑</button>`
+              : `<button class="btn btn-sm btn-icon" title="Restore" onclick="restore('${e.id}')">↩️</button>`}
+            <button class="btn btn-sm btn-icon" title="Audit trail" onclick="showAudit('${e.id}')">📋</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // KPIs — active entries only
+  const active = _cache.filter(e => !e.isDeleted);
+  const total  = active.reduce((s,e) => s + Number(e.amount), 0);
+  const zelle  = active.filter(e => e.method === 'Zelle' || e.method === 'ACH' || e.category === 'Zelle Payment' || e.category === 'Driver Pay' || e.category === 'Commission').reduce((s,e) => s + Number(e.amount), 0);
+  const fuel   = active.filter(e => e.category === 'Fuel').reduce((s,e) => s + Number(e.amount), 0);
+  const other  = active.filter(e => !['Fuel','Driver Pay','Commission','Zelle Payment'].includes(e.category)).reduce((s,e) => s + Number(e.amount), 0);
+  document.getElementById('kpi-total').textContent  = fmt(total);
+  document.getElementById('kpi-zelle').textContent  = fmt(zelle);
+  document.getElementById('kpi-fuel').textContent   = fmt(fuel);
+  document.getElementById('kpi-other').textContent  = fmt(other);
+  document.getElementById('kpi-count').textContent  = active.length + ' active' + (_cache.filter(e=>e.isDeleted).length ? ` (${_cache.filter(e=>e.isDeleted).length} deleted, excluded)` : '');
+}
+
+// ── TOGGLE ────────────────────────────────────────────────────────────────────
+function toggleDeleted() {
+  _showDeleted = !_showDeleted;
+  const t = document.getElementById('del-toggle');
+  t.classList.toggle('on', _showDeleted);
+  document.getElementById('del-label').textContent = _showDeleted ? 'Hiding deleted' : 'Show deleted';
+  render();
+}
+
+function clearFilters() {
+  ['f-person','f-cat','f-method','f-from','f-to'].forEach(id => {
+    const el = document.getElementById(id);
+    el.value = '';
+  });
+  render();
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+function openModal() {
+  document.getElementById('modal-title').textContent = 'ADD ENTRY';
+  document.getElementById('edit-id').value = '';
+  document.getElementById('e-date').value  = new Date().toISOString().split('T')[0];
+  document.getElementById('e-time').value  = new Date().toTimeString().slice(0,5);
+  document.getElementById('e-person').value = '';
+  document.getElementById('e-amount').value = '';
+  document.getElementById('e-cat').value   = '';
+  document.getElementById('e-method').value = '';
+  document.getElementById('e-desc').value  = '';
+  document.getElementById('e-load').value  = '';
+  document.getElementById('e-vendor').value = '';
+  document.getElementById('e-notes').value  = '';
+  document.getElementById('e-doc-title').value = '';
+  document.getElementById('e-doc-type').value  = '';
+  document.getElementById('e-doc-link').value  = '';
+  document.getElementById('entry-modal').classList.add('open');
+}
+
+function openEdit(id) {
+  const e = _cache.find(x => x.id === id);
+  if (!e) return;
+  document.getElementById('modal-title').textContent = 'EDIT ENTRY';
+  document.getElementById('edit-id').value   = id;
+  document.getElementById('e-date').value    = e.date || '';
+  document.getElementById('e-time').value    = e.time || '';
+  document.getElementById('e-person').value  = e.person || '';
+  document.getElementById('e-amount').value  = e.amount || '';
+  document.getElementById('e-cat').value     = e.category || '';
+  document.getElementById('e-method').value  = e.method || '';
+  document.getElementById('e-desc').value    = e.description || '';
+  document.getElementById('e-load').value    = e.loadId || '';
+  document.getElementById('e-vendor').value  = e.vendor || '';
+  document.getElementById('e-notes').value   = e.notes || '';
+  document.getElementById('e-doc-title').value = e.docTitle || '';
+  document.getElementById('e-doc-type').value  = e.docType || '';
+  document.getElementById('e-doc-link').value  = e.docLink || '';
+  document.getElementById('entry-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('entry-modal').classList.remove('open');
+}
+
+function saveEntry() {
+  const date   = document.getElementById('e-date').value;
+  const amount = document.getElementById('e-amount').value;
+  const person = document.getElementById('e-person').value;
+  const cat    = document.getElementById('e-cat').value;
+  const desc   = document.getElementById('e-desc').value;
+  if (!date || !amount || !person || !cat || !desc) {
+    alert('Date, For/Payee, Category, Amount, and Description are required.'); return;
+  }
+  const editId = document.getElementById('edit-id').value;
+  const now    = new Date().toISOString();
+  const who    = currentUser();
+  const arr    = loadAll();
+
+  if (editId) {
+    const idx = arr.findIndex(x => x.id === editId);
+    if (idx < 0) return;
+    const prev = {...arr[idx]};
+    arr[idx] = {
+      ...prev,
+      date:        date,
+      time:        document.getElementById('e-time').value,
+      person:      person,
+      category:    cat,
+      method:      document.getElementById('e-method').value,
+      amount:      parseFloat(amount),
+      description: desc,
+      loadId:      document.getElementById('e-load').value,
+      vendor:      document.getElementById('e-vendor').value,
+      notes:       document.getElementById('e-notes').value,
+      docTitle:    document.getElementById('e-doc-title').value,
+      docType:     document.getElementById('e-doc-type').value,
+      docLink:     document.getElementById('e-doc-link').value,
+      modifiedBy:  who,
+      modifiedAt:  now,
+      auditLog: [...(prev.auditLog||[]), { action:'edited', by:who, at:now, note:`Amount: ${prev.amount}→${amount}, Desc: ${prev.description}→${desc}` }]
+    };
+  } else {
+    const newEntry = {
+      id:          'exp_' + Date.now() + Math.random().toString(36).slice(2,5),
+      date,
+      time:        document.getElementById('e-time').value,
+      person,
+      category:    cat,
+      method:      document.getElementById('e-method').value,
+      amount:      parseFloat(amount),
+      description: desc,
+      loadId:      document.getElementById('e-load').value,
+      vendor:      document.getElementById('e-vendor').value,
+      notes:       document.getElementById('e-notes').value,
+      docTitle:    document.getElementById('e-doc-title').value,
+      docType:     document.getElementById('e-doc-type').value,
+      docLink:     document.getElementById('e-doc-link').value,
+      isDeleted:   false,
+      createdBy:   who,
+      createdAt:   now,
+      modifiedBy:  null,
+      modifiedAt:  null,
+      deletedBy:   null,
+      deletedAt:   null,
+      auditLog: [{ action:'created', by:who, at:now, note:'Entry created' }]
+    };
+    arr.push(newEntry);
+  }
+  saveAll(arr);
+  closeModal();
+  render();
+}
+
+// ── SOFT DELETE / RESTORE ─────────────────────────────────────────────────────
+function softDelete(id) {
+  if (!confirm('Mark this entry as deleted? It will be crossed out and excluded from totals but not erased.')) return;
+  const arr = loadAll();
+  const idx = arr.findIndex(x => x.id === id);
+  if (idx < 0) return;
+  const now = new Date().toISOString();
+  const who = currentUser();
+  arr[idx].isDeleted  = true;
+  arr[idx].deletedBy  = who;
+  arr[idx].deletedAt  = now;
+  arr[idx].auditLog   = [...(arr[idx].auditLog||[]), { action:'deleted', by:who, at:now, note:'Soft deleted — excluded from totals' }];
+  saveAll(arr);
+  render();
+}
+
+function restore(id) {
+  const arr = loadAll();
+  const idx = arr.findIndex(x => x.id === id);
+  if (idx < 0) return;
+  const now = new Date().toISOString();
+  const who = currentUser();
+  arr[idx].isDeleted  = false;
+  arr[idx].deletedBy  = null;
+  arr[idx].deletedAt  = null;
+  arr[idx].auditLog   = [...(arr[idx].auditLog||[]), { action:'restored', by:who, at:now, note:'Entry restored to active' }];
+  saveAll(arr);
+  render();
+}
+
+// ── AUDIT TRAIL ───────────────────────────────────────────────────────────────
+function showAudit(id) {
+  const e = _cache.find(x => x.id === id);
+  if (!e) return;
+  const log = e.auditLog || [];
+  const dotMap = { created:'audit-dot-create', edited:'audit-dot-edit', deleted:'audit-dot-delete', restored:'audit-dot-restore', imported:'audit-dot-create' };
+  const html = log.length
+    ? log.slice().reverse().map(l => `
+        <div class="audit-entry">
+          <div class="audit-dot ${dotMap[l.action]||'audit-dot-edit'}"></div>
+          <div class="audit-text">
+            <strong style="text-transform:capitalize;">${l.action}</strong> by <strong>${l.by}</strong>
+            ${l.note ? `<br><span style="color:var(--muted);font-size:11px;">${l.note}</span>` : ''}
+          </div>
+          <div class="audit-ts">${fmtDT(l.at)}</div>
+        </div>`).join('')
+    : '<div style="color:var(--muted);font-size:13px;">No audit history.</div>';
+  document.getElementById('audit-entries').innerHTML =
+    `<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:15px;font-weight:700;margin-bottom:12px;">${e.description || 'Entry'}</div>` + html;
+  document.getElementById('audit-modal').classList.add('open');
+}
+
+// Close modals on overlay click
+['entry-modal','audit-modal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', function(ev) {
+    if (ev.target === this) this.classList.remove('open');
+  });
+});
+
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+migrate();
+render();
 </script>
-  </div>
-</div>
-<nav class="mobile-nav">
-  <a href="fleet-command.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>DASH</a>
-  <a href="settlements.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>PAY</a>
-  <a href="documents.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>DOCS</a>
-  <a href="equipment.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>FLEET</a>
-  <a href="drivers.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>TEAM</a>
+
+<nav style="display:none;" class="mobile-nav">
+  <a href="fleet-command.html" class="mn-tab">DASH</a>
+  <a href="settlements.html" class="mn-tab">PAY</a>
+  <a href="documents.html" class="mn-tab">DOCS</a>
+  <a href="expenses.html" class="mn-tab active">EXP</a>
 </nav>
-<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
 </body>
 </html>

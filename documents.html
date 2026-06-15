@@ -430,6 +430,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
           <th>Driver</th>
           <th>Type</th>
           <th>ADD / DEDUCT</th>
+          <th>Logged By</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -595,8 +596,18 @@ function renderTable(data){
   data.forEach(doc=>{
     const dc = driverBadgeColors[doc.driver]||driverBadgeColors.UNKNOWN;
     const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="date-col">${fmtDate(doc.date)}</td>
+    const isDeleted = doc.isDeleted === true;
+    const fmtAudit = (iso) => {
+      if(!iso) return '—';
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+    };
+    if(isDeleted) tr.style.cssText='background:#fef2f2;opacity:0.65;';
+    const filenameStyle = isDeleted ? 'text-decoration:line-through;color:#94a3b8;' : '';
+    const deletedStamp = isDeleted ? `<span style="font-size:9px;color:#ef4444;font-family:monospace;display:block;margin-top:3px;">🗑 Deleted ${fmtAudit(doc.deletedAt)} by ${doc.deletedBy||'?'}</span>` : '';
+    const docId = doc.id || '';
+    tr.innerHTML = \`
+      <td class="date-col">\${fmtDate(doc.date)}</td>
       <td>
         <div class="filename-cell">
           <svg class="pdf-icon" width="14" height="16" viewBox="0 0 14 16" fill="none">
@@ -604,16 +615,29 @@ function renderTable(data){
             <path d="M8 1v5h5" stroke="#ef4444" stroke-width="1.2"/>
             <text x="3" y="13" font-family="Arial" font-size="4" fill="#ef4444" font-weight="bold">PDF</text>
           </svg>
-          <span class="filename-text" title="${doc.filename}">${doc.filename}</span>
+          <div>
+            <span class="filename-text" style="\${filenameStyle}" title="\${doc.filename}">\${doc.filename}</span>
+            \${doc.notes ? \`<span style="font-size:10px;color:#64748b;display:block;">\${doc.notes}</span>\` : ''}
+            \${deletedStamp}
+          </div>
         </div>
       </td>
-      <td><span class="driver-badge" style="background:${dc.bg};color:${dc.color};">${doc.driver}</span></td>
-      <td>${getTypeBadge(doc.type)}</td>
-      <td>${getADBadge(doc.add_deduct)}</td>
-      <td>
-        <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="openDoc(doc.driveId||'')">Open</button>
+      <td><span class="driver-badge" style="background:\${dc.bg};color:\${dc.color};">\${doc.driver}</span></td>
+      <td>\${getTypeBadge(doc.type)}</td>
+      <td>\${getADBadge(doc.add_deduct)}</td>
+      <td style="font-size:10px;font-family:monospace;color:#64748b;white-space:nowrap;">
+        <span style="font-weight:600;color:#0f172a;">\${doc.createdBy||'—'}</span><br>
+        \${fmtAudit(doc.createdAt)}
+        \${doc.modifiedBy ? \`<br><span style="color:#2e6da4;">✏️ \${doc.modifiedBy}</span><br>\${fmtAudit(doc.modifiedAt)}\` : ''}
       </td>
-    `;
+      <td>
+        <div style="display:flex;gap:4px;flex-wrap:nowrap;">
+          \${doc.driveId ? \`<button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="openDoc('\${doc.driveId}')">Open</button>\` : ''}
+          \${!isDeleted && docId ? \`<button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;" onclick="softDeleteDoc('\${docId}')" title="Delete (soft)">🗑</button>\` : ''}
+          \${isDeleted && docId ? \`<button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;" onclick="restoreDoc('\${docId}')" title="Restore">↩️</button>\` : ''}
+        </div>
+      </td>
+    \`;
     tbody.appendChild(tr);
   });
 }
@@ -629,19 +653,57 @@ function openAddDocModal(){
   document.getElementById('add-doc-modal').style.display='flex';
 }
 function closeAddDocModal(){ document.getElementById('add-doc-modal').style.display='none'; }
+function _currentUser(){
+  try{ const s=JSON.parse(localStorage.getItem('nexus_session')||'{}'); return s.name||s.email||'Admin'; }catch(e){return 'Admin';}
+}
 function submitAddDoc(e){
   e.preventDefault();
+  const now = new Date().toISOString();
+  const who = _currentUser();
   const doc = {
+    id: 'doc_' + Date.now() + Math.random().toString(36).slice(2,5),
     date: document.getElementById('nd-date').value,
     filename: document.getElementById('nd-filename').value,
     driver: document.getElementById('nd-driver').value,
     type: document.getElementById('nd-type').value,
     add_deduct: document.getElementById('nd-ad').value,
-    driveId: document.getElementById('nd-drive').value || ''
+    driveId: document.getElementById('nd-drive').value || '',
+    notes: document.getElementById('nd-notes') ? document.getElementById('nd-notes').value : '',
+    isDeleted: false,
+    createdBy: who,
+    createdAt: now,
+    modifiedBy: null,
+    modifiedAt: null,
+    deletedBy: null,
+    deletedAt: null,
+    auditLog: [{ action:'created', by:who, at:now, note:'Manually logged' }]
   };
   documents.unshift(doc);
   if(typeof NexusDB !== 'undefined') NexusDB.Documents && NexusDB.Documents.create(doc).catch(()=>{});
   closeAddDocModal();
+  applyFilters();
+}
+function softDeleteDoc(id){
+  if(!confirm('Mark this document as deleted? It will be crossed out but kept in the vault.')) return;
+  const now = new Date().toISOString();
+  const who = _currentUser();
+  const doc = documents.find(d => d.id === id);
+  if(!doc) return;
+  doc.isDeleted = true;
+  doc.deletedBy = who;
+  doc.deletedAt = now;
+  doc.auditLog = [...(doc.auditLog||[]), { action:'deleted', by:who, at:now, note:'Soft deleted from vault' }];
+  applyFilters();
+}
+function restoreDoc(id){
+  const now = new Date().toISOString();
+  const who = _currentUser();
+  const doc = documents.find(d => d.id === id);
+  if(!doc) return;
+  doc.isDeleted = false;
+  doc.deletedBy = null;
+  doc.deletedAt = null;
+  doc.auditLog = [...(doc.auditLog||[]), { action:'restored', by:who, at:now, note:'Restored to active' }];
   applyFilters();
 }
 
@@ -989,6 +1051,10 @@ document.addEventListener('DOMContentLoaded', function() {
       <div>
         <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">GOOGLE DRIVE LINK (optional)</label>
         <input type="url" id="nd-drive" placeholder="https://drive.google.com/file/d/..." style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">NOTES (optional)</label>
+        <input type="text" id="nd-notes" placeholder="e.g. Zelle confirmation, permit #, load ref..." style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
       </div>
       <button type="submit" style="padding:11px;background:#2e6da4;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;cursor:pointer;margin-top:4px;">ADD TO VAULT</button>
     </form>
