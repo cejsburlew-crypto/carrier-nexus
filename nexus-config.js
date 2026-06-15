@@ -68,7 +68,7 @@ window.NEXUS_LOCAL_USERS = (function () {
     {
       id: 'usr_001',
       email: 'crtruckus@gmail.com',
-      passwordHash: '86eaffe8d41c665078e53d2ac4af426a6cfff4ba6121e641d72e86cd8e989264',
+      passwordHash: 'f36c6387549f1d51a335c4c82b2731ac3bb8f71f9dafb259c925cc29e2a83218',
       role: 'admin',
       name: 'Admin',
       active: true,
