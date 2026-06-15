@@ -232,7 +232,7 @@ window.nexusMemberId = function(firstName, lastName, loginDate) {
 // ============================================================
 window.NEXUS_SEED_MEMBERS = [
   { id:'mem_001', memberId:'JB26148.0', firstName:'Jim', lastName:'Burlew', email:'jim.burlew@jbca-inc.com', phone:'', type:'admin', mc:'', dot:'', createdAt:'2026-05-28' },
-  { id:'mem_002', memberId:'AA26165.0', firstName:'Ana', lastName:'Abreu', email:'crtruckus2@gmail.com', phone:'', type:'staff', mc:'', dot:'', createdAt:'2026-06-14' },
+  { id:'mem_002', memberId:'LM26165.0', firstName:'Laura', lastName:'Moreno', email:'lbmoreno92@gmail.com', phone:'', type:'staff', mc:'', dot:'', createdAt:'2026-06-14' },
   { id:'mem_003', memberId:'AA26148.0', firstName:'Amet', lastName:'Abreu', email:'', phone:'', type:'dispatcher', mc:'', dot:'', createdAt:'2026-05-28' },
   { id:'mem_004', memberId:'BG26148.0', firstName:'Betty', lastName:'Gutierrez', email:'', phone:'', type:'dispatcher', mc:'', dot:'', createdAt:'2026-05-28' },
   { id:'mem_005', memberId:'DF26148.0', firstName:'David', lastName:'Fonseca', email:'', phone:'', type:'owner_operator', mc:'MC 1688495-C', dot:'US DOT 4326039', createdAt:'2026-05-28' },
@@ -250,7 +250,7 @@ window.NEXUS_SEED_MEMBERS = [
 // ============================================================
 window.NEXUS_SEED_COMPANY_MEMBERS = [
   { id:'cm_001', memberId:'JB26148.0', companyId:'carrier-trucking-us', roles:['admin'], status:'active', joinedAt:'2026-05-28', deactivatedAt:null, terminatedAt:null, approvedBy:null, notes:'' },
-  { id:'cm_002', memberId:'AA26165.0', companyId:'carrier-trucking-us', roles:['admin','preparer'], status:'active', joinedAt:'2026-06-14', deactivatedAt:null, terminatedAt:null, approvedBy:'JB26148.0', notes:'' },
+  { id:'cm_002', memberId:'LM26165.0', companyId:'carrier-trucking-us', roles:['admin','preparer'], status:'active', joinedAt:'2026-06-14', deactivatedAt:null, terminatedAt:null, approvedBy:'JB26148.0', notes:'' },
   { id:'cm_003', memberId:'AA26148.0', companyId:'carrier-trucking-us', roles:['dispatcher'], status:'active', joinedAt:'2026-05-28', deactivatedAt:null, terminatedAt:null, approvedBy:'JB26148.0', notes:'' },
   { id:'cm_004', memberId:'BG26148.0', companyId:'carrier-trucking-us', roles:['dispatcher'], status:'active', joinedAt:'2026-05-28', deactivatedAt:null, terminatedAt:null, approvedBy:'JB26148.0', notes:'' },
   { id:'cm_005', memberId:'DF26148.0', companyId:'carrier-trucking-us', roles:['owner_operator'], status:'active', joinedAt:'2026-05-28', deactivatedAt:null, terminatedAt:null, approvedBy:'JB26148.0', notes:'' },
@@ -275,9 +275,9 @@ window.NEXUS_SEED_COMPANY_MEMBERS = [
     var hasAna = users.some(function(u){ return u.email === 'crtruckus2@gmail.com'; });
     if(!hasAna) {
       users.push({
-        id:'usr_002', email:'crtruckus2@gmail.com',
-        passwordHash:'', // no password until Ana sets it via invite flow
-        role:'admin', name:'Ana Abreu', memberId:'AA26165.0', active:false,
+        id:'usr_002', email:'lbmoreno92@gmail.com',
+        passwordHash:'', // no password until Laura sets it via invite flow
+        role:'admin', name:'Laura Moreno', memberId:'LM26165.0', active:false,
         invitePending:true, createdAt:'2026-06-14'
       });
       localStorage.setItem('nexus_users', JSON.stringify(users));
