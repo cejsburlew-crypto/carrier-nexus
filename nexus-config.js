@@ -2,8 +2,8 @@
 // CARRIER NEXUS — CONFIG (nexus-config.js)
 // ============================================================
 
-window.NEXUS_SUPABASE_URL = ''; // disabled — app runs in localStorage mode
-window.NEXUS_SUPABASE_KEY = ''; // disabled;
+window.NEXUS_SUPABASE_URL: 'https://pzjfbjsntgdzbwtqhfqj.supabase.co'; // disabled — app runs in localStorage mode
+window.NEXUS_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6amZianNudGdkemJ3dHFoZnFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMDEyMjEsImV4cCI6MjA5NTU3NzIyMX0.9TRVm-geOXdwuWB828fOrfCKwuKWvlvN4Sv_cLIBXw8'; // disabled;
 window.NEXUS_GOOGLE_CLIENT_ID = '662145578280-f03nl1nqti0c6v3kojpbkbvognc10coj.apps.googleusercontent.com';
 
 // ============================================================
