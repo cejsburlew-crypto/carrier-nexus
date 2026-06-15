@@ -142,7 +142,7 @@ tr:hover:not(.row-inactive):not(.row-terminated) td{background:#f8fafc;cursor:po
       <div class="kpi-card">
         <div class="kpi-label">Pending Approvals</div>
         <div class="kpi-val" id="kpi-pending" style="color:#f59e0b;">0</div>
-        <div class="kpi-sub" id="kpi-pending-sub">Re-join requests</div>
+        <div class="kpi-sub" id="kpi-pending-sub">Requires Approver/Admin</div>
       </div>
     </div>
 
@@ -154,7 +154,7 @@ tr:hover:not(.row-inactive):not(.row-terminated) td{background:#f8fafc;cursor:po
         <div class="panel" id="rejoin-panel" style="display:none;">
           <div class="panel-head">
             <span class="panel-title" style="color:#f59e0b;">⏳ Re-Join Requests</span>
-            <span style="font-size:12px;color:var(--muted);">Ana must approve before member is reactivated</span>
+            <span style="font-size:12px;color:var(--muted);">Admin or Approver must approve before member is reactivated</span>
           </div>
           <div id="rejoin-list"></div>
         </div>
@@ -255,6 +255,7 @@ tr:hover:not(.row-inactive):not(.row-terminated) td{background:#f8fafc;cursor:po
           <label class="role-check"><input type="checkbox" value="owner_operator" id="ir-oo"><span>Owner Operator</span></label>
           <label class="role-check"><input type="checkbox" value="dispatcher" id="ir-disp"><span>Dispatcher</span></label>
           <label class="role-check"><input type="checkbox" value="preparer" id="ir-prep"><span>Preparer</span></label>
+          <label class="role-check"><input type="checkbox" value="approver" id="ir-appr"><span>Approver</span></label>
           <label class="role-check"><input type="checkbox" value="admin" id="ir-admin"><span>Admin</span></label>
           <label class="role-check"><input type="checkbox" value="viewer" id="ir-view"><span>Viewer</span></label>
         </div>
@@ -346,16 +347,29 @@ tr:hover:not(.row-inactive):not(.row-terminated) td{background:#f8fafc;cursor:po
 <script>
 // ── HELPERS ────────────────────────────────────────────────────────────────
 const COMPANY_ID = 'carrier-trucking-us';
-const ROLES_ALL = ['admin','dispatcher','driver','owner_operator','preparer','viewer'];
-const ROLE_LABELS = { admin:'Admin', dispatcher:'Dispatcher', driver:'Driver', owner_operator:'Owner Op', preparer:'Preparer', viewer:'Viewer' };
+const ROLES_ALL = ['admin','approver','dispatcher','driver','owner_operator','preparer','viewer'];
+const ROLE_LABELS = { admin:'Admin', approver:'Approver', dispatcher:'Dispatcher', driver:'Driver', owner_operator:'Owner Op', preparer:'Preparer', viewer:'Viewer' };
 const STATUS_BADGE = { active:'badge-green', inactive:'badge-gray', terminated:'badge-red', pending_rejoin:'badge-yellow', invited:'badge-invite' };
-const TYPE_BADGE = { admin:'badge-pink', dispatcher:'badge-purple', driver:'badge-blue', owner_operator:'badge-orange', preparer:'badge-blue', staff:'badge-gray' };
+const TYPE_BADGE = { admin:'badge-pink', approver:'badge-pink', dispatcher:'badge-purple', driver:'badge-blue', owner_operator:'badge-orange', preparer:'badge-blue', staff:'badge-gray' };
 
 function currentUser() {
   try { const s = JSON.parse(localStorage.getItem('nexus_session')||'{}'); return s.name||s.email||'Admin'; } catch(e){ return 'Admin'; }
 }
 function currentMemberId() {
   try { const s = JSON.parse(localStorage.getItem('nexus_session')||'{}'); return s.memberId||''; } catch(e){ return ''; }
+}
+function canManageMembers() {
+  // Only admin or approver role may add, activate, deactivate, or terminate members
+  try {
+    const s = JSON.parse(localStorage.getItem('nexus_session')||'{}');
+    const role = (s.role||'').toLowerCase();
+    if (role === 'admin' || role === 'approver') return true;
+    // Also check company membership roles
+    const mid = s.memberId||'';
+    if (!mid) return false;
+    const cm = loadCM().find(c => c.memberId===mid && c.companyId===COMPANY_ID);
+    return cm && (cm.roles||[]).some(r => r==='admin' || r==='approver');
+  } catch(e){ return false; }
 }
 function fmt(iso) {
   if(!iso) return '—';
@@ -523,6 +537,7 @@ function selectMember(mid) {
 
 // ── STATUS CHANGES ─────────────────────────────────────────────────────────
 function activate(mid) {
+  if(!canManageMembers()){alert('Only an Admin or Approver can reactivate members.');return;}
   const now = new Date().toISOString();
   const who = currentUser();
   const cms = loadCM();
@@ -538,6 +553,7 @@ function activate(mid) {
   if(_selectedMid===mid) selectMember(mid);
 }
 function deactivate(mid) {
+  if(!canManageMembers()){alert('Only an Admin or Approver can deactivate members.');return;}
   if(!confirm('Deactivate this member? They will no longer be assignable to loads or settlements until reactivated.')) return;
   const now = new Date().toISOString();
   const cms = loadCM();
@@ -550,6 +566,7 @@ function deactivate(mid) {
   if(_selectedMid===mid) selectMember(mid);
 }
 function terminate(mid) {
+  if(!canManageMembers()){alert('Only an Admin or Approver can terminate members.');return;}
   const reason = prompt('Termination reason (optional — stored in record):','');
   if(reason === null) return; // user cancelled
   const now = new Date().toISOString();
@@ -588,6 +605,7 @@ function openInviteModal() {
   document.getElementById('invite-modal').classList.add('open');
 }
 function saveInvite() {
+  if(!canManageMembers()){alert('Only an Admin or Approver can add members.');return;}
   const fn = document.getElementById('inv-first').value.trim();
   const ln = document.getElementById('inv-last').value.trim();
   if(!fn || !ln) { alert('First and last name are required.'); return; }
