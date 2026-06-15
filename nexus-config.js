@@ -112,7 +112,7 @@ window.NEXUS_SESSION = {
 };
 
 // --- AUTO-SEEDED DATA (v20260614) ---
-window.NEXUS_DATA_VERSION = '20260614c';
+window.NEXUS_DATA_VERSION = '20260615a';
 window.NEXUS_SEED_LOADS = [
 {"id":"L10001","loadNum":"1929469-01","broker":"TAB","driver":"David Fonseca","rate":7000,"originCity":"","originState":"","destCity":"","destState":"","pickupDate":"2026-01-05","deliveryDate":"2026-01-05","status":"delivered","pod":"none","notes":"","permits":"","settlement_id":"AMT-2026-01"},
 {"id":"L10002","loadNum":"1929467-01","broker":"TAB","driver":"Miguel Fonseca","rate":7000,"originCity":"","originState":"","destCity":"","destState":"","pickupDate":"2026-01-05","deliveryDate":"2026-01-05","status":"delivered","pod":"none","notes":"","permits":"","settlement_id":"AMT-2026-01"},
@@ -272,8 +272,8 @@ window.NEXUS_SEED_COMPANY_MEMBERS = [
     }
     // Seed Ana's login account if not present
     var users = JSON.parse(localStorage.getItem('nexus_users')||'[]');
-    var hasAna = users.some(function(u){ return u.email === 'crtruckus2@gmail.com'; });
-    if(!hasAna) {
+    var hasLaura = users.some(function(u){ return u.email === 'lbmoreno92@gmail.com'; });
+    if(!hasLaura) {
       users.push({
         id:'usr_002', email:'lbmoreno92@gmail.com',
         passwordHash:'', // no password until Laura sets it via invite flow
