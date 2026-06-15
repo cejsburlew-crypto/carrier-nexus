@@ -810,8 +810,7 @@ function viewPDF(id){
 
   <!-- TITLE -->
   <div class="stmt-title-row"><span class="stmt-title">${isDisp ? 'Statement of Account' : 'Driver Settlement Statement'}</span><span class="stmt-title-period">: ${isDisp ? fmtLong(s.start)+' – '+fmtLong(s.end) : fmtLong(s.start)+' – '+fmtLong(s.end)}</span></div>
-  <div class=<!-- period moved into title row -->"stmt-title-row"><span class="stmt-title">${isDisp ? 'Statement of Account' : 'Driver Settlement Statement'}</span><span class="stmt-title-period">: ${isDisp ? fmtLong(s.start)+' – '+fmtLong(s.end) : fmtLong(s.start)+' – '+fmtLong(s.end)}</span></div>
-
+  
   <!-- INFO TABLE -->
   ${isDisp ? `<table class="info-tbl">
     <thead><tr><th>DISPATCHER</th><th>STATEMENT #</th><th>RATE</th><th>TOTAL PAY</th></tr></thead>
