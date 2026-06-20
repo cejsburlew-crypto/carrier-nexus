@@ -194,6 +194,10 @@ select.asel option{background:#1c2535;}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             Upload Assigned
           </button>
+          <button class="btn btn-sm" id="queueBtn" onclick="sendUncertainToQueue()" style="background:rgba(233,30,140,.15);border:1px solid rgba(233,30,140,.35);color:#e91e8c;display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            <span id="queueBtnLabel">Send Uncertain to Review Queue</span>
+          </button>
         </div>
       </div>
       <div class="twrap">
@@ -498,7 +502,7 @@ async function startSync(){
   btn.disabled=false;
   btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Scan Inbox';
   document.getElementById('progPanel').className='prog-panel';
-  if(_files.length>0)renderStaging();
+  if(_files.length>0){renderStaging();checkForUncertain();}
   else document.getElementById('emptyState').style.display='';
 }
 
