@@ -332,7 +332,10 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
         Sync NEXUS Docs
       </button>
-      <button class="btn btn-ghost">Export List</button>
+      <button id="quick-import-btn" class="btn btn-ghost" onclick="quickImportDrive()" title="Import documents from Drive sync sheet">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Import Drive
+      </button>
       <button class="btn btn-orange" onclick="openAddDocModal()">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add Document
@@ -742,6 +745,63 @@ function addWAContact(){
   cfg.whatsappContacts.push({label:'',phone:''});
   localStorage.setItem('nexus_sync_config', JSON.stringify(cfg));
   renderWAContacts(cfg.whatsappContacts);
+}
+function quickImportDrive(){
+  var cfg=JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
+  var csvUrl=cfg.driveSyncCsvUrl||'';
+  if(!csvUrl){
+    alert('No Drive Sync URL configured.\n\nGo to: Sync NEXUS Docs \u2192 Configure tab \u2192 paste your Google Sheets CSV URL, then Save.');
+    return;
+  }
+  var btn=document.getElementById('quick-import-btn');
+  var origHtml=btn.innerHTML;
+  btn.innerHTML='<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> Importing...';
+  btn.disabled=true;
+  fetch(csvUrl)
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
+    .then(function(csv){
+      var lines=csv.trim().split('\n');
+      if(lines.length<2) throw new Error('Sheet empty');
+      var existing=JSON.parse(localStorage.getItem('nexus_documents_v2')||'[]');
+      var existingIds={};
+      existing.forEach(function(d){ existingIds[d.id]=true; });
+      var added=0;
+      for(var i=1;i<lines.length;i++){
+        var cols=parseCSVLine(lines[i]);
+        if(cols.length<7) continue;
+        var docId=cols[0]||('gdrive_import_'+i);
+        if(existingIds[docId]) continue;
+        var now=new Date().toISOString();
+        existing.push({
+          id:docId, date:cols[1]||now.split('T')[0], filename:cols[2]||'Unknown',
+          type:cols[3]||'Document', driver:cols[4]||'', source:cols[5]||'Drive Sync',
+          driveUrl:cols[6]||'', notes:cols[7]||'', isDeleted:false,
+          createdBy:'Drive Sync', createdAt:cols[8]||now,
+          modifiedBy:null, modifiedAt:null, deletedBy:null, deletedAt:null,
+          auditLog:[{action:'imported',by:'Drive Sync',at:now,note:'Auto-imported from Gmail Sync'}]
+        });
+        existingIds[docId]=true;
+        added++;
+      }
+      localStorage.setItem('nexus_documents_v2', JSON.stringify(existing));
+      btn.innerHTML=origHtml; btn.disabled=false;
+      btn.style.color='#4ade80'; btn.style.borderColor='#166534';
+      setTimeout(function(){ btn.style.color=''; btn.style.borderColor=''; },2500);
+      loadDocuments();
+      if(added>0) showToast(added+' new document'+(added===1?'':'s')+' imported from Drive');
+      else showToast('Already up to date');
+    })
+    .catch(function(e){
+      btn.innerHTML=origHtml; btn.disabled=false;
+      alert('Import failed: '+e.message+'\n\nMake sure the Google Sheet is published to web as CSV.');
+    });
+}
+function showToast(msg){
+  var t=document.createElement('div');
+  t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:24px;right:24px;background:#166534;color:#4ade80;padding:12px 20px;border-radius:8px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:14px;z-index:99999;letter-spacing:.04em;box-shadow:0 4px 12px rgba(0,0,0,0.4);';
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.opacity='0'; t.style.transition='opacity 0.4s'; setTimeout(function(){ t.remove(); },400); },2800);
 }
 function importFromDriveSync(){
   var cfg=JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
