@@ -690,9 +690,13 @@ function submitAddDoc(e){
   applyFilters();
 }
 
-// Close modals on backdrop click
-document.getElementById('sync-modal').addEventListener('click', function(e){ if(e.target===this) closeSyncModal(); });
-document.getElementById('add-doc-modal').addEventListener('click', function(e){ if(e.target===this) closeAddDocModal(); });
+// Close modals on backdrop click (defer until DOM is ready)
+document.addEventListener('DOMContentLoaded', function(){
+  var sm = document.getElementById('sync-modal');
+  var am = document.getElementById('add-doc-modal');
+  if(sm) sm.addEventListener('click', function(e){ if(e.target===this) closeSyncModal(); });
+  if(am) am.addEventListener('click', function(e){ if(e.target===this) closeAddDocModal(); });
+});
 
 
 /* ── VAULT TREE ──────────────────────────────────────────── */
