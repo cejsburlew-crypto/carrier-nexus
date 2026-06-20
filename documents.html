@@ -682,7 +682,7 @@ function renderWAContacts(contacts){
     inpL.setAttribute('style','flex:1;padding:6px 10px;background:#0f172a;border:1px solid #334155;border-radius:5px;color:#f1f5f9;font-size:12px;');
     (function(idx){ inpL.oninput=function(){ updateWAContact(idx,'label',this.value); }; })(i);
     var inpP=document.createElement('input');
-    inpP.type='text'; inpP.value=c.phone||''; inpP.placeholder='+1 phone or leave blank';
+    inpP.type='text'; inpP.value=c.phone||''; inpP.placeholder='Phone: +15551234567  OR  Group link: https://chat.whatsapp.com/...';
     inpP.setAttribute('style','flex:1;padding:6px 10px;background:#0f172a;border:1px solid #334155;border-radius:5px;color:#f1f5f9;font-size:12px;');
     (function(idx){ inpP.oninput=function(){ updateWAContact(idx,'phone',this.value); }; })(i);
     var btnX=document.createElement('button');
@@ -699,7 +699,11 @@ function renderWAButtons(contacts){
   container.innerHTML='';
   var items=(!contacts||contacts.length===0)?[{label:'WhatsApp Web',phone:''}]:contacts;
   items.forEach(function(c){
-    var href=c.phone?'https://web.whatsapp.com/send?phone='+c.phone.replace(/[^0-9]/g,''):'https://web.whatsapp.com';
+    var rawContact=c.phone||'';
+    var href;
+    if(!rawContact){ href='https://web.whatsapp.com'; }
+    else if(rawContact.indexOf('chat.whatsapp.com')>-1 || rawContact.indexOf('wa.me')>-1){ href=rawContact; }
+    else{ href='https://web.whatsapp.com/send?phone='+rawContact.replace(/[^0-9+]/g,''); }
     var a=document.createElement('a');
     a.href=href; a.target='_blank';
     a.setAttribute('style','display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;margin-bottom:10px;');
@@ -737,12 +741,24 @@ function addWAContact(){
   localStorage.setItem('nexus_sync_config', JSON.stringify(cfg));
   renderWAContacts(cfg.whatsappContacts);
 }
+function extractDriveFolderId(val){
+  // Accept full URL like https://drive.google.com/drive/folders/ABC123?usp=sharing
+  var m=val.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+  if(m) return m[1];
+  // Accept just the ID directly
+  if(/^[a-zA-Z0-9_-]{10,}$/.test(val)) return val;
+  return val; // return as-is if unrecognized
+}
 function saveSyncConfig(){
   var cfg=JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
   cfg.googleEmail=document.getElementById('sc-gmail').value.trim();
-  cfg.driveFolderId=document.getElementById('sc-folderid').value.trim();
+  var rawFolder=document.getElementById('sc-folderid').value.trim();
+  cfg.driveFolderId=extractDriveFolderId(rawFolder);
   cfg.driveFolderName=document.getElementById('sc-foldername').value.trim();
   localStorage.setItem('nexus_sync_config', JSON.stringify(cfg));
+  // Show the clean extracted ID back in the field
+  document.getElementById('sc-folderid').value=cfg.driveFolderId;
+  document.getElementById('sc-folderid').style.borderColor='#334155';
   // flash saved
   var btn=document.getElementById('sc-save-btn');
   var orig=btn.textContent;
@@ -1150,11 +1166,11 @@ document.addEventListener('DOMContentLoaded', function() {
         <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px 16px;">
           <div style="display:flex;gap:8px;margin-bottom:8px;">
             <span style="flex:1;font-size:10px;color:#475569;letter-spacing:.04em;text-transform:uppercase;">LABEL (e.g. Driver Group)</span>
-            <span style="flex:1;font-size:10px;color:#475569;letter-spacing:.04em;text-transform:uppercase;">PHONE NUMBER (intl. format)</span>
+            <span style="flex:1;font-size:10px;color:#475569;letter-spacing:.04em;text-transform:uppercase;">PHONE or GROUP INVITE LINK</span>
             <span style="width:32px;"></span>
           </div>
           <div id="sc-wa-list"></div>
-          <div style="font-size:11px;color:#475569;margin-top:10px;">Phone format: +1XXXXXXXXXX (no spaces/dashes). Clicking the contact button will open WhatsApp Web to that exact chat. Leave phone blank to open WhatsApp Web homepage.</div>
+          <div style="font-size:11px;color:#475569;margin-top:10px;">For individual drivers: enter phone as +1XXXXXXXXXX. For group chats (like Documentos): paste the group invite link — open WhatsApp → right-click group → Group Info → Invite via Link → Copy Link. It starts with https://chat.whatsapp.com/...</div>
         </div>
       </div>
 
