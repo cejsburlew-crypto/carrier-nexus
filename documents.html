@@ -508,20 +508,6 @@ let documents = [
   {date:"2026-05-06",filename:"GUILLERMO - SET LOGISTICS BOL 332500B.pdf",driver:"GUILLERMO",type:"BOL",add_deduct:"ADD",driveId:""},
 ];
 
-// Merge imported documents from localStorage into the live documents array
-(function(){
-  var stored = [];
-  try { stored = JSON.parse(localStorage.getItem('nexus_documents_v2')||'[]'); } catch(e){}
-  var existKeys = {};
-  documents.forEach(function(d){ existKeys[d.id||d.filename]=true; });
-  stored.forEach(function(d){
-    var key = d.id||d.filename;
-    if(existKeys[key]) return;
-    d.add_deduct = d.add_deduct || d.addDeduct || 'ADD';
-    documents.push(d);
-    existKeys[key]=true;
-  });
-})();
 
 const driverBadgeColors = {
   AVIS:    { bg:"#D6E4F0", color:"#1a3a5c" },
@@ -637,8 +623,43 @@ function renderTable(data){
   });
 }
 
-// Initial render (applyFilters sets KPIs too)
-applyFilters();
+// Live data from Google Sheets (Gmail → Drive → NEXUS sync)
+var NEXUS_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTJF987dLiGHsazNbPxyYC-VaYSZV1SUnkMXUqkUMb8P03gf9EB8tJQuoxoztXK-P0_yidGZAosz_RG/pub?gid=441892361&single=true&output=csv';
+
+function loadFromGoogleSheets(callback){
+  // Show loading state
+  var kpi = document.getElementById('kpi-total');
+  if(kpi) kpi.textContent = '...';
+  fetch(NEXUS_SHEET_CSV)
+    .then(function(r){ return r.text(); })
+    .then(function(csv){
+      var lines = csv.trim().split('
+');
+      var existKeys = {};
+      documents.forEach(function(d){ existKeys[d.id||d.filename]=true; });
+      var added = 0;
+      for(var i=1;i<lines.length;i++){
+        var cols = parseCSVLine(lines[i]);
+        var id=(cols[0]||'').trim();
+        var fname=(cols[2]||'').trim();
+        if(!id && !fname) continue;
+        var key = id||fname;
+        if(existKeys[key]) continue;
+        documents.push({
+          id:id, date:cols[1]||'', filename:fname,
+          type:cols[3]||'Document', driver:cols[4]||'',
+          source:cols[5]||'Gmail Sync', driveId:cols[6]||'',
+          notes:cols[7]||'', add_deduct:'ADD', status:'ACTIVE'
+        });
+        existKeys[key]=true;
+        added++;
+      }
+      if(callback) callback();
+    })
+    .catch(function(){ if(callback) callback(); }); // fallback to hardcoded 60 on error
+}
+
+loadFromGoogleSheets(applyFilters);
 
 
 function openSyncModal(){ document.getElementById('sync-modal').style.display='flex'; }
@@ -881,7 +902,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 (async()=>{
   if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
-  applyFilters(); // re-render + update KPIs after auth check
+  loadFromGoogleSheets(applyFilters); // re-render with live Google Sheets data after auth
 })();
 </script>
 
