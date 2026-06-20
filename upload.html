@@ -2,237 +2,226 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Upload Documents — Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0a0e1a;
-  --surface: #111827;
-  --surface2: #1a2235;
-  --border: rgba(255,255,255,.07);
-  --text: #e2e8f0;
-  --muted: #6b7280;
-  --accent: #e91e8c;
-  --accent2: #3b7eff;
-  --green: #10b981;
-  --orange: #f59e0b;
-  --red: #ef4444;
-  --sidebar-w: 220px;
-}
+:root{--bg:#0a0e1a;--surface:#111827;--surface2:#1a2235;--border:rgba(255,255,255,.07);--text:#e2e8f0;--muted:#6b7280;--accent:#e91e8c;--accent2:#3b7eff;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--sidebar-w:220px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px}
 
-/* ── Sidebar ── */
-#sidebar{width:var(--sidebar-w);flex-shrink:0;background:#0d1424;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100}
-
-/* ── Main ── */
+/* Sidebar */
+#sidebar{width:var(--sidebar-w);flex-shrink:0;background:#0d1424;border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100}
 #main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* Topbar */
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;gap:12px}
 .topbar h1{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:.04em;color:#fff}
-.topbar .badge{background:rgba(233,30,140,.15);color:var(--accent);border:1px solid rgba(233,30,140,.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.06em}
-.page-body{padding:28px;max-width:680px;margin:0 auto;width:100%}
+.badge{background:rgba(233,30,140,.15);color:var(--accent);border:1px solid rgba(233,30,140,.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.06em}
 
-/* ── Cards ── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
-.card-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.card-title .step-num{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.page-body{padding:24px;max-width:720px;margin:0 auto;width:100%}
 
-/* ── Who selector ── */
-.identity-bar{display:flex;align-items:center;gap:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 18px}
-.identity-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#fff;flex-shrink:0}
-.identity-info{flex:1}
-.identity-name{font-weight:600;font-size:15px;color:#fff}
-.identity-role{font-size:12px;color:var(--muted);margin-top:2px}
-.identity-lock{font-size:11px;color:var(--accent);background:rgba(233,30,140,.1);border:1px solid rgba(233,30,140,.2);padding:2px 8px;border-radius:10px}
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.step-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
-/* ── Driver dropdown (admin mode) ── */
-.field-row{margin-bottom:16px}
-.field-label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
-select, input[type=text], textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;padding:10px 14px;outline:none;transition:border .2s}
-select:focus, input[type=text]:focus, textarea:focus{border-color:var(--accent2)}
+/* Identity */
+.identity-bar{display:flex;align-items:center;gap:12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
+.id-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:#fff;flex-shrink:0}
+.id-name{font-weight:600;font-size:14px;color:#fff}
+.id-role{font-size:11px;color:var(--muted);margin-top:1px}
+.id-you{font-size:10px;color:var(--accent);background:rgba(233,30,140,.1);border:1px solid rgba(233,30,140,.2);padding:2px 8px;border-radius:10px;margin-left:auto;flex-shrink:0}
+.field-label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;padding:10px 14px;outline:none}
+select:focus{border-color:var(--accent2)}
 select option{background:#1a2235}
-textarea{resize:vertical;min-height:72px}
 
-/* ── Doc type tiles ── */
-.type-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-@media(min-width:480px){.type-grid{grid-template-columns:repeat(4,1fr)}}
-.type-tile{background:var(--surface2);border:2px solid var(--border);border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
-.type-tile:hover{border-color:rgba(59,126,255,.4);background:rgba(59,126,255,.06)}
-.type-tile.selected{border-color:var(--accent2);background:rgba(59,126,255,.12)}
-.type-tile .tile-icon{font-size:24px;margin-bottom:6px;line-height:1}
-.type-tile .tile-label{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
-.type-tile .tile-dest{font-size:10px;color:var(--muted);margin-top:3px;font-family:'JetBrains Mono',monospace}
+/* ── BIG Drop Zone ── */
+.dropzone{border:2px dashed rgba(255,255,255,.18);border-radius:14px;padding:0;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;background:rgba(255,255,255,.02)}
+.dropzone:hover,.dropzone.drag-over{border-color:var(--accent2);background:rgba(59,126,255,.06)}
+.dz-inner{padding:40px 24px;text-align:center;pointer-events:none}
+.dz-big-icon{font-size:52px;margin-bottom:12px;line-height:1;display:block}
+.dz-big-label{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;letter-spacing:.04em;color:#fff;margin-bottom:6px}
+.dz-sub{font-size:13px;color:var(--muted);line-height:1.6}
+.dz-types{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.dz-type-chip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--muted)}
+#fileInput{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0;width:100%;height:100%}
+.add-more-btn{display:flex;align-items:center;gap:8px;background:transparent;border:1px dashed rgba(255,255,255,.2);border-radius:8px;color:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;padding:8px 16px;cursor:pointer;position:relative;overflow:hidden;margin-top:12px;width:100%;justify-content:center}
+.add-more-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+#fileInputMore{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
 
-/* ── Drop zone ── */
-.dropzone{border:2px dashed rgba(255,255,255,.15);border-radius:12px;padding:36px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
-.dropzone.drag-over{border-color:var(--accent2);background:rgba(59,126,255,.06)}
-.dropzone.has-file{border-color:var(--green);background:rgba(16,185,129,.06)}
-.dz-icon{font-size:36px;margin-bottom:10px}
-.dz-label{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
-.dz-hint{font-size:12px;color:var(--muted)}
-.dz-filename{font-size:13px;font-weight:600;color:var(--green);margin-top:8px;word-break:break-all}
-.dz-filesize{font-size:11px;color:var(--muted);margin-top:2px}
-.dz-clear{font-size:11px;color:var(--red);cursor:pointer;margin-top:6px;text-decoration:underline}
-#fileInput{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+/* ── File list ── */
+.file-count-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.file-count-label{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:#fff}
+.clear-all-btn{font-size:11px;color:var(--red);cursor:pointer;background:none;border:none;font-family:'Barlow',sans-serif;padding:0}
 
-/* ── Multiple files list ── */
-.file-list{margin-top:12px;display:flex;flex-direction:column;gap:6px}
-.file-item{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px}
-.file-item-icon{font-size:18px;flex-shrink:0}
-.file-item-info{flex:1;min-width:0}
-.file-item-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.file-item-size{font-size:11px;color:var(--muted)}
-.file-item-remove{color:var(--muted);cursor:pointer;font-size:16px;flex-shrink:0;padding:2px 4px;border-radius:4px}
-.file-item-remove:hover{color:var(--red)}
-.file-item-status{font-size:11px;font-weight:600;margin-left:auto;flex-shrink:0;white-space:nowrap}
-.file-item-status.uploading{color:var(--accent2)}
-.file-item-status.done{color:var(--green)}
-.file-item-status.error{color:var(--red)}
+.file-row{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;transition:border-color .15s}
+.file-row.done-row{border-color:rgba(16,185,129,.3)}
+.file-row.error-row{border-color:rgba(239,68,68,.3)}
+.fi-icon{font-size:22px;flex-shrink:0;width:28px;text-align:center}
+.fi-info{flex:1;min-width:0}
+.fi-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}
+.fi-size{font-size:11px;color:var(--muted);margin-top:1px}
+.fi-type{flex-shrink:0}
+.fi-type select{width:148px;font-size:12px;padding:5px 8px;border-radius:6px;background:var(--bg);border-color:rgba(255,255,255,.1)}
+@media(max-width:500px){.fi-type select{width:120px;font-size:11px}}
+.fi-remove{color:var(--muted);cursor:pointer;font-size:15px;padding:4px;border-radius:4px;flex-shrink:0;background:none;border:none;line-height:1}
+.fi-remove:hover{color:var(--red)}
+.fi-status{font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0;min-width:64px;text-align:right}
+.fi-status.uploading{color:var(--accent2)}
+.fi-status.done{color:var(--green)}
+.fi-status.error{color:var(--red)}
 
-/* ── Upload btn ── */
-.upload-btn{width:100%;background:linear-gradient(135deg,var(--accent),#c2185b);border:none;border-radius:10px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:.06em;padding:16px;cursor:pointer;transition:opacity .2s;margin-top:4px}
-.upload-btn:hover:not(:disabled){opacity:.9}
-.upload-btn:disabled{opacity:.4;cursor:not-allowed}
-.upload-btn.uploading{background:var(--surface2);color:var(--accent2);border:1px solid var(--accent2)}
+/* ── Quick-assign toolbar ── */
+.quick-assign{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;padding:10px 14px;background:rgba(59,126,255,.06);border:1px solid rgba(59,126,255,.15);border-radius:8px}
+.qa-label{font-size:12px;color:var(--muted);white-space:nowrap}
+.qa-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;white-space:nowrap;font-family:'Barlow',sans-serif}
+.qa-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+
+/* ── Notes ── */
+textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;padding:10px 14px;outline:none;resize:vertical;min-height:60px}
+textarea:focus{border-color:var(--accent2)}
 
 /* ── Progress ── */
-.progress-wrap{margin-top:12px;display:none}
-.progress-bar-bg{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
-.progress-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .3s;border-radius:3px}
-.progress-label{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
+.prog-wrap{margin-top:12px;display:none}
+.prog-bg{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .3s;border-radius:3px}
+.prog-label{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
 
-/* ── Toast ── */
-#toast{position:fixed;bottom:28px;right:28px;background:#1a2235;border:1px solid var(--border);border-radius:10px;padding:14px 20px;font-size:13px;font-weight:500;color:#fff;z-index:9999;transform:translateY(120%);transition:transform .3s;max-width:320px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 24px rgba(0,0,0,.5)}
+/* ── Upload button ── */
+.upload-btn{width:100%;background:linear-gradient(135deg,var(--accent),#c2185b);border:none;border-radius:10px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:.06em;padding:18px;cursor:pointer;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.upload-btn:hover:not(:disabled){opacity:.9}
+.upload-btn:disabled{opacity:.35;cursor:not-allowed}
+.upload-btn svg{flex-shrink:0}
+
+/* ── Summary banner ── */
+.summary-banner{display:none;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:16px 20px;margin-bottom:16px}
+.summary-banner h3{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--green);margin-bottom:4px}
+.summary-banner p{font-size:13px;color:var(--muted)}
+.summary-links{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.summary-links a,.summary-links button{padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:'Barlow',sans-serif}
+.summary-links a:hover,.summary-links button:hover{border-color:var(--accent2);color:var(--accent2)}
+
+/* Toast */
+#toast{position:fixed;bottom:24px;right:24px;background:#1a2235;border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;font-weight:500;color:#fff;z-index:9999;transform:translateY(120%);transition:transform .3s;max-width:300px;box-shadow:0 4px 24px rgba(0,0,0,.5)}
 #toast.show{transform:translateY(0)}
 #toast.success{border-color:var(--green);color:var(--green)}
 #toast.error{border-color:var(--red);color:var(--red)}
 
-/* ── Auth status ── */
-.auth-notice{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--orange);display:flex;align-items:center;gap:8px;margin-bottom:16px}
-
-/* ── Success state ── */
-.success-screen{display:none;text-align:center;padding:32px 20px}
-.success-screen .checkmark{font-size:56px;margin-bottom:16px}
-.success-screen h2{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--green);margin-bottom:8px}
-.success-screen p{color:var(--muted);font-size:14px;margin-bottom:20px}
-.success-links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.success-links a,.success-links button{padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;border:none;font-family:'Barlow',sans-serif}
-.btn-outline{background:transparent;border:1px solid var(--border)!important;color:var(--text)}
-.btn-primary{background:var(--accent);color:#fff}
-
-/* ── Mobile ── */
-@media(max-width:768px){
-  #sidebar{display:none}
-  #main{margin-left:0}
-  .page-body{padding:16px}
-  .topbar{padding:14px 16px}
-}
+/* Mobile */
+@media(max-width:768px){#sidebar{display:none}#main{margin-left:0}.topbar{padding:14px 16px}.page-body{padding:14px}}
 </style>
 </head>
 <body>
 <div id="sidebar"></div>
 <div id="main">
+
   <div class="topbar">
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
     <h1>UPLOAD DOCUMENTS</h1>
     <span class="badge">DRIVE SYNC</span>
   </div>
 
   <div class="page-body">
 
-    <!-- Success screen -->
-    <div class="success-screen" id="successScreen">
-      <div class="checkmark">✅</div>
-      <h2>UPLOADED!</h2>
-      <p id="successMsg">Files uploaded to Google Drive successfully.</p>
-      <div class="success-links">
-        <button class="btn-primary" onclick="resetForm()">Upload More</button>
-        <a class="btn-outline" href="documents.html">Document Vault</a>
-        <a class="btn-outline" id="driveLink" href="#" target="_blank" style="display:none">Open in Drive</a>
+    <!-- Success summary (stays visible, shows above new upload) -->
+    <div class="summary-banner" id="summaryBanner">
+      <h3 id="summaryTitle">✅ 0 FILES UPLOADED</h3>
+      <p id="summaryDetail"></p>
+      <div class="summary-links">
+        <a href="documents.html">View Document Vault</a>
+        <button onclick="hideSummary()">Dismiss</button>
       </div>
     </div>
 
-    <!-- Upload form -->
-    <div id="uploadForm">
+    <!-- STEP 1: Who -->
+    <div class="card" id="cardWho">
+      <div class="card-title"><span class="step-num">1</span> WHO IS THIS FOR?</div>
+      <div id="selfView" style="display:none">
+        <div class="identity-bar">
+          <div class="id-avatar" id="selfAvatar">?</div>
+          <div><div class="id-name" id="selfName">…</div><div class="id-role" id="selfRole"></div></div>
+          <span class="id-you">You</span>
+        </div>
+      </div>
+      <div id="adminView" style="display:none">
+        <div class="field-label">Assign to</div>
+        <select id="memberSelect"><option value="">— Select member —</option></select>
+      </div>
+    </div>
 
-      <!-- Who is this for? -->
-      <div class="card" id="cardWho">
-        <div class="card-title"><span class="step-num">1</span> WHO IS THIS FOR?</div>
+    <!-- STEP 2: Files — BIG picker first -->
+    <div class="card">
+      <div class="card-title"><span class="step-num">2</span> SELECT FILES</div>
 
-        <!-- Driver view: auto-identified -->
-        <div id="selfView" style="display:none">
-          <div class="identity-bar">
-            <div class="identity-avatar" id="selfAvatar">?</div>
-            <div class="identity-info">
-              <div class="identity-name" id="selfName">Loading…</div>
-              <div class="identity-role" id="selfRole">—</div>
-            </div>
-            <span class="identity-lock">You</span>
+      <div id="dropzone" class="dropzone">
+        <input type="file" id="fileInput" multiple
+          accept=".pdf,.jpg,.jpeg,.png,.heic,.doc,.docx,.xls,.xlsx,.csv,.txt,.gif,.bmp,.tiff,.mp4,.mov">
+        <div class="dz-inner">
+          <span class="dz-big-icon">📂</span>
+          <div class="dz-big-label">TAP TO ADD FILES</div>
+          <div class="dz-sub">Select one file or hundreds — all at once<br>Drag &amp; drop also works on desktop</div>
+          <div class="dz-types">
+            <span class="dz-type-chip">PDF</span>
+            <span class="dz-type-chip">JPG / PNG</span>
+            <span class="dz-type-chip">HEIC</span>
+            <span class="dz-type-chip">DOC / DOCX</span>
+            <span class="dz-type-chip">XLS / XLSX</span>
           </div>
         </div>
+      </div>
 
-        <!-- Admin/Dispatch view: pick anyone -->
-        <div id="adminView" style="display:none">
-          <div class="field-row">
-            <div class="field-label">Assign to Driver / Member</div>
-            <select id="memberSelect">
-              <option value="">— Select member —</option>
-            </select>
-          </div>
+      <!-- File list (shows after picking) -->
+      <div id="fileSection" style="display:none;margin-top:16px">
+        <div class="file-count-bar">
+          <span class="file-count-label" id="fileCountLabel">0 files</span>
+          <button class="clear-all-btn" onclick="clearAll()">Clear all</button>
         </div>
-      </div>
 
-      <!-- Doc type -->
-      <div class="card">
-        <div class="card-title"><span class="step-num">2</span> DOCUMENT TYPE</div>
-        <div class="type-grid" id="typeGrid"></div>
-      </div>
-
-      <!-- File picker -->
-      <div class="card">
-        <div class="card-title"><span class="step-num">3</span> SELECT FILES</div>
-        <div id="authNotice" class="auth-notice" style="display:none">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Google Drive authorization required — you'll be prompted when you click Upload.
+        <!-- Quick-assign all -->
+        <div class="quick-assign">
+          <span class="qa-label">Set all to:</span>
+          <button class="qa-btn" onclick="setAllType('bol')">📋 BOL</button>
+          <button class="qa-btn" onclick="setAllType('ratecon')">📄 Rate Con</button>
+          <button class="qa-btn" onclick="setAllType('settlement')">💵 Settlement</button>
+          <button class="qa-btn" onclick="setAllType('permit')">📌 Permit</button>
+          <button class="qa-btn" onclick="setAllType('other')">📁 Other</button>
         </div>
-        <div class="dropzone" id="dropzone">
-          <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,.csv,.txt,.heic">
-          <div class="dz-icon">📂</div>
-          <div class="dz-label">Tap to choose files</div>
-          <div class="dz-hint">PDF, JPG, PNG, DOC, XLSX • Drag &amp; drop supported</div>
-        </div>
-        <div class="file-list" id="fileList"></div>
+
+        <div id="fileList"></div>
+
+        <!-- Add more files -->
+        <button class="add-more-btn">
+          <input type="file" id="fileInputMore" multiple
+            accept=".pdf,.jpg,.jpeg,.png,.heic,.doc,.docx,.xls,.xlsx,.csv,.txt,.gif,.bmp,.tiff,.mp4,.mov">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add more files
+        </button>
       </div>
+    </div>
 
-      <!-- Notes -->
-      <div class="card">
-        <div class="card-title"><span class="step-num">4</span> NOTES (OPTIONAL)</div>
-        <textarea id="notesField" placeholder="Load number, reference, or description…" rows="2"></textarea>
-      </div>
+    <!-- STEP 3: Notes -->
+    <div class="card" id="cardNotes" style="display:none">
+      <div class="card-title"><span class="step-num">3</span> NOTES (OPTIONAL)</div>
+      <textarea id="notesField" placeholder="Load number, week ending, reference, or any notes…" rows="2"></textarea>
+    </div>
 
-      <!-- Destination preview -->
-      <div class="card" id="destCard" style="display:none">
-        <div class="card-title">📁 UPLOAD DESTINATION</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent2);background:var(--surface2);padding:10px 14px;border-radius:8px;word-break:break-all" id="destPath">—</div>
-      </div>
+    <!-- Progress -->
+    <div class="prog-wrap" id="progWrap">
+      <div class="prog-bg"><div class="prog-fill" id="progFill"></div></div>
+      <div class="prog-label" id="progLabel">Preparing…</div>
+    </div>
 
-      <!-- Progress -->
-      <div class="progress-wrap" id="progressWrap">
-        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
-        <div class="progress-label" id="progressLabel">Preparing…</div>
-      </div>
+    <!-- Upload button -->
+    <button class="upload-btn" id="uploadBtn" onclick="startUpload()" disabled>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <span id="uploadBtnLabel">UPLOAD TO DRIVE</span>
+    </button>
 
-      <!-- Upload button -->
-      <button class="upload-btn" id="uploadBtn" onclick="startUpload()" disabled>
-        ↑ UPLOAD TO DRIVE
-      </button>
-
-    </div><!-- /uploadForm -->
   </div><!-- /page-body -->
 </div><!-- /main -->
-
 <div id="toast"></div>
 
 <script src="nexus-config.js"></script>
@@ -241,472 +230,430 @@ textarea{resize:vertical;min-height:72px}
 <script>
 'use strict';
 
-/* ── Constants ────────────────────────────────────────────── */
+/* ── Constants ─────────────────────────────────────────────── */
 var VAULT_ROOT   = '1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0';
 var DRIVE_UPLOAD = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
 var SHEETS_API   = 'https://sheets.googleapis.com/v4/spreadsheets';
 
-var DOC_TYPES = [
-  { key:'bol',        label:'Bill of Lading',    folder:'BILLS OF LADING',     icon:'📋', hint:'BOL' },
-  { key:'ratecon',    label:'Rate Confirmation', folder:'RATE CONFIRMATIONS',   icon:'📄', hint:'Rate Con' },
-  { key:'settlement', label:'Settlement / Pay',  folder:'DOCUMENTS',            icon:'💵', hint:'Settle' },
-  { key:'permit',     label:'Permit',            folder:'PERMITS',              icon:'📌', hint:'Permit' },
-  { key:'cdl',        label:'CDL / Driver ID',   folder:'DOCUMENTS',            icon:'🪪', hint:'CDL/ID' },
-  { key:'insurance',  label:'Insurance Doc',     folder:'DOCUMENTS',            icon:'🛡️', hint:'Insurance' },
-  { key:'w9',         label:'W-9 Form',          folder:'DOCUMENTS',            icon:'📝', hint:'W-9' },
-  { key:'other',      label:'Other Document',    folder:'DOCUMENTS',            icon:'📁', hint:'Other' }
-];
+var TYPE_MAP = {
+  bol:        { label:'Bill of Lading',    folder:'BILLS OF LADING',   icon:'📋' },
+  ratecon:    { label:'Rate Confirmation', folder:'RATE CONFIRMATIONS', icon:'📄' },
+  settlement: { label:'Settlement/Pay',    folder:'DOCUMENTS',          icon:'💵' },
+  permit:     { label:'Permit',            folder:'PERMITS',            icon:'📌' },
+  cdl:        { label:'CDL / Driver ID',   folder:'DOCUMENTS',          icon:'🪪' },
+  insurance:  { label:'Insurance',         folder:'DOCUMENTS',          icon:'🛡️' },
+  w9:         { label:'W-9 Form',          folder:'DOCUMENTS',          icon:'📝' },
+  other:      { label:'Other',             folder:'DOCUMENTS',          icon:'📁' }
+};
 
-/* ── State ────────────────────────────────────────────────── */
-var _session     = null;
-var _selectedType = null;
-var _files        = [];
+var TYPE_OPTIONS = Object.keys(TYPE_MAP).map(function(k){
+  return '<option value="'+k+'">'+TYPE_MAP[k].icon+' '+TYPE_MAP[k].label+'</option>';
+}).join('');
+
+/* ── Auto-detect type from filename ─────────────────────────── */
+function detectType(filename) {
+  var n = filename.toLowerCase();
+  if (/\bbol\b|bill.of.lading|b\.o\.l/.test(n))       return 'bol';
+  if (/rate.?con|ratecon|rc[\s_-]?\d|load.confirm/.test(n)) return 'ratecon';
+  if (/settl|pay.?stub|settlement/.test(n))             return 'settlement';
+  if (/permit/.test(n))                                 return 'permit';
+  if (/cdl|driver.?id|license/.test(n))                 return 'cdl';
+  if (/insurance|insur|coverage/.test(n))               return 'insurance';
+  if (/w.?9|w9/.test(n))                                return 'w9';
+  return 'other';
+}
+
+/* ── State ──────────────────────────────────────────────────── */
+var _session      = null;
+var _targetMember = null;
+var _files        = [];   // { file, id, type }
 var _driveToken   = null;
-var _targetMember = null; // { name, short, dispatcher }
+var _fileIdCounter = 0;
+var _folderCache  = {};   // parentId+name → folderId (avoids re-querying same folder)
 
-/* ── Boot ─────────────────────────────────────────────────── */
+/* ── Boot ───────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', function() {
-  // Session check
   try { _session = JSON.parse(localStorage.getItem('nexus_session')); } catch(e){}
   if (!_session) { window.location.href = 'login.html'; return; }
 
-  buildTypeGrid();
   setupDropzone();
   initIdentity();
-  checkDriveAuth();
 });
 
-/* ── Identity ─────────────────────────────────────────────── */
+/* ── Identity ───────────────────────────────────────────────── */
 function initIdentity() {
-  var role = (_session.role || '').toLowerCase();
+  var role = (_session.role||'').toLowerCase();
   var isDriver = ['driver','owner_operator'].includes(role);
 
   if (isDriver) {
-    // Auto-identify from session
     document.getElementById('selfView').style.display = 'block';
     var name = _session.name || 'Unknown';
     document.getElementById('selfName').textContent = name;
     document.getElementById('selfRole').textContent = roleLabel(role);
     document.getElementById('selfAvatar').textContent = initials(name);
-    // Map to member short
-    _targetMember = resolveDriverByName(name);
-    updateDestPreview();
+    _targetMember = resolveByName(name);
+    refreshBtn();
   } else {
-    // Admin / dispatch / approver — show selector
     document.getElementById('adminView').style.display = 'block';
-    populateMemberSelect();
-    document.getElementById('memberSelect').addEventListener('change', function() {
-      var val = this.value;
-      if (!val) { _targetMember = null; }
-      else {
-        try { _targetMember = JSON.parse(val); } catch(e){}
-      }
-      updateDestPreview();
-      refreshUploadBtn();
+    populateSelect();
+    document.getElementById('memberSelect').addEventListener('change', function(){
+      _targetMember = this.value ? JSON.parse(this.value) : null;
+      refreshBtn();
     });
   }
 }
 
-function roleLabel(r) {
-  return {admin:'Admin',approver:'Approver',dispatcher:'Dispatcher',driver:'Driver',owner_operator:'Owner Operator'}[r] || r;
-}
-function initials(name) {
-  return (name||'?').split(' ').slice(0,2).map(function(w){return w[0]||'';}).join('').toUpperCase() || '?';
-}
+function roleLabel(r){ return {admin:'Admin',approver:'Approver',dispatcher:'Dispatcher',driver:'Driver',owner_operator:'Owner Operator'}[r]||r; }
+function initials(n){ return (n||'?').split(' ').slice(0,2).map(function(w){return w[0]||'';}).join('').toUpperCase()||'?'; }
 
-function resolveDriverByName(fullName) {
-  var all = (window.NexusMembers && window.NexusMembers.all) ? window.NexusMembers.all() : [];
-  var lower = (fullName||'').toLowerCase().trim();
-  var match = all.find(function(m){ return (m.firstName+' '+m.lastName).toLowerCase()===lower; });
-  if (match) {
-    var short = match.firstName.toUpperCase();
-    return { name: match.firstName+' '+match.lastName, short: short, dispatcher: findDispatcher(short), memberId: match.memberId };
-  }
-  // Fallback: derive from name
-  var short = (fullName||'').split(' ')[0].toUpperCase();
+function resolveByName(fullName) {
+  var all = window.NexusMembers && NexusMembers.all ? NexusMembers.all() : [];
+  var lc  = (fullName||'').toLowerCase().trim();
+  var m   = all.find(function(x){ return (x.firstName+' '+x.lastName).toLowerCase()===lc; });
+  var short = m ? m.firstName.toUpperCase() : (fullName||'').split(' ')[0].toUpperCase();
   return { name: fullName, short: short, dispatcher: findDispatcher(short) };
 }
 
-function findDispatcher(shortName) {
-  var map = (window.NexusDrive && NexusDrive.vault) ? NexusDrive.vault.dispatcherMap : {AMET:['AVIS','DAVID','MIGUEL','NELSON','YOSVIEL','LAURA'],BETTY:['GUILLERMO']};
+function findDispatcher(short) {
+  var map = window.NexusDrive && NexusDrive.vault ? NexusDrive.vault.dispatcherMap : {AMET:['AVIS','DAVID','MIGUEL','NELSON','YOSVIEL','LAURA'],BETTY:['GUILLERMO']};
   for (var d in map) {
-    if (map[d].map(function(s){return s.toUpperCase();}).indexOf(shortName.toUpperCase()) >= 0) return d;
+    if (map[d].map(function(s){return s.toUpperCase();}).indexOf(short.toUpperCase())>=0) return d;
   }
   return null;
 }
 
-function populateMemberSelect() {
-  var all = (window.NexusMembers && window.NexusMembers.all) ? window.NexusMembers.all() : [];
-  var driverTypes = ['driver','owner_operator','dispatcher','approver'];
+function populateSelect() {
+  var all = window.NexusMembers && NexusMembers.all ? NexusMembers.all() : [];
   var sel = document.getElementById('memberSelect');
-  var groups = {
-    'Drivers & Owner Operators': [],
-    'Dispatchers': [],
-    'Other': []
-  };
-
-  all.forEach(function(m) {
-    var t = m.type || '';
+  var groups = {'Drivers & OOs':[],'Dispatchers':[],'Other':[]};
+  all.forEach(function(m){
+    var t = m.type||'';
     var short = m.firstName.toUpperCase();
-    var obj = { name: m.firstName+' '+m.lastName, short: short, dispatcher: findDispatcher(short), memberId: m.memberId, type: t };
-    if (['driver','owner_operator'].includes(t)) groups['Drivers & Owner Operators'].push(obj);
-    else if (t==='dispatcher') groups['Dispatchers'].push(obj);
-    else if (['admin','approver'].includes(t)) groups['Other'].push(obj);
+    var obj = {name:m.firstName+' '+m.lastName, short:short, dispatcher:findDispatcher(short)};
+    var gs = ['driver','owner_operator'].includes(t)?'Drivers & OOs':t==='dispatcher'?'Dispatchers':'Other';
+    groups[gs].push(obj);
   });
-
-  Object.keys(groups).forEach(function(g) {
+  Object.keys(groups).forEach(function(g){
     if (!groups[g].length) return;
     var og = document.createElement('optgroup');
     og.label = g;
-    groups[g].forEach(function(m) {
+    groups[g].forEach(function(m){
       var opt = document.createElement('option');
       opt.value = JSON.stringify(m);
-      opt.textContent = m.name + (m.dispatcher ? ' (' + m.dispatcher + ' dispatch)' : '');
+      opt.textContent = m.name + (m.dispatcher?' ('+m.dispatcher+')':'');
       og.appendChild(opt);
     });
     sel.appendChild(og);
   });
 }
 
-/* ── Doc type grid ────────────────────────────────────────── */
-function buildTypeGrid() {
-  var grid = document.getElementById('typeGrid');
-  DOC_TYPES.forEach(function(t) {
-    var tile = document.createElement('div');
-    tile.className = 'type-tile';
-    tile.dataset.key = t.key;
-    tile.innerHTML = '<div class="tile-icon">'+t.icon+'</div><div class="tile-label">'+t.label+'</div><div class="tile-dest">'+t.folder+'</div>';
-    tile.addEventListener('click', function() {
-      document.querySelectorAll('.type-tile').forEach(function(el){el.classList.remove('selected');});
-      tile.classList.add('selected');
-      _selectedType = t;
-      updateDestPreview();
-      refreshUploadBtn();
-    });
-    grid.appendChild(tile);
-  });
-}
-
-/* ── Dropzone ─────────────────────────────────────────────── */
+/* ── Dropzone ───────────────────────────────────────────────── */
 function setupDropzone() {
-  var dz   = document.getElementById('dropzone');
-  var inp  = document.getElementById('fileInput');
+  var dz  = document.getElementById('dropzone');
+  var inp = document.getElementById('fileInput');
+  var more = document.getElementById('fileInputMore');
 
-  inp.addEventListener('change', function() { addFiles(Array.from(inp.files)); inp.value=''; });
+  inp.addEventListener('change',  function(){ addFiles(Array.from(inp.files));  inp.value=''; });
+  more.addEventListener('change', function(){ addFiles(Array.from(more.files)); more.value=''; });
 
   dz.addEventListener('dragover',  function(e){ e.preventDefault(); dz.classList.add('drag-over'); });
   dz.addEventListener('dragleave', function()  { dz.classList.remove('drag-over'); });
-  dz.addEventListener('drop', function(e) {
+  dz.addEventListener('drop', function(e){
     e.preventDefault(); dz.classList.remove('drag-over');
     addFiles(Array.from(e.dataTransfer.files));
   });
 }
 
 function addFiles(newFiles) {
-  newFiles.forEach(function(f) {
-    // Dedup by name+size
-    var dup = _files.some(function(x){return x.name===f.name && x.size===f.size;});
-    if (!dup) _files.push(f);
+  newFiles.forEach(function(f){
+    var dup = _files.some(function(x){ return x.file.name===f.name && x.file.size===f.size; });
+    if (!dup) _files.push({ file:f, id:++_fileIdCounter, type:detectType(f.name) });
   });
-  renderFileList();
-  refreshUploadBtn();
+  renderList();
+  refreshBtn();
 }
 
-function removeFile(idx) {
-  _files.splice(idx, 1);
-  renderFileList();
-  refreshUploadBtn();
+function removeFile(id) {
+  _files = _files.filter(function(x){ return x.id!==id; });
+  renderList();
+  refreshBtn();
 }
 
-function renderFileList() {
-  var list = document.getElementById('fileList');
+function clearAll() {
+  _files = [];
+  renderList();
+  refreshBtn();
+}
+
+function setType(id, type) {
+  var f = _files.find(function(x){ return x.id===id; });
+  if (f) f.type = type;
+  refreshBtn();
+}
+
+function setAllType(type) {
+  _files.forEach(function(f){ f.type=type; });
+  // Update all selects
+  document.querySelectorAll('.fi-type-sel').forEach(function(s){ s.value=type; });
+  refreshBtn();
+}
+
+/* ── Render file list ───────────────────────────────────────── */
+function renderList() {
+  var list   = document.getElementById('fileList');
+  var sec    = document.getElementById('fileSection');
+  var notes  = document.getElementById('cardNotes');
+  var countEl = document.getElementById('fileCountLabel');
+
+  if (!_files.length) {
+    sec.style.display   = 'none';
+    notes.style.display = 'none';
+    document.getElementById('dropzone').querySelector('.dz-inner').style.display='block';
+    return;
+  }
+
+  sec.style.display    = 'block';
+  notes.style.display  = 'block';
+  document.getElementById('dropzone').querySelector('.dz-inner').style.display='none';
+  countEl.textContent  = _files.length + ' file' + (_files.length===1?'':'s') + ' selected';
+
   list.innerHTML = '';
-  if (!_files.length) { document.getElementById('dropzone').querySelector('.dz-label').textContent='Tap to choose files'; return; }
-  document.getElementById('dropzone').querySelector('.dz-label').textContent = _files.length + ' file'+ (_files.length>1?'s':'') + ' selected';
-
-  _files.forEach(function(f, i) {
-    var icon = fileIcon(f.name);
-    var item = document.createElement('div');
-    item.className = 'file-item';
-    item.id = 'fi-' + i;
-    item.innerHTML = '<span class="file-item-icon">'+icon+'</span>'
-      +'<div class="file-item-info"><div class="file-item-name">'+esc(f.name)+'</div><div class="file-item-size">'+fmtSize(f.size)+'</div></div>'
-      +'<span class="file-item-remove" title="Remove" onclick="removeFile('+i+')">✕</span>';
-    list.appendChild(item);
+  _files.forEach(function(item){
+    var row = document.createElement('div');
+    row.className = 'file-row';
+    row.id = 'row-'+item.id;
+    row.innerHTML =
+      '<span class="fi-icon">'+fileIcon(item.file.name)+'</span>'
+      +'<div class="fi-info">'
+        +'<div class="fi-name">'+esc(item.file.name)+'</div>'
+        +'<div class="fi-size">'+fmtSize(item.file.size)+'</div>'
+      +'</div>'
+      +'<div class="fi-type"><select class="fi-type-sel" onchange="setType('+item.id+',this.value)">'+TYPE_OPTIONS+'</select></div>'
+      +'<button class="fi-remove" onclick="removeFile('+item.id+')" title="Remove">✕</button>';
+    list.appendChild(row);
+    // Set current type
+    row.querySelector('.fi-type-sel').value = item.type;
   });
 }
 
-function fileIcon(name) {
-  var ext = (name||'').split('.').pop().toLowerCase();
-  return {pdf:'📑',jpg:'🖼️',jpeg:'🖼️',png:'🖼️',heic:'🖼️',doc:'📝',docx:'📝',xls:'📊',xlsx:'📊',csv:'📊'}[ext] || '📄';
+function fileIcon(n){
+  var ext=(n||'').split('.').pop().toLowerCase();
+  return {pdf:'📑',jpg:'🖼️',jpeg:'🖼️',png:'🖼️',heic:'🖼️',gif:'🖼️',bmp:'🖼️',tiff:'🖼️',doc:'📝',docx:'📝',xls:'📊',xlsx:'📊',csv:'📊',mp4:'🎬',mov:'🎬'}[ext]||'📄';
 }
-function fmtSize(b) {
-  if (b<1024) return b+'B';
-  if (b<1048576) return (b/1024).toFixed(1)+'KB';
-  return (b/1048576).toFixed(1)+'MB';
-}
+function fmtSize(b){ if(b<1024)return b+'B'; if(b<1048576)return(b/1024).toFixed(1)+'KB'; return(b/1048576).toFixed(1)+'MB'; }
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-/* ── Destination preview ──────────────────────────────────── */
-function updateDestPreview() {
-  var card = document.getElementById('destCard');
-  var path = document.getElementById('destPath');
-  if (!_targetMember || !_selectedType) { card.style.display='none'; return; }
-  card.style.display = 'block';
-  var dispatcher = _targetMember.dispatcher || '(no dispatcher)';
-  path.textContent = 'My Drive / Carrier Nexus Vault / ' + dispatcher + ' / ' + _targetMember.short + ' / ' + _selectedType.folder + '/';
-}
-
-/* ── Auth check ───────────────────────────────────────────── */
-function checkDriveAuth() {
-  var notice = document.getElementById('authNotice');
-  if (window.NexusDrive && NexusDrive.isAuthed) { notice.style.display='none'; }
-  else { notice.style.display='flex'; }
-}
-
-/* ── Refresh upload button state ──────────────────────────── */
-function refreshUploadBtn() {
+/* ── Upload button state ────────────────────────────────────── */
+function refreshBtn() {
   var role = (_session.role||'').toLowerCase();
   var isDriver = ['driver','owner_operator'].includes(role);
   var hasTarget = isDriver ? !!_targetMember : !!document.getElementById('memberSelect').value;
-  var hasType   = !!_selectedType;
   var hasFiles  = _files.length > 0;
-  document.getElementById('uploadBtn').disabled = !(hasTarget && hasType && hasFiles);
+  var btn = document.getElementById('uploadBtn');
+  btn.disabled = !(hasTarget && hasFiles);
+  if (!btn.disabled) {
+    document.getElementById('uploadBtnLabel').textContent = 'UPLOAD ' + _files.length + ' FILE' + (_files.length===1?'':'S') + ' TO DRIVE';
+  } else {
+    document.getElementById('uploadBtnLabel').textContent = 'UPLOAD TO DRIVE';
+  }
 }
 
-/* ── Upload ───────────────────────────────────────────────── */
+/* ── Upload ─────────────────────────────────────────────────── */
 async function startUpload() {
   var btn = document.getElementById('uploadBtn');
-  if (btn.disabled) return;
-
-  // Ensure Drive auth
-  if (!window.NexusDrive) { showToast('NexusDrive not loaded — refresh the page.','error'); return; }
-
+  if (btn.disabled || !window.NexusDrive) return;
   btn.disabled = true;
-  btn.textContent = '⏳ Authorizing…';
+  document.getElementById('uploadBtnLabel').textContent = '⏳ Authorizing…';
 
-  NexusDrive.requireAuth(async function(token) {
-    if (!token) { showToast('Google Drive authorization failed.','error'); resetBtn(); return; }
+  NexusDrive.requireAuth(async function(token){
+    if (!token) { toast('Google auth failed.','error'); resetBtn(); return; }
     _driveToken = token;
+    _folderCache = {};
     await doUpload();
-  }, { prompt: '' });
+  }, { prompt:'' });
 }
 
 async function doUpload() {
-  var btn = document.getElementById('uploadBtn');
-  var pw  = document.getElementById('progressWrap');
-  var pf  = document.getElementById('progressFill');
-  var pl  = document.getElementById('progressLabel');
+  var pw  = document.getElementById('progWrap');
+  var pf  = document.getElementById('progFill');
+  var pl  = document.getElementById('progLabel');
+  var notes = document.getElementById('notesField').value.trim();
 
-  btn.textContent = '↑ UPLOADING…';
   pw.style.display = 'block';
+  document.getElementById('uploadBtnLabel').textContent = 'UPLOADING…';
 
-  var notes  = document.getElementById('notesField').value.trim();
-  var folder = _selectedType.folder;
-  var total  = _files.length;
-  var done   = 0;
-  var errors = 0;
-  var uploaded = [];
+  var total = _files.length, done = 0, errors = 0;
+  var uploadedFiles = [];
 
-  try {
-    // ── Resolve folder path in Drive ──────────────────────────
-    pl.textContent = 'Locating Drive folder…';
-    var targetFolderId = await resolveFolderPath(folder);
-
-    // ── Upload each file ──────────────────────────────────────
-    for (var i = 0; i < _files.length; i++) {
-      var f = _files[i];
-      var statusEl = document.getElementById('fi-'+i);
-      if (statusEl) { statusEl.querySelector('.file-item-remove').outerHTML='<span class="file-item-status uploading" id="fs-'+i+'">↑ uploading…</span>'; }
-
-      pl.textContent = 'Uploading ' + (i+1) + ' of ' + total + ': ' + f.name;
-      pf.style.width = Math.round((i/total)*80) + '%';
-
-      try {
-        var result = await uploadFileToDrive(f, targetFolderId);
-        uploaded.push({ file: f, driveId: result.id, webViewLink: result.webViewLink });
-        done++;
-        var fsEl = document.getElementById('fs-'+i);
-        if (fsEl) { fsEl.textContent = '✓ done'; fsEl.className='file-item-status done'; }
-
-        // Log to sheet (best-effort)
-        try { await logToSheet(f, result, notes); } catch(e){}
-
-      } catch (uploadErr) {
-        errors++;
-        console.error('Upload error for', f.name, uploadErr);
-        var fsEl2 = document.getElementById('fs-'+i);
-        if (fsEl2) { fsEl2.textContent = '✗ failed'; fsEl2.className='file-item-status error'; }
-      }
+  for (var i=0; i<_files.length; i++) {
+    var item = _files[i];
+    var rowEl = document.getElementById('row-'+item.id);
+    if (rowEl) {
+      rowEl.querySelector('.fi-remove').style.display='none';
+      var statusSpan = document.createElement('span');
+      statusSpan.className='fi-status uploading';
+      statusSpan.id='fs-'+item.id;
+      statusSpan.textContent='↑ uploading';
+      rowEl.appendChild(statusSpan);
     }
 
-    pf.style.width = '100%';
-    pl.textContent = done + ' of ' + total + ' uploaded' + (errors?' ('+errors+' failed)':'');
+    pf.style.width = Math.round((i/total)*90)+'%';
+    pl.textContent = 'Uploading '+item.file.name+' ('+(i+1)+'/'+total+')';
 
-    await new Promise(function(r){setTimeout(r,600);});
+    try {
+      var typeInfo = TYPE_MAP[item.type] || TYPE_MAP.other;
+      var folderId = await getFolderCached(typeInfo.folder);
+      var result   = await uploadFileToDrive(item.file, folderId);
+      try { await logToSheet(item.file, result, item.type, notes); } catch(e){}
 
-    if (done > 0) {
-      // Show success screen
-      document.getElementById('uploadForm').style.display = 'none';
-      var ss = document.getElementById('successScreen');
-      ss.style.display = 'block';
-      document.getElementById('successMsg').textContent =
-        done + ' file' + (done>1?'s':'') + ' uploaded to Drive → ' +
-        (_targetMember.dispatcher||'') + ' / ' + _targetMember.short + ' / ' + folder;
-      if (uploaded.length===1 && uploaded[0].webViewLink) {
-        var dl = document.getElementById('driveLink');
-        dl.href = uploaded[0].webViewLink;
-        dl.style.display = 'inline-flex';
+      done++;
+      uploadedFiles.push(result);
+      if (rowEl) {
+        rowEl.classList.add('done-row');
+        var fs = document.getElementById('fs-'+item.id);
+        if (fs) { fs.textContent='✓ done'; fs.className='fi-status done'; }
       }
+    } catch(err) {
+      errors++;
+      console.error('Upload failed:', item.file.name, err);
+      if (rowEl) {
+        rowEl.classList.add('error-row');
+        var fs2 = document.getElementById('fs-'+item.id);
+        if (fs2) { fs2.textContent='✗ failed'; fs2.className='fi-status error'; }
+      }
+    }
+  }
+
+  pf.style.width = '100%';
+  pl.textContent = done+' of '+total+' uploaded'+(errors?' ('+errors+' failed)':'');
+
+  await new Promise(function(r){setTimeout(r,800);});
+
+  if (done > 0) {
+    // Show summary, clear uploaded files from list
+    var sb = document.getElementById('summaryBanner');
+    document.getElementById('summaryTitle').textContent = '✅ '+done+' FILE'+(done===1?'':'S')+' UPLOADED';
+    document.getElementById('summaryDetail').textContent =
+      'Saved to Drive → '+(_targetMember.dispatcher||'Vault')+' / '+_targetMember.short
+      +' | '+done+' uploaded'+(errors?' · '+errors+' failed':'');
+    sb.style.display = 'block';
+    sb.scrollIntoView({behavior:'smooth',block:'start'});
+
+    // Remove successfully uploaded files from list
+    _files = _files.filter(function(f){
+      var fs = document.getElementById('fs-'+f.id);
+      return fs && fs.textContent.includes('failed');
+    });
+    if (!_files.length) {
+      document.getElementById('fileSection').style.display='none';
+      document.getElementById('cardNotes').style.display='none';
+      document.getElementById('dropzone').querySelector('.dz-inner').style.display='block';
     } else {
-      showToast('All uploads failed. Check your connection.', 'error');
-      resetBtn();
+      renderList();
     }
-
-  } catch(err) {
-    console.error('Upload error:', err);
-    showToast('Error: ' + (err.message||err), 'error');
-    resetBtn();
+  } else {
+    toast('All uploads failed — check your connection.','error');
   }
+
+  pw.style.display='none';
+  resetBtn();
 }
 
-/* ── Resolve Drive folder: VAULT_ROOT/DISPATCHER/DRIVER/SUBFOLDER ── */
+/* ── Folder resolution with caching ────────────────────────── */
+async function getFolderCached(subfolder) {
+  var key = (_targetMember.dispatcher||'ROOT')+'/'+_targetMember.short+'/'+subfolder;
+  if (_folderCache[key]) return _folderCache[key];
+  var id = await resolveFolderPath(subfolder);
+  _folderCache[key] = id;
+  return id;
+}
+
 async function resolveFolderPath(subfolder) {
-  var dispatcher = _targetMember.dispatcher;
-  var short      = _targetMember.short;
-
-  if (!dispatcher) {
-    // No dispatcher mapping — upload to vault root / member folder
-    var memberFolder = await ensureFolder(short, VAULT_ROOT);
-    return (await ensureFolder(subfolder, memberFolder.id)).id;
+  if (!_targetMember.dispatcher) {
+    var mf = await ensureFolder(_targetMember.short, VAULT_ROOT);
+    var sf = await ensureFolder(subfolder, mf.id);
+    return sf.id;
   }
-
-  var dispatcherFolder = await ensureFolder(dispatcher, VAULT_ROOT);
-  var driverFolder     = await ensureFolder(short, dispatcherFolder.id);
-  var subFolder        = await ensureFolder(subfolder, driverFolder.id);
-  return subFolder.id;
+  var df = await ensureFolder(_targetMember.dispatcher, VAULT_ROOT);
+  var dv = await ensureFolder(_targetMember.short, df.id);
+  var su = await ensureFolder(subfolder, dv.id);
+  return su.id;
 }
 
-/* ── Drive helpers ────────────────────────────────────────── */
 async function ensureFolder(name, parentId) {
-  // First try to find existing
-  var safeName = name.replace(/'/g, "\\'");
-  var q = encodeURIComponent("'"+parentId+"' in parents and name='"+safeName+"' and mimeType='application/vnd.google-apps.folder' and trashed=false");
+  var cacheKey = parentId+'::'+name;
+  if (_folderCache[cacheKey]) return { id: _folderCache[cacheKey] };
+  var q = encodeURIComponent("'"+parentId+"' in parents and name='"+name.replace(/'/g,"\\'")+"' and mimeType='application/vnd.google-apps.folder' and trashed=false");
   var res = await driveGet('/files?q='+q+'&fields=files(id,name)');
-  if (res.files && res.files.length) return res.files[0];
-  // Create
-  return drivePost('/files', { name: name, mimeType: 'application/vnd.google-apps.folder', parents: [parentId] });
+  if (res.files && res.files.length) {
+    _folderCache[cacheKey] = res.files[0].id;
+    return res.files[0];
+  }
+  var created = await drivePost('/files', { name:name, mimeType:'application/vnd.google-apps.folder', parents:[parentId] });
+  _folderCache[cacheKey] = created.id;
+  return created;
 }
 
+/* ── Drive API ──────────────────────────────────────────────── */
 async function driveGet(path) {
-  var r = await fetch('https://www.googleapis.com/drive/v3'+path, {
-    headers: { 'Authorization': 'Bearer '+_driveToken }
-  });
-  if (!r.ok) { var e=await r.json(); throw new Error(e.error?.message||'Drive '+r.status); }
+  var r = await fetch('https://www.googleapis.com/drive/v3'+path,{headers:{'Authorization':'Bearer '+_driveToken}});
+  if (!r.ok){var e=await r.json();throw new Error(e.error?.message||'Drive '+r.status);}
   return r.json();
 }
-
 async function drivePost(path, body) {
-  var r = await fetch('https://www.googleapis.com/drive/v3'+path, {
-    method:'POST',
-    headers:{ 'Authorization':'Bearer '+_driveToken, 'Content-Type':'application/json' },
-    body: JSON.stringify(body)
-  });
-  if (!r.ok) { var e=await r.json(); throw new Error(e.error?.message||'Drive '+r.status); }
+  var r = await fetch('https://www.googleapis.com/drive/v3'+path,{method:'POST',headers:{'Authorization':'Bearer '+_driveToken,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if (!r.ok){var e=await r.json();throw new Error(e.error?.message||'Drive '+r.status);}
   return r.json();
 }
 
 async function uploadFileToDrive(file, folderId) {
-  var metadata = JSON.stringify({ name: file.name, parents: [folderId] });
-  var mimeType = file.type || 'application/octet-stream';
-  var boundary = 'nexus_boundary_' + Date.now();
-
-  // Read file as ArrayBuffer → base64
-  var ab = await file.arrayBuffer();
-  var b64 = arrayBufferToBase64(ab);
-
-  var body = '--' + boundary + '\r\n'
-    + 'Content-Type: application/json; charset=UTF-8\r\n\r\n'
-    + metadata + '\r\n'
-    + '--' + boundary + '\r\n'
-    + 'Content-Type: ' + mimeType + '\r\n'
-    + 'Content-Transfer-Encoding: base64\r\n\r\n'
-    + b64 + '\r\n'
-    + '--' + boundary + '--';
-
-  var r = await fetch(DRIVE_UPLOAD, {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Bearer ' + _driveToken,
-      'Content-Type': 'multipart/related; boundary=' + boundary
-    },
-    body: body
-  });
-  if (!r.ok) { var e=await r.json(); throw new Error(e.error?.message||'Upload '+r.status); }
+  var meta     = JSON.stringify({name:file.name, parents:[folderId]});
+  var mimeType = file.type||'application/octet-stream';
+  var boundary = 'nx_'+Date.now();
+  var ab       = await file.arrayBuffer();
+  var b64      = arrayBufferToBase64(ab);
+  var body     = '--'+boundary+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+meta+'\r\n'
+                +'--'+boundary+'\r\nContent-Type: '+mimeType+'\r\nContent-Transfer-Encoding: base64\r\n\r\n'+b64+'\r\n'
+                +'--'+boundary+'--';
+  var r = await fetch(DRIVE_UPLOAD,{method:'POST',headers:{'Authorization':'Bearer '+_driveToken,'Content-Type':'multipart/related; boundary='+boundary},body:body});
+  if (!r.ok){var e=await r.json();throw new Error(e.error?.message||'Upload '+r.status);}
   return r.json();
 }
 
 function arrayBufferToBase64(buffer) {
-  var bytes = new Uint8Array(buffer);
-  var binary = '';
-  var chunk = 8192;
-  for (var i = 0; i < bytes.length; i += chunk) {
-    binary += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i+chunk, bytes.length)));
-  }
-  return btoa(binary);
+  var bytes=new Uint8Array(buffer), bin='', chunk=8192;
+  for(var i=0;i<bytes.length;i+=chunk) bin+=String.fromCharCode.apply(null,bytes.subarray(i,Math.min(i+chunk,bytes.length)));
+  return btoa(bin);
 }
 
-/* ── Sheet logging ────────────────────────────────────────── */
-async function logToSheet(file, driveResult, notes) {
-  var sheetUrl = localStorage.getItem('nexus_sheets_url');
-  if (!sheetUrl) return;
-  var match = sheetUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if (!match) return;
-  var sheetId = match[1];
-
-  var now = new Date().toISOString().split('T')[0];
-  var id  = 'up_' + Date.now();
-  var row = [id, now, file.name, _selectedType.label, _targetMember.name, 'Direct Upload', driveResult.id||'', notes||'', 'ADD', 'ACTIVE'];
-
-  await fetch(SHEETS_API+'/'+sheetId+'/values/Documents!A:J:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS', {
-    method: 'POST',
-    headers: { 'Authorization': 'Bearer '+_driveToken, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ values: [row] })
+async function logToSheet(file, driveResult, typeKey, notes) {
+  var url = localStorage.getItem('nexus_sheets_url');
+  if (!url) return;
+  var m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (!m) return;
+  var row = ['up_'+Date.now(), new Date().toISOString().split('T')[0], file.name,
+    (TYPE_MAP[typeKey]||TYPE_MAP.other).label, _targetMember.name, 'Direct Upload',
+    driveResult.id||'', notes||'', 'ADD','ACTIVE'];
+  await fetch(SHEETS_API+'/'+m[1]+'/values/Documents!A:J:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS',{
+    method:'POST',
+    headers:{'Authorization':'Bearer '+_driveToken,'Content-Type':'application/json'},
+    body:JSON.stringify({values:[row]})
   });
 }
 
-/* ── Utilities ────────────────────────────────────────────── */
+/* ── Utilities ──────────────────────────────────────────────── */
 function resetBtn() {
-  var btn = document.getElementById('uploadBtn');
-  btn.textContent = '↑ UPLOAD TO DRIVE';
-  btn.disabled = false;
-  refreshUploadBtn();
+  refreshBtn();
+  document.getElementById('uploadBtnLabel').textContent = _files.length>0
+    ? 'UPLOAD '+_files.length+' FILE'+(_files.length===1?'':'S')+' TO DRIVE'
+    : 'UPLOAD TO DRIVE';
+  document.getElementById('uploadBtn').disabled = !(_targetMember && _files.length>0);
 }
 
-function resetForm() {
-  _selectedType  = null;
-  _files         = [];
-  _targetMember  = null;
-  document.getElementById('successScreen').style.display = 'none';
-  document.getElementById('uploadForm').style.display    = 'block';
-  document.getElementById('fileList').innerHTML = '';
-  document.getElementById('dropzone').querySelector('.dz-label').textContent = 'Tap to choose files';
-  document.getElementById('destCard').style.display = 'none';
-  document.getElementById('progressWrap').style.display = 'none';
-  document.getElementById('notesField').value = '';
-  document.querySelectorAll('.type-tile').forEach(function(t){t.classList.remove('selected');});
-  initIdentity();
-  refreshUploadBtn();
-}
+function hideSummary(){ document.getElementById('summaryBanner').style.display='none'; }
 
-var _toastTimer = null;
-function showToast(msg, type) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className   = 'show ' + (type||'');
-  clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(function(){ t.className=''; }, 4000);
-}
+var _toastT=null;
+function toast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='show '+(type||'');clearTimeout(_toastT);_toastT=setTimeout(function(){t.className='';},4000);}
 </script>
 </body>
 </html>
