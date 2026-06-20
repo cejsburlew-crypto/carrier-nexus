@@ -634,23 +634,29 @@ function loadFromGoogleSheets(callback){
     .then(function(r){ return r.text(); })
     .then(function(csv){
       var lines = csv.trim().split('\n');
-      var existKeys = {};
-      documents.forEach(function(d){ existKeys[d.id||d.filename]=true; });
+      // Dedupe by BOTH id and filename to catch hardcoded vs imported overlaps
+      var existIds = {}, existFilenames = {};
+      documents.forEach(function(d){
+        if(d.id) existIds[d.id] = true;
+        if(d.filename) existFilenames[d.filename] = true;
+      });
       var added = 0;
       for(var i=1;i<lines.length;i++){
         var cols = parseCSVLine(lines[i]);
         var id=(cols[0]||'').trim();
         var fname=(cols[2]||'').trim();
-        if(!id && !fname) continue;
-        var key = id||fname;
-        if(existKeys[key]) continue;
+        if(!fname) continue;
+        // Skip if already present by ID or by filename
+        if(id && existIds[id]) continue;
+        if(existFilenames[fname]) continue;
         documents.push({
           id:id, date:cols[1]||'', filename:fname,
           type:cols[3]||'Document', driver:cols[4]||'',
           source:cols[5]||'Gmail Sync', driveId:cols[6]||'',
           notes:cols[7]||'', add_deduct:'ADD', status:'ACTIVE'
         });
-        existKeys[key]=true;
+        if(id) existIds[id] = true;
+        existFilenames[fname] = true;
         added++;
       }
       if(callback) callback();
