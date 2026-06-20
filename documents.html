@@ -332,10 +332,11 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
         Sync NEXUS Docs
       </button>
-      <button id="quick-import-btn" class="btn btn-ghost" onclick="quickImportDrive()" title="Import documents from Drive sync sheet">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <button class="btn btn-ghost" onclick="quickImportDrive()" title="Pull latest from Gmail sync">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0018 9h-1.26A8 8 0 103 16.29"/></svg>
         Import Drive
       </button>
+      <button class="btn btn-ghost">Export List</button>
       <button class="btn btn-orange" onclick="openAddDocModal()">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add Document
@@ -433,7 +434,6 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
           <th>Driver</th>
           <th>Type</th>
           <th>ADD / DEDUCT</th>
-          <th>Logged By</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -597,38 +597,27 @@ function renderTable(data){
   if(data.length===0){ noRes.style.display='block'; return; }
   noRes.style.display='none';
   data.forEach(doc=>{
-    var dc = driverBadgeColors[doc.driver]||driverBadgeColors.UNKNOWN;
-    var tr = document.createElement('tr');
-    var isDeleted = doc.isDeleted === true;
-    var fmtAudit = function(iso) {
-      if(!iso) return '—';
-      var d = new Date(iso);
-      return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
-    };
-    if(isDeleted) tr.style.cssText='background:#fef2f2;opacity:0.65;';
-    var filenameStyle = isDeleted ? 'text-decoration:line-through;color:#94a3b8;' : '';
-    var deletedStamp = isDeleted ? '<span style="font-size:9px;color:#ef4444;font-family:monospace;display:block;margin-top:3px;">🗑 Deleted '+fmtAudit(doc.deletedAt)+' by '+(doc.deletedBy||'?')+'</span>' : '';
-    var docId = doc.id || '';
-    var notesHtml = doc.notes ? '<span style="font-size:10px;color:#64748b;display:block;">'+doc.notes+'</span>' : '';
-    var modHtml = doc.modifiedBy ? '<br><span style="color:#2e6da4;">✏️ '+doc.modifiedBy+'</span><br>'+fmtAudit(doc.modifiedAt) : '';
-    var openBtn = doc.driveId ? '<button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="openDoc(\''+doc.driveId+'\')">Open</button>' : '';
-    var delBtn = (!isDeleted && docId) ? '<button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;" onclick="softDeleteDoc(\''+docId+'\')" title="Delete (soft)">🗑</button>' : '';
-    var restBtn = (isDeleted && docId) ? '<button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;" onclick="restoreDoc(\''+docId+'\')" title="Restore">↩️</button>' : '';
-    tr.innerHTML = '<td class="date-col">'+fmtDate(doc.date)+'</td>'
-      +'<td><div class="filename-cell">'
-      +'<svg class="pdf-icon" width="14" height="16" viewBox="0 0 14 16" fill="none">'
-      +'<path d="M8 1H2a1 1 0 00-1 1v12a1 1 0 001 1h10a1 1 0 001-1V6L8 1z" stroke="#ef4444" stroke-width="1.2" fill="rgba(239,68,68,0.1)"/>'
-      +'<path d="M8 1v5h5" stroke="#ef4444" stroke-width="1.2"/>'
-      +'<text x="3" y="13" font-family="Arial" font-size="4" fill="#ef4444" font-weight="bold">PDF</text>'
-      +'</svg>'
-      +'<div><span class="filename-text" style="'+filenameStyle+'" title="'+doc.filename+'">'+doc.filename+'</span>'
-      +notesHtml+deletedStamp+'</div></div></td>'
-      +'<td><span class="driver-badge" style="background:'+dc.bg+';color:'+dc.color+';">'+doc.driver+'</span></td>'
-      +'<td>'+getTypeBadge(doc.type)+'</td>'
-      +'<td>'+getADBadge(doc.add_deduct)+'</td>'
-      +'<td style="font-size:10px;font-family:monospace;color:#64748b;white-space:nowrap;">'
-      +'<span style="font-weight:600;color:#0f172a;">'+(doc.createdBy||'—')+'</span><br>'+fmtAudit(doc.createdAt)+modHtml+'</td>'
-      +'<td><div style="display:flex;gap:4px;flex-wrap:nowrap;">'+openBtn+delBtn+restBtn+'</div></td>';
+    const dc = driverBadgeColors[doc.driver]||driverBadgeColors.UNKNOWN;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="date-col">${fmtDate(doc.date)}</td>
+      <td>
+        <div class="filename-cell">
+          <svg class="pdf-icon" width="14" height="16" viewBox="0 0 14 16" fill="none">
+            <path d="M8 1H2a1 1 0 00-1 1v12a1 1 0 001 1h10a1 1 0 001-1V6L8 1z" stroke="#ef4444" stroke-width="1.2" fill="rgba(239,68,68,0.1)"/>
+            <path d="M8 1v5h5" stroke="#ef4444" stroke-width="1.2"/>
+            <text x="3" y="13" font-family="Arial" font-size="4" fill="#ef4444" font-weight="bold">PDF</text>
+          </svg>
+          <span class="filename-text" title="${doc.filename}">${doc.filename}</span>
+        </div>
+      </td>
+      <td><span class="driver-badge" style="background:${dc.bg};color:${dc.color};">${doc.driver}</span></td>
+      <td>${getTypeBadge(doc.type)}</td>
+      <td>${getADBadge(doc.add_deduct)}</td>
+      <td>
+        <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="openDoc(doc.driveId||'')">Open</button>
+      </td>
+    `;
     tbody.appendChild(tr);
   });
 }
@@ -637,382 +626,32 @@ function renderTable(data){
 renderTable(documents);
 
 
-function openSyncModal(){
-  var m=document.getElementById('sync-modal');
-  m.style.display='flex';
-  loadSyncConfig();
-  switchSyncTab('sync');
-}
+function openSyncModal(){ document.getElementById('sync-modal').style.display='flex'; }
 function closeSyncModal(){ document.getElementById('sync-modal').style.display='none'; }
-function switchSyncTab(tab){
-  document.getElementById('stab-sync').style.borderBottomColor=tab==='sync'?'#2e6da4':'transparent';
-  document.getElementById('stab-sync').style.color=tab==='sync'?'#f1f5f9':'#64748b';
-  document.getElementById('stab-cfg').style.borderBottomColor=tab==='configure'?'#e8640a':'transparent';
-  document.getElementById('stab-cfg').style.color=tab==='configure'?'#f1f5f9':'#64748b';
-  document.getElementById('spanel-sync').style.display=tab==='sync'?'block':'none';
-  document.getElementById('spanel-cfg').style.display=tab==='configure'?'block':'none';
-}
-function loadSyncConfig(){
-  var cfg=JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
-  var gEmail=cfg.googleEmail||'crtruckus@gmail.com';
-  var folderId=cfg.driveFolderId||'13hRTmF6XVSI627s5Mc1wb_zkEA3I5rXZ';
-  var folderName=cfg.driveFolderName||'NEXUS Data Vault';
-  var waContacts=cfg.whatsappContacts||[];
-  // update form
-  document.getElementById('sc-gmail').value=gEmail;
-  document.getElementById('sc-folderid').value=folderId;
-  var csvUrl=cfg.driveSyncCsvUrl||'';
-  if(document.getElementById('sc-csvurl')) document.getElementById('sc-csvurl').value=csvUrl;
-  document.getElementById('sc-foldername').value=folderName;
-  renderWAContacts(waContacts);
-  // update live links
-  var gmailLink=document.getElementById('sync-gmail-link');
-  if(gmailLink) gmailLink.href='https://mail.google.com/mail/u/0/?authuser='+encodeURIComponent(gEmail)+'#search/has:attachment+carrier+OR+BOL+OR+load';
-  var driveLink=document.getElementById('sync-drive-link');
-  if(driveLink) driveLink.href='https://drive.google.com/drive/folders/'+folderId;
-  var driveSub=document.getElementById('sync-drive-sub');
-  if(driveSub) driveSub.textContent=folderName+' ('+folderId.substring(0,12)+'...)';
-  // render WA contact buttons
-  renderWAButtons(waContacts);
-}
-function renderWAContacts(contacts){
-  var list=document.getElementById('sc-wa-list');
-  if(!list) return;
-  list.innerHTML='';
-  contacts.forEach(function(c,i){
-    var row=document.createElement('div');
-    row.style.cssText='display:flex;gap:8px;align-items:center;margin-bottom:6px;';
-    var inpL=document.createElement('input');
-    inpL.type='text'; inpL.value=c.label||''; inpL.placeholder='Label (e.g. Driver Group)';
-    inpL.setAttribute('style','flex:1;padding:6px 10px;background:#0f172a;border:1px solid #334155;border-radius:5px;color:#f1f5f9;font-size:12px;');
-    (function(idx){ inpL.oninput=function(){ updateWAContact(idx,'label',this.value); }; })(i);
-    var inpP=document.createElement('input');
-    inpP.type='text'; inpP.value=c.phone||''; inpP.placeholder='Phone: +15551234567  OR  Group link: https://chat.whatsapp.com/...';
-    inpP.setAttribute('style','flex:1;padding:6px 10px;background:#0f172a;border:1px solid #334155;border-radius:5px;color:#f1f5f9;font-size:12px;');
-    (function(idx){ inpP.oninput=function(){ updateWAContact(idx,'phone',this.value); }; })(i);
-    var btnX=document.createElement('button');
-    btnX.innerHTML='&#x2715;';
-    btnX.setAttribute('style','padding:4px 8px;background:#7f1d1d;border:none;border-radius:4px;color:#fca5a5;font-size:11px;cursor:pointer;');
-    (function(idx){ btnX.onclick=function(){ removeWAContact(idx); }; })(i);
-    row.appendChild(inpL); row.appendChild(inpP); row.appendChild(btnX);
-    list.appendChild(row);
-  });
-}
-function renderWAButtons(contacts){
-  var container=document.getElementById('sync-wa-buttons');
-  if(!container) return;
-  container.innerHTML='';
-  var items=(!contacts||contacts.length===0)?[{label:'WhatsApp Web',phone:''}]:contacts;
-  items.forEach(function(c){
-    var rawContact=c.phone||'';
-    var href;
-    if(!rawContact){ href='https://web.whatsapp.com'; }
-    else if(rawContact.indexOf('chat.whatsapp.com')>-1 || rawContact.indexOf('wa.me')>-1){ href=rawContact; }
-    else{ href='https://web.whatsapp.com/send?phone='+rawContact.replace(/[^0-9+]/g,''); }
-    var a=document.createElement('a');
-    a.href=href; a.target='_blank';
-    a.setAttribute('style','display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;margin-bottom:10px;');
-    a.onmouseover=function(){this.style.borderColor='#25d366';};
-    a.onmouseout=function(){this.style.borderColor='#334155';};
-    var iconSVG='<svg width="28" height="28" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#25d366"/><path d="M12 4a8 8 0 100 16 8 8 0 000-16zm0 14.5A6.5 6.5 0 015.5 12 6.5 6.5 0 0112 5.5 6.5 6.5 0 0118.5 12 6.5 6.5 0 0112 18.5z" fill="white"/><path d="M9 9.5s1-1.5 3.5-.5 2 4 0 5-4.5-1-4.5-1L9 15.5" stroke="white" stroke-width="1.2" fill="none"/></svg>';
-    var arrowSVG='<svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
-    var lbl=c.label||'WhatsApp Web';
-    var sub=c.phone||'Open chats to download driver files';
-    var txt=document.createElement('div');
-    txt.innerHTML='<div style="font-weight:700;font-size:14px;color:#f1f5f9;letter-spacing:.04em;font-family:Barlow Condensed,sans-serif;">'+lbl.toUpperCase()+'</div>'+
-      '<div style="font-size:11px;color:#64748b;margin-top:2px;">'+sub+'</div>';
-    a.innerHTML=iconSVG; a.appendChild(txt); a.insertAdjacentHTML('beforeend',arrowSVG);
-    container.appendChild(a);
-  });
-}
-function updateWAContact(idx, field, val){
-  var cfg=JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
-  if(!cfg.whatsappContacts) cfg.whatsappContacts=[];
-  if(!cfg.whatsappContacts[idx]) cfg.whatsappContacts[idx]={label:'',phone:''};
-  cfg.whatsappContacts[idx][field]=val;
-  localStorage.setItem('nexus_sync_config', JSON.stringify(cfg));
-}
-function removeWAContact(idx){
-  var cfg=JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
-  if(!cfg.whatsappContacts) return;
-  cfg.whatsappContacts.splice(idx,1);
-  localStorage.setItem('nexus_sync_config', JSON.stringify(cfg));
-  renderWAContacts(cfg.whatsappContacts);
-}
-function addWAContact(){
-  var cfg=JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
-  if(!cfg.whatsappContacts) cfg.whatsappContacts=[];
-  cfg.whatsappContacts.push({label:'',phone:''});
-  localStorage.setItem('nexus_sync_config', JSON.stringify(cfg));
-  renderWAContacts(cfg.whatsappContacts);
-}
-function quickImportDrive(){
-  var cfg=JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
-  var csvUrl=cfg.driveSyncCsvUrl||'';
-  if(!csvUrl){
-    alert('No Drive Sync URL configured.\n\nGo to: Sync NEXUS Docs \u2192 Configure tab \u2192 paste your Google Sheets CSV URL, then Save.');
-    return;
-  }
-  var btn=document.getElementById('quick-import-btn');
-  var origHtml=btn.innerHTML;
-  btn.innerHTML='<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> Importing...';
-  btn.disabled=true;
-  fetch(csvUrl)
-    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
-    .then(function(csv){
-      var lines=csv.trim().split('\n');
-      if(lines.length<2) throw new Error('Sheet empty');
-      var existing=JSON.parse(localStorage.getItem('nexus_documents_v2')||'[]');
-      var existingIds={};
-      existing.forEach(function(d){ existingIds[d.id]=true; });
-      var added=0;
-      for(var i=1;i<lines.length;i++){
-        var cols=parseCSVLine(lines[i]);
-        if(cols.length<7) continue;
-        var docId=cols[0]||('gdrive_import_'+i);
-        if(existingIds[docId]) continue;
-        var now=new Date().toISOString();
-        existing.push({
-          id:docId, date:cols[1]||now.split('T')[0], filename:cols[2]||'Unknown',
-          type:cols[3]||'Document', driver:cols[4]||'', source:cols[5]||'Drive Sync',
-          driveUrl:cols[6]||'', notes:cols[7]||'', isDeleted:false,
-          createdBy:'Drive Sync', createdAt:cols[8]||now,
-          modifiedBy:null, modifiedAt:null, deletedBy:null, deletedAt:null,
-          auditLog:[{action:'imported',by:'Drive Sync',at:now,note:'Auto-imported from Gmail Sync'}]
-        });
-        existingIds[docId]=true;
-        added++;
-      }
-      localStorage.setItem('nexus_documents_v2', JSON.stringify(existing));
-      btn.innerHTML=origHtml; btn.disabled=false;
-      btn.style.color='#4ade80'; btn.style.borderColor='#166534';
-      setTimeout(function(){ btn.style.color=''; btn.style.borderColor=''; },2500);
-      loadDocuments();
-      if(added>0) showToast(added+' new document'+(added===1?'':'s')+' imported from Drive');
-      else showToast('Already up to date');
-    })
-    .catch(function(e){
-      btn.innerHTML=origHtml; btn.disabled=false;
-      alert('Import failed: '+e.message+'\n\nMake sure the Google Sheet is published to web as CSV.');
-    });
-}
-function showToast(msg){
-  var t=document.createElement('div');
-  t.textContent=msg;
-  t.style.cssText='position:fixed;bottom:24px;right:24px;background:#166534;color:#4ade80;padding:12px 20px;border-radius:8px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:14px;z-index:99999;letter-spacing:.04em;box-shadow:0 4px 12px rgba(0,0,0,0.4);';
-  document.body.appendChild(t);
-  setTimeout(function(){ t.style.opacity='0'; t.style.transition='opacity 0.4s'; setTimeout(function(){ t.remove(); },400); },2800);
-}
-function importFromDriveSync(){
-  var cfg=JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
-  var csvUrl=cfg.driveSyncCsvUrl||'';
-  if(!csvUrl){
-    document.getElementById('import-drive-status').textContent='No CSV URL configured. Go to Configure tab and add the Google Sheets CSV URL.';
-    document.getElementById('import-drive-status').style.color='#f87171';
-    return;
-  }
-  var btn=document.getElementById('import-drive-btn');
-  var status=document.getElementById('import-drive-status');
-  btn.textContent='IMPORTING...'; btn.disabled=true; status.style.color='#94a3b8';
-  status.textContent='Fetching from Google Sheets...';
-
-  // Use a CORS proxy since Sheets CSV may not allow direct fetch
-  var fetchUrl=csvUrl;
-  fetch(fetchUrl)
-    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
-    .then(function(csv){
-      var lines=csv.trim().split('\n');
-      if(lines.length<2){ throw new Error('Sheet appears empty'); }
-      // Headers: id,date,filename,type,driver,source,driveUrl,notes,importedAt
-      var existing=JSON.parse(localStorage.getItem('nexus_documents_v2')||'[]');
-      var existingIds={};
-      existing.forEach(function(d){ existingIds[d.id]=true; });
-      var added=0;
-      for(var i=1;i<lines.length;i++){
-        var cols=parseCSVLine(lines[i]);
-        if(cols.length<7) continue;
-        var docId=cols[0]||('gdrive_import_'+i);
-        if(existingIds[docId]) continue;
-        var now=new Date().toISOString();
-        existing.push({
-          id:docId,
-          date:cols[1]||now.split('T')[0],
-          filename:cols[2]||'Unknown',
-          type:cols[3]||'Document',
-          driver:cols[4]||'',
-          source:cols[5]||'Drive Sync',
-          driveUrl:cols[6]||'',
-          notes:cols[7]||'',
-          isDeleted:false,
-          createdBy:'Drive Sync',
-          createdAt:cols[8]||now,
-          modifiedBy:null, modifiedAt:null,
-          deletedBy:null, deletedAt:null,
-          auditLog:[{action:'imported',by:'Drive Sync',at:now,note:'Imported from Gmail→Drive sync'}]
-        });
-        existingIds[docId]=true;
-        added++;
-      }
-      localStorage.setItem('nexus_documents_v2', JSON.stringify(existing));
-      status.textContent='Imported '+added+' new document'+(added===1?'':'s')+'. Refreshing...';
-      status.style.color='#4ade80';
-      btn.textContent='IMPORT NOW'; btn.disabled=false;
-      setTimeout(function(){ loadDocuments(); closeSyncModal(); },1200);
-    })
-    .catch(function(e){
-      status.textContent='Error: '+e.message+'. Make sure the sheet is published to web as CSV.';
-      status.style.color='#f87171';
-      btn.textContent='IMPORT NOW'; btn.disabled=false;
-    });
-}
-function parseCSVLine(line){
-  var result=[]; var cur=''; var inQ=false;
-  for(var i=0;i<line.length;i++){
-    var c=line[i];
-    if(c==='"'){ inQ=!inQ; }
-    else if(c===','&&!inQ){ result.push(cur.trim()); cur=''; }
-    else{ cur+=c; }
-  }
-  result.push(cur.trim());
-  return result;
-}
-function extractDriveFolderId(val){
-  // Accept full URL like https://drive.google.com/drive/folders/ABC123?usp=sharing
-  var m=val.match(/\/folders\/([a-zA-Z0-9_-]+)/);
-  if(m) return m[1];
-  // Accept just the ID directly
-  if(/^[a-zA-Z0-9_-]{10,}$/.test(val)) return val;
-  return val; // return as-is if unrecognized
-}
-function saveSyncConfig(){
-  var cfg=JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
-  cfg.googleEmail=document.getElementById('sc-gmail').value.trim();
-  var rawFolder=document.getElementById('sc-folderid').value.trim();
-  cfg.driveFolderId=extractDriveFolderId(rawFolder);
-  cfg.driveFolderName=document.getElementById('sc-foldername').value.trim();
-  var csvEl=document.getElementById('sc-csvurl');
-  if(csvEl) cfg.driveSyncCsvUrl=csvEl.value.trim();
-  localStorage.setItem('nexus_sync_config', JSON.stringify(cfg));
-  // Show the clean extracted ID back in the field
-  document.getElementById('sc-folderid').value=cfg.driveFolderId;
-  document.getElementById('sc-folderid').style.borderColor='#334155';
-  // flash saved
-  var btn=document.getElementById('sc-save-btn');
-  var orig=btn.textContent;
-  btn.textContent='SAVED ✓';
-  btn.style.background='#166534';
-  loadSyncConfig();
-  setTimeout(function(){ btn.textContent=orig; btn.style.background='#e8640a'; },1800);
-}
 function openAddDocModal(){
   document.getElementById('nd-date').value = new Date().toISOString().split('T')[0];
   document.getElementById('add-doc-modal').style.display='flex';
 }
 function closeAddDocModal(){ document.getElementById('add-doc-modal').style.display='none'; }
-function _currentUser(){
-  try{ const s=JSON.parse(localStorage.getItem('nexus_session')||'{}'); return s.name||s.email||'Admin'; }catch(e){return 'Admin';}
-}
 function submitAddDoc(e){
   e.preventDefault();
-  const now = new Date().toISOString();
-  const who = _currentUser();
   const doc = {
-    id: 'doc_' + Date.now() + Math.random().toString(36).slice(2,5),
     date: document.getElementById('nd-date').value,
     filename: document.getElementById('nd-filename').value,
     driver: document.getElementById('nd-driver').value,
     type: document.getElementById('nd-type').value,
     add_deduct: document.getElementById('nd-ad').value,
-    driveId: document.getElementById('nd-drive').value || '',
-    notes: document.getElementById('nd-notes') ? document.getElementById('nd-notes').value : '',
-    isDeleted: false,
-    createdBy: who,
-    createdAt: now,
-    modifiedBy: null,
-    modifiedAt: null,
-    deletedBy: null,
-    deletedAt: null,
-    auditLog: [{ action:'created', by:who, at:now, note:'Manually logged' }]
+    driveId: document.getElementById('nd-drive').value || ''
   };
   documents.unshift(doc);
   if(typeof NexusDB !== 'undefined') NexusDB.Documents && NexusDB.Documents.create(doc).catch(()=>{});
   closeAddDocModal();
   applyFilters();
 }
-function softDeleteDoc(id){
-  if(!confirm('Mark this document as deleted? It will be crossed out but kept in the vault.')) return;
-  const now = new Date().toISOString();
-  const who = _currentUser();
-  const doc = documents.find(d => d.id === id);
-  if(!doc) return;
-  doc.isDeleted = true;
-  doc.deletedBy = who;
-  doc.deletedAt = now;
-  doc.auditLog = [...(doc.auditLog||[]), { action:'deleted', by:who, at:now, note:'Soft deleted from vault' }];
-  applyFilters();
-}
-function restoreDoc(id){
-  const now = new Date().toISOString();
-  const who = _currentUser();
-  const doc = documents.find(d => d.id === id);
-  if(!doc) return;
-  doc.isDeleted = false;
-  doc.deletedBy = null;
-  doc.deletedAt = null;
-  doc.auditLog = [...(doc.auditLog||[]), { action:'restored', by:who, at:now, note:'Restored to active' }];
-  applyFilters();
-}
 
 // Close modals on backdrop click
-const _sm=document.getElementById('sync-modal'); if(_sm)_sm.addEventListener('click', function(e){ if(e.target===this) closeSyncModal(); });
-
-// Auto-refresh from Drive sync sheet every 30 minutes while page is open
-(function startAutoSync(){
-  var INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
-  function silentImport(){
-    var cfg=JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
-    var csvUrl=cfg.driveSyncCsvUrl||'';
-    if(!csvUrl) return; // no URL configured, skip silently
-    fetch(csvUrl)
-      .then(function(r){ if(!r.ok) return; return r.text(); })
-      .then(function(csv){
-        if(!csv) return;
-        var lines=csv.trim().split('\n');
-        if(lines.length<2) return;
-        var existing=JSON.parse(localStorage.getItem('nexus_documents_v2')||'[]');
-        var existingIds={};
-        existing.forEach(function(d){ existingIds[d.id]=true; });
-        var added=0;
-        for(var i=1;i<lines.length;i++){
-          var cols=parseCSVLine(lines[i]);
-          if(cols.length<7) continue;
-          var docId=cols[0]||('gdrive_import_'+i);
-          if(existingIds[docId]) continue;
-          var now=new Date().toISOString();
-          existing.push({
-            id:docId, date:cols[1]||now.split('T')[0], filename:cols[2]||'Unknown',
-            type:cols[3]||'Document', driver:cols[4]||'', source:cols[5]||'Drive Sync',
-            driveUrl:cols[6]||'', notes:cols[7]||'', isDeleted:false,
-            createdBy:'Drive Sync', createdAt:cols[8]||now,
-            modifiedBy:null, modifiedAt:null, deletedBy:null, deletedAt:null,
-            auditLog:[{action:'imported',by:'Drive Sync',at:now,note:'Auto-imported from Drive sync'}]
-          });
-          existingIds[docId]=true;
-          added++;
-        }
-        if(added>0){
-          localStorage.setItem('nexus_documents_v2', JSON.stringify(existing));
-          loadDocuments();
-          showToast(added+' new document'+(added===1?'':'s')+' synced from Drive');
-        }
-      })
-      .catch(function(){}); // fail silently
-  }
-  // Run once 10 seconds after page load, then every 30 min
-  setTimeout(silentImport, 10000);
-  setInterval(silentImport, INTERVAL_MS);
-})();
-const _adm=document.getElementById('add-doc-modal'); if(_adm)_adm.addEventListener('click', function(e){ if(e.target===this) closeAddDocModal(); });
+document.getElementById('sync-modal').addEventListener('click', function(e){ if(e.target===this) closeSyncModal(); });
+document.getElementById('add-doc-modal').addEventListener('click', function(e){ if(e.target===this) closeAddDocModal(); });
 
 
 /* ── VAULT TREE ──────────────────────────────────────────── */
@@ -1192,7 +831,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 </script>
-<script src="nexus-config.js?v=5"></script>
+<script src="nexus-config.js"></script>
 <script src="nexus-drive.js"></script>
 <script src="nexus-lang.js"></script>
 
@@ -1222,197 +861,81 @@ document.addEventListener('DOMContentLoaded', function() {
 </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="nexus-db.js?v=3"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<script>
+(async()=>{
+  if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
+  renderTable(documents); // re-render after auth check in case of page state
+})();
+</script>
 
 <!-- SYNC NEXUS DOCS MODAL -->
 <div id="sync-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9999;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;">
-
-    <!-- Header -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #334155;">
+  <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid #334155;">
       <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#f1f5f9;letter-spacing:.06em;">SYNC NEXUS DOCUMENTS</span>
-      <button onclick="closeSyncModal()" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;line-height:1;">&#x2715;</button>
+      <button onclick="closeSyncModal()" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;line-height:1;">&#10005;</button>
     </div>
-
-    <!-- Tabs -->
+    <!-- TABS -->
     <div style="display:flex;border-bottom:1px solid #334155;padding:0 24px;">
-      <button id="stab-sync" onclick="switchSyncTab('sync')"
-        style="padding:11px 18px 10px;background:none;border:none;border-bottom:2px solid #2e6da4;color:#f1f5f9;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.05em;cursor:pointer;">
-        SYNC WORKFLOW
-      </button>
-      <button id="stab-cfg" onclick="switchSyncTab('configure')"
-        style="padding:11px 18px 10px;background:none;border:none;border-bottom:2px solid transparent;color:#64748b;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.05em;cursor:pointer;">
-        &#x2699;&#xFE0F; CONFIGURE
-      </button>
+      <button id="tab-sync" onclick="switchSyncTab('sync')" style="padding:12px 16px;background:none;border:none;border-bottom:2px solid #e8640a;color:#f1f5f9;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;cursor:pointer;">SYNC WORKFLOW</button>
+      <button id="tab-cfg" onclick="switchSyncTab('cfg')" style="padding:12px 16px;background:none;border:none;border-bottom:2px solid transparent;color:#64748b;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;cursor:pointer;">&#9881; CONFIGURE</button>
     </div>
-
-    <!-- SYNC PANEL -->
-    <div id="spanel-sync" style="padding:22px 24px;">
-      <p style="font-size:13px;color:#94a3b8;margin:0 0 18px;">Pull new files from Gmail and WhatsApp into the NEXUS Data Vault (Google Drive). Click a source below to open it, then download files and add them here.</p>
-
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:22px;">
-
-        <!-- Gmail -->
-        <a id="sync-gmail-link" href="https://mail.google.com/mail/u/0/#search/has:attachment+carrier+OR+BOL+OR+load" target="_blank"
-           style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;"
-           onmouseover="this.style.borderColor='#2e6da4'" onmouseout="this.style.borderColor='#334155'">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#ea4335"/><path d="M4 8l8 5 8-5V18H4V8z" fill="white"/><path d="M4 8l8 5 8-5" stroke="white" stroke-width="1.5"/></svg>
-          <div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;letter-spacing:.04em;">GMAIL &#x2014; Search Attachments</div>
-            <div style="font-size:11px;color:#64748b;margin-top:2px;">BOL, load confirmations, permits</div>
-          </div>
+    <!-- SYNC TAB -->
+    <div id="sync-tab-sync" style="padding:24px;">
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+        <a href="https://mail.google.com/mail/u/0/#search/has:attachment+carrier+OR+BOL+OR+load" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;" onmouseover="this.style.borderColor='#2e6da4'" onmouseout="this.style.borderColor='#334155'">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#ea4335"/><path d="M4 8l8 5 8-5V18H4V8z" fill="white"/></svg>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">GMAIL</div><div style="font-size:11px;color:#64748b;margin-top:2px;">BOL, load confirmations, permits</div></div>
           <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
-
-        <!-- WhatsApp — dynamic per config -->
-        <div id="sync-wa-buttons" style="display:flex;flex-direction:column;gap:10px;"></div>
-
-        <!-- Google Drive -->
-        <a id="sync-drive-link" href="https://drive.google.com/drive/folders/13hRTmF6XVSI627s5Mc1wb_zkEA3I5rXZ" target="_blank"
-           style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;"
-           onmouseover="this.style.borderColor='#4285f4'" onmouseout="this.style.borderColor='#334155'">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#1a73e8"/><path d="M6 18l3.5-6L12 18H6zM12 18l3.5-6L18 7.5 16 6l-4 7-1.5 2.5L12 18zm6 0l-2-3.5L12 6h2.5l5.5 9.5L18 18z" fill="white"/></svg>
-          <div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;letter-spacing:.04em;">GOOGLE DRIVE &#x2014; Data Vault</div>
-            <div id="sync-drive-sub" style="font-size:11px;color:#64748b;margin-top:2px;">Upload downloaded files to the vault folder</div>
-          </div>
+        <a href="https://web.whatsapp.com" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#334155'">
+          <svg width="28" height="28" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#25d366"/><path d="M12 4a8 8 0 100 16 8 8 0 000-16z" fill="white" fill-opacity="0.2"/><path d="M9 9.5s1-1.5 3.5-.5 2 4 0 5-4.5-1-4.5-1L9 15.5" stroke="white" stroke-width="1.2" fill="none"/></svg>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">WHATSAPP WEB</div><div style="font-size:11px;color:#64748b;margin-top:2px;">Download PDFs from driver chats</div></div>
+          <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+        <a href="https://drive.google.com" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;" onmouseover="this.style.borderColor='#4285f4'" onmouseout="this.style.borderColor='#334155'">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#1a73e8"/><path d="M6 18l3.5-6L12 18H6zM12 18l3.5-6 2.5-4.5L16 6l-4 7-1.5 2.5L12 18zm6 0l-2-3.5L12 6h2.5l5.5 9.5L18 18z" fill="white"/></svg>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">GOOGLE DRIVE</div><div style="font-size:11px;color:#64748b;margin-top:2px;">Drop files into vault folder</div></div>
           <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
       </div>
-
-      <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px 18px;margin-bottom:20px;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#e8640a;letter-spacing:.06em;margin-bottom:8px;">SYNC WORKFLOW</div>
-        <ol style="margin:0;padding-left:18px;font-size:12px;color:#94a3b8;line-height:2;">
-          <li>Open Gmail &#x2192; download BOLs / load confirmations as PDFs</li>
-          <li>Open WhatsApp &#x2192; download files drivers sent</li>
-          <li>Upload all files to Google Drive vault folder</li>
-          <li>Click <strong style="color:#f1f5f9;">Add Document</strong> above to log each file in NEXUS</li>
-        </ol>
+      <!-- IMPORT NOW -->
+      <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:16px 18px;margin-bottom:16px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#e8640a;letter-spacing:.06em;margin-bottom:10px;">IMPORT FROM GMAIL SYNC</div>
+        <p style="font-size:12px;color:#94a3b8;margin:0 0 12px;">Pull all documents the Gmail Apps Script synced into NEXUS automatically.</p>
+        <button id="import-drive-btn" onclick="quickImportDrive()" style="width:100%;padding:10px;background:#1a73e8;color:#fff;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;cursor:pointer;">
+          &#8595; IMPORT FROM DRIVE SYNC
+        </button>
+        <div id="import-status" style="font-size:11px;color:#64748b;margin-top:8px;text-align:center;"></div>
       </div>
-
-      <!-- Import from Drive -->
-      <div style="background:#0f172a;border:1px solid #166534;border-radius:8px;padding:14px 18px;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-          <div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:#4ade80;letter-spacing:.04em;">&#x2193; IMPORT FROM DRIVE SYNC</div>
-            <div id="import-drive-status" style="font-size:11px;color:#64748b;margin-top:3px;">Pull documents logged by the Apps Script into NEXUS vault.</div>
-          </div>
-          <button id="import-drive-btn" onclick="importFromDriveSync()" style="padding:8px 16px;background:#166534;color:#4ade80;border:1px solid #166534;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.05em;cursor:pointer;white-space:nowrap;">IMPORT NOW</button>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:10px;">
-        <button onclick="switchSyncTab('configure')" style="flex:1;padding:10px;background:#0f172a;color:#94a3b8;border:1px solid #334155;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.05em;cursor:pointer;">&#x2699;&#xFE0F; CONFIGURE SOURCES</button>
-        <button onclick="closeSyncModal()" style="flex:2;padding:10px;background:#2e6da4;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;cursor:pointer;">DONE</button>
-      </div>
+      <button onclick="closeSyncModal()" style="width:100%;padding:11px;background:#2e6da4;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;cursor:pointer;">DONE</button>
     </div>
-
-    <!-- CONFIGURE PANEL -->
-    <div id="spanel-cfg" style="display:none;padding:22px 24px;">
-      <p style="font-size:12px;color:#64748b;margin:0 0 20px;">Settings are saved locally to this browser. Configure which Google account, Drive folder, and WhatsApp contacts to use when syncing documents.</p>
-
-      <!-- Google Account -->
-      <div style="margin-bottom:20px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#ea4335"/><path d="M4 8l8 5 8-5V18H4V8z" fill="white"/><path d="M4 8l8 5 8-5" stroke="white" stroke-width="1.5"/></svg>
-          <span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:#f1f5f9;letter-spacing:.06em;">GOOGLE ACCOUNT</span>
+    <!-- CONFIGURE TAB -->
+    <div id="sync-tab-cfg" style="display:none;padding:24px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#e8640a;letter-spacing:.06em;margin-bottom:16px;">GMAIL SYNC CONFIGURATION</div>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px;">
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">GOOGLE ACCOUNT EMAIL</label>
+          <input id="sc-email" type="email" placeholder="crtruckus@gmail.com" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
         </div>
-        <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px 16px;">
-          <label style="font-size:11px;color:#64748b;letter-spacing:.04em;display:block;margin-bottom:5px;">CONNECTED GMAIL ADDRESS</label>
-          <input id="sc-gmail" type="email" placeholder="crtruckus@gmail.com"
-            style="width:100%;box-sizing:border-box;padding:8px 12px;background:#1e293b;border:1px solid #334155;border-radius:5px;color:#f1f5f9;font-size:13px;font-family:monospace;"
-            oninput="this.style.borderColor='#e8640a'">
-          <div style="font-size:11px;color:#475569;margin-top:6px;">Gmail will open under this account. Make sure you are signed in to Chrome with this address.</div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DRIVE VAULT FOLDER ID</label>
+          <input id="sc-folder" type="text" placeholder="Paste folder ID or full Drive share URL" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
+          <div style="font-size:10px;color:#475569;margin-top:4px;">Paste the full share URL or just the folder ID</div>
         </div>
-      </div>
-
-      <!-- Google Drive Folder -->
-      <div style="margin-bottom:20px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#1a73e8"/><path d="M6 18l3.5-6L12 18H6zM12 18l3.5-6L18 7.5 16 6l-4 7-1.5 2.5L12 18zm6 0l-2-3.5L12 6h2.5l5.5 9.5L18 18z" fill="white"/></svg>
-          <span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:#f1f5f9;letter-spacing:.06em;">GOOGLE DRIVE VAULT FOLDER</span>
-        </div>
-        <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;">
-          <div>
-            <label style="font-size:11px;color:#64748b;letter-spacing:.04em;display:block;margin-bottom:5px;">FOLDER NAME (display label)</label>
-            <input id="sc-foldername" type="text" placeholder="NEXUS Data Vault"
-              style="width:100%;box-sizing:border-box;padding:8px 12px;background:#1e293b;border:1px solid #334155;border-radius:5px;color:#f1f5f9;font-size:13px;"
-              oninput="this.style.borderColor='#e8640a'">
-          </div>
-          <div>
-            <label style="font-size:11px;color:#64748b;letter-spacing:.04em;display:block;margin-bottom:5px;">FOLDER ID <span style="color:#475569;font-weight:400;">(from Drive URL: drive.google.com/drive/folders/<strong>ID</strong>)</span></label>
-            <input id="sc-folderid" type="text" placeholder="13hRTmF6XVSI627s5Mc1wb_zkEA3I5rXZ"
-              style="width:100%;box-sizing:border-box;padding:8px 12px;background:#1e293b;border:1px solid #334155;border-radius:5px;color:#f1f5f9;font-size:12px;font-family:monospace;"
-              oninput="this.style.borderColor='#e8640a'">
-            <div style="font-size:11px;color:#475569;margin-top:6px;">Open your Drive vault folder &#x2192; copy the ID from the browser URL bar.</div>
-          </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DRIVE SYNC — AUTO-IMPORT CSV URL</label>
+          <input id="sc-csvurl" type="url" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?...output=csv" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
+          <div style="font-size:10px;color:#475569;margin-top:4px;">Google Sheet published as CSV (NEXUS Vault tab)</div>
         </div>
       </div>
-
-      <!-- WhatsApp Contacts -->
-      <div style="margin-bottom:22px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <svg width="18" height="18" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#25d366"/><path d="M12 4a8 8 0 100 16 8 8 0 000-16zm0 14.5A6.5 6.5 0 015.5 12 6.5 6.5 0 0112 5.5 6.5 6.5 0 0118.5 12 6.5 6.5 0 0112 18.5z" fill="white"/><path d="M9 9.5s1-1.5 3.5-.5 2 4 0 5-4.5-1-4.5-1L9 15.5" stroke="white" stroke-width="1.2" fill="none"/></svg>
-            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:#f1f5f9;letter-spacing:.06em;">WHATSAPP CONVERSATIONS</span>
-          </div>
-          <button onclick="addWAContact()" style="padding:5px 12px;background:#0f172a;border:1px solid #25d366;border-radius:5px;color:#25d366;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;cursor:pointer;">+ ADD</button>
-        </div>
-        <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px 16px;">
-          <div style="display:flex;gap:8px;margin-bottom:8px;">
-            <span style="flex:1;font-size:10px;color:#475569;letter-spacing:.04em;text-transform:uppercase;">LABEL (e.g. Driver Group)</span>
-            <span style="flex:1;font-size:10px;color:#475569;letter-spacing:.04em;text-transform:uppercase;">PHONE or GROUP INVITE LINK</span>
-            <span style="width:32px;"></span>
-          </div>
-          <div id="sc-wa-list"></div>
-          <div style="font-size:11px;color:#475569;margin-top:10px;">For individual drivers: enter phone as +1XXXXXXXXXX. For group chats (like Documentos): paste the group invite link — open WhatsApp → right-click group → Group Info → Invite via Link → Copy Link. It starts with https://chat.whatsapp.com/...</div>
-        </div>
-      </div>
-
-      <!-- Drive Sync CSV -->
-      <div style="margin-bottom:22px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#34a853"/><path d="M5 12l5 5L19 7" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:#f1f5f9;letter-spacing:.06em;">DRIVE SYNC — AUTO-IMPORT CSV</span>
-        </div>
-        <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px 16px;">
-          <label style="font-size:11px;color:#64748b;letter-spacing:.04em;display:block;margin-bottom:5px;">GOOGLE SHEETS CSV URL <span style="color:#475569;font-weight:400;">(from Apps Script log sheet)</span></label>
-          <input id="sc-csvurl" type="text" placeholder="https://docs.google.com/spreadsheets/d/..."
-            style="width:100%;box-sizing:border-box;padding:8px 12px;background:#1e293b;border:1px solid #334155;border-radius:5px;color:#f1f5f9;font-size:11px;font-family:monospace;"
-            oninput="this.style.borderColor='#e8640a'">
-          <div style="font-size:11px;color:#475569;margin-top:6px;">After running the Apps Script: open the log sheet &#x2192; File &#x2192; Share &#x2192; Publish to web &#x2192; select "NEXUS Vault" sheet &#x2192; CSV &#x2192; Publish &#x2192; copy URL here.</div>
-        </div>
-      </div>
-
-      <!-- Save Button -->
-      <div style="display:flex;gap:10px;">
-        <button onclick="switchSyncTab('sync')" style="flex:1;padding:10px;background:#0f172a;color:#94a3b8;border:1px solid #334155;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.05em;cursor:pointer;">&#x2190; BACK TO SYNC</button>
-        <button id="sc-save-btn" onclick="saveSyncConfig()" style="flex:2;padding:10px;background:#e8640a;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;cursor:pointer;">SAVE CONFIGURATION</button>
-      </div>
+      <button onclick="saveSyncConfig()" style="width:100%;padding:11px;background:#e8640a;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;cursor:pointer;">SAVE CONFIGURATION</button>
+      <div id="cfg-status" style="font-size:11px;color:#22c55e;margin-top:8px;text-align:center;display:none;">Configuration saved.</div>
     </div>
-
   </div>
 </div>
-
-
-  <!-- DRIVE VAULT TREE PANEL -->
-  <div id="vault-panel" style="display:none;padding:0 28px 28px;">
-    <div id="vault-connect" class="vault-connect-box">
-      <svg width="40" height="40" fill="none" stroke="var(--steel-blue)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.7A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.09a16 16 0 006 6l.55-.55a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-      <div class="vault-connect-title">CONNECT GOOGLE DRIVE</div>
-      <div class="vault-connect-sub">Authorize once to browse your dispatcher &rarr; driver vault structure and open folders directly.</div>
-      <button class="btn btn-orange" id="vault-auth-btn" onclick="vaultConnect()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-        Connect Drive
-      </button>
-    </div>
-    <div id="vault-loading" class="vault-loading" style="display:none;">
-      <div class="vault-loading-spinner"></div>
-      Loading vault structure from Google Drive...
-    </div>
-    <div id="vault-tree" class="vault-tree" style="display:none;"></div>
-    <div id="vault-error" style="display:none;padding:24px;background:var(--gunmetal);border:1px solid var(--red);border-radius:10px;color:var(--red);font-size:13px;"></div>
-  </div>
 
 <!-- ADD DOCUMENT MODAL -->
 <div id="add-doc-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9999;align-items:center;justify-content:center;padding:20px;">
@@ -1458,14 +981,180 @@ document.addEventListener('DOMContentLoaded', function() {
         <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">GOOGLE DRIVE LINK (optional)</label>
         <input type="url" id="nd-drive" placeholder="https://drive.google.com/file/d/..." style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
       </div>
-      <div>
-        <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">NOTES (optional)</label>
-        <input type="text" id="nd-notes" placeholder="e.g. Zelle confirmation, permit #, load ref..." style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
-      </div>
       <button type="submit" style="padding:11px;background:#2e6da4;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;cursor:pointer;margin-top:4px;">ADD TO VAULT</button>
     </form>
   </div>
 </div>
 
+<script>
+/* ── SYNC MODAL TABS ── */
+function switchSyncTab(tab){
+  document.getElementById('sync-tab-sync').style.display = tab==='sync' ? 'block' : 'none';
+  document.getElementById('sync-tab-cfg').style.display  = tab==='cfg'  ? 'block' : 'none';
+  document.getElementById('tab-sync').style.borderBottomColor = tab==='sync' ? '#e8640a' : 'transparent';
+  document.getElementById('tab-sync').style.color = tab==='sync' ? '#f1f5f9' : '#64748b';
+  document.getElementById('tab-cfg').style.borderBottomColor  = tab==='cfg'  ? '#e8640a' : 'transparent';
+  document.getElementById('tab-cfg').style.color  = tab==='cfg'  ? '#f1f5f9' : '#64748b';
+}
+
+/* ── CONFIG SAVE/LOAD ── */
+function loadSyncConfig(){
+  var cfg = JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
+  if(cfg.googleEmail)   document.getElementById('sc-email').value   = cfg.googleEmail;
+  if(cfg.driveFolderId) document.getElementById('sc-folder').value  = cfg.driveFolderId;
+  if(cfg.driveSyncCsvUrl) document.getElementById('sc-csvurl').value = cfg.driveSyncCsvUrl;
+}
+function saveSyncConfig(){
+  var folderVal = document.getElementById('sc-folder').value.trim();
+  var match = folderVal.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+  if(match) folderVal = match[1];
+  var cfg = {
+    googleEmail:    document.getElementById('sc-email').value.trim(),
+    driveFolderId:  folderVal,
+    driveSyncCsvUrl: document.getElementById('sc-csvurl').value.trim()
+  };
+  localStorage.setItem('nexus_sync_config', JSON.stringify(cfg));
+  var st = document.getElementById('cfg-status');
+  st.style.display='block'; st.textContent='Configuration saved.';
+  setTimeout(function(){ st.style.display='none'; }, 2500);
+}
+// load config when modal opens
+var _origOpenSyncModal = openSyncModal;
+openSyncModal = function(){
+  _origOpenSyncModal();
+  loadSyncConfig();
+  switchSyncTab('sync');
+};
+
+/* ── CSV PARSE ── */
+function parseCSVLine(line){
+  var result=[]; var cur=''; var inQ=false;
+  for(var i=0;i<line.length;i++){
+    var c=line[i];
+    if(c==='"'){ inQ=!inQ; }
+    else if(c===','&&!inQ){ result.push(cur); cur=''; }
+    else { cur+=c; }
+  }
+  result.push(cur);
+  return result;
+}
+
+/* ── TOAST ── */
+function showToast(msg){
+  var t=document.getElementById('nexus-toast');
+  if(!t){
+    t=document.createElement('div');
+    t.id='nexus-toast';
+    t.style.cssText='position:fixed;bottom:24px;right:24px;background:#22c55e;color:#fff;padding:12px 20px;border-radius:8px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:14px;letter-spacing:.04em;z-index:99999;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:opacity 0.4s;';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg; t.style.opacity='1';
+  clearTimeout(t._tid);
+  t._tid=setTimeout(function(){ t.style.opacity='0'; }, 3500);
+}
+
+/* ── IMPORT FUNCTION ── */
+function quickImportDrive(){
+  var cfg = JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
+  var csvUrl = cfg.driveSyncCsvUrl||'';
+  if(!csvUrl){
+    alert('No Drive Sync CSV URL configured.\n\nGo to Sync NEXUS Docs > Configure tab and paste the Google Sheet CSV URL.');
+    return;
+  }
+  var btn = document.getElementById('import-drive-btn');
+  var st  = document.getElementById('import-status');
+  if(btn){ btn.textContent='Importing...'; btn.disabled=true; }
+  if(st)  st.textContent='Fetching from Google Sheets...';
+
+  fetch(csvUrl)
+    .then(function(r){ return r.text(); })
+    .then(function(csv){
+      var lines = csv.trim().split('\n');
+      if(lines.length<2){ throw new Error('Empty sheet'); }
+      var existing = JSON.parse(localStorage.getItem('nexus_documents_v2')||'[]');
+      var existIds = {};
+      existing.forEach(function(d){ existIds[d.id]=true; });
+      var added=0;
+      for(var i=1;i<lines.length;i++){
+        var cols = parseCSVLine(lines[i]);
+        if(cols.length<7) continue;
+        var id       = (cols[0]||'').trim();
+        var date     = (cols[1]||'').trim();
+        var filename = (cols[2]||'').trim();
+        var type     = (cols[3]||'').trim();
+        var driver   = (cols[4]||'').trim();
+        var source   = (cols[5]||'').trim();
+        var driveUrl = (cols[6]||'').trim();
+        var notes    = (cols[7]||'').trim();
+        if(!id||existIds[id]) continue;
+        existing.push({
+          id:id, date:date, filename:filename,
+          type:type||'Document', driver:driver||'',
+          source:source||'Gmail Sync', driveUrl:driveUrl,
+          notes:notes, addDeduct:'ADD', status:'ACTIVE',
+          addedAt: new Date().toISOString()
+        });
+        existIds[id]=true;
+        added++;
+      }
+      localStorage.setItem('nexus_documents_v2', JSON.stringify(existing));
+      if(typeof loadDocuments==='function') loadDocuments();
+      if(typeof renderTable==='function') renderTable(existing);
+      if(btn){ btn.textContent='&#8595; IMPORT FROM DRIVE SYNC'; btn.disabled=false; }
+      if(st)  st.textContent='';
+      if(added>0){
+        showToast(added+' new documents imported from Drive Sync');
+      } else {
+        showToast('Already up to date — no new documents');
+      }
+    })
+    .catch(function(err){
+      if(btn){ btn.textContent='&#8595; IMPORT FROM DRIVE SYNC'; btn.disabled=false; }
+      if(st)  st.textContent='';
+      alert('Import failed: '+err.message+'\n\nMake sure the Google Sheet is published to web as CSV.');
+    });
+}
+
+/* ── SILENT AUTO-REFRESH (10s after load, then every 30min) ── */
+(function startAutoSync(){
+  function silentImport(){
+    var cfg = JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
+    var csvUrl = cfg.driveSyncCsvUrl||'';
+    if(!csvUrl) return;
+    fetch(csvUrl)
+      .then(function(r){ return r.text(); })
+      .then(function(csv){
+        var lines = csv.trim().split('\n');
+        if(lines.length<2) return;
+        var existing = JSON.parse(localStorage.getItem('nexus_documents_v2')||'[]');
+        var existIds = {};
+        existing.forEach(function(d){ existIds[d.id]=true; });
+        var added=0;
+        for(var i=1;i<lines.length;i++){
+          var cols = parseCSVLine(lines[i]);
+          if(cols.length<7) continue;
+          var id=(cols[0]||'').trim();
+          if(!id||existIds[id]) continue;
+          existing.push({
+            id:id, date:(cols[1]||'').trim(), filename:(cols[2]||'').trim(),
+            type:(cols[3]||'Document').trim(), driver:(cols[4]||'').trim(),
+            source:(cols[5]||'Gmail Sync').trim(), driveUrl:(cols[6]||'').trim(),
+            notes:(cols[7]||'').trim(), addDeduct:'ADD', status:'ACTIVE',
+            addedAt: new Date().toISOString()
+          });
+          existIds[id]=true; added++;
+        }
+        if(added>0){
+          localStorage.setItem('nexus_documents_v2', JSON.stringify(existing));
+          if(typeof loadDocuments==='function') loadDocuments();
+          if(typeof renderTable==='function') renderTable(existing);
+          showToast(added+' new documents synced from Drive');
+        }
+      }).catch(function(){});
+  }
+  setTimeout(silentImport, 10000);
+  setInterval(silentImport, 30*60*1000);
+})();
+</script>
 </body>
 </html>
