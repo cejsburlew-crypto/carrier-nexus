@@ -965,6 +965,53 @@ function restoreDoc(id){
 
 // Close modals on backdrop click
 const _sm=document.getElementById('sync-modal'); if(_sm)_sm.addEventListener('click', function(e){ if(e.target===this) closeSyncModal(); });
+
+// Auto-refresh from Drive sync sheet every 30 minutes while page is open
+(function startAutoSync(){
+  var INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
+  function silentImport(){
+    var cfg=JSON.parse(localStorage.getItem('nexus_sync_config')||'{}');
+    var csvUrl=cfg.driveSyncCsvUrl||'';
+    if(!csvUrl) return; // no URL configured, skip silently
+    fetch(csvUrl)
+      .then(function(r){ if(!r.ok) return; return r.text(); })
+      .then(function(csv){
+        if(!csv) return;
+        var lines=csv.trim().split('\n');
+        if(lines.length<2) return;
+        var existing=JSON.parse(localStorage.getItem('nexus_documents_v2')||'[]');
+        var existingIds={};
+        existing.forEach(function(d){ existingIds[d.id]=true; });
+        var added=0;
+        for(var i=1;i<lines.length;i++){
+          var cols=parseCSVLine(lines[i]);
+          if(cols.length<7) continue;
+          var docId=cols[0]||('gdrive_import_'+i);
+          if(existingIds[docId]) continue;
+          var now=new Date().toISOString();
+          existing.push({
+            id:docId, date:cols[1]||now.split('T')[0], filename:cols[2]||'Unknown',
+            type:cols[3]||'Document', driver:cols[4]||'', source:cols[5]||'Drive Sync',
+            driveUrl:cols[6]||'', notes:cols[7]||'', isDeleted:false,
+            createdBy:'Drive Sync', createdAt:cols[8]||now,
+            modifiedBy:null, modifiedAt:null, deletedBy:null, deletedAt:null,
+            auditLog:[{action:'imported',by:'Drive Sync',at:now,note:'Auto-imported from Drive sync'}]
+          });
+          existingIds[docId]=true;
+          added++;
+        }
+        if(added>0){
+          localStorage.setItem('nexus_documents_v2', JSON.stringify(existing));
+          loadDocuments();
+          showToast(added+' new document'+(added===1?'':'s')+' synced from Drive');
+        }
+      })
+      .catch(function(){}); // fail silently
+  }
+  // Run once 10 seconds after page load, then every 30 min
+  setTimeout(silentImport, 10000);
+  setInterval(silentImport, INTERVAL_MS);
+})();
 const _adm=document.getElementById('add-doc-modal'); if(_adm)_adm.addEventListener('click', function(e){ if(e.target===this) closeAddDocModal(); });
 
 
