@@ -633,8 +633,7 @@ function loadFromGoogleSheets(callback){
   fetch(NEXUS_SHEET_CSV)
     .then(function(r){ return r.text(); })
     .then(function(csv){
-      var lines = csv.trim().split('
-');
+      var lines = csv.trim().split('\n');
       var existKeys = {};
       documents.forEach(function(d){ existKeys[d.id||d.filename]=true; });
       var added = 0;
