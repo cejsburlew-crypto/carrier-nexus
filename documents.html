@@ -444,7 +444,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 </main>
 
 <script>
-let documents = [
+var documents = [
   {date:"2026-05-22",filename:"AVIS - ALLQUIP LOAD CONFIRMATION 36159.pdf",driver:"AVIS",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
   {date:"2026-05-22",filename:"AVIS - ALLQUIP LOAD CONFIRMATION 36158.pdf",driver:"AVIS",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
   {date:"2026-05-22",filename:"MIGUEL - ALLQUIP LOAD CONFIRMATION 35544.pdf",driver:"MIGUEL",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
@@ -1134,10 +1134,7 @@ function quickImportDrive(){
         added++;
       }
       localStorage.setItem('nexus_documents_v2', JSON.stringify(existing));
-      // Merge newly imported items into live documents array
-      var existKeys2 = {}; documents.forEach(function(d){ existKeys2[d.id||d.filename]=true; });
-      existing.forEach(function(d){ var k=d.id||d.filename; if(!existKeys2[k]){ d.add_deduct=d.add_deduct||d.addDeduct||'ADD'; documents.push(d); existKeys2[k]=true; } });
-      applyFilters();
+      if(typeof loadFromGoogleSheets==='function') loadFromGoogleSheets(applyFilters);
       if(btn){ btn.textContent='&#8595; IMPORT FROM DRIVE SYNC'; btn.disabled=false; }
       if(st)  st.textContent='';
       if(added>0){
@@ -1184,10 +1181,7 @@ function quickImportDrive(){
         }
         if(added>0){
           localStorage.setItem('nexus_documents_v2', JSON.stringify(existing));
-          // Merge into live documents array
-          var existKeysSi = {}; documents.forEach(function(d){ existKeysSi[d.id||d.filename]=true; });
-          existing.forEach(function(d){ var k=d.id||d.filename; if(!existKeysSi[k]){ d.add_deduct=d.add_deduct||d.addDeduct||'ADD'; documents.push(d); existKeysSi[k]=true; } });
-          applyFilters();
+          if(typeof loadFromGoogleSheets==='function') loadFromGoogleSheets(applyFilters);
           showToast(added+' new documents synced from Drive');
         }
       }).catch(function(){});
