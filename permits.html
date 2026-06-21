@@ -220,16 +220,67 @@ tr:hover td{background:#f8fafc;}
       <div class="form-group"><label class="form-label">Permit # *</label><input type="text" id="perm-num" class="form-input" placeholder="TX260512934484" required></div>
       <div class="form-group"><label class="form-label">Permit Type</label>
         <select id="perm-type" class="form-input">
-          <option>OSOW — Oversize/Overweight</option><option>OS — Oversize</option><option>OW — Overweight</option>
-          <option>Superload</option><option>Trip Permit</option><option>Fuel Permit (IFTA)</option><option>Other</option>
+          <option value="OSOW">OSOW — Oversize/Overweight</option>
+          <option value="OS">OS — Oversize Only</option>
+          <option value="OW">OW — Overweight Only</option>
+          <option value="Superload">Superload</option>
+          <option value="Trip Permit">Trip Permit</option>
+          <option value="Fuel Permit">Fuel Permit (IFTA)</option>
+          <option value="Reefer">Reefer Temp Permit</option>
+          <option value="Hazmat">Hazmat Transport</option>
+          <option value="Annual">Annual Blanket Permit</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Classification</label>
+        <select id="perm-classification" class="form-input">
+          <option value="single_trip">Single Trip</option>
+          <option value="annual">Annual / Blanket</option>
+          <option value="quarterly">Quarterly</option>
+          <option value="monthly">Monthly</option>
         </select>
       </div>
       <div class="form-group"><label class="form-label">Permit Cost ($)</label><input type="number" id="perm-cost" class="form-input" step="0.01" placeholder="0.00"></div>
       <div class="form-group"><label class="form-label">Expiry Date</label><input type="date" id="perm-expires" class="form-input"></div>
       <div class="form-group"><label class="form-label">Load / Rate Con ID</label><input type="text" id="perm-load" class="form-input" placeholder="L10483 or RC #0331987"></div>
+
+      <div class="form-group full" style="grid-column:1/-1;margin-top:4px;">
+        <div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:.1em;text-transform:uppercase;padding-bottom:6px;border-bottom:1px solid #f1f5f9;margin-bottom:4px;">📐 Load Dimensions</div>
+      </div>
+      <div class="form-group"><label class="form-label">Height (ft-in)</label><input type="text" id="perm-height" class="form-input" placeholder="e.g. 14'6&quot;"></div>
+      <div class="form-group"><label class="form-label">Width (ft-in)</label><input type="text" id="perm-width" class="form-input" placeholder="e.g. 14'0&quot;"></div>
+      <div class="form-group"><label class="form-label">Length (ft)</label><input type="text" id="perm-length" class="form-input" placeholder="e.g. 75 ft"></div>
+      <div class="form-group"><label class="form-label">Gross Weight (lbs)</label><input type="number" id="perm-weight" class="form-input" placeholder="e.g. 105000"></div>
+
+      <div class="form-group full" style="grid-column:1/-1;margin-top:4px;">
+        <div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:.1em;text-transform:uppercase;padding-bottom:6px;border-bottom:1px solid #f1f5f9;margin-bottom:4px;">🚨 Escort & Restrictions</div>
+      </div>
+      <div class="form-group"><label class="form-label">Escort Required</label>
+        <select id="perm-escort" class="form-input">
+          <option value="none">None</option>
+          <option value="front">Front Only</option>
+          <option value="rear">Rear Only</option>
+          <option value="front_rear">Front &amp; Rear</option>
+          <option value="police">Police Escort Required</option>
+          <option value="pilot_only">Pilot Car Only</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Travel Window</label>
+        <select id="perm-travel" class="form-input">
+          <option value="anytime">Anytime</option>
+          <option value="daylight">Daylight Only</option>
+          <option value="sunrise_sunset">Sunrise to Sunset</option>
+          <option value="no_weekend">No Weekend Travel</option>
+          <option value="no_holiday">No Holiday Travel</option>
+          <option value="specific">Specific Hours (see notes)</option>
+        </select>
+      </div>
+      <div class="form-group full"><label class="form-label">Route Restrictions</label>
+        <input type="text" id="perm-route" class="form-input" placeholder="e.g. I-10 W only, avoid I-35 Austin corridor, use SR-528 to SR-27…"></div>
+
       <div class="form-group full"><label class="form-label">Permit Doc URL (Google Drive / PDF link)</label><input type="url" id="perm-doc-url" class="form-input" placeholder="https://drive.google.com/file/d/..."></div>
       <div class="form-group full"><label class="form-label">Rate Con URL (Google Drive / PDF link)</label><input type="url" id="perm-rc-url" class="form-input" placeholder="https://drive.google.com/file/d/..."></div>
-      <div class="form-group full"><label class="form-label">Notes</label><input type="text" id="perm-notes" class="form-input" placeholder="Commodity, route, dimensions, axle config…"></div>
+      <div class="form-group full"><label class="form-label">Notes</label><input type="text" id="perm-notes" class="form-input" placeholder="Commodity, axle config, special instructions…"></div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closePermModal()">Cancel</button>
@@ -358,6 +409,8 @@ async function renderPermits() {
     const pDriver = p.driver || p.driverName || '—';
     const pNum  = p.permit_number || p.permitNo || '—';
     const pType = p.permit_type || p.type || '—';
+    const pClass = p.classification || 'single_trip';
+    const pEscort = p.escort && p.escort !== 'none';
     const pCost = p.cost ? '$'+Number(p.cost).toLocaleString('en-US',{minimumFractionDigits:2}) : '—';
     const pExp  = p.expiry_date || p.expires || '';
     const pDocUrl = p.permit_doc_url || p.docUrl || '';
@@ -410,7 +463,7 @@ function openPermModal() {
   document.getElementById('perm-modal-title').textContent = 'ADD PERMIT';
   document.getElementById('perm-edit-id').value = '';
   document.getElementById('perm-date').value = new Date().toISOString().split('T')[0];
-  ['perm-num','perm-cost','perm-expires','perm-load','perm-notes','perm-doc-url','perm-rc-url'].forEach(id => document.getElementById(id).value = '');
+  ['perm-num','perm-cost','perm-expires','perm-load','perm-notes','perm-doc-url','perm-rc-url','perm-height','perm-width','perm-length','perm-weight','perm-route'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
   document.getElementById('perm-modal').classList.add('open');
 }
 function closePermModal() { document.getElementById('perm-modal').classList.remove('open'); }
@@ -425,10 +478,18 @@ async function savePermit() {
     permit_number: n,
     state: document.getElementById('perm-state').value,
     permit_type: document.getElementById('perm-type').value,
+    classification: document.getElementById('perm-classification')?.value || 'single_trip',
     driver: document.getElementById('perm-driver').value,
     load_ref: document.getElementById('perm-load').value,
     cost: document.getElementById('perm-cost').value || null,
     expiry_date: document.getElementById('perm-expires').value || null,
+    height: document.getElementById('perm-height').value || null,
+    width: document.getElementById('perm-width').value || null,
+    length: document.getElementById('perm-length').value || null,
+    weight: document.getElementById('perm-weight').value || null,
+    escort: document.getElementById('perm-escort').value || 'none',
+    travel_window: document.getElementById('perm-travel').value || 'anytime',
+    route: document.getElementById('perm-route').value || null,
     permit_doc_url: document.getElementById('perm-doc-url').value || null,
     rate_con_url: document.getElementById('perm-rc-url').value || null,
     notes: document.getElementById('perm-notes').value
@@ -455,6 +516,15 @@ function editPerm(id) {
   document.getElementById('perm-doc-url').value = p.permit_doc_url || p.docUrl || '';
   document.getElementById('perm-rc-url').value  = p.rate_con_url || p.rcUrl || '';
   document.getElementById('perm-notes').value = p.notes || '';
+  const setOpt = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+  setOpt('perm-classification', p.classification);
+  document.getElementById('perm-height').value = p.height || '';
+  document.getElementById('perm-width').value  = p.width  || '';
+  document.getElementById('perm-length').value = p.length || '';
+  document.getElementById('perm-weight').value = p.weight || '';
+  setOpt('perm-escort',  p.escort);
+  setOpt('perm-travel',  p.travel_window);
+  document.getElementById('perm-route').value  = p.route  || '';
   document.getElementById('perm-modal').classList.add('open');
 }
 
@@ -490,6 +560,15 @@ function openDetail(id) {
     <div class="meta-item"><div class="meta-label">Type</div><div class="meta-val">${pType}</div></div>
     <div class="meta-item"><div class="meta-label">Cost</div><div class="meta-val">${pCost}</div></div>
     <div class="meta-item"><div class="meta-label">Load / Rate Con</div><div class="meta-val">${pLoadRef}</div></div>
+    <div class="meta-item"><div class="meta-label">Classification</div><div class="meta-val">${(p.classification||'single_trip').replace('_',' ').replace(/\b\w/g,c=>c.toUpperCase())}</div></div>
+    ${p.height||p.width||p.length||p.weight ? `
+    <div class="meta-item"><div class="meta-label">Height</div><div class="meta-val">${p.height||'—'}</div></div>
+    <div class="meta-item"><div class="meta-label">Width</div><div class="meta-val">${p.width||'—'}</div></div>
+    <div class="meta-item"><div class="meta-label">Length</div><div class="meta-val">${p.length||'—'}</div></div>
+    <div class="meta-item"><div class="meta-label">Gross Weight</div><div class="meta-val">${p.weight ? Number(p.weight).toLocaleString()+' lbs' : '—'}</div></div>` : ''}
+    ${p.escort && p.escort !== 'none' ? `<div class="meta-item"><div class="meta-label">Escort</div><div class="meta-val" style="color:#b45309;font-weight:700;">⚠ ${p.escort.replace(/_/g,' ').toUpperCase()}</div></div>` : ''}
+    ${p.travel_window && p.travel_window !== 'anytime' ? `<div class="meta-item"><div class="meta-label">Travel Window</div><div class="meta-val">${p.travel_window.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}</div></div>` : ''}
+    ${p.route ? `<div class="meta-item" style="grid-column:1/-1"><div class="meta-label">Route Restriction</div><div class="meta-val">${p.route}</div></div>` : ''}
     <div class="meta-item"><div class="meta-label">Notes</div><div class="meta-val">${p.notes||'—'}</div></div>
   `;
 
