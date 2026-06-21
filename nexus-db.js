@@ -108,6 +108,14 @@
 
   // ── GENERIC CRUD FACTORY ──────────────────────────────────
   // For each table, builds { list, get, create, update, delete, query }
+
+  // Columns that exist in localStorage schema but are NOT yet in the Supabase table schema.
+  // Strip these before Supabase inserts to avoid schema-cache errors and silent retries.
+  // Add the column in Supabase dashboard to remove from this list.
+  const SUPABASE_OMIT = {
+    documents: ['add_deduct']
+  };
+
   function makeTable(tableName, lsKey) {
     return {
       async list(filters = {}) {
@@ -144,23 +152,17 @@
       async create(item) {
         if (sb()) {
           try {
-            const { data, error } = await sb().from(tableName).insert(item).select().single();
+            // Strip fields not yet in Supabase schema — keep full item for localStorage
+            const sbItem = Object.assign({}, item);
+            (SUPABASE_OMIT[tableName] || []).forEach(function(f){ delete sbItem[f]; });
+            const { data, error } = await sb().from(tableName).insert(sbItem).select().single();
             if (error) throw error;
             return data;
           } catch(e) {
             // If Supabase rejects because a column doesn't exist in the schema cache,
             // strip that column and retry once — prevents localStorage fallback for
             // legitimate records that just have an unmigrated field (e.g. add_deduct).
-            const missing = (e.message||'').match(/Could not find the '([^']+)' column/);
-            if (missing) {
-              const stripped = Object.assign({}, item);
-              delete stripped[missing[1]];
-              console.warn('[NexusDB] Retrying ' + tableName + '.create without unknown column: ' + missing[1]);
-              try {
-                const { data: d2, error: e2 } = await sb().from(tableName).insert(stripped).select().single();
-                if (!e2) return d2;
-              } catch(_) {}
-            }
+            // Log and fall through to localStorage
             console.warn('[NexusDB] Supabase ' + tableName + '.create failed, using localStorage:', e.message);
           }
         }
