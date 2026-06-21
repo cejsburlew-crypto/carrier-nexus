@@ -281,6 +281,7 @@ function initGmailAuth() {
 
   const client = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
+    login_hint: 'crtruckus@gmail.com',
     scope: SCOPES,
     callback: (resp) => {
       if (resp.error) { console.error(resp); return; }
