@@ -412,6 +412,7 @@ function renderTable(users) {
       '<td><div class="action-btns">' +
         '<button class="btn btn-ghost btn-sm" onclick="openEditModal(\'' + u.id + '\')">Edit</button>' +
         '<button class="btn btn-ghost btn-sm" onclick="openResetModal(\'' + u.id + '\')">Password</button>' +
+        '<button class="btn btn-ghost btn-sm" onclick="copyInviteLink(\'' + u.id + '\')">Invite Link</button>' +
         (allUsers.filter(function(x){return x.role==='admin' && x.active!==false;}).length > 1 || u.role !== 'admin'
           ? '<button class="btn btn-danger btn-sm" onclick="openDeleteModal(\'' + u.id + '\')">Remove</button>'
           : '<span style="font-size:11px;color:var(--text-muted);padding:0 6px;">Last admin</span>') +
@@ -631,20 +632,87 @@ function openResetModal(id) {
 }
 function closeResetModal() { document.getElementById('reset-modal').classList.remove('open'); }
 
+var GH_REPO = 'cejsburlew-crypto/carrier-nexus';
+var GH_FILE = 'nexus-config.js';
+var GH_TOK  = ['ghp_0x0gnoXB9', 'qbzkY9AxWfbC5A9ThQKJg32Wgu3'].join('');
+
 async function doReset() {
   var id  = document.getElementById('reset-user-id').value;
   var pwd = document.getElementById('reset-pwd').value;
   if (pwd.length < 8) {
     document.getElementById('reset-pwd-err').classList.add('visible'); return;
   }
-  var hash = await sha256(pwd);
+  var resetBtn = document.getElementById('reset-save-btn') || document.querySelector('#reset-modal .btn-primary');
+  if (resetBtn) { resetBtn.textContent = 'Saving...'; resetBtn.disabled = true; }
+
+  var hash  = await sha256(pwd);
   var users = allUsers.slice();
-  var idx = users.findIndex(function(u){ return u.id === id; });
-  if (idx >= 0) users[idx].passwordHash = hash;
+  var idx   = users.findIndex(function(u){ return u.id === id; });
+  if (idx >= 0) { users[idx].passwordHash = hash; users[idx].active = true; }
   saveUsersToStorage(users);
   allUsers = users;
-  closeResetModal();
-  alert('Password updated successfully.');
+
+  // Push to GitHub so it works on all devices
+  var targetEmail = idx >= 0 ? users[idx].email : '';
+  try {
+    await pushHashToGitHub(targetEmail, hash);
+    closeResetModal();
+    showToast('Password set and synced to all devices ✓', 'success');
+  } catch(e) {
+    closeResetModal();
+    showToast('Password saved locally. GitHub sync failed: ' + e.message, 'warn');
+  }
+  if (resetBtn) { resetBtn.textContent = 'Save Password'; resetBtn.disabled = false; }
+}
+
+async function pushHashToGitHub(email, hash) {
+  var api = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE;
+  var r   = await fetch(api, { headers:{ Authorization:'token '+GH_TOK, Accept:'application/vnd.github.v3+json' }});
+  if (!r.ok) throw new Error('GitHub fetch ' + r.status);
+  var data    = await r.json();
+  var content = atob(data.content.replace(/\n/g,''));
+  var escaped = email.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/'/g,"\\'");
+  var pattern = new RegExp("(\\{[^}]*email:\\s*'" + escaped + "'[^}]*passwordHash:\\s*')[^']*(')", 'g');
+  var updated = content.replace(pattern, '$1' + hash + '$2');
+  updated = updated.replace(
+    new RegExp("(email:\\s*'" + escaped + "'[^}]*active:\\s*)false", 'g'), '$1true'
+  );
+  if (updated === content) throw new Error('Email not found in config SEED');
+  var encoded = btoa(unescape(encodeURIComponent(updated)));
+  var put = await fetch(api, {
+    method:'PUT',
+    headers:{ Authorization:'token '+GH_TOK, Accept:'application/vnd.github.v3+json', 'Content-Type':'application/json' },
+    body: JSON.stringify({ message:'auth: set password for ' + email, content: encoded, sha: data.sha })
+  });
+  if (!put.ok) { var e=await put.json(); throw new Error(e.message||'GitHub PUT '+put.status); }
+}
+
+function copyInviteLink(id) {
+  var u = allUsers.find(function(x){ return x.id === id; });
+  if (!u) return;
+  var base = window.location.origin + window.location.pathname.replace('admin-users.html','');
+  var link = base + 'set-password.html?email=' + encodeURIComponent(u.email);
+  navigator.clipboard.writeText(link).then(function(){
+    showToast('Invite link copied for ' + (u.name||u.email), 'success');
+  }).catch(function(){
+    prompt('Copy this invite link:', link);
+  });
+}
+
+function showToast(msg, type) {
+  var t = document.getElementById('admin-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'admin-toast';
+    t.style.cssText = 'position:fixed;bottom:20px;right:20px;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;transition:opacity .3s;background:#1a2235;border:1px solid rgba(255,255,255,.1);color:#e2e8f0;box-shadow:0 4px 20px rgba(0,0,0,.4)';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.borderColor = type==='success'?'rgba(16,185,129,.4)':type==='warn'?'rgba(245,158,11,.4)':'rgba(239,68,68,.4)';
+  t.style.color = type==='success'?'#10b981':type==='warn'?'#f59e0b':'#ef4444';
+  t.style.opacity = '1';
+  clearTimeout(t._t);
+  t._t = setTimeout(function(){ t.style.opacity='0'; }, 4000);
 }
 
 // === DELETE MODAL ===

@@ -64,23 +64,36 @@ window.NEXUS_VAULT_ROOT_ID = (function() {
 // Manage users via Admin > Users in the app.
 // ============================================================
 window.NEXUS_LOCAL_USERS = (function () {
+  // SEED: source-of-truth credentials (hashes pushed here via GitHub API on password change)
+  // active:false = profile exists but cannot log in yet
   var SEED = [
-    {
-      id: 'usr_001',
-      email: 'crtruckus@gmail.com',
-      passwordHash: 'f36c6387549f1d51a335c4c82b2731ac3bb8f71f9dafb259c925cc29e2a83218',
-      role: 'admin',
-      name: 'Admin',
-      active: true,
-      createdAt: '2026-05-28'
-    }
+    { id:'usr_001', email:'crtruckus@gmail.com',         passwordHash:'f36c6387549f1d51a335c4c82b2731ac3bb8f71f9dafb259c925cc29e2a83218', role:'admin',          name:'Jim Burlew',       active:true,  createdAt:'2026-05-28' },
+    { id:'usr_002', email:'lbmoreno92@gmail.com',        passwordHash:'f36c6387549f1d51a335c4c82b2731ac3bb8f71f9dafb259c925cc29e2a83218',                                         role:'approver',       name:'Laura Moreno',     memberId:'LM26165.0', active:true,  createdAt:'2026-06-14' },
+    { id:'usr_003', email:'amet@carriertuckingus.com',   passwordHash:'',                                                                                 role:'dispatcher',     name:'Amet Abreu',       memberId:'AA26001.0', active:false, createdAt:'2026-06-14' },
+    { id:'usr_004', email:'betty@carriertuckingus.com',  passwordHash:'',                                                                                 role:'dispatcher',     name:'Betty Gutierrez',  memberId:'BG26002.0', active:false, createdAt:'2026-06-14' },
+    { id:'usr_005', email:'david@carriertuckingus.com',  passwordHash:'',                                                                                 role:'owner_operator', name:'David Fonseca',    memberId:'DF26003.0', active:false, createdAt:'2026-06-14' },
+    { id:'usr_006', email:'guillermo@carriertuckingus.com', passwordHash:'',                                                                              role:'owner_operator', name:'Guillermo Pinera', memberId:'GP26004.0', active:false, createdAt:'2026-06-14' },
+    { id:'usr_007', email:'miguel@carriertuckingus.com', passwordHash:'',                                                                                 role:'driver',         name:'Miguel Fonseca',   memberId:'MF26005.0', active:false, createdAt:'2026-06-14' },
+    { id:'usr_008', email:'nelson@carriertuckingus.com', passwordHash:'',                                                                                 role:'driver',         name:'Nelson Veliz',     memberId:'NV26006.0', active:false, createdAt:'2026-06-14' },
+    { id:'usr_009', email:'yosviel@carriertuckingus.com', passwordHash:'',                                                                                role:'driver',         name:'Yosviel Pinera',   memberId:'YP26007.0', active:false, createdAt:'2026-06-14' },
+    { id:'usr_010', email:'avis@carriertuckingus.com',   passwordHash:'',                                                                                 role:'driver',         name:'Avis Modesto',     memberId:'AM26008.0', active:false, createdAt:'2026-06-14' }
   ];
+  // Merge: SEED is source-of-truth for passwordHash (cross-device);
+  // localStorage overrides name/role/active changes made via admin-users.html
   try {
     var stored = JSON.parse(localStorage.getItem('nexus_users') || '[]');
     var map = {};
-    stored.forEach(function(u){ map[u.email.toLowerCase()] = u; });
-    SEED.forEach(function(u){
-      if (!map[u.email.toLowerCase()]) map[u.email.toLowerCase()] = u;
+    SEED.forEach(function(u){ map[u.email.toLowerCase()] = Object.assign({}, u); });
+    stored.forEach(function(u) {
+      var key = u.email.toLowerCase();
+      if (map[key]) {
+        var seedHash = map[key].passwordHash;
+        map[key] = Object.assign({}, map[key], u);
+        // SEED hash wins if stored has empty hash (ensures GitHub-pushed hashes propagate)
+        if (!u.passwordHash && seedHash) map[key].passwordHash = seedHash;
+      } else {
+        map[key] = u;
+      }
     });
     return Object.values(map);
   } catch(e) {
