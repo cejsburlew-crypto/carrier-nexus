@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inbox Sync â Carrier Nexus</title>
+<title>Inbox Sync — Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="nexus-config.js?v=5"></script>
@@ -233,11 +233,11 @@ select.asel option{background:#1c2535;}
       <div class="secttitle">Active Security Rules</div>
       <div class="rules-box">
         <div class="rules-title">Always Enforced</div>
-        <div class="rule-item"><span style="color:var(--pink)">&#x25CF;</span> Only <strong>opened/read</strong> emails â UNREAD messages are never touched</div>
-        <div class="rule-item"><span style="color:var(--pink)">&#x25CF;</span> Only emails <strong>after January 1, 2026</strong> â older messages are skipped</div>
-        <div class="rule-item"><span style="color:var(--pink)">&#x25CF;</span> Files go <strong>directly to Google Drive</strong> â nothing saved locally</div>
+        <div class="rule-item"><span style="color:var(--pink)">&#x25CF;</span> Only <strong>opened/read</strong> emails — UNREAD messages are never touched</div>
+        <div class="rule-item"><span style="color:var(--pink)">&#x25CF;</span> Only emails <strong>after January 1, 2026</strong> — older messages are skipped</div>
+        <div class="rule-item"><span style="color:var(--pink)">&#x25CF;</span> Files go <strong>directly to Google Drive</strong> — nothing saved locally</div>
         <div class="rule-item"><span style="color:var(--pink)">&#x25CF;</span> <strong>You review, edit, and approve every file</strong> before upload</div>
-        <div class="rule-item"><span style="color:var(--pink)">&#x25CF;</span> Scanned thread IDs are remembered â <strong>no duplicate uploads</strong></div>
+        <div class="rule-item"><span style="color:var(--pink)">&#x25CF;</span> Scanned thread IDs are remembered — <strong>no duplicate uploads</strong></div>
       </div>
     </div>
   </div>
@@ -259,11 +259,11 @@ select.asel option{background:#1c2535;}
         <div class="massign-title">Assign This File</div>
         <div class="massign-row">
           <div class="mfield"><label>Assign To</label>
-            <select id="mUser" onchange="onMUser()"><option value="">â Select User â</option></select>
+            <select id="mUser" onchange="onMUser()"><option value="">— Select User —</option></select>
           </div>
           <div class="mdrv-wrap" id="mDrvWrap">
             <label style="font-size:11px;color:var(--muted);">Driver</label>
-            <select id="mDriver"><option value="">â Select Driver â</option></select>
+            <select id="mDriver"><option value="">— Select Driver —</option></select>
           </div>
           <div class="mfield"><label>Doc Type</label>
             <select id="mType" onchange="onMType()">
@@ -370,7 +370,7 @@ function loadStagedFiles(){
   return false;
 }
 function clearStagedFiles(){localStorage.removeItem(STAGED_KEY);}
-function openSheetUrl(){var u=localStorage.getItem('nexus_sheets_url');if(u)window.open(u,'_blank');else alert('No Google Sheet linked yet.');}
+function openSheetUrl(){var u=localStorage.getItem('nexus_sheets_url')||localStorage.getItem('nexus_sync_config')&&JSON.parse(localStorage.getItem('nexus_sync_config')||'{}').driveSyncCsvUrl;if(u){var m=u.match(/spreadsheets\/d\/([^/]+)/);if(m)window.open('https://docs.google.com/spreadsheets/d/'+m[1]+'/edit','_blank');else window.open(u,'_blank');}else addLog('No Google Sheet configured. Set it in the Sync Config tab.','warn');}
 
 function init(){
   var tok=getToken();
@@ -395,7 +395,7 @@ function init(){
 }
 function getCo(){return(window.NEXUS_ACTIVE_COMPANY&&window.NEXUS_ACTIVE_COMPANY())||{name:'Carrier Trucking US, LLC',driveRootId:'13hRTmF6XVSI627s5Mc1wb_zkEA3I5rXZ'};}
 
-// ââ CONFIDENCE ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── CONFIDENCE ────────────────────────────────────────────────────────────────
 function calcUserConf(user,from,subject){
   if(!user)return 0;
   var n=(user.name||'').toLowerCase();
@@ -436,7 +436,7 @@ function confBadge(pct){
   return '<span class="conf-badge '+cls+'">'+pct+'%</span>';
 }
 
-// ââ AUTO-DETECT âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── AUTO-DETECT ───────────────────────────────────────────────────────────────
 function autoMatchUser(from,subject,users){
   var combined=(from+' '+subject).toLowerCase();
   var best=null,bestScore=0;
@@ -458,7 +458,7 @@ function autoDetectType(filename,subject){
   return 'other';
 }
 
-// ââ SCAN ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── SCAN ──────────────────────────────────────────────────────────────────────
 async function startSync(){
   var token=getToken();if(!token){alert('Google Drive not connected.');return;}
   var btn=document.getElementById('syncBtn');
@@ -540,14 +540,14 @@ async function startSync(){
   else document.getElementById('emptyState').style.display='';
 }
 
-// ââ STAGING TABLE âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── STAGING TABLE ─────────────────────────────────────────────────────────────
 function renderStaging(){
   var users=getUsers();
   document.getElementById('stgPanel').className='stg-panel on';
   document.getElementById('stgBadge').textContent=_files.length+' file'+(_files.length!==1?'s':'');
-  var uHtml='<option value="">â Unassigned â</option>';
+  var uHtml='<option value="">— Unassigned —</option>';
   users.forEach(function(u){uHtml+='<option value="'+esc(u.name)+'" data-role="'+esc(u.role||'')+'">'+esc(u.name+(u.role?' ('+u.role+')':''))+'</option>';});
-  var dHtml='<option value="">â Select Driver â</option>';
+  var dHtml='<option value="">— Select Driver —</option>';
   users.filter(function(u){return u.role==='driver';}).forEach(function(u){dHtml+='<option value="'+esc(u.name)+'">'+esc(u.name)+'</option>';});
   var tbody=document.getElementById('stgBody');tbody.innerHTML='';
   var typeLabels={'rate-con':'&#x26A1; Rate Con','settlement':'&#x1F4B0; Settlement','permit':'&#x1F4CB; Permit','tax':'&#x1F9FE; Tax','license':'&#x1FAA9; License','insurance':'&#x1F6E1; Insurance'};
@@ -608,7 +608,7 @@ function renderStaging(){
         '<div class="ep-actions">'+
           '<button class="btn btn-p btn-sm" onclick="saveEdit('+f.idx+')">&#x2713; Save Edits</button>'+
           '<button class="btn btn-s btn-sm" onclick="cancelEdit('+f.idx+')">Cancel</button>'+
-          '<span style="font-size:11px;color:var(--muted);margin-left:8px;">Changes affect the filename and matching shown in the table â not the original email.</span>'+
+          '<span style="font-size:11px;color:var(--muted);margin-left:8px;">Changes affect the filename and matching shown in the table — not the original email.</span>'+
         '</div>'+
       '</div>'+
     '</td></tr>';
@@ -652,7 +652,7 @@ function autoAssignAll(){
   });updateStats();
 }
 
-// ââ INLINE EDIT âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── INLINE EDIT ───────────────────────────────────────────────────────────────
 function openEdit(idx){
   // close any other open edit panels
   _files.forEach(function(f){if(f.idx!==idx){var ep=document.getElementById('ep-'+f.idx);if(ep)ep.className='ep';}});
@@ -697,7 +697,7 @@ function saveEdit(idx){
   updateStats();
 }
 
-// ââ PREVIEW MODAL âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── PREVIEW MODAL ─────────────────────────────────────────────────────────────
 function openPreview(idx){
   var f=_files[idx];if(!f)return;
   _mIdx=idx;
@@ -721,8 +721,8 @@ function openPreview(idx){
   // Populate modal selects
   var users=getUsers();
   var mU=document.getElementById('mUser');var mD=document.getElementById('mDriver');
-  mU.innerHTML='<option value="">â Select User â</option>';
-  mD.innerHTML='<option value="">â Select Driver â</option>';
+  mU.innerHTML='<option value="">— Select User —</option>';
+  mD.innerHTML='<option value="">— Select Driver —</option>';
   users.forEach(function(u){
     var o=new Option(u.name+(u.role?' ('+u.role+')':''),u.name);o.setAttribute('data-role',u.role||'');mU.add(o);
     if(u.role==='driver')mD.add(new Option(u.name,u.name));
@@ -766,7 +766,7 @@ async function applyModal(andUpload){
   if(andUpload)await uploadRow(idx);
 }
 
-// ââ UPLOAD ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── UPLOAD ────────────────────────────────────────────────────────────────────
 async function uploadRow(idx){
   var token=getToken();if(!token){alert('Not connected to Google Drive.');return;}
   var f=_files[idx];if(!f)return;
@@ -792,7 +792,7 @@ async function uploadRow(idx){
       var drvF=await ensureFolder(token,vault,assignedDriver);
       targetFolder=await ensureFolder(token,drvF,'Rate Cons');
       folderPath='/'+assignedDriver+'/Rate Cons';
-      targetName=assignedUser+' â '+filename;
+      targetName=assignedUser+' — '+filename;
     }else{
       var uF=await ensureFolder(token,vault,assignedUser);
       var subMap={settlement:'Settlements',permit:'Permits',license:'Documents',insurance:'Documents',tax:'Tax Documents',other:'Documents'};
@@ -827,7 +827,7 @@ async function uploadAllAssigned(){
   }
 }
 
-// ââ RESULTS TABLE âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── RESULTS TABLE ─────────────────────────────────────────────────────────────
 function addToResults(item){
   var panel=document.getElementById('resPanel');panel.className='res-panel on';
   var tbody=document.getElementById('resBody');
@@ -844,14 +844,14 @@ function addToResults(item){
   document.getElementById('resBadge').textContent=c+' file'+(c!==1?'s':'');
 }
 
-// ââ EDIT UPLOADED RESULT ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── EDIT UPLOADED RESULT ──────────────────────────────────────────────────────
 function openEditResult(ri){
   var item=_results[ri];if(!item)return;
   _erIdx=ri;
   var users=getUsers();
   var erU=document.getElementById('erUser');var erD=document.getElementById('erDriver');
-  erU.innerHTML='<option value="">â Select User â</option>';
-  erD.innerHTML='<option value="">â Select Driver â</option>';
+  erU.innerHTML='<option value="">— Select User —</option>';
+  erD.innerHTML='<option value="">— Select Driver —</option>';
   users.forEach(function(u){
     var o=new Option(u.name+(u.role?' ('+u.role+')':''),u.name);o.setAttribute('data-role',u.role||'');erU.add(o);
     if(u.role==='driver')erD.add(new Option(u.name,u.name));
@@ -896,7 +896,7 @@ async function saveEditResult(){
       var df=await ensureFolder(token,vault,newDriver);
       newFolder=await ensureFolder(token,df,'Rate Cons');
       newPath='/'+newDriver+'/Rate Cons';
-      finalName=newUser+' â '+newName;
+      finalName=newUser+' — '+newName;
     }else{
       var uf=await ensureFolder(token,vault,newUser);
       var sm={settlement:'Settlements',permit:'Permits',license:'Documents',insurance:'Documents',tax:'Tax Documents',other:'Documents'};
@@ -928,12 +928,12 @@ async function saveEditResult(){
   }catch(e){alert('Update failed: '+e.message);}
 }
 
-// ââ GMAIL API âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── GMAIL API ─────────────────────────────────────────────────────────────────
 async function gmailSearch(tok,q){var r=await fetch('https://gmail.googleapis.com/gmail/v1/users/me/threads?q='+encodeURIComponent(q)+'&maxResults=100',{headers:{'Authorization':'Bearer '+tok}});if(!r.ok)throw new Error('Gmail '+r.status);return(await r.json()).threads||[];}
 async function gmailGetThread(tok,tid){var r=await fetch('https://gmail.googleapis.com/gmail/v1/users/me/threads/'+tid+'?format=full',{headers:{'Authorization':'Bearer '+tok}});if(!r.ok)throw new Error('Thread '+r.status);return(await r.json()).messages||[];}
 async function gmailGetAtt(tok,mid,aid){var r=await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/'+mid+'/attachments/'+aid,{headers:{'Authorization':'Bearer '+tok}});if(!r.ok)throw new Error('Att '+r.status);return r.json();}
 
-// ââ DRIVE API âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── DRIVE API ─────────────────────────────────────────────────────────────────
 async function ensureFolder(tok,parentId,name){
   var q='name="'+name.replace(/"/g,'\\"')+'" and mimeType="application/vnd.google-apps.folder" and "'+parentId+'" in parents and trashed=false';
   var r=await fetch('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent(q)+'&fields=files(id,name)',{headers:{'Authorization':'Bearer '+tok}});
@@ -954,7 +954,7 @@ async function uploadToDrive(tok,filename,mimeType,b64,folderId){
   return r.json();
 }
 
-// ââ UTILS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── UTILS ─────────────────────────────────────────────────────────────────────
 function getAllParts(p){var r=[];if(!p)return r;if(p.parts)p.parts.forEach(function(x){r=r.concat(getAllParts(x));});else r.push(p);return r;}
 function getHeader(hs,n){if(!hs)return'';var h=hs.find(function(x){return x.name.toLowerCase()===n.toLowerCase();});return h?h.value:'';}
 function setProgress(c,t){var p=t>0?Math.round(c/t*100):0;document.getElementById('pbarFill').style.width=p+'%';document.getElementById('progCnt').textContent=c+' / '+t;}

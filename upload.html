@@ -121,7 +121,7 @@ textarea:focus{border-color:var(--accent2)}
   <div class="topbar">
     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
     <h1>UPLOAD DOCUMENTS</h1>
-    <span class="badge">DRIVE SYNC</span>
+    <a href="doc-inbox.html" class="badge" style="text-decoration:none;cursor:pointer;" title="View Document Review Queue">DRIVE SYNC ↗</a>
   </div>
 
   <div class="page-body">
@@ -227,6 +227,30 @@ textarea:focus{border-color:var(--accent2)}
 <script src="nexus-config.js"></script>
 <script src="nexus-sidebar.js"></script>
 <script src="nexus-drive.js"></script>
+<script>
+// BUG #5 fix: catch GSI popup-blocked errors and show user-friendly message
+(function(){
+  var _origConsoleError = console.error;
+  console.error = function() {
+    var msg = Array.prototype.join.call(arguments,' ');
+    if (msg && msg.indexOf('popup') !== -1 && msg.indexOf('blocked') !== -1) {
+      var authBtn = document.getElementById('authBtn') || document.querySelector('[id*="auth"]');
+      if (authBtn) { authBtn.disabled = false; authBtn.textContent = 'Connect Drive'; }
+      var notice = document.getElementById('popup-notice');
+      if (!notice) {
+        notice = document.createElement('div');
+        notice.id = 'popup-notice';
+        notice.style.cssText = 'background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);color:#f59e0b;border-radius:8px;padding:10px 14px;font-size:12px;margin:10px 0;text-align:center;';
+        notice.innerHTML = '⚠ Popup blocked. <strong>Allow popups</strong> for this site in your browser, then try again.';
+        var pb = document.querySelector('.page-body') || document.body;
+        pb.insertBefore(notice, pb.firstChild);
+        setTimeout(function(){ if(notice.parentNode) notice.parentNode.removeChild(notice); }, 10000);
+      }
+    }
+    _origConsoleError.apply(console, arguments);
+  };
+})();
+</script>
 <script>
 'use strict';
 
