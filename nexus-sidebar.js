@@ -159,7 +159,7 @@
       .sidebar-logo .brand{font-family:'Barlow Condensed',sans-serif!important;font-weight:800!important;font-size:15px!important;letter-spacing:2px!important;color:#fff!important;display:block!important;}
       .sidebar-logo .sub{font-family:'JetBrains Mono',monospace!important;font-size:9px!important;color:rgba(255,255,255,0.45)!important;letter-spacing:1px!important;display:block!important;}
       .sidebar-section{padding:4px 0!important;}
-      .sidebar-section-label{padding:12px 16px 4px!important;font-family:'JetBrains Mono',monospace!important;font-size:9px!important;font-weight:700!important;color:rgba(255,255,255,0.3)!important;letter-spacing:1.5px!important;text-transform:uppercase!important;display:block!important;}
+      .sidebar-section-label{padding:12px 16px 4px!important;font-family:'JetBrains Mono',monospace!important;font-size:11px!important;font-weight:700!important;color:rgba(255,255,255,0.55)!important;letter-spacing:1.5px!important;text-transform:uppercase!important;display:block!important;}
       .sidebar-link{display:flex!important;align-items:center!important;gap:10px!important;padding:7px 16px!important;text-decoration:none!important;color:#a0aec0!important;font-size:13px!important;border-left:3px solid transparent!important;transition:all .15s!important;white-space:nowrap!important;}
       .sidebar-link:hover{background:rgba(233,30,140,0.14)!important;border-left-color:#c2185b!important;color:#fff!important;}
       .sidebar-link.active{background:rgba(233,30,140,0.22)!important;border-left:3px solid #e91e8c!important;color:#fff!important;}

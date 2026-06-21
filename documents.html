@@ -552,6 +552,54 @@ function setADFilter(btn){
   applyFilters();
 }
 
+
+/* ── Role-based access control ───────────────────────────────── */
+var _NEXUS_SESSION_CACHE = null;
+function getSession(){
+  if(!_NEXUS_SESSION_CACHE){
+    try{ _NEXUS_SESSION_CACHE = JSON.parse(localStorage.getItem('nexus_session')||'{}'); }catch(e){ _NEXUS_SESSION_CACHE={}; }
+  }
+  return _NEXUS_SESSION_CACHE;
+}
+var DISPATCHER_DRIVER_MAP = {
+  'amet@carriertuckingus.com':  ['AVIS','DAVID','MIGUEL','NELSON','YOSVIEL'],
+  'amet@carriertuckingus.com'.replace('amet','amet'): ['AVIS','DAVID','MIGUEL','NELSON','YOSVIEL'],
+  'betty@carriertuckingus.com': ['GUILLERMO']
+};
+// Normalise: also key by first-name shorthand from email
+function getAllowedDriverSet(){
+  var sess = getSession();
+  var role = (sess.role||'').toLowerCase();
+  var email = (sess.email||'').toLowerCase();
+  if(role==='admin'||role==='approver') return null; // null = no restriction
+  if(role==='dispatcher'){
+    var list = DISPATCHER_DRIVER_MAP[email];
+    if(!list){
+      // fallback: derive from first part of email
+      var prefix = email.split('@')[0].toUpperCase();
+      for(var k in DISPATCHER_DRIVER_MAP){
+        if(k.split('@')[0].toUpperCase()===prefix){ list=DISPATCHER_DRIVER_MAP[k]; break; }
+      }
+    }
+    return list ? list.map(function(s){return s.toUpperCase();}) : [];
+  }
+  if(role==='driver'){
+    // driver sees only their own docs — name is first word of session name, uppercased
+    var driverShort = (sess.name||'').split(' ')[0].toUpperCase();
+    return [driverShort];
+  }
+  return null; // default: no restriction (admin fallback)
+}
+
+function restrictByRole(docs){
+  var allowed = getAllowedDriverSet();
+  if(allowed===null) return docs; // admin/approver: see all
+  return docs.filter(function(d){
+    return allowed.indexOf((d.driver||'UNKNOWN').toUpperCase()) >= 0;
+  });
+}
+/* ── End access control ─────────────────────────────────────── */
+
 function applyFilters(){
   const search = document.getElementById('search-input').value.toLowerCase();
   const dv = document.getElementById('f-driver').value;
@@ -559,8 +607,9 @@ function applyFilters(){
   const from = document.getElementById('f-date-from').value;
   const to = document.getElementById('f-date-to').value;
 
-  filteredDocs = documents;
-  const filtered = documents.filter(d=>{
+  var _roleDocs = restrictByRole(documents);
+  filteredDocs = _roleDocs;
+  const filtered = _roleDocs.filter(d=>{
     if(search && !d.filename.toLowerCase().includes(search)) return false;
     if(dv && (d.driver||'').toUpperCase()!==(dv||'').toUpperCase()) return false;
     if(tv && d.type!==tv) return false;
@@ -579,7 +628,7 @@ function applyFilters(){
   document.getElementById('kpi-add').textContent = filtered.filter(d=>d.add_deduct==='ADD').length;
   document.getElementById('kpi-deduct').textContent = filtered.filter(d=>d.add_deduct==='DEDUCT').length;
   document.getElementById('kpi-review').textContent = filtered.filter(d=>d.add_deduct==='REVIEW').length;
-  document.getElementById('row-count').textContent = `Showing ${filtered.length} of ${documents.length} documents`;
+  document.getElementById('row-count').textContent = `Showing ${filtered.length} of ${_roleDocs.length} documents`;
 }
 
 function clearFilters(){
@@ -1328,7 +1377,8 @@ function confirmDelete() {
 </script>
 
 <!-- Delete confirmation modal -->
-<div id="delete-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)closeDeleteModal()">
+<div id="vault-panel" style="display:none"></div>
+<div id="delete-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.65);align-items:center;justify-content:center;" onclick="if(event.target===this)closeDeleteModal()">
   <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:28px 32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.6);">
     <div style="font-size:20px;margin-bottom:8px;">🗑️</div>
     <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:#f1f5f9;margin-bottom:6px;">Remove document?</div>

@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Weekly Settlements — Carrier Nexus</title>
 <script src="nexus-config.js"></script>
-<script src="nexus-sidebar.js"></script>
 <style>
 :root{
   --bg:#0d1117;--surface:#161b22;--surface2:#21262d;--surface3:#2d333b;
@@ -83,6 +82,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .pl-row.pl-total .pl-val.pos{color:#3fb950}
 .pl-row.pl-total .pl-val.neg{color:#f85149}
 .deduct{color:#f85149}
+
+.rate-editor{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:6px 10px;margin-top:8px;}
+.rate-editor label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
+.rate-input-sm{width:52px;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.2);color:#fff;font-size:13px;font-weight:700;text-align:center;padding:2px 4px;outline:none;}
+.rate-input-sm:focus{border-bottom-color:var(--accent);}
+.rate-editors{display:flex;gap:8px;flex-wrap:wrap;}
 .dispatch-summary{background:var(--surface2);border-radius:6px;padding:10px 12px;margin-top:8px}
 .dispatch-row{display:flex;justify-content:space-between;font-size:12px;padding:2px 0;color:var(--muted)}
 .dispatch-row .dr-name{color:var(--text)}
@@ -102,7 +107,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </head>
 <body>
 <script>
-if(typeof buildSidebar==='function'){document.body.insertAdjacentHTML('afterbegin',buildSidebar('weekly-settlements.html'));}
 </script>
 <div class="main">
 <div class="topbar">
@@ -161,6 +165,42 @@ var FLEET=[
   {id:'laura',    name:'Laura Moreno',     initials:'LM',color:'#37474f',defaultRole:'admin'},
 ];
 var ROLES=['driver','owner_op','dispatcher','admin'];
+
+/* ── Per-week editable rates ────────────────────────────────── */
+function rateKey(wk){ return 'nexus_weekly_rates_' + wk; }
+function loadRates(wk){
+  try{ return JSON.parse(localStorage.getItem(rateKey(wk))||'{}'); }catch(e){ return {}; }
+}
+function saveRate(memberId, field, val, wk){
+  var r = loadRates(wk);
+  if(!r[memberId]) r[memberId]={};
+  r[memberId][field] = val;
+  localStorage.setItem(rateKey(wk), JSON.stringify(r));
+}
+function getRate(m, field, wk){
+  var r = loadRates(wk);
+  if(r[m.id] && r[m.id][field] !== undefined) return r[m.id][field];
+  // defaults from FLEET
+  if(field==='dispatchRate') return m.dispatchRate||0.13;
+  if(field==='driverRate')   return m.driverRate||0.30;
+  if(field==='commissionRate') return m.commissionRate||0.05;
+  return 0;
+}
+function onRateChange(memberId, field, pctVal){
+  var val = parseFloat(pctVal);
+  if(isNaN(val)||val<0||val>100) return;
+  saveRate(memberId, field, val/100, getWeekKey());
+  renderBody(FLEET.find(function(m){return m.id===memberId;}), getRole(memberId));
+  updateSummary();
+}
+function getRole(memberId){
+  var wk=getWeekKey(); var wr=loadWR(wk);
+  var m=FLEET.find(function(f){return f.id===memberId;});
+  return wr[memberId] || (m?m.defaultRole:'driver');
+}
+/* ── End editable rates ─────────────────────────────────────── */
+
+
 var RL={driver:'Driver',owner_op:'Owner Op',dispatcher:'Dispatcher',admin:'Admin'};
 var BC={driver:'badge-driver',owner_op:'badge-owner_op',dispatcher:'badge-dispatcher',admin:'badge-admin'};
 var ML={},ME={},ID={},LC=1000,EC=2000;
@@ -245,11 +285,13 @@ function driverBody(m){
       '<div class="pl-row"><span class="pl-label">Gross Rate Con</span><span class="pl-val">'+fmt(g)+'</span></div>'+
       '<div class="pl-row pl-total"><span>Driver Pay (30%)</span><span class="pl-val '+(p>0?'pos':'')+'">'+(p>0?'+':'')+fmt(p)+'</span></div>'+
     '</div>'+
-    '<div class="rate-hint">Dispatch: <span>'+dp+'%</span> paid by Carrier on gross</div>';
+    '<div class="rate-editors">'+
+    '<div class="rate-editor"><label>Dispatch %</label><input class="rate-input-sm" type="number" min="0" max="100" step="0.5" value="'+dp+'" onchange="onRateChange(\''+m.id+'\',\'dispatchRate\',this.value)"></div>'+
+    '</div>';
 }
 
 function ownerBody(m){
-  var loads=ML[m.id]||[];var exps=ME[m.id]||[];var dr=m.dispatchRate||0.14;var dp=Math.round(dr*100);
+  var wk=getWeekKey(); var dr=getRate(m,'dispatchRate',wk);var dp=Math.round(dr*100); var loads=ML[m.id]||[];var exps=ME[m.id]||[];
   var rows=loads.map(function(l,i){return'<div class="load-row">'+
     '<input type="text" placeholder="Load #" value="'+esc(l.loadNum)+'" onchange="upL(\''+m.id+'\','+i+',\'loadNum\',this.value)">'+
     '<input type="text" placeholder="Broker" value="'+esc(l.broker)+'" onchange="upL(\''+m.id+'\','+i+',\'broker\',this.value)">'+
@@ -362,5 +404,6 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 
 render();
 </script>
+<script src="nexus-sidebar.js"></script>
 </body>
 </html>
