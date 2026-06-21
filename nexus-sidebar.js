@@ -5,6 +5,12 @@
 (function() {
   const page = location.pathname.split('/').pop() || 'index.html';
 
+  /* ── Theme system: apply BEFORE layout to prevent flash ── */
+  (function(){
+    var t = localStorage.getItem('nexus_theme') || 'dark';
+    document.documentElement.setAttribute('data-nexus-theme', t);
+  })();
+
   function active(href) {
     return (href === page || (href.includes('?') && page === href.split('?')[0])) ? ' active' : '';
   }
@@ -133,6 +139,9 @@
       <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.55);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="nexus-user-label">Jim Burlew Â· ADMIN</div>
       <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.25);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="nexus-company-footer">${activeCompany.name}</div>
     </div>
+    <button id="nexus-theme-btn" onclick="window.NEXUS_TOGGLE_THEME()" title="Toggle dark / light mode" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.3);flex-shrink:0;padding:3px;line-height:0;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.3)'">
+      <svg id="nexus-theme-icon" viewBox="0 0 16 16" fill="currentColor" width="13" height="13"></svg>
+    </button>
     <a href="admin-users.html" title="Admin" style="color:rgba(255,255,255,.3);text-decoration:none;flex-shrink:0;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.3)'">
       <svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13"><path d="M8 1a3 3 0 110 6A3 3 0 018 1zm5 11c0-2.21-2.24-4-5-4S3 9.79 3 12v1h10v-1z"/></svg>
     </a>
@@ -169,6 +178,80 @@
     `;
     document.head.appendChild(style);
   }
+
+  // Inject theme override CSS
+  if (!document.getElementById('nexus-theme-styles')) {
+    var ts = document.createElement('style');
+    ts.id = 'nexus-theme-styles';
+    ts.textContent = [
+      /* ─── DARK MODE ─── force all pages to dark */
+      '[data-nexus-theme="dark"] body{background:#0a0a0a!important;color:#c9d1d9!important}',
+      '[data-nexus-theme="dark"] .topbar{background:#111827!important;border-bottom:1px solid #21262d!important}',
+      '[data-nexus-theme="dark"] .topbar-title,[data-nexus-theme="dark"] .page-title{color:#e6edf3!important}',
+      '[data-nexus-theme="dark"] .content{background:transparent!important}',
+      '[data-nexus-theme="dark"] .card,[data-nexus-theme="dark"] .panel,[data-nexus-theme="dark"] .section-card,[data-nexus-theme="dark"] .stat-card{background:#111827!important;border-color:#21262d!important;color:#c9d1d9!important}',
+      '[data-nexus-theme="dark"] .modal,[data-nexus-theme="dark"] .modal-box{background:#161b22!important;color:#c9d1d9!important}',
+      '[data-nexus-theme="dark"] .modal-head,[data-nexus-theme="dark"] .modal-hdr,[data-nexus-theme="dark"] .modal-footer{background:#161b22!important;border-color:#21262d!important;color:#e6edf3!important}',
+      '[data-nexus-theme="dark"] .modal-body{background:#161b22!important;color:#c9d1d9!important}',
+      '[data-nexus-theme="dark"] .modal-title,[data-nexus-theme="dark"] .modal-hdr-title{color:#e6edf3!important}',
+      '[data-nexus-theme="dark"] .form-input,[data-nexus-theme="dark"] .form-select,[data-nexus-theme="dark"] textarea,[data-nexus-theme="dark"] select,[data-nexus-theme="dark"] input:not([type=range]){background:#0d1117!important;color:#c9d1d9!important;border-color:#30363d!important}',
+      '[data-nexus-theme="dark"] .form-label,[data-nexus-theme="dark"] label{color:#8b949e!important}',
+      '[data-nexus-theme="dark"] table th{background:#161b22!important;color:#8b949e!important;border-color:#21262d!important}',
+      '[data-nexus-theme="dark"] table td{color:#c9d1d9!important;border-color:#21262d!important}',
+      '[data-nexus-theme="dark"] tr:hover td{background:#1c2331!important}',
+      '[data-nexus-theme="dark"] .btn-outline{color:#c9d1d9!important;border-color:#30363d!important;background:transparent!important}',
+      '[data-nexus-theme="dark"] .btn-outline:hover{background:rgba(255,255,255,0.06)!important}',
+      '[data-nexus-theme="dark"] h1,[data-nexus-theme="dark"] h2,[data-nexus-theme="dark"] h3{color:#e6edf3!important}',
+      '[data-nexus-theme="dark"] .badge-gray,[data-nexus-theme="dark"] .badge-neutral{background:#21262d!important;color:#8b949e!important}',
+      '[data-nexus-theme="dark"] hr,[data-nexus-theme="dark"] .divider{border-color:#21262d!important}',
+      '[data-nexus-theme="dark"] .filter-bar,[data-nexus-theme="dark"] .toolbar,[data-nexus-theme="dark"] .table-toolbar{background:#111827!important;border-color:#21262d!important}',
+      '[data-nexus-theme="dark"] .member-card,[data-nexus-theme="dark"] .driver-card{background:#111827!important;border-color:#21262d!important}',
+      '[data-nexus-theme="dark"] .load-row,[data-nexus-theme="dark"] .expense-row{background:#0d1117!important}',
+      /* ─── LIGHT MODE ─── force all pages to light */
+      '[data-nexus-theme="light"] body{background:#f1f5f9!important;color:#0f172a!important}',
+      '[data-nexus-theme="light"] .topbar{background:#fff!important;border-bottom:1px solid #e2e8f0!important}',
+      '[data-nexus-theme="light"] .topbar-title,[data-nexus-theme="light"] .page-title{color:#0f172a!important}',
+      '[data-nexus-theme="light"] .content{background:transparent!important}',
+      '[data-nexus-theme="light"] .card,[data-nexus-theme="light"] .panel,[data-nexus-theme="light"] .section-card,[data-nexus-theme="light"] .stat-card{background:#fff!important;border-color:#e2e8f0!important;color:#0f172a!important}',
+      '[data-nexus-theme="light"] .modal,[data-nexus-theme="light"] .modal-box,[data-nexus-theme="light"] .modal-head,[data-nexus-theme="light"] .modal-hdr,[data-nexus-theme="light"] .modal-footer,[data-nexus-theme="light"] .modal-body{background:#fff!important;border-color:#e2e8f0!important;color:#0f172a!important}',
+      '[data-nexus-theme="light"] .form-input,[data-nexus-theme="light"] .form-select,[data-nexus-theme="light"] textarea,[data-nexus-theme="light"] select,[data-nexus-theme="light"] input:not([type=range]){background:#fff!important;color:#0f172a!important;border-color:#e2e8f0!important}',
+      '[data-nexus-theme="light"] .form-label,[data-nexus-theme="light"] label{color:#334155!important}',
+      '[data-nexus-theme="light"] table th{background:#f8fafc!important;color:#64748b!important;border-color:#e2e8f0!important}',
+      '[data-nexus-theme="light"] table td{color:#0f172a!important;border-color:#e2e8f0!important}',
+      '[data-nexus-theme="light"] tr:hover td{background:#f0f4f8!important}',
+      '[data-nexus-theme="light"] h1,[data-nexus-theme="light"] h2,[data-nexus-theme="light"] h3{color:#0f172a!important}',
+      '[data-nexus-theme="light"] .member-card,[data-nexus-theme="light"] .driver-card{background:#fff!important;border-color:#e2e8f0!important}',
+    ].join('\n');
+    document.head.appendChild(ts);
+  }
+
+  // Theme toggle function + icon updater
+  window.NEXUS_TOGGLE_THEME = function() {
+    var cur = document.documentElement.getAttribute('data-nexus-theme') || 'dark';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-nexus-theme', next);
+    localStorage.setItem('nexus_theme', next);
+    _updateThemeIcon(next);
+  };
+
+  function _updateThemeIcon(theme) {
+    var el = document.getElementById('nexus-theme-icon');
+    if (!el) return;
+    if (theme === 'dark') {
+      // Sun icon — click to go light
+      el.setAttribute('viewBox', '0 0 16 16');
+      el.innerHTML = '<circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M11.54 4.46l-1.41 1.41M4.46 11.54l-1.41 1.41" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>';
+    } else {
+      // Moon icon — click to go dark
+      el.setAttribute('viewBox', '0 0 16 16');
+      el.innerHTML = '<path d="M13.5 10A5.5 5.5 0 016 2.5a.5.5 0 00-.6.6A6 6 0 1013.4 10.6a.5.5 0 00.1-.6z" fill="currentColor"/>';
+    }
+  }
+
+  // Set correct icon after sidebar is injected
+  setTimeout(function(){
+    _updateThemeIcon(document.documentElement.getAttribute('data-nexus-theme') || 'dark');
+  }, 0);
 
   // Close company dropdown on outside click
   document.addEventListener('click', function(e) {
