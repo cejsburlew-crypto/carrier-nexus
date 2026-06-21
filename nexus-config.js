@@ -76,7 +76,8 @@ window.NEXUS_LOCAL_USERS = (function () {
     { id:'usr_007', email:'miguel@carriertuckingus.com', passwordHash:'',                                                                                 role:'driver',         name:'Miguel Fonseca',   memberId:'MF26005.0', active:false, createdAt:'2026-06-14' },
     { id:'usr_008', email:'nelson@carriertuckingus.com', passwordHash:'',                                                                                 role:'driver',         name:'Nelson Veliz',     memberId:'NV26006.0', active:false, createdAt:'2026-06-14' },
     { id:'usr_009', email:'yosviel@carriertuckingus.com', passwordHash:'',                                                                                role:'driver',         name:'Yosviel Pinera',   memberId:'YP26007.0', active:false, createdAt:'2026-06-14' },
-    { id:'usr_010', email:'avis@carriertuckingus.com',   passwordHash:'',                                                                                 role:'driver',         name:'Avis Modesto',     memberId:'AM26008.0', active:false, createdAt:'2026-06-14' }
+    { id:'usr_010', email:'avis@carriertuckingus.com',   passwordHash:'',                                                                                 role:'driver',         name:'Avis Modesto',     memberId:'AM26008.0', active:false, createdAt:'2026-06-14' },
+    { id:'usr_011', email:'jayler@carriertuckingus.com', passwordHash:'',                                                                                role:'driver',         name:'Jayler Labrada',   memberId:'JL26009.0', active:false, createdAt:'2026-06-20' }
   ];
   // Merge: SEED is source-of-truth for passwordHash (cross-device);
   // localStorage overrides name/role/active changes made via admin-users.html
