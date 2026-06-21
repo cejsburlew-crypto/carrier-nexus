@@ -1145,8 +1145,10 @@ function renderDriverCards(filter) {
       '<div class="compliance-section">' +
         '<div class="compliance-hdr">' + shieldSVG + ' COMPLIANCE</div>' +
         '<div class="comp-row"><span class="comp-lbl">CDL</span>' +
-          '<span class="comp-val">' + (isPlaceholder(d.cdl_number) ? 'Not on file' : d.cdl_number + ' · Class ' + d.cdl_class + ' · ' + d.cdl_state) + '</span>' +
+          '<span class="comp-val">' + (isPlaceholder(d.cdl_number) ? 'Not on file' : d.cdl_number + ' · Class ' + d.cdl_class + ' · ' + d.cdl_state +
+            (d.cdl_endorsements ? ' · <strong>' + d.cdl_endorsements + '</strong>' : '')) + '</span>' +
           cdlBadge + '</div>' +
+        (d.hire_date ? '<div class="comp-row"><span class="comp-lbl">HIRED</span><span class="comp-val">' + fmtDate(d.hire_date) + '</span></div>' : '') +
         '<div class="comp-row"><span class="comp-lbl">MED</span>' +
           '<span class="comp-val">DOT Physical' + (isPlaceholder(d.med_examiner) ? '' : ' · ' + d.med_examiner) + '</span>' +
           medBadge + '</div>' +
@@ -1250,6 +1252,21 @@ function openComplianceModal(driverId) {
     if (el) el.textContent = docs[type] ? '✓ ' + docs[type].name : '';
   });
 
+  // CDL Endorsements
+  const ends = (d.cdl_endorsements || '').split(',').map(e=>e.trim()).filter(Boolean);
+  ['h','n','p','s','t','x'].forEach(e => {
+    const cb = document.getElementById('f-end-'+e);
+    if (cb) cb.checked = ends.includes(e.toUpperCase());
+  });
+  // Emergency Contact
+  set('f-emerg_name',   d.emerg_name);
+  set('f-emerg_rel',    d.emerg_rel);
+  set('f-emerg_phone',  d.emerg_phone);
+  set('f-emerg_phone2', d.emerg_phone2);
+  set('f-emerg_email',  d.emerg_email);
+  set('f-hire_date',    d.hire_date);
+  set('f-driver_notes', d.driver_notes || d.notes);
+
   document.getElementById('modal-save-btn').textContent = 'Save Compliance Data';
   document.getElementById('modal-save-btn').classList.remove('saved');
   document.getElementById('compliance-modal').style.display = 'flex';
@@ -1304,7 +1321,19 @@ function saveComplianceForm() {
     mvr_date: get('f-mvr_date'),
     hazmat: document.getElementById('f-hazmat')?.value === 'true',
     hazmat_expires: get('f-hazmat_expires'),
-    annual_review: get('f-annual_review')
+    annual_review: get('f-annual_review'),
+    // CDL Endorsements
+    cdl_endorsements: ['H','N','P','S','T','X'].filter(e =>
+      document.getElementById('f-end-'+e.toLowerCase())?.checked
+    ).join(','),
+    // Emergency Contact
+    emerg_name:   get('f-emerg_name'),
+    emerg_rel:    get('f-emerg_rel'),
+    emerg_phone:  get('f-emerg_phone'),
+    emerg_phone2: get('f-emerg_phone2'),
+    emerg_email:  get('f-emerg_email'),
+    hire_date:    get('f-hire_date'),
+    driver_notes: get('f-driver_notes')
   };
   // Remove null/empty entries
   Object.keys(data).forEach(k => { if (!data[k] && data[k] !== false) delete data[k]; });
@@ -1366,6 +1395,21 @@ function saveComplianceForm() {
             <select id="f-cdl_class"><option>A</option><option>B</option><option>C</option></select></div>
           <div class="modal-field" style="max-width:60px"><label>State</label><input id="f-cdl_state" type="text" placeholder="FL" maxlength="2" style="text-transform:uppercase"></div>
           <div class="modal-field"><label>Expiration Date</label><input id="f-cdl_expires" type="date"></div>
+        </div>
+        <div class="modal-row" style="flex-wrap:wrap;gap:6px;margin-top:4px;">
+          <label style="font-size:10px;font-weight:700;color:#475569;text-transform:uppercase;width:100%;letter-spacing:.08em;">Endorsements</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:5px 10px;cursor:pointer;">
+            <input type="checkbox" id="f-end-h" value="H"> H — Hazardous Materials</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:5px 10px;cursor:pointer;">
+            <input type="checkbox" id="f-end-n" value="N"> N — Tank Vehicle</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:5px 10px;cursor:pointer;">
+            <input type="checkbox" id="f-end-p" value="P"> P — Passenger</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:5px 10px;cursor:pointer;">
+            <input type="checkbox" id="f-end-s" value="S"> S — School Bus</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:5px 10px;cursor:pointer;">
+            <input type="checkbox" id="f-end-t" value="T"> T — Double/Triple</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:5px 10px;cursor:pointer;">
+            <input type="checkbox" id="f-end-x" value="X"> X — HazMat + Tank</label>
         </div>
         <div class="upload-zone" onclick="document.getElementById('fu-cdl').click()">
           <input type="file" id="fu-cdl" accept="image/*,.pdf" onchange="handleUpload(event,'cdl')">
@@ -1502,6 +1546,22 @@ function saveComplianceForm() {
     </div>
     <div class="modal-footer">
       <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Cancel</button>
+      <div class="modal-section" style="margin-bottom:0;">
+        <div class="modal-section-title">🆘 Emergency Contact</div>
+        <div class="modal-row">
+          <div class="modal-field flex2"><label>Contact Name</label><input id="f-emerg_name" type="text" placeholder="Full name"></div>
+          <div class="modal-field"><label>Relationship</label><input id="f-emerg_rel" type="text" placeholder="Spouse, Parent, Sibling…"></div>
+        </div>
+        <div class="modal-row">
+          <div class="modal-field"><label>Phone (Primary)</label><input id="f-emerg_phone" type="tel" placeholder="(305) 555-0000"></div>
+          <div class="modal-field"><label>Phone (Alt)</label><input id="f-emerg_phone2" type="tel" placeholder="(305) 555-0001"></div>
+          <div class="modal-field flex2"><label>Email</label><input id="f-emerg_email" type="email" placeholder="contact@email.com"></div>
+        </div>
+        <div class="modal-row">
+          <div class="modal-field flex2"><label>Hire Date</label><input id="f-hire_date" type="date"></div>
+          <div class="modal-field flex2"><label>Notes</label><input id="f-driver_notes" type="text" placeholder="Home terminal, special endorsements, restrictions…"></div>
+        </div>
+      </div>
       <button class="modal-btn modal-btn-save" id="modal-save-btn" onclick="saveComplianceForm()">Save Compliance Data</button>
     </div>
   </div>
