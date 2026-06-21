@@ -118,6 +118,7 @@
       <a href="equipment.html" class="sidebar-link${active('equipment.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8 4 10l1-3.5L2 4h4.5z"/></svg>Fleet &amp; Equipment</a>
       <a href="maintenance.html" class="sidebar-link${active('maintenance.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.5 2.5l-1.4 1.4A4 4 0 106.1 9.8L4.7 11.2A6 6 0 1113.5 2.5zm-3 3A2 2 0 108 10a2 2 0 002.5-2.5z"/></svg>Maintenance Log</a>
       <a href="pm-schedule.html" class="sidebar-link${active('pm-schedule.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h10v2H3zm0 4h10v2H3zm0 4h6v2H3z"/></svg>PM Schedule</a>
+      <a href="dot-compliance.html" class="sidebar-link${active('dot-compliance.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.5 4h1v5h-1zm0 6h1v1.5h-1z"/></svg>DOT Compliance</a>
       <a href="tires.html" class="sidebar-link${active('tires.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>Tires</a>
       <a href="fuel.html" class="sidebar-link${active('fuel.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h7l3 3v10a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 6h6V6H4zm0 3h4V9H4z"/></svg>Fuel</a>
     </div>
