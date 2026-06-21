@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Settlement Review — Carrier Nexus</title>
+<title>Settlement Approval Queue — Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -301,7 +301,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 </head>
 
 <style>
-/* ── SETTLEMENT REVIEW EXTRAS ── */
+/* ── SETTLEMENT APPROVAL QUEUE EXTRAS ── */
 .kpi-value.red{color:#ef4444;}
 /* ROLE CHIPS — inside gradient topbar, styled as ghost white buttons */
 .role-chip{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.12);color:#fff;font-family:'Barlow',sans-serif;transition:all 0.15s;}
@@ -395,7 +395,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 <main class="main">
   <div class="topbar">
     <div>
-      <div class="page-title">SETTLEMENT REVIEW</div>
+      <div class="page-title">SETTLEMENT APPROVAL QUEUE</div>
       <div class="page-subtitle">Operations → Executive approval workflow · Carrier Trucking US, LLC</div>
     </div>
     <div class="topbar-actions">
@@ -466,7 +466,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 <div class="modal-overlay" id="reviewModal">
   <div class="modal">
     <div class="modal-header">
-      <div><div class="modal-title" id="modalTitle">Settlement Review</div><div class="modal-subtitle" id="modalSubtitle"></div></div>
+      <div><div class="modal-title" id="modalTitle">Settlement Approval Queue</div><div class="modal-subtitle" id="modalSubtitle"></div></div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
@@ -506,8 +506,8 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 </div>
 
 <div class="toast" id="toast"></div>
-<script src="nexus-db.js?v=3"></script>
-<script src="nexus-config.js?v=5"></script>
+<script src="nexus-db.js"></script>
+<script src="nexus-config.js"></script>
 <script>
 let currentRole='ops',currentTab='queue',activeSettlement=null,reviewData={};
 const REVIEW_KEY='nexus_settlement_reviews',INSIGHTS_KEY='nexus_review_insights';
@@ -545,10 +545,10 @@ function refreshKPIs(){
   document.getElementById('kpiTotal').textContent=ss.length;
   const qc=currentRole==='ops'?(draft+revision):pendExec;
   const tb=document.getElementById('tabBadge');
-  if(tb){tb.textContent=qc;tb.style.display=qc>0?'inline-flex':'none';}
+  tb.textContent=qc;tb.style.display=qc>0?'inline-flex':'none';
   const sb=document.getElementById('sidebarBadge');
   const tot=pendExec+revision;
-  if(sb){if(tot>0){sb.textContent=tot;sb.style.display='inline-block';}else{sb.style.display='none';}}
+  if(tot>0){sb.textContent=tot;sb.style.display='inline-block';}else{sb.style.display='none';}
 }
 function switchRole(role){
   currentRole=role;

@@ -400,8 +400,8 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
     </select>
     <div class="toggle-group" id="ad-toggle">
       <button class="toggle-btn active" data-val="" onclick="setADFilter(this)">All</button>
-      <button class="toggle-btn" data-val="ADD" onclick="setADFilter(this)">ADD</button>
-      <button class="toggle-btn" data-val="DEDUCT" onclick="setADFilter(this)">DEDUCT</button>
+      <button class="toggle-btn" data-val="ADD" onclick="setADFilter(this)">Revenue</button>
+      <button class="toggle-btn" data-val="DEDUCT" onclick="setADFilter(this)">Expense</button>
       <button class="toggle-btn" data-val="REVIEW" onclick="setADFilter(this)">REVIEW</button>
     </div>
     <div class="filter-divider"></div>
@@ -533,8 +533,8 @@ function getTypeBadge(type){
 }
 
 function getADBadge(ad){
-  if(ad==='ADD') return '<span class="ad-badge ad-add">ADD</span>';
-  if(ad==='DEDUCT') return '<span class="ad-badge ad-deduct">DEDUCT</span>';
+  if(ad==='ADD') return '<span class="ad-badge ad-add">Revenue</span>';
+  if(ad==='DEDUCT') return '<span class="ad-badge ad-deduct">Expense</span>';
   return '<span class="ad-badge ad-review">REVIEW</span>';
 }
 
@@ -1161,7 +1161,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <div>
         <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">ADD / DEDUCT</label>
         <select id="nd-ad" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
-          <option value="ADD">ADD</option><option value="DEDUCT">DEDUCT</option><option value="REVIEW">REVIEW</option>
+          <option value="ADD">Revenue</option><option value="DEDUCT">Expense</option><option value="REVIEW">REVIEW</option>
         </select>
       </div>
       <div>

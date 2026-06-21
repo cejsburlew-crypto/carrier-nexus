@@ -380,11 +380,11 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
           <th>Week</th>
           <th style="text-align:right">Loads</th>
           <th style="text-align:right">Gross Revenue</th>
-          <th style="text-align:right">Overhead</th>
-          <th style="text-align:right">Carry Fwd</th>
+          <th style="text-align:right">Deductions</th>
+          <th style="text-align:right">Balance Forward</th>
           <th style="text-align:right">Permits</th>
-          <th style="text-align:right">Op. Expenses</th>
-          <th style="text-align:right">Net Pay</th>
+          <th style="text-align:right">Operating Expenses</th>
+          <th style="text-align:right">Net Settlement</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
@@ -675,7 +675,7 @@ function renderTable(){
           <div class="expand-section">
             <h4>Deductions</h4>
             <div class="expand-line"><span class="el-label" style="color:var(--text-muted);font-style:italic;">No deduction detail on file</span><span class="el-val">—</span></div>
-            <div class="expand-total"><span class="et-label">Net Pay</span><span class="et-val ${s.net_pay>=0?'pos':'neg'}">${fmt(s.net_pay)}</span></div>
+            <div class="expand-total"><span class="et-label">Net Settlement</span><span class="et-val ${s.net_pay>=0?'pos':'neg'}">${fmt(s.net_pay)}</span></div>
           </div>
         </div>`;
     }
@@ -774,16 +774,16 @@ function viewPDF(id){
       });
       totalOH = detail.overhead.reduce((a,o)=>a+o.amount,0);
     } else if(s.overhead>0){
-      deductRows += `<tr><td>—</td><td>Overhead</td><td></td><td class="ra">${fmtMoney(s.overhead)}</td><td></td></tr>`;
+      deductRows += `<tr><td>—</td><td>Deductions</td><td></td><td class="ra">${fmtMoney(s.overhead)}</td><td></td></tr>`;
     }
-    deductRows += `<tr class="sub"><td colspan="3"><strong>Total Overhead</strong></td><td class="ra"><strong>${fmtMoney(totalOH)}</strong></td><td></td></tr>`;
+    deductRows += `<tr class="sub"><td colspan="3"><strong>Total Deductions</strong></td><td class="ra"><strong>${fmtMoney(totalOH)}</strong></td><td></td></tr>`;
     deductRows += `<tr><td></td><td>${s.permits>0?'Permits':'No permits this period.'}</td><td></td><td class="ra">${fmtMoney(s.permits)}</td><td></td></tr>`;
     deductRows += `<tr class="sub"><td colspan="3"><strong>Total Permits</strong></td><td class="ra"><strong>${fmtMoney(s.permits)}</strong></td><td></td></tr>`;
     deductRows += `<tr class="sub"><td colspan="3"><strong>Total Operational Expenses</strong></td><td class="ra"><strong>${fmtMoney(s.expenses)}</strong></td><td></td></tr>`;
     const totalD = totalOH + s.permits + s.expenses;
     deductRows += `<tr class="total"><td colspan="3"><strong>TOTAL</strong></td><td class="ra"><strong>${fmtMoney(totalD)}</strong></td><td class="ra"><strong>${fmtMoney(totalAdds)}</strong></td></tr>`;
     netDisplay = s.net_pay!==0 ? s.net_pay : totalAdds-totalD;
-    deductRows += `<tr class="net"><td colspan="4"><strong>NET PAY</strong></td><td class="ra net-val"><strong>${fmtMoney(netDisplay,true)}</strong></td></tr>`;
+    deductRows += `<tr class="net"><td colspan="4"><strong>NET SETTLEMENT</strong></td><td class="ra net-val"><strong>${fmtMoney(netDisplay,true)}</strong></td></tr>`;
   }
 
   const html = `
@@ -822,7 +822,7 @@ function viewPDF(id){
       <td class="net-val"><strong>${fmtMoney(netDisplay)}</strong></td>
     </tr></tbody>
   </table>` : `<table class="info-tbl">
-    <thead><tr><th>DRIVER</th><th>TRUCK</th><th>STATEMENT #</th><th>NET PAY</th></tr></thead>
+    <thead><tr><th>DRIVER</th><th>TRUCK</th><th>STATEMENT #</th><th>NET SETTLEMENT</th></tr></thead>
     <tbody><tr>
       <td><strong>${s.driver}</strong></td>
       <td>${truck}</td>

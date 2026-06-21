@@ -113,10 +113,10 @@ tr:hover td{background:#f8fafc;}
       <table>
         <thead><tr><th>Load #</th><th>Driver</th><th>Dispatcher</th><th>Broker</th><th>Rate</th><th>Delivered</th><th>Days Out</th><th>Action</th></tr></thead>
         <tbody>
-          <tr><td><span class="mono">L10483</span></td><td><span class="badge badge-blue">DAVID</span></td><td><span class="badge disp-amet">AMET</span></td><td>Expressway Logistics</td><td style="color:#22c55e;font-weight:600">$2,850</td><td>May 14</td><td><span class="badge badge-red">7 days</span></td><td><button class="btn btn-orange" onclick="alert('Reminder sent to David')">Remind Driver</button></td></tr>
-          <tr><td><span class="mono">BOL-36158</span></td><td><span class="badge badge-green">AVIS</span></td><td><span class="badge disp-betty">BETTY</span></td><td>Allquip</td><td style="color:#22c55e;font-weight:600">$4,200</td><td>May 22</td><td><span class="badge badge-yellow">3 days</span></td><td><button class="btn btn-orange" onclick="alert('Reminder sent to Avis')">Remind Driver</button></td></tr>
-          <tr><td><span class="mono">130209</span></td><td><span class="badge badge-orange">YOSVIEL</span></td><td><span class="badge disp-amet">AMET</span></td><td>LRS Logistics</td><td style="color:#22c55e;font-weight:600">$5,100</td><td>May 15</td><td><span class="badge badge-red">10 days</span></td><td><button class="btn btn-orange" onclick="alert('Reminder sent to Yosviel')">Remind Driver</button></td></tr>
-          <tr><td><span class="mono">120630</span></td><td><span class="badge badge-purple">AMET</span></td><td><span class="badge disp-betty">BETTY</span></td><td>Coast to Coast</td><td style="color:#22c55e;font-weight:600">$3,500</td><td>May 18</td><td><span class="badge badge-yellow">7 days</span></td><td><button class="btn btn-orange" onclick="alert('Reminder sent to Amet')">Remind Driver</button></td></tr>
+          <tr><td><span class="mono">L10483</span></td><td><span class="badge badge-blue">DAVID</span></td><td><span class="badge disp-amet">AMET</span></td><td>Expressway Logistics</td><td style="color:#22c55e;font-weight:600">$2,850</td><td>May 14</td><td><span class="badge badge-red">7 days</span></td><td><button class="btn btn-orange" onclick="alert('Reminder sent to David')">Send POD Request</button></td></tr>
+          <tr><td><span class="mono">BOL-36158</span></td><td><span class="badge badge-green">AVIS</span></td><td><span class="badge disp-betty">BETTY</span></td><td>Allquip</td><td style="color:#22c55e;font-weight:600">$4,200</td><td>May 22</td><td><span class="badge badge-yellow">3 days</span></td><td><button class="btn btn-orange" onclick="alert('Reminder sent to Avis')">Send POD Request</button></td></tr>
+          <tr><td><span class="mono">130209</span></td><td><span class="badge badge-orange">YOSVIEL</span></td><td><span class="badge disp-amet">AMET</span></td><td>LRS Logistics</td><td style="color:#22c55e;font-weight:600">$5,100</td><td>May 15</td><td><span class="badge badge-red">10 days</span></td><td><button class="btn btn-orange" onclick="alert('Reminder sent to Yosviel')">Send POD Request</button></td></tr>
+          <tr><td><span class="mono">120630</span></td><td><span class="badge badge-purple">AMET</span></td><td><span class="badge disp-betty">BETTY</span></td><td>Coast to Coast</td><td style="color:#22c55e;font-weight:600">$3,500</td><td>May 18</td><td><span class="badge badge-yellow">7 days</span></td><td><button class="btn btn-orange" onclick="alert('Reminder sent to Amet')">Send POD Request</button></td></tr>
         </tbody>
       </table>
     </div>
@@ -141,8 +141,8 @@ tr:hover td{background:#f8fafc;}
 </nav>
 <script src="nexus-lang.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="nexus-config.js?v=5"></script>
-<script src="nexus-db.js?v=3"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
 <script>
 (async()=>{
   if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});

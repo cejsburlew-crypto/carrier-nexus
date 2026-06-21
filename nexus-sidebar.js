@@ -67,11 +67,11 @@
   <div class="sidebar-nav" style="flex:1;overflow-y:auto;">
     <div class="sidebar-section">
       <div class="sidebar-section-label">Operations</div>
-      <a href="fleet-command.html" class="sidebar-link${active('fleet-command.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h7v2H2z"/></svg>Dashboard</a>
+      <a href="fleet-command.html" class="sidebar-link${active('fleet-command.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h7v2H2z"/></svg>Operations Dashboard</a>
       <a href="active-loads.html" class="sidebar-link${active('active-loads.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V3zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V9zm4 4h6v2H5z"/></svg>Active Loads</a>
       <a href="settlements.html" class="sidebar-link${active('settlements.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h8a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h6V4H5zm0 3v1h6V7H5zm0 3v1h4v-1H5z"/></svg>Settlements</a>
-      <a href="weekly-settlements.html" class="sidebar-link${active('weekly-settlements.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 5h14v1H1zm2-3h10v2H3zm0 6h2v6H3zm4 0h2v6H7zm4 0h2v6h-2z"/></svg>Weekly Builder</a>
-      <a href="settlement-review.html" class="sidebar-link${active('settlement-review.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v2H2zm0 4h8v2H2zm0 4h12v2H2z"/></svg>Settlement Review</a>
+      <a href="weekly-settlements.html" class="sidebar-link${active('weekly-settlements.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 5h14v1H1zm2-3h10v2H3zm0 6h2v6H3zm4 0h2v6H7zm4 0h2v6h-2z"/></svg>Settlement Builder</a>
+      <a href="settlement-review.html" class="sidebar-link${active('settlement-review.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v2H2zm0 4h8v2H2zm0 4h12v2H2z"/></svg>Settlement Approval Queue</a>
       <a href="drivers.html" class="sidebar-link${active('drivers.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>Drivers</a>
       <a href="permits.html" class="sidebar-link${active('permits.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h10v14H3zm2 3h6v1H5zm0 3h6v1H5zm0 3h4v1H5z"/></svg>Permits</a>
       <a href="pods.html" class="sidebar-link${active('pods.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm-.5 2v4.5l3.5 2-.5-.87-3-1.63V5h-1z"/></svg>Missing PODs</a>
@@ -80,10 +80,10 @@
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Dispatch</div>
-      <a href="dispatcher-hub.html" class="sidebar-link${active('dispatcher-hub.html')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Dispatcher Hub</a>
+      <a href="dispatcher-hub.html" class="sidebar-link${active('dispatcher-hub.html')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Dispatch Board</a>
       <a href="commissions.html" class="sidebar-link${active('commissions.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 9.5l-3-3 1-1 2 2 3-3 1 1-4 4z"/></svg>Commissions</a>
-      <a href="available-dispatchers.html" class="sidebar-link${active('available-dispatchers.html')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Available Dispatchers</a>
-      <a href="available-drivers.html" class="sidebar-link${active('available-drivers.html')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>Available Drivers</a>
+      <a href="available-dispatchers.html" class="sidebar-link${active('available-dispatchers.html')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Dispatcher Roster</a>
+      <a href="available-drivers.html" class="sidebar-link${active('available-drivers.html')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>Driver Pool</a>
     </div>
 
     <div class="sidebar-section">
@@ -97,7 +97,7 @@
       <div class="sidebar-section-label">Documents</div>
       <a href="documents.html" class="sidebar-link${active('documents.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h5l4 4v9a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm5 0v4h4"/></svg>Document Vault</a>
       <a href="upload.html" class="sidebar-link${active('upload.html')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload Docs</a>
-      <a href="inbox-sync.html" class="sidebar-link${active('inbox-sync.html')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Inbox Sync</a>
+      <a href="inbox-sync.html" class="sidebar-link${active('inbox-sync.html')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Email Import</a>
     <a href="emails.html" class="sidebar-link${active('emails.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="3" width="14" height="11" rx="1" fill="none" stroke="currentColor"/><path d="M1 4l7 5 7-5"/></svg>Emails</a>
     </div>
 
@@ -127,9 +127,9 @@
       <a href="member-management.html" class="sidebar-link\${active('member-management.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M10 8a3 3 0 100-6 3 3 0 000 6zm-7 6s-1 0-1-1 1-4 8-4 8 3 8 4-1 1-1 1H3zM3 5a2 2 0 110 4 2 2 0 010-4z"/></svg>Members</a>
       <a href="admin-users.html" class="sidebar-link\${active('admin-users.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 110 6A3 3 0 018 1zm5 11c0-2.21-2.24-4-5-4S3 9.79 3 12v1h10v-1z"/></svg>User Accounts</a>
       <div class="sidebar-section-label">Intelligence</div>
-      <a href="nexus-ai.html" class="sidebar-link${active('nexus-ai.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v5l4.5 2.7-.7-1.2-3.8-2.3V5z"/></svg>Nexus AI</a>
+      <a href="nexus-ai.html" class="sidebar-link${active('nexus-ai.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v5l4.5 2.7-.7-1.2-3.8-2.3V5z"/></svg>AI Assistant</a>
       <a href="analysis.html" class="sidebar-link${active('analysis.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h2v-4H2zm3 0h2V6H5zm3 0h2V4H8zm3 0h2V2h-2z"/></svg>Analytics</a>
-      <a href="drive-settings.html" class="sidebar-link${active('drive-settings.html')}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V7L8 2z"/><polyline points="8 2 8 7 13 7"/></svg>Drive Settings</a>
+      <a href="drive-settings.html" class="sidebar-link${active('drive-settings.html')}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V7L8 2z"/><polyline points="8 2 8 7 13 7"/></svg>Integrations</a>
       <a href="eld-settings.html" class="sidebar-link${active('eld-settings.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 00-3 3c0 1.3.83 2.4 2 2.82V8H5v2h2v1.18A3 3 0 108 14.93V10h2V8H8V6.82A3.001 3.001 0 008 1zm0 12a1 1 0 110-2 1 1 0 010 2zm0-8a1 1 0 110-2 1 1 0 010 2z"/></svg>ELD Integration</a>
     </div>
   </div>

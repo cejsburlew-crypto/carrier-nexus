@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nexus AI — Carrier Nexus</title>
+<title>AI Assistant — Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -97,7 +97,7 @@ tr:hover td{background:#f8fafc;}
 </head>
 <body><script src="nexus-sidebar.js"></script>
 <div class="main">
-  <div class="topbar"><span class="topbar-title">NEXUS AI ASSISTANT</span></div>
+  <div class="topbar"><span class="topbar-title">AI ASSISTANT ASSISTANT</span></div>
   <div class="content">
     <div style="max-width:720px;margin:0 auto;">
       <div class="panel" style="margin-bottom:16px;">
@@ -112,10 +112,10 @@ tr:hover td{background:#f8fafc;}
         </div>
       </div>
       <div class="panel" id="chat-panel">
-        <div class="panel-head"><span class="panel-title">Ask Nexus AI</span><span style="font-size:11px;color:#22c55e">● Online</span></div>
+        <div class="panel-head"><span class="panel-title">Ask AI Assistant</span><span style="font-size:11px;color:#22c55e">● Online</span></div>
         <div id="chat-log" style="padding:16px;min-height:300px;max-height:460px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;">
           <div style="background:#f1f5f9;border-radius:10px 10px 10px 2px;padding:12px 16px;max-width:85%;font-size:13px;line-height:1.6;color:#0f172a;">
-            Hello! I'm Nexus AI for <strong>Carrier Trucking US LLC</strong>. I have access to your loads, settlements, drivers, and fleet data. What do you need?
+            Hello! I'm AI Assistant for <strong>Carrier Trucking US LLC</strong>. I have access to your loads, settlements, drivers, and fleet data. What do you need?
           </div>
         </div>
         <div style="padding:12px 16px;border-top:1px solid #f1f5f9;display:flex;gap:10px;">
@@ -170,8 +170,8 @@ function sendPrompt(preset) {
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="nexus-config.js?v=5"></script>
-<script src="nexus-db.js?v=3"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
 <script>
 (async()=>{
   if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
