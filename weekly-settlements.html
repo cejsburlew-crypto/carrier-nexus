@@ -242,7 +242,13 @@ function render(){
   var wk=getWeekKey();var wr=loadWR(wk);var wl=getWeekLoads(wk);
   document.getElementById('weekLabel').textContent=fmtDate(curMon)+' – '+fmtDate(getWeekEnd());
   var grid=document.getElementById('memberGrid');grid.innerHTML='';
-  FLEET.forEach(function(m){ensureData(m,wl);grid.appendChild(buildCard(m,wr[m.id]||m.defaultRole));});
+  FLEET.forEach(function(m){
+    var role=wr[m.id]||m.defaultRole;
+    ensureData(m,wl);
+    var card=buildCard(m,role);
+    grid.appendChild(card);
+    renderBody(m,role);
+  });
   updateSummary();
 }
 
@@ -260,7 +266,7 @@ function buildCard(m,role){
     '</div>'+
     '<div class="role-select-wrap"><select class="role-select" onchange="chRole(\''+m.id+'\',this.value)">'+opts+'</select></div>'+
   '</div><div class="card-body" id="body-'+m.id+'"></div>';
-  renderBody(m,role);return c;
+  return c;
 }
 
 function renderBody(m,role){
@@ -273,20 +279,25 @@ function renderBody(m,role){
 }
 
 function driverBody(m){
-  var loads=ML[m.id]||[];var dp=Math.round((m.dispatchRate||0.13)*100);
+  var wk=getWeekKey();
+  var loads=ML[m.id]||[];
+  var dp=Math.round(getRate(m,'dispatchRate',wk)*100);
+  var drvp=Math.round(getRate(m,'driverRate',wk)*100);
   var rows=loads.map(function(l,i){return'<div class="load-row">'+
     '<input type="text" placeholder="Load #" value="'+esc(l.loadNum)+'" onchange="upL(\''+m.id+'\','+i+',\'loadNum\',this.value)">'+
     '<input type="text" placeholder="Broker" value="'+esc(l.broker)+'" onchange="upL(\''+m.id+'\','+i+',\'broker\',this.value)">'+
     '<input type="number" placeholder="$0" class="rate-input" value="'+(l.rate||'')+'" onchange="upL(\''+m.id+'\','+i+',\'rate\',parseFloat(this.value)||0)">'+
     '<button class="del-btn" onclick="rmL(\''+m.id+'\','+i+')">✕</button></div>';}).join('');
-  var g=loads.reduce(function(s,l){return s+(+(l.rate||0));},0);var p=g*0.3;
+  var g=loads.reduce(function(s,l){return s+(+(l.rate||0));},0);
+  var p=g*getRate(m,'driverRate',wk);
   return lSection(m.id,loads.length,rows)+
     '<div class="pl-summary" id="pl-'+m.id+'">'+
       '<div class="pl-row"><span class="pl-label">Gross Rate Con</span><span class="pl-val">'+fmt(g)+'</span></div>'+
-      '<div class="pl-row pl-total"><span>Driver Pay (30%)</span><span class="pl-val '+(p>0?'pos':'')+'">'+(p>0?'+':'')+fmt(p)+'</span></div>'+
+      '<div class="pl-row pl-total"><span>Driver Pay ('+drvp+'%)</span><span class="pl-val '+(p>0?'pos':'')+'">'+(p>0?'+':'')+fmt(p)+'</span></div>'+
     '</div>'+
     '<div class="rate-editors">'+
     '<div class="rate-editor"><label>Dispatch %</label><input class="rate-input-sm" type="number" min="0" max="100" step="0.5" value="'+dp+'" onchange="onRateChange(\''+m.id+'\',\'dispatchRate\',this.value)"></div>'+
+    '<div class="rate-editor"><label>Driver Pay %</label><input class="rate-input-sm" type="number" min="0" max="100" step="0.5" value="'+drvp+'" onchange="onRateChange(\''+m.id+'\',\'driverRate\',this.value)"></div>'+
     '</div>';
 }
 
@@ -317,7 +328,7 @@ function ownerBody(m){
 }
 
 function dispBody(m){
-  var wl=getWeekLoads(getWeekKey());var rate=m.commissionRate||0.05;var pct=Math.round(rate*100);
+  var wk=getWeekKey();var wl=getWeekLoads(wk);var rate=getRate(m,'commissionRate',wk);var pct=Math.round(rate*100);
   var byD={};wl.forEach(function(l){var d=l.driver||'Unknown';byD[d]=(byD[d]||0)+parseFloat(l.rate||0);});
   var lines=[];var tot=0;
   Object.keys(byD).forEach(function(d){
@@ -327,7 +338,8 @@ function dispBody(m){
   });
   if(!lines.length)lines=[{d:'No loads this week',g:0,c:0}];
   var drows=lines.map(function(r){return'<div class="dispatch-row"><span class="dr-name">'+esc(r.d)+'</span><span>'+fmt(r.g)+' &times; '+pct+'% = <strong style="color:#3fb950">'+fmt(r.c)+'</strong></span></div>';}).join('');
-  return'<div class="dispatch-summary">'+drows+'<div class="dispatch-total"><span>Commission ('+pct+'%)</span><span>+'+fmt(tot)+'</span></div></div>';
+  return'<div class="dispatch-summary">'+drows+'<div class="dispatch-total"><span>Commission ('+pct+'%)</span><span>+'+fmt(tot)+'</span></div></div>'+
+    '<div class="rate-editors"><div class="rate-editor"><label>Commission %</label><input class="rate-input-sm" type="number" min="0" max="100" step="0.5" value="'+pct+'" onchange="onRateChange(\''+m.id+'\',\'commissionRate\',this.value)"></div></div>';
 }
 
 function lSection(mid,n,rows){

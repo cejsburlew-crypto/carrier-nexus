@@ -193,21 +193,27 @@ async function renderInvoices(){
   document.getElementById('kpi-pending').textContent=fmt(pend);
   document.getElementById('kpi-overdue').textContent=fmt(over);
 }
-async function openInvModal(){
+function openInvModal(){
   document.getElementById('inv-modal-title').textContent='CREATE INVOICE';
   document.getElementById('inv-edit-id').value='';
   const d=new Date();
-  // Generate invoice number safely — fallback to timestamp if NexusDB unavailable
-  let invNum = 'INV-' + Date.now().toString().slice(-6);
-  try { invNum = await NexusDB.Invoices.nextNumber(); } catch(e){}
-  document.getElementById('inv-num').value = invNum;
+  // Open modal immediately with fallback number — update async in background
+  const fallbackNum='INV-'+Date.now().toString().slice(-6);
+  document.getElementById('inv-num').value=fallbackNum;
   document.getElementById('inv-date').value=d.toISOString().split('T')[0];
   document.getElementById('inv-broker').value='';
+  document.getElementById('inv-driver').value='';
   document.getElementById('inv-amount').value='';
   document.getElementById('inv-loads').value='';
+  document.getElementById('inv-due').value='';
   document.getElementById('inv-notes').value='';
   document.getElementById('inv-status').value='Draft';
   document.getElementById('inv-modal').classList.add('open');
+  // Update invoice number from DB without blocking modal
+  NexusDB.Invoices.nextNumber().then(function(n){
+    if(document.getElementById('inv-modal').classList.contains('open'))
+      document.getElementById('inv-num').value=n;
+  }).catch(function(){/* keep fallback */});
 }
 function closeInvModal(){document.getElementById('inv-modal').classList.remove('open');}
 async function saveInvoice(){const n=document.getElementById('inv-num').value,dt=document.getElementById('inv-date').value,br=document.getElementById('inv-broker').value,am=document.getElementById('inv-amount').value;if(!n||!dt||!br||!am){alert('Invoice #, Date, Broker and Amount are required.');return;}const editId=document.getElementById('inv-edit-id').value;const rec={invoice_number:n,issue_date:dt,customer:br,driver:document.getElementById('inv-driver').value,amount:parseFloat(am),load_ref:document.getElementById('inv-loads').value,due_date:document.getElementById('inv-due').value||null,status:document.getElementById('inv-status').value,notes:document.getElementById('inv-notes').value};if(editId){await NexusDB.Invoices.update(editId,rec);}else{await NexusDB.Invoices.create(rec);}closeInvModal();await renderInvoices();}

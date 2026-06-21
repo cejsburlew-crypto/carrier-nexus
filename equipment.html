@@ -638,7 +638,7 @@ body {
       </div>
       <div class="summary-divider"></div>
       <div class="summary-stat">
-        <div class="summary-stat-value green" style="font-size:18px;">COVERED</div>
+        <div class="summary-stat-value" id="ins-badge-top" style="font-size:18px;color:var(--green);">COVERED</div>
         <div class="summary-stat-label">Insurance<br>Status</div>
       </div>
     </div>
@@ -657,8 +657,8 @@ body {
       </div>
       <div class="stats-bottom-card">
         <div class="stats-bottom-label">Insurance Coverage</div>
-        <div class="stats-bottom-value" style="color:var(--green);">ACTIVE</div>
-        <div class="stats-bottom-sub">Transverse Specialty · $1M CSL + $250K Cargo · Expires Apr 2026</div>
+        <div class="stats-bottom-value" id="ins-status-bottom" style="color:var(--green);">ACTIVE</div>
+        <div class="stats-bottom-sub">Transverse Specialty · $1M CSL + $250K Cargo · <span id="ins-expiry-text">Expires Apr 2026</span></div>
       </div>
       <div class="stats-bottom-card">
         <div class="stats-bottom-label">Next PM Due</div>
@@ -671,8 +671,8 @@ body {
 </div><!-- /main -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="nexus-config.js?v=5"></script>
-<script src="nexus-db.js?v=3"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
 <script src="nexus-data.js"></script>
 <script src="nexus-lang.js"></script>
 
@@ -1022,7 +1022,7 @@ async function saveUnit(e) {
     });
   }
   // Persist each changed unit
-  // editId already declared above: document.getElementById('equip-edit-id').value;
+  const editId = document.getElementById('equip-edit-id').value;
   if (editId) { await NexusDB.Fleet.update(editId, fleet.find(u=>u.id===editId)); }
   else { await NexusDB.Fleet.create(fleet[fleet.length-1]); }
   _fleetCache = fleet;
@@ -1031,14 +1031,14 @@ async function saveUnit(e) {
 }
 
 // ── REMOVE ──
-async function removeUnit(id, unit) {
+function removeUnit(id, unit) {
   if (!confirm('Remove Unit ' + unit + ' from fleet? This cannot be undone.')) return;
   await NexusDB.Fleet.delete(id);
   await renderFleet();
 }
 
 // ── LOG PM ──
-async function logPM(id) {
+function logPM(id) {
   const today = new Date().toISOString().split('T')[0];
   const fleet = await loadFleet();
   const u = fleet.find(x=>x.id===id);
@@ -1052,7 +1052,7 @@ async function logPM(id) {
 }
 
 // ── REPORT ISSUE ──
-async function reportIssue(id, unit) {
+function reportIssue(id, unit) {
   const issue = prompt('Describe the issue for Unit ' + unit + ':');
   if (issue) alert('Issue logged for Unit ' + unit + ':\n"' + issue + '"\n\nStatus updated to DOWN.');
   const fleet = await loadFleet();
@@ -1141,5 +1141,21 @@ async function renderFleet() {
 (async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); await renderFleet(); })();
 </script>
 
+
+<script>
+(function(){
+  var INS_EXPIRY = new Date('2026-04-30T23:59:59');
+  var today = new Date();
+  var expired = today > INS_EXPIRY;
+  var topBadge = document.getElementById('ins-badge-top');
+  var bottomStatus = document.getElementById('ins-status-bottom');
+  var expiryText = document.getElementById('ins-expiry-text');
+  if(expired){
+    if(topBadge){ topBadge.textContent='EXPIRED'; topBadge.style.color='var(--red)'; }
+    if(bottomStatus){ bottomStatus.textContent='EXPIRED'; bottomStatus.style.color='var(--red)'; }
+    if(expiryText){ expiryText.textContent='Expired Apr 2026 — Renewal required'; expiryText.style.color='var(--red)'; }
+  }
+})();
+</script>
 </body>
 </html>
