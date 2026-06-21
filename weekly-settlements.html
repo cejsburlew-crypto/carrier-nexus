@@ -311,7 +311,7 @@ function ensureData(member,wloads){
 function render(){
   ID={};
   var wk=getWeekKey();var wr=loadWR(wk);var wl=getWeekLoads(wk);
-  document.getElementById('weekLabel').textContent=fmtDate(curMon)+' – '+fmtDate(getWeekEnd());
+  document.getElementById('weekLabel').textContent='Mon '+fmtDate(curMon)+' – Sun '+fmtDate(getWeekEnd());
   var grid=document.getElementById('memberGrid');grid.innerHTML='';
   FLEET.forEach(function(m){
     var role=wr[m.id]||m.defaultRole;
