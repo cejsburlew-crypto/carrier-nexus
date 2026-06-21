@@ -331,6 +331,7 @@ select.asel option{background:#1c2535;}
 
 <script>
 var SKEY='nexus_inbox_sync_processed';
+var STAGED_KEY='nexus_staged_files';
 var CUTOFF=new Date('2026-01-01T00:00:00Z').getTime()/1000;
 var _files=[];
 var _mIdx=-1;
@@ -344,6 +345,31 @@ function getToken(){try{var t=localStorage.getItem('nexus_drive_token')||localSt
 function getUsers(){try{return JSON.parse(localStorage.getItem('nexus_users')||'[]');}catch(e){return[];}}
 function getState(){try{return JSON.parse(localStorage.getItem(SKEY)||'{}');}catch(e){return{};}}
 function saveState(s){localStorage.setItem(SKEY,JSON.stringify(s));}
+function saveStagedFiles(){
+  // Strip b64 data if item is already uploaded/queued to save space
+  var toSave=_files.map(function(f){
+    var copy=Object.assign({},f);
+    // Keep b64 only for pending items; queued/ok items just need metadata
+    if(f.status==='ok'||f.status==='queued') delete copy.b64;
+    return copy;
+  });
+  try{localStorage.setItem(STAGED_KEY,JSON.stringify(toSave));}catch(e){
+    // If storage is full, save without b64
+    var lite=_files.map(function(f){var c=Object.assign({},f);delete c.b64;return c;});
+    try{localStorage.setItem(STAGED_KEY,JSON.stringify(lite));}catch(e2){}
+  }
+}
+function loadStagedFiles(){
+  try{
+    var saved=JSON.parse(localStorage.getItem(STAGED_KEY)||'[]');
+    if(saved&&saved.length>0){
+      _files=saved;
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+function clearStagedFiles(){localStorage.removeItem(STAGED_KEY);}
 function openSheetUrl(){var u=localStorage.getItem('nexus_sheets_url');if(u)window.open(u,'_blank');else alert('No Google Sheet linked yet.');}
 
 function init(){
@@ -360,6 +386,12 @@ function init(){
   if(st.lastRun)document.getElementById('sLast').textContent=new Date(st.lastRun).toLocaleString();
   document.getElementById('sProc').textContent=(st.processedIds||[]).length;
   document.getElementById('sUpl').textContent=st.uploadedCount||0;
+  // Restore staged files from previous session if any
+  if(loadStagedFiles()&&_files.length>0){
+    renderStaging();
+    checkForUncertain();
+    addLog('Restored '+_files.length+' staged file(s) from previous session. Click Scan to refresh.','ok');
+  }
 }
 function getCo(){return(window.NEXUS_ACTIVE_COMPANY&&window.NEXUS_ACTIVE_COMPANY())||{name:'Carrier Trucking US, LLC',driveRootId:'13hRTmF6XVSI627s5Mc1wb_zkEA3I5rXZ'};}
 
@@ -437,6 +469,7 @@ async function startSync(){
   document.getElementById('progPanel').className='prog-panel on';
   document.getElementById('logArea').innerHTML='';
   _files=[];
+  clearStagedFiles();
   var st=getState();st.processedIds=st.processedIds||[];
   var done=new Set(st.processedIds);
   var users=getUsers();
@@ -502,6 +535,7 @@ async function startSync(){
   btn.disabled=false;
   btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Scan Inbox';
   document.getElementById('progPanel').className='prog-panel';
+  saveStagedFiles();
   if(_files.length>0){renderStaging();checkForUncertain();}
   else document.getElementById('emptyState').style.display='';
 }
@@ -771,6 +805,7 @@ async function uploadRow(idx){
     stat.innerHTML='<span class="bdg bdg-ok">&#x2713; Uploaded</span>';
     if(upBtn)upBtn.style.display='none';
     f.status='ok';f.driveId=driveRes.id;f.driveName=targetName;
+    saveStagedFiles();
     // Sync POD received status to fleet dashboard
     try{var _u=document.getElementById('user-'+idx);var _d=_u&&_u.value?_u.value.trim().split(' ')[0].toUpperCase():'';if(_d){var _ls=JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]');var _ch=false;_ls.forEach(function(l){if(l.pod==='missing'&&l.driver&&l.driver.toUpperCase().indexOf(_d)!==-1){l.pod='received';_ch=true;}});if(_ch)localStorage.setItem('nexus_loads_v2',JSON.stringify(_ls));}}catch(e){}
     var st=getState();st.uploadedCount=(st.uploadedCount||0)+1;saveState(st);
