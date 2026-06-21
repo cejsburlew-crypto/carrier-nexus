@@ -82,6 +82,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .pl-row.pl-total .pl-val.pos{color:#3fb950}
 .pl-row.pl-total .pl-val.neg{color:#f85149}
 .deduct{color:#f85149}
+.ded-section{margin-top:8px;border-top:1px solid var(--border);padding-top:8px;}
+.ded-section-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
+.ded-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.ded-row select,.ded-row input[type=text]{flex:2;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#fff;font-size:12px;padding:4px 7px;}
+.ded-row input[type=number]{width:90px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#ef4444;font-size:12px;padding:4px 7px;text-align:right;}
+.ded-row select option{background:#1a1a1a;}
+.add-ded-btn{font-size:10px;background:transparent;border:1px dashed rgba(255,255,255,.2);color:var(--muted);border-radius:4px;padding:3px 8px;cursor:pointer;}
+.add-ded-btn:hover{border-color:var(--accent);color:#fff;}
 
 .rate-editor{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:6px 10px;margin-top:8px;}
 .rate-editor label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
@@ -206,6 +214,69 @@ var BC={driver:'badge-driver',owner_op:'badge-owner_op',dispatcher:'badge-dispat
 var ML={},ME={},ID={},LC=1000,EC=2000;
 var curMon=getMonday(new Date());
 
+/* ── Per-week driver deductions (fuel advance, escrow, per diem, EFS, deadhead) ── */
+var DED_TYPES = [
+  {val:'fuel_advance',  label:'Fuel Advance',        sign:-1},
+  {val:'efs_card',      label:'EFS Card Charges',     sign:-1},
+  {val:'escrow',        label:'Escrow (Weekly)',       sign:-1},
+  {val:'insurance',     label:'Occupational Insurance',sign:-1},
+  {val:'lumper',        label:'Lumper Fee',            sign:-1},
+  {val:'truck_lease',   label:'Truck Lease Payment',  sign:-1},
+  {val:'trailer_lease', label:'Trailer Lease',         sign:-1},
+  {val:'violation',     label:'Violation/Chargeback',  sign:-1},
+  {val:'per_diem',      label:'Per Diem Advance',     sign:-1},
+  {val:'advance_other', label:'Other Advance/Deduction',sign:-1},
+  {val:'deadhead',      label:'Deadhead Pay',          sign:+1},
+  {val:'bonus',         label:'Bonus / Extra',         sign:+1},
+  {val:'layover',       label:'Layover Pay',           sign:+1},
+];
+function dedKey(wk,mid){return 'nexus_weekly_ded_'+wk+'_'+mid;}
+function loadDeds(wk,mid){try{return JSON.parse(localStorage.getItem(dedKey(wk,mid))||'[]');}catch(e){return[];}}
+function saveDeds(wk,mid,arr){localStorage.setItem(dedKey(wk,mid),JSON.stringify(arr));}
+function addDed(mid){
+  var wk=getWeekKey();var arr=loadDeds(wk,mid);
+  arr.push({id:'d'+(Date.now()),type:'fuel_advance',label:'Fuel Advance',amount:0});
+  saveDeds(wk,mid,arr);
+  var m=FLEET.find(function(x){return x.id===mid;});
+  renderBody(m,loadWR(wk)[mid]||m.defaultRole);updateSummary();
+}
+function rmDed(mid,idx){
+  var wk=getWeekKey();var arr=loadDeds(wk,mid);arr.splice(idx,1);saveDeds(wk,mid,arr);
+  var m=FLEET.find(function(x){return x.id===mid;});
+  renderBody(m,loadWR(wk)[mid]||m.defaultRole);updateSummary();
+}
+function upDedType(mid,idx,val){
+  var wk=getWeekKey();var arr=loadDeds(wk,mid);if(!arr[idx])return;
+  var dt=DED_TYPES.find(function(t){return t.val===val;})||{val:val,label:val,sign:-1};
+  arr[idx].type=dt.val;arr[idx].label=dt.label;arr[idx].sign=dt.sign;
+  saveDeds(wk,mid,arr);rfPL(mid);
+}
+function upDedAmt(mid,idx,val){
+  var wk=getWeekKey();var arr=loadDeds(wk,mid);if(!arr[idx])return;
+  arr[idx].amount=parseFloat(val)||0;saveDeds(wk,mid,arr);rfPL(mid);
+}
+function netDeds(wk,mid){
+  var arr=loadDeds(wk,mid);
+  return{
+    deductions:arr.filter(function(d){return(d.sign||(-1))<0;}).reduce(function(s,d){return s+(+(d.amount||0));},0),
+    additions:arr.filter(function(d){return(d.sign||(-1))>0;}).reduce(function(s,d){return s+(+(d.amount||0));},0)
+  };
+}
+function buildDedRows(wk,mid){
+  var arr=loadDeds(wk,mid);
+  if(!arr.length)return'<div style="font-size:11px;color:var(--muted);padding:2px 0;">None added</div>';
+  var opts=DED_TYPES.map(function(t){return'<option value="'+t.val+'">'+t.label+'</option>';}).join('');
+  return arr.map(function(d,i){
+    return'<div class="ded-row">'+
+      '<select onchange="upDedType(''+mid+'','+i+',this.value)">'+
+        DED_TYPES.map(function(t){return'<option value="'+t.val+'"'+(t.val===d.type?' selected':'')+'>'+t.label+'</option>';}).join('')+
+      '</select>'+
+      '<input type="number" step="0.01" placeholder="0.00" value="'+(d.amount||'')+'" onchange="upDedAmt(''+mid+'','+i+',this.value)">'+
+      '<button class="del-btn" onclick="rmDed(''+mid+'','+i+')">✕</button>'+
+    '</div>';
+  }).join('');
+}
+/* ── End deductions ─────────────────────────────────────────────────────── */
 function getMonday(d){var dt=new Date(d);var day=dt.getDay();var diff=(day===0)?-6:1-day;dt.setDate(dt.getDate()+diff);dt.setHours(0,0,0,0);return dt;}
 function fmtDate(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
 function isoDate(d){var y=d.getFullYear();var m=String(d.getMonth()+1).padStart(2,'0');var dy=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+dy;}
@@ -289,11 +360,23 @@ function driverBody(m){
     '<input type="number" placeholder="$0" class="rate-input" value="'+(l.rate||'')+'" onchange="upL(\''+m.id+'\','+i+',\'rate\',parseFloat(this.value)||0)">'+
     '<button class="del-btn" onclick="rmL(\''+m.id+'\','+i+')">✕</button></div>';}).join('');
   var g=loads.reduce(function(s,l){return s+(+(l.rate||0));},0);
+  var g=loads.reduce(function(s,l){return s+(+(l.rate||0));},0);
   var p=g*getRate(m,'driverRate',wk);
+  var nd=netDeds(wk,m.id);
+  var netPay=p+nd.additions-nd.deductions;
   return lSection(m.id,loads.length,rows)+
+    '<div class="ded-section">'+
+      '<div class="ded-section-label"><span>Advances &amp; Deductions</span>'+
+        '<button class="add-ded-btn" onclick="addDed(\''+m.id+'\')">&plus; Add Line</button></div>'+
+      '<div id="ded-rows-'+m.id+'">'+buildDedRows(wk,m.id)+'</div>'+
+    '</div>'+
     '<div class="pl-summary" id="pl-'+m.id+'">'+
       '<div class="pl-row"><span class="pl-label">Gross Rate Con</span><span class="pl-val">'+fmt(g)+'</span></div>'+
-      '<div class="pl-row pl-total"><span>Driver Pay ('+drvp+'%)</span><span class="pl-val '+(p>0?'pos':'')+'">'+(p>0?'+':'')+fmt(p)+'</span></div>'+
+      '<div class="pl-row"><span class="pl-label">Driver Pay ('+drvp+'%)</span><span class="pl-val">'+fmt(p)+'</span></div>'+
+      (nd.additions>0?'<div class="pl-row"><span class="pl-label">Additions</span><span class="pl-val pos">+'+fmt(nd.additions)+'</span></div>':'')+
+      (nd.deductions>0?'<div class="pl-row"><span class="pl-label">Deductions</span><span class="pl-val deduct">('+fmt(nd.deductions)+')</span></div>':'')+
+      '<div class="pl-row pl-total"><span>Net Settlement</span><span class="pl-val '+(netPay>=0?'pos':'neg')+'">'+
+        (netPay>=0?'+':'')+fmt(netPay)+'</span></div>'+
     '</div>'+
     '<div class="rate-editors">'+
     '<div class="rate-editor"><label>Dispatch %</label><input class="rate-input-sm" type="number" min="0" max="100" step="0.5" value="'+dp+'" onchange="onRateChange(\''+m.id+'\',\'dispatchRate\',this.value)"></div>'+
@@ -371,7 +454,7 @@ function rfPL(mid){
   var pl=document.getElementById('pl-'+mid);if(!pl)return;
   var loads=ML[mid]||[];var exps=ME[mid]||[];
   var g=loads.reduce(function(s,l){return s+(+(l.rate||0));},0);
-  if(role==='driver'){var p=g*0.3;pl.innerHTML='<div class="pl-row"><span class="pl-label">Gross Rate Con</span><span class="pl-val">'+fmt(g)+'</span></div><div class="pl-row pl-total"><span>Driver Pay (30%)</span><span class="pl-val '+(p>0?'pos':'')+'">+'+fmt(p)+'</span></div>';}
+  if(role==='driver'){var wk2=getWeekKey();var nd=netDeds(wk2,mid);var p=g*getRate(m,'driverRate',wk2);var netPay=p+nd.additions-nd.deductions;var drvp2=Math.round(getRate(m,'driverRate',wk2)*100);pl.innerHTML='<div class="pl-row"><span class="pl-label">Gross Rate Con</span><span class="pl-val">'+fmt(g)+'</span></div><div class="pl-row"><span class="pl-label">Driver Pay ('+drvp2+'%)</span><span class="pl-val">'+fmt(p)+'</span></div>'+(nd.additions>0?'<div class="pl-row"><span class="pl-label">Additions</span><span class="pl-val pos">+'+fmt(nd.additions)+'</span></div>':'')+(nd.deductions>0?'<div class="pl-row"><span class="pl-label">Deductions</span><span class="pl-val deduct">('+fmt(nd.deductions)+')</span></div>':'')+'<div class="pl-row pl-total"><span>Net Settlement</span><span class="pl-val '+(netPay>=0?'pos':'neg')+'">'+fmt(netPay)+'</span></div>';}
   else if(role==='owner_op'){var dr=m.dispatchRate||0.14;var disp=g*dr;var te=exps.reduce(function(s,e){return s+(+(e.amount||0));},0);var net=g-disp-te;pl.innerHTML='<div class="pl-row"><span class="pl-label">Gross Revenue</span><span class="pl-val">'+fmt(g)+'</span></div><div class="pl-row"><span class="pl-label">Dispatch Fee ('+Math.round(dr*100)+'%)</span><span class="pl-val deduct">('+fmt(disp)+')</span></div><div class="pl-row"><span class="pl-label">Operating Expenses</span><span class="pl-val deduct">('+fmt(te)+')</span></div><div class="pl-row pl-total"><span>Net to Owner Op</span><span class="pl-val '+(net>=0?'pos':'neg')+'">'+(net>=0?'+':'')+fmt(net)+'</span></div>';}
   updateSummary();
 }
@@ -387,7 +470,7 @@ function updateSummary(){
     var g=loads.reduce(function(s,l){return s+(+(l.rate||0));},0);var n=loads.length;
     var df=0,et=0,pay=0,cn=0;
     if(role==='admin'){var tr=document.createElement('tr');tr.className='admin-row';tr.innerHTML='<td>'+m.name+'</td><td><span class="role-badge badge-admin">Admin</span></td><td>—</td><td class="right">—</td><td class="right">—</td><td class="right">—</td><td class="right">—</td><td class="right">—</td>';tb.appendChild(tr);return;}
-    if(role==='driver'){pay=g*0.3;df=g*(m.dispatchRate||0.13);cn=df;}
+    if(role==='driver'){var nd2=netDeds(wk,m.id);var dr2=getRate(m,'driverRate',wk);pay=(g*dr2)+nd2.additions-nd2.deductions;df=g*(m.dispatchRate||0.13);cn=df;}
     else if(role==='owner_op'){df=g*(m.dispatchRate||0.14);et=exps.reduce(function(s,e){return s+(+(e.amount||0));},0);pay=g-df-et;cn=df;}
     else if(role==='dispatcher'){var r2=m.commissionRate||0.05;Object.keys(byD).forEach(function(d){var dg=byD[d];var ib=(d==='Guillermo Pinera');if(m.id==='betty'&&!ib)return;if(m.id==='amet'&&ib)return;pay+=dg*r2;});cn=-pay;}
     if(role!=='dispatcher'){tG+=g;tL+=n;}
