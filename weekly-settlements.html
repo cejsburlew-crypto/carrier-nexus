@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Weekly Settlements — Carrier Nexus</title>
+<script src="nexus-config.js"></script>
+<script src="nexus-sidebar.js"></script>
+<style>
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#21262d;--surface3:#2d333b;
+  --border:#30363d;--text:#e6edf3;--muted:#8b949e;--pink:#c2185b;
+  --green:#238636;--red:#da3633;--blue:#388bfd;--purple:#8957e5;
+  --gold:#d4a017;--orange:#f0883e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.topbar h1{font-size:18px;font-weight:600;display:flex;align-items:center;gap:8px}
+.topbar h1 svg{width:20px;height:20px;fill:var(--pink)}
+.week-nav{display:flex;align-items:center;gap:10px}
+.week-nav button{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:13px;transition:background .15s}
+.week-nav button:hover{background:var(--surface3)}
+.week-label{font-size:14px;font-weight:600;color:var(--text);min-width:200px;text-align:center}
+.topbar-right{display:flex;gap:8px;align-items:center}
+.btn{padding:7px 14px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:500;transition:all .15s}
+.btn-primary{background:var(--pink);color:#fff}
+.btn-primary:hover{background:#a31550}
+.btn-secondary{background:var(--surface2);border:1px solid var(--border);color:var(--text)}
+.btn-secondary:hover{background:var(--surface3)}
+.content{flex:1;overflow-y:auto;padding:20px 24px}
+.week-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.stat-card .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.stat-card .value{font-size:20px;font-weight:700;color:var(--text)}
+.stat-card .value.green{color:#3fb950}
+.stat-card .value.red{color:#f85149}
+.stat-card .value.blue{color:var(--blue)}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.member-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;margin-bottom:24px}
+.member-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .15s}
+.member-card:hover{border-color:var(--muted)}
+.member-card.role-admin{opacity:.6}
+.card-header{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.card-info{flex:1;min-width:0}
+.card-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-sub{font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.role-select-wrap{flex-shrink:0}
+.role-select{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:6px;font-size:12px;cursor:pointer;outline:none}
+.role-select:focus{border-color:var(--pink)}
+.role-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.badge-driver{background:rgba(56,139,253,.15);color:#58a6ff;border:1px solid rgba(56,139,253,.3)}
+.badge-owner_op{background:rgba(35,134,54,.15);color:#3fb950;border:1px solid rgba(35,134,54,.3)}
+.badge-dispatcher{background:rgba(137,87,229,.15);color:#bc8cff;border:1px solid rgba(137,87,229,.3)}
+.badge-admin{background:rgba(139,148,158,.1);color:var(--muted);border:1px solid var(--border)}
+.card-body{padding:14px 16px}
+.card-body.admin-body{display:flex;align-items:center;justify-content:center;padding:20px;color:var(--muted);font-size:13px}
+.loads-section{margin-bottom:12px}
+.loads-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.add-load-btn{background:none;border:1px dashed var(--border);color:var(--muted);padding:3px 8px;border-radius:4px;font-size:11px;cursor:pointer;transition:all .15s}
+.add-load-btn:hover{border-color:var(--pink);color:var(--pink)}
+.load-row{display:grid;grid-template-columns:1fr 1fr 80px auto;gap:6px;margin-bottom:5px;align-items:center}
+.load-row input,.expense-row input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 7px;border-radius:5px;font-size:12px;width:100%;outline:none}
+.load-row input:focus,.expense-row input:focus{border-color:var(--pink)}
+.load-row input.rate-input{text-align:right}
+.del-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;border-radius:4px;font-size:14px;line-height:1;transition:color .15s}
+.del-btn:hover{color:#f85149}
+.load-row-header{display:grid;grid-template-columns:1fr 1fr 80px auto;gap:6px;margin-bottom:4px}
+.load-row-header span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;padding:0 7px}
+.no-loads{font-size:12px;color:var(--muted);font-style:italic;padding:4px 0}
+.expenses-section{border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
+.expense-rows{display:flex;flex-direction:column;gap:5px}
+.expense-row{display:grid;grid-template-columns:1fr 90px auto;gap:6px;align-items:center}
+.expense-row input.exp-amt{text-align:right}
+.pl-summary{background:var(--surface2);border-radius:6px;padding:10px 12px;margin-top:10px}
+.pl-row{display:flex;justify-content:space-between;align-items:center;padding:2px 0;font-size:12px}
+.pl-row .pl-label{color:var(--muted)}
+.pl-row .pl-val{font-weight:500}
+.pl-row.pl-total{border-top:1px solid var(--border);margin-top:6px;padding-top:6px;font-weight:700;font-size:13px}
+.pl-row.pl-total .pl-val.pos{color:#3fb950}
+.pl-row.pl-total .pl-val.neg{color:#f85149}
+.deduct{color:#f85149}
+.dispatch-summary{background:var(--surface2);border-radius:6px;padding:10px 12px;margin-top:8px}
+.dispatch-row{display:flex;justify-content:space-between;font-size:12px;padding:2px 0;color:var(--muted)}
+.dispatch-row .dr-name{color:var(--text)}
+.dispatch-total{border-top:1px solid var(--border);margin-top:6px;padding-top:6px;font-weight:700;font-size:13px;display:flex;justify-content:space-between;color:#3fb950}
+.summary-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:8px}
+.summary-table{width:100%;border-collapse:collapse;font-size:13px}
+.summary-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border)}
+.summary-table th.right{text-align:right}
+.summary-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.summary-table tr:last-child td{border-bottom:none}
+.summary-table td.right{text-align:right;font-variant-numeric:tabular-nums}
+.summary-table tr.total-row{background:var(--surface2);font-weight:700}
+.summary-table tr.admin-row{opacity:.5}
+.rate-hint{font-size:11px;color:var(--muted);margin-top:4px}
+.rate-hint span{color:var(--orange)}
+</style>
+</head>
+<body>
+<script>
+if(typeof buildSidebar==='function'){document.body.insertAdjacentHTML('afterbegin',buildSidebar('weekly-settlements.html'));}
+</script>
+<div class="main">
+<div class="topbar">
+  <h1>
+    <svg viewBox="0 0 16 16"><path d="M4 1h8a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h6V4H5zm0 3v1h6V7H5zm0 3v1h4v-1H5z"/></svg>
+    Weekly Settlement Builder
+  </h1>
+  <div class="week-nav">
+    <button onclick="shiftWeek(-1)">&#9664; Prev</button>
+    <div class="week-label" id="weekLabel">—</div>
+    <button onclick="shiftWeek(1)">Next &#9654;</button>
+  </div>
+  <div class="topbar-right">
+    <button class="btn btn-secondary" onclick="resetWeekRoles()">Reset Roles</button>
+    <button class="btn btn-primary" onclick="generateAllPDFs()">&#11015; Generate All PDFs</button>
+  </div>
+</div>
+<div class="content">
+  <div class="week-summary">
+    <div class="stat-card"><div class="label">Total Loads</div><div class="value blue" id="statLoads">0</div></div>
+    <div class="stat-card"><div class="label">Gross Revenue</div><div class="value" id="statGross">$0</div></div>
+    <div class="stat-card"><div class="label">Total Payouts</div><div class="value red" id="statPayouts">$0</div></div>
+    <div class="stat-card"><div class="label">Carrier Net</div><div class="value" id="statNet">$0</div></div>
+  </div>
+  <div class="section-header">
+    <div class="section-title">Fleet Members</div>
+    <div style="font-size:12px;color:var(--muted)">Role changes save automatically per week</div>
+  </div>
+  <div class="member-grid" id="memberGrid"></div>
+  <div class="section-header" style="margin-top:8px"><div class="section-title">Week Payout Summary</div></div>
+  <div class="summary-table-wrap">
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Member</th><th>Role</th><th>Loads</th>
+          <th class="right">Gross</th><th class="right">Dispatch Fee</th>
+          <th class="right">Expenses</th><th class="right">Payout</th><th class="right">Carrier Net</th>
+        </tr>
+      </thead>
+      <tbody id="summaryBody"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+<script>
+var FLEET=[
+  {id:'david',    name:'David Fonseca',    initials:'DF',color:'#c2185b',defaultRole:'owner_op',  dispatchRate:0.14},
+  {id:'guillermo',name:'Guillermo Pinera', initials:'GP',color:'#0288d1',defaultRole:'owner_op',  dispatchRate:0.13,notes:'2 trucks (T1 13%, T2 12%)'},
+  {id:'yosviel',  name:'Yosviel Pinera',   initials:'YP',color:'#388e3c',defaultRole:'owner_op',  dispatchRate:0.13},
+  {id:'avis',     name:'Avis Modesto',     initials:'AM',color:'#7b1fa2',defaultRole:'owner_op',  dispatchRate:0.14},
+  {id:'nelson',   name:'Nelson Veliz',     initials:'NV',color:'#f57c00',defaultRole:'driver',    dispatchRate:0.13,driverRate:0.30},
+  {id:'miguel',   name:'Miguel Fonseca',   initials:'MF',color:'#00838f',defaultRole:'driver',    dispatchRate:0.12,driverRate:0.30,notes:"Guillermo's Truck 2 (12%)"},
+  {id:'javier',   name:'Javier Labrada',   initials:'JL',color:'#5d4037',defaultRole:'driver',    dispatchRate:0.13,driverRate:0.30},
+  {id:'amet',     name:'Amet Abreu',       initials:'AA',color:'#1565c0',defaultRole:'dispatcher',commissionRate:0.05},
+  {id:'betty',    name:'Betty Gutierrez',  initials:'BG',color:'#6a1b9a',defaultRole:'dispatcher',commissionRate:0.05},
+  {id:'laura',    name:'Laura Moreno',     initials:'LM',color:'#37474f',defaultRole:'admin'},
+];
+var ROLES=['driver','owner_op','dispatcher','admin'];
+var RL={driver:'Driver',owner_op:'Owner Op',dispatcher:'Dispatcher',admin:'Admin'};
+var BC={driver:'badge-driver',owner_op:'badge-owner_op',dispatcher:'badge-dispatcher',admin:'badge-admin'};
+var ML={},ME={},ID={},LC=1000,EC=2000;
+var curMon=getMonday(new Date());
+
+function getMonday(d){var dt=new Date(d);var day=dt.getDay();var diff=(day===0)?-6:1-day;dt.setDate(dt.getDate()+diff);dt.setHours(0,0,0,0);return dt;}
+function fmtDate(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+function isoDate(d){var y=d.getFullYear();var m=String(d.getMonth()+1).padStart(2,'0');var dy=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+dy;}
+function getWeekKey(){return isoDate(curMon);}
+function getWeekEnd(){var d=new Date(curMon);d.setDate(d.getDate()+6);return d;}
+function shiftWeek(dir){curMon=new Date(curMon);curMon.setDate(curMon.getDate()+dir*7);render();}
+
+function loadWR(wk){try{var a=JSON.parse(localStorage.getItem('nexus_weekly_roles')||'{}');return a[wk]||{};}catch(e){return{};}}
+function saveWR(wk,mid,role){try{var a=JSON.parse(localStorage.getItem('nexus_weekly_roles')||'{}');if(!a[wk])a[wk]={};a[wk][mid]=role;localStorage.setItem('nexus_weekly_roles',JSON.stringify(a));}catch(e){}}
+function resetWeekRoles(){if(!confirm('Reset all roles for this week to defaults?'))return;try{var a=JSON.parse(localStorage.getItem('nexus_weekly_roles')||'{}');delete a[getWeekKey()];localStorage.setItem('nexus_weekly_roles',JSON.stringify(a));}catch(e){}render();}
+
+function getWeekLoads(wk){
+  var loads=[];try{loads=JSON.parse(localStorage.getItem('nexus_loads')||'[]');}catch(e){}
+  if(!loads.length&&window.NEXUS_SEED_LOADS)loads=window.NEXUS_SEED_LOADS;
+  var mon=new Date(wk+'T00:00:00');var sun=new Date(mon);sun.setDate(sun.getDate()+6);
+  return loads.filter(function(l){var d=new Date((l.pickupDate||'2000-01-01')+'T00:00:00');return d>=mon&&d<=sun;});
+}
+
+function ensureData(member,wloads){
+  var key=member.id+getWeekKey();if(ID[key])return;ID[key]=true;
+  var ml=wloads.filter(function(l){return(l.driver||'').toLowerCase()===member.name.toLowerCase();});
+  ML[member.id]=ml.length?ml.map(function(l,i){return{id:'s'+i,loadNum:l.loadNum||'',broker:l.broker||'',rate:+(l.rate||0)};}) :[];
+  ME[member.id]=[];
+  try{
+    var exps=JSON.parse(localStorage.getItem('nexus_expenses')||'[]');
+    var mon=new Date(getWeekKey()+'T00:00:00');var sun=new Date(mon);sun.setDate(sun.getDate()+6);
+    var me=exps.filter(function(e){var en=(e.person||'').toLowerCase();var mn=member.name.split(' ')[0].toLowerCase();var ed=new Date((e.date||'2000-01-01')+'T00:00:00');return en.indexOf(mn)>-1&&ed>=mon&&ed<=sun;});
+    if(me.length){var tot=me.reduce(function(s,e){return s+parseFloat(e.amount||0);},0);ME[member.id]=[{id:'e0',desc:'Operating Expenses',amount:tot}];}
+  }catch(e){}
+}
+
+function render(){
+  ID={};
+  var wk=getWeekKey();var wr=loadWR(wk);var wl=getWeekLoads(wk);
+  document.getElementById('weekLabel').textContent=fmtDate(curMon)+' – '+fmtDate(getWeekEnd());
+  var grid=document.getElementById('memberGrid');grid.innerHTML='';
+  FLEET.forEach(function(m){ensureData(m,wl);grid.appendChild(buildCard(m,wr[m.id]||m.defaultRole));});
+  updateSummary();
+}
+
+function buildCard(m,role){
+  var c=document.createElement('div');c.className='member-card role-'+role;c.id='card-'+m.id;
+  var opts=ROLES.map(function(r){return'<option value="'+r+'"'+(r===role?' selected':'')+'>'+RL[r]+'</option>';}).join('');
+  c.innerHTML='<div class="card-header">'+
+    '<div class="avatar" style="background:'+m.color+'22;color:'+m.color+'">'+m.initials+'</div>'+
+    '<div class="card-info">'+
+      '<div class="card-name">'+m.name+'</div>'+
+      '<div class="card-sub">'+
+        '<span class="role-badge '+BC[role]+'" id="badge-'+m.id+'">'+RL[role]+'</span>'+
+        (m.notes?'<span style="font-size:10px;color:var(--muted)">'+m.notes+'</span>':'')+
+      '</div>'+
+    '</div>'+
+    '<div class="role-select-wrap"><select class="role-select" onchange="chRole(\''+m.id+'\',this.value)">'+opts+'</select></div>'+
+  '</div><div class="card-body" id="body-'+m.id+'"></div>';
+  renderBody(m,role);return c;
+}
+
+function renderBody(m,role){
+  var b=document.getElementById('body-'+m.id);if(!b)return;
+  if(role==='admin'){b.className='card-body admin-body';b.innerHTML='<span>— No settlement this week —</span>';return;}
+  b.className='card-body';
+  if(role==='driver')b.innerHTML=driverBody(m);
+  else if(role==='owner_op')b.innerHTML=ownerBody(m);
+  else if(role==='dispatcher')b.innerHTML=dispBody(m);
+}
+
+function driverBody(m){
+  var loads=ML[m.id]||[];var dp=Math.round((m.dispatchRate||0.13)*100);
+  var rows=loads.map(function(l,i){return'<div class="load-row">'+
+    '<input type="text" placeholder="Load #" value="'+esc(l.loadNum)+'" onchange="upL(\''+m.id+'\','+i+',\'loadNum\',this.value)">'+
+    '<input type="text" placeholder="Broker" value="'+esc(l.broker)+'" onchange="upL(\''+m.id+'\','+i+',\'broker\',this.value)">'+
+    '<input type="number" placeholder="$0" class="rate-input" value="'+(l.rate||'')+'" onchange="upL(\''+m.id+'\','+i+',\'rate\',parseFloat(this.value)||0)">'+
+    '<button class="del-btn" onclick="rmL(\''+m.id+'\','+i+')">✕</button></div>';}).join('');
+  var g=loads.reduce(function(s,l){return s+(+(l.rate||0));},0);var p=g*0.3;
+  return lSection(m.id,loads.length,rows)+
+    '<div class="pl-summary" id="pl-'+m.id+'">'+
+      '<div class="pl-row"><span class="pl-label">Gross Rate Con</span><span class="pl-val">'+fmt(g)+'</span></div>'+
+      '<div class="pl-row pl-total"><span>Driver Pay (30%)</span><span class="pl-val '+(p>0?'pos':'')+'">'+(p>0?'+':'')+fmt(p)+'</span></div>'+
+    '</div>'+
+    '<div class="rate-hint">Dispatch: <span>'+dp+'%</span> paid by Carrier on gross</div>';
+}
+
+function ownerBody(m){
+  var loads=ML[m.id]||[];var exps=ME[m.id]||[];var dr=m.dispatchRate||0.14;var dp=Math.round(dr*100);
+  var rows=loads.map(function(l,i){return'<div class="load-row">'+
+    '<input type="text" placeholder="Load #" value="'+esc(l.loadNum)+'" onchange="upL(\''+m.id+'\','+i+',\'loadNum\',this.value)">'+
+    '<input type="text" placeholder="Broker" value="'+esc(l.broker)+'" onchange="upL(\''+m.id+'\','+i+',\'broker\',this.value)">'+
+    '<input type="number" placeholder="$0" class="rate-input" value="'+(l.rate||'')+'" onchange="upL(\''+m.id+'\','+i+',\'rate\',parseFloat(this.value)||0)">'+
+    '<button class="del-btn" onclick="rmL(\''+m.id+'\','+i+')">✕</button></div>';}).join('');
+  var erows=exps.map(function(e,i){return'<div class="expense-row">'+
+    '<input type="text" placeholder="Description" value="'+esc(e.desc)+'" onchange="upE(\''+m.id+'\','+i+',\'desc\',this.value)">'+
+    '<input type="number" placeholder="$0" class="exp-amt" value="'+(e.amount||'')+'" onchange="upE(\''+m.id+'\','+i+',\'amount\',parseFloat(this.value)||0)">'+
+    '<button class="del-btn" onclick="rmE(\''+m.id+'\','+i+')">✕</button></div>';}).join('');
+  var g=loads.reduce(function(s,l){return s+(+(l.rate||0));},0);
+  var disp=g*dr;var te=exps.reduce(function(s,e){return s+(+(e.amount||0));},0);var net=g-disp-te;
+  return lSection(m.id,loads.length,rows)+
+    '<div class="expenses-section">'+
+      '<div class="loads-label" style="margin-bottom:6px">Expenses<button class="add-load-btn" onclick="addE(\''+m.id+'\')">&plus; Add</button></div>'+
+      '<div class="expense-rows" id="exrows-'+m.id+'">'+(erows||'<div class="no-loads">No expenses entered</div>')+'</div>'+
+    '</div>'+
+    '<div class="pl-summary" id="pl-'+m.id+'">'+
+      '<div class="pl-row"><span class="pl-label">Gross Revenue</span><span class="pl-val">'+fmt(g)+'</span></div>'+
+      '<div class="pl-row"><span class="pl-label">Dispatch Fee ('+dp+'%)</span><span class="pl-val deduct">('+fmt(disp)+')</span></div>'+
+      '<div class="pl-row"><span class="pl-label">Operating Expenses</span><span class="pl-val deduct">('+fmt(te)+')</span></div>'+
+      '<div class="pl-row pl-total"><span>Net to Owner Op</span><span class="pl-val '+(net>=0?'pos':'neg')+'">'+(net>=0?'+':'')+fmt(net)+'</span></div>'+
+    '</div>';
+}
+
+function dispBody(m){
+  var wl=getWeekLoads(getWeekKey());var rate=m.commissionRate||0.05;var pct=Math.round(rate*100);
+  var byD={};wl.forEach(function(l){var d=l.driver||'Unknown';byD[d]=(byD[d]||0)+parseFloat(l.rate||0);});
+  var lines=[];var tot=0;
+  Object.keys(byD).forEach(function(d){
+    var g=byD[d];var isBetty=(d==='Guillermo Pinera');
+    if(m.id==='betty'&&!isBetty)return;if(m.id==='amet'&&isBetty)return;
+    var comm=g*rate;tot+=comm;lines.push({d:d,g:g,c:comm});
+  });
+  if(!lines.length)lines=[{d:'No loads this week',g:0,c:0}];
+  var drows=lines.map(function(r){return'<div class="dispatch-row"><span class="dr-name">'+esc(r.d)+'</span><span>'+fmt(r.g)+' &times; '+pct+'% = <strong style="color:#3fb950">'+fmt(r.c)+'</strong></span></div>';}).join('');
+  return'<div class="dispatch-summary">'+drows+'<div class="dispatch-total"><span>Commission ('+pct+'%)</span><span>+'+fmt(tot)+'</span></div></div>';
+}
+
+function lSection(mid,n,rows){
+  return'<div class="loads-section"><div class="loads-label">Loads <span style="color:var(--muted);font-weight:400">('+n+')</span>'+
+    '<button class="add-load-btn" onclick="addL(\''+mid+'\')">&plus; Add Load</button></div>'+
+    '<div class="load-row-header"><span>Load #</span><span>Broker</span><span>Rate Con</span><span></span></div>'+
+    (rows||'<div class="no-loads">No loads this week</div>')+
+  '</div>';
+}
+
+function chRole(mid,role){
+  saveWR(getWeekKey(),mid,role);
+  var m=FLEET.filter(function(x){return x.id===mid;})[0];if(!m)return;
+  var c=document.getElementById('card-'+mid);if(c)c.className='member-card role-'+role;
+  var b=document.getElementById('badge-'+mid);if(b){b.className='role-badge '+BC[role];b.textContent=RL[role];}
+  renderBody(m,role);updateSummary();
+}
+
+function addL(mid){if(!ML[mid])ML[mid]=[];ML[mid].push({id:'n'+(++LC),loadNum:'',broker:'',rate:0});var m=FLEET.filter(function(x){return x.id===mid;})[0];renderBody(m,loadWR(getWeekKey())[mid]||m.defaultRole);updateSummary();}
+function rmL(mid,i){if(!ML[mid])return;ML[mid].splice(i,1);var m=FLEET.filter(function(x){return x.id===mid;})[0];renderBody(m,loadWR(getWeekKey())[mid]||m.defaultRole);updateSummary();}
+function upL(mid,i,f,v){if(!ML[mid]||!ML[mid][i])return;ML[mid][i][f]=v;rfPL(mid);}
+function addE(mid){if(!ME[mid])ME[mid]=[];ME[mid].push({id:'x'+(++EC),desc:'',amount:0});var m=FLEET.filter(function(x){return x.id===mid;})[0];renderBody(m,'owner_op');updateSummary();}
+function rmE(mid,i){if(!ME[mid])return;ME[mid].splice(i,1);var m=FLEET.filter(function(x){return x.id===mid;})[0];renderBody(m,'owner_op');updateSummary();}
+function upE(mid,i,f,v){if(!ME[mid]||!ME[mid][i])return;ME[mid][i][f]=v;rfPL(mid);}
+
+function rfPL(mid){
+  var m=FLEET.filter(function(x){return x.id===mid;})[0];
+  var role=loadWR(getWeekKey())[mid]||m.defaultRole;
+  var pl=document.getElementById('pl-'+mid);if(!pl)return;
+  var loads=ML[mid]||[];var exps=ME[mid]||[];
+  var g=loads.reduce(function(s,l){return s+(+(l.rate||0));},0);
+  if(role==='driver'){var p=g*0.3;pl.innerHTML='<div class="pl-row"><span class="pl-label">Gross Rate Con</span><span class="pl-val">'+fmt(g)+'</span></div><div class="pl-row pl-total"><span>Driver Pay (30%)</span><span class="pl-val '+(p>0?'pos':'')+'">+'+fmt(p)+'</span></div>';}
+  else if(role==='owner_op'){var dr=m.dispatchRate||0.14;var disp=g*dr;var te=exps.reduce(function(s,e){return s+(+(e.amount||0));},0);var net=g-disp-te;pl.innerHTML='<div class="pl-row"><span class="pl-label">Gross Revenue</span><span class="pl-val">'+fmt(g)+'</span></div><div class="pl-row"><span class="pl-label">Dispatch Fee ('+Math.round(dr*100)+'%)</span><span class="pl-val deduct">('+fmt(disp)+')</span></div><div class="pl-row"><span class="pl-label">Operating Expenses</span><span class="pl-val deduct">('+fmt(te)+')</span></div><div class="pl-row pl-total"><span>Net to Owner Op</span><span class="pl-val '+(net>=0?'pos':'neg')+'">'+(net>=0?'+':'')+fmt(net)+'</span></div>';}
+  updateSummary();
+}
+
+function updateSummary(){
+  var wk=getWeekKey();var wr=loadWR(wk);var wl=getWeekLoads(wk);
+  var tb=document.getElementById('summaryBody');tb.innerHTML='';
+  var tG=0,tP=0,tL=0,tN=0;
+  var byD={};wl.forEach(function(l){var d=l.driver||'Unknown';byD[d]=(byD[d]||0)+parseFloat(l.rate||0);});
+  FLEET.forEach(function(m){
+    var role=wr[m.id]||m.defaultRole;
+    var loads=ML[m.id]||[];var exps=ME[m.id]||[];
+    var g=loads.reduce(function(s,l){return s+(+(l.rate||0));},0);var n=loads.length;
+    var df=0,et=0,pay=0,cn=0;
+    if(role==='admin'){var tr=document.createElement('tr');tr.className='admin-row';tr.innerHTML='<td>'+m.name+'</td><td><span class="role-badge badge-admin">Admin</span></td><td>—</td><td class="right">—</td><td class="right">—</td><td class="right">—</td><td class="right">—</td><td class="right">—</td>';tb.appendChild(tr);return;}
+    if(role==='driver'){pay=g*0.3;df=g*(m.dispatchRate||0.13);cn=df;}
+    else if(role==='owner_op'){df=g*(m.dispatchRate||0.14);et=exps.reduce(function(s,e){return s+(+(e.amount||0));},0);pay=g-df-et;cn=df;}
+    else if(role==='dispatcher'){var r2=m.commissionRate||0.05;Object.keys(byD).forEach(function(d){var dg=byD[d];var ib=(d==='Guillermo Pinera');if(m.id==='betty'&&!ib)return;if(m.id==='amet'&&ib)return;pay+=dg*r2;});cn=-pay;}
+    if(role!=='dispatcher'){tG+=g;tL+=n;}
+    tP+=Math.abs(pay);tN+=cn;
+    var nc=cn>=0?'color:#3fb950':'color:#f85149';
+    var pc=role==='owner_op'?(pay>=0?'color:#3fb950':'color:#f85149'):'color:#3fb950';
+    var ps=role==='dispatcher'?'+'+fmt(pay):fmt(Math.abs(pay));
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td><strong>'+m.name+'</strong></td><td><span class="role-badge '+BC[role]+'">'+RL[role]+'</span></td><td>'+(n||'—')+'</td><td class="right">'+(g?fmt(g):'—')+'</td><td class="right">'+(df?'('+fmt(df)+')':'—')+'</td><td class="right">'+(et?'('+fmt(et)+')':'—')+'</td><td class="right" style="'+pc+'"><strong>'+(pay?ps:'—')+'</strong></td><td class="right" style="'+nc+'">'+(cn?fmt(cn):'—')+'</td>';
+    tb.appendChild(tr);
+  });
+  var tot=document.createElement('tr');tot.className='total-row';
+  var tnc=tN>=0?'color:#3fb950':'color:#f85149';
+  tot.innerHTML='<td colspan="2">TOTALS</td><td>'+tL+'</td><td class="right">'+fmt(tG)+'</td><td class="right">—</td><td class="right">—</td><td class="right" style="color:#f85149">'+fmt(tP)+'</td><td class="right" style="'+tnc+'">'+fmt(tN)+'</td>';
+  tb.appendChild(tot);
+  document.getElementById('statLoads').textContent=tL;
+  document.getElementById('statGross').textContent=fmt(tG);
+  document.getElementById('statPayouts').textContent=fmt(tP);
+  var ne=document.getElementById('statNet');ne.textContent=fmt(tN);ne.className='value '+(tN>=0?'green':'red');
+}
+
+function generateAllPDFs(){alert('PDF generation coming soon.\n\nIndividual settlement PDFs will be generated per role:\n  Driver: 30% pay stub\n  Owner Op: Full P&L\n  Dispatcher: Commission summary');}
+
+function fmt(v){if(v===undefined||v===null||isNaN(v))return'$0.00';var a=Math.abs(v);var s='$'+a.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});return v<0?'('+s+')':s;}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+render();
+</script>
+</body>
+</html>
