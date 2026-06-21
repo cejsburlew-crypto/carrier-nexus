@@ -148,6 +148,19 @@
             if (error) throw error;
             return data;
           } catch(e) {
+            // If Supabase rejects because a column doesn't exist in the schema cache,
+            // strip that column and retry once — prevents localStorage fallback for
+            // legitimate records that just have an unmigrated field (e.g. add_deduct).
+            const missing = (e.message||'').match(/Could not find the '([^']+)' column/);
+            if (missing) {
+              const stripped = Object.assign({}, item);
+              delete stripped[missing[1]];
+              console.warn('[NexusDB] Retrying ' + tableName + '.create without unknown column: ' + missing[1]);
+              try {
+                const { data: d2, error: e2 } = await sb().from(tableName).insert(stripped).select().single();
+                if (!e2) return d2;
+              } catch(_) {}
+            }
             console.warn('[NexusDB] Supabase ' + tableName + '.create failed, using localStorage:', e.message);
           }
         }

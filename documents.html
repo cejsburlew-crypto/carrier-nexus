@@ -645,18 +645,7 @@ function exportList() {
   showToast('Exported ' + rows.length + ' documents to CSV', 'success');
 }
 
-function deleteDoc(docId, filename) {
-  if (!confirm('Remove "' + (filename||docId) + '" from the vault?\nThis removes it from this view only — the Drive file is not deleted.')) return;
-  var before = documents.length;
-  if (docId) {
-    documents = documents.filter(function(d){ return (d.id||d.filename) !== docId; });
-  }
-  if (documents.length === before && filename) {
-    documents = documents.filter(function(d){ return d.filename !== filename; });
-  }
-  applyFilters();
-  showToast('Document removed from vault', 'success');
-}
+// deleteDoc replaced by modal — see bottom of script
 
 function showToast(msg, type) {
   var t = document.getElementById('doc-toast');
@@ -770,11 +759,38 @@ function setView(v) {
   if (!vaultEl) {
     // vault-panel missing from DOM — show user-friendly message
     console.warn('vault-panel element not found');
-    if (v === 'vault') { showToast('Drive Vault panel not available.', 'warn'); return; }
+    if (v === 'vault') {
+      // vault-panel not in DOM — inject a persistent placeholder so the user knows what this tab is for
+      var placeholder = document.getElementById('vault-placeholder-panel');
+      if (!placeholder) {
+        placeholder = document.createElement('div');
+        placeholder.id = 'vault-placeholder-panel';
+        placeholder.style.cssText = 'margin:24px 28px;background:#1e293b;border:1px solid #334155;border-radius:10px;padding:48px 32px;text-align:center;';
+        placeholder.innerHTML =
+          '<div style="font-size:40px;margin-bottom:14px;">☁️</div>' +
+          '<div style="font-family:Barlow Condensed,sans-serif;font-size:20px;font-weight:800;color:#f1f5f9;letter-spacing:.06em;margin-bottom:8px;">DRIVE VAULT</div>' +
+          '<div style="font-size:13px;color:#94a3b8;max-width:340px;margin:0 auto 20px;line-height:1.6;">' +
+            'Browse your Google Drive document vault organized by dispatcher and driver. ' +
+            'Connect Google Drive via the Inbox Sync page to enable this panel.' +
+          '</div>' +
+          '<a href="inbox-sync.html" class="btn btn-orange" style="display:inline-block;padding:9px 22px;border-radius:7px;background:#e8640a;color:#fff;font-weight:700;font-size:13px;text-decoration:none;">Go to Inbox Sync</a>';
+        // Insert after the main page header or before table-wrap
+        var filterBar = document.querySelector('.filter-bar');
+        if (filterBar) filterBar.parentNode.insertBefore(placeholder, filterBar);
+        else document.querySelector('.content, .page-content, main') && document.querySelector('.content, .page-content, main').appendChild(placeholder);
+      }
+      listEls.forEach(function(el){ if(el) el.style.display='none'; });
+      placeholder.style.display = 'block';
+      document.getElementById('view-vault-btn').classList.add('active');
+      document.getElementById('view-list-btn').classList.remove('active');
+      return;
+    }
   }
   if (v === 'list') {
     listEls.forEach(function(el){ if(el) el.style.display=''; });
     if(vaultEl) vaultEl.style.display = 'none';
+    var ph = document.getElementById('vault-placeholder-panel');
+    if (ph) ph.style.display = 'none';
     document.getElementById('view-list-btn').classList.add('active');
     document.getElementById('view-vault-btn').classList.remove('active');
   } else {
@@ -1276,6 +1292,52 @@ function quickImportDrive(){
   setTimeout(silentImport, 10000);
   setInterval(silentImport, 30*60*1000);
 })();
+
+
+// ── Delete confirmation modal ──
+var _pendingDeleteId = null, _pendingDeleteName = null;
+
+function deleteDoc(docId, filename) {
+  _pendingDeleteId   = docId;
+  _pendingDeleteName = filename;
+  var label = filename || docId || 'this document';
+  document.getElementById('delete-modal-msg').textContent =
+    'Remove "' + label + '" from the vault?\nThe Drive file is not deleted.';
+  document.getElementById('delete-modal').style.display = 'flex';
+}
+
+function closeDeleteModal() {
+  document.getElementById('delete-modal').style.display = 'none';
+  _pendingDeleteId   = null;
+  _pendingDeleteName = null;
+}
+
+function confirmDelete() {
+  var docId    = _pendingDeleteId;
+  var filename = _pendingDeleteName;
+  closeDeleteModal();
+  if (!docId && !filename) return;
+  var before = documents.length;
+  if (docId)    documents = documents.filter(function(d){ return (d.id||d.filename) !== docId; });
+  if (documents.length === before && filename)
+    documents = documents.filter(function(d){ return d.filename !== filename; });
+  applyFilters();
+  showToast('Document removed from vault', 'success');
+}
+
 </script>
+
+<!-- Delete confirmation modal -->
+<div id="delete-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)closeDeleteModal()">
+  <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:28px 32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.6);">
+    <div style="font-size:20px;margin-bottom:8px;">🗑️</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:#f1f5f9;margin-bottom:6px;">Remove document?</div>
+    <div id="delete-modal-msg" style="font-size:13px;color:#94a3b8;margin-bottom:20px;line-height:1.5;">This removes it from this view only — the Drive file is not deleted.</div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button onclick="closeDeleteModal()" style="padding:8px 18px;border-radius:6px;border:1px solid #334155;background:none;color:#94a3b8;cursor:pointer;font-size:13px;font-weight:600;">Cancel</button>
+      <button id="delete-modal-confirm" onclick="confirmDelete()" style="padding:8px 18px;border-radius:6px;border:none;background:#ef4444;color:#fff;cursor:pointer;font-size:13px;font-weight:600;">Remove</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
