@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#090a0c">
-<title>Driver Command  Carrier Nexus</title>
+<title>Driver Command — Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -53,7 +53,7 @@ body{
   html{background:#060708;}
 }
 
-/*  STATUS BAR  */
+/* ── STATUS BAR ── */
 .status-bar{
   height:44px;
   background:var(--black);
@@ -77,7 +77,7 @@ body{
 }
 .signal-bar{background:var(--white);border-radius:1px;width:2px;}
 
-/*  TOP APP BAR  */
+/* ── TOP APP BAR ── */
 .app-bar{
   background:var(--black);
   padding:12px 16px 14px;
@@ -111,7 +111,7 @@ body{
   border:1.5px solid var(--black);
 }
 
-/*  ACTIVE LOAD BANNER  */
+/* ── ACTIVE LOAD BANNER ── */
 .active-load{
   margin:14px 16px;
   background:linear-gradient(135deg, rgba(46,109,164,0.15), rgba(46,109,164,0.06));
@@ -165,7 +165,7 @@ body{
 }
 .load-meta-value.green{color:var(--green);}
 
-/*  SECTION HEADER  */
+/* ── SECTION HEADER ── */
 .section-head{
   padding:14px 16px 6px;
   font-family:'JetBrains Mono',monospace;
@@ -173,7 +173,7 @@ body{
   letter-spacing:0.2em;text-transform:uppercase;
 }
 
-/*  ACTION BUTTONS GRID  */
+/* ── ACTION BUTTONS GRID ── */
 .action-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -239,7 +239,7 @@ body{
   flex-shrink:0;
 }
 
-/*  REPORT BUTTONS  */
+/* ── REPORT BUTTONS ── */
 .report-row{
   padding:0 16px;
   margin-top:10px;
@@ -276,7 +276,7 @@ body{
 .report-sub{font-size:10px;color:var(--muted);}
 .report-chevron{color:var(--muted);font-size:14px;flex-shrink:0;}
 
-/*  LOAD HISTORY  */
+/* ── LOAD HISTORY ── */
 .history-list{
   margin:0 16px;
   border:1px solid var(--border);
@@ -314,7 +314,7 @@ body{
 .pill-sm.closed{color:var(--mid);border-color:rgba(138,155,191,0.3);background:rgba(138,155,191,0.06);}
 .pill-sm.billing{color:var(--orange);border-color:rgba(232,100,10,0.3);background:rgba(232,100,10,0.08);}
 
-/*  BOTTOM NAV  */
+/* ── BOTTOM NAV ── */
 .bottom-nav{
   position:fixed;
   bottom:0;left:50%;
@@ -364,7 +364,7 @@ body{
   white-space:nowrap;letter-spacing:0.04em;
 }
 
-/*  MODAL OVERLAY  */
+/* ── MODAL OVERLAY ── */
 .modal-overlay{
   position:fixed;inset:0;
   background:rgba(0,0,0,0.7);
@@ -455,38 +455,40 @@ body{
   letter-spacing:0.15em;text-transform:uppercase;
   display:block;margin-bottom:6px;
 }
+
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
 </style>
 <style id="nexus-unified">
-/*  SIDEBAR BLACK  */
+/* ── SIDEBAR BLACK ── */
 .sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
-/*  LOGO AREA  */
+/* ── LOGO AREA ── */
 .sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
 .sidebar-logo .logo-hex { flex-shrink:0 !important; }
 .sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
 .sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
 .sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
 .sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
-/*  NAV LINKS  */
+/* ── NAV LINKS ── */
 .sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
 .sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
 .sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
 .sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
 .sidebar-link.active svg { opacity:1 !important; }
-/*  SECTION LABELS  */
+/* ── SECTION LABELS ── */
 .sidebar-section { padding:12px 0 4px !important; }
 .sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
-/*  TOPBAR  */
+/* ── TOPBAR ── */
 .topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
 .topbar *, .top-bar * { color:#ffffff !important; }
 .topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
-/*  MOBILE NAV  */
+/* ── MOBILE NAV ── */
 .mobile-nav { background:#000000 !important; }
 .mobile-nav-tab.active { color:#e91e8c !important; }
-/*  SIDEBAR USER  */
+/* ── SIDEBAR USER ── */
 .sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
 .sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
 .sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
-/*  NAV BADGE  */
+/* ── NAV BADGE ── */
 .nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
 </head>
@@ -504,7 +506,7 @@ body{
       <div class="signal-bar" style="height:90%;"></div>
     </div>
     <span>LTE</span>
-    <span>=</span>
+    <span>🔋</span>
   </div>
 </div>
 
@@ -513,7 +515,7 @@ body{
   <div class="app-bar-row">
     <div>
       <div class="app-bar-logo">CARRIER <span>NEXUS</span></div>
-      <div class="app-bar-greeting">Driver Command  <strong>Marcus Rodriguez</strong></div>
+      <div class="app-bar-greeting">Driver Command · <strong>Marcus Rodriguez</strong></div>
     </div>
     <div class="notif-btn" onclick="openModal('alertModal')">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a5 5 0 00-5 5v3H2v1h12v-1h-1V7a5 5 0 00-5-5zM6 13a2 2 0 004 0H6z" fill="currentColor" opacity="0.7"/></svg>
@@ -529,7 +531,7 @@ body{
     Active Load
   </div>
   <div class="active-load-id">LDX-2841</div>
-  <div class="active-load-route">Miami, FL <span></span> Atlanta, GA</div>
+  <div class="active-load-route">Miami, FL <span>→</span> Atlanta, GA</div>
   <div class="load-meta">
     <div class="load-meta-item">
       <div class="load-meta-label">Rate</div>
@@ -555,7 +557,7 @@ body{
 <div class="action-grid">
 
   <div class="action-btn primary" onclick="openModal('podModal')">
-    <div class="action-icon">=</div>
+    <div class="action-icon">📸</div>
     <div>
       <div class="action-label orange">Upload POD</div>
       <div class="action-sub">Photo or file</div>
@@ -563,7 +565,7 @@ body{
   </div>
 
   <div class="action-btn blue" onclick="openModal('mileageModal')">
-    <div class="action-icon">=</div>
+    <div class="action-icon">🛣️</div>
     <div>
       <div class="action-label blue">Enter Mileage</div>
       <div class="action-sub">Loaded + deadhead</div>
@@ -571,12 +573,12 @@ body{
   </div>
 
   <div class="action-btn full" onclick="openModal('signModal')">
-    <div class="action-icon sm"></div>
+    <div class="action-icon sm">✍️</div>
     <div style="flex:1;min-width:0;">
       <div class="action-label">Sign Rate Con</div>
-      <div class="action-sub">LDX-2841  Coyote Logistics  $3,400</div>
+      <div class="action-sub">LDX-2841 · Coyote Logistics · $3,400</div>
     </div>
-    <div class="action-arrow">:</div>
+    <div class="action-arrow">›</div>
   </div>
 
 </div>
@@ -586,30 +588,30 @@ body{
 <div class="report-row">
 
   <div class="report-btn danger" onclick="openModal('blowoutModal')">
-    <div class="report-icon" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);">=</div>
+    <div class="report-icon" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);">💥</div>
     <div class="report-body">
       <div class="report-label red">Report Tire Blowout</div>
       <div class="report-sub">Wheel position + photo + location</div>
     </div>
-    <div class="report-chevron">:</div>
+    <div class="report-chevron">›</div>
   </div>
 
   <div class="report-btn warn" onclick="openModal('repairModal')">
-    <div class="report-icon" style="background:rgba(251,191,36,0.08);border-color:rgba(251,191,36,0.25);">=</div>
+    <div class="report-icon" style="background:rgba(251,191,36,0.08);border-color:rgba(251,191,36,0.25);">🔧</div>
     <div class="report-body">
       <div class="report-label yellow">Report Repair</div>
       <div class="report-sub">Description + vendor + receipt</div>
     </div>
-    <div class="report-chevron">:</div>
+    <div class="report-chevron">›</div>
   </div>
 
   <div class="report-btn" onclick="openModal('photosModal')">
-    <div class="report-icon">=</div>
+    <div class="report-icon">📷</div>
     <div class="report-body">
       <div class="report-label">Take Photos</div>
       <div class="report-sub">Damage, delivery, scale tickets</div>
     </div>
-    <div class="report-chevron">:</div>
+    <div class="report-chevron">›</div>
   </div>
 
 </div>
@@ -620,32 +622,32 @@ body{
   <div class="history-item">
     <div class="history-load">LDX-2841</div>
     <div class="history-body">
-      <div class="history-route">Miami  Atlanta</div>
-      <div class="history-date">Today  In progress</div>
+      <div class="history-route">Miami → Atlanta</div>
+      <div class="history-date">Today · In progress</div>
     </div>
     <span class="pill-sm billing"><span class="pill-dot-sm" style="background:var(--orange);"></span>Active</span>
   </div>
   <div class="history-item">
     <div class="history-load">LDX-2826</div>
     <div class="history-body">
-      <div class="history-route">Tampa  Nashville</div>
-      <div class="history-date">May 24  POD submitted</div>
+      <div class="history-route">Tampa → Nashville</div>
+      <div class="history-date">May 24 · POD submitted</div>
     </div>
     <span class="pill-sm closed"><span class="pill-dot-sm" style="background:var(--mid);"></span>Billing</span>
   </div>
   <div class="history-item">
     <div class="history-load">LDX-2810</div>
     <div class="history-body">
-      <div class="history-route">Jacksonville  Memphis</div>
-      <div class="history-date">May 21  Paid</div>
+      <div class="history-route">Jacksonville → Memphis</div>
+      <div class="history-date">May 21 · Paid</div>
     </div>
     <span class="pill-sm closed"><span class="pill-dot-sm" style="background:var(--mid);"></span>Closed</span>
   </div>
   <div class="history-item">
     <div class="history-load">LDX-2798</div>
     <div class="history-body">
-      <div class="history-route">Orlando  Charlotte</div>
-      <div class="history-date">May 18  Paid</div>
+      <div class="history-route">Orlando → Charlotte</div>
+      <div class="history-date">May 18 · Paid</div>
     </div>
     <span class="pill-sm closed"><span class="pill-dot-sm" style="background:var(--mid);"></span>Closed</span>
   </div>
@@ -679,23 +681,23 @@ body{
   </button>
 </nav>
 
-<!-- PPP MODALS PPP -->
+<!-- ═══ MODALS ═══ -->
 
 <!-- POD Upload -->
 <div class="modal-overlay" id="podModal" onclick="closeModal('podModal')">
   <div class="modal-sheet" onclick="e=>e.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-title">Upload POD / BOL</div>
-    <div class="modal-sub">Load LDX-2841  Coyote Logistics</div>
+    <div class="modal-sub">Load LDX-2841 · Coyote Logistics</div>
 
     <div class="upload-zone" onclick="">
-      <div class="upload-icon">=</div>
+      <div class="upload-icon">📷</div>
       <div class="upload-label">Take Photo</div>
       <div class="upload-sub">Camera opens automatically</div>
     </div>
 
     <div class="upload-zone" style="padding:16px;flex-direction:row;display:flex;align-items:center;gap:12px;text-align:left;" onclick="">
-      <div style="font-size:24px;">=</div>
+      <div style="font-size:24px;">📁</div>
       <div>
         <div class="upload-label" style="margin-bottom:2px;">Choose File</div>
         <div class="upload-sub">PDF, JPG, PNG from phone</div>
@@ -703,7 +705,7 @@ body{
     </div>
 
     <button class="modal-btn" onclick="closeModal('podModal');showSuccess('POD uploaded and linked to LDX-2841')">
-       Submit POD
+      ✓ Submit POD
     </button>
     <button class="modal-btn secondary" onclick="closeModal('podModal')">Cancel</button>
   </div>
@@ -714,7 +716,7 @@ body{
   <div class="modal-sheet" onclick="e=>e.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-title">Enter Mileage</div>
-    <div class="modal-sub">Load LDX-2841  Miami  Atlanta</div>
+    <div class="modal-sub">Load LDX-2841 · Miami → Atlanta</div>
 
     <label class="form-label-sm">Loaded Miles</label>
     <input class="mileage-input" type="number" placeholder="000" inputmode="numeric">
@@ -725,8 +727,8 @@ body{
     <label class="form-label-sm">Power-Only Miles</label>
     <input class="mileage-input" type="number" placeholder="000" inputmode="numeric" style="font-size:20px;">
 
-    <button class="modal-btn" onclick="closeModal('mileageModal');showSuccess('Mileage saved  LDX-2841')">
-       Save Mileage
+    <button class="modal-btn" onclick="closeModal('mileageModal');showSuccess('Mileage saved · LDX-2841')">
+      ✓ Save Mileage
     </button>
     <button class="modal-btn secondary" onclick="closeModal('mileageModal')">Cancel</button>
   </div>
@@ -737,23 +739,23 @@ body{
   <div class="modal-sheet" onclick="e=>e.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-title">Sign Rate Con</div>
-    <div class="modal-sub">LDX-2841  $3,400  Coyote Logistics</div>
+    <div class="modal-sub">LDX-2841 · $3,400 · Coyote Logistics</div>
 
     <div style="background:var(--panel2);border:1px solid var(--border);padding:14px;margin-bottom:14px;">
       <div style="display:flex;flex-direction:column;gap:8px;">
-        <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--muted);">Pickup</span><span style="font-size:12px;font-weight:600;">Miami, FL  Today 6AM</span></div>
-        <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--muted);">Delivery</span><span style="font-size:12px;font-weight:600;">Atlanta, GA  Today 2PM</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--muted);">Pickup</span><span style="font-size:12px;font-weight:600;">Miami, FL · Today 6AM</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--muted);">Delivery</span><span style="font-size:12px;font-weight:600;">Atlanta, GA · Today 2PM</span></div>
         <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--muted);">Rate</span><span style="font-size:14px;font-weight:700;color:var(--green);">$3,400</span></div>
-        <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--muted);">Equipment</span><span style="font-size:12px;">Truck #104  53' Dry Van</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--muted);">Equipment</span><span style="font-size:12px;">Truck #104 · 53' Dry Van</span></div>
       </div>
     </div>
 
     <div style="border:1.5px dashed var(--border2);height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;cursor:pointer;background:rgba(46,109,164,0.03);">
-      <span style="font-size:12px;color:var(--muted);"> Tap to sign</span>
+      <span style="font-size:12px;color:var(--muted);">✍️ Tap to sign</span>
     </div>
 
-    <button class="modal-btn" onclick="closeModal('signModal');showSuccess('Rate Con signed  LDX-2841')">
-       I Agree & Sign
+    <button class="modal-btn" onclick="closeModal('signModal');showSuccess('Rate Con signed · LDX-2841')">
+      ✓ I Agree & Sign
     </button>
     <button class="modal-btn secondary" onclick="closeModal('signModal')">Cancel</button>
   </div>
@@ -764,7 +766,7 @@ body{
   <div class="modal-sheet" onclick="e=>e.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-title" style="color:var(--red);">Report Blowout</div>
-    <div class="modal-sub">Truck #104  Load LDX-2841</div>
+    <div class="modal-sub">Truck #104 · Load LDX-2841</div>
 
     <label class="form-label-sm">Wheel Position</label>
     <select class="form-input-sm" style="color:var(--white);">
@@ -788,15 +790,15 @@ body{
     <input class="form-input-sm" type="text" placeholder="What happened?">
 
     <div class="upload-zone" style="padding:14px;flex-direction:row;display:flex;align-items:center;gap:12px;text-align:left;margin-bottom:0;" onclick="">
-      <div style="font-size:20px;">=</div>
+      <div style="font-size:20px;">📷</div>
       <div>
         <div style="font-size:12px;font-weight:600;color:var(--white);">Add Photos</div>
         <div class="upload-sub">Tire + damage photos</div>
       </div>
     </div>
 
-    <button class="modal-btn" style="background:var(--red);" onclick="closeModal('blowoutModal');showSuccess('Blowout reported  Dispatcher notified')">
-      = Submit Blowout Report
+    <button class="modal-btn" style="background:var(--red);" onclick="closeModal('blowoutModal');showSuccess('Blowout reported · Dispatcher notified')">
+      🚨 Submit Blowout Report
     </button>
     <button class="modal-btn secondary" onclick="closeModal('blowoutModal')">Cancel</button>
   </div>
@@ -819,15 +821,15 @@ body{
     <input class="form-input-sm" type="number" placeholder="$0.00" inputmode="decimal">
 
     <div class="upload-zone" style="padding:14px;flex-direction:row;display:flex;align-items:center;gap:12px;text-align:left;margin-bottom:0;" onclick="">
-      <div style="font-size:20px;">></div>
+      <div style="font-size:20px;">🧾</div>
       <div>
         <div style="font-size:12px;font-weight:600;color:var(--white);">Upload Receipt</div>
         <div class="upload-sub">Photo or PDF of invoice</div>
       </div>
     </div>
 
-    <button class="modal-btn" onclick="closeModal('repairModal');showSuccess('Repair logged  Linked to LDX-2841')">
-       Submit Repair
+    <button class="modal-btn" onclick="closeModal('repairModal');showSuccess('Repair logged · Linked to LDX-2841')">
+      ✓ Submit Repair
     </button>
     <button class="modal-btn secondary" onclick="closeModal('repairModal')">Cancel</button>
   </div>
@@ -842,25 +844,25 @@ body{
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
       <div class="upload-zone" style="padding:20px 10px;text-align:center;">
-        <div style="font-size:24px;margin-bottom:6px;">=</div>
+        <div style="font-size:24px;margin-bottom:6px;">🚛</div>
         <div style="font-size:11px;font-weight:600;color:var(--white);">Truck</div>
       </div>
       <div class="upload-zone" style="padding:20px 10px;text-align:center;">
-        <div style="font-size:24px;margin-bottom:6px;">=</div>
+        <div style="font-size:24px;margin-bottom:6px;">📦</div>
         <div style="font-size:11px;font-weight:600;color:var(--white);">Cargo</div>
       </div>
       <div class="upload-zone" style="padding:20px 10px;text-align:center;">
-        <div style="font-size:24px;margin-bottom:6px;"></div>
+        <div style="font-size:24px;margin-bottom:6px;">⚖️</div>
         <div style="font-size:11px;font-weight:600;color:var(--white);">Scale Ticket</div>
       </div>
       <div class="upload-zone" style="padding:20px 10px;text-align:center;">
-        <div style="font-size:24px;margin-bottom:6px;">=</div>
+        <div style="font-size:24px;margin-bottom:6px;">🔍</div>
         <div style="font-size:11px;font-weight:600;color:var(--white);">Damage</div>
       </div>
     </div>
 
     <button class="modal-btn" onclick="closeModal('photosModal');showSuccess('Photos uploaded to Drive')">
-       Upload Selected
+      ✓ Upload Selected
     </button>
     <button class="modal-btn secondary" onclick="closeModal('photosModal')">Cancel</button>
   </div>
@@ -875,12 +877,12 @@ body{
 
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
       <div style="padding:12px 14px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);">
-        <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:2px;">POD Required  LDX-2841</div>
+        <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:2px;">POD Required — LDX-2841</div>
         <div style="font-size:11px;color:var(--muted);">Please upload delivery proof as soon as possible</div>
       </div>
       <div style="padding:12px 14px;background:rgba(46,109,164,0.06);border:1px solid var(--border2);">
-        <div style="font-size:12px;font-weight:600;color:var(--white);margin-bottom:2px;">New Load Available  LDX-2845</div>
-        <div style="font-size:11px;color:var(--muted);">Atlanta  Chicago  $4,100  Pick up 4PM today</div>
+        <div style="font-size:12px;font-weight:600;color:var(--white);margin-bottom:2px;">New Load Available — LDX-2845</div>
+        <div style="font-size:11px;color:var(--muted);">Atlanta → Chicago · $4,100 · Pick up 4PM today</div>
       </div>
     </div>
 
@@ -910,7 +912,7 @@ function closeModal(id){
 }
 function showSuccess(msg){
   const t=document.getElementById('successToast');
-  t.textContent=' '+msg;
+  t.textContent='✓ '+msg;
   t.style.opacity='1';
   t.style.transform='translateX(-50%) translateY(0)';
   setTimeout(()=>{

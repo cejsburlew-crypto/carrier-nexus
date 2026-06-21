@@ -18,7 +18,7 @@
 html,body{height:100%;background:var(--gunmetal);color:var(--white);font-family:'Barlow',sans-serif;}
 .layout{display:flex;height:100vh;overflow:hidden;}
 .sidebar{width:var(--sidebar-w);background:var(--gunmetal-light);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
-.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.main{margin-left:220px;flex:1;overflow-y:auto;display:flex;flex-direction:column;}
 .sidebar-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;text-decoration:none;}
 .logo-icon{width:32px;height:32px;background:var(--orange);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;color:#fff;flex-shrink:0;}
 .logo-text{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:var(--white);letter-spacing:.06em;line-height:1.2;}
@@ -168,7 +168,7 @@ html,body{height:100%;background:var(--gunmetal);color:var(--white);font-family:
 </div>
 
 <script src="nexus-sidebar.js"></script>
-<script src="nexus-config.js?v=5"></script>
+<script src="nexus-config.js"></script>
 <script>
 
 // ─── SEED DATA (mirrors settlements.html SEED_SETTLEMENTS, dispatcher rows only) ───
@@ -177,7 +177,7 @@ const SEED_DISPATCHER_SETTLEMENTS = [
   {id:"AMT-2026-10",driver:"Amet Abreu",short:"AMET",role:"dispatcher",dispatcher_rate:0.05,service_adj:0,start:"2026-01-20",end:"2026-01-26",loads:9,total_adds:29600,net_pay:1480,status:"draft"},
   {id:"AMT-2026-09",driver:"Amet Abreu",short:"AMET",role:"dispatcher",dispatcher_rate:0.05,service_adj:0,start:"2026-01-13",end:"2026-01-19",loads:4,total_adds:20400,net_pay:1020,status:"draft"},
   {id:"AMT-2026-08",driver:"Amet Abreu",short:"AMET",role:"dispatcher",dispatcher_rate:0.05,service_adj:0,start:"2026-01-06",end:"2026-01-12",loads:6,total_adds:32500,net_pay:1625,status:"draft"},
-  {id:"AMT-2025-07",driver:"Amet Abreu",short:"AMET",role:"dispatcher",dispatcher_rate:0.05,service_adj:0,start:"2025-12-23",end:"2025-12-29",loads:4,total_adds:14750,net_pay:737.50,status:"approved"},
+  {id:"AMT-2025-07",driver:"Amet Abreu",short:"AMET",role:"dispatcher",dispatcher_rate:0.05,service_adj:0,start:"2025-12-23",end:"2025-12-29",loads:3,total_adds:14750,net_pay:737.50,status:"approved"},
   {id:"AMT-2025-06",driver:"Amet Abreu",short:"AMET",role:"dispatcher",dispatcher_rate:0.05,service_adj:0,start:"2025-12-16",end:"2025-12-22",loads:10,total_adds:46550,net_pay:2327.50,status:"approved"},
   {id:"BET-2026-01",driver:"Betty",short:"BETTY",role:"dispatcher",dispatcher_rate:0.05,service_adj:160,start:"2026-05-05",end:"2026-05-18",loads:2,total_adds:14150,net_pay:867.50,status:"draft"},
 ];
@@ -217,7 +217,7 @@ function loadUsers() {
 
 function fmt(n) {
   if (n == null || isNaN(n)) return '$0';
-  return '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:3});
+  return '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 function fmtDate(ds) {
   if (!ds) return '—';
@@ -271,7 +271,7 @@ function renderPage() {
 
     var periodsHtml = g.periods.map(function(p) {
       var comm = Math.round(((p.total_adds||0) * (p.dispatcher_rate||0.05) + (p.service_adj||0)) * 100)/100;
-      var badge = {draft:'_draft',pending:'_pending',approved:'_approved',paid:' _paid'}[p.status]||'_draft';
+      var badge = {draft:'badge-draft',pending:'badge-pending',approved:'badge-approved',paid:'badge-paid'}[p.status]||'badge-draft';
       return '<tr>' +
         '<td><span class="period-id">' + p.id + '</span></td>' +
         '<td>' + fmtDate(p.start) + ' – ' + fmtDate(p.end) + '</td>' +
@@ -279,7 +279,7 @@ function renderPage() {
         '<td style="text-align:right;color:var(--text-mid);">' + fmt(p.total_adds) + '</td>' +
         '<td style="text-align:right;color:var(--orange);font-weight:600;">' + fmt(comm) + '</td>' +
         (p.service_adj ? '<td style="text-align:right;font-size:11px;color:var(--text-muted);">+' + fmt(p.service_adj) + '</td>' : '<td style="text-align:right;font-size:11px;color:var(--text-muted);">—</td>') +
-        '<td style="text-align:center;"><span class="badge badge' + badge + '">' + p.status.toUpperCase() + '</span></td>' +
+        '<td style="text-align:center;"><span class="badge ' + badge + '">' + p.status.toUpperCase() + '</span></td>' +
         '<td style="text-align:right;"><a href="settlements.html" class="btn btn-ghost btn-sm">View</a></td>' +
         '</tr>';
     }).join('');
@@ -320,7 +320,7 @@ function renderPage() {
 }
 
 function toggleDispatcher(header) {
-  var chev = header.querySelector('s.disp-chevron');
+  var chev = header.querySelector('.disp-chevron');
   var periods = header.nextElementSibling;
   var isOpen = chev.classList.contains('open');
   chev.classList.toggle('open', !isOpen);
@@ -396,6 +396,7 @@ function populateFilters() {
   });
 }
 
+// ─── INIT ────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
   _settlements = loadSettlements();
   _assignments = loadAssignments();
