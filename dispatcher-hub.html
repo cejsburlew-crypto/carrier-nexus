@@ -524,8 +524,21 @@ function loadAssignedDrivers() {
     .filter(a => a.dispatcherEmail === myEmail)
     .map(a => a.driverEmail);
 
-  const users = JSON.parse(localStorage.getItem('nexus_users') || '[]');
-  const myDrivers = users.filter(u => u.role === 'driver' && assignedDriverEmails.includes(u.email));
+  // Fallback: if no explicit assignments, use DISPATCHER_MAP from nexus-config.js
+  if (assignedDriverEmails.length === 0) {
+    const MAP = {
+      'amet@carriertuckingus.com':  ['avis@carriertuckingus.com','david@carriertuckingus.com','miguel@carriertuckingus.com','nelson@carriertuckingus.com','yosviel@carriertuckingus.com'],
+      'betty@carriertuckingus.com': ['guillermo@carriertuckingus.com']
+    };
+    assignedDriverEmails = MAP[myEmail] || [];
+  }
+
+  // Read users: prefer NEXUS_LOCAL_USERS (always seeded), fall back to nexus_users localStorage
+  const lsUsers = JSON.parse(localStorage.getItem('nexus_users') || '[]');
+  const allUsers = (window.NEXUS_LOCAL_USERS && window.NEXUS_LOCAL_USERS.length)
+    ? window.NEXUS_LOCAL_USERS
+    : lsUsers;
+  const myDrivers = allUsers.filter(u => u.role === 'driver' && assignedDriverEmails.includes(u.email));
 
   document.getElementById('driverCount').textContent = `${myDrivers.length} driver${myDrivers.length !== 1 ? 's' : ''} assigned`;
 
