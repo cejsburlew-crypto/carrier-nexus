@@ -408,7 +408,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="nexus-config.js?v=5"></script>
+<script src="nexus-config.js"></script>
 <script src="nexus-db.js"></script>
 <script>
 const SEED_SETTLEMENTS = [
@@ -528,7 +528,7 @@ const driverColors = {
 };
 
 function fmt(n){ if(n===0) return '—'; return (n<0?'-':'')+'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-function fmtDate(d){ const dt=new Date(d+'T00:00:00'); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}); }
+function fmtDate(d){ const dt=new Date(d+'T00:00:00'); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
 
 let expandedId = null;
 let settlements = [...SEED_SETTLEMENTS];
@@ -794,7 +794,7 @@ function viewPDF(id){
       <div class="hdr-logo">
         <div class="hdr-mark">CT</div>
         <div class="hdr-co">
-          <div class="hdr-co-name">CARRIER TRUCKING US, LLC</div>
+          <div class="hdr-co-name">CARRIER TRUCKING<br><span>US, LLC · DORAL, FLORIDA</span></div>
         </div>
       </div>
     </div>
@@ -809,8 +809,9 @@ function viewPDF(id){
   </div>
 
   <!-- TITLE -->
-  <div class="stmt-title-row"><span class="stmt-title">${isDisp ? 'Statement of Account' : 'Driver Settlement Statement'}</span><span class="stmt-title-period">: ${isDisp ? fmtLong(s.start)+' – '+fmtLong(s.end) : fmtLong(s.start)+' – '+fmtLong(s.end)}</span></div>
-  
+  <div class="stmt-title">${isDisp ? 'Statement of Account' : 'Driver Settlement Statement'}</div>
+  <div class="stmt-period">${isDisp ? 'Start Date: '+fmtLong(s.start)+'&nbsp;&nbsp;End Date: '+fmtLong(s.end) : 'Pay period '+fmtLong(s.start)+' – '+fmtLong(s.end)}</div>
+
   <!-- INFO TABLE -->
   ${isDisp ? `<table class="info-tbl">
     <thead><tr><th>DISPATCHER</th><th>STATEMENT #</th><th>RATE</th><th>TOTAL PAY</th></tr></thead>
@@ -839,7 +840,7 @@ function viewPDF(id){
     </tbody>
   </table>
 
-  ${s.expenses>0?'<div class="ops-note">Operational expense detail is on the following page.</div>':''}
+  ${s.expenses>0?'<div class="ops-note">Operational expenses detail on the following page.</div>':''}
 
   <!-- SIGNATURE -->
   <div class="sig-row">
@@ -886,7 +887,7 @@ body{font-family:'Barlow',sans-serif;font-size:12px;color:#0f172a;background:#ff
 .hdr-co-name span{font-weight:400;font-size:11px;}
 .hdr-right{text-align:right;font-size:10px;color:#334155;line-height:1.6;}
 .hdr-ids{font-size:9px;font-family:'JetBrains Mono',monospace;color:#475569;padding:5px 0 10px;border-bottom:1px solid #cbd5e1;margin-bottom:14px;}
-.stmt-title-row{display:flex;align-items:baseline;flex-wrap:nowrap;gap:8px;margin-bottom:14px;}.stmt-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:1px;white-space:nowrap;}.stmt-title-period{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#475569;white-space:nowrap;}
+.stmt-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;}
 .stmt-period{font-size:11px;color:#475569;margin-bottom:14px;}
 .info-tbl{width:100%;border-collapse:collapse;margin-bottom:16px;}
 .info-tbl th{background:#0f172a;color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:7px 10px;text-align:left;}
@@ -894,7 +895,7 @@ body{font-family:'Barlow',sans-serif;font-size:12px;color:#0f172a;background:#ff
 .info-tbl td.net-val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:#dc2626;}
 .main-tbl{width:100%;border-collapse:collapse;margin-bottom:12px;}
 .main-tbl th{background:#0f172a;color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:7px 10px;text-align:left;}
-.main-tbl th.ra{text-align:right;}.info-tbl td.net-val,.main-tbl td.ra,.main-tbl tr.sub td,.main-tbl tr.total td,.main-tbl tr.net td,.main-tbl tr.net td.net-val{font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right;font-variant-numeric:tabular-nums;}
+.main-tbl th.ra{text-align:right;}
 .main-tbl td{padding:6px 10px;font-size:11px;border-bottom:1px solid #f1f5f9;vertical-align:top;}
 .main-tbl td.ra{text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;}
 .main-tbl tr.sub td{background:#f8fafc;font-size:11px;border-top:1px solid #cbd5e1;border-bottom:1px solid #cbd5e1;}
@@ -952,7 +953,7 @@ function emailSettlement(){
 .hdr-co-name span{font-weight:400;font-size:11px;}
 .hdr-right{text-align:right;font-size:10px;color:#334155;line-height:1.6;}
 .hdr-ids{font-size:9px;font-family:'JetBrains Mono',monospace;color:#475569;padding:5px 0 10px;border-bottom:1px solid #cbd5e1;margin-bottom:14px;}
-.stmt-title-row{display:flex;align-items:baseline;flex-wrap:nowrap;gap:8px;margin-bottom:14px;}.stmt-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:1px;white-space:nowrap;}.stmt-title-period{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#475569;white-space:nowrap;}
+.stmt-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;}
 .stmt-period{font-size:11px;color:#475569;margin-bottom:14px;}
 .info-tbl{width:100%;border-collapse:collapse;margin-bottom:16px;}
 .info-tbl th{background:#0f172a;color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:7px 10px;text-align:left;}
@@ -960,7 +961,7 @@ function emailSettlement(){
 .info-tbl td.net-val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:#dc2626;}
 .main-tbl{width:100%;border-collapse:collapse;margin-bottom:12px;}
 .main-tbl th{background:#0f172a;color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:7px 10px;text-align:left;}
-.main-tbl th.ra,.main-tbl td.ra{text-align:right;}.info-tbl td.net-val,.main-tbl td.ra,.main-tbl tr.sub td,.main-tbl tr.total td,.main-tbl tr.net td,.main-tbl tr.net td.net-val{font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right;font-variant-numeric:tabular-nums;}
+.main-tbl th.ra,.main-tbl td.ra{text-align:right;}
 .main-tbl td{padding:7px 10px;font-size:11px;border-bottom:1px solid #f1f5f9;vertical-align:top;}
 .main-tbl td.ra{font-family:'JetBrains Mono',monospace;font-size:11px;}
 .main-tbl tr.sub td{background:#f8fafc;font-size:11px;border-top:1px solid #cbd5e1;border-bottom:1px solid #cbd5e1;}

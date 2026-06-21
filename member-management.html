@@ -1,717 +1,476 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Members — Carrier Nexus</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--sb:#000;--orange:#e8640a;--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
+:root{
+  --black:#0f172a;--gunmetal:#1e293b;--gunmetal-light:#293548;--steel:#334155;
+  --steel-blue:#2e6da4;--steel-blue-light:#3d87c8;--ice:#a8c4e0;
+  --white:#f1f5f9;--white-pure:#f8fafc;--orange:#e8640a;--orange-bright:#ff7518;
+  --text-muted:#64748b;--text-mid:#475569;--border:#334155;
+  --red:#ef4444;--green:#22c55e;--yellow:#fbbf24;--pink:#e91e8c;
+}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
-.sidebar{width:220px;min-height:100vh;background:#000;border-right:1px solid #1a1a1a;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
-.sidebar-logo{padding:16px;display:flex;align-items:center;gap:10px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.07);}
-.brand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:2px;color:#fff;}
-.sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.45);letter-spacing:1px;}
-.sidebar-section{padding:12px 0 4px;}
-.sidebar-section-label{padding:0 16px 6px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:rgba(255,255,255,0.3);letter-spacing:1.5px;text-transform:uppercase;display:block;}
-.sidebar-link{display:flex;align-items:center;gap:10px;padding:7px 16px;text-decoration:none;color:#a0aec0;font-size:13px;border-left:3px solid transparent;transition:all .15s;}
-.sidebar-link:hover{background:rgba(233,30,140,0.14);border-left-color:#c2185b;color:#fff;}
-.sidebar-link.active{background:rgba(233,30,140,0.22);border-left:3px solid #e91e8c;color:#fff;}
-.sidebar-spacer{flex:1;}
-.sidebar-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.07);}
-.user-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.6);font-weight:500;}
-.user-role{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);margin-top:2px;}
-.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
-.topbar{height:56px;background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50;}
-.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#fff;flex:1;}
-.content{padding:24px 28px 48px;}
-/* KPIs */
-.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
-.kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;}
-.kpi-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
-.kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:#0f172a;line-height:1;}
-.kpi-sub{font-size:11px;color:var(--blue);margin-top:4px;}
-/* LAYOUT */
-.two-col{display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start;}
-/* PANEL */
-.panel{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
-.panel-head{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:#0f172a;letter-spacing:.06em;text-transform:uppercase;}
-/* TABLE */
-.tbl-wrap{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;}
-th{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;text-align:left;background:#f8fafc;border-bottom:1px solid var(--border);white-space:nowrap;}
-td{padding:10px 14px;font-size:13px;color:#0f172a;border-bottom:1px solid #f8fafc;vertical-align:middle;}
-tr:last-child td{border-bottom:none;}
-tr.row-inactive td{opacity:.5;background:#fafafa;}
-tr.row-terminated td{opacity:.4;background:#fef2f2;}
-tr:hover:not(.row-inactive):not(.row-terminated) td{background:#f8fafc;cursor:pointer;}
-/* BADGES */
-.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;display:inline-block;}
-.badge-green{background:#dcfce7;color:#15803d;}
-.badge-red{background:#fee2e2;color:#b91c1c;}
-.badge-gray{background:#f1f5f9;color:#64748b;}
-.badge-yellow{background:#fef9c3;color:#a16207;}
-.badge-blue{background:#dbeafe;color:#1d4ed8;}
-.badge-purple{background:#ede9fe;color:#6d28d9;}
-.badge-orange{background:#ffedd5;color:#c2410c;}
-.badge-pink{background:#fce7f3;color:#be185d;}
-.mid-id{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue);font-weight:600;letter-spacing:.05em;}
-/* BTNS */
-.btn{padding:7px 16px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.8px;cursor:pointer;border:1px solid var(--border);background:#fff;color:#334155;transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
-.btn:hover{background:#f1f5f9;}
-.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue);}
-.btn-primary:hover{background:#1d5a8a;}
-.btn-orange{background:var(--orange);color:#fff;border-color:var(--orange);}
-.btn-green{background:#16a34a;color:#fff;border-color:#16a34a;}
-.btn-red{background:#dc2626;color:#fff;border-color:#dc2626;}
-.btn-sm{padding:4px 10px;font-size:11px;}
-/* FILTER TABS */
-.filter-tabs{display:flex;gap:2px;background:#f1f5f9;padding:3px;border-radius:8px;}
-.filter-tab{padding:5px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:none;color:#64748b;transition:all .15s;}
-.filter-tab.active{background:#fff;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,.1);}
-/* DETAIL PANEL */
-.detail-panel{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;position:sticky;top:76px;}
-.detail-header{background:linear-gradient(135deg,#0f172a,#1e3a5f);padding:20px;}
-.detail-mid{font-family:'JetBrains Mono',monospace;font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:4px;}
-.detail-name{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:#fff;letter-spacing:.05em;}
-.detail-type{font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px;}
-.detail-body{padding:20px;display:flex;flex-direction:column;gap:14px;}
-.detail-field{display:flex;flex-direction:column;gap:3px;}
-.detail-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
-.detail-value{font-size:13px;color:#0f172a;}
-.detail-actions{padding:0 20px 20px;display:flex;flex-direction:column;gap:8px;}
-.detail-section-title{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;padding:12px 20px 6px;border-top:1px solid #f1f5f9;}
-/* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;align-items:center;justify-content:center;}
-.modal-overlay.open{display:flex;}
-.modal-box{background:#fff;border-radius:10px;width:96%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);}
-.modal-hdr{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:18px 24px;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1;}
-.modal-hdr-title{color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:2px;}
-.modal-close{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1;}
-.modal-body{padding:24px;display:flex;flex-direction:column;gap:14px;}
-.form-group{display:flex;flex-direction:column;gap:5px;}
-.form-label{font-size:11px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:1px;}
-.form-label .req{color:#ef4444;}
-.form-input{width:100%;padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:6px;font-size:14px;color:#0f172a;font-family:'Barlow',sans-serif;background:#fff;}
-.form-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(46,109,164,.12);}
-.modal-footer{padding:0 24px 24px;display:flex;gap:10px;justify-content:flex-end;}
-/* ROLES CHECKBOXES */
-.roles-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.role-check{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:6px;cursor:pointer;transition:all .15s;}
-.role-check:hover{border-color:var(--blue);}
-.role-check input{width:15px;height:15px;cursor:pointer;accent-color:var(--blue);}
-.role-check span{font-size:13px;font-weight:600;}
-/* REJOIN QUEUE */
-.rejoin-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #f1f5f9;}
-.rejoin-row:last-child{border-bottom:none;}
-/* EMPTY STATE */
-.empty-state{padding:48px 20px;text-align:center;color:var(--muted);}
-.empty-state svg{width:48px;height:48px;opacity:.3;margin-bottom:12px;}
-/* PENDING INVITE BADGE */
-.badge-invite{background:#fff9e6;color:#92400e;border:1px dashed #fbbf24;}
+body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+
+/* ── MAIN ── */
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-right .3s;}
+.main.panel-open{margin-right:360px;}
+
+/* ── TOPBAR ── */
+.topbar{padding:18px 28px 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;letter-spacing:2px;text-transform:uppercase;}
+.status-live{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green);letter-spacing:1px;}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
+.btn-primary{background:var(--orange);color:#fff;}
+.btn-primary:hover{background:var(--orange-bright);}
+.btn-ghost{background:transparent;color:var(--text-mid);border:1px solid var(--border);}
+.btn-ghost:hover{color:var(--white);border-color:var(--steel-blue);}
+.topbar-spacer{flex:1;}
+
+/* ── CONTENT ── */
+.content{padding:20px 28px 60px;}
+
+/* ── STAT CARDS ── */
+.stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px;}
+.stat-card{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;padding:16px 18px;cursor:pointer;transition:border-color .15s;}
+.stat-card:hover{border-color:var(--steel-blue);}
+.stat-card.active-filter{border-color:var(--orange);background:rgba(232,100,10,.08);}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;}
+.stat-val.green{color:var(--green);}
+.stat-val.red{color:var(--red);}
+.stat-val.yellow{color:var(--yellow);}
+.stat-val.muted{color:var(--text-muted);}
+.stat-val.pink{color:var(--pink);}
+
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+.filter-select{background:var(--gunmetal);border:1px solid var(--border);color:var(--white);padding:6px 12px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;cursor:pointer;outline:none;}
+.filter-select:focus{border-color:var(--steel-blue);}
+.search-input{background:var(--gunmetal);border:1px solid var(--border);color:var(--white);padding:6px 12px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;outline:none;width:220px;}
+.search-input::placeholder{color:var(--text-muted);}
+.search-input:focus{border-color:var(--steel-blue);}
+.member-count{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-left:auto;}
+
+/* ── MEMBER GRID ── */
+.member-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.member-card{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:border-color .15s,background .15s;position:relative;}
+.member-card:hover{border-color:var(--steel-blue);background:var(--gunmetal-light);}
+.member-card.selected{border-color:var(--orange);background:rgba(232,100,10,.06);}
+
+.mc-top{display:flex;align-items:flex-start;gap:12px;}
+.mc-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;flex-shrink:0;}
+.mc-info{flex:1;min-width:0;}
+.mc-name{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mc-id{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:2px;letter-spacing:.5px;}
+.mc-badges{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap;}
+
+/* ── BADGES ── */
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.badge-admin    {background:rgba(232,100,10,.18);color:var(--orange);border:1px solid rgba(232,100,10,.3);}
+.badge-approver {background:rgba(168,196,224,.12);color:var(--ice);border:1px solid rgba(168,196,224,.25);}
+.badge-dispatcher{background:rgba(233,30,140,.12);color:var(--pink);border:1px solid rgba(233,30,140,.25);}
+.badge-owner_operator{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25);}
+.badge-driver   {background:rgba(46,109,164,.15);color:#60a5fa;border:1px solid rgba(46,109,164,.3);}
+.badge-staff    {background:rgba(251,191,36,.12);color:var(--yellow);border:1px solid rgba(251,191,36,.25);}
+.badge-status-active    {background:rgba(34,197,94,.1);color:var(--green);}
+.badge-status-inactive  {background:rgba(100,116,139,.1);color:var(--text-muted);}
+.badge-status-terminated{background:rgba(239,68,68,.1);color:var(--red);}
+.badge-status-pending   {background:rgba(251,191,36,.1);color:var(--yellow);}
+.badge-status-pending_rejoin{background:rgba(233,30,140,.1);color:var(--pink);}
+
+/* MC/DOT info row */
+.mc-authority{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;}
+.authority-chip{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ice);background:rgba(168,196,224,.08);border:1px solid rgba(168,196,224,.15);padding:2px 8px;border-radius:3px;letter-spacing:.5px;}
+
+/* ── SIDE DETAIL PANEL ── */
+.detail-panel{position:fixed;top:0;right:-360px;width:360px;height:100vh;background:var(--gunmetal);border-left:1px solid var(--border);z-index:200;display:flex;flex-direction:column;transition:right .3s;overflow-y:auto;}
+.detail-panel.open{right:0;}
+.dp-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--gunmetal);z-index:1;}
+.dp-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
+.dp-close{background:none;border:1px solid var(--border);color:var(--text-muted);width:28px;height:28px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s;}
+.dp-close:hover{border-color:var(--red);color:var(--red);}
+.dp-body{padding:20px;}
+.dp-avatar-row{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.dp-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;flex-shrink:0;}
+.dp-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;}
+.dp-member-id{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:3px;}
+
+.dp-section{margin-bottom:18px;}
+.dp-section-title{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--text-muted);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.dp-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(51,65,85,.5);}
+.dp-row:last-child{border-bottom:none;}
+.dp-lbl{font-size:11px;color:var(--text-muted);}
+.dp-val{font-size:12px;font-weight:500;text-align:right;max-width:200px;word-break:break-word;}
+.dp-val.mono{font-family:'JetBrains Mono',monospace;font-size:11px;}
+
+.dp-actions{padding:16px 20px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;position:sticky;bottom:0;background:var(--gunmetal);}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-muted);}
+.empty-state-icon{font-size:40px;margin-bottom:12px;opacity:.4;}
+.empty-state-text{font-size:14px;}
 </style>
 </head>
 <body>
 <script src="nexus-sidebar.js"></script>
-<div class="main">
+<div class="main" id="main-content">
   <div class="topbar">
-    <div class="topbar-title">MEMBER MANAGEMENT</div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-orange" onclick="openInviteModal()">+ Invite Member</button>
-    </div>
+    <div class="topbar-title">MEMBERS</div>
+    <div class="status-live"><span class="status-dot"></span>LIVE</div>
+    <div class="topbar-spacer"></div>
+    <button class="btn btn-ghost" onclick="exportRoster()">Export</button>
+    <button class="btn btn-primary" onclick="openInviteModal()">+ Invite Member</button>
   </div>
+
   <div class="content">
 
-    <div class="kpi-row">
-      <div class="kpi-card">
-        <div class="kpi-label">Active Members</div>
-        <div class="kpi-val" id="kpi-active" style="color:#16a34a;">0</div>
-        <div class="kpi-sub">Carrier Trucking US</div>
+    <!-- STAT CARDS -->
+    <div class="stat-row" id="stat-row">
+      <div class="stat-card" id="sc-active" onclick="applyStatusFilter('active',this)">
+        <div class="stat-label">Active</div>
+        <div class="stat-val green" id="cnt-active">—</div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Inactive</div>
-        <div class="kpi-val" id="kpi-inactive" style="color:#64748b;">0</div>
-        <div class="kpi-sub">Deactivated — not assignable</div>
+      <div class="stat-card" id="sc-inactive" onclick="applyStatusFilter('inactive',this)">
+        <div class="stat-label">Inactive</div>
+        <div class="stat-val muted" id="cnt-inactive">—</div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Terminated</div>
-        <div class="kpi-val" id="kpi-terminated" style="color:#ef4444;">0</div>
-        <div class="kpi-sub">Do not rehire flagged</div>
+      <div class="stat-card" id="sc-terminated" onclick="applyStatusFilter('terminated',this)">
+        <div class="stat-label">Terminated</div>
+        <div class="stat-val red" id="cnt-terminated">—</div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Pending Approvals</div>
-        <div class="kpi-val" id="kpi-pending" style="color:#f59e0b;">0</div>
-        <div class="kpi-sub" id="kpi-pending-sub">Requires Approver/Admin</div>
+      <div class="stat-card" id="sc-pending" onclick="applyStatusFilter('pending',this)">
+        <div class="stat-label">Pending</div>
+        <div class="stat-val yellow" id="cnt-pending">—</div>
       </div>
-    </div>
-
-    <div class="two-col">
-      <!-- MAIN ROSTER -->
-      <div style="display:flex;flex-direction:column;gap:16px;">
-
-        <!-- PENDING REJOIN QUEUE -->
-        <div class="panel" id="rejoin-panel" style="display:none;">
-          <div class="panel-head">
-            <span class="panel-title" style="color:#f59e0b;">⏳ Re-Join Requests</span>
-            <span style="font-size:12px;color:var(--muted);">Admin or Approver must approve before member is reactivated</span>
-          </div>
-          <div id="rejoin-list"></div>
-        </div>
-
-        <!-- ROSTER PANEL -->
-        <div class="panel">
-          <div class="panel-head">
-            <span class="panel-title">Roster — Carrier Trucking US</span>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <div class="filter-tabs" id="status-tabs">
-                <button class="filter-tab active" data-val="" onclick="setFilter('')">All</button>
-                <button class="filter-tab" data-val="active" onclick="setFilter('active')">Active</button>
-                <button class="filter-tab" data-val="inactive" onclick="setFilter('inactive')">Inactive</button>
-                <button class="filter-tab" data-val="terminated" onclick="setFilter('terminated')">Terminated</button>
-              </div>
-              <select id="f-role" onchange="render()" class="btn btn-sm" style="font-family:'Barlow',sans-serif;">
-                <option value="">All Roles</option>
-                <option value="admin">Admin</option>
-                <option value="dispatcher">Dispatcher</option>
-                <option value="driver">Driver</option>
-                <option value="owner_operator">Owner Operator</option>
-                <option value="preparer">Preparer</option>
-              </select>
-            </div>
-          </div>
-          <div class="tbl-wrap">
-            <table>
-              <thead><tr>
-                <th>Member ID</th>
-                <th>Name</th>
-                <th>Type / Roles</th>
-                <th>Status</th>
-                <th>MC / DOT</th>
-                <th>Joined</th>
-                <th>Actions</th>
-              </tr></thead>
-              <tbody id="roster-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- DETAIL PANEL -->
-      <div id="detail-wrap">
-        <div class="detail-panel" id="detail-panel">
-          <div class="detail-header" style="text-align:center;padding:40px 20px;">
-            <div style="font-size:32px;margin-bottom:8px;opacity:.4;">👤</div>
-            <div style="font-size:13px;color:rgba(255,255,255,0.4);">Select a member to view details</div>
-          </div>
-        </div>
+      <div class="stat-card" id="sc-rejoin" onclick="applyStatusFilter('pending_rejoin',this)">
+        <div class="stat-label">Re-Join Requests</div>
+        <div class="stat-val pink" id="cnt-rejoin">—</div>
       </div>
     </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <select class="filter-select" id="type-filter" onchange="renderGrid()">
+        <option value="">All Types</option>
+        <option value="admin">Admin</option>
+        <option value="approver">Approver</option>
+        <option value="dispatcher">Dispatcher</option>
+        <option value="owner_operator">Owner Operator</option>
+        <option value="driver">Driver</option>
+        <option value="staff">Staff</option>
+      </select>
+      <input class="search-input" id="search-input" type="text" placeholder="Search members…" oninput="renderGrid()">
+      <span class="member-count" id="member-count">— MEMBERS</span>
+    </div>
+
+    <!-- MEMBER GRID -->
+    <div class="member-grid" id="member-grid"></div>
+
   </div>
 </div>
 
-<!-- INVITE MODAL -->
-<div class="modal-overlay" id="invite-modal">
-  <div class="modal-box">
-    <div class="modal-hdr">
-      <span class="modal-hdr-title">INVITE MEMBER</span>
-      <button class="modal-close" onclick="closeModal('invite-modal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:13px;color:var(--muted);line-height:1.6;">A unique Member ID will be generated automatically when they first log in. You can add them now and fill in their email later if needed.</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-        <div class="form-group">
-          <label class="form-label">First Name <span class="req">*</span></label>
-          <input type="text" id="inv-first" class="form-input" placeholder="First">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Last Name <span class="req">*</span></label>
-          <input type="text" id="inv-last" class="form-input" placeholder="Last">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Email</label>
-        <input type="email" id="inv-email" class="form-input" placeholder="their@email.com (optional for now)">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Phone</label>
-        <input type="tel" id="inv-phone" class="form-input" placeholder="(555) 000-0000">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Type</label>
-        <select id="inv-type" class="form-input">
-          <option value="driver">Driver</option>
-          <option value="owner_operator">Owner Operator</option>
-          <option value="dispatcher">Dispatcher</option>
-          <option value="admin">Admin</option>
-          <option value="preparer">Preparer</option>
-          <option value="staff">Staff</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Roles for Carrier Trucking</label>
-        <div class="roles-grid">
-          <label class="role-check"><input type="checkbox" value="driver" id="ir-driver"><span>Driver</span></label>
-          <label class="role-check"><input type="checkbox" value="owner_operator" id="ir-oo"><span>Owner Operator</span></label>
-          <label class="role-check"><input type="checkbox" value="dispatcher" id="ir-disp"><span>Dispatcher</span></label>
-          <label class="role-check"><input type="checkbox" value="preparer" id="ir-prep"><span>Preparer</span></label>
-          <label class="role-check"><input type="checkbox" value="approver" id="ir-appr"><span>Approver</span></label>
-          <label class="role-check"><input type="checkbox" value="admin" id="ir-admin"><span>Admin</span></label>
-          <label class="role-check"><input type="checkbox" value="viewer" id="ir-view"><span>Viewer</span></label>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-        <div class="form-group">
-          <label class="form-label">MC Number</label>
-          <input type="text" id="inv-mc" class="form-input" placeholder="MC 000000 (OO only)">
-        </div>
-        <div class="form-group">
-          <label class="form-label">DOT Number</label>
-          <input type="text" id="inv-dot" class="form-input" placeholder="US DOT 000000">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Notes</label>
-        <input type="text" id="inv-notes" class="form-input" placeholder="Any notes about this member">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('invite-modal')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveInvite()">ADD MEMBER</button>
-    </div>
+<!-- SIDE DETAIL PANEL -->
+<div class="detail-panel" id="detail-panel">
+  <div class="dp-header">
+    <span class="dp-title">Member Detail</span>
+    <button class="dp-close" onclick="closePanel()" title="Close">✕</button>
+  </div>
+  <div class="dp-body" id="dp-body">
+    <!-- populated by JS -->
+  </div>
+  <div class="dp-actions">
+    <button class="btn btn-ghost" onclick="copyInviteLink()" id="dp-invite-btn">📋 Copy Invite Link</button>
+    <button class="btn btn-ghost" onclick="closePanel()">Close</button>
   </div>
 </div>
 
-<!-- EDIT MODAL -->
-<div class="modal-overlay" id="edit-modal">
-  <div class="modal-box">
-    <div class="modal-hdr">
-      <span class="modal-hdr-title">EDIT MEMBER</span>
-      <button class="modal-close" onclick="closeModal('edit-modal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="edit-mid">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-        <div class="form-group">
-          <label class="form-label">First Name</label>
-          <input type="text" id="edit-first" class="form-input">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Last Name</label>
-          <input type="text" id="edit-last" class="form-input">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Email</label>
-        <input type="email" id="edit-email" class="form-input">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Phone</label>
-        <input type="tel" id="edit-phone" class="form-input">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Type</label>
-        <select id="edit-type" class="form-input">
-          <option value="driver">Driver</option>
-          <option value="owner_operator">Owner Operator</option>
-          <option value="dispatcher">Dispatcher</option>
-          <option value="admin">Admin</option>
-          <option value="preparer">Preparer</option>
-          <option value="staff">Staff</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Roles for This Company</label>
-        <div class="roles-grid" id="edit-roles-grid"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-        <div class="form-group">
-          <label class="form-label">MC Number</label>
-          <input type="text" id="edit-mc" class="form-input">
-        </div>
-        <div class="form-group">
-          <label class="form-label">DOT Number</label>
-          <input type="text" id="edit-dot" class="form-input">
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('edit-modal')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveEdit()">SAVE CHANGES</button>
-    </div>
-  </div>
-</div>
-
-<script src="nexus-config.js?v=5"></script>
-<script src="nexus-db.js?v=3"></script>
+<script src="nexus-config.js"></script>
 <script>
-// ── HELPERS ────────────────────────────────────────────────────────────────
-const COMPANY_ID = 'carrier-trucking-us';
-const ROLES_ALL = ['admin','approver','dispatcher','driver','owner_operator','preparer','viewer'];
-const ROLE_LABELS = { admin:'Admin', approver:'Approver', dispatcher:'Dispatcher', driver:'Driver', owner_operator:'Owner Op', preparer:'Preparer', viewer:'Viewer' };
-const STATUS_BADGE = { active:'badge-green', inactive:'badge-gray', terminated:'badge-red', pending_rejoin:'badge-yellow', invited:'badge-invite' };
-const TYPE_BADGE = { admin:'badge-pink', approver:'badge-pink', dispatcher:'badge-purple', driver:'badge-blue', owner_operator:'badge-orange', preparer:'badge-blue', staff:'badge-gray' };
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function fmtDate(d){
+  if(!d) return '—';
+  const [y,m,day] = d.split('-');
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(m,10)-1]+' '+parseInt(day,10)+', '+y;
+}
 
-function currentUser() {
-  try { const s = JSON.parse(localStorage.getItem('nexus_session')||'{}'); return s.name||s.email||'Admin'; } catch(e){ return 'Admin'; }
+// Strip the .0 version suffix from memberId for display
+function displayId(memberId){
+  return memberId ? memberId.replace(/\.0$/, '') : '—';
 }
-function currentMemberId() {
-  try { const s = JSON.parse(localStorage.getItem('nexus_session')||'{}'); return s.memberId||''; } catch(e){ return ''; }
+
+// Type → human-readable label
+function typeLabel(t){
+  const map={admin:'Admin',approver:'Approver',dispatcher:'Dispatcher',
+    owner_operator:'Owner Op',driver:'Driver',staff:'Staff'};
+  return map[t]||t||'—';
 }
-function canManageMembers() {
-  // Only admin or approver role may add, activate, deactivate, or terminate members
+
+// Avatar initials + background
+const AVATAR_COLORS={
+  admin:'#4a1a0a',approver:'#0a1a2f',dispatcher:'#2d0a1f',
+  owner_operator:'#0a2a1a',driver:'#0a1a3a',staff:'#2a2a0a'
+};
+const AVATAR_TEXT_COLORS={
+  admin:var_or('#e8640a'),approver:var_or('#a8c4e0'),dispatcher:var_or('#e91e8c'),
+  owner_operator:var_or('#22c55e'),driver:var_or('#60a5fa'),staff:var_or('#fbbf24')
+};
+function var_or(c){return c;}
+function initials(m){
+  return ((m.firstName||'')[0]||'').toUpperCase()+((m.lastName||'')[0]||'').toUpperCase();
+}
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let _allMembers = [];       // member profiles
+let _companyMap = {};       // memberId → company membership record
+let _statusFilter = '';     // active stat card filter
+let _selectedId  = null;    // selected member ID
+
+// ─── Load data ────────────────────────────────────────────────────────────────
+function loadData(){
+  // Pull from localStorage (seeded by nexus-config.js), fall back to seeds
   try {
-    const s = JSON.parse(localStorage.getItem('nexus_session')||'{}');
-    const role = (s.role||'').toLowerCase();
-    if (role === 'admin' || role === 'approver') return true;
-    // Also check company membership roles
-    const mid = s.memberId||'';
-    if (!mid) return false;
-    const cm = loadCM().find(c => c.memberId===mid && c.companyId===COMPANY_ID);
-    return cm && (cm.roles||[]).some(r => r==='admin' || r==='approver');
-  } catch(e){ return false; }
-}
-function fmt(iso) {
-  if(!iso) return '—';
-  return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'});
-}
-function loadMembers() {
-  try { return JSON.parse(localStorage.getItem('nexus_member_profiles')||'[]'); } catch(e){ return window.NEXUS_SEED_MEMBERS||[]; }
-}
-function loadCM() {
-  try { return JSON.parse(localStorage.getItem('nexus_company_members')||'[]'); } catch(e){ return window.NEXUS_SEED_COMPANY_MEMBERS||[]; }
-}
-function saveMem(arr) { localStorage.setItem('nexus_member_profiles', JSON.stringify(arr)); }
-function saveCM(arr) { localStorage.setItem('nexus_company_members', JSON.stringify(arr)); }
-function getCM(memberId) {
-  return loadCM().find(cm => cm.memberId===memberId && cm.companyId===COMPANY_ID);
-}
-function roleBadges(roles) {
-  return (roles||[]).map(r => `<span class="badge badge-blue" style="font-size:9px;padding:2px 6px;margin:1px;">${ROLE_LABELS[r]||r}</span>`).join(' ');
+    _allMembers = JSON.parse(localStorage.getItem('nexus_member_profiles')||'[]');
+  } catch(e){ _allMembers = []; }
+  if(!_allMembers.length && window.NEXUS_SEED_MEMBERS){
+    _allMembers = window.NEXUS_SEED_MEMBERS;
+  }
+
+  let companyMembers = [];
+  try {
+    companyMembers = JSON.parse(localStorage.getItem('nexus_company_members')||'[]');
+  } catch(e){ companyMembers = []; }
+  if(!companyMembers.length && window.NEXUS_SEED_COMPANY_MEMBERS){
+    companyMembers = window.NEXUS_SEED_COMPANY_MEMBERS;
+  }
+  _companyMap = {};
+  companyMembers.forEach(function(cm){ _companyMap[cm.memberId] = cm; });
 }
 
-// ── STATE ─────────────────────────────────────────────────────────────────
-let _filterStatus = '';
-let _filterRole = '';
-let _selectedMid = null;
+// ─── Stat cards ───────────────────────────────────────────────────────────────
+function updateStats(){
+  const counts={active:0,inactive:0,terminated:0,pending:0,pending_rejoin:0};
+  _allMembers.forEach(function(m){
+    const cm = _companyMap[m.memberId];
+    const status = cm ? cm.status : 'active';
+    if(counts[status]!==undefined) counts[status]++;
+  });
+  document.getElementById('cnt-active').textContent    = counts.active;
+  document.getElementById('cnt-inactive').textContent  = counts.inactive;
+  document.getElementById('cnt-terminated').textContent= counts.terminated;
+  document.getElementById('cnt-pending').textContent   = counts.pending;
+  document.getElementById('cnt-rejoin').textContent    = counts.pending_rejoin;
+}
 
-// ── RENDER ─────────────────────────────────────────────────────────────────
-function render() {
-  const members = loadMembers();
-  const cms = loadCM();
-  const fRole = document.getElementById('f-role').value;
-  _filterRole = fRole;
+function applyStatusFilter(status, el){
+  if(_statusFilter===status){
+    // Toggle off
+    _statusFilter='';
+    document.querySelectorAll('.stat-card').forEach(function(c){c.classList.remove('active-filter');});
+  } else {
+    _statusFilter=status;
+    document.querySelectorAll('.stat-card').forEach(function(c){c.classList.remove('active-filter');});
+    el.classList.add('active-filter');
+  }
+  renderGrid();
+}
 
-  // Build merged list for this company
-  const rows = cms
-    .filter(cm => cm.companyId === COMPANY_ID)
-    .map(cm => {
-      const p = members.find(m => m.memberId === cm.memberId);
-      return p ? { ...p, cm } : null;
-    })
-    .filter(Boolean);
+// ─── Badge HTML ───────────────────────────────────────────────────────────────
+function typeBadge(type){
+  return '<span class="badge badge-'+type+'">'+typeLabel(type)+'</span>';
+}
+function statusBadge(status){
+  const labels={active:'Active',inactive:'Inactive',terminated:'Terminated',
+    pending:'Pending',pending_rejoin:'Re-Join'};
+  return '<span class="badge badge-status-'+status+'">'+(labels[status]||status)+'</span>';
+}
 
-  // Filter
-  const filtered = rows.filter(r => {
-    if(_filterStatus && r.cm.status !== _filterStatus) return false;
-    if(fRole && !(r.cm.roles||[]).includes(fRole)) return false;
+// ─── Render grid ─────────────────────────────────────────────────────────────
+function renderGrid(){
+  const typeVal = document.getElementById('type-filter').value.toLowerCase();
+  const query   = document.getElementById('search-input').value.toLowerCase().trim();
+
+  let visible = _allMembers.filter(function(m){
+    const cm      = _companyMap[m.memberId];
+    const status  = cm ? cm.status : 'active';
+    const mtype   = (m.type||'').toLowerCase();
+
+    if(_statusFilter && status !== _statusFilter) return false;
+    if(typeVal       && mtype  !== typeVal)        return false;
+    if(query){
+      const full = ((m.firstName||'')+' '+(m.lastName||'')+' '+(m.memberId||'')+' '+mtype).toLowerCase();
+      if(!full.includes(query)) return false;
+    }
     return true;
   });
 
-  // KPIs
-  document.getElementById('kpi-active').textContent = rows.filter(r=>r.cm.status==='active').length;
-  document.getElementById('kpi-inactive').textContent = rows.filter(r=>r.cm.status==='inactive').length;
-  document.getElementById('kpi-terminated').textContent = rows.filter(r=>r.cm.status==='terminated').length;
-  const pending = rows.filter(r=>r.cm.status==='pending_rejoin');
-  document.getElementById('kpi-pending').textContent = pending.length;
+  document.getElementById('member-count').textContent = visible.length+' MEMBER'+(visible.length!==1?'S':'');
 
-  // Rejoin queue
-  const rjPanel = document.getElementById('rejoin-panel');
-  if(pending.length) {
-    rjPanel.style.display='block';
-    document.getElementById('rejoin-list').innerHTML = pending.map(r => `
-      <div class="rejoin-row">
-        <div>
-          <span class="mid-id">${r.memberId}</span>
-          <strong style="margin-left:8px;">${r.firstName} ${r.lastName}</strong>
-          <span style="font-size:11px;color:var(--muted);margin-left:8px;">requested re-join ${fmt(r.cm.rejoinRequestedAt)}</span>
-        </div>
-        <div style="display:flex;gap:6px;">
-          <button class="btn btn-green btn-sm" onclick="approveRejoin('${r.memberId}')">✓ Approve</button>
-          <button class="btn btn-red btn-sm" onclick="denyRejoin('${r.memberId}')">✕ Deny</button>
-        </div>
-      </div>`).join('');
-  } else {
-    rjPanel.style.display='none';
-  }
-
-  // Roster table
-  const tbody = document.getElementById('roster-tbody');
-  if(!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:32px;">No members match filter.</td></tr>';
-    updateKPIs();
+  if(!visible.length){
+    document.getElementById('member-grid').innerHTML =
+      '<div class="empty-state" style="grid-column:1/-1;">' +
+        '<div class="empty-state-icon">👥</div>' +
+        '<div class="empty-state-text">No members match your filters.</div>' +
+      '</div>';
     return;
   }
-  tbody.innerHTML = filtered.map(r => {
-    const rowClass = r.cm.status==='terminated' ? 'row-terminated' : r.cm.status==='inactive' ? 'row-inactive' : '';
-    return `<tr class="${rowClass}" onclick="selectMember('${r.memberId}')">
-      <td><span class="mid-id">${r.memberId}</span></td>
-      <td><strong>${r.firstName} ${r.lastName}</strong>${r.email ? `<br><span style="font-size:11px;color:var(--muted);">${r.email}</span>` : ''}</td>
-      <td>
-        <span class="badge ${TYPE_BADGE[r.type]||'badge-gray'}" style="font-size:9px;margin-bottom:3px;">${r.type}</span>
-        <div style="margin-top:3px;">${roleBadges(r.cm.roles)}</div>
-      </td>
-      <td><span class="badge ${STATUS_BADGE[r.cm.status]||'badge-gray'}">${r.cm.status}</span></td>
-      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">
-        ${r.mc ? `<div>${r.mc}</div>` : ''}
-        ${r.dot ? `<div style="color:var(--muted);">${r.dot}</div>` : ''}
-        ${!r.mc && !r.dot ? '—' : ''}
-      </td>
-      <td style="font-size:11px;color:var(--muted);">${fmt(r.cm.joinedAt)}</td>
-      <td>
-        <div style="display:flex;gap:4px;flex-wrap:nowrap;">
-          <button class="btn btn-sm" onclick="event.stopPropagation();openEdit('${r.memberId}')">✏️</button>
-          ${r.cm.status==='active'
-            ? `<button class="btn btn-sm" onclick="event.stopPropagation();deactivate('${r.memberId}')" title="Deactivate">⏸</button>`
-            : r.cm.status==='inactive'
-              ? `<button class="btn btn-sm btn-green" onclick="event.stopPropagation();activate('${r.memberId}')" title="Reactivate">▶</button>`
-              : ''}
-          ${r.cm.status!=='terminated'
-            ? `<button class="btn btn-sm" style="color:#dc2626;" onclick="event.stopPropagation();terminate('${r.memberId}')" title="Terminate">🚫</button>`
-            : `<button class="btn btn-sm btn-green" onclick="event.stopPropagation();activate('${r.memberId}')" title="Reactivate from termination">↩️</button>`}
-        </div>
-      </td>
-    </tr>`;
+
+  document.getElementById('member-grid').innerHTML = visible.map(function(m){
+    const cm      = _companyMap[m.memberId];
+    const status  = cm ? cm.status : 'active';
+    const type    = m.type||'driver';
+    const bg      = AVATAR_COLORS[type]||'#1e293b';
+    const tc      = AVATAR_TEXT_COLORS[type]||'#a8c4e0';
+    const ini     = initials(m);
+    const fullName= (m.firstName||'')+' '+(m.lastName||'');
+    const dispId  = displayId(m.memberId);
+    const isSelected = _selectedId === m.memberId;
+
+    let authorityHTML='';
+    if(m.mc||m.dot){
+      authorityHTML='<div class="mc-authority">';
+      if(m.mc) authorityHTML+='<span class="authority-chip">'+m.mc+'</span>';
+      if(m.dot) authorityHTML+='<span class="authority-chip">'+m.dot+'</span>';
+      authorityHTML+='</div>';
+    }
+
+    return '<div class="member-card'+(isSelected?' selected':'')+'" onclick="selectMember(\''+m.memberId+'\')">' +
+      '<div class="mc-top">' +
+        '<div class="mc-avatar" style="background:'+bg+';color:'+tc+'">'+ini+'</div>' +
+        '<div class="mc-info">' +
+          '<div class="mc-name">'+fullName+'</div>' +
+          '<div class="mc-id">'+dispId+' &nbsp;·&nbsp; Joined '+fmtDate(cm?cm.joinedAt:m.createdAt)+'</div>' +
+          '<div class="mc-badges">' +
+            typeBadge(type) +
+            statusBadge(status) +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      authorityHTML +
+    '</div>';
   }).join('');
 }
 
-function setFilter(val) {
-  _filterStatus = val;
-  document.querySelectorAll('.filter-tab').forEach(t => t.classList.toggle('active', t.dataset.val===val));
-  render();
-}
-
-// ── MEMBER DETAIL ──────────────────────────────────────────────────────────
-function selectMember(mid) {
-  _selectedMid = mid;
-  const members = loadMembers();
-  const m = members.find(x => x.memberId===mid);
-  const cm = getCM(mid);
-  if(!m || !cm) return;
-  const panel = document.getElementById('detail-panel');
-  const statusColor = { active:'#22c55e', inactive:'#94a3b8', terminated:'#ef4444', pending_rejoin:'#f59e0b' };
-  panel.innerHTML = `
-    <div class="detail-header">
-      <div class="detail-mid">${m.memberId}</div>
-      <div class="detail-name">${m.firstName} ${m.lastName}</div>
-      <div class="detail-type">${m.type}${m.email ? ' — ' + m.email : ''}</div>
-      <div style="margin-top:12px;">
-        <span style="background:${statusColor[cm.status]||'#94a3b8'}33;color:${statusColor[cm.status]||'#94a3b8'};padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid ${statusColor[cm.status]||'#94a3b8'}55;">${cm.status.toUpperCase()}</span>
-      </div>
-    </div>
-    <div class="detail-body">
-      ${m.phone ? `<div class="detail-field"><div class="detail-label">Phone</div><div class="detail-value">${m.phone}</div></div>` : ''}
-      <div class="detail-field"><div class="detail-label">Roles</div><div class="detail-value" style="display:flex;flex-wrap:wrap;gap:4px;">${roleBadges(cm.roles)||'<span style="color:var(--muted);">None assigned</span>'}</div></div>
-      ${m.mc ? `<div class="detail-field"><div class="detail-label">MC Number</div><div class="detail-value" style="font-family:'JetBrains Mono',monospace;">${m.mc}</div></div>` : ''}
-      ${m.dot ? `<div class="detail-field"><div class="detail-label">DOT Number</div><div class="detail-value" style="font-family:'JetBrains Mono',monospace;">${m.dot}</div></div>` : ''}
-      <div class="detail-field"><div class="detail-label">Joined Carrier Trucking</div><div class="detail-value">${fmt(cm.joinedAt)}</div></div>
-      ${cm.approvedBy ? `<div class="detail-field"><div class="detail-label">Approved By</div><div class="detail-value">${cm.approvedBy}</div></div>` : ''}
-      ${cm.deactivatedAt ? `<div class="detail-field"><div class="detail-label">Deactivated</div><div class="detail-value" style="color:#ef4444;">${fmt(cm.deactivatedAt)}</div></div>` : ''}
-      ${cm.terminatedAt ? `<div class="detail-field"><div class="detail-label">Terminated</div><div class="detail-value" style="color:#ef4444;">${fmt(cm.terminatedAt)}</div></div>` : ''}
-      ${cm.notes ? `<div class="detail-field"><div class="detail-label">Notes</div><div class="detail-value">${cm.notes}</div></div>` : ''}
-    </div>
-    <div class="detail-section-title">ACTIONS</div>
-    <div class="detail-actions">
-      <button class="btn btn-primary" onclick="openEdit('${mid}')" style="width:100%;justify-content:center;">Edit Profile & Roles</button>
-      ${cm.status==='active'
-        ? `<button class="btn" onclick="deactivate('${mid}')" style="width:100%;justify-content:center;">⏸ Deactivate</button>
-           <button class="btn" onclick="terminate('${mid}')" style="color:#dc2626;border-color:#fca5a5;width:100%;justify-content:center;">🚫 Terminate</button>`
-        : cm.status==='inactive'
-          ? `<button class="btn btn-green" onclick="activate('${mid}')" style="width:100%;justify-content:center;">▶ Reactivate</button>
-             <button class="btn" onclick="terminate('${mid}')" style="color:#dc2626;border-color:#fca5a5;width:100%;justify-content:center;">🚫 Terminate</button>`
-          : cm.status==='terminated'
-            ? `<button class="btn btn-green" onclick="activate('${mid}')" style="width:100%;justify-content:center;">↩️ Reactivate from Terminated</button>`
-            : ''}
-    </div>`;
-}
-
-// ── STATUS CHANGES ─────────────────────────────────────────────────────────
-function activate(mid) {
-  if(!canManageMembers()){alert('Only an Admin or Approver can reactivate members.');return;}
-  const now = new Date().toISOString();
-  const who = currentUser();
-  const cms = loadCM();
-  const idx = cms.findIndex(c => c.memberId===mid && c.companyId===COMPANY_ID);
-  if(idx<0) return;
-  cms[idx].status = 'active';
-  cms[idx].deactivatedAt = null;
-  cms[idx].terminatedAt = null;
-  cms[idx].approvedBy = who;
-  cms[idx].approvedAt = now;
-  saveCM(cms);
-  render();
-  if(_selectedMid===mid) selectMember(mid);
-}
-function deactivate(mid) {
-  if(!canManageMembers()){alert('Only an Admin or Approver can deactivate members.');return;}
-  if(!confirm('Deactivate this member? They will no longer be assignable to loads or settlements until reactivated.')) return;
-  const now = new Date().toISOString();
-  const cms = loadCM();
-  const idx = cms.findIndex(c => c.memberId===mid && c.companyId===COMPANY_ID);
-  if(idx<0) return;
-  cms[idx].status = 'inactive';
-  cms[idx].deactivatedAt = now;
-  saveCM(cms);
-  render();
-  if(_selectedMid===mid) selectMember(mid);
-}
-function terminate(mid) {
-  if(!canManageMembers()){alert('Only an Admin or Approver can terminate members.');return;}
-  const reason = prompt('Termination reason (optional — stored in record):','');
-  if(reason === null) return; // user cancelled
-  const now = new Date().toISOString();
-  const who = currentUser();
-  const cms = loadCM();
-  const idx = cms.findIndex(c => c.memberId===mid && c.companyId===COMPANY_ID);
-  if(idx<0) return;
-  cms[idx].status = 'terminated';
-  cms[idx].terminatedAt = now;
-  cms[idx].terminatedBy = who;
-  if(reason) cms[idx].notes = (cms[idx].notes ? cms[idx].notes + ' | ' : '') + 'Terminated: ' + reason;
-  saveCM(cms);
-  render();
-  if(_selectedMid===mid) selectMember(mid);
-}
-function approveRejoin(mid) {
-  activate(mid);
-}
-function denyRejoin(mid) {
-  const now = new Date().toISOString();
-  const who = currentUser();
-  const cms = loadCM();
-  const idx = cms.findIndex(c => c.memberId===mid && c.companyId===COMPANY_ID);
-  if(idx<0) return;
-  cms[idx].status = 'inactive';
-  cms[idx].notes = (cms[idx].notes ? cms[idx].notes + ' | ' : '') + 'Re-join denied by ' + who + ' on ' + now.slice(0,10);
-  saveCM(cms);
-  render();
-}
-
-// ── INVITE ─────────────────────────────────────────────────────────────────
-function openInviteModal() {
-  ['inv-first','inv-last','inv-email','inv-phone','inv-mc','inv-dot','inv-notes'].forEach(id => { const el=document.getElementById(id); if(el)el.value=''; });
-  document.getElementById('inv-type').value = 'driver';
-  document.querySelectorAll('#invite-modal input[type="checkbox"]').forEach(cb => cb.checked=false);
-  document.getElementById('invite-modal').classList.add('open');
-}
-function saveInvite() {
-  if(!canManageMembers()){alert('Only an Admin or Approver can add members.');return;}
-  const fn = document.getElementById('inv-first').value.trim();
-  const ln = document.getElementById('inv-last').value.trim();
-  if(!fn || !ln) { alert('First and last name are required.'); return; }
-  const roles = Array.from(document.querySelectorAll('#invite-modal input[type="checkbox"]:checked')).map(cb=>cb.value);
-  const now = new Date().toISOString();
-  const who = currentUser();
-  const whoMid = currentMemberId();
-
-  // Generate member ID
-  const mid = window.nexusMemberId(fn, ln, now);
-
-  const newMember = {
-    id: 'mem_' + Date.now(),
-    memberId: mid,
-    firstName: fn,
-    lastName: ln,
-    email: document.getElementById('inv-email').value.trim(),
-    phone: document.getElementById('inv-phone').value.trim(),
-    type: document.getElementById('inv-type').value,
-    mc: document.getElementById('inv-mc').value.trim(),
-    dot: document.getElementById('inv-dot').value.trim(),
-    createdAt: now
-  };
-
-  const newCM = {
-    id: 'cm_' + Date.now(),
-    memberId: mid,
-    companyId: COMPANY_ID,
-    roles: roles.length ? roles : [document.getElementById('inv-type').value],
-    status: 'active',
-    joinedAt: now,
-    deactivatedAt: null,
-    terminatedAt: null,
-    approvedBy: whoMid || who,
-    notes: document.getElementById('inv-notes').value.trim()
-  };
-
-  const members = loadMembers();
-  members.push(newMember);
-  saveMem(members);
-
-  const cms = loadCM();
-  cms.push(newCM);
-  saveCM(cms);
-
-  closeModal('invite-modal');
-  render();
-  selectMember(mid);
-  alert('✅ Member added: ' + mid + '\n' + fn + ' ' + ln);
-}
-
-// ── EDIT ───────────────────────────────────────────────────────────────────
-function openEdit(mid) {
-  const m = loadMembers().find(x => x.memberId===mid);
-  const cm = getCM(mid);
-  if(!m) return;
-  document.getElementById('edit-mid').value = mid;
-  document.getElementById('edit-first').value = m.firstName||'';
-  document.getElementById('edit-last').value = m.lastName||'';
-  document.getElementById('edit-email').value = m.email||'';
-  document.getElementById('edit-phone').value = m.phone||'';
-  document.getElementById('edit-type').value = m.type||'driver';
-  document.getElementById('edit-mc').value = m.mc||'';
-  document.getElementById('edit-dot').value = m.dot||'';
-  const currentRoles = cm ? (cm.roles||[]) : [];
-  document.getElementById('edit-roles-grid').innerHTML = ROLES_ALL.map(r =>
-    `<label class="role-check">
-      <input type="checkbox" value="${r}" ${currentRoles.includes(r)?'checked':''}>
-      <span>${ROLE_LABELS[r]||r}</span>
-    </label>`).join('');
-  document.getElementById('edit-modal').classList.add('open');
-}
-function saveEdit() {
-  const mid = document.getElementById('edit-mid').value;
-  const members = loadMembers();
-  const idx = members.findIndex(m => m.memberId===mid);
-  if(idx<0) return;
-  members[idx].firstName = document.getElementById('edit-first').value.trim();
-  members[idx].lastName = document.getElementById('edit-last').value.trim();
-  members[idx].email = document.getElementById('edit-email').value.trim();
-  members[idx].phone = document.getElementById('edit-phone').value.trim();
-  members[idx].type = document.getElementById('edit-type').value;
-  members[idx].mc = document.getElementById('edit-mc').value.trim();
-  members[idx].dot = document.getElementById('edit-dot').value.trim();
-  saveMem(members);
-
-  const roles = Array.from(document.querySelectorAll('#edit-roles-grid input[type="checkbox"]:checked')).map(cb=>cb.value);
-  const cms = loadCM();
-  const cidx = cms.findIndex(c => c.memberId===mid && c.companyId===COMPANY_ID);
-  if(cidx>=0) {
-    cms[cidx].roles = roles;
-    saveCM(cms);
+// ─── Select / panel ───────────────────────────────────────────────────────────
+function selectMember(memberId){
+  if(_selectedId===memberId){
+    closePanel();
+    return;
   }
-  closeModal('edit-modal');
-  render();
-  if(_selectedMid===mid) selectMember(mid);
+  _selectedId = memberId;
+  renderGrid(); // re-render to show selected state
+
+  const m  = _allMembers.find(function(x){return x.memberId===memberId;});
+  if(!m) return;
+  const cm = _companyMap[m.memberId];
+  const status  = cm ? cm.status : 'active';
+  const type    = m.type||'driver';
+  const bg      = AVATAR_COLORS[type]||'#1e293b';
+  const tc      = AVATAR_TEXT_COLORS[type]||'#a8c4e0';
+  const fullName= (m.firstName||'')+' '+(m.lastName||'');
+  const dispId  = displayId(m.memberId);
+
+  let authorityRows='';
+  if(m.mc) authorityRows+='<div class="dp-row"><span class="dp-lbl">MC#</span><span class="dp-val mono">'+m.mc+'</span></div>';
+  if(m.dot) authorityRows+='<div class="dp-row"><span class="dp-lbl">DOT#</span><span class="dp-val mono">'+m.dot+'</span></div>';
+
+  document.getElementById('dp-body').innerHTML =
+    '<div class="dp-avatar-row">' +
+      '<div class="dp-avatar" style="background:'+bg+';color:'+tc+'">'+initials(m)+'</div>' +
+      '<div>' +
+        '<div class="dp-name">'+fullName+'</div>' +
+        '<div class="dp-member-id">'+dispId+'</div>' +
+        '<div style="margin-top:6px;display:flex;gap:6px;">'+typeBadge(type)+statusBadge(status)+'</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="dp-section">' +
+      '<div class="dp-section-title">Contact</div>' +
+      '<div class="dp-row"><span class="dp-lbl">Email</span><span class="dp-val mono">'+(m.email||'—')+'</span></div>' +
+      '<div class="dp-row"><span class="dp-lbl">Phone</span><span class="dp-val">'+(m.phone||'—')+'</span></div>' +
+    '</div>' +
+    '<div class="dp-section">' +
+      '<div class="dp-section-title">Membership</div>' +
+      '<div class="dp-row"><span class="dp-lbl">Member ID</span><span class="dp-val mono">'+dispId+'</span></div>' +
+      '<div class="dp-row"><span class="dp-lbl">Status</span><span class="dp-val">'+statusBadge(status)+'</span></div>' +
+      '<div class="dp-row"><span class="dp-lbl">Type</span><span class="dp-val">'+typeBadge(type)+'</span></div>' +
+      '<div class="dp-row"><span class="dp-lbl">Joined</span><span class="dp-val">'+fmtDate(cm?cm.joinedAt:m.createdAt)+'</span></div>' +
+      '<div class="dp-row"><span class="dp-lbl">Profile Created</span><span class="dp-val">'+fmtDate(m.createdAt)+'</span></div>' +
+      (cm&&cm.deactivatedAt?'<div class="dp-row"><span class="dp-lbl">Deactivated</span><span class="dp-val" style="color:var(--yellow)">'+fmtDate(cm.deactivatedAt)+'</span></div>':'') +
+      (cm&&cm.terminatedAt?'<div class="dp-row"><span class="dp-lbl">Terminated</span><span class="dp-val" style="color:var(--red)">'+fmtDate(cm.terminatedAt)+'</span></div>':'') +
+      (cm&&cm.approvedBy?'<div class="dp-row"><span class="dp-lbl">Approved By</span><span class="dp-val mono">'+displayId(cm.approvedBy)+'</span></div>':'') +
+      (cm&&cm.notes?'<div class="dp-row"><span class="dp-lbl">Notes</span><span class="dp-val">'+cm.notes+'</span></div>':'') +
+    '</div>' +
+    (authorityRows?'<div class="dp-section"><div class="dp-section-title">Operating Authority</div>'+authorityRows+'</div>':'');
+
+  openPanel();
 }
 
-// ── UTILS ──────────────────────────────────────────────────────────────────
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-['invite-modal','edit-modal'].forEach(id => {
-  document.getElementById(id).addEventListener('click', function(e){ if(e.target===this) closeModal(id); });
-});
+function openPanel(){
+  document.getElementById('detail-panel').classList.add('open');
+  document.getElementById('main-content').classList.add('panel-open');
+}
 
-// ── BOOT ───────────────────────────────────────────────────────────────────
-render();
+function closePanel(){
+  document.getElementById('detail-panel').classList.remove('open');
+  document.getElementById('main-content').classList.remove('panel-open');
+  _selectedId = null;
+  renderGrid();
+}
+
+// ─── Export ───────────────────────────────────────────────────────────────────
+function exportRoster(){
+  const rows = [['Member ID','Name','Type','Status','Email','MC#','DOT#','Joined']];
+  _allMembers.forEach(function(m){
+    const cm = _companyMap[m.memberId];
+    rows.push([
+      displayId(m.memberId),
+      (m.firstName||'')+' '+(m.lastName||''),
+      m.type||'',
+      cm?cm.status:'active',
+      m.email||'',
+      m.mc||'',
+      m.dot||'',
+      cm?cm.joinedAt:m.createdAt||''
+    ]);
+  });
+  const csv = rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download = 'carrier-nexus-members-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+// ─── Invite link ─────────────────────────────────────────────────────────────
+function openInviteModal(){
+  alert('Invite flow: generate a set-password link for the user. Use Admin > Users to create the account first, then share the invite link.');
+}
+
+function copyInviteLink(){
+  if(!_selectedId) return;
+  const m = _allMembers.find(function(x){return x.memberId===_selectedId;});
+  if(!m||!m.email) return;
+  const link = window.location.origin+'/set-password.html?email='+encodeURIComponent(m.email);
+  navigator.clipboard.writeText(link).then(function(){
+    const btn=document.getElementById('dp-invite-btn');
+    btn.textContent='✅ Copied!';
+    setTimeout(function(){btn.textContent='📋 Copy Invite Link';},2000);
+  });
+}
+
+// ─── Close panel on Escape ────────────────────────────────────────────────────
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closePanel();});
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+loadData();
+updateStats();
+renderGrid();
 </script>
 </body>
 </html>

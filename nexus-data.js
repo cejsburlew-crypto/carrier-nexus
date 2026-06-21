@@ -93,7 +93,7 @@ const NEXUS = {
       violations: []
     },
     {
-      id: "011", name: "Nelson", short: "NELSON", truck: "06", status: "active", phone: "", dispatch_pct: 0.14,
+      id: "011", name: "Nelson Veliz", short: "NELSON", truck: "06", status: "active", phone: "", dispatch_pct: 0.14,
       loads: "32", revenue: "$28K", avatar_bg: "#d1ecf1",
       cdl_number: "ENTER CDL #", cdl_class: "A", cdl_state: "FL", cdl_expires: "YYYY-MM-DD",
       med_cert_expires: "YYYY-MM-DD", med_examiner: "Enter Examiner",
