@@ -2,141 +2,594 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PM Schedule — Carrier Nexus</title>
+<title>Fleet Maintenance — Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--steel-blue:#2e6da4;--orange:#e8640a;--red:#ef4444;--green:#22c55e;--yellow:#fbbf24;}
+:root{--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--orange:#e8640a;--border:#e2e8f0;--muted:#64748b;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
-.sidebar{width:220px;min-height:100vh;background:#1a2744;border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
-.sidebar-logo{padding:20px 20px 12px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:#2e6da4;letter-spacing:.08em;text-decoration:none;display:block;}
-.sidebar-section{font-size:9px;font-weight:700;color:#4a6080;letter-spacing:.12em;padding:16px 20px 6px;text-transform:uppercase;}
-.sidebar-link{display:flex;align-items:center;gap:10px;padding:8px 20px;font-size:13px;color:#c8d8ea;text-decoration:none;transition:all .15s;}
-.sidebar-link:hover{background:rgba(255,255,255,0.07);color:#fff;}
-.sidebar-link.active{background:rgba(46,109,164,0.35);color:#fff;border-right:2px solid #2e6da4;}
-.sidebar-link svg{width:14px;height:14px;opacity:.7;flex-shrink:0;}
 .main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
-.topbar{height:56px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
-.topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:#0f172a;letter-spacing:.04em;}
-.content{padding:24px 28px 40px;}
-.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
-.kpi-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;}
-.kpi-label{font-size:10px;font-weight:700;color:#64748b;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
-.kpi-val{font-size:28px;font-weight:700;color:#0f172a;line-height:1;}
-.kpi-sub{font-size:11px;color:#2e6da4;margin-top:4px;}
-.panel{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:20px;}
-.panel-head{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:#0f172a;letter-spacing:.04em;text-transform:uppercase;}
-table{width:100%;border-collapse:collapse;}
-th{font-size:10px;font-weight:700;color:#64748b;letter-spacing:.08em;text-transform:uppercase;padding:10px 16px;text-align:left;background:#f8fafc;border-bottom:1px solid #e2e8f0;}
-td{padding:11px 16px;font-size:13px;color:#0f172a;border-bottom:1px solid #f8fafc;}
-tr:last-child td{border-bottom:none;}
-tr:hover td{background:#f8fafc;}
-.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;}
+.topbar{height:56px;background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#fff;flex:1;}
+.content{padding:24px 28px 48px;}
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;}
+.kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 18px;}
+.kpi-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;}
+.kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:#0f172a;line-height:1.1;}
+.kpi-sub{font-size:11px;color:var(--blue);margin-top:3px;}
+/* TABS */
+.tab-bar{display:flex;gap:4px;margin-bottom:20px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px;width:fit-content;}
+.tab{padding:7px 18px;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.6px;cursor:pointer;color:#475569;border:none;background:transparent;transition:all .15s;}
+.tab.active{background:var(--pink);color:#fff;}
+.tab-content{display:none;}.tab-content.active{display:block;}
+/* FLEET CARDS */
+.fleet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px;}
+.unit-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.unit-card-head{padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9;}
+.unit-num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#0f172a;letter-spacing:1px;}
+.unit-truck{font-size:12px;color:var(--muted);}
+.unit-card-body{padding:12px 16px;}
+.pm-item{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f8fafc;font-size:12px;}
+.pm-item:last-child{border-bottom:none;}
+.pm-item-label{color:#475569;font-weight:600;}
+.pm-item-val{display:flex;align-items:center;gap:6px;}
+/* BADGES */
+.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;}
 .badge-green{background:#dcfce7;color:#15803d;}
 .badge-red{background:#fee2e2;color:#b91c1c;}
 .badge-yellow{background:#fef9c3;color:#a16207;}
 .badge-blue{background:#dbeafe;color:#1d4ed8;}
 .badge-gray{background:#f1f5f9;color:#64748b;}
 .badge-orange{background:#ffedd5;color:#c2410c;}
-.badge-purple{background:#ede9fe;color:#6d28d9;}
-.mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:#2e6da4;font-weight:600;}
-.btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #e2e8f0;background:#fff;color:#334155;transition:background .15s;}
+.status-pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.pill-green{background:#dcfce7;color:#15803d;}
+.pill-yellow{background:#fef9c3;color:#a16207;}
+.pill-red{background:#fee2e2;color:#b91c1c;}
+.pill-gray{background:#f1f5f9;color:#64748b;}
+.pill-blue{background:#dbeafe;color:#1d4ed8;}
+/* PANELS */
+.panel{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.panel-head{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:#0f172a;letter-spacing:.06em;text-transform:uppercase;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:9px 14px;text-align:left;background:#f8fafc;border-bottom:1px solid var(--border);}
+td{padding:10px 14px;font-size:13px;color:#0f172a;border-bottom:1px solid #f8fafc;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fafcff;}
+.mono{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue);}
+/* BTNS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.6px;cursor:pointer;border:1px solid var(--border);background:#fff;color:#334155;transition:all .15s;}
 .btn:hover{background:#f1f5f9;}
-.btn-primary{background:#2e6da4;color:#fff;border-color:#2e6da4;}
-.btn-primary:hover{background:#1d5a8a;}
-.btn-orange{background:#e8640a;color:#fff;border-color:#e8640a;}
-.btn-orange:hover{background:#c4520a;}
-.disp-amet{background:#dbeafe;color:#1d4ed8;}
-.disp-betty{background:#fce7f3;color:#9d174d;}
+.btn-primary{background:var(--pink);color:#fff;border-color:var(--pink);}
+.btn-sm{padding:4px 10px;font-size:11px;}
+.btn-ghost{background:transparent;border:none;padding:4px 8px;font-size:12px;color:var(--muted);cursor:pointer;}
+.btn-ghost:hover{color:var(--pink);}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#fff;border-radius:12px;width:92%;max-width:640px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.3);}
+.modal-hdr{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:16px 22px;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;}
+.modal-hdr-title{color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;letter-spacing:2px;}
+.modal-close{background:none;border:none;color:rgba(255,255,255,0.7);font-size:20px;cursor:pointer;}
+.modal-body{padding:20px 22px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-full{grid-column:1/-1;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-section-head{font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:.1em;text-transform:uppercase;border-top:1px solid #f1f5f9;padding-top:12px;margin-top:4px;grid-column:1/-1;}
+.form-section-head:first-child{border-top:none;padding-top:0;}
+.form-label{font-size:10px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;}
+.form-input,.form-select{width:100%;padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:6px;font-size:13px;color:#0f172a;font-family:'Barlow',sans-serif;transition:border .15s;}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--pink);}
+.modal-footer{padding:12px 22px 18px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid #f1f5f9;position:sticky;bottom:0;background:#fff;}
+/* MOBILE */
 .mobile-nav{display:none;}
-@media(max-width:768px){
-  .sidebar{display:none!important;}
-  .main{margin-left:0!important;}
-  .content{padding:14px 12px 80px!important;}
-  .kpi-row{grid-template-columns:1fr 1fr!important;gap:10px!important;}
-  .mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;height:56px;background:#fff;border-top:1px solid #e2e8f0;z-index:200;}
-  .mobile-nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;font-size:9px;font-weight:700;color:#94a3b8;letter-spacing:.06em;}
-  .mobile-nav-tab.active{color:#2e6da4;border-top:2px solid #2e6da4;}
-}
+@media(max-width:768px){.main{margin-left:0!important;}.content{padding:14px 12px 80px!important;}.kpi-row{grid-template-columns:1fr 1fr!important;}.fleet-grid{grid-template-columns:1fr!important;}.form-grid{grid-template-columns:1fr!important;}.mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;height:56px;background:#000;border-top:1px solid rgba(233,30,140,0.2);z-index:200;}.mobile-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;font-size:9px;font-weight:700;color:#64748b;}.mobile-nav a.active{color:#e91e8c;}}
 </style>
 <style id="nexus-unified">
-/* ── SIDEBAR BLACK ── */
-.sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
-/* ── LOGO AREA ── */
-.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
-.sidebar-logo .logo-hex { flex-shrink:0 !important; }
-.sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
-.sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
-.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
-.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
-/* ── NAV LINKS ── */
-.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
-.sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
-.sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
-.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
-.sidebar-link.active svg { opacity:1 !important; }
-/* ── SECTION LABELS ── */
-.sidebar-section { padding:12px 0 4px !important; }
-.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
-/* ── TOPBAR ── */
-.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
-.topbar *, .top-bar * { color:#ffffff !important; }
-.topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
-/* ── MOBILE NAV ── */
-.mobile-nav { background:#000000 !important; }
-.mobile-nav-tab.active { color:#e91e8c !important; }
-/* ── SIDEBAR USER ── */
-.sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
-.sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
-.sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
-/* ── NAV BADGE ── */
-.nav-badge { background:#e91e8c !important; color:#fff !important; }
+.sidebar,nav.sidebar{background:#000!important;border-right:1px solid #1a1a1a!important;}
+.sidebar-logo{padding:16px!important;display:flex!important;align-items:center!important;gap:10px!important;text-decoration:none!important;border-bottom:1px solid rgba(255,255,255,0.07)!important;flex-direction:row!important;}
+.sidebar-logo .logo-hex{flex-shrink:0!important;}.sidebar-logo .logo-hex svg{width:36px!important;height:36px!important;display:block!important;}
+.sidebar-logo .logo-text{display:flex!important;flex-direction:column!important;gap:2px!important;}
+.sidebar-logo .logo-text .brand{font-family:'Barlow Condensed',sans-serif!important;font-weight:800!important;font-size:15px!important;letter-spacing:2px!important;color:#fff!important;display:block!important;}
+.sidebar-logo .logo-text .sub{font-family:'JetBrains Mono',monospace!important;font-size:9px!important;color:rgba(255,255,255,0.55)!important;letter-spacing:1px!important;display:block!important;}
+.sidebar-link{display:flex!important;align-items:center!important;gap:10px!important;padding:8px 16px!important;color:#a0aec0!important;border-left:3px solid transparent!important;text-decoration:none!important;font-size:13px!important;}
+.sidebar-link:hover{background:rgba(194,24,91,0.18)!important;border-left-color:#c2185b!important;color:#fff!important;}
+.sidebar-link.active{background:rgba(233,30,140,0.22)!important;border-left:3px solid #e91e8c!important;color:#fff!important;}
+.sidebar-link svg{width:14px!important;height:14px!important;flex-shrink:0!important;opacity:.7!important;}
+.sidebar-link.active svg{opacity:1!important;}
+.sidebar-section{padding:12px 0 4px!important;}
+.sidebar-section-label{color:rgba(255,255,255,0.3)!important;font-family:'JetBrains Mono',monospace!important;font-size:9px!important;font-weight:700!important;letter-spacing:1.5px!important;padding:16px 16px 6px!important;text-transform:uppercase!important;display:block!important;}
+.topbar,.top-bar{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%)!important;}
+.topbar *,.top-bar *{color:#fff!important;}
+.mobile-nav{background:#000!important;}
 </style>
 </head>
-<body><script src="nexus-sidebar.js"></script>
+<body>
+<script src="nexus-sidebar.js"></script>
 <div class="main">
   <div class="topbar">
-    <span class="topbar-title">PREVENTIVE MAINTENANCE SCHEDULE</span>
-    <button class="btn btn-primary" onclick="alert('New PM entry added')">+ Add Service</button>
+    <div class="topbar-title">FLEET MAINTENANCE</div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn" style="color:#fff;border-color:rgba(255,255,255,0.3);" onclick="exportPM()">⬇ Export</button>
+      <button class="btn btn-primary" onclick="openServiceModal()">＋ Log Service</button>
+    </div>
   </div>
   <div class="content">
+
+    <!-- KPIs -->
     <div class="kpi-row">
-      <div class="kpi-card"><div class="kpi-label">Due This Week</div><div class="kpi-val" style="color:#22c55e">0</div><div class="kpi-sub">All upcoming on schedule</div></div>
-      <div class="kpi-card"><div class="kpi-label">Overdue</div><div class="kpi-val" style="color:#ef4444">3</div><div class="kpi-sub">Units 01, 04, 06</div></div>
-      <div class="kpi-card"><div class="kpi-label">Completed This Month</div><div class="kpi-val" style="color:#22c55e">3</div><div class="kpi-sub">On schedule</div></div>
-      <div class="kpi-card"><div class="kpi-label">Est. Monthly PM Cost</div><div class="kpi-val" style="font-size:22px">$2,400</div><div class="kpi-sub">Avg 6 trucks</div></div>
+      <div class="kpi-card"><div class="kpi-label">Total Units</div><div class="kpi-val" id="kpi-total">9</div><div class="kpi-sub">In fleet</div></div>
+      <div class="kpi-card"><div class="kpi-label">In Service</div><div class="kpi-val" id="kpi-service" style="color:#22c55e;">—</div><div class="kpi-sub">Running</div></div>
+      <div class="kpi-card"><div class="kpi-label">PM Overdue</div><div class="kpi-val" id="kpi-overdue" style="color:#ef4444;">—</div><div class="kpi-sub">Past interval</div></div>
+      <div class="kpi-card"><div class="kpi-label">Due This Month</div><div class="kpi-val" id="kpi-due" style="color:#f59e0b;">—</div><div class="kpi-sub">Schedule PM</div></div>
+      <div class="kpi-card"><div class="kpi-label">Annual Inspections</div><div class="kpi-val" id="kpi-annual" style="color:#22c55e;">—</div><div class="kpi-sub">Current</div></div>
     </div>
-    <div class="panel">
-      <div class="panel-head"><span class="panel-title">PM Schedule — All Units</span></div>
-      <table>
-        <thead><tr><th>Unit</th><th>Truck</th><th>Service Type</th><th>Last Done</th><th>Due Date</th><th>Miles Due</th><th>Status</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr><td><b>Unit 01</b></td><td>Peterbilt 379</td><td>Oil Change</td><td>Mar 1, 2026</td><td>Jun 1, 2026</td><td>450,000 mi</td><td><span class="badge badge-red">Overdue</span></td><td><button class="btn" onclick="alert('Service order created for Unit 01')">Schedule</button></td></tr>
-          <tr><td><b>Unit 03</b></td><td>Freightliner Cascadia</td><td>Full PM Service</td><td>Apr 10, 2026</td><td>Jul 10, 2026</td><td>512,000 mi</td><td><span class="badge badge-green">OK</span></td><td><button class="btn" onclick="alert('Unit 03 PM details')">View</button></td></tr>
-          <tr><td><b>Unit 04</b></td><td>Kenworth T680</td><td>Brake Inspection</td><td>Apr 15, 2026</td><td>May 30, 2026</td><td>388,000 mi</td><td><span class="badge badge-red">Overdue</span></td><td><button class="btn" onclick="alert('Service order created for Unit 04')">Schedule</button></td></tr>
-          <tr><td><b>Unit 05</b></td><td>Peterbilt 389</td><td>Oil Change + Filter</td><td>May 1, 2026</td><td>Aug 1, 2026</td><td>421,000 mi</td><td><span class="badge badge-green">OK</span></td><td><button class="btn" onclick="alert('Unit 05 PM details')">View</button></td></tr>
-          <tr><td><b>Unit 06</b></td><td>Freightliner Cascadia</td><td>DOT Inspection</td><td>Nov 20, 2025</td><td>May 28, 2026</td><td>398,000 mi</td><td><span class="badge badge-red">Overdue</span></td><td><button class="btn" onclick="alert('Service order created for Unit 06')">Schedule</button></td></tr>
-          <tr><td><b>Unit 09</b></td><td>Kenworth T800</td><td>Full PM Service</td><td>May 5, 2026</td><td>Aug 5, 2026</td><td>467,000 mi</td><td><span class="badge badge-green">OK</span></td><td><button class="btn" onclick="alert('Unit 09 PM details')">View</button></td></tr>
-        </tbody>
-      </table>
+
+    <!-- TABS -->
+    <div class="tab-bar">
+      <button class="tab active" onclick="showTab('overview',this)">Fleet Overview</button>
+      <button class="tab" onclick="showTab('service-log',this)">Service Log</button>
+      <button class="tab" onclick="showTab('regulatory',this)">Regulatory Filings</button>
+    </div>
+
+    <!-- TAB: Fleet Overview -->
+    <div id="tab-overview" class="tab-content active">
+      <div class="fleet-grid" id="fleetGrid"></div>
+    </div>
+
+    <!-- TAB: Service Log -->
+    <div id="tab-service-log" class="tab-content">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Service History</span>
+          <select class="btn btn-sm" id="svcUnitFilter" onchange="renderServiceLog()">
+            <option value="">All Units</option>
+            <option>01</option><option>02</option><option>03</option><option>04</option>
+            <option>05</option><option>06</option><option>07</option><option>08</option><option>09</option>
+          </select>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>Date</th><th>Unit</th><th>Truck</th><th>Service Type</th><th>Mileage</th><th>Cost</th><th>Shop / Vendor</th><th>Next Due</th><th>Notes</th><th></th></tr></thead>
+            <tbody id="svc-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Regulatory Filings -->
+    <div id="tab-regulatory" class="tab-content">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Regulatory &amp; Registration Tracker</span>
+          <button class="btn btn-sm btn-primary" onclick="openRegModal()">＋ Add</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>Unit</th><th>Item</th><th>Due / Expires</th><th>Status</th><th>Authority</th><th>Notes</th><th></th></tr></thead>
+            <tbody id="reg-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- Service Log Modal -->
+<div class="modal-overlay" id="svcModal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span class="modal-hdr-title" id="svcModalTitle">LOG SERVICE</span>
+      <button class="modal-close" onclick="closeSvcModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="svc-edit-id">
+      <div class="form-grid">
+        <div class="form-section-head">🔧 Service Details</div>
+        <div class="form-group"><label class="form-label">Unit #</label>
+          <select class="form-select" id="svc-unit">
+            <option value="">— Select —</option>
+            <option>01</option><option>02</option><option>03</option><option>04</option>
+            <option>05</option><option>06</option><option>07</option><option>08</option><option>09</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Service Date</label><input class="form-input" id="svc-date" type="date"></div>
+        <div class="form-group form-full"><label class="form-label">Service Type</label>
+          <select class="form-select" id="svc-type">
+            <option value="oil_change">Oil &amp; Filter Change</option>
+            <option value="dot_annual">DOT Annual Inspection (396.17)</option>
+            <option value="brake_inspection">Brake Inspection / Adjustment</option>
+            <option value="tire_rotation">Tire Rotation / Replacement</option>
+            <option value="pm_a">PM-A (Full Preventive Maintenance)</option>
+            <option value="pm_b">PM-B (Extended Service)</option>
+            <option value="coolant_flush">Coolant Flush</option>
+            <option value="transmission">Transmission Service</option>
+            <option value="diff_fluid">Differential Fluid</option>
+            <option value="def_system">DEF System Service</option>
+            <option value="dpf_regen">DPF / Regen Service</option>
+            <option value="air_filter">Air Filter Replacement</option>
+            <option value="fuel_filter">Fuel Filter Replacement</option>
+            <option value="battery">Battery / Alternator</option>
+            <option value="steering">Steering / Suspension</option>
+            <option value="hvac">HVAC / Cab Climate</option>
+            <option value="electrical">Electrical Repair</option>
+            <option value="body">Body / Frame Repair</option>
+            <option value="tires_new">Tire Purchase (New Set)</option>
+            <option value="eld">ELD / Telematics Service</option>
+            <option value="breakdown">Breakdown / Road Call</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Mileage at Service</label><input class="form-input" id="svc-mileage" type="number" placeholder="e.g. 487500"></div>
+        <div class="form-group"><label class="form-label">Cost ($)</label><input class="form-input" id="svc-cost" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="form-group form-full"><label class="form-label">Shop / Vendor</label><input class="form-input" id="svc-shop" placeholder="e.g. TA Truck Service, Love's, mobile mechanic"></div>
+        <div class="form-group form-full"><label class="form-label">Next Service Due</label>
+          <div style="display:flex;gap:8px;">
+            <input class="form-input" id="svc-next-date" type="date" style="flex:1;" placeholder="Date">
+            <input class="form-input" id="svc-next-miles" type="number" style="flex:1;" placeholder="Mileage">
+          </div>
+        </div>
+        <div class="form-group form-full"><label class="form-label">Notes</label>
+          <input class="form-input" id="svc-notes" placeholder="Parts replaced, invoice #, warranty info…">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeSvcModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveService()">Save Record</button>
     </div>
   </div>
-</div><nav class="mobile-nav">
-  <a href="fleet-command.html" class="mobile-nav-tab">DASH</a>
-  <a href="settlements.html" class="mobile-nav-tab">PAY</a>
-  <a href="documents.html" class="mobile-nav-tab">DOCS</a>
-  <a href="equipment.html" class="mobile-nav-tab">FLEET</a>
-  <a href="drivers.html" class="mobile-nav-tab">TEAM</a>
+</div>
+
+<!-- Regulatory Item Modal -->
+<div class="modal-overlay" id="regModal">
+  <div class="modal-box" style="max-width:480px;">
+    <div class="modal-hdr">
+      <span class="modal-hdr-title">REGULATORY ITEM</span>
+      <button class="modal-close" onclick="closeRegModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="reg-edit-id">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Unit #</label>
+          <select class="form-select" id="reg-unit">
+            <option value="ALL">All Units (Fleet-Wide)</option>
+            <option>01</option><option>02</option><option>03</option><option>04</option>
+            <option>05</option><option>06</option><option>07</option><option>08</option><option>09</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Due / Expiration</label><input class="form-input" id="reg-due" type="date"></div>
+        <div class="form-group form-full"><label class="form-label">Item Type</label>
+          <select class="form-select" id="reg-type">
+            <option value="registration">Vehicle Registration (IRP)</option>
+            <option value="ifta_decal">IFTA Decal (Quarterly)</option>
+            <option value="ifta_filing">IFTA Quarterly Filing</option>
+            <option value="hvut_2290">HVUT Form 2290</option>
+            <option value="state_permit">State Fuel Permit</option>
+            <option value="ucr">UCR Registration</option>
+            <option value="mc_authority">MC Operating Authority</option>
+            <option value="dot_number">USDOT Number Renewal</option>
+            <option value="insurance">Cargo Insurance</option>
+            <option value="liability">Liability Insurance</option>
+            <option value="boc3">BOC-3 Agent Filing</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Authority / Agency</label><input class="form-input" id="reg-authority" placeholder="FMCSA, State DMV, IRS…"></div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-select" id="reg-status">
+            <option value="current">Current</option>
+            <option value="due_soon">Due Soon</option>
+            <option value="filed">Filed / Submitted</option>
+            <option value="expired">Expired</option>
+          </select>
+        </div>
+        <div class="form-group form-full"><label class="form-label">Notes / Reference #</label>
+          <input class="form-input" id="reg-notes" placeholder="Confirmation #, tag #, policy #…">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeRegModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveReg()">Save</button>
+    </div>
+  </div>
+</div>
+
+<nav class="mobile-nav">
+  <a href="fleet-command.html">DASH</a>
+  <a href="pm-schedule.html" class="active">PM</a>
+  <a href="dot-compliance.html">DOT</a>
+  <a href="drivers.html">TEAM</a>
 </nav>
-<script src="nexus-lang.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
 <script src="nexus-config.js"></script>
 <script src="nexus-db.js"></script>
 <script>
-(async()=>{
-  if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
-})();
+// ─── FLEET DATA ───────────────────────────────────────────────────────────────
+const FLEET = [
+  {unit:'01',truck:'Peterbilt 379',year:'2019',driver:'AVIS',  mileage:492000,status:'in_service',lastPM:'2026-03-15',lastPMmi:490000,pmInterval:25000,annualInsp:'2026-08-14'},
+  {unit:'02',truck:'Kenworth T680',year:'2020',driver:'GUILLERMO',mileage:381000,status:'in_service',lastPM:'2026-02-20',lastPMmi:379000,pmInterval:25000,annualInsp:'2026-09-01'},
+  {unit:'03',truck:'Freightliner Cascadia',year:'2018',driver:'MIGUEL',mileage:604000,status:'in_service',lastPM:'2026-01-10',lastPMmi:602000,pmInterval:25000,annualInsp:'2026-06-30'},
+  {unit:'04',truck:'Kenworth T680',year:'2021',driver:'DAVID',  mileage:297000,status:'in_service',lastPM:'2026-04-01',lastPMmi:295000,pmInterval:25000,annualInsp:'2026-11-15'},
+  {unit:'05',truck:'Peterbilt 389',year:'2017',driver:'NELSON', mileage:711000,status:'in_shop',  lastPM:'2025-12-05',lastPMmi:700000,pmInterval:25000,annualInsp:'2026-05-20'},
+  {unit:'06',truck:'Freightliner Cascadia',year:'2022',driver:'YOSVIEL',mileage:188000,status:'in_service',lastPM:'2026-05-10',lastPMmi:186000,pmInterval:25000,annualInsp:'2026-12-01'},
+  {unit:'07',truck:'Peterbilt 389',year:'2016',driver:'',        mileage:843000,status:'out_of_service',lastPM:'2025-09-20',lastPMmi:830000,pmInterval:25000,annualInsp:'2025-11-01'},
+  {unit:'08',truck:'Kenworth T800',year:'2015',driver:'',        mileage:930000,status:'out_of_service',lastPM:'2025-07-01',lastPMmi:920000,pmInterval:25000,annualInsp:'2025-10-05'},
+  {unit:'09',truck:'Kenworth T800',year:'2020',driver:'DAVID',  mileage:443000,status:'in_service',lastPM:'2026-03-25',lastPMmi:441000,pmInterval:25000,annualInsp:'2026-10-20'},
+];
+
+const SVC_KEY = 'nexus_pm_services';
+const REG_KEY = 'nexus_pm_reg';
+
+const SVC_SEED = [
+  {id:'s01a',unit:'01',date:'2026-03-15',type:'oil_change',mileage:490000,cost:450,shop:'TA Truck Service - Miami',nextDate:'2026-09-15',nextMiles:515000,notes:'Shell Rotella T6 15W40, Fleetguard filter'},
+  {id:'s01b',unit:'01',date:'2026-01-10',type:'dot_annual',mileage:487000,cost:350,shop:'Miami DOT Inspection Station',nextDate:'2027-01-10',nextMiles:null,notes:'Annual 396.17 — passed, no violations'},
+  {id:'s02a',unit:'02',date:'2026-02-20',type:'oil_change',mileage:379000,cost:440,shop:'Love\'s Fleet Services',nextDate:'2026-08-20',nextMiles:404000,notes:''},
+  {id:'s03a',unit:'03',date:'2026-01-10',type:'oil_change',mileage:602000,cost:480,shop:'Speedco',nextDate:'2026-07-10',nextMiles:627000,notes:'High mileage oil, checked injectors'},
+  {id:'s03b',unit:'03',date:'2026-01-10',type:'brake_inspection',mileage:602000,cost:220,shop:'Speedco',nextDate:'',nextMiles:null,notes:'Replaced brake shoes rear axle'},
+  {id:'s04a',unit:'04',date:'2026-04-01',type:'oil_change',mileage:295000,cost:440,shop:'TA Truck Service - Hialeah',nextDate:'2026-10-01',nextMiles:320000,notes:''},
+  {id:'s05a',unit:'05',date:'2025-12-05',type:'oil_change',mileage:700000,cost:460,shop:'Mobile mechanic',nextDate:'2026-06-05',nextMiles:725000,notes:'Overdue — high blow-by on inspection'},
+  {id:'s05b',unit:'05',date:'2026-06-15',type:'pm_a',mileage:711000,cost:2800,shop:'International Service Miami',nextDate:'2026-12-15',nextMiles:736000,notes:'In shop — full PM-A: oil, brakes, hubs, alignment'},
+  {id:'s06a',unit:'06',date:'2026-05-10',type:'oil_change',mileage:186000,cost:430,shop:'Petro Stopping Center',nextDate:'2026-11-10',nextMiles:211000,notes:''},
+  {id:'s09a',unit:'09',date:'2026-03-25',type:'oil_change',mileage:441000,cost:450,shop:'TA Truck Service',nextDate:'2026-09-25',nextMiles:466000,notes:''},
+];
+
+const REG_SEED = [
+  {id:'r01',unit:'ALL',type:'ifta_filing',due:'2026-07-31',status:'due_soon',authority:'State of FL',notes:'Q2 2026 filing — due July 31'},
+  {id:'r02',unit:'ALL',type:'ucr',due:'2026-12-31',status:'current',authority:'FMCSA',notes:'UCR registration current through 2026'},
+  {id:'r03',unit:'ALL',type:'mc_authority',due:'2027-01-01',status:'current',authority:'FMCSA',notes:'MC authority — biennial update'},
+  {id:'r04',unit:'01',type:'registration',due:'2026-09-30',status:'current',authority:'FL DMV / IRP',notes:'FL IRP apportioned plate'},
+  {id:'r05',unit:'02',type:'registration',due:'2026-10-31',status:'current',authority:'FL DMV / IRP',notes:''},
+  {id:'r06',unit:'03',type:'registration',due:'2026-08-31',status:'due_soon',authority:'FL DMV / IRP',notes:'Renewal due — gather docs'},
+  {id:'r07',unit:'ALL',type:'hvut_2290',due:'2026-08-31',status:'due_soon',authority:'IRS',notes:'Form 2290 due Aug 31 for new tax year'},
+  {id:'r08',unit:'ALL',type:'ifta_decal',due:'2026-12-31',status:'current',authority:'State of FL',notes:'2026 IFTA decals — installed on all units'},
+];
+
+function getSvc(){ try{const r=localStorage.getItem(SVC_KEY);if(r)return JSON.parse(r);}catch(e){} localStorage.setItem(SVC_KEY,JSON.stringify(SVC_SEED));return [...SVC_SEED]; }
+function getReg(){ try{const r=localStorage.getItem(REG_KEY);if(r)return JSON.parse(r);}catch(e){} localStorage.setItem(REG_KEY,JSON.stringify(REG_SEED));return [...REG_SEED]; }
+function saveSvc(a){ localStorage.setItem(SVC_KEY,JSON.stringify(a)); }
+function saveReg2(a){ localStorage.setItem(REG_KEY,JSON.stringify(a)); }
+
+const today = new Date().toISOString().split('T')[0];
+const thisMonth = today.slice(0,7);
+
+function daysUntil(d){ if(!d)return null; return Math.round((new Date(d+'T12:00:00')-new Date())/86400000); }
+function fmtD(d){ if(!d)return '—'; try{return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}catch(e){return d;} }
+function fmtMi(n){ return n?Number(n).toLocaleString()+' mi':'—'; }
+
+const SVC_LABELS = {oil_change:'Oil & Filter Change',dot_annual:'DOT Annual Inspection',brake_inspection:'Brake Inspection',tire_rotation:'Tire Rotation/Replacement',pm_a:'PM-A Full Service',pm_b:'PM-B Extended',coolant_flush:'Coolant Flush',transmission:'Transmission Service',diff_fluid:'Differential Fluid',def_system:'DEF System',dpf_regen:'DPF/Regen',air_filter:'Air Filter',fuel_filter:'Fuel Filter',battery:'Battery/Alternator',steering:'Steering/Suspension',hvac:'HVAC',electrical:'Electrical',body:'Body/Frame',tires_new:'Tires (New Set)',eld:'ELD/Telematics',breakdown:'Breakdown/Road Call',other:'Other'};
+const REG_LABELS = {registration:'IRP Registration',ifta_decal:'IFTA Decal',ifta_filing:'IFTA Quarterly Filing',hvut_2290:'HVUT Form 2290',state_permit:'State Fuel Permit',ucr:'UCR Registration',mc_authority:'MC Operating Authority',dot_number:'USDOT Renewal',insurance:'Cargo Insurance',liability:'Liability Insurance',boc3:'BOC-3 Filing',other:'Other'};
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function showTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  if(id==='service-log') renderServiceLog();
+  if(id==='regulatory') renderReg();
+}
+
+// ─── FLEET OVERVIEW ──────────────────────────────────────────────────────────
+function pmStatus(unit) {
+  const svcs = getSvc().filter(s=>s.unit===unit.unit && s.type==='oil_change').sort((a,b)=>b.date.localeCompare(a.date));
+  const last = svcs[0];
+  if (!last) return {label:'No Record',cls:'pill-gray',miUntil:null};
+  const milesSince = unit.mileage - (last.mileage||unit.lastPMmi||0);
+  const remaining = unit.pmInterval - milesSince;
+  if (remaining < 0) return {label:`${Math.abs(Math.round(remaining/1000))}K OVER`,cls:'pill-red',miUntil:remaining};
+  if (remaining < 3000) return {label:`${Math.round(remaining/1000)*1000} mi`,cls:'pill-yellow',miUntil:remaining};
+  return {label:`${Math.round(remaining/1000)*1000} mi`,cls:'pill-green',miUntil:remaining};
+}
+
+function unitStatus(s) {
+  if(s==='in_service') return '<span class="status-pill pill-green">▲ In Service</span>';
+  if(s==='in_shop')    return '<span class="status-pill pill-yellow">🔧 In Shop</span>';
+  return '<span class="status-pill pill-red">✗ Out of Service</span>';
+}
+
+function renderFleet() {
+  const services = getSvc();
+  let inSvc=0, overdue=0, dueMo=0, annualOk=0;
+
+  const cards = FLEET.map(u => {
+    const pm = pmStatus(u);
+    const annualDays = daysUntil(u.annualInsp);
+    const annualBadge = !u.annualInsp ? '<span class="badge badge-gray">No Record</span>'
+      : annualDays < 0 ? '<span class="badge badge-red">EXPIRED</span>'
+      : annualDays <= 60 ? `<span class="badge badge-yellow">${annualDays}d</span>`
+      : '<span class="badge badge-green">Current</span>';
+
+    if(u.status==='in_service') inSvc++;
+    if(pm.miUntil!==null && pm.miUntil<0) overdue++;
+    if(u.annualInsp && u.annualInsp.startsWith(thisMonth)) dueMo++;
+    if(u.annualInsp && annualDays!==null && annualDays>=0) annualOk++;
+
+    const lastSvc = services.filter(s=>s.unit===u.unit).sort((a,b)=>b.date.localeCompare(a.date))[0];
+
+    return `<div class="unit-card">
+      <div class="unit-card-head">
+        <div>
+          <div class="unit-num">Unit ${u.unit}</div>
+          <div class="unit-truck">${u.year} ${u.truck}</div>
+        </div>
+        <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+          ${unitStatus(u.status)}
+          ${u.driver ? `<span style="font-size:11px;color:#475569;font-weight:600;">${u.driver}</span>` : ''}
+        </div>
+      </div>
+      <div class="unit-card-body">
+        <div class="pm-item"><span class="pm-item-label">Mileage</span><span class="pm-item-val"><span class="mono">${fmtMi(u.mileage)}</span></span></div>
+        <div class="pm-item"><span class="pm-item-label">Oil Change (PM)</span><span class="pm-item-val"><span class="status-pill ${pm.cls}" style="font-size:10px;">${pm.label}</span></span></div>
+        <div class="pm-item"><span class="pm-item-label">Annual Inspection</span><span class="pm-item-val">${annualBadge}<span style="font-size:11px;color:#64748b;">${fmtD(u.annualInsp)}</span></span></div>
+        <div class="pm-item"><span class="pm-item-label">Last Service</span><span class="pm-item-val"><span style="font-size:11px;">${lastSvc ? SVC_LABELS[lastSvc.type]||lastSvc.type : '—'} · ${fmtD(lastSvc?.date)}</span></span></div>
+        <div style="margin-top:8px;display:flex;gap:6px;">
+          <button class="btn btn-sm" onclick="openServiceModal('${u.unit}')">+ Log Service</button>
+          <button class="btn btn-sm" onclick="showTab('service-log',document.querySelectorAll('.tab')[1]);document.getElementById('svcUnitFilter').value='${u.unit}';renderServiceLog();">History</button>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('fleetGrid').innerHTML = cards.join('');
+  document.getElementById('kpi-service').textContent  = inSvc;
+  document.getElementById('kpi-overdue').textContent  = overdue;
+  document.getElementById('kpi-due').textContent      = dueMo;
+  document.getElementById('kpi-annual').textContent   = annualOk;
+}
+
+// ─── SERVICE LOG ─────────────────────────────────────────────────────────────
+function renderServiceLog() {
+  const filter = document.getElementById('svcUnitFilter').value;
+  const all = getSvc().filter(s=>filter?s.unit===filter:true).sort((a,b)=>b.date.localeCompare(a.date));
+  const tbody = document.getElementById('svc-tbody');
+  if(!all.length){ tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:32px;color:#94a3b8;">No service records. Click "+ Log Service" to start.</td></tr>'; return; }
+  const truckMap = Object.fromEntries(FLEET.map(u=>[u.unit,u.truck]));
+  tbody.innerHTML = all.map(s=>`<tr>
+    <td class="mono">${fmtD(s.date)}</td>
+    <td style="font-family:monospace;font-weight:700;">Unit ${s.unit}</td>
+    <td style="font-size:12px;color:#475569;">${truckMap[s.unit]||''}</td>
+    <td style="font-weight:600;">${SVC_LABELS[s.type]||s.type}</td>
+    <td class="mono">${s.mileage?Number(s.mileage).toLocaleString()+' mi':'—'}</td>
+    <td style="color:#22c55e;font-weight:600;">${s.cost?'$'+Number(s.cost).toLocaleString():'—'}</td>
+    <td style="font-size:12px;">${s.shop||'—'}</td>
+    <td class="mono" style="font-size:11px;">${s.nextDate?fmtD(s.nextDate):s.nextMiles?fmtMi(s.nextMiles):'—'}</td>
+    <td style="font-size:11px;color:#64748b;max-width:160px;">${s.notes||''}</td>
+    <td><button class="btn-ghost" onclick="deleteSvc('${s.id}')" style="color:#ef4444;">🗑</button></td>
+  </tr>`).join('');
+}
+
+// ─── REGULATORY ──────────────────────────────────────────────────────────────
+function renderReg() {
+  const all = getReg().sort((a,b)=>(a.due||'').localeCompare(b.due||''));
+  const tbody = document.getElementById('reg-tbody');
+  if(!all.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:32px;color:#94a3b8;">No regulatory items. Click "+ Add" to start.</td></tr>'; return; }
+  const statusBadge = {current:'badge-green',due_soon:'badge-yellow',filed:'badge-blue',expired:'badge-red'};
+  tbody.innerHTML = all.map(r=>`<tr>
+    <td style="font-weight:700;font-family:monospace;">${r.unit==='ALL'?'All Units':'Unit '+r.unit}</td>
+    <td style="font-weight:600;">${REG_LABELS[r.type]||r.type}</td>
+    <td class="mono">${fmtD(r.due)}</td>
+    <td><span class="badge ${statusBadge[r.status]||'badge-gray'}">${r.status?.replace('_',' ').toUpperCase()}</span></td>
+    <td style="font-size:12px;">${r.authority||'—'}</td>
+    <td style="font-size:11px;color:#64748b;">${r.notes||''}</td>
+    <td><button class="btn-ghost" onclick="editReg('${r.id}')">✏️</button><button class="btn-ghost" onclick="deleteReg('${r.id}')" style="color:#ef4444;">🗑</button></td>
+  </tr>`).join('');
+}
+
+// ─── SERVICE MODAL ────────────────────────────────────────────────────────────
+function openServiceModal(preUnit='') {
+  document.getElementById('svcModalTitle').textContent = 'LOG SERVICE';
+  document.getElementById('svc-edit-id').value = '';
+  document.getElementById('svc-unit').value = preUnit;
+  document.getElementById('svc-date').value = today;
+  document.getElementById('svc-type').value = 'oil_change';
+  document.getElementById('svc-mileage').value = '';
+  document.getElementById('svc-cost').value = '';
+  document.getElementById('svc-shop').value = '';
+  document.getElementById('svc-next-date').value = '';
+  document.getElementById('svc-next-miles').value = '';
+  document.getElementById('svc-notes').value = '';
+  document.getElementById('svcModal').classList.add('open');
+}
+function closeSvcModal(){ document.getElementById('svcModal').classList.remove('open'); }
+
+function saveService() {
+  const unit = document.getElementById('svc-unit').value;
+  const date = document.getElementById('svc-date').value;
+  if(!unit||!date){ alert('Unit and date required'); return; }
+  const rec = {
+    id: document.getElementById('svc-edit-id').value || 'sv'+Date.now(),
+    unit, date,
+    type:      document.getElementById('svc-type').value,
+    mileage:   parseInt(document.getElementById('svc-mileage').value)||null,
+    cost:      parseFloat(document.getElementById('svc-cost').value)||null,
+    shop:      document.getElementById('svc-shop').value.trim(),
+    nextDate:  document.getElementById('svc-next-date').value||'',
+    nextMiles: parseInt(document.getElementById('svc-next-miles').value)||null,
+    notes:     document.getElementById('svc-notes').value.trim(),
+  };
+  const all = getSvc();
+  const idx = all.findIndex(s=>s.id===rec.id);
+  if(idx>=0) all[idx]=rec; else all.unshift(rec);
+  saveSvc(all);
+  closeSvcModal();
+  renderFleet();
+  if(document.getElementById('tab-service-log').classList.contains('active')) renderServiceLog();
+}
+
+function deleteSvc(id){ if(!confirm('Delete this service record?')) return; saveSvc(getSvc().filter(s=>s.id!==id)); renderServiceLog(); renderFleet(); }
+
+// ─── REGULATORY MODAL ────────────────────────────────────────────────────────
+function openRegModal() {
+  document.getElementById('reg-edit-id').value='';
+  document.getElementById('reg-unit').value='ALL';
+  document.getElementById('reg-due').value='';
+  document.getElementById('reg-type').value='registration';
+  document.getElementById('reg-authority').value='';
+  document.getElementById('reg-status').value='current';
+  document.getElementById('reg-notes').value='';
+  document.getElementById('regModal').classList.add('open');
+}
+function closeRegModal(){ document.getElementById('regModal').classList.remove('open'); }
+
+function editReg(id){
+  const r=getReg().find(x=>x.id===id);
+  if(!r) return;
+  document.getElementById('reg-edit-id').value=r.id;
+  document.getElementById('reg-unit').value=r.unit;
+  document.getElementById('reg-due').value=r.due||'';
+  document.getElementById('reg-type').value=r.type;
+  document.getElementById('reg-authority').value=r.authority||'';
+  document.getElementById('reg-status').value=r.status;
+  document.getElementById('reg-notes').value=r.notes||'';
+  document.getElementById('regModal').classList.add('open');
+}
+
+function saveReg(){
+  const rec={
+    id: document.getElementById('reg-edit-id').value||'rg'+Date.now(),
+    unit: document.getElementById('reg-unit').value,
+    due:  document.getElementById('reg-due').value,
+    type: document.getElementById('reg-type').value,
+    authority: document.getElementById('reg-authority').value.trim(),
+    status: document.getElementById('reg-status').value,
+    notes: document.getElementById('reg-notes').value.trim(),
+  };
+  const all=getReg();
+  const idx=all.findIndex(r=>r.id===rec.id);
+  if(idx>=0) all[idx]=rec; else all.unshift(rec);
+  saveReg2(all);
+  closeRegModal();
+  renderReg();
+}
+
+function deleteReg(id){ if(!confirm('Delete this item?')) return; saveReg2(getReg().filter(r=>r.id!==id)); renderReg(); }
+
+// ─── EXPORT ───────────────────────────────────────────────────────────────────
+function exportPM(){
+  const rows=[['Unit','Truck','Mileage','Status','Annual Insp','Last Oil Change','PM Miles Left']];
+  FLEET.forEach(u=>{
+    const pm=pmStatus(u);
+    rows.push([u.unit,u.truck,u.mileage,u.status,u.annualInsp||'—',u.lastPM||'—',pm.miUntil||'—']);
+  });
+  const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='fleet-pm-report.csv';
+  a.click();
+}
+
+// ─── CLICK OUTSIDE ────────────────────────────────────────────────────────────
+['svcModal','regModal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)document.getElementById(id).classList.remove('open');});
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderFleet();
+(async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); })();
 </script>
 </body></html>
