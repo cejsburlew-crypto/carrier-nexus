@@ -105,6 +105,22 @@
   .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim); cursor: pointer; }
   .legend-swatch { width: 20px; height: 3px; border-radius: 2px; flex-shrink: 0; }
 
+  /* ── PROFIT PER LOAD ── */
+  #profitLoadSection { display:none; }
+  .ppl-kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+  .ppl-table-wrap { background:var(--black-2); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .ppl-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .ppl-table th { font-size:9px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); padding:8px 12px; border-bottom:1px solid var(--border); text-align:left; background:rgba(255,255,255,0.03); }
+  .ppl-table td { padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .ppl-table tr:last-child td { border-bottom:none; }
+  .ppl-table tr:hover td { background:rgba(255,255,255,0.03); }
+  .margin-high { color:#22c55e; font-weight:700; }
+  .margin-mid  { color:#eab308; font-weight:700; }
+  .margin-low  { color:#ef4444; font-weight:700; }
+  .ppl-dot-high { display:inline-block; width:8px; height:8px; border-radius:50%; background:#22c55e; margin-right:4px; }
+  .ppl-dot-mid  { display:inline-block; width:8px; height:8px; border-radius:50%; background:#eab308; margin-right:4px; }
+  .ppl-dot-low  { display:inline-block; width:8px; height:8px; border-radius:50%; background:#ef4444; margin-right:4px; }
+
   @media (max-width: 900px) {
     .kpi-row { grid-template-columns: repeat(2, 1fr); }
     .chart-grid { grid-template-columns: 1fr; }
@@ -129,6 +145,7 @@
         <button class="toggle-btn" data-view="driver">Driver</button>
         <button class="toggle-btn" data-view="pnl">P&amp;L</button>
         <button class="toggle-btn" data-view="cashflow">Cash Flow</button>
+        <button class="toggle-btn" data-view="profitload">Profit/Load</button>
       </div>
       <select class="period-select" id="periodSelect">
         <option value="7">Last 7 Days</option>
@@ -245,6 +262,62 @@
       <canvas id="driverChart" height="200"></canvas>
       <div class="chart-legend" id="driverLegend"></div>
     </div>
+
+
+    <!-- PROFIT PER LOAD SECTION -->
+    <div id="profitLoadSection">
+      <!-- PPL KPI Row -->
+      <div class="ppl-kpi-row" id="pplKpiRow">
+        <div class="kpi-card highlight">
+          <div class="kpi-label">Total Net Profit</div>
+          <div class="kpi-value" id="ppl-total-net" style="color:var(--green)">$0</div>
+          <div class="kpi-sub" id="ppl-load-count">0 loads</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Avg Margin %</div>
+          <div class="kpi-value" id="ppl-avg-margin" style="color:var(--orange)">0%</div>
+          <div class="kpi-sub">Across all loads</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Best Load</div>
+          <div class="kpi-value" id="ppl-best-load" style="color:var(--green);font-size:16px;">—</div>
+          <div class="kpi-sub" id="ppl-best-sub">Highest net profit</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Worst Load</div>
+          <div class="kpi-value" id="ppl-worst-load" style="color:var(--red);font-size:16px;">—</div>
+          <div class="kpi-sub" id="ppl-worst-sub">Lowest net profit</div>
+        </div>
+      </div>
+
+      <!-- PPL Table -->
+      <div class="ppl-table-wrap">
+        <div class="panel-header" style="padding:16px 20px;border-bottom:1px solid var(--border);">
+          <div>
+            <div class="panel-title">Profit Per Load Detail</div>
+            <div class="panel-sub">Revenue from nexus_loads_v2 · Expenses from nexus_expenses (load_ref matched) · Driver pay: David 14%, Guillermo 13%</div>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="ppl-table">
+            <thead>
+              <tr>
+                <th>Load #</th>
+                <th>Driver</th>
+                <th>Rate</th>
+                <th>Driver Pay</th>
+                <th>Linked Expenses</th>
+                <th>Net Profit</th>
+                <th>Margin %</th>
+              </tr>
+            </thead>
+            <tbody id="pplTbody">
+              <tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text-muted);">Loading load data…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /profitLoadSection -->
 
   </div><!-- /content -->
 </div><!-- /main -->
@@ -610,6 +683,116 @@ document.getElementById('viewToggle').addEventListener('click', e => {
 });
 
 rebuildAll();
+
+
+// ── PROFIT PER LOAD ───────────────────────────────────────────────────────────
+const DRIVER_PAY_PCT = { 'DAVID': 0.14, 'GUILLERMO': 0.13 };
+const DEFAULT_DRIVER_PAY = 0.70; // fallback for company drivers
+
+function fmt$(n) {
+  return '$' + Number(n||0).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
+}
+
+function buildProfitPerLoad() {
+  let loads = [];
+  let expenses = [];
+  try { loads = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]'); } catch(e){}
+  try { expenses = JSON.parse(localStorage.getItem('nexus_expenses') || '[]'); } catch(e){}
+
+  if (!loads.length) {
+    // Generate synthetic demo data
+    const demoDrivers = ['DAVID', 'GUILLERMO', 'AVIS', 'MIGUEL', 'NELSON', 'YOSVIEL'];
+    const demoBrokers = ['All-Quip','SET Logistics','Expressway Logistics','WLE','STT Logistics','LRS Logistics'];
+    loads = Array.from({length:12}, (_,i) => ({
+      id: 'L' + (10400+i),
+      loadNum: '#L' + (10400+i),
+      driver: demoDrivers[i % demoDrivers.length],
+      rate: Math.round(2000 + Math.random()*5000),
+      broker: demoBrokers[i % demoBrokers.length],
+    }));
+    expenses = loads.map(l => ({
+      load_ref: l.loadNum,
+      amount: Math.round(100 + Math.random()*800),
+      category: 'Fuel',
+    }));
+  }
+
+  // Build expense map keyed by load_ref (normalized)
+  const expMap = {};
+  expenses.forEach(e => {
+    const ref = (e.load_ref || e.loadRef || '').toString().trim().toUpperCase();
+    if (!ref) return;
+    expMap[ref] = (expMap[ref] || 0) + Number(e.amount || 0);
+  });
+
+  const rows = loads.map(load => {
+    const rate = Number(load.rate || load.total_rate || load.totalRate || 0);
+    const driverKey = (load.driver || '').toString().toUpperCase().trim();
+    const payPct = DRIVER_PAY_PCT[driverKey] !== undefined ? DRIVER_PAY_PCT[driverKey] : DEFAULT_DRIVER_PAY;
+    const driverPay = rate * payPct;
+    const loadRef = (load.loadNum || load.id || '').toString().trim().toUpperCase();
+    const linkedExp = expMap[loadRef] || 0;
+    const net = rate - driverPay - linkedExp;
+    const margin = rate > 0 ? (net / rate * 100) : 0;
+    return { load, rate, driverPay, linkedExp, net, margin, driverKey };
+  }).filter(r => r.rate > 0);
+
+  // KPIs
+  const totalNet = rows.reduce((s,r)=>s+r.net, 0);
+  const avgMargin = rows.length ? rows.reduce((s,r)=>s+r.margin,0)/rows.length : 0;
+  const bestRow = rows.reduce((best,r)=>(!best||r.net>best.net)?r:best, null);
+  const worstRow = rows.reduce((worst,r)=>(!worst||r.net<worst.net)?r:worst, null);
+
+  document.getElementById('ppl-total-net').textContent = fmt$(totalNet);
+  document.getElementById('ppl-load-count').textContent = rows.length + ' loads analyzed';
+  document.getElementById('ppl-avg-margin').textContent = avgMargin.toFixed(1) + '%';
+  document.getElementById('ppl-avg-margin').className = 'kpi-value ' + (avgMargin>20?'margin-high':avgMargin>=10?'margin-mid':'margin-low');
+  if (bestRow) {
+    document.getElementById('ppl-best-load').textContent = (bestRow.load.loadNum||bestRow.load.id) + ' · ' + fmt$(bestRow.net);
+    document.getElementById('ppl-best-sub').textContent = bestRow.driverKey + ' · ' + bestRow.margin.toFixed(1) + '% margin';
+  }
+  if (worstRow) {
+    document.getElementById('ppl-worst-load').textContent = (worstRow.load.loadNum||worstRow.load.id) + ' · ' + fmt$(worstRow.net);
+    document.getElementById('ppl-worst-sub').textContent = worstRow.driverKey + ' · ' + worstRow.margin.toFixed(1) + '% margin';
+  }
+
+  // Table
+  const tbody = document.getElementById('pplTbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text-muted);">No load data with rate information found.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.sort((a,b)=>b.net-a.net).map(r => {
+    const cls = r.margin>20?'margin-high':r.margin>=10?'margin-mid':'margin-low';
+    const dot = r.margin>20?'ppl-dot-high':r.margin>=10?'ppl-dot-mid':'ppl-dot-low';
+    return `<tr>
+      <td><span class="mono" style="color:var(--orange)">${r.load.loadNum||r.load.id}</span></td>
+      <td style="font-weight:600;font-size:12px;">${r.driverKey||'—'}</td>
+      <td class="mono" style="color:var(--white-pure)">${fmt$(r.rate)}</td>
+      <td class="mono" style="color:#3b82f6">${fmt$(r.driverPay)}</td>
+      <td class="mono" style="color:var(--text-muted)">${r.linkedExp ? fmt$(r.linkedExp) : '<span style="opacity:.4;">—</span>'}</td>
+      <td class="mono" style="${r.net>=0?'color:#22c55e':'color:#ef4444'};font-weight:700;">${fmt$(r.net)}</td>
+      <td><span class="${dot}"></span><span class="${cls}">${r.margin.toFixed(1)}%</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// Hook into view toggle
+document.getElementById('viewToggle').addEventListener('click', e => {
+  if (!e.target.classList.contains('toggle-btn')) return;
+  const view = e.target.dataset.view;
+  const pplSection = document.getElementById('profitLoadSection');
+  if (view === 'profitload') {
+    pplSection.style.display = 'block';
+    buildProfitPerLoad();
+    // Hide other sections
+    document.getElementById('driverSection').style.display = 'none';
+  } else {
+    pplSection.style.display = 'none';
+    document.getElementById('driverSection').style.display = 'block';
+  }
+});
+
 </script>
 </body>
 </html>

@@ -101,6 +101,19 @@ tr:hover td{background:#fafcff;}
 .print-total-row{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;}
 .print-total-final{font-weight:800;font-size:16px;color:var(--pink);}
 .print-footer{border-top:1px solid #e2e8f0;padding:16px 32px;font-size:11px;color:#94a3b8;display:flex;justify-content:space-between;}
+
+/* AGING ANALYSIS */
+.aging-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.aging-bucket{background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px 16px;text-align:center;}
+.aging-bucket-label{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;}
+.aging-bucket-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#0f172a;}
+.aging-bucket-ct{font-size:11px;color:var(--muted);margin-top:2px;}
+.aging-bucket.amber{border-left:3px solid #fbbf24;}
+.aging-bucket.red-bkt{border-left:3px solid #ef4444;}
+.row-amber td{background:#fffbeb!important;}
+.row-red td{background:#fff1f1!important;}
+.badge-overdue{background:#fee2e2;color:#b91c1c;font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;letter-spacing:.04em;margin-left:5px;vertical-align:middle;}
+.days-out-cell{font-family:'JetBrains Mono',monospace;font-size:11px;}
 /* MOBILE */
 .mobile-nav{display:none;}
 @media(max-width:768px){
@@ -156,6 +169,15 @@ tr:hover td{background:#fafcff;}
       <div class="kpi-card"><div class="kpi-label">Drafts</div><div class="kpi-val" id="kpi-draft" style="color:#94a3b8;">0</div><div class="kpi-sub">Not yet sent</div></div>
     </div>
 
+
+    <!-- AGING ANALYSIS -->
+    <div id="agingSummary" class="aging-strip">
+      <div class="aging-bucket"><div class="aging-bucket-label">Current (0–30 days)</div><div class="aging-bucket-val" id="age-0-30">$0</div><div class="aging-bucket-ct" id="age-0-30-ct">0 invoices</div></div>
+      <div class="aging-bucket amber"><div class="aging-bucket-label">30–60 Days</div><div class="aging-bucket-val" id="age-30-60" style="color:#d97706;">$0</div><div class="aging-bucket-ct" id="age-30-60-ct">0 invoices</div></div>
+      <div class="aging-bucket amber"><div class="aging-bucket-label">60–90 Days</div><div class="aging-bucket-val" id="age-60-90" style="color:#b45309;">$0</div><div class="aging-bucket-ct" id="age-60-90-ct">0 invoices</div></div>
+      <div class="aging-bucket red-bkt"><div class="aging-bucket-label">90+ Days</div><div class="aging-bucket-val" id="age-90p" style="color:#ef4444;">$0</div><div class="aging-bucket-ct" id="age-90p-ct">0 invoices</div></div>
+    </div>
+
     <!-- Invoice Table -->
     <div class="panel">
       <div class="panel-head">
@@ -178,7 +200,7 @@ tr:hover td{background:#fafcff;}
           <thead><tr>
             <th>Invoice #</th><th>Date</th><th>Broker / Customer</th><th>Driver</th>
             <th>Load Ref(s)</th><th>Rate Con</th><th>Accessorials</th>
-            <th style="text-align:right">Total</th><th>Due</th><th>Status</th><th>Actions</th>
+            <th style="text-align:right">Total</th><th>Due</th><th>Days Out</th><th>Status</th><th>Actions</th>
           </tr></thead>
           <tbody id="inv-tbody"></tbody>
         </table>
@@ -486,16 +508,41 @@ function renderTable() {
   document.getElementById('kpi-overdue-ct').textContent = overdueCt + ' past due';
   document.getElementById('kpi-draft').textContent = draftCt;
 
+  // Aging buckets (unpaid only)
+  var ageData = {'0-30':{amt:0,ct:0},'30-60':{amt:0,ct:0},'60-90':{amt:0,ct:0},'90+':{amt:0,ct:0}};
+  all.forEach(function(i) {
+    var eff = isOverdue(i) ? 'Overdue' : i.status;
+    if (eff === 'Paid' || eff === 'Draft') return;
+    if (!i.invoice_date && !i.date) return;
+    var invDate = new Date((i.invoice_date || i.date) + 'T12:00:00');
+    var daysOut = Math.floor((new Date() - invDate) / 86400000);
+    var bucket = daysOut <= 30 ? '0-30' : daysOut <= 60 ? '30-60' : daysOut <= 90 ? '60-90' : '90+';
+    ageData[bucket].amt += Number(i.total||0);
+    ageData[bucket].ct++;
+  });
+  document.getElementById('age-0-30').textContent = fmt$(ageData['0-30'].amt);
+  document.getElementById('age-0-30-ct').textContent = ageData['0-30'].ct + ' invoice' + (ageData['0-30'].ct===1?'':'s');
+  document.getElementById('age-30-60').textContent = fmt$(ageData['30-60'].amt);
+  document.getElementById('age-30-60-ct').textContent = ageData['30-60'].ct + ' invoice' + (ageData['30-60'].ct===1?'':'s');
+  document.getElementById('age-60-90').textContent = fmt$(ageData['60-90'].amt);
+  document.getElementById('age-60-90-ct').textContent = ageData['60-90'].ct + ' invoice' + (ageData['60-90'].ct===1?'':'s');
+  document.getElementById('age-90p').textContent = fmt$(ageData['90+'].amt);
+  document.getElementById('age-90p-ct').textContent = ageData['90+'].ct + ' invoice' + (ageData['90+'].ct===1?'':'s');
+
   const tbody = document.getElementById('inv-tbody');
   if (!data.length) {
-    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:36px;color:#94a3b8;">No invoices match your filters.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;padding:36px;color:#94a3b8;">No invoices match your filters.</td></tr>';
     return;
   }
 
   tbody.innerHTML = data.map(i => {
     const eff = isOverdue(i) ? 'Overdue' : i.status;
     const acc = Number(i.fsc||0) + Number(i.accessorial||0) + Number(i.detention||0);
-    return `<tr>
+    const invDate = new Date((i.invoice_date||i.date)+'T12:00:00');
+    const daysOut = Math.floor((new Date() - invDate) / 86400000);
+    const rowCls = (daysOut>=90&&eff!=='Paid') ? 'row-red' : (daysOut>=60&&eff!=='Paid') ? 'row-amber' : '';
+    const overdueBadge = (daysOut>45&&eff!=='Paid') ? '<span class="badge-overdue">OVERDUE</span>' : '';
+    return `<tr class="${rowCls}">
       <td><span class="mono" style="font-weight:700;">${i.num}</span></td>
       <td class="mono" style="font-size:11px;">${fmtD(i.date)}</td>
       <td style="font-weight:600;">${i.broker||'—'}</td>
@@ -505,6 +552,9 @@ function renderTable() {
       <td style="color:#64748b;font-size:12px;">${acc ? fmt$(acc) : '—'}</td>
       <td style="text-align:right;font-weight:800;color:#0f172a;">${fmt$(i.total)}</td>
       <td class="mono" style="font-size:11px;${eff==='Overdue'?'color:#ef4444;font-weight:700;':''}">${fmtD(i.due)}</td>
+      <td class="days-out-cell" style="${eff==='Paid'?'color:#94a3b8':'daysOut>45?'color:#ef4444;font-weight:700;':''}">
+        ${eff==='Paid'?'—':daysOut+' day'+(daysOut===1?'':'s')}${overdueBadge}
+      </td>
       <td><span class="badge ${STATUS_BADGE[eff]||'badge-gray'}">${eff}</span>${i.factored==='yes'?'<span class="badge badge-purple" style="margin-left:4px;">FAC</span>':''}</td>
       <td>
         <div class="action-cell">

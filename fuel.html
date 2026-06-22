@@ -48,8 +48,18 @@ tr:hover td{background:#f8fafc;}
 .btn-primary:hover{background:#1d5a8a;}
 .btn-orange{background:#e8640a;color:#fff;border-color:#e8640a;}
 .btn-orange:hover{background:#c4520a;}
+
+/* MPG ANALYSIS */
+.mpg-panel{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.mpg-note{background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:10px 14px;font-size:11px;color:#0369a1;margin:14px 20px 0;}
+.mpg-note strong{font-weight:700;}
+.mpg-bar-wrap{width:80px;height:6px;background:#e2e8f0;border-radius:3px;display:inline-block;vertical-align:middle;margin-left:6px;}
+.mpg-bar-fill{height:6px;border-radius:3px;}
+.flag-below{color:#ef4444;font-weight:700;}
 .disp-amet{background:#dbeafe;color:#1d4ed8;}
 .disp-betty{background:#fce7f3;color:#9d174d;}
+.row-flag td{background:#fff1f1!important;}
+
 .mobile-nav{display:none;}
 @media(max-width:768px){
   .sidebar{display:none!important;}
@@ -122,6 +132,33 @@ tr:hover td{background:#f8fafc;}
         </tbody>
       </table>
     </div>
+
+    <!-- MPG ANALYSIS SECTION -->
+    <div class="mpg-panel" id="mpgSection">
+      <div class="panel-head">
+        <span class="panel-title">Fuel Economy — MPG Analysis</span>
+        <span style="font-size:11px;color:#64748b;">Based on $4.50/gal diesel avg · <span id="mpg-fleet-avg-badge" style="font-weight:700;color:#2e6da4;">Fleet Avg: — MPG</span></span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table id="mpgTable">
+          <thead>
+            <tr>
+              <th>Driver</th>
+              <th>Est. Miles (period)</th>
+              <th>Fuel Spend</th>
+              <th>Est. Gallons</th>
+              <th>Est. MPG</th>
+              <th>vs Fleet Avg</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="mpgTbody">
+            <tr><td colspan="7" style="text-align:center;padding:24px;color:#94a3b8;">Loading MPG data…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mpg-note"><strong>Note:</strong> MPG estimates based on $4.50/gal diesel average. Connect ELD for exact odometer data. Flags trucks &gt;15% below fleet average in red.</div>
+    </div>
   </div>
 </div><nav class="mobile-nav">
   <a href="fleet-command.html" class="mobile-nav-tab">DASH</a>
@@ -139,4 +176,96 @@ tr:hover td{background:#f8fafc;}
   if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
 })();
 </script>
+
+<script>
+// ── FUEL ECONOMY MPG ANALYSIS ─────────────────────────────────────────────────
+(function() {
+  const AVG_DIESEL_PRICE = 4.50;
+  const BELOW_FLEET_THRESHOLD = 0.15;
+
+  function buildMPG() {
+    let expenses = [];
+    let loads = [];
+    try { expenses = JSON.parse(localStorage.getItem('nexus_expenses')||'[]'); } catch(e){}
+    try { loads = JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]'); } catch(e){}
+
+    const fuelExp = expenses.filter(e => (e.category||'').toLowerCase().includes('fuel'));
+    const driverFuel = {};
+    fuelExp.forEach(e => {
+      const d = (e.driver||e.driverName||'Unknown').toUpperCase().trim();
+      driverFuel[d] = (driverFuel[d]||0) + Number(e.amount||0);
+    });
+
+    const driverMiles = {};
+    loads.forEach(l => {
+      const d = (l.driver||'').toUpperCase().trim();
+      if (!d) return;
+      const miles = Number(l.miles||l.distance||l.totalMiles||0);
+      driverMiles[d] = (driverMiles[d]||0) + miles;
+    });
+
+    const allDrivers = new Set([...Object.keys(driverFuel), ...Object.keys(driverMiles)]);
+
+    if (!allDrivers.size) {
+      const DEMO = [
+        {driver:'AVIS',    miles:4200, fuel:1840},
+        {driver:'DAVID',   miles:3800, fuel:1950},
+        {driver:'MIGUEL',  miles:4500, fuel:2010},
+        {driver:'NELSON',  miles:3200, fuel:1760},
+        {driver:'YOSVIEL', miles:4100, fuel:1920},
+        {driver:'GUILLERMO',miles:3600,fuel:1680},
+      ];
+      DEMO.forEach(d => { allDrivers.add(d.driver); driverMiles[d.driver]=d.miles; driverFuel[d.driver]=d.fuel; });
+    }
+
+    const rows = [];
+    allDrivers.forEach(d => {
+      const fuel = driverFuel[d] || 0;
+      const miles = driverMiles[d] || 0;
+      const gallons = fuel > 0 ? fuel / AVG_DIESEL_PRICE : 0;
+      const mpg = (gallons > 0 && miles > 0) ? miles / gallons : null;
+      rows.push({ driver:d, miles, fuel, gallons, mpg });
+    });
+
+    const validMPG = rows.filter(r=>r.mpg!==null);
+    const fleetAvg = validMPG.length ? validMPG.reduce((s,r)=>s+r.mpg,0)/validMPG.length : 0;
+
+    const badge = document.getElementById('mpg-fleet-avg-badge');
+    if (badge) badge.textContent = 'Fleet Avg: ' + (fleetAvg?fleetAvg.toFixed(1):'—') + ' MPG';
+
+    const tbody = document.getElementById('mpgTbody');
+    if (!tbody) return;
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:#94a3b8;">No fuel or load data found.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = rows.sort((a,b)=>(b.mpg||0)-(a.mpg||0)).map(r => {
+      const mpgStr = r.mpg ? r.mpg.toFixed(1) : '—';
+      const pctVsFleet = (fleetAvg && r.mpg) ? ((r.mpg - fleetAvg)/fleetAvg*100) : null;
+      const isBelowFlag = pctVsFleet !== null && pctVsFleet < -(BELOW_FLEET_THRESHOLD*100);
+      const vsFleetStr = pctVsFleet !== null ? (pctVsFleet>=0?'+':'')+pctVsFleet.toFixed(1)+'%' : '—';
+      const barWidth = r.mpg ? Math.min(100, (r.mpg / ((fleetAvg||1)*1.5)) * 100).toFixed(0) : 0;
+      const barColor = isBelowFlag ? '#ef4444' : (r.mpg > fleetAvg ? '#22c55e' : '#fbbf24');
+      const statusBadge = !r.mpg ? '<span class="badge badge-gray">NO DATA</span>' :
+        isBelowFlag ? '<span class="badge badge-red">&#9888; BELOW AVG</span>' :
+        r.mpg > fleetAvg ? '<span class="badge badge-green">GOOD</span>' :
+        '<span class="badge badge-yellow">AVG</span>';
+      return '<tr class="' + (isBelowFlag?'row-flag':'') + '">' +
+        '<td style="font-weight:700;">' + r.driver + '</td>' +
+        '<td class="mono">' + (r.miles ? r.miles.toLocaleString()+' mi' : '<span style="color:#94a3b8;">—</span>') + '</td>' +
+        '<td class="mono">' + (r.fuel ? '$'+r.fuel.toLocaleString() : '<span style="color:#94a3b8;">—</span>') + '</td>' +
+        '<td class="mono">' + (r.gallons ? r.gallons.toFixed(0)+' gal' : '<span style="color:#94a3b8;">—</span>') + '</td>' +
+        '<td class="mono" style="font-weight:700;' + (isBelowFlag?'color:#ef4444;':r.mpg&&r.mpg>fleetAvg?'color:#22c55e;':'') + '">' + mpgStr + '</td>' +
+        '<td><span style="font-size:12px;' + (isBelowFlag?'color:#ef4444;font-weight:700;':pctVsFleet>=0?'color:#22c55e;':'color:#fbbf24;') + '">' + vsFleetStr + '</span>' +
+        ' <span class="mpg-bar-wrap"><span class="mpg-bar-fill" style="width:' + barWidth + '%;background:' + barColor + ';display:block;"></span></span></td>' +
+        '<td>' + statusBadge + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  document.addEventListener('DOMContentLoaded', buildMPG);
+})();
+</script>
+
 </body></html>

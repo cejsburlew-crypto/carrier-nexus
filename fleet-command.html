@@ -616,6 +616,18 @@ body {
 .sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
 /* ── NAV BADGE ── */
 .nav-badge { background:#e91e8c !important; color:#fff !important; }
+
+  /* ── EXPIRATION ALERTS ── */
+  .exp-strip { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:4px; }
+  .exp-alert { display:flex; align-items:center; gap:8px; padding:7px 12px; border-radius:8px; font-size:12px; font-weight:600; border:1px solid; cursor:default; }
+  .exp-alert .exp-dismiss { background:none; border:none; cursor:pointer; opacity:0.6; font-size:13px; margin-left:4px; padding:0; line-height:1; }
+  .exp-alert .exp-dismiss:hover { opacity:1; }
+  .exp-critical { background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.4); color:#fca5a5; }
+  .exp-warning  { background:rgba(251,191,36,0.12); border-color:rgba(251,191,36,0.4); color:#fcd34d; }
+  .exp-notice   { background:rgba(59,130,246,0.12); border-color:rgba(59,130,246,0.4); color:#93c5fd; }
+  .exp-all-clear { background:rgba(34,197,94,0.1); border-color:rgba(34,197,94,0.35); color:#86efac; padding:7px 16px; border-radius:8px; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px; }
+  .exp-section-hdr { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+  .exp-panel { background:var(--gunmetal-light); border:1px solid var(--border); border-radius:10px; padding:14px 18px; margin-bottom:18px; }
 </style>
 </head>
 <body>
@@ -658,6 +670,9 @@ body {
         <div class="kpi-sub" id="kpi-docs-sub">Missing PODs · Action required</div>
       </div>
     </div>
+
+    <!-- EXPIRATION ALERTS -->
+    <div id="expirationAlerts" style="margin-bottom:18px;"></div>
 
     <!-- ACTIVE LOADS + MISSING DOCS -->
     <div class="panels-row">
@@ -1048,6 +1063,153 @@ body {
     if (docsSub) docsSub.textContent = missingPods + ' missing POD' + (missingPods !== 1 ? 's' : '') + ' · Action required';
 
   } catch(e) { console.warn('KPI load error:', e); }
+})();
+</script>
+
+
+<script>
+// ── EXPIRATION ALERTS ──────────────────────────────────────────────────────────
+(function() {
+  var DISMISSED_KEY = 'nexus_dismissed_alerts';
+  var today = new Date();
+  today.setHours(0,0,0,0);
+
+  function getDismissed() {
+    try { return JSON.parse(localStorage.getItem(DISMISSED_KEY)||'[]'); } catch(e){ return []; }
+  }
+  function dismiss(id) {
+    var d = getDismissed();
+    if (!d.includes(id)) d.push(id);
+    localStorage.setItem(DISMISSED_KEY, JSON.stringify(d));
+    renderAlerts();
+  }
+
+  function daysDiff(dateStr) {
+    if (!dateStr) return null;
+    var d = new Date(dateStr + 'T12:00:00');
+    if (isNaN(d)) return null;
+    return Math.round((d - today) / 86400000);
+  }
+
+  function collectAlerts() {
+    var alerts = [];
+    var dismissed = getDismissed();
+
+    // Scan nexus_documents
+    try {
+      var docs = JSON.parse(localStorage.getItem('nexus_documents')||'[]');
+      docs.forEach(function(doc) {
+        var expDate = doc.expiration_date || doc.expiry_date || doc.expiration || doc.expiry;
+        if (!expDate) return;
+        var days = daysDiff(expDate);
+        if (days === null || days > 60) return;
+        var id = 'doc_' + (doc.id || doc.name);
+        if (dismissed.includes(id)) return;
+        var label = (doc.type || doc.doc_type || 'Document').toString().toUpperCase();
+        var owner = doc.driver || doc.owner || doc.assignedTo || '';
+        alerts.push({
+          id: id,
+          name: (doc.name || doc.fileName || label),
+          owner: owner,
+          days: days,
+          type: days <= 14 ? 'critical' : days <= 30 ? 'warning' : 'notice'
+        });
+      });
+    } catch(e) {}
+
+    // Scan nexus_loads_v2 for any embedded expiry fields
+    try {
+      var loads = JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]');
+      loads.forEach(function(l) {
+        ['cdl_expiry','ins_expiry','permit_expiry'].forEach(function(field) {
+          if (!l[field]) return;
+          var days = daysDiff(l[field]);
+          if (days === null || days > 60) return;
+          var id = 'load_' + l.id + '_' + field;
+          if (dismissed.includes(id)) return;
+          alerts.push({
+            id: id,
+            name: field.replace(/_/g,' ').replace('expiry','Expiry'),
+            owner: l.driver || '',
+            days: days,
+            type: days <= 14 ? 'critical' : days <= 30 ? 'warning' : 'notice'
+          });
+        });
+      });
+    } catch(e) {}
+
+    // Sort: critical first, then by days ascending
+    alerts.sort(function(a,b) {
+      var order = {critical:0, warning:1, notice:2};
+      if (order[a.type] !== order[b.type]) return order[a.type] - order[b.type];
+      return a.days - b.days;
+    });
+    return alerts;
+  }
+
+  function renderAlerts() {
+    var container = document.getElementById('expirationAlerts');
+    if (!container) return;
+    var alerts = collectAlerts();
+
+    if (!alerts.length) {
+      container.innerHTML = '<div class="exp-panel"><div class="exp-all-clear">✓ All documents current — no expirations within 60 days</div></div>';
+      return;
+    }
+
+    var critical = alerts.filter(function(a){ return a.type==='critical'; });
+    var warning  = alerts.filter(function(a){ return a.type==='warning'; });
+    var notice   = alerts.filter(function(a){ return a.type==='notice'; });
+
+    function badge(count, cls, label) {
+      if (!count) return '';
+      return '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;' +
+        (cls==='critical'?'background:rgba(239,68,68,0.18);color:#f87171;':
+         cls==='warning'?'background:rgba(251,191,36,0.18);color:#fcd34d;':
+         'background:rgba(59,130,246,0.18);color:#93c5fd;') +
+        '">' + count + ' ' + label + '</span>';
+    }
+
+    function renderAlertItem(a) {
+      var dayLabel = a.days < 0 ? 'EXPIRED ' + Math.abs(a.days) + ' days ago' :
+                     a.days === 0 ? 'EXPIRES TODAY' :
+                     'in ' + a.days + ' day' + (a.days===1?'':'s');
+      var cls = 'exp-alert exp-' + a.type;
+      return '<span class="' + cls + '">' +
+        (a.type==='critical'?'🔴':a.type==='warning'?'🟡':'🔵') + ' ' +
+        '<strong>' + a.name + '</strong>' +
+        (a.owner ? ' &mdash; ' + a.owner : '') +
+        ' &nbsp;<span style="opacity:.75;">' + dayLabel + '</span>' +
+        '<button class="exp-dismiss" onclick="(function(){' +
+          'var d=JSON.parse(localStorage.getItem('nexus_dismissed_alerts')||'[]');' +
+          'd.push('' + a.id.replace(/'/g,"\'") + '');' +
+          'localStorage.setItem('nexus_dismissed_alerts',JSON.stringify(d));' +
+          'document.getElementById('expirationAlerts').dispatchEvent(new Event('refresh'));' +
+        '})()">✕</button>' +
+        '</span>';
+    }
+
+    var html = '<div class="exp-panel">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">';
+    html += '<span class="exp-section-hdr">⚠ Document Expiration Alerts</span>';
+    html += '<div style="display:flex;gap:6px;">' +
+      badge(critical.length,'critical','Critical') +
+      badge(warning.length,'warning','Warning') +
+      badge(notice.length,'notice','Notice') +
+      '</div></div>';
+    html += '<div class="exp-strip">';
+    alerts.forEach(function(a){ html += renderAlertItem(a); });
+    html += '</div></div>';
+    container.innerHTML = html;
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var container = document.getElementById('expirationAlerts');
+    if (container) {
+      container.addEventListener('refresh', renderAlerts);
+      renderAlerts();
+    }
+  });
 })();
 </script>
 
