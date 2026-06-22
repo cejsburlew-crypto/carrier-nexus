@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DVIR — Carrier Nexus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0a; color: #e5e7eb; font-family: 'Inter', sans-serif; font-size: 14px; min-height: 100vh; }
+    .main-wrap { margin-left: 220px; }
+    .topbar {
+      background: #111827; border-bottom: 1px solid #21262d; padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .page-title {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700;
+      color: #fff; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;
+    }
+    .btn-new {
+      background: #e91e8c; color: #fff; border: none; padding: 9px 20px; border-radius: 6px;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700;
+      letter-spacing: 0.5px; cursor: pointer; transition: background 0.2s;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .btn-new:hover { background: #c91478; }
+    .content { padding: 24px; }
+    .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .kpi-card { background: #111827; border: 1px solid #21262d; border-radius: 10px; padding: 18px 22px; }
+    .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; margin-bottom: 6px; }
+    .kpi-value { font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 700; color: #fff; line-height: 1; }
+    .kpi-value.accent { color: #e91e8c; }
+    .kpi-sub { font-size: 11px; color: #6b7280; margin-top: 4px; }
+    .card { background: #111827; border: 1px solid #21262d; border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; }
+    .card-title {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700;
+      color: #fff; letter-spacing: 0.5px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+    }
+    .dvir-table { width: 100%; border-collapse: collapse; }
+    .dvir-table th {
+      text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.8px; color: #6b7280; padding: 10px 14px; border-bottom: 1px solid #21262d; background: #0d1117;
+    }
+    .dvir-table td { padding: 12px 14px; border-bottom: 1px solid #1a1f2e; vertical-align: middle; }
+    .dvir-table tr:last-child td { border-bottom: none; }
+    .dvir-table tr:hover td { background: #161e2e; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.4px; }
+    .badge-ok { background: #052e16; color: #4ade80; border: 1px solid #166534; }
+    .badge-defect { background: #450a0a; color: #f87171; border: 1px solid #7f1d1d; }
+    .badge-pre { background: #0c1a33; color: #60a5fa; border: 1px solid #1e3a5f; }
+    .badge-post { background: #1a0c33; color: #a78bfa; border: 1px solid #3b1f6e; }
+    .btn-view {
+      background: transparent; border: 1px solid #374151; color: #9ca3af;
+      padding: 5px 13px; border-radius: 5px; font-size: 12px; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-view:hover { border-color: #e91e8c; color: #e91e8c; }
+    .empty-state { text-align: center; padding: 48px 24px; color: #4b5563; }
+    .empty-state p { font-size: 14px; }
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+      z-index: 200; align-items: flex-start; justify-content: center;
+      padding: 24px 16px 40px; overflow-y: auto;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #111827; border: 1px solid #21262d; border-radius: 12px;
+      width: 100%; max-width: 860px; box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+      animation: slideUp 0.2s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #21262d; }
+    .modal-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+    .modal-close { background: none; border: none; color: #6b7280; cursor: pointer; font-size: 22px; line-height: 1; padding: 2px 6px; border-radius: 4px; transition: color 0.2s; }
+    .modal-close:hover { color: #fff; }
+    .modal-body { padding: 24px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid #21262d; display: flex; justify-content: flex-end; gap: 10px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: #9ca3af; }
+    .form-label span.req { color: #e91e8c; margin-left: 2px; }
+    .form-input, .form-select, .form-textarea {
+      background: #0d1117; border: 1px solid #374151; border-radius: 6px; color: #e5e7eb;
+      padding: 9px 12px; font-size: 14px; font-family: 'Inter', sans-serif; transition: border-color 0.2s; width: 100%;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #e91e8c; }
+    .form-select option { background: #1f2937; }
+    .form-textarea { resize: vertical; min-height: 80px; }
+    .checklist-section { margin-bottom: 24px; }
+    .checklist-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .checklist-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 10px; border-radius: 6px; border: 1px solid transparent;
+      margin-bottom: 4px; transition: background 0.15s;
+    }
+    .checklist-item:hover { background: #161e2e; }
+    .checklist-item.has-defect { background: #1a0808; border-color: #7f1d1d; }
+    .item-label { font-size: 13px; color: #d1d5db; flex: 1; }
+    .radio-group { display: flex; gap: 4px; }
+    .radio-btn {
+      padding: 3px 10px; border-radius: 4px; border: 1px solid #374151;
+      background: transparent; color: #6b7280; font-size: 11px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .radio-btn:hover { border-color: #e91e8c; color: #e91e8c; }
+    .radio-btn.active-ok { background: #052e16; border-color: #166534; color: #4ade80; }
+    .radio-btn.active-defect { background: #450a0a; border-color: #7f1d1d; color: #f87171; }
+    .radio-btn.active-na { background: #1e1b1b; border-color: #4b5563; color: #9ca3af; }
+    .defect-notes-box { background: #1a0808; border: 1px solid #7f1d1d; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: none; }
+    .defect-notes-box.visible { display: block; }
+    .defect-notes-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #f87171; margin-bottom: 8px; }
+    .cert-box { background: #0d1117; border: 1px solid #374151; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; }
+    .cert-box input[type="checkbox"] { width: 18px; height: 18px; accent-color: #e91e8c; flex-shrink: 0; margin-top: 1px; cursor: pointer; }
+    .cert-text { font-size: 13px; color: #9ca3af; line-height: 1.5; }
+    .cert-text strong { color: #e5e7eb; }
+    .btn-cancel {
+      background: transparent; border: 1px solid #374151; color: #9ca3af;
+      padding: 9px 20px; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 14px; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-cancel:hover { border-color: #6b7280; color: #e5e7eb; }
+    .btn-submit {
+      background: #e91e8c; color: #fff; border: none; padding: 9px 24px; border-radius: 6px;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: background 0.2s;
+    }
+    .btn-submit:hover { background: #c91478; }
+    .btn-submit:disabled { background: #374151; cursor: not-allowed; }
+    .view-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .view-item label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: #6b7280; margin-bottom: 3px; }
+    .view-item p { font-size: 14px; color: #e5e7eb; }
+    .view-checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .view-check-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; border-radius: 4px; font-size: 12px; border: 1px solid #1a1f2e; margin-bottom: 3px; }
+    .view-check-name { color: #9ca3af; }
+    .view-check-val { font-weight: 600; font-size: 11px; }
+    .val-ok { color: #4ade80; } .val-defect { color: #f87171; } .val-na { color: #6b7280; }
+    .view-notes-box { background: #1a0808; border: 1px solid #7f1d1d; border-radius: 6px; padding: 12px; font-size: 13px; color: #fca5a5; line-height: 1.5; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0a0a; }
+    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+    @media (max-width: 900px) {
+      .main-wrap { margin-left: 0 !important; }
+      .kpi-row, .form-grid, .checklist-columns, .view-checklist-grid, .view-grid { grid-template-columns: 1fr; }
+    }
+    @media print {
+      .topbar, .btn-new, .modal-footer .btn-cancel, .btn-view, #kpiRow { display: none !important; }
+      body { background: #fff !important; color: #000 !important; }
+      .main-wrap { margin-left: 0 !important; }
+    }
+  </style>
+</head>
+<body>
+
+<script src="nexus-config.js?v=6"></script>
+<script src="nexus-sidebar.js?v=6"></script>
+
+<div class="main-wrap" style="margin-left:220px;">
+
+  <div class="topbar">
+    <div class="page-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e91e8c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="M9 12h6M9 16h4"/></svg>
+      INSPECTION REPORTS (DVIR)
+    </div>
+    <button class="btn-new" onclick="openNewModal()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Inspection
+    </button>
+  </div>
+
+  <div class="content">
+
+    <div class="kpi-row" id="kpiRow">
+      <div class="kpi-card">
+        <div class="kpi-label">Inspections This Month</div>
+        <div class="kpi-value" id="kpiTotal">0</div>
+        <div class="kpi-sub" id="kpiMonthLabel">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Defects Found</div>
+        <div class="kpi-value accent" id="kpiDefects">0</div>
+        <div class="kpi-sub">Inspections with at least one defect</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Defect Rate</div>
+        <div class="kpi-value" id="kpiRate">0%</div>
+        <div class="kpi-sub">Defects / total inspections this month</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e91e8c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        Inspection Log
+      </div>
+      <div id="tableWrap">
+        <div class="empty-state" id="emptyState">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 12px;display:block;"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
+          <p>No inspections recorded yet. Click <strong style="color:#e91e8c;">+ New Inspection</strong> to begin.</p>
+        </div>
+        <table class="dvir-table" id="dvirTable" style="display:none;">
+          <thead>
+            <tr>
+              <th>Date / Time</th>
+              <th>Driver</th>
+              <th>Truck</th>
+              <th>Trip Type</th>
+              <th>Odometer</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="dvirTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- NEW INSPECTION MODAL -->
+<div class="modal-overlay" id="newModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">New Driver Vehicle Inspection Report</div>
+      <button class="modal-close" onclick="closeNewModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Driver <span class="req">*</span></label>
+          <select class="form-select" id="f_driver" onchange="updateSubmitState()">
+            <option value="">— Select Driver —</option>
+            <option value="Guillermo Pinera">Guillermo Pinera</option>
+            <option value="David Hernandez">David Hernandez</option>
+            <option value="Avis">Avis</option>
+            <option value="Miguel">Miguel</option>
+            <option value="Nelson">Nelson</option>
+            <option value="Yosviel">Yosviel</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Truck Unit <span class="req">*</span></label>
+          <select class="form-select" id="f_truck" onchange="updateSubmitState()">
+            <option value="">— Select Unit —</option>
+            <option value="T-001">T-001</option>
+            <option value="T-002">T-002</option>
+            <option value="T-003">T-003</option>
+            <option value="T-004">T-004</option>
+            <option value="T-005">T-005</option>
+            <option value="T-006">T-006</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Trip Type <span class="req">*</span></label>
+          <select class="form-select" id="f_triptype" onchange="updateSubmitState()">
+            <option value="">— Select Type —</option>
+            <option value="Pre-trip">Pre-trip</option>
+            <option value="Post-trip">Post-trip</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date &amp; Time <span class="req">*</span></label>
+          <input type="datetime-local" class="form-input" id="f_datetime" onchange="updateSubmitState()" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Odometer Reading (miles)</label>
+          <input type="number" class="form-input" id="f_odometer" placeholder="e.g. 124580" min="0" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Trailer # (if applicable)</label>
+          <input type="text" class="form-input" id="f_trailer" placeholder="e.g. TR-12345" />
+        </div>
+      </div>
+
+      <div class="checklist-section">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:#e91e8c;letter-spacing:0.5px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #21262d;display:flex;align-items:center;gap:6px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          FMCSA Inspection Checklist
+        </div>
+        <div style="font-size:12px;color:#6b7280;margin-bottom:14px;">
+          Mark each item: <strong style="color:#4ade80;">OK</strong> = Satisfactory &nbsp;|&nbsp; <strong style="color:#f87171;">DEF</strong> = Defect Found &nbsp;|&nbsp; <strong style="color:#9ca3af;">N/A</strong> = Not Applicable
+        </div>
+        <div class="checklist-columns">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #1e3a5f;">Tractor</div>
+            <div id="tractorChecklist"></div>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #3b1f6e;">Trailer</div>
+            <div id="trailerChecklist"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="defect-notes-box" id="defectNotesBox">
+        <div class="defect-notes-label">Defect Description — Required</div>
+        <textarea class="form-textarea" id="f_defectnotes" rows="4"
+          placeholder="Describe each defect found — item name, location, severity. Example: Left front tire has a slow leak, approx 15 psi low. Right tail light flickering intermittently."></textarea>
+      </div>
+
+      <div class="cert-box">
+        <input type="checkbox" id="f_certify" onchange="updateSubmitState()" />
+        <div class="cert-text">
+          <strong>Driver Certification (49 CFR 396.13):</strong><br />
+          I certify that I have inspected the above vehicle(s) in accordance with applicable requirements, and the above vehicle(s) is in safe operating condition — or that the defects noted above have been reported. I understand that per FMCSA regulations, I am required to sign this report before operating the vehicle.
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeNewModal()">Cancel</button>
+      <button class="btn-submit" id="btnSubmit" onclick="submitInspection()" disabled>Submit DVIR</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW INSPECTION MODAL -->
+<div class="modal-overlay" id="viewModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="viewModalTitle">Inspection Report</div>
+      <button class="modal-close" onclick="closeViewModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="viewModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeViewModal()">Close</button>
+      <button class="btn-submit" onclick="window.print()" style="background:#1d4ed8;">Print / Export PDF</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'nexus_dvir';
+
+const TRACTOR_ITEMS = [
+  'Air Brakes','Steering','Lights (Head/Tail/Stop/Turn)','Horn',
+  'Windshield Wipers','Mirrors','Tires','Wheels & Rims',
+  'Battery','Fuel System','Exhaust System','Frame & Body',
+  'Coupling Devices','Emergency Equipment','Engine Compartment'
+];
+
+const TRAILER_ITEMS = [
+  'Brakes','Lights','Tires','Wheels & Rims',
+  'Coupling Devices','Body & Frame','Cargo Securement','Mudflaps','Landing Gear'
+];
+
+let inspections = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadData();
+  buildChecklist('tractorChecklist', TRACTOR_ITEMS, 'tractor');
+  buildChecklist('trailerChecklist', TRAILER_ITEMS, 'trailer');
+  setDefaultDateTime();
+  renderTable();
+  renderKPIs();
+});
+
+function loadData() {
+  try { inspections = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+  catch(e) { inspections = []; }
+}
+
+function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(inspections)); }
+
+function setDefaultDateTime() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('f_datetime').value =
+    `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+}
+
+function buildChecklist(containerId, items, prefix) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  items.forEach((item, i) => {
+    const id = `${prefix}_${i}`;
+    const div = document.createElement('div');
+    div.className = 'checklist-item';
+    div.id = `item_${id}`;
+    div.innerHTML = `
+      <span class="item-label">${item}</span>
+      <div class="radio-group">
+        <button type="button" class="radio-btn" id="${id}_ok"  onclick="setItemStatus('${id}','ok')">OK</button>
+        <button type="button" class="radio-btn" id="${id}_def" onclick="setItemStatus('${id}','defect')">DEF</button>
+        <button type="button" class="radio-btn" id="${id}_na"  onclick="setItemStatus('${id}','na')">N/A</button>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function setItemStatus(id, status) {
+  ['ok','def','na'].forEach(s => {
+    const btn = document.getElementById(`${id}_${s}`);
+    if (btn) btn.className = 'radio-btn';
+  });
+  const classMap = { ok:'active-ok', defect:'active-defect', na:'active-na' };
+  const btnEl = document.getElementById(status === 'defect' ? `${id}_def` : `${id}_${status}`);
+  if (btnEl) btnEl.className = `radio-btn ${classMap[status]}`;
+  const row = document.getElementById(`item_${id}`);
+  if (row) row.classList.toggle('has-defect', status === 'defect');
+  updateDefectNotesVisibility();
+  updateSubmitState();
+}
+
+function getItemStatus(id) {
+  if (document.getElementById(`${id}_ok`)  && document.getElementById(`${id}_ok`).classList.contains('active-ok'))     return 'ok';
+  if (document.getElementById(`${id}_def`) && document.getElementById(`${id}_def`).classList.contains('active-defect')) return 'defect';
+  if (document.getElementById(`${id}_na`)  && document.getElementById(`${id}_na`).classList.contains('active-na'))      return 'na';
+  return null;
+}
+
+function gatherChecklistStatuses() {
+  const result = {};
+  TRACTOR_ITEMS.forEach((item, i) => { result[item] = getItemStatus(`tractor_${i}`); });
+  TRAILER_ITEMS.forEach((item, i) => { result[item] = getItemStatus(`trailer_${i}`); });
+  return result;
+}
+
+function hasAnyDefect() { return Object.values(gatherChecklistStatuses()).includes('defect'); }
+
+function updateDefectNotesVisibility() {
+  document.getElementById('defectNotesBox').classList.toggle('visible', hasAnyDefect());
+}
+
+function updateSubmitState() {
+  const ok = document.getElementById('f_driver').value.trim() &&
+             document.getElementById('f_truck').value.trim() &&
+             document.getElementById('f_triptype').value.trim() &&
+             document.getElementById('f_datetime').value.trim() &&
+             document.getElementById('f_certify').checked;
+  document.getElementById('btnSubmit').disabled = !ok;
+}
+
+function openNewModal() {
+  resetForm();
+  setDefaultDateTime();
+  document.getElementById('newModal').classList.add('active');
+}
+
+function closeNewModal() { document.getElementById('newModal').classList.remove('active'); }
+function closeViewModal() { document.getElementById('viewModal').classList.remove('active'); }
+
+document.getElementById('newModal').addEventListener('click', e => { if (e.target === document.getElementById('newModal')) closeNewModal(); });
+document.getElementById('viewModal').addEventListener('click', e => { if (e.target === document.getElementById('viewModal')) closeViewModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeNewModal(); closeViewModal(); } });
+
+function resetForm() {
+  ['f_driver','f_truck','f_triptype','f_odometer','f_trailer','f_defectnotes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('f_certify').checked = false;
+  document.getElementById('defectNotesBox').classList.remove('visible');
+  [...TRACTOR_ITEMS.map((_,i)=>`tractor_${i}`),...TRAILER_ITEMS.map((_,i)=>`trailer_${i}`)].forEach(id => {
+    ['ok','def','na'].forEach(s => {
+      const btn = document.getElementById(`${id}_${s}`);
+      if (btn) btn.className = 'radio-btn';
+    });
+    const row = document.getElementById(`item_${id}`);
+    if (row) row.classList.remove('has-defect');
+  });
+  document.getElementById('btnSubmit').disabled = true;
+}
+
+function submitInspection() {
+  const checklist = gatherChecklistStatuses();
+  const defectFound = Object.values(checklist).includes('defect');
+  const record = {
+    id: 'dvir_' + Date.now(),
+    driver:   document.getElementById('f_driver').value.trim(),
+    truck:    document.getElementById('f_truck').value.trim(),
+    triptype: document.getElementById('f_triptype').value.trim(),
+    datetime: document.getElementById('f_datetime').value,
+    odometer: document.getElementById('f_odometer').value.trim() || null,
+    trailer:  document.getElementById('f_trailer').value.trim() || null,
+    checklist,
+    defectNotes: defectFound ? document.getElementById('f_defectnotes').value.trim() : '',
+    hasDefect: defectFound,
+    submittedAt: new Date().toISOString()
+  };
+  inspections.unshift(record);
+  saveData();
+  renderTable();
+  renderKPIs();
+  closeNewModal();
+  showToast(defectFound ? 'DVIR submitted — Defects reported.' : 'DVIR submitted — All Clear.');
+}
+
+function renderTable() {
+  const tbody = document.getElementById('dvirTableBody');
+  const table = document.getElementById('dvirTable');
+  const empty = document.getElementById('emptyState');
+  if (inspections.length === 0) { table.style.display='none'; empty.style.display='block'; return; }
+  table.style.display = 'table'; empty.style.display = 'none';
+  tbody.innerHTML = inspections.map(r => {
+    const typeBadge = r.triptype === 'Pre-trip'
+      ? '<span class="badge badge-pre">Pre-trip</span>'
+      : '<span class="badge badge-post">Post-trip</span>';
+    const statusBadge = r.hasDefect
+      ? '<span class="badge badge-defect">Defects Found</span>'
+      : '<span class="badge badge-ok">All Clear</span>';
+    const odo = r.odometer ? Number(r.odometer).toLocaleString() + ' mi' : '—';
+    return `<tr>
+      <td style="color:#9ca3af;white-space:nowrap;">${fmtDt(r.datetime)}</td>
+      <td>${esc(r.driver)}</td>
+      <td><span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:#fff;">${esc(r.truck)}</span></td>
+      <td>${typeBadge}</td>
+      <td style="color:#9ca3af;">${odo}</td>
+      <td>${statusBadge}</td>
+      <td><button class="btn-view" onclick="viewInspection('${r.id}')">View</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function viewInspection(id) {
+  const r = inspections.find(x => x.id === id);
+  if (!r) return;
+  document.getElementById('viewModalTitle').textContent =
+    `DVIR — ${r.driver} / ${r.truck} — ${fmtDt(r.datetime)}`;
+
+  const makeRows = (items, prefix) => items.map((item, i) => {
+    const s = r.checklist[item];
+    let valHtml = '<span class="view-check-val val-na">—</span>';
+    if (s === 'ok')     valHtml = '<span class="view-check-val val-ok">OK</span>';
+    if (s === 'defect') valHtml = '<span class="view-check-val val-defect">DEFECT</span>';
+    if (s === 'na')     valHtml = '<span class="view-check-val val-na">N/A</span>';
+    const bg = s === 'defect' ? 'background:#1a0808;border-color:#7f1d1d;' : '';
+    return `<div class="view-check-item" style="${bg}"><span class="view-check-name">${esc(item)}</span>${valHtml}</div>`;
+  }).join('');
+
+  const defSec = r.hasDefect && r.defectNotes ? `
+    <div style="margin-bottom:20px;">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#f87171;margin-bottom:8px;">Defect Notes</div>
+      <div class="view-notes-box">${esc(r.defectNotes)}</div>
+    </div>` : '';
+
+  const typeBadge = r.triptype === 'Pre-trip'
+    ? '<span class="badge badge-pre">Pre-trip</span>'
+    : '<span class="badge badge-post">Post-trip</span>';
+  const statusBadge = r.hasDefect
+    ? '<span class="badge badge-defect">Defects Found</span>'
+    : '<span class="badge badge-ok">All Clear</span>';
+
+  document.getElementById('viewModalBody').innerHTML = `
+    <div style="margin-bottom:20px;">
+      <div class="view-grid">
+        <div class="view-item"><label>Driver</label><p>${esc(r.driver)}</p></div>
+        <div class="view-item"><label>Truck Unit</label><p style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;">${esc(r.truck)}</p></div>
+        <div class="view-item"><label>Trip Type</label><p>${typeBadge}</p></div>
+        <div class="view-item"><label>Date &amp; Time</label><p>${fmtDt(r.datetime)}</p></div>
+        <div class="view-item"><label>Odometer</label><p>${r.odometer ? Number(r.odometer).toLocaleString() + ' miles' : '—'}</p></div>
+        <div class="view-item"><label>Trailer #</label><p>${r.trailer ? esc(r.trailer) : '—'}</p></div>
+        <div class="view-item"><label>Overall Status</label><p>${statusBadge}</p></div>
+        <div class="view-item"><label>Submitted</label><p style="color:#6b7280;font-size:12px;">${new Date(r.submittedAt).toLocaleString()}</p></div>
+      </div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#9ca3af;margin-bottom:12px;">FMCSA Checklist</div>
+      <div class="view-checklist-grid">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid #1e3a5f;">Tractor</div>
+          ${makeRows(TRACTOR_ITEMS,'tractor')}
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid #3b1f6e;">Trailer</div>
+          ${makeRows(TRAILER_ITEMS,'trailer')}
+        </div>
+      </div>
+    </div>
+    ${defSec}
+    <div style="font-size:11px;color:#4b5563;border-top:1px solid #21262d;padding-top:12px;">
+      Driver certified this report per 49 CFR 396.13 &nbsp;|&nbsp; Record ID: ${r.id}
+    </div>`;
+
+  document.getElementById('viewModal').classList.add('active');
+}
+
+function renderKPIs() {
+  const now = new Date();
+  const mo = now.getMonth(), yr = now.getFullYear();
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const thisMonth = inspections.filter(r => { const d = new Date(r.datetime); return d.getMonth()===mo && d.getFullYear()===yr; });
+  const defects = thisMonth.filter(r => r.hasDefect).length;
+  const total = thisMonth.length;
+  document.getElementById('kpiTotal').textContent = total;
+  document.getElementById('kpiDefects').textContent = defects;
+  document.getElementById('kpiRate').textContent = total > 0 ? Math.round(defects/total*100)+'%' : '0%';
+  document.getElementById('kpiMonthLabel').textContent = `${months[mo]} ${yr}`;
+}
+
+function showToast(msg) {
+  let t = document.getElementById('nexusToast');
+  if (!t) {
+    t = document.createElement('div'); t.id = 'nexusToast';
+    t.style.cssText = 'position:fixed;bottom:28px;right:28px;z-index:9999;background:#1f2937;border:1px solid #374151;border-radius:8px;padding:12px 20px;font-size:14px;color:#e5e7eb;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:opacity 0.4s;max-width:320px;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 3500);
+}
+
+function fmtDt(str) {
+  if (!str) return '—';
+  try {
+    const d = new Date(str);
+    return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) + ' ' +
+           d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+  } catch(e) { return str; }
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
