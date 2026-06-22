@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Load Board — Carrier Nexus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="nexus-config.js?v=6"></script>
+  <script src="nexus-sidebar.js?v=6"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0a; color: #e5e7eb; font-family: 'Inter', sans-serif; font-size: 14px; min-height: 100vh; }
+    .main-wrap { margin-left: 220px; }
+    .topbar { background: #111827; border-bottom: 1px solid #21262d; padding: 16px 24px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+    .page-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: #fff; letter-spacing: 1px; }
+    .demo-badge { background: #1f2937; border: 1px solid #374151; color: #9ca3af; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 4px; letter-spacing: 0.5px; margin-left: auto; }
+    .content { padding: 24px; }
+    .api-banner { background: #0f172a; border: 1px solid #1d4ed8; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 12px 18px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .api-banner .icon { font-size: 18px; flex-shrink: 0; }
+    .api-banner .text { flex: 1; color: #93c5fd; font-size: 13px; }
+    .api-banner a { color: #60a5fa; text-decoration: underline; cursor: pointer; }
+    .api-banner .dismiss { background: none; border: none; color: #6b7280; font-size: 18px; cursor: pointer; padding: 0 4px; line-height: 1; }
+    .api-banner .dismiss:hover { color: #9ca3af; }
+    .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+    .kpi-card { background: #111827; border: 1px solid #21262d; border-radius: 10px; padding: 16px 20px; }
+    .kpi-label { font-size: 11px; font-weight: 600; color: #6b7280; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px; }
+    .kpi-value { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; color: #e91e8c; line-height: 1; }
+    .kpi-sub { font-size: 11px; color: #6b7280; margin-top: 4px; }
+    .search-panel { background: #111827; border: 1px solid #21262d; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+    .search-panel h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 0.5px; margin-bottom: 14px; text-transform: uppercase; }
+    .search-grid { display: grid; grid-template-columns: 1fr 1fr 180px 260px 140px auto; gap: 12px; align-items: end; }
+    .field-group { display: flex; flex-direction: column; gap: 5px; }
+    .field-group label { font-size: 11px; font-weight: 600; color: #6b7280; letter-spacing: 0.6px; text-transform: uppercase; }
+    .field-group input, .field-group select { background: #0d1117; border: 1px solid #21262d; border-radius: 6px; color: #e5e7eb; font-family: 'Inter', sans-serif; font-size: 13px; height: 38px; padding: 0 10px; outline: none; transition: border-color 0.15s; }
+    .field-group input:focus, .field-group select:focus { border-color: #e91e8c; }
+    .field-group input::placeholder { color: #4b5563; }
+    .date-range { display: flex; gap: 8px; }
+    .date-range input { flex: 1; }
+    .btn-search { background: #e91e8c; border: none; border-radius: 6px; color: #fff; cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; height: 38px; letter-spacing: 1px; padding: 0 22px; transition: background 0.15s; white-space: nowrap; }
+    .btn-search:hover { background: #c0176f; }
+    .board-layout { display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start; }
+    .results-panel { background: #111827; border: 1px solid #21262d; border-radius: 10px; overflow: hidden; }
+    .results-header { padding: 14px 18px; border-bottom: 1px solid #21262d; display: flex; align-items: center; gap: 10px; }
+    .results-header h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 0.5px; text-transform: uppercase; }
+    .results-count { background: #e91e8c22; border: 1px solid #e91e8c55; color: #e91e8c; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th { background: #0d1117; border-bottom: 1px solid #21262d; color: #6b7280; cursor: pointer; font-size: 11px; font-weight: 600; letter-spacing: 0.8px; padding: 10px 14px; text-align: left; text-transform: uppercase; user-select: none; white-space: nowrap; }
+    thead th:hover { color: #e5e7eb; }
+    thead th.sort-asc::after { content: ' \25B2'; color: #e91e8c; }
+    thead th.sort-desc::after { content: ' \25BC'; color: #e91e8c; }
+    tbody tr { border-bottom: 1px solid #1a2030; transition: background 0.1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #1a2035; }
+    tbody td { padding: 11px 14px; vertical-align: middle; font-size: 13px; }
+    .age-badge { border-radius: 4px; font-size: 11px; font-weight: 700; padding: 3px 8px; white-space: nowrap; }
+    .age-fresh { background: #052e16; border: 1px solid #166534; color: #4ade80; }
+    .age-recent { background: #451a03; border: 1px solid #92400e; color: #fbbf24; }
+    .age-old { background: #1c1c1c; border: 1px solid #374151; color: #6b7280; }
+    .route-cell { font-weight: 600; color: #e5e7eb; }
+    .route-arrow { color: #6b7280; margin: 0 4px; }
+    .equip-badge { background: #1e1b4b; border: 1px solid #312e81; border-radius: 4px; color: #a5b4fc; font-size: 11px; font-weight: 600; padding: 2px 8px; }
+    .rate-cell { color: #4ade80; font-weight: 700; }
+    .rpm-cell { color: #a3e635; font-weight: 600; }
+    .broker-cell { color: #94a3b8; }
+    .contact-cell a { color: #60a5fa; text-decoration: none; font-size: 12px; }
+    .contact-cell a:hover { text-decoration: underline; }
+    .btn-assign { background: #e91e8c; border: none; border-radius: 5px; color: #fff; cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; padding: 5px 14px; transition: background 0.15s; white-space: nowrap; }
+    .btn-assign:hover { background: #c0176f; }
+    .btn-star { background: none; border: none; color: #4b5563; cursor: pointer; font-size: 16px; padding: 2px 6px; transition: color 0.15s; }
+    .btn-star:hover { color: #fbbf24; }
+    .btn-star.starred { color: #fbbf24; }
+    .no-results { color: #4b5563; font-size: 14px; padding: 40px; text-align: center; }
+    .saved-panel { background: #111827; border: 1px solid #21262d; border-radius: 10px; overflow: hidden; position: sticky; top: 80px; }
+    .saved-header { padding: 14px 18px; border-bottom: 1px solid #21262d; display: flex; align-items: center; gap: 8px; }
+    .saved-header h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 0.5px; text-transform: uppercase; }
+    .saved-count { background: #fbbf2422; border: 1px solid #fbbf2455; color: #fbbf24; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+    .saved-list { padding: 12px; max-height: 600px; overflow-y: auto; }
+    .saved-card { background: #0d1117; border: 1px solid #21262d; border-radius: 8px; padding: 12px; margin-bottom: 8px; position: relative; }
+    .saved-card:last-child { margin-bottom: 0; }
+    .saved-route { font-weight: 700; font-size: 13px; color: #e5e7eb; margin-bottom: 4px; }
+    .saved-meta { color: #6b7280; font-size: 12px; display: flex; gap: 10px; }
+    .saved-rate { color: #4ade80; font-weight: 700; }
+    .btn-unsave { background: none; border: none; color: #4b5563; cursor: pointer; font-size: 14px; padding: 2px; position: absolute; right: 10px; top: 10px; }
+    .btn-unsave:hover { color: #ef4444; }
+    .saved-empty { color: #4b5563; font-size: 13px; padding: 24px; text-align: center; }
+    .modal-overlay { background: #000000cc; bottom: 0; display: none; left: 0; position: fixed; right: 0; top: 0; z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: #111827; border: 1px solid #374151; border-radius: 12px; max-width: 480px; padding: 28px; width: 90%; }
+    .modal h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .modal .modal-sub { color: #6b7280; font-size: 13px; margin-bottom: 20px; }
+    .modal-detail-row { background: #0d1117; border: 1px solid #21262d; border-radius: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-bottom: 20px; overflow: hidden; }
+    .modal-detail-item { padding: 10px 14px; background: #0d1117; }
+    .modal-detail-item .lbl { color: #4b5563; font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 2px; }
+    .modal-detail-item .val { color: #e5e7eb; font-size: 13px; font-weight: 600; }
+    .modal label { color: #9ca3af; display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.6px; margin-bottom: 5px; text-transform: uppercase; }
+    .modal select { background: #0d1117; border: 1px solid #374151; border-radius: 6px; color: #e5e7eb; font-family: 'Inter', sans-serif; font-size: 14px; height: 42px; padding: 0 12px; width: 100%; outline: none; }
+    .modal select:focus { border-color: #e91e8c; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+    .btn-cancel { background: transparent; border: 1px solid #374151; border-radius: 6px; color: #9ca3af; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 14px; padding: 9px 20px; }
+    .btn-cancel:hover { background: #1f2937; }
+    .btn-confirm { background: #e91e8c; border: none; border-radius: 6px; color: #fff; cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; padding: 9px 24px; }
+    .btn-confirm:hover { background: #c0176f; }
+    .toast { background: #111827; border: 1px solid #21262d; border-left: 4px solid #4ade80; border-radius: 8px; bottom: 30px; box-shadow: 0 4px 24px #00000088; color: #e5e7eb; font-size: 14px; opacity: 0; padding: 12px 18px; position: fixed; right: 30px; transform: translateY(10px); transition: opacity 0.3s, transform 0.3s; z-index: 2000; max-width: 320px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .assigned-badge { background: #14532d; border: 1px solid #166534; border-radius: 4px; color: #4ade80; font-size: 11px; font-weight: 700; padding: 3px 10px; text-align: center; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+  </style>
+</head>
+<body>
+  <div class="main-wrap">
+    <div class="topbar">
+      <div class="page-title">LOAD BOARD</div>
+      <div class="demo-badge">DEMO MODE</div>
+    </div>
+    <div class="content">
+
+      <div class="api-banner" id="apiBanner">
+        <div class="icon">&#x2139;&#xFE0F;</div>
+        <div class="text">
+          <strong>Running in demo mode.</strong> To enable live DAT loads, add your DAT API key in
+          <a onclick="window.location.href='drive-settings.html'">Integrations settings</a>.
+          Showing 12 pre-loaded sample loads for FL / GA / SC / TX corridors.
+        </div>
+        <button class="dismiss" onclick="document.getElementById('apiBanner').style.display='none'">&#x00D7;</button>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-label">Avg Rate / Mile</div>
+          <div class="kpi-value" id="kpiAvgRpm">--</div>
+          <div class="kpi-sub" id="kpiAvgRpmSub">across filtered results</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Highest Paying Load</div>
+          <div class="kpi-value" id="kpiTopPay">--</div>
+          <div class="kpi-sub" id="kpiTopPaySub">in filtered results</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Loads Matching Equipment</div>
+          <div class="kpi-value" id="kpiEquipMatch">--</div>
+          <div class="kpi-sub" id="kpiEquipMatchSub">select equipment type to filter</div>
+        </div>
+      </div>
+
+      <div class="search-panel">
+        <h3>Search Loads</h3>
+        <div class="search-grid">
+          <div class="field-group">
+            <label>Origin</label>
+            <input type="text" id="filterOrigin" placeholder="City, ST or zip" />
+          </div>
+          <div class="field-group">
+            <label>Destination</label>
+            <input type="text" id="filterDest" placeholder="City, ST or 'Any'" />
+          </div>
+          <div class="field-group">
+            <label>Equipment</label>
+            <select id="filterEquip">
+              <option value="">All Types</option>
+              <option value="Flatbed">Flatbed</option>
+              <option value="Step Deck">Step Deck</option>
+              <option value="RGN">RGN</option>
+              <option value="Lowboy">Lowboy</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Date Range</label>
+            <div class="date-range">
+              <input type="date" id="filterDateFrom" />
+              <input type="date" id="filterDateTo" />
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Min Rate ($)</label>
+            <input type="number" id="filterMinRate" placeholder="e.g. 2000" min="0" />
+          </div>
+          <div>
+            <button class="btn-search" onclick="applyFilters()">SEARCH</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="board-layout">
+        <div class="results-panel">
+          <div class="results-header">
+            <h3>Available Loads</h3>
+            <span class="results-count" id="resultsCount">12</span>
+          </div>
+          <div class="table-wrap">
+            <table id="loadsTable">
+              <thead>
+                <tr>
+                  <th data-col="age" onclick="sortBy('age')">Age</th>
+                  <th data-col="route" onclick="sortBy('route')">Origin &rarr; Destination</th>
+                  <th data-col="miles" onclick="sortBy('miles')">Miles</th>
+                  <th data-col="equip" onclick="sortBy('equip')">Equipment</th>
+                  <th data-col="rate" onclick="sortBy('rate')">Rate</th>
+                  <th data-col="rpm" onclick="sortBy('rpm')">Rate/Mile</th>
+                  <th data-col="broker" onclick="sortBy('broker')">Broker</th>
+                  <th>Contact</th>
+                  <th>Action</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="loadsBody"></tbody>
+            </table>
+            <div class="no-results" id="noResults" style="display:none;">No loads match your filters.</div>
+          </div>
+        </div>
+
+        <div class="saved-panel">
+          <div class="saved-header">
+            <h3>&#x2B50; Saved</h3>
+            <span class="saved-count" id="savedCount">0</span>
+          </div>
+          <div class="saved-list" id="savedList">
+            <div class="saved-empty" id="savedEmpty">Star a load to bookmark it here.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="assignModal">
+    <div class="modal">
+      <h2>Assign Load</h2>
+      <p class="modal-sub">Select a driver to assign this load to.</p>
+      <div class="modal-detail-row" id="modalDetail"></div>
+      <label for="driverSelect">Driver</label>
+      <select id="driverSelect">
+        <option value="">-- Select Driver --</option>
+        <option value="Guillermo Pinera">Guillermo Pinera</option>
+        <option value="David Hernandez">David Hernandez</option>
+        <option value="Avis">Avis</option>
+        <option value="Miguel">Miguel</option>
+        <option value="Nelson">Nelson</option>
+        <option value="Yosviel">Yosviel</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-confirm" onclick="confirmAssign()">ASSIGN LOAD</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var MOCK_LOADS = [
+      { id:'LB-001', ageMin:25,  origin:'Miami, FL',        dest:'New York, NY',     miles:1280, equip:'Flatbed',   rate:4480, broker:'Echo Global',           phone:'800-354-7993', pickupDate:'2026-06-23' },
+      { id:'LB-002', ageMin:45,  origin:'Jacksonville, FL', dest:'Philadelphia, PA', miles:960,  equip:'Step Deck', rate:3168, broker:'Coyote Logistics',       phone:'888-263-9686', pickupDate:'2026-06-23' },
+      { id:'LB-003', ageMin:10,  origin:'Savannah, GA',     dest:'Columbus, OH',     miles:780,  equip:'Flatbed',   rate:2808, broker:'C.H. Robinson',          phone:'952-683-3600', pickupDate:'2026-06-24' },
+      { id:'LB-004', ageMin:180, origin:'Charleston, SC',   dest:'Pittsburgh, PA',   miles:700,  equip:'RGN',       rate:2940, broker:'Landstar',               phone:'800-872-9400', pickupDate:'2026-06-24' },
+      { id:'LB-005', ageMin:5,   origin:'Houston, TX',      dest:'Los Angeles, CA',  miles:1550, equip:'Flatbed',   rate:5890, broker:'XPO Logistics',          phone:'800-755-2728', pickupDate:'2026-06-23' },
+      { id:'LB-006', ageMin:320, origin:'Orlando, FL',      dest:'Baltimore, MD',    miles:1040, equip:'Lowboy',    rate:4160, broker:'Mode Global',            phone:'972-364-3400', pickupDate:'2026-06-25' },
+      { id:'LB-007', ageMin:90,  origin:'Atlanta, GA',      dest:'Newark, NJ',       miles:870,  equip:'Step Deck', rate:3219, broker:'Total Quality Logistics', phone:'800-580-3101', pickupDate:'2026-06-24' },
+      { id:'LB-008', ageMin:15,  origin:'Tampa, FL',        dest:'Boston, MA',       miles:1380, equip:'Flatbed',   rate:4554, broker:'Arrive Logistics',       phone:'512-900-8440', pickupDate:'2026-06-23' },
+      { id:'LB-009', ageMin:240, origin:'Dallas, TX',       dest:'Chicago, IL',      miles:920,  equip:'Flatbed',   rate:2944, broker:'Ryan Transportation',    phone:'800-736-3781', pickupDate:'2026-06-25' },
+      { id:'LB-010', ageMin:35,  origin:'Raleigh, NC',      dest:'Detroit, MI',      miles:660,  equip:'RGN',       rate:2970, broker:'Worldwide Express',      phone:'800-758-7447', pickupDate:'2026-06-24' },
+      { id:'LB-011', ageMin:8,   origin:'Memphis, TN',      dest:'Atlanta, GA',      miles:390,  equip:'Flatbed',   rate:1482, broker:'MoLo Solutions',         phone:'312-757-1111', pickupDate:'2026-06-23' },
+      { id:'LB-012', ageMin:400, origin:'Phoenix, AZ',      dest:'Denver, CO',       miles:600,  equip:'Step Deck', rate:2340, broker:'Transplace',             phone:'800-888-7701', pickupDate:'2026-06-26' }
+    ];
+
+    var filteredLoads = MOCK_LOADS.slice();
+    var sortCol = 'age', sortDir = 'asc';
+    var assigningLoad = null;
+    var savedIds = new Set(JSON.parse(localStorage.getItem('nexus_loadboard_saved') || '[]'));
+    var assignedIds = new Set();
+
+    try {
+      var ex = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]');
+      ex.forEach(function(r){ if(r.sourceLBId) assignedIds.add(r.sourceLBId); });
+    } catch(e){}
+
+    function ageBadge(m) {
+      if (m < 60) return '<span class="age-badge age-fresh">&lt;1 hr</span>';
+      if (m < 360) return '<span class="age-badge age-recent">'+Math.floor(m/60)+'h '+m%60+'m</span>';
+      return '<span class="age-badge age-old">'+Math.floor(m/60)+'h ago</span>';
+    }
+
+    function fmtRate(r) { return '$' + r.toLocaleString(); }
+    function fmtRpm(r,m) { return '$' + (r/m).toFixed(2); }
+    function equipBadge(e) { return '<span class="equip-badge">'+e+'</span>'; }
+
+    function renderKPIs() {
+      var loads = filteredLoads;
+      if (!loads.length) {
+        document.getElementById('kpiAvgRpm').textContent = '--';
+        document.getElementById('kpiTopPay').textContent = '--';
+        document.getElementById('kpiEquipMatch').textContent = '0';
+        return;
+      }
+      var sumRpm = 0;
+      loads.forEach(function(l){ sumRpm += l.rate/l.miles; });
+      document.getElementById('kpiAvgRpm').textContent = '$'+(sumRpm/loads.length).toFixed(2);
+      document.getElementById('kpiAvgRpmSub').textContent = 'across '+loads.length+' result'+(loads.length!==1?'s':'');
+      var top = loads.reduce(function(b,l){ return l.rate>b.rate?l:b; }, loads[0]);
+      document.getElementById('kpiTopPay').textContent = fmtRate(top.rate);
+      document.getElementById('kpiTopPaySub').textContent = top.origin+' → '+top.dest;
+      var equip = document.getElementById('filterEquip').value;
+      var mc = equip ? loads.filter(function(l){return l.equip===equip;}).length : loads.length;
+      document.getElementById('kpiEquipMatch').textContent = mc;
+      document.getElementById('kpiEquipMatchSub').textContent = equip ? 'matching '+equip : 'select equipment type to filter';
+    }
+
+    function renderTable() {
+      var tbody = document.getElementById('loadsBody');
+      var noRes = document.getElementById('noResults');
+      if (!filteredLoads.length) {
+        tbody.innerHTML = '';
+        noRes.style.display = 'block';
+        document.getElementById('resultsCount').textContent = '0';
+        return;
+      }
+      noRes.style.display = 'none';
+      document.getElementById('resultsCount').textContent = filteredLoads.length;
+      tbody.innerHTML = filteredLoads.map(function(l) {
+        var isA = assignedIds.has(l.id);
+        var isS = savedIds.has(l.id);
+        return '<tr>'
+          +'<td>'+ageBadge(l.ageMin)+'</td>'
+          +'<td class="route-cell">'+l.origin+'<span class="route-arrow">&rarr;</span>'+l.dest+'</td>'
+          +'<td>'+l.miles.toLocaleString()+'</td>'
+          +'<td>'+equipBadge(l.equip)+'</td>'
+          +'<td class="rate-cell">'+fmtRate(l.rate)+'</td>'
+          +'<td class="rpm-cell">'+fmtRpm(l.rate,l.miles)+'</td>'
+          +'<td class="broker-cell">'+l.broker+'</td>'
+          +'<td class="contact-cell"><a href="tel:'+l.phone+'">'+l.phone+'</a></td>'
+          +'<td>'+(isA
+            ? '<span class="assigned-badge">ASSIGNED</span>'
+            : '<button class="btn-assign" onclick="openModal(\''+l.id+'\')">Assign</button>')+'</td>'
+          +'<td><button class="btn-star'+(isS?' starred':'')+'" onclick="toggleSave(\''+l.id+'\')" title="'+(isS?'Remove bookmark':'Bookmark')+'">'+(isS?'&#9733;':'&#9734;')+'</button></td>'
+          +'</tr>';
+      }).join('');
+    }
+
+    function renderSaved() {
+      var list = document.getElementById('savedList');
+      var empty = document.getElementById('savedEmpty');
+      var count = document.getElementById('savedCount');
+      var saved = MOCK_LOADS.filter(function(l){ return savedIds.has(l.id); });
+      count.textContent = saved.length;
+      if (!saved.length) {
+        empty.style.display = 'block';
+        list.innerHTML = '<div class="saved-empty" id="savedEmpty">Star a load to bookmark it here.</div>';
+        return;
+      }
+      empty.style.display = 'none';
+      list.innerHTML = saved.map(function(l) {
+        return '<div class="saved-card">'
+          +'<button class="btn-unsave" onclick="toggleSave(\''+l.id+'\')" title="Remove">&#x2715;</button>'
+          +'<div class="saved-route">'+l.origin+' &rarr; '+l.dest+'</div>'
+          +'<div class="saved-meta"><span>'+l.equip+'</span><span>'+l.miles+' mi</span><span class="saved-rate">'+fmtRate(l.rate)+'</span></div>'
+          +'<div class="saved-meta" style="margin-top:4px;color:#4b5563;"><span>'+l.broker+'</span></div>'
+          +'</div>';
+      }).join('');
+    }
+
+    function toggleSave(id) {
+      if (savedIds.has(id)) { savedIds.delete(id); }
+      else { savedIds.add(id); showToast('Bookmarked'); }
+      localStorage.setItem('nexus_loadboard_saved', JSON.stringify(Array.from(savedIds)));
+      renderTable();
+      renderSaved();
+    }
+
+    function applyFilters() {
+      var origin  = document.getElementById('filterOrigin').value.trim().toLowerCase();
+      var dest    = document.getElementById('filterDest').value.trim().toLowerCase();
+      var equip   = document.getElementById('filterEquip').value;
+      var dfrom   = document.getElementById('filterDateFrom').value;
+      var dto     = document.getElementById('filterDateTo').value;
+      var minRate = parseFloat(document.getElementById('filterMinRate').value) || 0;
+      filteredLoads = MOCK_LOADS.filter(function(l) {
+        if (origin && l.origin.toLowerCase().indexOf(origin) === -1) return false;
+        if (dest && dest !== 'any' && l.dest.toLowerCase().indexOf(dest) === -1) return false;
+        if (equip && l.equip !== equip) return false;
+        if (dfrom && l.pickupDate < dfrom) return false;
+        if (dto && l.pickupDate > dto) return false;
+        if (l.rate < minRate) return false;
+        return true;
+      });
+      sortCol = 'age'; sortDir = 'asc';
+      updateSortHeaders();
+      renderTable();
+      renderKPIs();
+    }
+
+    function sortBy(col) {
+      if (sortCol === col) { sortDir = sortDir === 'asc' ? 'desc' : 'asc'; }
+      else { sortCol = col; sortDir = 'asc'; }
+      updateSortHeaders();
+      filteredLoads.sort(function(a,b) {
+        var av, bv;
+        if (col==='age')    { av=a.ageMin; bv=b.ageMin; }
+        else if(col==='route')  { av=a.origin; bv=b.origin; }
+        else if(col==='miles')  { av=a.miles; bv=b.miles; }
+        else if(col==='equip')  { av=a.equip; bv=b.equip; }
+        else if(col==='rate')   { av=a.rate; bv=b.rate; }
+        else if(col==='rpm')    { av=a.rate/a.miles; bv=b.rate/b.miles; }
+        else if(col==='broker') { av=a.broker; bv=b.broker; }
+        else return 0;
+        if (typeof av==='string') return sortDir==='asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+        return sortDir==='asc' ? av-bv : bv-av;
+      });
+      renderTable();
+    }
+
+    function updateSortHeaders() {
+      document.querySelectorAll('thead th[data-col]').forEach(function(th) {
+        th.classList.remove('sort-asc','sort-desc');
+        if (th.dataset.col===sortCol) th.classList.add(sortDir==='asc'?'sort-asc':'sort-desc');
+      });
+    }
+
+    function openModal(id) {
+      assigningLoad = null;
+      for (var i=0; i<MOCK_LOADS.length; i++) { if (MOCK_LOADS[i].id===id) { assigningLoad=MOCK_LOADS[i]; break; } }
+      if (!assigningLoad) return;
+      document.getElementById('modalDetail').innerHTML =
+        '<div class="modal-detail-item"><div class="lbl">Route</div><div class="val">'+assigningLoad.origin+' &rarr; '+assigningLoad.dest+'</div></div>'
+       +'<div class="modal-detail-item"><div class="lbl">Miles</div><div class="val">'+assigningLoad.miles.toLocaleString()+'</div></div>'
+       +'<div class="modal-detail-item"><div class="lbl">Rate</div><div class="val" style="color:#4ade80">'+fmtRate(assigningLoad.rate)+'</div></div>'
+       +'<div class="modal-detail-item"><div class="lbl">Rate/Mile</div><div class="val" style="color:#a3e635">'+fmtRpm(assigningLoad.rate,assigningLoad.miles)+'</div></div>'
+       +'<div class="modal-detail-item"><div class="lbl">Equipment</div><div class="val">'+assigningLoad.equip+'</div></div>'
+       +'<div class="modal-detail-item"><div class="lbl">Pickup Date</div><div class="val">'+assigningLoad.pickupDate+'</div></div>';
+      document.getElementById('driverSelect').value = '';
+      document.getElementById('assignModal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('assignModal').classList.remove('open');
+      assigningLoad = null;
+    }
+
+    function confirmAssign() {
+      var driver = document.getElementById('driverSelect').value;
+      if (!driver) { showToast('Please select a driver.', true); return; }
+      var record = {
+        id: 'load_'+Date.now(),
+        sourceLBId: assigningLoad.id,
+        driver: driver,
+        origin: assigningLoad.origin,
+        destination: assigningLoad.dest,
+        miles: assigningLoad.miles,
+        equipment: assigningLoad.equip,
+        rate: assigningLoad.rate,
+        broker: assigningLoad.broker,
+        brokerPhone: assigningLoad.phone,
+        pickupDate: assigningLoad.pickupDate,
+        assignedAt: new Date().toISOString(),
+        status: 'assigned',
+        source: 'load-board'
+      };
+      try {
+        var existing = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]');
+        existing.push(record);
+        localStorage.setItem('nexus_loads_v2', JSON.stringify(existing));
+        assignedIds.add(assigningLoad.id);
+        showToast('Load assigned to '+driver);
+      } catch(e) { showToast('Error saving load record.', true); }
+      closeModal();
+      renderTable();
+    }
+
+    var toastTimer = null;
+    function showToast(msg, isErr) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.borderLeftColor = isErr ? '#ef4444' : '#4ade80';
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 3000);
+    }
+
+    document.getElementById('assignModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+    filteredLoads = MOCK_LOADS.slice();
+    renderTable();
+    renderKPIs();
+    renderSaved();
+    updateSortHeaders();
+  </script>
+</body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>IFTA — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0a0a0a;--black2:#111827;--black3:#161b22;--black4:#21262d;
+  --border:rgba(255,255,255,0.08);--border2:#21262d;
+  --pink:#e91e8c;--orange:#E8640A;
+  --green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--blue:#3b82f6;
+  --text:#c9d1d9;--text-dim:#8b949e;--text-muted:rgba(255,255,255,0.35);
+  --sidebar-w:220px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--black);color:var(--text);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:56px;background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;padding:0 28px;gap:14px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#fff;flex:1;}
+.topbar-badge{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:4px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);}
+.content{padding:24px 28px 60px;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.kpi-card{background:var(--black2);border:1px solid var(--border2);border-radius:10px;padding:16px 20px;transition:border-color .2s;}
+.kpi-card:hover{border-color:rgba(233,30,140,0.3);}
+.kpi-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;}
+.kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;line-height:1;color:#e6edf3;}
+.kpi-sub{font-size:11px;color:var(--text-dim);margin-top:5px;}
+.kpi-card.tax-owed .kpi-val{color:var(--red);}
+.kpi-card.tax-credit .kpi-val{color:var(--green);}
+.panel{background:var(--black2);border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.panel-head{padding:14px 20px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:#e6edf3;letter-spacing:.06em;text-transform:uppercase;}
+.panel-sub{font-size:11px;color:var(--text-dim);margin-top:2px;}
+.q-sel-wrap{display:flex;align-items:center;gap:8px;}
+.q-sel{background:var(--black3);border:1px solid var(--border2);color:var(--text);padding:6px 12px;font-size:12px;border-radius:6px;font-family:'Barlow',sans-serif;cursor:pointer;}
+.q-sel:focus{outline:none;border-color:var(--pink);}
+.ifta-table{width:100%;border-collapse:collapse;}
+.ifta-table th{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);padding:10px 14px;text-align:left;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border2);white-space:nowrap;}
+.ifta-table th.right{text-align:right;}
+.ifta-table td{padding:0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.ifta-table tr:last-child td{border-bottom:none;}
+.ifta-table tr:hover td{background:rgba(255,255,255,0.025);}
+.cell-input{width:100%;padding:9px 14px;background:transparent;border:none;color:var(--text);font-size:13px;font-family:'Barlow',sans-serif;outline:none;text-align:right;}
+.cell-input:focus{background:rgba(233,30,140,0.08);}
+.cell-state-input{text-align:left;font-weight:600;color:#e6edf3;}
+.cell-computed{padding:9px 14px;font-size:13px;font-family:'JetBrains Mono',monospace;text-align:right;white-space:nowrap;}
+.cell-computed.positive{color:var(--green);}
+.cell-computed.negative{color:var(--red);}
+.cell-computed.neutral{color:var(--text-dim);}
+.delete-btn{padding:6px 10px;background:none;border:none;color:rgba(255,100,100,0.4);cursor:pointer;font-size:15px;line-height:1;transition:color .15s;}
+.delete-btn:hover{color:var(--red);}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:20px;}
+.sum-block{background:var(--black3);border:1px solid var(--border2);border-radius:8px;padding:16px 18px;}
+.sum-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;}
+.sum-val{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;color:#e6edf3;}
+.sum-val.owed{color:var(--red);}
+.sum-val.credit{color:var(--green);}
+.sum-detail{font-size:11px;color:var(--text-dim);margin-top:6px;}
+.sum-net-block{grid-column:1/-1;background:var(--black3);border:1px solid var(--border2);border-radius:8px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;}
+.sum-net-label{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);}
+.sum-net-val{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;}
+.sum-net-val.owed{color:var(--red);}
+.sum-net-val.credit{color:var(--green);}
+.sum-net-badge{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.04em;margin-top:6px;display:inline-block;}
+.sum-net-badge.owed{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
+.sum-net-badge.credit{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.25);}
+.sum-net-badge.balanced{background:rgba(255,255,255,0.07);color:var(--text-dim);border:1px solid var(--border2);}
+.btn{padding:7px 16px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.8px;cursor:pointer;border:1px solid var(--border2);background:var(--black3);color:var(--text);transition:all .15s;display:inline-flex;align-items:center;gap:7px;}
+.btn:hover{border-color:rgba(233,30,140,0.4);background:rgba(233,30,140,0.08);color:#fff;}
+.btn-primary{background:var(--pink);color:#fff;border-color:var(--pink);}
+.btn-primary:hover{background:#c2185b;border-color:#c2185b;}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-ghost{background:transparent;border-color:var(--border2);color:var(--text-dim);}
+.btn-ghost:hover{border-color:rgba(233,30,140,0.4);color:#fff;background:rgba(233,30,140,0.08);}
+.info-bar{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:10px 16px;font-size:12px;color:#7dd3fc;display:flex;align-items:flex-start;gap:10px;margin-bottom:18px;}
+@media(max-width:768px){
+  .main{margin-left:0;}
+  .content{padding:14px 12px 80px;}
+  .kpi-row{grid-template-columns:1fr 1fr;gap:10px;}
+  .kpi-val{font-size:22px;}
+  .summary-grid{grid-template-columns:1fr;}
+  .sum-net-block{flex-direction:column;align-items:flex-start;gap:10px;}
+}
+</style>
+</head>
+<body>
+<script src="nexus-config.js?v=6"></script>
+<script src="nexus-sidebar.js?v=6"></script>
+<div class="main">
+
+  <div class="topbar">
+    <div class="topbar-title">IFTA FUEL TAX</div>
+    <span class="topbar-badge" id="quarter-badge">Q2 2026</span>
+    <div style="display:flex;gap:8px;align-items:center;margin-left:auto;">
+      <button class="btn btn-ghost btn-sm" onclick="exportCSV()">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 11.854a.5.5 0 00.708 0l3-3a.5.5 0 00-.708-.708L8.5 10.293V1.5a.5.5 0 00-1 0v8.793L5.354 8.146a.5.5 0 10-.708.708l3 3z"/></svg>
+        EXPORT CSV
+      </button>
+      <button class="btn btn-primary btn-sm" onclick="addRow()">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a.5.5 0 01.5.5v5h5a.5.5 0 010 1h-5v5a.5.5 0 01-1 0v-5h-5a.5.5 0 010-1h5v-5A.5.5 0 018 2z"/></svg>
+        ADD STATE
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="info-bar">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink:0;margin-top:1px;"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm.5 10.5h-1v-5h1v5zm0-6.5h-1V3.5h1V5z"/></svg>
+      <span>IFTA quarters: Q1 = Jan-Mar &nbsp;|&nbsp; Q2 = Apr-Jun &nbsp;|&nbsp; Q3 = Jul-Sep &nbsp;|&nbsp; Q4 = Oct-Dec. Default tax rate is $0.18/gal (federal HVUT portion). Enter gallons purchased per state and what you paid at the pump. All edits save automatically to this device.</span>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Miles</div>
+        <div class="kpi-val" id="kpi-miles">0</div>
+        <div class="kpi-sub">Across all states</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Gallons</div>
+        <div class="kpi-val" id="kpi-gallons">0</div>
+        <div class="kpi-sub">Fuel purchased</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Fleet Avg MPG</div>
+        <div class="kpi-val" id="kpi-mpg">--</div>
+        <div class="kpi-sub">Miles divided by gallons</div>
+      </div>
+      <div class="kpi-card" id="kpi-tax-card">
+        <div class="kpi-label" id="kpi-tax-label">Net Tax</div>
+        <div class="kpi-val" id="kpi-tax">$0.00</div>
+        <div class="kpi-sub" id="kpi-tax-sub">No data yet</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">State Mileage &amp; Fuel Log</div>
+          <div class="panel-sub">Enter miles driven and gallons purchased per state/province this quarter</div>
+        </div>
+        <div class="q-sel-wrap">
+          <label style="font-size:11px;color:var(--text-dim);font-weight:600;letter-spacing:.06em;">QUARTER</label>
+          <select class="q-sel" id="quarter-select" onchange="changeQuarter()">
+            <option value="Q1-2026">Q1 2026</option>
+            <option value="Q2-2026">Q2 2026</option>
+            <option value="Q3-2026">Q3 2026</option>
+            <option value="Q4-2026">Q4 2026</option>
+            <option value="Q1-2025">Q1 2025</option>
+            <option value="Q2-2025">Q2 2025</option>
+            <option value="Q3-2025">Q3 2025</option>
+            <option value="Q4-2025">Q4 2025</option>
+          </select>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="ifta-table" id="ifta-table">
+          <thead>
+            <tr>
+              <th style="min-width:120px;">State / Province</th>
+              <th class="right" style="min-width:120px;">Miles Driven</th>
+              <th class="right" style="min-width:140px;">Fuel Purchased (gal)</th>
+              <th class="right" style="min-width:130px;">Tax Rate ($/gal)</th>
+              <th class="right" style="min-width:120px;">Tax Paid ($)</th>
+              <th class="right" style="min-width:110px;">Tax Owed ($)</th>
+              <th class="right" style="min-width:100px;">Net ($)</th>
+              <th style="width:44px;"></th>
+            </tr>
+          </thead>
+          <tbody id="ifta-tbody"></tbody>
+        </table>
+      </div>
+      <div style="padding:12px 16px;border-top:1px solid var(--border2);display:flex;align-items:center;justify-content:flex-end;gap:10px;">
+        <button class="btn btn-ghost btn-sm" onclick="addRow()">+ Add State / Province</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Quarterly Summary</div>
+          <div class="panel-sub" id="summary-period-label">Q2 2026 -- Apr 1 through Jun 30</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV()">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 11.854a.5.5 0 00.708 0l3-3a.5.5 0 00-.708-.708L8.5 10.293V1.5a.5.5 0 00-1 0v8.793L5.354 8.146a.5.5 0 10-.708.708l3 3z"/></svg>
+          EXPORT CSV
+        </button>
+      </div>
+      <div class="summary-grid">
+        <div class="sum-block">
+          <div class="sum-label">Total Fuel Tax Liability</div>
+          <div class="sum-val" id="sum-liability">$0.00</div>
+          <div class="sum-detail">Gallons purchased x tax rate per state</div>
+        </div>
+        <div class="sum-block">
+          <div class="sum-label">Total Fuel Tax Paid</div>
+          <div class="sum-val" id="sum-paid">$0.00</div>
+          <div class="sum-detail">Taxes already paid at the pump</div>
+        </div>
+        <div class="sum-net-block">
+          <div>
+            <div class="sum-net-label">Net Balance This Quarter</div>
+            <div class="sum-detail" style="margin-top:4px;">Positive = refund owed to you &nbsp;|&nbsp; Negative = payment due to states</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="sum-net-val" id="sum-net">$0.00</div>
+            <div><span class="sum-net-badge balanced" id="sum-net-badge">NO DATA</span></div>
+          </div>
+        </div>
+        <div style="grid-column:1/-1;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;padding:0 2px;">State Breakdown by Miles (Top 8)</div>
+          <div id="state-breakdown"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var STORAGE_KEY = 'nexus_ifta';
+
+var DEFAULT_STATES = [
+  {state:'FL',miles:'',gallons:'',rate:'0.18',paid:''},
+  {state:'GA',miles:'',gallons:'',rate:'0.18',paid:''},
+  {state:'SC',miles:'',gallons:'',rate:'0.18',paid:''},
+  {state:'NC',miles:'',gallons:'',rate:'0.18',paid:''},
+  {state:'VA',miles:'',gallons:'',rate:'0.18',paid:''},
+  {state:'MD',miles:'',gallons:'',rate:'0.18',paid:''},
+  {state:'PA',miles:'',gallons:'',rate:'0.18',paid:''},
+  {state:'NJ',miles:'',gallons:'',rate:'0.18',paid:''},
+  {state:'NY',miles:'',gallons:'',rate:'0.18',paid:''},
+  {state:'CT',miles:'',gallons:'',rate:'0.18',paid:''},
+  {state:'MA',miles:'',gallons:'',rate:'0.18',paid:''},
+  {state:'TX',miles:'',gallons:'',rate:'0.18',paid:''},
+  {state:'OH',miles:'',gallons:'',rate:'0.18',paid:''}
+];
+
+var QUARTER_PERIODS = {
+  'Q1':'Jan 1 through Mar 31',
+  'Q2':'Apr 1 through Jun 30',
+  'Q3':'Jul 1 through Sep 30',
+  'Q4':'Oct 1 through Dec 31'
+};
+
+var currentQuarter = 'Q2-2026';
+var appData = {};
+
+function loadData() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) appData = JSON.parse(raw);
+  } catch(e) { appData = {}; }
+  if (!appData[currentQuarter]) {
+    appData[currentQuarter] = DEFAULT_STATES.map(function(r){ return {state:r.state,miles:r.miles,gallons:r.gallons,rate:r.rate,paid:r.paid}; });
+    saveData();
+  }
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+}
+
+function getRows() {
+  if (!appData[currentQuarter]) appData[currentQuarter] = [];
+  return appData[currentQuarter];
+}
+
+function changeQuarter() {
+  currentQuarter = document.getElementById('quarter-select').value;
+  var parts = currentQuarter.split('-');
+  var q = parts[0]; var yr = parts[1];
+  document.getElementById('quarter-badge').textContent = q + ' ' + yr;
+  document.getElementById('summary-period-label').textContent = q + ' ' + yr + ' -- ' + (QUARTER_PERIODS[q] || '');
+  loadData();
+  renderTable();
+  updateKPIs();
+}
+
+function computeRow(r) {
+  var miles   = parseFloat(r.miles)   || 0;
+  var gallons = parseFloat(r.gallons) || 0;
+  var rate    = parseFloat(r.rate)    || 0.18;
+  var paid    = parseFloat(r.paid)    || 0;
+  var taxOwed = gallons * rate;
+  var net     = paid - taxOwed;
+  return { miles:miles, gallons:gallons, rate:rate, paid:paid, taxOwed:taxOwed, net:net };
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderTable() {
+  var tbody = document.getElementById('ifta-tbody');
+  var rows = getRows();
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="padding:28px;text-align:center;color:var(--text-dim);font-size:13px;">No states added. Click "+ Add State" to begin.</td></tr>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    var c = computeRow(r);
+    var netClass = c.net > 0.005 ? 'positive' : c.net < -0.005 ? 'negative' : 'neutral';
+    var isEmpty = !r.miles && !r.gallons && !r.paid;
+    var netStr = isEmpty ? '--' : ((c.net >= 0 ? '+' : '') + '$' + c.net.toFixed(2));
+    html += '<tr>' +
+      '<td><input type="text" class="cell-input cell-state-input" value="' + escHtml(r.state) + '" placeholder="State" data-idx="' + i + '" data-field="state" /></td>' +
+      '<td><input type="number" class="cell-input" value="' + escHtml(r.miles) + '" placeholder="0" min="0" data-idx="' + i + '" data-field="miles" /></td>' +
+      '<td><input type="number" class="cell-input" value="' + escHtml(r.gallons) + '" placeholder="0.0" min="0" step="0.1" data-idx="' + i + '" data-field="gallons" /></td>' +
+      '<td><input type="number" class="cell-input" value="' + escHtml(r.rate) + '" placeholder="0.18" min="0" step="0.01" data-idx="' + i + '" data-field="rate" /></td>' +
+      '<td><input type="number" class="cell-input" value="' + escHtml(r.paid) + '" placeholder="0.00" min="0" step="0.01" data-idx="' + i + '" data-field="paid" /></td>' +
+      '<td><div class="cell-computed neutral" id="owed-' + i + '">$' + c.taxOwed.toFixed(2) + '</div></td>' +
+      '<td><div class="cell-computed ' + netClass + '" id="net-' + i + '">' + netStr + '</div></td>' +
+      '<td><button class="delete-btn" data-del="' + i + '" title="Remove">x</button></td>' +
+    '</tr>';
+  }
+  tbody.innerHTML = html;
+
+  // Attach delegated events
+  tbody.querySelectorAll('input[data-field]').forEach(function(inp) {
+    inp.addEventListener('input', function() {
+      var idx = parseInt(this.getAttribute('data-idx'));
+      var field = this.getAttribute('data-field');
+      var rows2 = getRows();
+      if (rows2[idx]) {
+        rows2[idx][field] = this.value;
+        saveData();
+        updateComputedCell(idx);
+        updateKPIs();
+      }
+    });
+  });
+
+  tbody.querySelectorAll('button[data-del]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var idx = parseInt(this.getAttribute('data-del'));
+      var rows2 = getRows();
+      rows2.splice(idx, 1);
+      saveData();
+      renderTable();
+      updateKPIs();
+    });
+  });
+}
+
+function updateComputedCell(idx) {
+  var rows = getRows();
+  if (!rows[idx]) return;
+  var c = computeRow(rows[idx]);
+  var owedEl = document.getElementById('owed-' + idx);
+  var netEl  = document.getElementById('net-' + idx);
+  if (owedEl) owedEl.textContent = '$' + c.taxOwed.toFixed(2);
+  if (netEl) {
+    var isEmpty = !rows[idx].miles && !rows[idx].gallons && !rows[idx].paid;
+    var netStr = isEmpty ? '--' : ((c.net >= 0 ? '+' : '') + '$' + c.net.toFixed(2));
+    netEl.textContent = netStr;
+    netEl.className = 'cell-computed ' + (c.net > 0.005 ? 'positive' : c.net < -0.005 ? 'negative' : 'neutral');
+  }
+}
+
+function addRow() {
+  var rows = getRows();
+  rows.push({state:'',miles:'',gallons:'',rate:'0.18',paid:''});
+  saveData();
+  renderTable();
+  updateKPIs();
+  setTimeout(function() {
+    var inputs = document.querySelectorAll('#ifta-tbody tr:last-child input');
+    if (inputs[0]) inputs[0].focus();
+  }, 60);
+}
+
+function fmtNum(n) {
+  return Math.round(n).toLocaleString();
+}
+
+function updateKPIs() {
+  var rows = getRows();
+  var totalMiles = 0, totalGallons = 0, totalLiability = 0, totalPaid = 0, totalNet = 0;
+  var stateData = [];
+
+  for (var i = 0; i < rows.length; i++) {
+    var c = computeRow(rows[i]);
+    totalMiles     += c.miles;
+    totalGallons   += c.gallons;
+    totalLiability += c.taxOwed;
+    totalPaid      += c.paid;
+    totalNet       += c.net;
+    if (c.miles > 0 || c.gallons > 0) {
+      stateData.push({state: rows[i].state || '??', miles: c.miles, gallons: c.gallons, net: c.net});
+    }
+  }
+
+  var mpg = totalGallons > 0 ? (totalMiles / totalGallons) : 0;
+
+  document.getElementById('kpi-miles').textContent   = fmtNum(totalMiles);
+  document.getElementById('kpi-gallons').textContent = fmtNum(totalGallons);
+  document.getElementById('kpi-mpg').textContent     = mpg > 0 ? mpg.toFixed(1) : '--';
+
+  var taxCard = document.getElementById('kpi-tax-card');
+  var taxVal  = document.getElementById('kpi-tax');
+  var taxLbl  = document.getElementById('kpi-tax-label');
+  var taxSub  = document.getElementById('kpi-tax-sub');
+
+  taxVal.textContent = '$' + Math.abs(totalNet).toFixed(2);
+  if (totalNet > 0.005) {
+    taxCard.className = 'kpi-card tax-credit';
+    taxLbl.textContent = 'Est. Refund';
+    taxSub.textContent = 'Credit owed to you';
+  } else if (totalNet < -0.005) {
+    taxCard.className = 'kpi-card tax-owed';
+    taxLbl.textContent = 'Est. Tax Owed';
+    taxSub.textContent = 'Payment due to states';
+  } else {
+    taxCard.className = 'kpi-card';
+    taxLbl.textContent = 'Net Tax';
+    taxSub.textContent = totalGallons > 0 ? 'Balanced' : 'No data yet';
+  }
+
+  document.getElementById('sum-liability').textContent = '$' + totalLiability.toFixed(2);
+  document.getElementById('sum-paid').textContent      = '$' + totalPaid.toFixed(2);
+
+  var netEl    = document.getElementById('sum-net');
+  var netBadge = document.getElementById('sum-net-badge');
+  netEl.textContent = (totalNet >= 0 ? '+' : '') + '$' + totalNet.toFixed(2);
+  if (totalNet > 0.005) {
+    netEl.className = 'sum-net-val credit';
+    netBadge.textContent = 'REFUND DUE';
+    netBadge.className = 'sum-net-badge credit';
+  } else if (totalNet < -0.005) {
+    netEl.className = 'sum-net-val owed';
+    netBadge.textContent = 'PAYMENT DUE';
+    netBadge.className = 'sum-net-badge owed';
+  } else {
+    netEl.className = 'sum-net-val';
+    netBadge.textContent = totalGallons > 0 ? 'BALANCED' : 'NO DATA';
+    netBadge.className = 'sum-net-badge balanced';
+  }
+
+  // State breakdown bars
+  var sorted = stateData.slice().sort(function(a,b){return b.miles - a.miles;}).slice(0,8);
+  var maxMiles = sorted.length ? sorted[0].miles : 1;
+  var bd = document.getElementById('state-breakdown');
+  if (!sorted.length) {
+    bd.innerHTML = '<span style="font-size:12px;color:var(--text-dim);">Enter mileage data above to see the breakdown.</span>';
+    return;
+  }
+  var bdHtml = '';
+  for (var j = 0; j < sorted.length; j++) {
+    var s = sorted[j];
+    var pct = maxMiles > 0 ? (s.miles / maxMiles * 100).toFixed(1) : 0;
+    var sNetStr = (s.net >= 0 ? '+' : '-') + '$' + Math.abs(s.net).toFixed(2);
+    var sNetCol = s.net > 0.005 ? 'var(--green)' : s.net < -0.005 ? 'var(--red)' : 'var(--text-dim)';
+    bdHtml += '<div style="display:grid;grid-template-columns:52px 1fr 90px 80px;align-items:center;gap:10px;margin-bottom:8px;">' +
+      '<span style="font-family:JetBrains Mono,monospace;font-size:11px;font-weight:600;color:#e6edf3;">' + escHtml(s.state) + '</span>' +
+      '<div style="height:6px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;">' +
+        '<div style="height:100%;width:' + pct + '%;background:var(--pink);border-radius:3px;"></div>' +
+      '</div>' +
+      '<span style="font-size:11px;color:var(--text-dim);text-align:right;">' + fmtNum(s.miles) + ' mi</span>' +
+      '<span style="font-size:11px;font-family:JetBrains Mono,monospace;text-align:right;color:' + sNetCol + ';">' + sNetStr + '</span>' +
+    '</div>';
+  }
+  bd.innerHTML = bdHtml;
+}
+
+function exportCSV() {
+  var rows = getRows();
+  var parts = currentQuarter.split('-');
+  var q = parts[0]; var yr = parts[1];
+  var csv = 'IFTA Report - ' + q + ' ' + yr + '\n';
+  csv += 'State/Province,Miles Driven,Fuel Purchased (gal),Tax Rate ($/gal),Tax Paid ($),Tax Owed ($),Net ($)\n';
+  var totalMiles=0,totalGal=0,totalPaid=0,totalOwed=0,totalNet=0;
+  for (var i = 0; i < rows.length; i++) {
+    var c = computeRow(rows[i]);
+    totalMiles += c.miles; totalGal += c.gallons; totalPaid += c.paid; totalOwed += c.taxOwed; totalNet += c.net;
+    csv += [rows[i].state||'',c.miles.toFixed(0),c.gallons.toFixed(2),c.rate.toFixed(2),c.paid.toFixed(2),c.taxOwed.toFixed(2),((c.net>=0?'+':'')+c.net.toFixed(2))].join(',') + '\n';
+  }
+  csv += ['TOTAL',totalMiles.toFixed(0),totalGal.toFixed(2),'',totalPaid.toFixed(2),totalOwed.toFixed(2),((totalNet>=0?'+':'')+totalNet.toFixed(2))].join(',') + '\n';
+
+  var blob = new Blob([csv], {type:'text/csv'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'IFTA_' + currentQuarter + '_CarrierNexus.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
+// INIT
+(function() {
+  var now = new Date();
+  var month = now.getMonth() + 1;
+  var year  = now.getFullYear();
+  var q = month <= 3 ? 'Q1' : month <= 6 ? 'Q2' : month <= 9 ? 'Q3' : 'Q4';
+  currentQuarter = q + '-' + year;
+
+  var sel = document.getElementById('quarter-select');
+  var found = false;
+  for (var i = 0; i < sel.options.length; i++) {
+    if (sel.options[i].value === currentQuarter) { sel.selectedIndex = i; found = true; break; }
+  }
+  if (!found) {
+    var opt = document.createElement('option');
+    opt.value = currentQuarter;
+    opt.textContent = q + ' ' + year;
+    opt.selected = true;
+    sel.insertBefore(opt, sel.firstChild);
+  }
+
+  document.getElementById('quarter-badge').textContent = q + ' ' + year;
+  document.getElementById('summary-period-label').textContent = q + ' ' + year + ' -- ' + (QUARTER_PERIODS[q] || '');
+
+  loadData();
+  renderTable();
+  updateKPIs();
+})();
+</script>
+</body>
+</html>
