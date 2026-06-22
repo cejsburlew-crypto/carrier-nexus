@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" data-nexus-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>WhatsApp Import — Carrier Nexus</title>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<script src="nexus-sidebar.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--yellow:#d29922;--red:#f85149;--purple:#a371f7}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;display:flex;min-height:100vh}
+  #nexus-sidebar{flex-shrink:0}
+  .main{flex:1;padding:24px;overflow-y:auto;max-width:1200px}
+  h1{font-size:20px;font-weight:600;margin-bottom:4px}
+  .subtitle{color:var(--muted);margin-bottom:24px;font-size:13px}
+
+  /* Drop zone */
+  .drop-zone{border:2px dashed var(--border);border-radius:12px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface)}
+  .drop-zone:hover,.drop-zone.drag-over{border-color:var(--accent);background:#1c2333}
+  .drop-zone svg{width:48px;height:48px;color:var(--muted);margin-bottom:12px}
+  .drop-zone h3{font-size:16px;margin-bottom:6px}
+  .drop-zone p{color:var(--muted);font-size:13px}
+  .drop-zone input{display:none}
+
+  /* Stats bar */
+  .stats-bar{display:flex;gap:16px;margin:20px 0;flex-wrap:wrap}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 18px;min-width:140px}
+  .stat-card .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .stat-card .value{font-size:22px;font-weight:700}
+  .stat-card.green .value{color:var(--green)}
+  .stat-card.yellow .value{color:var(--yellow)}
+  .stat-card.blue .value{color:var(--accent)}
+
+  /* Toolbar */
+  .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+  .toolbar-left{display:flex;gap:8px;align-items:center;flex:1;flex-wrap:wrap}
+  select,input[type=text]{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;font-size:13px;outline:none}
+  select:focus,input[type=text]:focus{border-color:var(--accent)}
+  .btn{padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:500;transition:opacity .2s}
+  .btn:hover{opacity:.85}
+  .btn-primary{background:var(--accent);color:#0d1117}
+  .btn-success{background:var(--green);color:#0d1117}
+  .btn-danger{background:var(--red);color:#fff}
+  .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+
+  /* Table */
+  .table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px}
+  table{width:100%;border-collapse:collapse;min-width:700px}
+  th{background:#1c2333;padding:8px 12px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);white-space:nowrap}
+  td{padding:8px 12px;border-top:1px solid var(--border);vertical-align:middle}
+  tr.excluded td{opacity:.4;text-decoration:line-through}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;text-transform:uppercase}
+  .badge-fuel{background:#1a3a5c;color:#58a6ff}
+  .badge-repair{background:#3a1a1a;color:#f85149}
+  .badge-tire{background:#2a1a3a;color:#a371f7}
+  .badge-misc{background:#1e1e1e;color:#8b949e}
+  .badge-permit{background:#1a3a1a;color:#3fb950}
+  .badge-meals{background:#3a2a1a;color:#d29922}
+  .badge-dup{background:#3a1a00;color:#d29922}
+  td select{padding:3px 6px;font-size:12px;width:120px}
+  .chk{width:16px;height:16px;cursor:pointer;accent-color:var(--accent)}
+  .row-num{color:var(--muted);font-size:11px}
+
+  /* Progress */
+  .progress-wrap{margin-top:20px;display:none}
+  .progress-bar-outer{background:var(--surface);border:1px solid var(--border);border-radius:6px;height:10px;overflow:hidden;margin-top:8px}
+  .progress-bar-inner{height:100%;background:var(--accent);transition:width .2s}
+  .log{margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px;max-height:200px;overflow-y:auto;font-family:monospace;font-size:12px;color:var(--muted)}
+
+  .empty{text-align:center;padding:48px;color:var(--muted)}
+  .tag-new{background:#1a3a1a;color:var(--green);padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;margin-left:4px}
+  .tag-dup{background:#3a2a00;color:var(--yellow);padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;margin-left:4px}
+</style>
+</head>
+<body>
+<div id="nexus-sidebar"></div>
+<div class="main">
+  <h1>WhatsApp Expense Import</h1>
+  <p class="subtitle">Drop a WhatsApp chat export (.zip or .txt) to parse and import driver expenses</p>
+
+  <div class="drop-zone" id="dropZone">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M17.657 16.657A8 8 0 116.343 5.343m0 0C7.28 3.9 8.533 3 10 3m-3.657 2.343L3 9M21 15l-3-3-3 3"/>
+      <path d="M3 3l18 18M8 12h8M12 8v8"/>
+    </svg>
+    <h3>Drop WhatsApp export here</h3>
+    <p>Supports .zip (exported chat) or .txt (chat file)<br/>
+    <a href="#" onclick="document.getElementById('fileInput').click();return false;" style="color:var(--accent)">or click to browse</a></p>
+    <input type="file" id="fileInput" accept=".zip,.txt"/>
+  </div>
+
+  <div id="results" style="display:none">
+    <div class="stats-bar" id="statsBar"></div>
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <select id="filterDriver"><option value="">All Drivers</option></select>
+        <select id="filterCat"><option value="">All Categories</option>
+          <option>Fuel</option><option>Repair</option><option>Tire</option>
+          <option>Permit</option><option>Meals</option><option>Miscellaneous</option>
+        </select>
+        <select id="filterStatus">
+          <option value="">All</option>
+          <option value="new">New only</option>
+          <option value="dup">Duplicates only</option>
+        </select>
+        <input type="text" id="searchBox" placeholder="Search description…" style="width:200px"/>
+      </div>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer">
+        <input type="checkbox" id="selectAll" class="chk" checked/> Select all new
+      </label>
+      <button class="btn btn-ghost" id="clearDupsBtn">Uncheck duplicates</button>
+      <button class="btn btn-success" id="importBtn">⬆ Import Selected</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px"><input type="checkbox" id="headerChk" class="chk" checked/></th>
+            <th>#</th>
+            <th>Date</th>
+            <th>Driver</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="progress-wrap" id="progressWrap">
+      <div style="display:flex;justify-content:space-between">
+        <span id="progressLabel">Importing…</span>
+        <span id="progressCount"></span>
+      </div>
+      <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar" style="width:0%"></div></div>
+      <div class="log" id="logBox"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Parser (mirrors Python logic) ───────────────────────────────────────────
+const MONTH_MAP = {jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',
+  jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12'};
+
+const SKIP_KW = ['omitted','<media','rate con','ratecon','bill of lading','bol',
+  'scale ticket','permits','invoice','agreement','settlement','attached','added',
+  'removed','changed','encrypted','messages are end','created group','joined',
+  'security code','null','undefined','whatsapp','nexus','carrier trucking',
+  'scac','mc ','us dot','doral','nw 107','fein'];
+
+const DRIVER_MAP = {
+  'amet abreu':'Amet','amet':'Amet',
+  'avis modesto':'Avis','avis':'Avis',
+  'david fonseca':'David','david':'David',
+  'guilermo pinera':'Guillermo','guillermo pinera':'Guillermo','guillermo':'Guillermo',
+  'nelson veliz':'Nelson','nelson':'Nelson',
+  'miguel fonseca':'Miguel','miguel':'Miguel',
+  'yosviel':'Yosviel',
+  'betty':'Betty','laura':'Laura',
+  'jayler':'Jayler','javier labrada':'Jayler','jailer':'Jayler','javier':'Jayler'
+};
+
+function detectDriver(text) {
+  const t = text.toLowerCase();
+  for (const [k,v] of Object.entries(DRIVER_MAP).sort((a,b)=>b[0].length-a[0].length)) {
+    if (t.includes(k)) return v;
+  }
+  return null;
+}
+
+function catFromDesc(desc) {
+  const d = desc.toLowerCase();
+  if (/fuel|tank|gas|diesel/.test(d)) return 'Fuel';
+  if (/tire|tires|goodyear|michelin/.test(d)) return 'Tire';
+  if (/repair|mechanic|mecanico|sgt auto/.test(d)) return 'Repair';
+  if (/food|meal|restaurant|subway|mcdonalds|waffle|starbucks/.test(d)) return 'Meals';
+  if (/permit/.test(d)) return 'Permit';
+  return 'Miscellaneous';
+}
+
+function parseAmount(s) {
+  s = s.replace(/[$\s]/g,'').replace(/ /g,'');
+  // EU decimal: digits,2digits at end
+  const eu = s.match(/^([\d.]+),(\d{2})$/);
+  if (eu) return parseFloat(eu[1].replace(/\./g,'') + '.' + eu[2]);
+  return parseFloat(s.replace(/,/g,''));
+}
+
+function parseDate(s, lastDate) {
+  s = s.replace(/ /g,' ').replace(/‎/g,'').replace(/‏/g,'').trim();
+  // M/D/YY or MM/DD/YYYY
+  let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+  if (m) {
+    const yr = parseInt(m[3]); const y = yr < 100 ? 2000+yr : yr;
+    return `${y}-${String(m[1]).padStart(2,'0')}-${String(m[2]).padStart(2,'0')}`;
+  }
+  return lastDate;
+}
+
+function shouldSkip(line) {
+  if (!line.trim() || line.trim().length < 5) return true;
+  const ll = line.toLowerCase();
+  return SKIP_KW.some(k => ll.includes(k));
+}
+
+function parseChatText(text) {
+  // Normalize unicode
+  text = text.replace(/ /g,' ').replace(/‎/g,'').replace(/‏/g,'');
+
+  const LINE_RE = /^(\d{1,2}\/\d{1,2}\/\d{2,4}),\s*\d{1,2}:\d{2}(?::\d{2})?\s*(?:AM|PM|am|pm)\s*-\s*(.+?):\s*(.*)$/;
+  const AMT_RE = /\$\s*([\d,]+(?:\.\d{1,2})?)/g;
+  const AMT_BARE = /(?<![.\d])([\d]{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+,\d{2})(?![\d,.])/;
+
+  const expenses = [];
+  const lines = text.split('\n');
+  let lastDate = '2026-01-01';
+
+  for (const rawLine of lines) {
+    const m = rawLine.match(LINE_RE);
+    if (!m) continue;
+
+    const [,dateStr, sender, body] = m;
+    lastDate = parseDate(dateStr, lastDate);
+    if (!body || shouldSkip(body)) continue;
+
+    const driver = detectDriver(body) || detectDriver(sender);
+    if (!driver) continue;
+
+    // Find dollar amounts
+    let found = false;
+    let match;
+    const re = /\$\s*([\d,]+(?:\.\d{1,2})?)/g;
+    while ((match = re.exec(body)) !== null) {
+      const amt = parseAmount(match[1]);
+      if (isNaN(amt) || amt < 10 || amt > 50000) continue;
+      const desc = body.replace(/<This message was edited>/g,'').trim();
+      expenses.push({
+        date: lastDate,
+        driver,
+        category: catFromDesc(desc),
+        amount: Math.round(amt * 100) / 100,
+        description: desc,
+        source: 'whatsapp'
+      });
+      found = true;
+    }
+
+    // Bare number fallback (e.g. "Zelle David 1800")
+    if (!found) {
+      const bm = body.match(/(?:^|\s)([\d]{1,3}(?:,\d{3})+(?:\.\d{1,2})?)(?:\s|$)/);
+      if (bm) {
+        const amt = parseAmount(bm[1]);
+        if (!isNaN(amt) && amt >= 50 && amt <= 50000) {
+          const desc = body.replace(/<This message was edited>/g,'').trim();
+          expenses.push({
+            date: lastDate,
+            driver,
+            category: catFromDesc(desc),
+            amount: Math.round(amt * 100) / 100,
+            description: desc,
+            source: 'whatsapp'
+          });
+        }
+      }
+    }
+  }
+
+  // Dedup by date+driver+amount+desc
+  const seen = new Set();
+  return expenses.filter(e => {
+    const k = `${e.date}|${e.driver}|${e.amount}|${e.description.trim()}`;
+    if (seen.has(k)) return false;
+    seen.add(k); return true;
+  }).sort((a,b) => a.date.localeCompare(b.date) || a.driver.localeCompare(b.driver));
+}
+
+// ─── UI State ────────────────────────────────────────────────────────────────
+let parsedExpenses = [];
+let existingKeys = new Set();
+
+async function loadExisting() {
+  try {
+    const all = await NexusDB.Expenses.list();
+    existingKeys = new Set(all.map(e => `${e.date}|${e.driver}|${e.amount}`));
+  } catch(e) {
+    const raw = localStorage.getItem('nexus_expenses');
+    if (raw) {
+      JSON.parse(raw).forEach(e => existingKeys.add(`${e.date}|${e.driver}|${e.amount}`));
+    }
+  }
+}
+
+function isDup(e) {
+  return existingKeys.has(`${e.date}|${e.driver}|${e.amount}`);
+}
+
+function catBadge(cat) {
+  const cls = {Fuel:'fuel',Repair:'repair',Tire:'tire',Miscellaneous:'misc',Permit:'permit',Meals:'meals'}[cat]||'misc';
+  return `<span class="badge badge-${cls}">${cat}</span>`;
+}
+
+function buildCatSelect(current, idx) {
+  const cats = ['Fuel','Repair','Tire','Permit','Meals','Miscellaneous'];
+  return `<select onchange="parsedExpenses[${idx}].category=this.value;renderTable()">${
+    cats.map(c=>`<option${c===current?' selected':''}>${c}</option>`).join('')
+  }</select>`;
+}
+
+function renderStats() {
+  const checked = parsedExpenses.filter((_,i) => document.querySelector(`#chk-${i}`)?.checked ?? !isDup(parsedExpenses[i]));
+  const total = parsedExpenses.length;
+  const dups = parsedExpenses.filter(e=>isDup(e)).length;
+  const newOnes = total - dups;
+  const sumAll = parsedExpenses.reduce((s,e)=>s+e.amount,0);
+
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat-card blue"><div class="label">Parsed</div><div class="value">${total}</div></div>
+    <div class="stat-card green"><div class="label">New</div><div class="value">${newOnes}</div></div>
+    <div class="stat-card yellow"><div class="label">Duplicates</div><div class="value">${dups}</div></div>
+    <div class="stat-card blue"><div class="label">Total Value</div><div class="value">$${sumAll.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div>
+  `;
+}
+
+function getVisibleIndices() {
+  const driverF = document.getElementById('filterDriver').value;
+  const catF = document.getElementById('filterCat').value;
+  const statusF = document.getElementById('filterStatus').value;
+  const search = document.getElementById('searchBox').value.toLowerCase();
+  return parsedExpenses.map((_,i)=>i).filter(i => {
+    const e = parsedExpenses[i];
+    if (driverF && e.driver !== driverF) return false;
+    if (catF && e.category !== catF) return false;
+    if (statusF === 'new' && isDup(e)) return false;
+    if (statusF === 'dup' && !isDup(e)) return false;
+    if (search && !e.description.toLowerCase().includes(search)) return false;
+    return true;
+  });
+}
+
+function renderTable() {
+  const indices = getVisibleIndices();
+  const tbody = document.getElementById('tbody');
+  if (indices.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" class="empty">No records match filters</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = indices.map((i,rowNum) => {
+    const e = parsedExpenses[i];
+    const dup = isDup(e);
+    const checked = dup ? '' : 'checked';
+    return `<tr id="row-${i}" class="${dup?'excluded':''}">
+      <td><input type="checkbox" id="chk-${i}" class="chk row-chk" data-idx="${i}" ${checked}
+        onchange="document.getElementById('row-${i}').classList.toggle('excluded',!this.checked)"/></td>
+      <td class="row-num">${rowNum+1}</td>
+      <td><input type="date" value="${e.date}" style="background:transparent;border:none;color:var(--text);font-size:12px;width:115px"
+        onchange="parsedExpenses[${i}].date=this.value"/></td>
+      <td>${e.driver}</td>
+      <td>${buildCatSelect(e.category,i)}</td>
+      <td style="font-weight:600">$${e.amount.toFixed(2)}</td>
+      <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${e.description.replace(/"/g,'&quot;')}">${e.description}</td>
+      <td>${dup ? '<span class="tag-dup">DUP</span>' : '<span class="tag-new">NEW</span>'}</td>
+    </tr>`;
+  }).join('');
+  renderStats();
+}
+
+function populateDriverFilter() {
+  const drivers = [...new Set(parsedExpenses.map(e=>e.driver))].sort();
+  const sel = document.getElementById('filterDriver');
+  sel.innerHTML = '<option value="">All Drivers</option>' +
+    drivers.map(d=>`<option>${d}</option>`).join('');
+}
+
+// ─── File handling ────────────────────────────────────────────────────────────
+async function processFile(file) {
+  const dz = document.getElementById('dropZone');
+  dz.innerHTML = `<p style="color:var(--muted)">Processing <strong>${file.name}</strong>…</p>`;
+
+  let text = '';
+  try {
+    if (file.name.endsWith('.zip')) {
+      const zip = await JSZip.loadAsync(file);
+      // Find _chat.txt inside zip
+      const chatFile = Object.values(zip.files).find(f => f.name.endsWith('_chat.txt') || f.name.endsWith('.txt'));
+      if (!chatFile) throw new Error('No .txt file found inside zip');
+      text = await chatFile.async('text');
+    } else {
+      text = await file.text();
+    }
+  } catch(err) {
+    dz.innerHTML = `<p style="color:var(--red)">Error: ${err.message}</p><p style="color:var(--muted);margin-top:8px"><a href="#" onclick="location.reload();return false" style="color:var(--accent)">Try again</a></p>`;
+    return;
+  }
+
+  await loadExisting();
+  parsedExpenses = parseChatText(text);
+
+  dz.innerHTML = `<p style="color:var(--green)">✓ Parsed <strong>${file.name}</strong> — ${parsedExpenses.length} expenses found</p>
+    <p style="color:var(--muted);margin-top:6px;font-size:12px"><a href="#" onclick="document.getElementById('fileInput').click();return false" style="color:var(--accent)">Load different file</a></p>`;
+
+  document.getElementById('results').style.display = 'block';
+  populateDriverFilter();
+  renderTable();
+}
+
+// ─── Drop zone events ─────────────────────────────────────────────────────────
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); if(e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]); });
+dz.addEventListener('click', () => document.getElementById('fileInput').click());
+document.getElementById('fileInput').addEventListener('change', e => { if(e.target.files[0]) processFile(e.target.files[0]); });
+
+// ─── Filters ──────────────────────────────────────────────────────────────────
+['filterDriver','filterCat','filterStatus','searchBox'].forEach(id =>
+  document.getElementById(id).addEventListener('input', renderTable));
+
+document.getElementById('selectAll').addEventListener('change', function() {
+  document.querySelectorAll('.row-chk').forEach(chk => {
+    chk.checked = this.checked;
+    document.getElementById(`row-${chk.dataset.idx}`).classList.toggle('excluded', !this.checked);
+  });
+});
+
+document.getElementById('headerChk').addEventListener('change', function() {
+  const vis = getVisibleIndices();
+  vis.forEach(i => {
+    const chk = document.getElementById(`chk-${i}`);
+    if (chk) { chk.checked = this.checked; document.getElementById(`row-${i}`).classList.toggle('excluded',!this.checked); }
+  });
+});
+
+document.getElementById('clearDupsBtn').addEventListener('click', () => {
+  parsedExpenses.forEach((_,i) => {
+    if (isDup(parsedExpenses[i])) {
+      const chk = document.getElementById(`chk-${i}`);
+      if (chk) { chk.checked = false; document.getElementById(`row-${i}`).classList.add('excluded'); }
+    }
+  });
+});
+
+// ─── Import ───────────────────────────────────────────────────────────────────
+document.getElementById('importBtn').addEventListener('click', async () => {
+  const selected = parsedExpenses.filter((_,i) => {
+    const chk = document.getElementById(`chk-${i}`);
+    return chk && chk.checked;
+  });
+
+  if (selected.length === 0) { alert('No records selected.'); return; }
+  if (!confirm(`Import ${selected.length} expense records into Carrier Nexus?`)) return;
+
+  const btn = document.getElementById('importBtn');
+  btn.disabled = true;
+  const pw = document.getElementById('progressWrap');
+  pw.style.display = 'block';
+  const bar = document.getElementById('progressBar');
+  const lbl = document.getElementById('progressLabel');
+  const cnt = document.getElementById('progressCount');
+  const log = document.getElementById('logBox');
+
+  let ok = 0, fail = 0;
+
+  for (let i = 0; i < selected.length; i++) {
+    const e = selected[i];
+    lbl.textContent = `Importing ${i+1} of ${selected.length}…`;
+    cnt.textContent = `${ok} ok / ${fail} failed`;
+    bar.style.width = `${Math.round((i/selected.length)*100)}%`;
+    try {
+      await NexusDB.Expenses.create({
+        date: e.date, driver: e.driver, category: e.category,
+        amount: e.amount, description: e.description,
+        load_ref: '', vendor: '', source: 'whatsapp'
+      });
+      ok++;
+      log.innerHTML += `<span style="color:var(--green)">✓</span> ${e.date} ${e.driver} $${e.amount} ${e.description.substring(0,40)}<br/>`;
+    } catch(err) {
+      fail++;
+      log.innerHTML += `<span style="color:var(--red)">✗</span> ${e.description.substring(0,40)}: ${err.message}<br/>`;
+    }
+    log.scrollTop = log.scrollHeight;
+  }
+
+  bar.style.width = '100%';
+  lbl.innerHTML = fail === 0
+    ? `<span style="color:var(--green)">✓ Done! Imported ${ok} expenses.</span>`
+    : `<span style="color:var(--yellow)">Done — ${ok} imported, ${fail} failed.</span>`;
+  cnt.textContent = '';
+  btn.disabled = false;
+  btn.textContent = `✓ Imported ${ok}`;
+
+  // Reload existing keys so dups update
+  await loadExisting();
+  renderTable();
+});
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+loadExisting();
+</script>
+</body>
+</html>

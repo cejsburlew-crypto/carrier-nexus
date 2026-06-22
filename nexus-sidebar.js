@@ -89,6 +89,7 @@
     <div class="sidebar-section">
       <div class="sidebar-section-label">Finance</div>
       <a href="invoicing.html" class="sidebar-link${active('invoicing.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h10a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 3v1h8V4H4zm0 3v1h8V7H4zm0 3v1h5v-1H4z"/></svg>Invoicing</a>
+      <a href="whatsapp-import.html" class="sidebar-link${active('whatsapp-import.html')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>WhatsApp Import</a>
       <a href="expenses.html" class="sidebar-link${active('expenses.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v2H5v2h2v2h2V9h2V7H9V5z"/></svg>Expenses</a>
       <a href="financials.html" class="sidebar-link${active('financials.html')}"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h2v-4H2zm3 0h2V6H5zm3 0h2V4H8zm3 0h2V2h-2z"/></svg>Financials</a>
     </div>
