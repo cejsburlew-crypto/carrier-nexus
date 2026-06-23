@@ -39,6 +39,7 @@
   var SECTIONS = [
     { key:'ops',     label:'Operations',     pages:['fleet-command.html','active-loads.html','settlements.html','weekly-settlements.html','settlement-review.html','drivers.html','permits.html','pods.html','issues.html'] },
     { key:'dispatch',label:'Dispatch',       pages:['dispatcher-hub.html','load-board.html','commissions.html','available-dispatchers.html','available-drivers.html'] },
+    { key:'driver',  label:'Driver',         pages:['driver-command.html','driver-availability.html'] },
     { key:'finance', label:'Finance',        pages:['invoicing.html','whatsapp-import.html','expenses.html','financials.html','ifta.html'] },
     { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','emails.html','doc-inbox.html'] },
     { key:'contacts',label:'Contacts',       pages:['contacts.html'] },
@@ -173,6 +174,7 @@
     scale:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 9l9-6 9 6"/><path d="M6 16s0 4 6 4 6-4 6-4"/><line x1="3" y1="9" x2="21" y2="9"/></svg>',
     search:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
     service: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 4.93 19.07"/><path d="M4.93 4.93A10 10 0 0 1 19.07 19.07"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>',
+    signal:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>',
   };
 
   var navHtml =
@@ -193,6 +195,10 @@
       lnk('commissions.html',          I.comm,    'Commissions') +
       lnk('available-dispatchers.html',I.team,    'Dispatcher Roster') +
       lnk('available-drivers.html',    I.person,  'Driver Pool')
+    ) +
+    sec('driver', 'Driver',
+      lnk('driver-command.html',       I.signal,  'Driver Command') +
+      lnk('driver-availability.html',  I.signal,  'Availability Network')
     ) +
     sec('finance', 'Finance',
       lnk('invoicing.html',            I.invoice, 'Invoicing') +

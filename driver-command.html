@@ -5,935 +5,423 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#090a0c">
+<meta name="theme-color" content="#0f1724">
 <title>Driver Command — Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --black:#090a0c;
-  --bg:#0d1017;
-  --panel:#131820;
-  --panel2:#1a2030;
-  --border:rgba(46,109,164,0.18);
-  --border2:rgba(46,109,164,0.35);
-  --steel:#2e6da4;
-  --steel-l:#3d87c8;
-  --orange:#e8640a;
-  --orange-l:#ff7518;
-  --white:#f0f4f8;
-  --white2:#c8d4e8;
-  --muted:#6b7a99;
-  --mid:#8a9bbf;
-  --green:#4ade80;
-  --yellow:#fbbf24;
-  --red:#ef4444;
-}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{height:100%;-webkit-text-size-adjust:100%;}
-body{
-  background:var(--bg);
-  color:var(--white);
-  font-family:'Barlow',sans-serif;
-  min-height:100vh;
-  max-width:430px;
-  margin:0 auto;
-  position:relative;
-  overflow-x:hidden;
-  padding-bottom:80px;
-}
+body{background:#0f1724;color:#f0f4f8;font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;}
+.layout{display:flex;min-height:100vh;}
+.main-content{flex:1;min-width:0;margin-left:220px;padding-bottom:30px;}
+@media(max-width:768px){.main-content{margin-left:0;padding-bottom:80px;}}
 
-/* Desktop frame */
-@media(min-width:500px){
-  body{
-    border-left:1px solid var(--border);
-    border-right:1px solid var(--border);
-    box-shadow:0 0 60px rgba(0,0,0,0.5);
-  }
-  html{background:#060708;}
-}
+/* TOPBAR */
+.topbar{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;letter-spacing:.06em;text-transform:uppercase;color:#fff;}
+.topbar-sub{font-size:12px;color:rgba(255,255,255,.65);margin-top:2px;font-weight:300;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.online-badge{display:flex;align-items:center;gap:5px;background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.35);padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;color:#00d4aa;letter-spacing:.08em;text-transform:uppercase;}
+.online-dot{width:5px;height:5px;border-radius:50%;background:#00d4aa;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 
-/* ── STATUS BAR ── */
-.status-bar{
-  height:44px;
-  background:var(--black);
-  display:flex;align-items:center;
-  justify-content:space-between;
-  padding:0 20px;
-  border-bottom:1px solid var(--border);
-  position:sticky;top:0;z-index:100;
-}
-.status-time{
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700;font-size:15px;
-  color:var(--white);
-}
-.status-icons{
-  display:flex;align-items:center;gap:6px;
-  font-size:12px;color:var(--white2);
-}
-.status-signal{
-  display:flex;align-items:flex-end;gap:1px;height:10px;
-}
-.signal-bar{background:var(--white);border-radius:1px;width:2px;}
+/* ADMIN BANNER */
+.admin-banner{background:rgba(251,191,36,.1);border-bottom:1px solid rgba(251,191,36,.3);padding:8px 20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#fbbf24;letter-spacing:.04em;display:flex;align-items:center;gap:8px;}
 
-/* ── TOP APP BAR ── */
-.app-bar{
-  background:var(--black);
-  padding:12px 16px 14px;
-  border-bottom:1px solid var(--border);
-  position:sticky;top:44px;z-index:99;
-}
-.app-bar-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
-.app-bar-logo{
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:800;font-size:16px;
-  letter-spacing:0.06em;text-transform:uppercase;
-  color:var(--white);
-}
-.app-bar-logo span{color:var(--orange);}
-.app-bar-greeting{
-  font-size:12px;color:var(--mid);font-weight:300;
-}
-.app-bar-greeting strong{color:var(--white);font-weight:600;}
-.notif-btn{
-  position:relative;
-  width:34px;height:34px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;
-  border-radius:50%;cursor:pointer;
-}
-.notif-dot{
-  position:absolute;top:6px;right:6px;
-  width:7px;height:7px;
-  background:var(--orange);border-radius:50%;
-  border:1.5px solid var(--black);
-}
+/* SECTION LABEL */
+.section-label{padding:18px 20px 8px;font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.2em;text-transform:uppercase;}
 
-/* ── ACTIVE LOAD BANNER ── */
-.active-load{
-  margin:14px 16px;
-  background:linear-gradient(135deg, rgba(46,109,164,0.15), rgba(46,109,164,0.06));
-  border:1px solid var(--border2);
-  padding:14px 16px;
-  position:relative;
-  overflow:hidden;
-}
-.active-load::before{
-  content:'';
-  position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg, var(--steel), var(--orange));
-}
-.active-load-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;color:var(--orange);
-  letter-spacing:0.2em;text-transform:uppercase;
-  margin-bottom:8px;
-  display:flex;align-items:center;gap:6px;
-}
-.active-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--orange);
-  animation:pulse 2s infinite;
-}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
-.active-load-id{
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:800;font-size:20px;
-  color:var(--white);
-  margin-bottom:2px;
-}
-.active-load-route{
-  font-size:13px;color:var(--white2);font-weight:500;
-  margin-bottom:10px;
-}
-.active-load-route span{color:var(--mid);}
-.load-meta{
-  display:flex;gap:16px;flex-wrap:wrap;
-}
-.load-meta-item{
-  display:flex;flex-direction:column;gap:2px;
-}
-.load-meta-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:8px;color:var(--muted);
-  letter-spacing:0.15em;text-transform:uppercase;
-}
-.load-meta-value{
-  font-size:12px;font-weight:600;color:var(--white);
-}
-.load-meta-value.green{color:var(--green);}
+/* TILE GRID */
+.tile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:4px 20px 8px;}
+@media(min-width:900px){.tile-grid{grid-template-columns:1fr 1fr 1fr;}}
 
-/* ── SECTION HEADER ── */
-.section-head{
-  padding:14px 16px 6px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;color:var(--muted);
-  letter-spacing:0.2em;text-transform:uppercase;
-}
+/* TILE */
+.tile{background:#1a2236;border:1px solid rgba(255,255,255,.07);padding:18px 16px;cursor:pointer;text-decoration:none;display:flex;flex-direction:column;gap:10px;transition:transform .12s,border-color .12s,background .12s;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;}
+.tile:hover{transform:translateY(-1px);background:#1e2840;}
+.tile:active{transform:scale(.97);}
+.tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.tile.t-green::before{background:#4ade80;} .tile.t-green{border-color:rgba(74,222,128,.15);}
+.tile.t-blue::before{background:#3b82f6;}  .tile.t-blue{border-color:rgba(59,130,246,.15);}
+.tile.t-orange::before{background:#f97316;}.tile.t-orange{border-color:rgba(249,115,22,.15);}
+.tile.t-teal::before{background:#00d4aa;}  .tile.t-teal{border-color:rgba(0,212,170,.15);}
+.tile.t-purple::before{background:#a78bfa;}.tile.t-purple{border-color:rgba(167,139,250,.15);}
+.tile.t-cyan::before{background:#22d3ee;}  .tile.t-cyan{border-color:rgba(34,211,238,.15);}
+.tile-icon{font-size:28px;line-height:1;}
+.tile-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.06em;color:#fff;}
+.tile-main{font-size:14px;font-weight:600;color:#f0f4f8;line-height:1.3;}
+.tile-sub{font-size:11px;color:rgba(255,255,255,.45);line-height:1.35;}
+.c-green{color:#4ade80!important;}.c-blue{color:#60a5fa!important;}.c-teal{color:#00d4aa!important;}.c-red{color:#f87171!important;}.c-yellow{color:#fbbf24!important;}
 
-/* ── ACTION BUTTONS GRID ── */
-.action-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  padding:4px 16px 0;
-}
-.action-btn{
-  background:var(--panel);
-  border:1px solid var(--border);
-  padding:16px 14px;
-  display:flex;flex-direction:column;gap:10px;
-  cursor:pointer;
-  transition:all 0.15s;
-  -webkit-tap-highlight-color:transparent;
-  position:relative;
-  overflow:hidden;
-  text-decoration:none;
-}
-.action-btn:active{transform:scale(0.97);}
-.action-btn.primary{
-  background:rgba(232,100,10,0.1);
-  border-color:rgba(232,100,10,0.3);
-}
-.action-btn.primary::after{
-  content:'';
-  position:absolute;top:0;left:0;right:0;height:1px;
-  background:var(--orange);
-}
-.action-btn.blue{
-  background:rgba(46,109,164,0.1);
-  border-color:rgba(46,109,164,0.3);
-}
-.action-btn.blue::after{
-  content:'';
-  position:absolute;top:0;left:0;right:0;height:1px;
-  background:var(--steel-l);
-}
-.action-btn.full{
-  grid-column:span 2;
-  flex-direction:row;align-items:center;
-  padding:14px 16px;
-}
-.action-icon{
-  font-size:24px;line-height:1;
-  flex-shrink:0;
-}
-.action-icon.sm{font-size:20px;}
-.action-label{
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700;font-size:15px;
-  text-transform:uppercase;letter-spacing:0.06em;
-  color:var(--white);
-}
-.action-label.orange{color:var(--orange);}
-.action-label.blue{color:var(--steel-l);}
-.action-sub{
-  font-size:11px;color:var(--muted);font-weight:400;
-  line-height:1.3;
-}
-.action-arrow{
-  margin-left:auto;
-  font-size:16px;color:var(--muted);
-  flex-shrink:0;
-}
+/* DEDUCTIONS */
+.ded-list{display:flex;flex-direction:column;gap:3px;margin-top:4px;}
+.ded-item{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:rgba(255,255,255,.5);}
+.ded-item span:last-child{color:rgba(249,115,22,.9);font-weight:600;}
 
-/* ── REPORT BUTTONS ── */
-.report-row{
-  padding:0 16px;
-  margin-top:10px;
-  display:flex;flex-direction:column;gap:8px;
-}
-.report-btn{
-  background:var(--panel);
-  border:1px solid var(--border);
-  padding:13px 14px;
-  display:flex;align-items:center;gap:12px;
-  cursor:pointer;
-  transition:all 0.15s;
-  -webkit-tap-highlight-color:transparent;
-}
-.report-btn:active{background:var(--panel2);}
-.report-btn.warn{border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.04);}
-.report-btn.danger{border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.04);}
-.report-icon{
-  width:36px;height:36px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;
-  background:rgba(255,255,255,0.04);
-  border:1px solid var(--border);
-}
-.report-body{flex:1;min-width:0;}
-.report-label{
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700;font-size:14px;
-  text-transform:uppercase;letter-spacing:0.06em;
-  color:var(--white);margin-bottom:1px;
-}
-.report-label.yellow{color:var(--yellow);}
-.report-label.red{color:var(--red);}
-.report-sub{font-size:10px;color:var(--muted);}
-.report-chevron{color:var(--muted);font-size:14px;flex-shrink:0;}
+/* SERVICE BUTTONS */
+.svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;}
+.svc-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);padding:7px 6px;display:flex;align-items:center;gap:5px;cursor:pointer;text-decoration:none;font-size:11px;font-weight:600;color:rgba(255,255,255,.75);transition:background .12s,border-color .12s;-webkit-tap-highlight-color:transparent;}
+.svc-btn:hover{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.3);color:#fff;}
+.svc-btn:active{transform:scale(.96);}
 
-/* ── LOAD HISTORY ── */
-.history-list{
-  margin:0 16px;
-  border:1px solid var(--border);
-  overflow:hidden;
-}
-.history-item{
-  display:flex;align-items:center;gap:12px;
-  padding:12px 14px;
-  border-bottom:1px solid var(--border);
-  cursor:pointer;
-  transition:background 0.12s;
-}
-.history-item:last-child{border-bottom:none;}
-.history-item:active{background:var(--panel2);}
-.history-load{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;color:var(--steel-l);
-  flex-shrink:0;width:72px;
-}
-.history-body{flex:1;min-width:0;}
-.history-route{font-size:12px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.history-date{font-size:10px;color:var(--muted);}
-.history-status{}
+/* AVAILABILITY TOGGLE */
+.avail-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.avail-label-txt{font-size:13px;font-weight:600;color:#fff;}
+.toggle-switch{position:relative;width:44px;height:24px;cursor:pointer;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:12px;transition:background .2s;border:1px solid rgba(255,255,255,.15);}
+.toggle-switch input:checked + .toggle-track{background:#00d4aa;border-color:#00d4aa;}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.4);}
+.toggle-switch input:checked ~ .toggle-thumb{transform:translateX(20px);}
+.avail-status-txt{font-size:10px;}
+.avail-status-txt.on{color:#00d4aa;} .avail-status-txt.off{color:rgba(255,255,255,.35);}
+.equip-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+.equip-pill{font-size:9px;font-weight:600;padding:2px 7px;font-family:'JetBrains Mono',monospace;letter-spacing:.04em;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.25);color:#00d4aa;cursor:pointer;transition:background .12s;}
+.equip-pill.sel{background:rgba(0,212,170,.25);border-color:#00d4aa;}
 
-/* STATUS PILLS small */
-.pill-sm{
-  display:inline-flex;align-items:center;gap:4px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:8px;font-weight:500;
-  padding:2px 7px;letter-spacing:0.08em;
-  text-transform:uppercase;border:1px solid;
-  white-space:nowrap;
-}
-.pill-dot-sm{width:4px;height:4px;border-radius:50%;flex-shrink:0;}
-.pill-sm.closed{color:var(--mid);border-color:rgba(138,155,191,0.3);background:rgba(138,155,191,0.06);}
-.pill-sm.billing{color:var(--orange);border-color:rgba(232,100,10,0.3);background:rgba(232,100,10,0.08);}
+/* DOCUMENT ALERTS */
+.doc-alert{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.doc-alert:last-child{border-bottom:none;}
+.doc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.doc-name{font-size:11px;font-weight:600;color:#fff;flex:1;}
+.doc-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 6px;font-weight:600;}
+.b-red{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);}
+.b-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.3);}
+.b-green{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
 
-/* ── BOTTOM NAV ── */
-.bottom-nav{
-  position:fixed;
-  bottom:0;left:50%;
-  transform:translateX(-50%);
-  width:100%;max-width:430px;
-  height:72px;
-  background:var(--black);
-  border-top:1px solid var(--border);
-  display:flex;align-items:stretch;
-  z-index:200;
-  padding-bottom:env(safe-area-inset-bottom,0px);
-}
-.nav-tab{
-  flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:4px;
-  cursor:pointer;
-  transition:all 0.15s;
-  -webkit-tap-highlight-color:transparent;
-  border:none;background:none;
-  color:var(--muted);font-family:'Barlow',sans-serif;
-}
-.nav-tab.active{color:var(--orange);}
-.nav-tab:active{opacity:0.7;}
-.nav-tab svg{flex-shrink:0;}
-.nav-tab-label{font-size:10px;font-weight:500;letter-spacing:0.04em;}
-.nav-tab-center{
-  flex:1.2;
-  position:relative;
-}
-.nav-tab-center-btn{
-  position:absolute;
-  top:-16px;left:50%;transform:translateX(-50%);
-  width:52px;height:52px;
-  background:var(--orange);
-  border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 20px rgba(232,100,10,0.5);
-  cursor:pointer;
-  transition:all 0.15s;
-  -webkit-tap-highlight-color:transparent;
-  border:3px solid var(--black);
-}
-.nav-tab-center-btn:active{transform:translateX(-50%) scale(0.93);}
-.nav-tab-center-label{
-  font-size:10px;font-weight:500;color:var(--muted);
-  position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
-  white-space:nowrap;letter-spacing:0.04em;
-}
+/* UNREAD BADGE */
+.unread-badge{background:#e91e8c;color:#fff;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;min-width:22px;text-align:center;}
 
-/* ── MODAL OVERLAY ── */
-.modal-overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,0.7);
-  z-index:300;
-  display:none;align-items:flex-end;
-  backdrop-filter:blur(4px);
-}
-.modal-overlay.open{display:flex;}
-.modal-sheet{
-  background:var(--panel);
-  border-top:1px solid var(--border2);
-  border-radius:0;
-  width:100%;max-width:430px;
-  margin:0 auto;
-  padding:20px 20px 40px;
-  animation:slideUp 0.25s ease;
-}
-@keyframes slideUp{
-  from{transform:translateY(100%);}
-  to{transform:translateY(0);}
-}
-.modal-handle{
-  width:36px;height:3px;
-  background:var(--border2);border-radius:2px;
-  margin:0 auto 20px;
-}
-.modal-title{
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:800;font-size:22px;
-  text-transform:uppercase;letter-spacing:0.06em;
-  color:var(--white);margin-bottom:4px;
-}
-.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
+/* ACTIVITY FEED */
+.activity-feed{margin:0 20px;background:#1a2236;border:1px solid rgba(255,255,255,.07);overflow:hidden;}
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.05);transition:background .12s;}
+.activity-item:last-child{border-bottom:none;}
+.activity-item:hover{background:rgba(255,255,255,.02);}
+.ai-icon{width:30px;height:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);font-size:14px;}
+.ai-body{flex:1;min-width:0;}
+.ai-title{font-size:12px;font-weight:600;color:#f0f4f8;}
+.ai-sub{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px;}
+.ai-time{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);flex-shrink:0;margin-top:2px;}
+.empty-state{padding:20px;text-align:center;font-size:12px;color:rgba(255,255,255,.3);font-style:italic;}
 
-.upload-zone{
-  border:1.5px dashed var(--border2);
-  padding:28px 20px;
-  text-align:center;
-  margin-bottom:14px;
-  cursor:pointer;
-  transition:all 0.15s;
-}
-.upload-zone:active{background:rgba(46,109,164,0.06);}
-.upload-icon{font-size:32px;margin-bottom:8px;}
-.upload-label{font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;}
-.upload-sub{font-size:11px;color:var(--muted);}
-
-.modal-btn{
-  width:100%;padding:15px;
-  background:var(--orange);border:none;
-  color:var(--white);
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:17px;font-weight:700;
-  letter-spacing:0.1em;text-transform:uppercase;
-  cursor:pointer;transition:all 0.15s;
-  margin-top:12px;
-}
-.modal-btn:active{background:var(--orange-l);}
-.modal-btn.secondary{background:transparent;border:1px solid var(--border2);color:var(--mid);}
-.modal-btn.secondary:active{background:rgba(46,109,164,0.08);}
-
-.mileage-input{
-  width:100%;
-  padding:14px 16px;
-  background:var(--panel2);
-  border:1px solid var(--border2);
-  color:var(--white);
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:28px;font-weight:700;
-  text-align:center;letter-spacing:0.04em;
-  outline:none;
-  margin-bottom:8px;
-}
-.mileage-input::placeholder{color:var(--muted);}
-.mileage-input:focus{border-color:var(--steel-l);}
-
-.form-input-sm{
-  width:100%;padding:12px 14px;
-  background:var(--panel2);border:1px solid var(--border);
-  color:var(--white);font-family:'Barlow',sans-serif;
-  font-size:14px;outline:none;margin-bottom:10px;
-}
-.form-input-sm:focus{border-color:var(--steel-l);}
-.form-input-sm::placeholder{color:var(--muted);}
-.form-label-sm{
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;color:var(--muted);
-  letter-spacing:0.15em;text-transform:uppercase;
-  display:block;margin-bottom:6px;
-}
-
-.main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
+/* BOTTOM NAV */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:64px;background:#0a0d14;border-top:1px solid rgba(255,255,255,.07);z-index:100;padding-bottom:env(safe-area-inset-bottom,0px);}
+@media(max-width:768px){.bottom-nav{display:flex;}}
+.bnav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:rgba(255,255,255,.35);font-size:9px;font-weight:500;letter-spacing:.04em;text-decoration:none;transition:color .12s;-webkit-tap-highlight-color:transparent;}
+.bnav-tab.active{color:#00d4aa;}
+.bnav-tab svg{width:18px;height:18px;}
 </style>
 <style id="nexus-unified">
-/* ── SIDEBAR BLACK ── */
-.sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
-/* ── LOGO AREA ── */
-.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
-.sidebar-logo .logo-hex { flex-shrink:0 !important; }
-.sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
-.sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
-.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
-.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
-/* ── NAV LINKS ── */
-.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
-.sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
-.sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
-.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
-.sidebar-link.active svg { opacity:1 !important; }
-/* ── SECTION LABELS ── */
-.sidebar-section { padding:12px 0 4px !important; }
-.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
-/* ── TOPBAR ── */
-.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
-.topbar *, .top-bar * { color:#ffffff !important; }
-.topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
-/* ── MOBILE NAV ── */
-.mobile-nav { background:#000000 !important; }
-.mobile-nav-tab.active { color:#e91e8c !important; }
-/* ── SIDEBAR USER ── */
-.sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
-.sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
-.sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
-/* ── NAV BADGE ── */
-.nav-badge { background:#e91e8c !important; color:#fff !important; }
+.sidebar,nav.sidebar{background:#000!important;border-right:1px solid #1a1a1a!important;}
+.sidebar-logo{padding:16px!important;display:flex!important;align-items:center!important;gap:10px!important;text-decoration:none!important;border-bottom:1px solid rgba(255,255,255,.07)!important;flex-direction:row!important;}
+.sidebar-logo .logo-hex svg{width:36px!important;height:36px!important;display:block!important;}
+.sidebar-logo .logo-text{display:flex!important;flex-direction:column!important;gap:2px!important;}
+.sidebar-logo .logo-text .brand{font-family:'Barlow Condensed',sans-serif!important;font-weight:800!important;font-size:15px!important;letter-spacing:2px!important;color:#fff!important;display:block!important;}
+.sidebar-logo .logo-text .sub{font-family:'JetBrains Mono',monospace!important;font-size:9px!important;color:rgba(255,255,255,.55)!important;letter-spacing:1px!important;display:block!important;}
+.sidebar-link{display:flex!important;align-items:center!important;gap:10px!important;padding:8px 16px!important;color:#a0aec0!important;border-left:3px solid transparent!important;text-decoration:none!important;font-size:13px!important;}
+.sidebar-link:hover{background:rgba(194,24,91,.18)!important;border-left-color:#c2185b!important;color:#fff!important;}
+.sidebar-link.active{background:rgba(233,30,140,.22)!important;border-left:3px solid #e91e8c!important;color:#fff!important;}
+.sidebar-link svg{width:14px!important;height:14px!important;flex-shrink:0!important;opacity:.7!important;}
+.sidebar-link.active svg{opacity:1!important;}
 </style>
 </head>
 <body>
+<script src="nexus-config.js"></script>
 <script src="nexus-sidebar.js"></script>
+<div class="layout">
+<div class="main-content">
 
-<!-- STATUS BAR -->
-<div class="status-bar">
-  <span class="status-time">8:42</span>
-  <div class="status-icons">
-    <div class="status-signal">
-      <div class="signal-bar" style="height:30%;"></div>
-      <div class="signal-bar" style="height:50%;"></div>
-      <div class="signal-bar" style="height:70%;"></div>
-      <div class="signal-bar" style="height:90%;"></div>
-    </div>
-    <span>LTE</span>
-    <span>🔋</span>
-  </div>
+<!-- ADMIN BANNER -->
+<div class="admin-banner" id="adminBanner" style="display:none;">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  Driver Command Preview &mdash; viewing as <span id="adminRole">admin</span> &bull; Data shown for all drivers
 </div>
 
-<!-- APP BAR -->
-<div class="app-bar">
-  <div class="app-bar-row">
-    <div>
-      <div class="app-bar-logo">CARRIER <span>NEXUS</span></div>
-      <div class="app-bar-greeting">Driver Command · <strong>Marcus Rodriguez</strong></div>
-    </div>
-    <div class="notif-btn" onclick="openModal('alertModal')">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a5 5 0 00-5 5v3H2v1h12v-1h-1V7a5 5 0 00-5-5zM6 13a2 2 0 004 0H6z" fill="currentColor" opacity="0.7"/></svg>
-      <div class="notif-dot"></div>
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-title">Driver Command</div>
+    <div class="topbar-sub" id="topbarSub">Loading&hellip;</div>
+  </div>
+  <div class="topbar-right">
+    <div class="online-badge" id="onlineBadge">
+      <div class="online-dot"></div>
+      <span id="onlineText">Online</span>
     </div>
   </div>
 </div>
 
-<!-- ACTIVE LOAD BANNER -->
-<div class="active-load">
-  <div class="active-load-label">
-    <div class="active-dot"></div>
-    Active Load
-  </div>
-  <div class="active-load-id">LDX-2841</div>
-  <div class="active-load-route">Miami, FL <span>→</span> Atlanta, GA</div>
-  <div class="load-meta">
-    <div class="load-meta-item">
-      <div class="load-meta-label">Rate</div>
-      <div class="load-meta-value green">$3,400</div>
-    </div>
-    <div class="load-meta-item">
-      <div class="load-meta-label">Broker</div>
-      <div class="load-meta-value">Coyote</div>
-    </div>
-    <div class="load-meta-item">
-      <div class="load-meta-label">Truck</div>
-      <div class="load-meta-value">#104</div>
-    </div>
-    <div class="load-meta-item">
-      <div class="load-meta-label">Delivery</div>
-      <div class="load-meta-value">Today 2PM</div>
-    </div>
-  </div>
-</div>
+<!-- TILE GRID -->
+<div class="section-label">Quick Access</div>
+<div class="tile-grid">
 
-<!-- QUICK ACTIONS -->
-<div class="section-head">Quick Actions</div>
-<div class="action-grid">
+  <!-- 1. MY PAY -->
+  <a class="tile t-green" href="settlements.html#mydriver" id="tileMyPay">
+    <div class="tile-icon">&#x1F4B0;</div>
+    <div class="tile-title">My Pay</div>
+    <div class="tile-main c-green" id="payAmount">No pending settlement</div>
+    <div class="tile-sub" id="payExpected">Check back after your next load</div>
+    <div class="ded-list" id="dedList"></div>
+  </a>
 
-  <div class="action-btn primary" onclick="openModal('podModal')">
-    <div class="action-icon">📸</div>
-    <div>
-      <div class="action-label orange">Upload POD</div>
-      <div class="action-sub">Photo or file</div>
+  <!-- 2. MY LOADS -->
+  <a class="tile t-blue" href="active-loads.html">
+    <div class="tile-icon">&#x1F69B;</div>
+    <div class="tile-title">My Loads</div>
+    <div class="tile-main c-blue" id="loadsCount">0 Active Loads</div>
+    <div class="tile-sub" id="loadsDest">No active loads</div>
+  </a>
+
+  <!-- 3. NEED HELP -->
+  <div class="tile t-orange">
+    <div class="tile-icon">&#x1F198;</div>
+    <div class="tile-title">Need Help</div>
+    <div class="tile-sub" style="margin-bottom:2px;">Driver Services</div>
+    <div class="svc-grid">
+      <a class="svc-btn" href="driver-services.html?category=mechanic">&#x1F527; Mechanic</a>
+      <a class="svc-btn" href="driver-services.html?category=tire">&#x1F535; Tire</a>
+      <a class="svc-btn" href="driver-services.html?category=fuel">&#x26FD; Fuel</a>
+      <a class="svc-btn" href="driver-services.html?category=parking">&#x1F17F;&#xFE0F; Parking</a>
     </div>
   </div>
 
-  <div class="action-btn blue" onclick="openModal('mileageModal')">
-    <div class="action-icon">🛣️</div>
-    <div>
-      <div class="action-label blue">Enter Mileage</div>
-      <div class="action-sub">Loaded + deadhead</div>
+  <!-- 4. AVAILABILITY -->
+  <div class="tile t-teal" style="cursor:default;">
+    <div class="tile-icon">&#x1F4E1;</div>
+    <div class="tile-title">Available</div>
+    <div class="avail-row">
+      <div>
+        <div class="avail-label-txt" id="availLabelTxt">Not Available</div>
+        <div class="avail-status-txt off" id="availStatusTxt">Tap to go available</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="availToggle" onchange="toggleAvail(this.checked)">
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
     </div>
+    <div class="equip-pills" id="equipPills"></div>
+    <a href="driver-availability.html" style="font-size:10px;color:rgba(0,212,170,.7);text-decoration:none;margin-top:4px;display:block;">Edit Full Profile &#x2192;</a>
   </div>
 
-  <div class="action-btn full" onclick="openModal('signModal')">
-    <div class="action-icon sm">✍️</div>
-    <div style="flex:1;min-width:0;">
-      <div class="action-label">Sign Rate Con</div>
-      <div class="action-sub">LDX-2841 · Coyote Logistics · $3,400</div>
+  <!-- 5. MY DOCUMENTS -->
+  <a class="tile t-purple" href="documents.html">
+    <div class="tile-icon">&#x1F4C1;</div>
+    <div class="tile-title">My Docs</div>
+    <div id="docAlerts">
+      <div class="doc-alert"><div class="doc-dot" style="background:#4ade80;"></div><div class="doc-name">CDL</div><div class="doc-badge b-green">Valid</div></div>
+      <div class="doc-alert"><div class="doc-dot" style="background:#4ade80;"></div><div class="doc-name">Medical Card</div><div class="doc-badge b-green">Valid</div></div>
     </div>
-    <div class="action-arrow">›</div>
-  </div>
+  </a>
 
-</div>
-
-<!-- REPORT SECTION -->
-<div class="section-head" style="margin-top:10px;">Report Issue</div>
-<div class="report-row">
-
-  <div class="report-btn danger" onclick="openModal('blowoutModal')">
-    <div class="report-icon" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);">💥</div>
-    <div class="report-body">
-      <div class="report-label red">Report Tire Blowout</div>
-      <div class="report-sub">Wheel position + photo + location</div>
+  <!-- 6. MESSAGES -->
+  <a class="tile t-cyan" href="nexus-connect.html">
+    <div class="tile-icon">&#x1F4AC;</div>
+    <div class="tile-title">Messages</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+      <div class="tile-sub">Unread</div>
+      <div class="unread-badge" id="unreadCount">0</div>
     </div>
-    <div class="report-chevron">›</div>
-  </div>
-
-  <div class="report-btn warn" onclick="openModal('repairModal')">
-    <div class="report-icon" style="background:rgba(251,191,36,0.08);border-color:rgba(251,191,36,0.25);">🔧</div>
-    <div class="report-body">
-      <div class="report-label yellow">Report Repair</div>
-      <div class="report-sub">Description + vendor + receipt</div>
-    </div>
-    <div class="report-chevron">›</div>
-  </div>
-
-  <div class="report-btn" onclick="openModal('photosModal')">
-    <div class="report-icon">📷</div>
-    <div class="report-body">
-      <div class="report-label">Take Photos</div>
-      <div class="report-sub">Damage, delivery, scale tickets</div>
-    </div>
-    <div class="report-chevron">›</div>
-  </div>
+    <div class="tile-sub" id="lastMessage" style="font-style:italic;">No recent messages</div>
+  </a>
 
 </div>
 
-<!-- RECENT LOADS -->
-<div class="section-head" style="margin-top:16px;">My Loads</div>
-<div class="history-list">
-  <div class="history-item">
-    <div class="history-load">LDX-2841</div>
-    <div class="history-body">
-      <div class="history-route">Miami → Atlanta</div>
-      <div class="history-date">Today · In progress</div>
-    </div>
-    <span class="pill-sm billing"><span class="pill-dot-sm" style="background:var(--orange);"></span>Active</span>
-  </div>
-  <div class="history-item">
-    <div class="history-load">LDX-2826</div>
-    <div class="history-body">
-      <div class="history-route">Tampa → Nashville</div>
-      <div class="history-date">May 24 · POD submitted</div>
-    </div>
-    <span class="pill-sm closed"><span class="pill-dot-sm" style="background:var(--mid);"></span>Billing</span>
-  </div>
-  <div class="history-item">
-    <div class="history-load">LDX-2810</div>
-    <div class="history-body">
-      <div class="history-route">Jacksonville → Memphis</div>
-      <div class="history-date">May 21 · Paid</div>
-    </div>
-    <span class="pill-sm closed"><span class="pill-dot-sm" style="background:var(--mid);"></span>Closed</span>
-  </div>
-  <div class="history-item">
-    <div class="history-load">LDX-2798</div>
-    <div class="history-body">
-      <div class="history-route">Orlando → Charlotte</div>
-      <div class="history-date">May 18 · Paid</div>
-    </div>
-    <span class="pill-sm closed"><span class="pill-dot-sm" style="background:var(--mid);"></span>Closed</span>
-  </div>
+<!-- TODAY'S ACTIVITY -->
+<div class="section-label" style="margin-top:8px;">Today's Activity</div>
+<div class="activity-feed" id="activityFeed">
+  <div class="empty-state">No activity yet today</div>
 </div>
 
-<div style="height:16px;"></div>
+<div style="height:20px;"></div>
+</div><!-- /main-content -->
+</div><!-- /layout -->
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <button class="nav-tab active">
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" stroke="currentColor" stroke-width="1.4"/><rect x="10" y="2" width="6" height="6" stroke="currentColor" stroke-width="1.4"/><rect x="2" y="10" width="6" height="6" stroke="currentColor" stroke-width="1.4"/><rect x="10" y="10" width="6" height="6" stroke="currentColor" stroke-width="1.4"/></svg>
-    <span class="nav-tab-label">Home</span>
-  </button>
-  <button class="nav-tab">
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 5h12M3 9h12M3 13h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-    <span class="nav-tab-label">Loads</span>
-  </button>
-  <div class="nav-tab-center">
-    <div class="nav-tab-center-btn" onclick="openModal('podModal')">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 4v14M4 11h14" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
-    </div>
-    <span class="nav-tab-center-label">Upload</span>
-  </div>
-  <button class="nav-tab">
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="8" r="4" stroke="currentColor" stroke-width="1.4"/><path d="M2 17c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="currentColor" stroke-width="1.4"/></svg>
-    <span class="nav-tab-label">Profile</span>
-  </button>
-  <button class="nav-tab">
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.4"/><path d="M9 5v4l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-    <span class="nav-tab-label">History</span>
-  </button>
+  <a href="driver-command.html" class="bnav-tab active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Home</a>
+  <a href="active-loads.html" class="bnav-tab">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="1"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Loads</a>
+  <a href="driver-services.html" class="bnav-tab">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M17.66 6.34l-1.41 1.41M6.34 17.66l-1.41 1.41"/></svg>Help</a>
+  <a href="driver-availability.html" class="bnav-tab">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Avail</a>
+  <a href="nexus-connect.html" class="bnav-tab">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Chat</a>
 </nav>
 
-<!-- ═══ MODALS ═══ -->
-
-<!-- POD Upload -->
-<div class="modal-overlay" id="podModal" onclick="closeModal('podModal')">
-  <div class="modal-sheet" onclick="e=>e.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Upload POD / BOL</div>
-    <div class="modal-sub">Load LDX-2841 · Coyote Logistics</div>
-
-    <div class="upload-zone" onclick="">
-      <div class="upload-icon">📷</div>
-      <div class="upload-label">Take Photo</div>
-      <div class="upload-sub">Camera opens automatically</div>
-    </div>
-
-    <div class="upload-zone" style="padding:16px;flex-direction:row;display:flex;align-items:center;gap:12px;text-align:left;" onclick="">
-      <div style="font-size:24px;">📁</div>
-      <div>
-        <div class="upload-label" style="margin-bottom:2px;">Choose File</div>
-        <div class="upload-sub">PDF, JPG, PNG from phone</div>
-      </div>
-    </div>
-
-    <button class="modal-btn" onclick="closeModal('podModal');showSuccess('POD uploaded and linked to LDX-2841')">
-      ✓ Submit POD
-    </button>
-    <button class="modal-btn secondary" onclick="closeModal('podModal')">Cancel</button>
-  </div>
-</div>
-
-<!-- Mileage Entry -->
-<div class="modal-overlay" id="mileageModal" onclick="closeModal('mileageModal')">
-  <div class="modal-sheet" onclick="e=>e.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Enter Mileage</div>
-    <div class="modal-sub">Load LDX-2841 · Miami → Atlanta</div>
-
-    <label class="form-label-sm">Loaded Miles</label>
-    <input class="mileage-input" type="number" placeholder="000" inputmode="numeric">
-
-    <label class="form-label-sm">Deadhead Miles</label>
-    <input class="mileage-input" type="number" placeholder="000" inputmode="numeric" style="font-size:20px;margin-bottom:14px;">
-
-    <label class="form-label-sm">Power-Only Miles</label>
-    <input class="mileage-input" type="number" placeholder="000" inputmode="numeric" style="font-size:20px;">
-
-    <button class="modal-btn" onclick="closeModal('mileageModal');showSuccess('Mileage saved · LDX-2841')">
-      ✓ Save Mileage
-    </button>
-    <button class="modal-btn secondary" onclick="closeModal('mileageModal')">Cancel</button>
-  </div>
-</div>
-
-<!-- Sign Rate Con -->
-<div class="modal-overlay" id="signModal" onclick="closeModal('signModal')">
-  <div class="modal-sheet" onclick="e=>e.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Sign Rate Con</div>
-    <div class="modal-sub">LDX-2841 · $3,400 · Coyote Logistics</div>
-
-    <div style="background:var(--panel2);border:1px solid var(--border);padding:14px;margin-bottom:14px;">
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--muted);">Pickup</span><span style="font-size:12px;font-weight:600;">Miami, FL · Today 6AM</span></div>
-        <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--muted);">Delivery</span><span style="font-size:12px;font-weight:600;">Atlanta, GA · Today 2PM</span></div>
-        <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--muted);">Rate</span><span style="font-size:14px;font-weight:700;color:var(--green);">$3,400</span></div>
-        <div style="display:flex;justify-content:space-between;"><span style="font-size:11px;color:var(--muted);">Equipment</span><span style="font-size:12px;">Truck #104 · 53' Dry Van</span></div>
-      </div>
-    </div>
-
-    <div style="border:1.5px dashed var(--border2);height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;cursor:pointer;background:rgba(46,109,164,0.03);">
-      <span style="font-size:12px;color:var(--muted);">✍️ Tap to sign</span>
-    </div>
-
-    <button class="modal-btn" onclick="closeModal('signModal');showSuccess('Rate Con signed · LDX-2841')">
-      ✓ I Agree & Sign
-    </button>
-    <button class="modal-btn secondary" onclick="closeModal('signModal')">Cancel</button>
-  </div>
-</div>
-
-<!-- Tire Blowout -->
-<div class="modal-overlay" id="blowoutModal" onclick="closeModal('blowoutModal')">
-  <div class="modal-sheet" onclick="e=>e.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title" style="color:var(--red);">Report Blowout</div>
-    <div class="modal-sub">Truck #104 · Load LDX-2841</div>
-
-    <label class="form-label-sm">Wheel Position</label>
-    <select class="form-input-sm" style="color:var(--white);">
-      <option value="">Select position...</option>
-      <option>Front Left (Steer)</option>
-      <option>Front Right (Steer)</option>
-      <option>Drive Axle 1 - Left Outer</option>
-      <option>Drive Axle 1 - Left Inner</option>
-      <option>Drive Axle 1 - Right Inner</option>
-      <option>Drive Axle 1 - Right Outer</option>
-      <option>Drive Axle 2 - Left Outer</option>
-      <option>Drive Axle 2 - Right Outer</option>
-      <option>Trailer Axle - Left</option>
-      <option>Trailer Axle - Right</option>
-    </select>
-
-    <label class="form-label-sm">Current Odometer</label>
-    <input class="form-input-sm" type="number" placeholder="e.g. 312,540" inputmode="numeric">
-
-    <label class="form-label-sm">Notes (optional)</label>
-    <input class="form-input-sm" type="text" placeholder="What happened?">
-
-    <div class="upload-zone" style="padding:14px;flex-direction:row;display:flex;align-items:center;gap:12px;text-align:left;margin-bottom:0;" onclick="">
-      <div style="font-size:20px;">📷</div>
-      <div>
-        <div style="font-size:12px;font-weight:600;color:var(--white);">Add Photos</div>
-        <div class="upload-sub">Tire + damage photos</div>
-      </div>
-    </div>
-
-    <button class="modal-btn" style="background:var(--red);" onclick="closeModal('blowoutModal');showSuccess('Blowout reported · Dispatcher notified')">
-      🚨 Submit Blowout Report
-    </button>
-    <button class="modal-btn secondary" onclick="closeModal('blowoutModal')">Cancel</button>
-  </div>
-</div>
-
-<!-- Repair Report -->
-<div class="modal-overlay" id="repairModal" onclick="closeModal('repairModal')">
-  <div class="modal-sheet" onclick="e=>e.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Report Repair</div>
-    <div class="modal-sub">Truck #104</div>
-
-    <label class="form-label-sm">What was repaired?</label>
-    <input class="form-input-sm" type="text" placeholder="e.g. Brake adjustment, tire mount">
-
-    <label class="form-label-sm">Vendor / Shop Name</label>
-    <input class="form-input-sm" type="text" placeholder="e.g. Loves Truck Stop">
-
-    <label class="form-label-sm">Repair Cost</label>
-    <input class="form-input-sm" type="number" placeholder="$0.00" inputmode="decimal">
-
-    <div class="upload-zone" style="padding:14px;flex-direction:row;display:flex;align-items:center;gap:12px;text-align:left;margin-bottom:0;" onclick="">
-      <div style="font-size:20px;">🧾</div>
-      <div>
-        <div style="font-size:12px;font-weight:600;color:var(--white);">Upload Receipt</div>
-        <div class="upload-sub">Photo or PDF of invoice</div>
-      </div>
-    </div>
-
-    <button class="modal-btn" onclick="closeModal('repairModal');showSuccess('Repair logged · Linked to LDX-2841')">
-      ✓ Submit Repair
-    </button>
-    <button class="modal-btn secondary" onclick="closeModal('repairModal')">Cancel</button>
-  </div>
-</div>
-
-<!-- Photos -->
-<div class="modal-overlay" id="photosModal" onclick="closeModal('photosModal')">
-  <div class="modal-sheet" onclick="e=>e.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Take Photos</div>
-    <div class="modal-sub">Will be linked to Load LDX-2841</div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-      <div class="upload-zone" style="padding:20px 10px;text-align:center;">
-        <div style="font-size:24px;margin-bottom:6px;">🚛</div>
-        <div style="font-size:11px;font-weight:600;color:var(--white);">Truck</div>
-      </div>
-      <div class="upload-zone" style="padding:20px 10px;text-align:center;">
-        <div style="font-size:24px;margin-bottom:6px;">📦</div>
-        <div style="font-size:11px;font-weight:600;color:var(--white);">Cargo</div>
-      </div>
-      <div class="upload-zone" style="padding:20px 10px;text-align:center;">
-        <div style="font-size:24px;margin-bottom:6px;">⚖️</div>
-        <div style="font-size:11px;font-weight:600;color:var(--white);">Scale Ticket</div>
-      </div>
-      <div class="upload-zone" style="padding:20px 10px;text-align:center;">
-        <div style="font-size:24px;margin-bottom:6px;">🔍</div>
-        <div style="font-size:11px;font-weight:600;color:var(--white);">Damage</div>
-      </div>
-    </div>
-
-    <button class="modal-btn" onclick="closeModal('photosModal');showSuccess('Photos uploaded to Drive')">
-      ✓ Upload Selected
-    </button>
-    <button class="modal-btn secondary" onclick="closeModal('photosModal')">Cancel</button>
-  </div>
-</div>
-
-<!-- Alerts Modal -->
-<div class="modal-overlay" id="alertModal" onclick="closeModal('alertModal')">
-  <div class="modal-sheet" onclick="e=>e.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Notifications</div>
-    <div class="modal-sub" style="margin-bottom:16px;">2 items need attention</div>
-
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
-      <div style="padding:12px 14px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);">
-        <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:2px;">POD Required — LDX-2841</div>
-        <div style="font-size:11px;color:var(--muted);">Please upload delivery proof as soon as possible</div>
-      </div>
-      <div style="padding:12px 14px;background:rgba(46,109,164,0.06);border:1px solid var(--border2);">
-        <div style="font-size:12px;font-weight:600;color:var(--white);margin-bottom:2px;">New Load Available — LDX-2845</div>
-        <div style="font-size:11px;color:var(--muted);">Atlanta → Chicago · $4,100 · Pick up 4PM today</div>
-      </div>
-    </div>
-
-    <button class="modal-btn secondary" onclick="closeModal('alertModal')">Dismiss All</button>
-  </div>
-</div>
-
-<!-- SUCCESS TOAST -->
-<div id="successToast" style="
-  position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);
-  background:#1a3a1a;border:1px solid rgba(74,222,128,0.3);
-  padding:10px 18px;
-  font-family:'JetBrains Mono',monospace;font-size:11px;
-  color:var(--green);letter-spacing:0.06em;
-  z-index:500;opacity:0;transition:all 0.25s;
-  white-space:nowrap;pointer-events:none;max-width:360px;text-align:center;
-"></div>
-
 <script>
-function openModal(id){
-  document.getElementById(id).classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function closeModal(id){
-  document.getElementById(id).classList.remove('open');
-  document.body.style.overflow='';
-}
-function showSuccess(msg){
-  const t=document.getElementById('successToast');
-  t.textContent='✓ '+msg;
-  t.style.opacity='1';
-  t.style.transform='translateX(-50%) translateY(0)';
-  setTimeout(()=>{
-    t.style.opacity='0';
-    t.style.transform='translateX(-50%) translateY(20px)';
-  },2800);
-}
+(function(){
+  function getNextFriday(){
+    var d=new Date(),day=d.getDay(),diff=(5-day+7)%7||7;
+    d.setDate(d.getDate()+diff);
+    return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  }
+  function fmt$(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function today(){return new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});}
 
-// Prevent modal close on sheet click
-document.querySelectorAll('.modal-sheet').forEach(s=>{
-  s.addEventListener('click',e=>e.stopPropagation());
-});
+  // Current user
+  var users=[];
+  try{users=JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS')||'[]');}catch(e){}
+  var currentEmail=localStorage.getItem('nexus_current_user')||'';
+  var currentUser=users.find(function(u){return u.email===currentEmail;})||null;
+  var isDriver=currentUser&&currentUser.role==='driver';
 
-// Nav tabs
-document.querySelectorAll('.nav-tab').forEach(tab=>{
-  tab.addEventListener('click',function(){
-    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-    this.classList.add('active');
-  });
-});
+  // Topbar
+  var driverName=(currentUser&&(currentUser.name||currentUser.email))||'Driver';
+  document.getElementById('topbarSub').textContent=driverName+' · '+today();
+
+  // Admin banner
+  if(!isDriver){
+    document.getElementById('adminBanner').style.display='flex';
+    document.getElementById('adminRole').textContent=(currentUser&&currentUser.role)||'admin';
+  }
+
+  // Online/offline
+  function updateOnline(){
+    var b=document.getElementById('onlineBadge'),t=document.getElementById('onlineText');
+    if(navigator.onLine){b.style.cssText='display:flex;align-items:center;gap:5px;background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.35);padding:4px 10px;font-family:\'JetBrains Mono\',monospace;font-size:10px;font-weight:500;color:#00d4aa;letter-spacing:.08em;text-transform:uppercase;';t.textContent='Online';}
+    else{b.style.cssText='display:flex;align-items:center;gap:5px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);padding:4px 10px;font-family:\'JetBrains Mono\',monospace;font-size:10px;font-weight:500;color:#f87171;letter-spacing:.08em;text-transform:uppercase;';t.textContent='Offline';}
+  }
+  updateOnline();
+  window.addEventListener('online',updateOnline);
+  window.addEventListener('offline',updateOnline);
+
+  // MY PAY
+  (function(){
+    var setts=[];try{setts=JSON.parse(localStorage.getItem('nexus_settlements')||'[]');}catch(e){}
+    var dId=currentUser&&(currentUser.id||currentUser.memberId);
+    var pending=setts.filter(function(s){
+      if(!isDriver)return s.status==='pending'||s.status==='active';
+      return(s.driverId===dId||s.memberEmail===currentEmail)&&(s.status==='pending'||s.status==='active');
+    });
+    var total=pending.reduce(function(sum,s){return sum+parseFloat(s.netPay||s.net||0);},0);
+    var payEl=document.getElementById('payAmount'),expEl=document.getElementById('payExpected');
+    if(pending.length){
+      payEl.textContent='Pending: '+fmt$(total);
+      expEl.textContent='Expected: '+getNextFriday();
+      var deds=pending[0].deductions||pending[0].deductionsList||[];
+      var dedEl=document.getElementById('dedList');
+      deds.slice(0,2).forEach(function(d){
+        var item=document.createElement('div');item.className='ded-item';
+        item.innerHTML='<span>'+(d.label||d.description||d.type||'Deduction')+'</span><span>-'+fmt$(d.amount)+'</span>';
+        dedEl.appendChild(item);
+      });
+    } else {
+      payEl.style.cssText='font-size:11px;color:rgba(255,255,255,.4);';
+      payEl.textContent='No pending settlement';
+      expEl.textContent='Check back after your next load';
+    }
+  })();
+
+  // MY LOADS
+  (function(){
+    var loads=[];try{loads=JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]');}catch(e){}
+    var dId=currentUser&&(currentUser.id||currentUser.memberId);
+    var myLoads=loads.filter(function(l){
+      if(!isDriver)return l.status==='active'||l.status==='in_progress';
+      return(l.driverId===dId||l.driverEmail===currentEmail)&&(l.status==='active'||l.status==='in_progress');
+    });
+    var cEl=document.getElementById('loadsCount'),dEl=document.getElementById('loadsDest');
+    if(myLoads.length){
+      cEl.textContent=myLoads.length+' Active Load'+(myLoads.length!==1?'s':'');
+      var r=myLoads[0];
+      dEl.textContent=(r.origin||r.from||'')+(r.destination||r.to?' → '+(r.destination||r.to):'');
+    }
+  })();
+
+  // AVAILABILITY
+  var AVAIL_KEY='nexus_driver_availability';
+  var availArr=[];try{availArr=JSON.parse(localStorage.getItem(AVAIL_KEY)||'[]');}catch(e){}
+  var dId=currentUser&&(currentUser.id||currentUser.memberId||currentUser.email);
+  var myAvail=availArr.find(function(a){return a.driverId===dId;})||{available:false,equipmentTypes:[],radius:'Regional'};
+
+  function renderAvail(av){
+    var tog=document.getElementById('availToggle');
+    tog.checked=av.available;
+    var lbl=document.getElementById('availLabelTxt'),sts=document.getElementById('availStatusTxt');
+    if(av.available){lbl.textContent='Available';sts.textContent='Visible to approved brokers';sts.className='avail-status-txt on';}
+    else{lbl.textContent='Not Available';sts.textContent='Tap to go available';sts.className='avail-status-txt off';}
+    var pills=document.getElementById('equipPills');pills.innerHTML='';
+    var types=av.equipmentTypes||[];
+    types.slice(0,3).forEach(function(t){var p=document.createElement('span');p.className='equip-pill sel';p.textContent=t;pills.appendChild(p);});
+    if(types.length>3){var m=document.createElement('span');m.className='equip-pill';m.textContent='+' +(types.length-3)+' more';pills.appendChild(m);}
+  }
+  renderAvail(myAvail);
+
+  window.toggleAvail=function(checked){
+    myAvail.available=checked;myAvail.driverId=dId;myAvail.updatedAt=new Date().toISOString();
+    var idx=availArr.findIndex(function(a){return a.driverId===dId;});
+    if(idx>-1)availArr[idx]=myAvail;else availArr.push(myAvail);
+    try{localStorage.setItem(AVAIL_KEY,JSON.stringify(availArr));}catch(e){}
+    renderAvail(myAvail);
+  };
+
+  // DOCUMENTS
+  (function(){
+    var docs=[];try{docs=JSON.parse(localStorage.getItem('nexus_documents')||'[]');}catch(e){}
+    var dId2=currentUser&&(currentUser.id||currentUser.memberId);
+    var myDocs=docs.filter(function(d){return!isDriver||d.driverId===dId2||d.driverEmail===currentEmail;});
+    var cdl=myDocs.find(function(d){return d.type==='cdl'||d.docType==='cdl';});
+    var med=myDocs.find(function(d){return d.type==='medical'||d.docType==='medical'||((d.description||d.label||'').toLowerCase().includes('medical'));});
+    var items=[];
+    function makeDocItem(label,doc){
+      if(!doc)return{label:label,badge:'No file',cls:'b-yellow',dot:'#fbbf24'};
+      var exp=doc.expiryDate||doc.expiry||doc.expDate;
+      var daysLeft=exp?Math.ceil((new Date(exp)-new Date())/(864e5)):null;
+      var cls=daysLeft!==null&&daysLeft<60?'b-red':'b-green';
+      var txt=daysLeft!==null?(daysLeft<0?'EXPIRED':daysLeft+'d left'):'Valid';
+      return{label:label,badge:txt,cls:cls,dot:cls==='b-red'?'#f87171':'#4ade80'};
+    }
+    items.push(makeDocItem('CDL',cdl));
+    items.push(makeDocItem('Medical Card',med));
+    document.getElementById('docAlerts').innerHTML=items.map(function(i){
+      return '<div class="doc-alert"><div class="doc-dot" style="background:'+i.dot+';"></div><div class="doc-name">'+i.label+'</div><div class="doc-badge '+i.cls+'">'+i.badge+'</div></div>';
+    }).join('');
+  })();
+
+  // MESSAGES
+  (function(){
+    var msgs=[];try{msgs=JSON.parse(localStorage.getItem('nexus_messages')||'[]');}catch(e){}
+    var dId3=currentUser&&(currentUser.id||currentUser.memberId);
+    var myMsgs=msgs.filter(function(m){return!isDriver||m.toId===dId3||m.toEmail===currentEmail;});
+    var unread=myMsgs.filter(function(m){return!m.read;});
+    document.getElementById('unreadCount').textContent=unread.length||'0';
+    if(myMsgs.length){var last=myMsgs[myMsgs.length-1];document.getElementById('lastMessage').textContent=last.text||last.body||last.preview||'New message';}
+  })();
+
+  // ACTIVITY FEED
+  (function(){
+    var items=[];
+    var dId4=currentUser&&(currentUser.id||currentUser.memberId);
+    try{
+      JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]')
+        .filter(function(l){return!isDriver||(l.driverId===dId4||l.driverEmail===currentEmail);})
+        .slice(-3).forEach(function(l){items.push({icon:'🚛',title:'Load '+(l.loadId||l.id||'#—')+' · '+(l.origin||'')+(l.destination?' → '+l.destination:''),sub:l.status||'',time:l.updatedAt||l.createdAt||'');});});
+    }catch(e){}
+    try{
+      JSON.parse(localStorage.getItem('nexus_settlements')||'[]')
+        .filter(function(s){return!isDriver||(s.driverId===dId4||s.memberEmail===currentEmail);})
+        .slice(-2).forEach(function(s){items.push({icon:'💵',title:'Settlement '+(s.weekLabel||s.week||'')+(s.netPay?' · '+fmt$(s.netPay):''),sub:s.status||'',time:s.updatedAt||s.createdAt||'');});});
+    }catch(e){}
+    try{
+      JSON.parse(localStorage.getItem('nexus_expenses')||'[]')
+        .filter(function(e2){return!isDriver||(e2.driverId===dId4||e2.driverEmail===currentEmail);})
+        .slice(-2).forEach(function(e2){items.push({icon:'💳',title:(e2.description||e2.vendor||'Expense')+(e2.amount?' · '+fmt$(e2.amount):''),sub:e2.category||'',time:e2.date||e2.createdAt||'');});});
+    }catch(e){}
+    items.sort(function(a,b){return(b.time||'').localeCompare(a.time||'');});
+    items=items.slice(0,5);
+    var feed=document.getElementById('activityFeed');
+    if(!items.length){feed.innerHTML='<div class="empty-state">No activity yet today</div>';return;}
+    feed.innerHTML=items.map(function(it){
+      var ts=it.time?new Date(it.time).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'';
+      return '<div class="activity-item"><div class="ai-icon">'+it.icon+'</div><div class="ai-body"><div class="ai-title">'+it.title+'</div>'+(it.sub?'<div class="ai-sub">'+it.sub+'</div>':'')+'</div><div class="ai-time">'+ts+'</div></div>';
+    }).join('');
+  })();
+})();
 </script>
-<script src="nexus-lang.js"></script>
+<script src="nexus-core.js?v=6"></script>
+<script src="nexus-search.js?v=6"></script>
 </body>
 </html>
