@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Equipment Marketplace — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --surface: #111827;
+  --surface2: #161b22;
+  --border: #21262d;
+  --border-light: #30363d;
+  --text: #c9d1d9;
+  --text-head: #e6edf3;
+  --text-muted: #8b949e;
+  --pink: #e91e8c;
+  --pink-dim: rgba(233,30,140,0.18);
+  --pink-hover: rgba(233,30,140,0.28);
+  --blue: #2563eb;
+  --green: #22c55e;
+  --yellow: #fbbf24;
+  --red: #ef4444;
+  --orange: #f97316;
+  --purple: #a855f7;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+
+/* ── LAYOUT ── */
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:50;}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:var(--text-head);letter-spacing:.04em;}
+.page-subtitle{font-size:12px;color:var(--text-muted);margin-top:1px;}
+.topbar-right{display:flex;gap:10px;align-items:center;}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;text-decoration:none;}
+.btn-pink{background:var(--pink);color:#fff;}
+.btn-pink:hover{background:#c2177a;}
+.btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border-light);}
+.btn-ghost:hover{color:var(--text-head);border-color:var(--pink);}
+.btn-sm{padding:5px 10px;font-size:12px;}
+
+/* ── SEARCH / FILTER BAR ── */
+.search-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+.search-wrap{position:relative;flex:1;min-width:220px;max-width:400px;}
+.search-input{width:100%;background:var(--surface2);border:1px solid var(--border-light);color:var(--text-head);padding:8px 12px 8px 36px;border-radius:7px;font-family:'Barlow',sans-serif;font-size:13px;}
+.search-input::placeholder{color:var(--text-muted);}
+.search-input:focus{outline:none;border-color:var(--pink);}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;}
+.cat-tabs{display:flex;gap:4px;flex-wrap:wrap;}
+.cat-tab{padding:6px 12px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border-light);background:transparent;color:var(--text-muted);transition:all .15s;font-family:'Barlow',sans-serif;}
+.cat-tab:hover{border-color:var(--pink);color:var(--text);}
+.cat-tab.active{background:var(--pink-dim);border-color:var(--pink);color:#fff;}
+.sort-select{background:var(--surface2);border:1px solid var(--border-light);color:var(--text);padding:7px 10px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:12px;cursor:pointer;}
+.sort-select:focus{outline:none;border-color:var(--pink);}
+.view-toggle{display:flex;background:var(--surface2);border:1px solid var(--border-light);border-radius:6px;overflow:hidden;}
+.view-btn{padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--text-muted);border:none;font-family:'Barlow',sans-serif;transition:all .15s;}
+.view-btn.active{background:var(--pink);color:#fff;}
+
+/* ── MARKETPLACE BODY ── */
+.mkt-body{display:flex;flex:1;padding:0;}
+
+/* ── SIDEBAR FILTERS ── */
+.filters-panel{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:16px 0;overflow-y:auto;position:sticky;top:109px;max-height:calc(100vh - 109px);}
+.filter-section{padding:0 16px 14px;border-bottom:1px solid var(--border);}
+.filter-section:last-child{border-bottom:none;}
+.filter-title{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;margin-top:12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.filter-title svg{transition:transform .2s;}
+.filter-title.collapsed svg{transform:rotate(-90deg);}
+.range-wrap{padding:4px 0;}
+.range-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:6px;}
+input[type=range]{width:100%;accent-color:var(--pink);cursor:pointer;}
+.check-group{display:flex;flex-direction:column;gap:5px;}
+.check-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text);cursor:pointer;}
+.check-item input{accent-color:var(--pink);cursor:pointer;}
+.radio-group{display:flex;flex-direction:column;gap:5px;}
+.radio-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text);cursor:pointer;}
+.radio-item input{accent-color:var(--pink);cursor:pointer;}
+.clear-filters{width:100%;margin:12px 16px 0;width:calc(100% - 32px);background:transparent;border:1px dashed var(--border-light);color:var(--text-muted);padding:6px;border-radius:5px;font-size:11px;font-family:'Barlow',sans-serif;cursor:pointer;transition:all .15s;}
+.clear-filters:hover{border-color:var(--pink);color:var(--pink);}
+
+/* ── LISTINGS AREA ── */
+.listings-area{flex:1;padding:20px 24px;overflow-x:hidden;}
+.results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.results-count{font-size:13px;color:var(--text-muted);}
+.results-count strong{color:var(--text-head);}
+
+/* ── GRID ── */
+.listings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+
+/* ── LISTING CARD ── */
+.listing-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .15s,transform .1s;cursor:pointer;}
+.listing-card:hover{border-color:var(--pink);transform:translateY(-2px);}
+.card-photo{height:160px;display:flex;align-items:center;justify-content:center;position:relative;font-size:48px;}
+.card-photo.cat-truck{background:linear-gradient(135deg,#1e3a5f,#0a1628);}
+.card-photo.cat-trailer{background:linear-gradient(135deg,#0f2d1f,#04150e);}
+.card-photo.cat-parts{background:linear-gradient(135deg,#2d1a0a,#15090a);}
+.card-photo.cat-farm,.card-photo.cat-construction{background:linear-gradient(135deg,#1a0e2d,#09050f);}
+.card-save{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;font-size:14px;}
+.card-save:hover{background:rgba(233,30,140,.6);}
+.card-save.saved{background:rgba(233,30,140,.8);}
+.card-posted{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.6);color:var(--text-muted);font-size:10px;padding:2px 7px;border-radius:3px;font-family:'JetBrains Mono',monospace;}
+.card-body{padding:12px 14px 14px;}
+.card-price{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--text-head);margin-bottom:4px;}
+.card-price.contact{font-size:15px;color:var(--text-muted);font-weight:600;}
+.card-title{font-size:13px;font-weight:600;color:var(--text-head);margin-bottom:3px;}
+.card-meta{font-size:11px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.card-meta span{display:flex;align-items:center;gap:3px;}
+.card-footer{display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.condition-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.cond-new{background:rgba(34,197,94,.2);color:var(--green);border:1px solid rgba(34,197,94,.3);}
+.cond-likenew{background:rgba(59,130,246,.2);color:#60a5fa;border:1px solid rgba(59,130,246,.3);}
+.cond-good{background:rgba(251,191,36,.15);color:var(--yellow);border:1px solid rgba(251,191,36,.3);}
+.cond-fair{background:rgba(249,115,22,.2);color:var(--orange);border:1px solid rgba(249,115,22,.3);}
+.cond-parts{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3);}
+.card-view-btn{padding:5px 12px;background:var(--pink-dim);border:1px solid rgba(233,30,140,.3);color:var(--pink);border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;transition:all .15s;}
+.card-view-btn:hover{background:var(--pink);color:#fff;}
+
+/* ── EMPTY STATE ── */
+.empty-state{padding:60px;text-align:center;color:var(--text-muted);font-size:14px;}
+.empty-state svg{opacity:.25;margin-bottom:16px;}
+.empty-state h3{font-family:'Barlow Condensed',sans-serif;font-size:20px;color:var(--text);margin-bottom:8px;}
+
+/* ── MODAL BASE ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;width:100%;max-width:760px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;}
+.modal-box.narrow{max-width:540px;}
+.modal-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-hdr-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--text-head);}
+.modal-close{background:none;border:none;color:var(--text-muted);cursor:pointer;padding:4px;border-radius:4px;line-height:0;}
+.modal-close:hover{color:var(--text-head);background:rgba(255,255,255,.06);}
+.modal-body{padding:20px;overflow-y:auto;flex:1;}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
+
+/* ── DETAIL MODAL SPECIFICS ── */
+.detail-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;}
+.gallery-slot{height:120px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:32px;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.detail-field{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 12px;}
+.detail-field-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px;font-family:'JetBrains Mono',monospace;}
+.detail-field-val{font-size:14px;color:var(--text-head);font-weight:600;}
+.detail-desc{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:13px;color:var(--text);line-height:1.55;margin-bottom:16px;}
+.detail-price-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--pink-dim);border:1px solid rgba(233,30,140,.3);border-radius:8px;margin-bottom:16px;}
+.detail-price-big{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:#fff;}
+.detail-seller{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px;}
+.related-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.related-card{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:10px;cursor:pointer;transition:border-color .15s;}
+.related-card:hover{border-color:var(--pink);}
+.related-photo{height:60px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:8px;}
+.related-title{font-size:11px;color:var(--text-head);font-weight:600;}
+.related-price{font-size:12px;color:var(--pink);font-weight:700;}
+.section-hdr{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;}
+
+/* ── LIST ITEM MODAL FORM ── */
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px;font-family:'JetBrains Mono',monospace;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface);border:1px solid var(--border-light);color:var(--text-head);padding:8px 12px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;transition:border-color .15s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--pink);}
+.form-textarea{resize:vertical;min-height:90px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-hint{font-size:11px;color:var(--text-muted);margin-top:3px;}
+.char-count{text-align:right;font-size:10px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.contact-locked{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px;}
+
+/* ── FOLLOW-UP REMINDERS ── */
+.followup-card{background:var(--surface);border:1px solid rgba(251,191,36,.3);border-radius:7px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.followup-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:2px;}
+.followup-note{font-size:12px;color:var(--text);}
+.followup-del{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;}
+.followup-del:hover{color:var(--red);}
+
+/* ── SAVED VIEW ── */
+.saved-header{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){.listings-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:900px){
+  .filters-panel{display:none;}
+  .filters-panel.mobile-open{display:block;position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;}
+  .main{margin-left:0;}
+  .listings-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:600px){
+  .listings-grid{grid-template-columns:1fr;}
+  .topbar{padding:12px 16px;}
+  .search-bar{padding:10px 16px;}
+  .listings-area{padding:16px;}
+  .detail-grid{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .related-list{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<script src="nexus-sidebar.js?v=7"></script>
+
+<div class="main">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div>
+      <div class="page-title">🏪 Equipment Marketplace</div>
+      <div class="page-subtitle">Buy &amp; sell trucks, trailers, parts, and heavy equipment</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-ghost btn-sm" id="mobile-filter-btn" onclick="toggleMobileFilters()">
+        <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M1 3h14v1.5l-5 5V15l-4-2V9.5L1 4.5V3z"/></svg>
+        Filters
+      </button>
+      <button class="btn btn-pink btn-sm" onclick="openListModal()">
+        <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><path d="M8 1v14M1 8h14"/></svg>
+        List Item
+      </button>
+    </div>
+  </div>
+
+  <!-- SEARCH + CATEGORY BAR -->
+  <div class="search-bar">
+    <div class="search-wrap">
+      <span class="search-icon">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zm4.3-1.1l3.2 3.2-1.1 1.1-3.2-3.2a7 7 0 111.1-1.1z"/></svg>
+      </span>
+      <input type="text" class="search-input" id="mkt-search" placeholder="Search trucks, trailers, parts…" oninput="renderListings()">
+    </div>
+    <div class="cat-tabs" id="cat-tabs">
+      <button class="cat-tab active" data-cat="all" onclick="setCat('all')">All</button>
+      <button class="cat-tab" data-cat="truck" onclick="setCat('truck')">Trucks</button>
+      <button class="cat-tab" data-cat="trailer" onclick="setCat('trailer')">Trailers</button>
+      <button class="cat-tab" data-cat="parts" onclick="setCat('parts')">Parts &amp; Accessories</button>
+      <button class="cat-tab" data-cat="farm" onclick="setCat('farm')">Farm Equipment</button>
+      <button class="cat-tab" data-cat="construction" onclick="setCat('construction')">Construction</button>
+    </div>
+    <select class="sort-select" id="mkt-sort" onchange="renderListings()">
+      <option value="newest">Newest</option>
+      <option value="price-asc">Price Low–High</option>
+      <option value="price-desc">Price High–Low</option>
+      <option value="saved">Most Saved</option>
+    </select>
+    <div class="view-toggle">
+      <button class="view-btn active" id="vbtn-browse" onclick="setView('browse')">Browse</button>
+      <button class="view-btn" id="vbtn-mine" onclick="setView('mine')">My Listings</button>
+      <button class="view-btn" id="vbtn-saved" onclick="setView('saved')">Saved</button>
+    </div>
+  </div>
+
+  <!-- BODY: FILTERS + LISTINGS -->
+  <div class="mkt-body">
+
+    <!-- FILTER PANEL -->
+    <div class="filters-panel" id="filters-panel">
+      <button class="clear-filters" onclick="clearFilters()">✕ Clear All Filters</button>
+
+      <div class="filter-section">
+        <div class="filter-title" onclick="toggleFilter(this)">
+          Price Range
+          <svg viewBox="0 0 16 16" width="10" height="10" fill="currentColor"><path d="M4 6l4 4 4-4"/></svg>
+        </div>
+        <div class="filter-body">
+          <div class="range-wrap">
+            <div class="range-label">
+              <span>$<span id="price-min-lbl">0</span></span>
+              <span>$<span id="price-max-lbl">500,000</span></span>
+            </div>
+            <input type="range" id="price-min" min="0" max="500000" step="1000" value="0" oninput="updateRangeLabel('price-min','price-min-lbl');renderListings()">
+            <input type="range" id="price-max" min="0" max="500000" step="1000" value="500000" oninput="updateRangeLabel('price-max','price-max-lbl');renderListings()">
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title" onclick="toggleFilter(this)">
+          Year Range
+          <svg viewBox="0 0 16 16" width="10" height="10" fill="currentColor"><path d="M4 6l4 4 4-4"/></svg>
+        </div>
+        <div class="filter-body">
+          <div class="range-wrap">
+            <div class="range-label">
+              <span id="year-min-lbl">2005</span>
+              <span id="year-max-lbl">2026</span>
+            </div>
+            <input type="range" id="year-min" min="2005" max="2026" step="1" value="2005" oninput="updateRangeLabel('year-min','year-min-lbl');renderListings()">
+            <input type="range" id="year-max" min="2005" max="2026" step="1" value="2026" oninput="updateRangeLabel('year-max','year-max-lbl');renderListings()">
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title" onclick="toggleFilter(this)">
+          Make
+          <svg viewBox="0 0 16 16" width="10" height="10" fill="currentColor"><path d="M4 6l4 4 4-4"/></svg>
+        </div>
+        <div class="filter-body">
+          <div class="check-group" id="make-filters">
+            <label class="check-item"><input type="checkbox" value="Peterbilt" onchange="renderListings()"> Peterbilt</label>
+            <label class="check-item"><input type="checkbox" value="Kenworth" onchange="renderListings()"> Kenworth</label>
+            <label class="check-item"><input type="checkbox" value="Freightliner" onchange="renderListings()"> Freightliner</label>
+            <label class="check-item"><input type="checkbox" value="Volvo" onchange="renderListings()"> Volvo</label>
+            <label class="check-item"><input type="checkbox" value="Mack" onchange="renderListings()"> Mack</label>
+            <label class="check-item"><input type="checkbox" value="International" onchange="renderListings()"> International</label>
+            <label class="check-item"><input type="checkbox" value="Western Star" onchange="renderListings()"> Western Star</label>
+            <label class="check-item"><input type="checkbox" value="John Deere" onchange="renderListings()"> John Deere</label>
+            <label class="check-item"><input type="checkbox" value="Caterpillar" onchange="renderListings()"> Caterpillar</label>
+            <label class="check-item"><input type="checkbox" value="Other" onchange="renderListings()"> Other</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title" onclick="toggleFilter(this)">
+          Condition
+          <svg viewBox="0 0 16 16" width="10" height="10" fill="currentColor"><path d="M4 6l4 4 4-4"/></svg>
+        </div>
+        <div class="filter-body">
+          <div class="check-group">
+            <label class="check-item"><input type="checkbox" value="New" onchange="renderListings()"> New</label>
+            <label class="check-item"><input type="checkbox" value="Like New" onchange="renderListings()"> Like New</label>
+            <label class="check-item"><input type="checkbox" value="Good" onchange="renderListings()"> Good</label>
+            <label class="check-item"><input type="checkbox" value="Fair" onchange="renderListings()"> Fair</label>
+            <label class="check-item"><input type="checkbox" value="Parts" onchange="renderListings()"> Parts Only</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title" onclick="toggleFilter(this)">
+          Location Radius
+          <svg viewBox="0 0 16 16" width="10" height="10" fill="currentColor"><path d="M4 6l4 4 4-4"/></svg>
+        </div>
+        <div class="filter-body">
+          <div class="radio-group" id="radius-filters">
+            <label class="radio-item"><input type="radio" name="radius" value="100"> Within 100 mi</label>
+            <label class="radio-item"><input type="radio" name="radius" value="250"> Within 250 mi</label>
+            <label class="radio-item"><input type="radio" name="radius" value="500"> Within 500 mi</label>
+            <label class="radio-item"><input type="radio" name="radius" value="all" checked> Nationwide</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title" onclick="toggleFilter(this)">
+          Seller Type
+          <svg viewBox="0 0 16 16" width="10" height="10" fill="currentColor"><path d="M4 6l4 4 4-4"/></svg>
+        </div>
+        <div class="filter-body">
+          <div class="check-group">
+            <label class="check-item"><input type="checkbox" value="Dealer" onchange="renderListings()"> Dealer</label>
+            <label class="check-item"><input type="checkbox" value="Private" onchange="renderListings()"> Private Party</label>
+            <label class="check-item"><input type="checkbox" value="Fleet" onchange="renderListings()"> Fleet Liquidation</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LISTINGS AREA -->
+    <div class="listings-area">
+      <div class="results-header">
+        <div class="results-count" id="results-count"><strong>20</strong> listings found</div>
+      </div>
+      <div class="listings-grid" id="listings-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ DETAIL MODAL ═══════════════════════════════════ -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title" id="detail-modal-title">Listing Detail</div>
+      <button class="modal-close" onclick="closeModal('detail-modal')">
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M3.3 3.3l9.4 9.4M12.7 3.3L3.3 12.7" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="detail-modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" id="detail-flag-btn" onclick="flagListing()">🚩 Flag Listing</button>
+      <button class="btn btn-ghost btn-sm" id="detail-followup-btn" onclick="addFollowUp()">📌 Follow Up</button>
+      <button class="btn btn-ghost btn-sm" id="detail-save-btn" onclick="toggleSaveFromDetail()">♡ Save</button>
+      <button class="btn btn-pink btn-sm" onclick="sendMessage()">💬 Send Message</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ LIST ITEM MODAL ═══════════════════════════════════ -->
+<div class="modal-overlay" id="list-modal">
+  <div class="modal-box narrow">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title">+ List an Item</div>
+      <button class="modal-close" onclick="closeModal('list-modal')">
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M3.3 3.3l9.4 9.4M12.7 3.3L3.3 12.7" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category *</label>
+          <select class="form-select" id="list-cat" required>
+            <option value="">Select…</option>
+            <option value="truck">Truck</option>
+            <option value="trailer">Trailer</option>
+            <option value="parts">Parts &amp; Accessories</option>
+            <option value="farm">Farm Equipment</option>
+            <option value="construction">Construction Equipment</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Condition *</label>
+          <select class="form-select" id="list-condition" required>
+            <option value="">Select…</option>
+            <option value="New">New</option>
+            <option value="Like New">Like New</option>
+            <option value="Good">Good</option>
+            <option value="Fair">Fair</option>
+            <option value="Parts">Parts Only</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Make *</label>
+          <input type="text" class="form-input" id="list-make" placeholder="e.g. Peterbilt">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Model *</label>
+          <input type="text" class="form-input" id="list-model" placeholder="e.g. 389">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Year</label>
+          <input type="number" class="form-input" id="list-year" min="1990" max="2026" placeholder="2020">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mileage / Hours</label>
+          <input type="text" class="form-input" id="list-mileage" placeholder="e.g. 450,000 mi">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Price</label>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <input type="number" class="form-input" id="list-price" placeholder="85000" style="flex:1;">
+          <label class="check-item" style="white-space:nowrap;"><input type="checkbox" id="list-contact-price" onchange="document.getElementById('list-price').disabled=this.checked"> Contact for Price</label>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">City *</label>
+          <input type="text" class="form-input" id="list-city" placeholder="Tampa">
+        </div>
+        <div class="form-group">
+          <label class="form-label">State *</label>
+          <input type="text" class="form-input" id="list-state" maxlength="2" placeholder="FL" style="text-transform:uppercase;">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">VIN / Serial Number <span style="color:var(--text-muted);font-size:10px;">(optional)</span></label>
+        <input type="text" class="form-input" id="list-vin" placeholder="1XPBD49X1ED123456">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description <span style="color:var(--text-muted);font-size:10px;">(500 char max)</span></label>
+        <textarea class="form-textarea" id="list-desc" maxlength="500" oninput="document.getElementById('list-desc-count').textContent=this.value.length"></textarea>
+        <div class="char-count"><span id="list-desc-count">0</span> / 500</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contact Method</label>
+        <div class="contact-locked">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 1a3 3 0 00-3 3v2H3v8h10V6h-2V4a3 3 0 00-3-3zm0 1.5a1.5 1.5 0 011.5 1.5v2h-3V4A1.5 1.5 0 018 2.5z"/></svg>
+          Via Platform Message only — contact info not shared
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('list-modal')">Cancel</button>
+      <button class="btn btn-pink btn-sm" onclick="submitListing()">Post Listing</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ FOLLOW-UP MODAL ═══════════════════════════════════ -->
+<div class="modal-overlay" id="followup-modal">
+  <div class="modal-box narrow" style="max-width:420px;">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title">📌 Set Follow-Up Reminder</div>
+      <button class="modal-close" onclick="closeModal('followup-modal')">
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M3.3 3.3l9.4 9.4M12.7 3.3L3.3 12.7" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Follow-Up Date</label>
+        <input type="date" class="form-input" id="followup-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Note <span style="color:var(--text-muted);font-size:10px;">(optional)</span></label>
+        <input type="text" class="form-input" id="followup-note" placeholder="e.g. Call seller, ask about price drop">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('followup-modal')">Cancel</button>
+      <button class="btn btn-pink btn-sm" onclick="saveFollowUp()">Save Reminder</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CARRIER NEXUS — EQUIPMENT MARKETPLACE
+   localStorage keys:
+     nexus_marketplace         → listings array
+     nexus_marketplace_saved   → array of saved listing IDs
+     nexus_marketplace_followup → {listingId, date, note}[]
+═══════════════════════════════════════════════════════════ */
+
+// ── SEED DATA ──
+var SEED_LISTINGS = [
+  // TRUCKS
+  {id:'t001',cat:'truck',year:2019,make:'Peterbilt',model:'389',price:145000,mileage:'487,000 mi',location:'Tampa, FL',condition:'Good',desc:'Well-maintained fleet truck. DD15 engine, 10-speed manual. New rubber all around, fresh DOT inspection. Ready to work.',engine:'Detroit DD15',transmission:'10-Speed Eaton Fuller',color:'Black',vin:'1XP5D49X4KD',seller:'Fleet Sales SE',sellerType:'Fleet',daysAgo:3},
+  {id:'t002',cat:'truck',year:2020,make:'Kenworth',model:'W900L',price:165000,mileage:'312,000 mi',location:'Atlanta, GA',condition:'Like New',desc:'One-owner truck, always dealer serviced. Cummins X15, 18-speed. Chrome package, Bluetooth, APU. Immaculate condition.',engine:'Cummins X15 565HP',transmission:'18-Speed Eaton Fuller',color:'White',vin:'2NKHHM0X9LM',seller:'KW Atlanta',sellerType:'Dealer',daysAgo:1},
+  {id:'t003',cat:'truck',year:2017,make:'Freightliner',model:'Cascadia',price:89500,mileage:'689,000 mi',location:'Nashville, TN',condition:'Fair',desc:'High miles but mechanically sound. DD15 recently rebuilt at 640k. New clutch, brakes. Good for another 300k. Priced to move.',engine:'Detroit DD15 (rebuilt)',transmission:'10-Speed Manual',color:'White',vin:'1FUJGLDR8HLHM',seller:'Mid-South Trucks',sellerType:'Private',daysAgo:7},
+  {id:'t004',cat:'truck',year:2021,make:'Volvo',model:'VNL 860',price:178000,mileage:'198,000 mi',location:'Charlotte, NC',condition:'Like New',desc:'Premium sleeper, D13 Turbo Compound engine. Volvo Dynamic Steering, full infotainment, fridge/microwave. One company driver.',engine:'Volvo D13TC 500HP',transmission:'I-Shift Automated',color:'Blue',vin:'4V4NC9EH5MN',seller:'Volvo Carolinas',sellerType:'Dealer',daysAgo:2},
+  {id:'t005',cat:'truck',year:2018,make:'Mack',model:'Anthem',price:98000,mileage:'551,000 mi',location:'Birmingham, AL',condition:'Good',desc:'MP8 engine, mDrive automated. Daycab, good for regional. Passed last 3 DOT inspections with no violations.',engine:'Mack MP8 425HP',transmission:'mDrive Automated',color:'Silver',vin:'1M1AN4GY4JM',seller:'Mack Southeast',sellerType:'Dealer',daysAgo:5},
+  {id:'t006',cat:'truck',year:2016,make:'Western Star',model:'4900SF',price:75000,mileage:'712,000 mi',location:'Houston, TX',condition:'Good',desc:'Vocational spec, Detroit DD13. Heavy hauler configuration. Well-maintained by previous fleet owner. Ready to work.',engine:'Detroit DD13 450HP',transmission:'Eaton Fuller 13-Speed',color:'Yellow',vin:'5KJJABDV7GPPX',seller:'Tex-Mex Trucks',sellerType:'Private',daysAgo:10},
+  {id:'t007',cat:'truck',year:2022,make:'Kenworth',model:'T680',price:195000,mileage:'87,000 mi',location:'Miami, FL',condition:'Like New',desc:'Nearly new, single owner. PACCAR MX-13 engine, Endurant transmission. Full driver comfort package, Pre-Pass Elite, forward collision avoidance.',engine:'PACCAR MX-13 510HP',transmission:'Eaton Endurant',color:'White',vin:'3WKDD49X5NF',seller:'KW South Florida',sellerType:'Dealer',daysAgo:0},
+  // TRAILERS
+  {id:'r001',cat:'trailer',year:2020,make:'Fontaine',model:'48ft Flatbed',price:38500,mileage:null,location:'Tampa, FL',condition:'Good',desc:'48ft aluminum flatbed, spread axle. New decking, all lights LED. Fresh DOT inspection, ready to haul.',engine:null,transmission:null,color:'Silver',vin:'4FN48AAG3L',seller:'Southern Trailer Sales',sellerType:'Dealer',daysAgo:4},
+  {id:'r002',cat:'trailer',year:2019,make:'Goldhofer',model:'4-Axle RGN',price:125000,mileage:null,location:'Dallas, TX',condition:'Like New',desc:'Gooseneck removable, 4-axle configuration. 80-ton capacity. Full hydraulic detach. Used lightly on 2 projects.',engine:null,transmission:null,color:'Orange',vin:'JLHRGN4XKM',seller:'Heavy Haul TX',sellerType:'Fleet',daysAgo:6},
+  {id:'r003',cat:'trailer',year:2018,make:'Landoll',model:'440B Sliding RGN',price:67000,mileage:null,location:'Memphis, TN',condition:'Good',desc:'Sliding RGN with hydraulic slide. 50-ton capacity, tri-axle. Good tires, all lights working. Ready for immediate use.',engine:null,transmission:null,color:'Red',vin:'LANDOLL440BJ',seller:'Mid-South Heavy',sellerType:'Private',daysAgo:9},
+  {id:'r004',cat:'trailer',year:2021,make:'Talbert',model:'55-Ton Lowboy',price:89000,mileage:null,location:'Orlando, FL',condition:'Like New',desc:'55-ton lowboy, removable gooseneck. 3-axle, air ride. Minimal use, kept under cover. Excellent condition throughout.',engine:null,transmission:null,color:'Black',vin:'TALBERT55LBM',seller:'FL Heavy Equipment',sellerType:'Dealer',daysAgo:2},
+  {id:'r005',cat:'trailer',year:2017,make:'XL Specialized',model:'3-Axle Extendable',price:78000,mileage:null,location:'Jacksonville, FL',condition:'Good',desc:'Extendable to 80ft, 3 flip axles. Hydraulic detachable neck. Good condition, well-maintained. All permits transferable.',engine:null,transmission:null,color:'Black',vin:'XL3AXEXTDH',seller:'Jax Trailers',sellerType:'Private',daysAgo:14},
+  // PARTS
+  {id:'p001',cat:'parts',year:null,make:'Detroit',model:'DD15 Engine (Rebuilt)',price:18500,mileage:'0 mi (rebuilt)',location:'Tampa, FL',condition:'New',desc:'Professionally rebuilt Detroit DD15 engine. All new seals, bearings, injectors. 1-year/100k mile warranty. Core included.',engine:'Detroit DD15',transmission:null,color:null,vin:null,seller:'Engine Pro SE',sellerType:'Dealer',daysAgo:1},
+  {id:'p002',cat:'parts',year:null,make:'Peterbilt',model:'389 Hood & Fender Set',price:4200,mileage:null,location:'Atlanta, GA',condition:'Good',desc:'Complete hood and fender set for 389 wide-nose. Black paint, minor scratches. No cracks. Fits 2014-2021 models.',engine:null,transmission:null,color:'Black',vin:null,seller:'Pete Parts ATL',sellerType:'Private',daysAgo:3},
+  {id:'p003',cat:'parts',year:null,make:'Eaton Fuller',model:'10-Speed Transmission',price:6800,mileage:'450,000 mi',location:'Nashville, TN',condition:'Good',desc:'Eaton Fuller 10-speed, pulled from running truck. Shifts smooth, no leaks. Tested. Ready to install.',engine:null,transmission:null,color:null,vin:null,seller:'Tenn Drivetrain',sellerType:'Private',daysAgo:5},
+  {id:'p004',cat:'parts',year:null,make:'Other',model:'Air Ride Suspension Kit',price:2100,mileage:null,location:'Online / Ships',condition:'New',desc:'Complete air ride suspension conversion kit. Fits most Class 8 chassis. Includes all brackets, bags, valves, and fittings. Ships nationwide.',engine:null,transmission:null,color:null,vin:null,seller:'TruckParts Direct',sellerType:'Dealer',daysAgo:0},
+  {id:'p005',cat:'parts',year:null,make:'Alcoa',model:'22.5 Aluminum Wheels (Set of 6)',price:3600,mileage:null,location:'Miami, FL',condition:'Like New',desc:'Set of 6 Alcoa 22.5" aluminum wheels, lightly used. No curb rash, no cracks. Refinished and ready. Hub-piloted.',engine:null,transmission:null,color:'Polished',vin:null,seller:'South FL Truck Parts',sellerType:'Private',daysAgo:2},
+  // FARM / CONSTRUCTION
+  {id:'f001',cat:'farm',year:2018,make:'John Deere',model:'S760 Combine',price:285000,mileage:'1,240 sep hrs',location:'Ocala, FL',condition:'Good',desc:'S760 with 625F header included. 1,240 separator hours, GPS guidance, auto steer. Full service history from JD dealer.',engine:'John Deere 9.0L',transmission:'HydroStatic',color:'Green',vin:'1H0S760SXJ',seller:'Central FL Ag',sellerType:'Private',daysAgo:8},
+  {id:'f002',cat:'construction',year:2017,make:'Caterpillar',model:'336 Excavator',price:198000,mileage:'4,200 hrs',location:'Tampa, FL',condition:'Good',desc:'Cat 336 next gen excavator. 4,200 hours, recent major service. Cat Connect telematics, quick coupler, 3 buckets included.',engine:'Cat C9.3B 304HP',transmission:'Hydraulic',color:'Yellow',vin:'CAT0336GKDPH',seller:'Cat Tampa',sellerType:'Dealer',daysAgo:4},
+  {id:'f003',cat:'farm',year:2020,make:'John Deere',model:'9570RX Tractor',price:312000,mileage:'890 hrs',location:'Gainesville, FL',condition:'Like New',desc:'9570RX tracked tractor, 570HP. JD IVT transmission, SF6000 receiver, AutoTrac. 890 hours, exceptional condition.',engine:'JD PowerTech 13.5L 570HP',transmission:'IVT Infinitely Variable',color:'Green',vin:'1RW9570RX',seller:'Gainesville Farm Equip',sellerType:'Dealer',daysAgo:1},
+];
+
+// ── STATE ──
+var currentView = 'browse';
+var currentCat = 'all';
+var activeListing = null;
+
+// ── LOCALSTORAGE ──
+function getListings() {
+  try {
+    var stored = JSON.parse(localStorage.getItem('nexus_marketplace') || '[]');
+    if (!stored.length) {
+      localStorage.setItem('nexus_marketplace', JSON.stringify(SEED_LISTINGS));
+      return SEED_LISTINGS;
+    }
+    return stored;
+  } catch(e) { return SEED_LISTINGS; }
+}
+function saveListings(arr) { localStorage.setItem('nexus_marketplace', JSON.stringify(arr)); }
+
+function getSaved() {
+  try { return JSON.parse(localStorage.getItem('nexus_marketplace_saved') || '[]'); } catch(e) { return []; }
+}
+function setSaved(arr) { localStorage.setItem('nexus_marketplace_saved', JSON.stringify(arr)); }
+
+function getFollowUps() {
+  try { return JSON.parse(localStorage.getItem('nexus_marketplace_followup') || '[]'); } catch(e) { return []; }
+}
+function setFollowUps(arr) { localStorage.setItem('nexus_marketplace_followup', JSON.stringify(arr)); }
+
+// ── FILTERS ──
+function setCat(cat) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-tab').forEach(function(t) {
+    t.classList.toggle('active', t.getAttribute('data-cat') === cat);
+  });
+  renderListings();
+}
+
+function setView(v) {
+  currentView = v;
+  ['browse','mine','saved'].forEach(function(id) {
+    var el = document.getElementById('vbtn-' + id);
+    if (el) el.classList.toggle('active', id === v);
+  });
+  renderListings();
+}
+
+function getChecked(groupId) {
+  var checks = document.querySelectorAll('#' + groupId + ' input[type=checkbox]:checked');
+  return Array.from(checks).map(function(c) { return c.value; });
+}
+function getCondChecked() {
+  var checks = document.querySelectorAll('.filter-section input[type=checkbox]:checked');
+  var conds = [];
+  checks.forEach(function(c) {
+    if (['New','Like New','Good','Fair','Parts'].indexOf(c.value) > -1) conds.push(c.value);
+  });
+  return conds;
+}
+function getSellerChecked() {
+  var checks = document.querySelectorAll('.filter-section input[type=checkbox]:checked');
+  var types = [];
+  checks.forEach(function(c) {
+    if (['Dealer','Private','Fleet'].indexOf(c.value) > -1) types.push(c.value);
+  });
+  return types;
+}
+
+function updateRangeLabel(inputId, labelId) {
+  var val = parseInt(document.getElementById(inputId).value);
+  var el = document.getElementById(labelId);
+  if (!el) return;
+  if (inputId.startsWith('price')) {
+    el.textContent = val >= 1000 ? (val/1000).toFixed(0)+'k' : val;
+  } else {
+    el.textContent = val;
+  }
+}
+
+function clearFilters() {
+  document.querySelectorAll('.filter-section input[type=checkbox]').forEach(function(c){ c.checked=false; });
+  document.getElementById('price-min').value = 0;
+  document.getElementById('price-max').value = 500000;
+  document.getElementById('year-min').value = 2005;
+  document.getElementById('year-max').value = 2026;
+  document.getElementById('price-min-lbl').textContent = '0';
+  document.getElementById('price-max-lbl').textContent = '500,000';
+  document.getElementById('year-min-lbl').textContent = '2005';
+  document.getElementById('year-max-lbl').textContent = '2026';
+  document.querySelector('input[name=radius][value=all]').checked = true;
+  renderListings();
+}
+
+function toggleFilter(titleEl) {
+  var body = titleEl.nextElementSibling;
+  if (!body) return;
+  var collapsed = body.style.display === 'none';
+  body.style.display = collapsed ? '' : 'none';
+  titleEl.classList.toggle('collapsed', !collapsed);
+}
+
+// ── RENDER ──
+function condClass(cond) {
+  return {
+    'New':'cond-new','Like New':'cond-likenew','Good':'cond-good','Fair':'cond-fair','Parts':'cond-parts'
+  }[cond] || 'cond-good';
+}
+
+function catEmoji(cat) {
+  return {truck:'🚛',trailer:'🚚',parts:'⚙️',farm:'🌾',construction:'🏗️'}[cat] || '📦';
+}
+
+function fmtPrice(listing) {
+  if (listing.contactPrice) return '<span class="card-price contact">Contact for Price</span>';
+  return '<span class="card-price">$' + listing.price.toLocaleString() + '</span>';
+}
+
+function daysAgoText(d) {
+  if (d === 0) return 'Today';
+  if (d === 1) return '1 day ago';
+  return d + ' days ago';
+}
+
+function renderListings() {
+  var all = getListings();
+  var saved = getSaved();
+  var followups = getFollowUps();
+  var searchTerm = (document.getElementById('mkt-search').value || '').toLowerCase().trim();
+  var sortVal = document.getElementById('mkt-sort').value;
+  var priceMin = parseInt(document.getElementById('price-min').value);
+  var priceMax = parseInt(document.getElementById('price-max').value);
+  var yearMin  = parseInt(document.getElementById('year-min').value);
+  var yearMax  = parseInt(document.getElementById('year-max').value);
+  var makes    = getChecked('make-filters');
+  var conds    = getCondChecked();
+  var sellers  = getSellerChecked();
+
+  var listings = all.slice();
+
+  // ── VIEW FILTER ──
+  if (currentView === 'saved') {
+    listings = listings.filter(function(l){ return saved.indexOf(l.id) > -1; });
+  } else if (currentView === 'mine') {
+    listings = listings.filter(function(l){ return l.mine === true; });
+  }
+
+  // ── CATEGORY ──
+  if (currentCat !== 'all') {
+    listings = listings.filter(function(l){ return l.cat === currentCat; });
+  }
+
+  // ── SEARCH ──
+  if (searchTerm) {
+    listings = listings.filter(function(l){
+      var blob = [l.make,l.model,l.location,l.desc,l.cat,l.condition].join(' ').toLowerCase();
+      return blob.indexOf(searchTerm) > -1;
+    });
+  }
+
+  // ── PRICE ──
+  listings = listings.filter(function(l){
+    if (l.contactPrice) return true;
+    return l.price >= priceMin && l.price <= priceMax;
+  });
+
+  // ── YEAR ──
+  listings = listings.filter(function(l){
+    if (!l.year) return true;
+    return l.year >= yearMin && l.year <= yearMax;
+  });
+
+  // ── MAKE ──
+  if (makes.length) {
+    listings = listings.filter(function(l){ return makes.indexOf(l.make) > -1; });
+  }
+
+  // ── CONDITION ──
+  if (conds.length) {
+    listings = listings.filter(function(l){ return conds.indexOf(l.condition) > -1; });
+  }
+
+  // ── SELLER ──
+  if (sellers.length) {
+    listings = listings.filter(function(l){ return sellers.indexOf(l.sellerType) > -1; });
+  }
+
+  // ── SORT ──
+  if (sortVal === 'price-asc') listings.sort(function(a,b){ return (a.price||0)-(b.price||0); });
+  else if (sortVal === 'price-desc') listings.sort(function(a,b){ return (b.price||0)-(a.price||0); });
+  else if (sortVal === 'newest') listings.sort(function(a,b){ return (a.daysAgo||0)-(b.daysAgo||0); });
+  else if (sortVal === 'saved') listings.sort(function(a,b){
+    return (saved.indexOf(b.id)>-1?1:0)-(saved.indexOf(a.id)>-1?1:0);
+  });
+
+  // ── UPDATE COUNT ──
+  document.getElementById('results-count').innerHTML =
+    '<strong>' + listings.length + '</strong> listing' + (listings.length !== 1 ? 's' : '') + ' found';
+
+  // ── SAVED VIEW: show follow-ups at top ──
+  var grid = document.getElementById('listings-grid');
+  grid.innerHTML = '';
+
+  if (currentView === 'saved' && listings.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">' +
+      '<svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2"><path d="M24 42l-2-2C10 29 4 24 4 17a10 10 0 0120-3 10 10 0 0120 3c0 7-6 12-18 23l-2 2z"/></svg>' +
+      '<h3>No saved listings</h3>Browse listings and tap ♡ to save them here.</div>';
+    return;
+  }
+
+  if (currentView === 'mine' && listings.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">' +
+      '<svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2"><path d="M24 4l4 8 9 1.5-6.5 6 1.5 9L24 24l-8 4.5 1.5-9L11 13.5 20 12z"/></svg>' +
+      '<h3>No active listings</h3>Click "+ List Item" to post your first listing.</div>';
+    return;
+  }
+
+  if (listings.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">' +
+      '<svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2"><circle cx="21" cy="21" r="14"/><path d="M36 36l8 8"/></svg>' +
+      '<h3>No results found</h3>Try adjusting your search or filters.</div>';
+    return;
+  }
+
+  // ── FOLLOW-UP REMINDERS IN SAVED VIEW ──
+  if (currentView === 'saved' && followups.length) {
+    var fuDiv = document.createElement('div');
+    fuDiv.style.gridColumn = '1 / -1';
+    fuDiv.innerHTML = '<div class="section-hdr" style="margin-bottom:8px;">📌 Follow-Up Reminders</div>' +
+      followups.map(function(fu,i){
+        var l = all.find(function(x){ return x.id === fu.listingId; });
+        return '<div class="followup-card">' +
+          '<div>' +
+            '<div class="followup-date">' + (fu.date || 'No date') + '</div>' +
+            '<div class="followup-note">' + (l ? (l.year?l.year+' ':'')+l.make+' '+l.model : 'Unknown listing') +
+              (fu.note ? ' — ' + fu.note : '') + '</div>' +
+          '</div>' +
+          '<button class="followup-del" onclick="deleteFollowUp(' + i + ')" title="Remove">✕</button>' +
+        '</div>';
+      }).join('') +
+      '<hr style="border-color:var(--border);margin:12px 0 16px;">';
+    grid.appendChild(fuDiv);
+  }
+
+  // ── CARDS ──
+  listings.forEach(function(listing) {
+    var isSaved = saved.indexOf(listing.id) > -1;
+    var card = document.createElement('div');
+    card.className = 'listing-card';
+    card.onclick = function(e) {
+      if (e.target.classList.contains('card-save') || e.target.closest('.card-save')) return;
+      if (e.target.classList.contains('card-view-btn')) return;
+      openDetail(listing.id);
+    };
+
+    var catClass = listing.cat === 'farm' || listing.cat === 'construction' ? 'cat-' + listing.cat : 'cat-' + listing.cat;
+    var titleStr = (listing.year ? listing.year + ' ' : '') + listing.make + ' ' + listing.model;
+
+    var metaHtml = '';
+    if (listing.mileage) metaHtml += '<span>🔢 ' + listing.mileage + '</span>';
+    metaHtml += '<span>📍 ' + listing.location + '</span>';
+
+    card.innerHTML =
+      '<div class="card-photo cat-' + listing.cat + '">' +
+        catEmoji(listing.cat) +
+        '<button class="card-save' + (isSaved ? ' saved' : '') + '" data-id="' + listing.id + '" ' +
+          'onclick="toggleSave(\'' + listing.id + '\',this)" title="' + (isSaved ? 'Unsave' : 'Save') + '">' +
+          (isSaved ? '♥' : '♡') +
+        '</button>' +
+        '<span class="card-posted">' + daysAgoText(listing.daysAgo) + '</span>' +
+      '</div>' +
+      '<div class="card-body">' +
+        fmtPrice(listing) +
+        '<div class="card-title">' + titleStr + '</div>' +
+        '<div class="card-meta">' + metaHtml + '</div>' +
+        '<div class="card-footer">' +
+          '<span class="condition-badge ' + condClass(listing.condition) + '">' + listing.condition + '</span>' +
+          '<button class="card-view-btn" onclick="openDetail(\'' + listing.id + '\')">View Details</button>' +
+        '</div>' +
+      '</div>';
+
+    grid.appendChild(card);
+  });
+}
+
+// ── TOGGLE SAVE ──
+function toggleSave(id, btn) {
+  var saved = getSaved();
+  var idx = saved.indexOf(id);
+  if (idx > -1) {
+    saved.splice(idx, 1);
+    if (btn) { btn.textContent = '♡'; btn.classList.remove('saved'); btn.title = 'Save'; }
+  } else {
+    saved.push(id);
+    if (btn) { btn.textContent = '♥'; btn.classList.add('saved'); btn.title = 'Unsave'; }
+  }
+  setSaved(saved);
+  updateDetailSaveBtn(id);
+}
+
+function updateDetailSaveBtn(id) {
+  var btn = document.getElementById('detail-save-btn');
+  if (!btn || !activeListing || activeListing.id !== id) return;
+  var saved = getSaved();
+  var isSaved = saved.indexOf(id) > -1;
+  btn.textContent = isSaved ? '♥ Saved' : '♡ Save';
+}
+
+function toggleSaveFromDetail() {
+  if (!activeListing) return;
+  var saved = getSaved();
+  var isSaved = saved.indexOf(activeListing.id) > -1;
+  // Find card save button if visible
+  var cardBtn = document.querySelector('.card-save[data-id="' + activeListing.id + '"]');
+  toggleSave(activeListing.id, cardBtn);
+}
+
+// ── DETAIL MODAL ──
+function openDetail(id) {
+  var all = getListings();
+  var listing = all.find(function(l){ return l.id === id; });
+  if (!listing) return;
+  activeListing = listing;
+  var saved = getSaved();
+  var isSaved = saved.indexOf(id) > -1;
+
+  document.getElementById('detail-modal-title').textContent =
+    (listing.year ? listing.year + ' ' : '') + listing.make + ' ' + listing.model;
+  document.getElementById('detail-save-btn').textContent = isSaved ? '♥ Saved' : '♡ Save';
+
+  // Gallery
+  var galHtml = [0,1,2].map(function(i){
+    return '<div class="gallery-slot cat-' + listing.cat + '" style="' + (i>0?'opacity:.5':'') + '">' + catEmoji(listing.cat) + '</div>';
+  }).join('');
+
+  // Specs
+  var specs = [
+    {label:'Category',val: listing.cat.charAt(0).toUpperCase()+listing.cat.slice(1)},
+    {label:'Condition',val: listing.condition},
+    {label:'Year',val: listing.year || '—'},
+    {label:'Make',val: listing.make},
+    {label:'Model',val: listing.model},
+    {label:'Mileage / Hours',val: listing.mileage || '—'},
+    {label:'Engine',val: listing.engine || '—'},
+    {label:'Transmission',val: listing.transmission || '—'},
+    {label:'Color',val: listing.color || '—'},
+    {label:'VIN / Serial',val: listing.vin || '—'},
+    {label:'Location',val: listing.location},
+    {label:'Seller Type',val: listing.sellerType},
+  ];
+  var specHtml = specs.map(function(s){
+    return '<div class="detail-field"><div class="detail-field-label">'+s.label+'</div><div class="detail-field-val">'+s.val+'</div></div>';
+  }).join('');
+
+  // Related (same category, not same listing)
+  var all2 = getListings();
+  var related = all2.filter(function(l){ return l.cat === listing.cat && l.id !== listing.id; }).slice(0,3);
+  var relHtml = '';
+  if (related.length) {
+    relHtml = '<div class="section-hdr" style="margin-top:16px;">You may also like…</div>' +
+      '<div class="related-list">' +
+      related.map(function(r){
+        return '<div class="related-card" onclick="openDetail(\''+r.id+'\')">' +
+          '<div class="related-photo cat-'+r.cat+'">'+catEmoji(r.cat)+'</div>' +
+          '<div class="related-title">'+(r.year?r.year+' ':'')+r.make+' '+r.model+'</div>' +
+          '<div class="related-price">'+(r.contactPrice?'Contact':'$'+r.price.toLocaleString())+'</div>' +
+          '</div>';
+      }).join('') +
+      '</div>';
+  }
+
+  document.getElementById('detail-modal-body').innerHTML =
+    galHtml +
+    '<div class="detail-price-row">' +
+      '<div class="detail-price-big">' + (listing.contactPrice ? 'Contact for Price' : '$' + listing.price.toLocaleString()) + '</div>' +
+      '<div class="detail-seller">🏷 ' + listing.seller + ' &nbsp;|&nbsp; ' + listing.sellerType + '</div>' +
+    '</div>' +
+    '<div class="section-hdr">Specifications</div>' +
+    '<div class="detail-grid">' + specHtml + '</div>' +
+    '<div class="section-hdr">Description</div>' +
+    '<div class="detail-desc">' + (listing.desc || 'No description provided.') + '</div>' +
+    relHtml;
+
+  openModal('detail-modal');
+}
+
+// ── LIST ITEM MODAL ──
+function openListModal() {
+  document.getElementById('list-cat').value = '';
+  document.getElementById('list-make').value = '';
+  document.getElementById('list-model').value = '';
+  document.getElementById('list-year').value = '';
+  document.getElementById('list-mileage').value = '';
+  document.getElementById('list-price').value = '';
+  document.getElementById('list-city').value = '';
+  document.getElementById('list-state').value = '';
+  document.getElementById('list-vin').value = '';
+  document.getElementById('list-desc').value = '';
+  document.getElementById('list-desc-count').textContent = '0';
+  document.getElementById('list-contact-price').checked = false;
+  document.getElementById('list-price').disabled = false;
+  openModal('list-modal');
+}
+
+function submitListing() {
+  var cat   = document.getElementById('list-cat').value;
+  var make  = document.getElementById('list-make').value.trim();
+  var model = document.getElementById('list-model').value.trim();
+  var year  = parseInt(document.getElementById('list-year').value) || null;
+  var price = parseInt(document.getElementById('list-price').value) || 0;
+  var contactPrice = document.getElementById('list-contact-price').checked;
+  var mileage = document.getElementById('list-mileage').value.trim();
+  var city  = document.getElementById('list-city').value.trim();
+  var state = document.getElementById('list-state').value.trim().toUpperCase();
+  var condition = document.getElementById('list-condition').value;
+  var vin   = document.getElementById('list-vin').value.trim();
+  var desc  = document.getElementById('list-desc').value.trim();
+
+  if (!cat || !make || !model || !city || !state || !condition) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  var newListing = {
+    id: 'u' + Date.now(),
+    cat: cat,
+    year: year,
+    make: make,
+    model: model,
+    price: price,
+    contactPrice: contactPrice,
+    mileage: mileage || null,
+    location: city + ', ' + state,
+    condition: condition,
+    desc: desc,
+    engine: null,
+    transmission: null,
+    color: null,
+    vin: vin || null,
+    seller: 'You (Private)',
+    sellerType: 'Private',
+    daysAgo: 0,
+    mine: true,
+  };
+
+  var all = getListings();
+  all.unshift(newListing);
+  saveListings(all);
+  closeModal('list-modal');
+  renderListings();
+  setTimeout(function(){
+    openDetail(newListing.id);
+  }, 150);
+}
+
+// ── FOLLOW-UP ──
+function addFollowUp() {
+  if (!activeListing) return;
+  // Set default date to tomorrow
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById('followup-date').value = tomorrow.toISOString().split('T')[0];
+  document.getElementById('followup-note').value = '';
+  openModal('followup-modal');
+}
+
+function saveFollowUp() {
+  if (!activeListing) return;
+  var date = document.getElementById('followup-date').value;
+  var note = document.getElementById('followup-note').value.trim();
+  var fus = getFollowUps();
+  // Remove existing for same listing
+  fus = fus.filter(function(f){ return f.listingId !== activeListing.id; });
+  fus.push({ listingId: activeListing.id, date: date, note: note });
+  setFollowUps(fus);
+  closeModal('followup-modal');
+  alert('📌 Follow-up reminder saved for ' + (activeListing.year?activeListing.year+' ':'')+activeListing.make+' '+activeListing.model);
+}
+
+function deleteFollowUp(index) {
+  var fus = getFollowUps();
+  fus.splice(index, 1);
+  setFollowUps(fus);
+  renderListings();
+}
+
+// ── SEND MESSAGE / FLAG ──
+function sendMessage() {
+  if (!activeListing) return;
+  alert('💬 Message sent to seller of ' + (activeListing.year?activeListing.year+' ':'')+activeListing.make+' '+activeListing.model + '.\n\nThey will receive your inquiry via the Nexus platform.');
+}
+
+function flagListing() {
+  if (!activeListing) return;
+  if (confirm('Flag this listing as inappropriate or suspicious?')) {
+    alert('🚩 Listing flagged. Our team will review it within 24 hours.');
+  }
+}
+
+// ── MODAL HELPERS ──
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+});
+
+// Close on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(function(m){ m.classList.remove('open'); });
+  }
+});
+
+// ── MOBILE FILTERS ──
+function toggleMobileFilters() {
+  document.getElementById('filters-panel').classList.toggle('mobile-open');
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', function() {
+  renderListings();
+});
+
+// Also render immediately in case DOMContentLoaded already fired
+if (document.readyState !== 'loading') {
+  renderListings();
+}
+</script>
+</body>
+</html>
