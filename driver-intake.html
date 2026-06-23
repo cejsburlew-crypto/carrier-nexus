@@ -21,6 +21,7 @@
       --success: #38a169;
       --tab-h: 64px;
       --top-h: 56px;
+      --section-bar-h: 52px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { height: 100%; background: var(--white); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 16px; color: #1a1a2e; overflow: hidden; }
@@ -42,7 +43,7 @@
 
     /* WHO ARE YOU */
     #who-bar {
-      position: fixed; top: calc(var(--top-h) + env(safe-area-inset-top)); left: 0; right: 0;
+      position: fixed; top: calc(var(--top-h) + var(--section-bar-h) + env(safe-area-inset-top)); left: 0; right: 0;
       background: var(--teal); padding: 8px 16px; z-index: 99;
       display: flex; align-items: center; gap: 10px; display: none;
     }
@@ -52,7 +53,7 @@
 
     /* CONTENT AREA */
     #content {
-      position: fixed; top: var(--top-h); bottom: var(--tab-h); left: 0; right: 0;
+      position: fixed; top: calc(var(--top-h) + var(--section-bar-h)); bottom: var(--tab-h); left: 0; right: 0;
       overflow-y: auto; -webkit-overflow-scrolling: touch;
       background: var(--gray-bg);
       padding-top: env(safe-area-inset-top);
@@ -63,18 +64,18 @@
     /* TAB BAR */
     #tabbar {
       position: fixed; bottom: 0; left: 0; right: 0; height: var(--tab-h);
-      background: var(--white); border-top: 1px solid var(--gray-border);
+      background: #111d38; border-top: 2px solid rgba(0,212,170,0.15);
       display: flex; z-index: 100;
       padding-bottom: env(safe-area-inset-bottom);
     }
     .tab-btn {
       flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
       gap: 3px; cursor: pointer; border: none; background: none; padding: 6px 4px;
-      color: var(--gray-text); font-size: 10px; font-weight: 500; transition: color 0.2s;
+      color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 600; transition: color 0.2s;
     }
-    .tab-btn .tab-icon { font-size: 22px; }
-    .tab-btn.active { color: var(--navy); }
-    .tab-btn.active .tab-icon { filter: drop-shadow(0 0 4px rgba(0,212,170,0.4)); }
+    .tab-btn .tab-icon { font-size: 24px; }
+    .tab-btn.active { color: var(--teal); border-top: 3px solid var(--teal); margin-top: -2px; }
+    .tab-btn.active .tab-icon { filter: drop-shadow(0 0 5px rgba(0,212,170,0.6)); }
 
     /* FORMS */
     .form-section { background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
@@ -242,6 +243,61 @@
     .section-divider { height: 1px; background: var(--gray-border); margin: 16px 0; }
     .helper-text { font-size: 12px; color: var(--gray-text); margin-top: 4px; }
     .link-btn { background: none; border: none; color: var(--teal); font-size: 15px; font-weight: 700; cursor: pointer; padding: 10px 0; text-decoration: underline; }
+
+    /* SECTION SUB-HEADER BAR */
+    #section-bar {
+      position: fixed; left: 0; right: 0; z-index: 99;
+      top: var(--top-h);
+      background: #111d38; padding: 10px 16px 10px 16px;
+      display: flex; flex-direction: column; justify-content: center;
+      border-bottom: 1px solid rgba(0,212,170,0.15);
+      margin-top: env(safe-area-inset-top);
+    }
+    #section-bar .sb-title {
+      font-size: 15px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px;
+      line-height: 1.2;
+    }
+    #section-bar .sb-desc {
+      font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 1px; font-weight: 400;
+    }
+    --section-bar-h: 52px;
+
+    /* WELCOME SPLASH OVERLAY */
+    #intake-splash {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 500;
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+    }
+    #intake-splash .splash-card {
+      background: #1a2744; border-radius: 18px; padding: 32px 24px 28px;
+      max-width: 360px; width: 100%; text-align: center;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    }
+    #intake-splash .splash-title {
+      font-size: 22px; font-weight: 900; color: #fff; letter-spacing: 0.5px; margin-bottom: 6px;
+    }
+    #intake-splash .splash-phone { font-size: 28px; margin-bottom: 16px; display: block; }
+    #intake-splash .splash-list {
+      list-style: none; padding: 0; margin: 0 0 20px 0; text-align: left;
+    }
+    #intake-splash .splash-list li {
+      font-size: 15px; color: rgba(255,255,255,0.9); padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; gap: 12px;
+    }
+    #intake-splash .splash-list li:last-child { border-bottom: none; }
+    #intake-splash .splash-list li .s-icon { font-size: 20px; flex-shrink: 0; }
+    #intake-splash .splash-list li .s-text { line-height: 1.3; }
+    #intake-splash .splash-list li .s-label { font-weight: 700; color: #fff; }
+    #intake-splash .splash-list li .s-sub { font-size: 12px; color: rgba(255,255,255,0.5); }
+    #intake-splash .splash-hint {
+      font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 20px;
+    }
+    #intake-splash .splash-btn {
+      width: 100%; padding: 16px; background: var(--teal); color: var(--navy);
+      border: none; border-radius: 10px; font-size: 16px; font-weight: 900;
+      cursor: pointer; letter-spacing: 0.5px;
+    }
+    #intake-splash .splash-btn:active { background: var(--teal-light); }
   </style>
 </head>
 <body>
@@ -249,9 +305,16 @@
 <!-- TOP BAR -->
 <div id="topbar">
   <a href="driver-command.html" class="back-btn" id="back-btn" onclick="return confirmBack()">←</a>
-  <div class="title"><span>Carrier</span> Nexus</div>
+  <div class="title" style="display:flex;flex-direction:column;gap:1px;"><span style="font-size:16px;font-weight:900;letter-spacing:0.5px;color:#fff;line-height:1.1;">DRIVER INTAKE</span><span style="font-size:11px;font-weight:500;color:var(--teal);letter-spacing:0.3px;line-height:1;">Carrier Nexus</span></div>
   <div id="draft-indicator"></div>
 </div>
+
+<!-- SECTION SUB-HEADER BAR -->
+<div id="section-bar">
+  <div class="sb-title" id="sb-title">📋 RATE CONFIRMATION</div>
+  <div class="sb-desc" id="sb-desc">Submit a new load from rate con</div>
+</div>
+
 
 <!-- WHO ARE YOU BAR (shown if not logged in) -->
 <div id="who-bar">
@@ -510,7 +573,67 @@
   </div>
 </div>
 
+<!-- WELCOME SPLASH (first-time onboarding) -->
+<div id="intake-splash" style="display:none;">
+  <div class="splash-card">
+    <span class="splash-phone">📱</span>
+    <div class="splash-title">DRIVER INTAKE PORTAL</div>
+    <ul class="splash-list">
+      <li>
+        <span class="s-icon">📋</span>
+        <div class="s-text"><div class="s-label">Rate Con</div><div class="s-sub">Submit loads from your rate con</div></div>
+      </li>
+      <li>
+        <span class="s-icon">📄</span>
+        <div class="s-text"><div class="s-label">Documents</div><div class="s-sub">Upload or photograph your docs</div></div>
+      </li>
+      <li>
+        <span class="s-icon">💰</span>
+        <div class="s-text"><div class="s-label">Expenses</div><div class="s-sub">Log fuel, food, repairs fast</div></div>
+      </li>
+      <li>
+        <span class="s-icon">📸</span>
+        <div class="s-text"><div class="s-label">Camera</div><div class="s-sub">Capture any document on the spot</div></div>
+      </li>
+    </ul>
+    <div class="splash-hint">Use the tabs at the bottom to switch sections</div>
+    <button class="splash-btn" onclick="dismissSplash()">GOT IT — LET'S GO</button>
+  </div>
+</div>
+
+
 <script>
+
+// ============================================================
+// SECTION BAR LABELS
+// ============================================================
+const SECTION_LABELS = {
+  ratecon: { title: '📋 RATE CONFIRMATION', desc: 'Submit a new load from rate con' },
+  docs:    { title: '📄 DOCUMENTS',         desc: 'Upload or photograph your docs' },
+  expenses:{ title: '💰 EXPENSES',          desc: 'Log fuel, food, repairs' },
+  camera:  { title: '📸 CAMERA',            desc: 'Capture any document' }
+};
+function updateSectionBar(tab) {
+  const s = SECTION_LABELS[tab] || SECTION_LABELS.ratecon;
+  const titleEl = document.getElementById('sb-title');
+  const descEl  = document.getElementById('sb-desc');
+  if (titleEl) titleEl.textContent = s.title;
+  if (descEl)  descEl.textContent  = s.desc;
+}
+
+// ============================================================
+// SPLASH LOGIC
+// ============================================================
+function dismissSplash() {
+  localStorage.setItem('nexus_intake_toured', 'true');
+  document.getElementById('intake-splash').style.display = 'none';
+}
+function maybeShowSplash() {
+  if (!localStorage.getItem('nexus_intake_toured')) {
+    document.getElementById('intake-splash').style.display = 'flex';
+  }
+}
+
 // ============================================================
 // GLOBALS
 // ============================================================
@@ -559,6 +682,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handle hash navigation
   const hash = location.hash.replace('#','');
   if (hash && ['ratecon','docs','expenses','camera'].includes(hash)) switchTab(hash);
+  // Show onboarding splash on first visit
+  maybeShowSplash();
 });
 
 // ============================================================
@@ -609,6 +734,7 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('panel-' + tab).classList.add('active');
   document.getElementById('tab-' + tab).classList.add('active');
+  updateSectionBar(tab);
   if (tab === 'docs') renderDocGrid();
   if (tab === 'expenses') renderExpenseList();
   if (tab === 'camera') renderThumbs();
