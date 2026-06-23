@@ -220,7 +220,8 @@
       lnk('nexus-ai.html',             I.ai,      'AI Assistant') +
       lnk('analysis.html',             I.bar,     'Analytics') +
       lnk('drive-settings.html',       I.file,    'Integrations') +
-      lnk('eld-settings.html',         I.eld,     'ELD Integration')
+      lnk('eld-settings.html',         I.eld,     'ELD Integration') +
+      lnk('search.html',                 I.bar,     'Global Search')
     );
 
   const html = `
@@ -240,6 +241,13 @@
   ${companySelectorHtml}
 
   <div class="sidebar-nav" style="flex:1;overflow-y:auto;">
+
+    <div style="padding:8px 12px 4px;">
+      <button id="nexus-search-trigger" onclick="if(window.NexusSearchUI)NexusSearchUI.open()" style="width:100%;background:#1f2937;border:1px solid #374151;color:#9ca3af;padding:8px 12px;border-radius:8px;text-align:left;cursor:pointer;font-size:13px;display:flex;justify-content:space-between;align-items:center;font-family:'Barlow',sans-serif;transition:background .15s;" onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#1f2937'">
+        <span>🔍 Search everything…</span>
+        <span style="font-size:11px;background:#374151;padding:2px 6px;border-radius:4px;color:#6b7280;font-family:'JetBrains Mono',monospace;">⌘K</span>
+      </button>
+    </div>
 
     <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:6px 12px 2px;">
       <button id="sb-collapse-all" title="Collapse all sections" style="background:none;border:none;color:rgba(255,255,255,.3);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.5px;cursor:pointer;padding:3px 6px;border-radius:3px;text-transform:uppercase;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Collapse all</button>
@@ -415,4 +423,21 @@
     var btn = document.getElementById('nexus-co-selector');
     if (dd && btn && !btn.contains(e.target)) dd.style.display = 'none';
   });
+  // ── Load nexus-search.js if not already present ──
+  (function() {
+    if (window.NexusSearch) return; // already loaded
+    var s = document.createElement('script');
+    s.src = (function() {
+      // Find relative base from existing sidebar script tag
+      var scripts = document.querySelectorAll('script[src*="nexus-sidebar"]');
+      if (scripts.length) {
+        var src = scripts[scripts.length-1].src;
+        return src.replace(/nexus-sidebar\.js.*$/, 'nexus-search.js?v=6');
+      }
+      return 'nexus-search.js?v=6';
+    })();
+    s.async = false;
+    document.head.appendChild(s);
+  })();
+
 })();
