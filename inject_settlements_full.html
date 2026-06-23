@@ -377,21 +377,24 @@
       if (!Array.isArray(existing)) existing = [];
     } catch(e) { existing = []; }
 
-    const existingIds = new Set(existing.map(r => r.id));
-    const toInject = newRecords.filter(r => !existingIds.has(r.id));
-    const merged = existing.concat(toInject);
+    // UPSERT: replace existing records with new ones (don't skip — overwrite with correct data)
+    const newById = new Map(newRecords.map(r => [r.id, r]));
+    // Replace any existing record that has a matching ID with the new version
+    const merged = existing.map(r => newById.has(r.id) ? newById.get(r.id) : r);
+    // Add new records that didn't exist before
+    newRecords.forEach(r => { if (!existing.find(e => e.id === r.id)) merged.push(r); });
+
+    const replaced = existing.filter(r => newById.has(r.id)).length;
+    const added = newRecords.length - replaced;
 
     localStorage.setItem('nexus_settlements', JSON.stringify(merged));
 
-    const skipped = newRecords.length - toInject.length;
-
     // Status card
     document.getElementById('statusCard').innerHTML =
-      '<span class="big">✅ Injected ' + toInject.length + ' new settlement records.</span><br>' +
-      'Total in localStorage: <strong>' + merged.length + '</strong> &nbsp;&nbsp;|&nbsp;&nbsp; ' +
-      'Duplicates skipped: <strong>' + skipped + '</strong> &nbsp;&nbsp;|&nbsp;&nbsp; ' +
-      'Records generated this run: <strong>' + newRecords.length + '</strong> &nbsp;&nbsp;|&nbsp;&nbsp; ' +
-      'Migrated existing: <strong>' + migrated + '</strong> records to new schema';
+      '<span class="big">✅ Settlement data loaded. Total: ' + merged.length + ' records.</span><br>' +
+      'Added: <strong>' + added + '</strong> new &nbsp;&nbsp;|&nbsp;&nbsp; ' +
+      'Replaced: <strong>' + replaced + '</strong> existing (with correct amounts) &nbsp;&nbsp;|&nbsp;&nbsp; ' +
+      'Migrated: <strong>' + migrated + '</strong> schema fields';
 
     // Summary table
     const driverTotals = {};
