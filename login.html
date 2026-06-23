@@ -1135,7 +1135,7 @@
   // If already authenticated, skip login
   (async () => {
     const local = localStorage.getItem('nexus_session');
-    if (local) { const _lr=JSON.parse(local).role||'staff'; window.location.href = _lr==='driver'?'driver-portal.html':_lr==='dispatcher'?'dispatcher-hub.html':'fleet-command.html'; return; }
+    if (local) { const _lr=JSON.parse(local).role||'staff'; window.location.href = _lr==='driver'?'driver-portal.html':_lr==='dispatcher'?'dispatcher-hub.html':'index.html'; return; }
   })();
 
   const loginBtn = document.getElementById('loginBtn');
@@ -1227,7 +1227,7 @@
       loginBtn.classList.remove('loading');
       const _sess = JSON.parse(localStorage.getItem('nexus_session')||'{}');
       const _role = _sess.role || 'staff';
-      window.location.href = _role==='driver'?'driver-portal.html':_role==='dispatcher'?'dispatcher-hub.html':'fleet-command.html';
+      window.location.href = _role==='driver'?'driver-portal.html':_role==='dispatcher'?'dispatcher-hub.html':'index.html';
     } catch (err) {
       loginBtn.classList.remove('loading');
       // Show error under password field
@@ -1249,7 +1249,7 @@
     setTimeout(() => {
       btn.classList.remove('loading');
       // In production: redirect to dashboard
-      window.location.href = 'fleet-command.html';
+      window.location.href = 'index.html';
     }, 800);
   }
 
