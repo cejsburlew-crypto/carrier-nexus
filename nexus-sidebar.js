@@ -1,7 +1,8 @@
 /**
  * nexus-sidebar.js — Carrier Nexus canonical sidebar.
- * v2: collapsible sections, Collapse All / Expand All, state persisted in localStorage,
- *     active section always auto-expanded. Includes new pages: IFTA, DVIR, Load Board.
+ * v3: collapsible sections, Collapse All / Expand All, state persisted in localStorage,
+ *     active section always auto-expanded. Driver Services, Scale Tickets, Load Board,
+ *     Nexus Connect, Search Everything added. nexus-core.js + nexus-search.js injection.
  */
 (function() {
   const page = location.pathname.split('/').pop() || 'index.html';
@@ -12,12 +13,20 @@
     document.documentElement.setAttribute('data-nexus-theme', t);
   })();
 
+  // ── Inject nexus-core.js and nexus-search.js if not already present ──
+  ['nexus-core.js', 'nexus-search.js'].forEach(function(src) {
+    if (!document.querySelector('script[src^="' + src + '"]')) {
+      var s = document.createElement('script');
+      s.src = src + '?v=6';
+      document.head.appendChild(s);
+    }
+  });
+
   function active(href) {
     return (href === page || (href.includes('?') && page === href.split('?')[0])) ? ' active' : '';
   }
 
   // ── Collapse state ──
-  // nexus_sidebar_sections: { sectionKey: true/false (true = collapsed) }
   var COLLAPSE_KEY = 'nexus_sidebar_sections';
   function getCollapseState() {
     try { return JSON.parse(localStorage.getItem(COLLAPSE_KEY) || '{}'); } catch(e) { return {}; }
@@ -28,16 +37,16 @@
 
   // Section definitions — key, label, pages in section (for auto-expand)
   var SECTIONS = [
-    { key:'ops',     label:'Operations',  pages:['fleet-command.html','active-loads.html','settlements.html','weekly-settlements.html','settlement-review.html','drivers.html','permits.html','pods.html','issues.html'] },
-    { key:'dispatch',label:'Dispatch',    pages:['dispatcher-hub.html','load-board.html','commissions.html','available-dispatchers.html','available-drivers.html'] },
-    { key:'finance', label:'Finance',     pages:['invoicing.html','whatsapp-import.html','expenses.html','financials.html','ifta.html'] },
-    { key:'docs',    label:'Documents',   pages:['documents.html','upload.html','inbox-sync.html','emails.html','doc-inbox.html'] },
-    { key:'contacts',label:'Contacts',    pages:['contacts.html'] },
-    { key:'taxhr',   label:'Tax & HR',    pages:['tax-forms.html','w9.html'] },
-    { key:'maint',   label:'Maintenance', pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','tires.html','fuel.html','dvir.html'] },
-    { key:'admin',   label:'Admin',       pages:['member-management.html','admin-users.html'] },
-    { key:'intel',   label:'Intelligence',pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html'] },
-    { key:'comms',   label:'Communications',pages:['nexus-connect.html'] },
+    { key:'ops',     label:'Operations',     pages:['fleet-command.html','active-loads.html','settlements.html','weekly-settlements.html','settlement-review.html','drivers.html','permits.html','pods.html','issues.html'] },
+    { key:'dispatch',label:'Dispatch',       pages:['dispatcher-hub.html','load-board.html','commissions.html','available-dispatchers.html','available-drivers.html'] },
+    { key:'finance', label:'Finance',        pages:['invoicing.html','whatsapp-import.html','expenses.html','financials.html','ifta.html'] },
+    { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','emails.html','doc-inbox.html'] },
+    { key:'contacts',label:'Contacts',       pages:['contacts.html'] },
+    { key:'taxhr',   label:'Tax & HR',       pages:['tax-forms.html','w9.html'] },
+    { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','tires.html','fuel.html','dvir.html','driver-services.html','scale-tickets.html'] },
+    { key:'admin',   label:'Admin',          pages:['member-management.html','admin-users.html'] },
+    { key:'intel',   label:'Intelligence',   pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html','search.html'] },
+    { key:'comms',   label:'Communications', pages:['nexus-connect.html'] },
   ];
 
   // Determine which section the current page lives in
@@ -96,7 +105,6 @@
   }
 
   function sectionLabel(key, label) {
-    var isActive = key === activeSection;
     return '<button class="sb-sec-btn" data-sec="' + key + '" ' +
       'style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 16px 4px;background:none;border:none;cursor:pointer;text-align:left;">' +
       '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:1.5px;text-transform:uppercase;">' + label + '</span>' +
@@ -106,7 +114,7 @@
 
   function sectionLinks(key, linksHtml) {
     var hidden = isSectionCollapsed(key);
-    return '<div class="sb-sec-links" data-sec="' + key + '" style="overflow:hidden;max-height:' + (hidden ? '0' : '500px') + ';transition:max-height .22s ease' + (hidden ? '' : '-in-out') + ';">' + linksHtml + '</div>';
+    return '<div class="sb-sec-links" data-sec="' + key + '" style="overflow:hidden;max-height:' + (hidden ? '0' : '600px') + ';transition:max-height .22s ease' + (hidden ? '' : '-in-out') + ';">' + linksHtml + '</div>';
   }
 
   function sec(key, label, linksHtml) {
@@ -148,7 +156,7 @@
     inbox:   '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 2h14v2H1zm0 4h14v2H1zm0 4h6v4H1zm8 0h6v4H9z"/></svg>',
     contact: '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 5a3 3 0 11-6 0 3 3 0 016 0zM2 13c0-2.761 2.686-5 6-5s6 2.239 6 5H2z"/></svg>',
     tax:     '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h10v14H3zm2 3h6v1H5zm0 3h6v1H5zm0 3h4v1H5z"/></svg>',
-    truck:   '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 3H14l-3 2.5 1 3.5L8 8 4 10l1-3.5L2 4h4.5z"/></svg>',
+    truck:   '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 4h9v8H1zm9 2h3l2 3v3h-5V6zM3 13a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm8 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>',
     wrench:  '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.5 2.5l-1.4 1.4A4 4 0 106.1 9.8L4.7 11.2A6 6 0 1113.5 2.5zm-3 3A2 2 0 108 10a2 2 0 002.5-2.5z"/></svg>',
     cal:     '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h10v2H3zm0 4h10v2H3zm0 4h6v2H3z"/></svg>',
     dot:     '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.5 4h1v5h-1zm0 6h1v1.5h-1z"/></svg>',
@@ -162,6 +170,9 @@
     eld:     '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 00-3 3c0 1.3.83 2.4 2 2.82V8H5v2h2v1.18A3 3 0 108 14.93V10h2V8H8V6.82A3.001 3.001 0 008 1zm0 12a1 1 0 110-2 1 1 0 010 2zm0-8a1 1 0 110-2 1 1 0 010 2z"/></svg>',
     map:     '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 2l5 2 4-2 5 2v11l-5-2-4 2-5-2V2zm5 2.5v8l4-2V4.5l-4 2z"></path></svg>',
     connect: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
+    scale:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 9l9-6 9 6"/><path d="M6 16s0 4 6 4 6-4 6-4"/><line x1="3" y1="9" x2="21" y2="9"/></svg>',
+    search:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+    service: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 4.93 19.07"/><path d="M4.93 4.93A10 10 0 0 1 19.07 19.07"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>',
   };
 
   var navHtml =
@@ -212,7 +223,9 @@
       lnk('dvir.html',                 I.dvir,    'Inspection Reports') +
       lnk('dot-compliance.html',       I.dot,     'DOT Compliance') +
       lnk('tires.html',                I.tire,    'Tires') +
-      lnk('fuel.html',                 I.fuel,    'Fuel')
+      lnk('fuel.html',                 I.fuel,    'Fuel') +
+      lnk('driver-services.html',      I.service, 'Driver Services') +
+      lnk('scale-tickets.html',        I.scale,   'Scale Tickets')
     ) +
     sec('admin', 'Admin',
       lnk('member-management.html',    I.members, 'Members') +
@@ -223,10 +236,10 @@
       lnk('analysis.html',             I.bar,     'Analytics') +
       lnk('drive-settings.html',       I.file,    'Integrations') +
       lnk('eld-settings.html',         I.eld,     'ELD Integration') +
-      lnk('search.html',                 I.bar,     'Global Search')
+      lnk('search.html',               I.search,  'Search Everything')
     ) +
     sec('comms', 'Communications',
-      lnk('nexus-connect.html',          I.connect, 'Nexus Connect')
+      lnk('nexus-connect.html',        I.connect, 'Nexus Connect')
     );
 
   const html = `
@@ -323,7 +336,7 @@
   function applyCollapseState(key, collapsed) {
     var links = document.querySelector('.sb-sec-links[data-sec="' + key + '"]');
     var chev  = document.querySelector('.sb-chevron[data-sec="' + key + '"]');
-    if (links) links.style.maxHeight = collapsed ? '0' : '500px';
+    if (links) links.style.maxHeight = collapsed ? '0' : '600px';
     if (chev)  chev.style.transform  = collapsed ? 'rotate(0deg)' : 'rotate(90deg)';
   }
 
@@ -428,21 +441,5 @@
     var btn = document.getElementById('nexus-co-selector');
     if (dd && btn && !btn.contains(e.target)) dd.style.display = 'none';
   });
-  // ── Load nexus-search.js if not already present ──
-  (function() {
-    if (window.NexusSearch) return; // already loaded
-    var s = document.createElement('script');
-    s.src = (function() {
-      // Find relative base from existing sidebar script tag
-      var scripts = document.querySelectorAll('script[src*="nexus-sidebar"]');
-      if (scripts.length) {
-        var src = scripts[scripts.length-1].src;
-        return src.replace(/nexus-sidebar\.js.*$/, 'nexus-search.js?v=6');
-      }
-      return 'nexus-search.js?v=6';
-    })();
-    s.async = false;
-    document.head.appendChild(s);
-  })();
 
 })();
