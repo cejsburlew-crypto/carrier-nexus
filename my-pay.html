@@ -370,7 +370,7 @@ function getViewMonday(){var today=new Date('2026-06-22'),mon=getMonday(today);m
 function shiftWeek(dir){weekOffset+=dir;if(weekOffset>0)weekOffset=0;render();}
 
 // ─── DATA ─────────────────────────────────────────
-function getSettForWeek(driverId,monStr){return parseLS('nexus_settlements',[]).find(function(s){return s.driverId===driverId&&s.weekMonday===monStr;})||null;}
+function getSettForWeek(driverId,monStr){return parseLS('nexus_settlements',[]).find(function(s){return s.driverId===driverId&&(s.weekMonday===monStr||s.week_start===monStr);})||null;}
 function getLoadsForWeek(driverId,monStr,sunStr){return parseLS('nexus_loads_v2',[]).filter(function(l){if(l.driverId!==driverId)return false;if(l.weekMonday)return l.weekMonday===monStr;return (l.pickupDate||'')>=monStr&&(l.pickupDate||'')<=sunStr;});}
 function getExpensesForWeek(driverId,monStr,sunStr){return parseLS('nexus_expenses',[]).filter(function(e){if(e.driverId&&e.driverId!==driverId)return false;var dt=e.date||e.transactionDate||'';return dt>=monStr&&dt<=sunStr;});}
 function calcOnTheFly(driverId,loads,expenses){
@@ -438,7 +438,7 @@ function renderHero(wd){
 }
 
 function renderMetrics(){
-  var setts=parseLS('nexus_settlements',[]).filter(function(s){return s.driverId===viewingDriver&&(s.weekMonday||'').startsWith('2026');});
+  var setts=parseLS('nexus_settlements',[]).filter(function(s){return s.driverId===viewingDriver&&((s.weekMonday||s.week_start||'').startsWith('2026'));});
   var ytdNet=setts.reduce(function(a,s){return a+(s.net||0);},0);
   var bestNet=setts.reduce(function(a,s){return Math.max(a,s.net||0);},0);
   var active=setts.filter(function(s){return (s.gross||0)>0;}).length;
@@ -454,18 +454,18 @@ function renderMetrics(){
 }
 
 function renderHistory(){
-  var setts=parseLS('nexus_settlements',[]).filter(function(s){return s.driverId===viewingDriver;}).sort(function(a,b){return b.weekMonday>a.weekMonday?1:-1;}).slice(0,12);
+  var setts=parseLS('nexus_settlements',[]).filter(function(s){return s.driverId===viewingDriver;}).sort(function(a,b){var aDate=a.weekMonday||a.week_start||'';var bDate=b.weekMonday||b.week_start||'';return bDate>aDate?1:-1;}).slice(0,12);
   if(!setts.length){document.getElementById('historyList').innerHTML='<div class="empty-state">No pay history found.</div>';return;}
   var h='';
   setts.forEach(function(s,i){
-    var mon=new Date(s.weekMonday+'T12:00:00'),sun=addDays(mon,6);
+    var mon=new Date((s.weekMonday||s.week_start)+'T12:00:00'),sun=addDays(mon,6);
     var wl=MS[mon.getMonth()]+' '+String(mon.getDate()).padStart(2,'0')+' - '+MS[sun.getMonth()]+' '+String(sun.getDate()).padStart(2,'0');
     var lc=(s.loads||[]).length;
     var expH='<div class="history-expand" id="hexp'+i+'">';
     if(lc){expH+='<div class="history-expand-section">Loads</div>';(s.loads||[]).forEach(function(l){expH+='<div class="history-expand-row"><span class="history-expand-label">'+(l.origin&&l.destination?l.origin+' → '+l.destination:l.id)+'</span><span class="history-expand-amt" style="color:#4ade80">'+fmt(l.rate||0)+'</span></div>';});}
     if((s.deductions||[]).length){expH+='<div class="history-expand-section">Deductions</div>';s.deductions.forEach(function(d){expH+='<div class="history-expand-row"><span class="history-expand-label">'+d.label+'</span><span class="history-expand-amt" style="color:#f87171">- '+fmt(d.amount)+'</span></div>';});}
     expH+='<div class="history-expand-row" style="margin-top:8px;padding-top:8px;border-top:1px solid #1a1a1a;"><span class="history-expand-label" style="font-weight:700;color:#9ca3af">Net Pay</span><span class="history-expand-amt" style="color:#14b8a6;font-size:14px">'+fmt(s.net)+'</span></div></div>';
-    h+='<div class="history-row"><div class="history-row-header" onclick="toggleHist('+i+')"><div class="history-row-left"><div class="history-week">'+wl+'</div><div class="history-loads">'+lc+' load'+(lc!==1?'s':'')+' &middot; Gross '+fmt(s.gross)+' &middot; Ded. '+fmt(s.totalDeductions)+'</div></div><div class="history-row-right">'+statusBadgeHtml(s.status||'PENDING APPROVAL')+'<div class="history-net">'+fmt(s.net)+'</div><span class="history-chevron" id="hchev'+i+'">&rsaquo;</span></div></div>'+expH+'</div>';
+    h+='<div class="history-row"><div class="history-row-header" onclick="toggleHist('+i+')"><div class="history-row-left"><div class="history-week">'+wl+'</div><div class="history-loads">'+lc+' load'+(lc!==1?'s':'')+' &middot; Gross '+fmt(s.gross)+' &middot; Ded. '+fmt(s.totalDeductions||s.total_deductions||0)+'</div></div><div class="history-row-right">'+statusBadgeHtml(s.status||'PENDING APPROVAL')+'<div class="history-net">'+fmt(s.net)+'</div><span class="history-chevron" id="hchev'+i+'">&rsaquo;</span></div></div>'+expH+'</div>';
   });
   document.getElementById('historyList').innerHTML=h;
 }
@@ -517,10 +517,10 @@ function renderLoads(loads,wd){
 }
 
 function renderDisputeForm(){
-  var setts=parseLS('nexus_settlements',[]).filter(function(s){return s.driverId===viewingDriver;}).sort(function(a,b){return b.weekMonday>a.weekMonday?1:-1;}).slice(0,12);
+  var setts=parseLS('nexus_settlements',[]).filter(function(s){return s.driverId===viewingDriver;}).sort(function(a,b){var aDate=a.weekMonday||a.week_start||'';var bDate=b.weekMonday||b.week_start||'';return bDate>aDate?1:-1;}).slice(0,12);
   var sel=document.getElementById('disputeWeek');
   sel.innerHTML='<option value="">Select week&hellip;</option>';
-  setts.forEach(function(s){var o=document.createElement('option');o.value=s.weekMonday;o.textContent=s.weekLabel||s.weekMonday;sel.appendChild(o);});
+  setts.forEach(function(s){var o=document.createElement('option');o.value=s.weekMonday||s.week_start;o.textContent=s.weekLabel||s.week_label||s.weekMonday||s.week_start;sel.appendChild(o);});
 }
 
 function updateDisputeDeductions(){

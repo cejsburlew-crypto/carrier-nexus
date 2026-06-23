@@ -322,14 +322,17 @@
           driverId: driver.id,
           driverName: driver.name,
           driverEmail: driver.email,
+          weekMonday: week.start,
           week_start: week.start,
-          week_end: week.end,
+          weekLabel: week.label,
           week_label: week.label,
+          week_end: week.end,
           loads: loads,
           gross: gross,
           dispatch_rate: driver.dispatchRate,
           dispatch_fee: dispatchFee,
           deductions: deductions,
+          totalDeductions: totalDeductions,
           total_deductions: totalDeductions,
           net: net,
           status: status,
@@ -345,8 +348,27 @@
     return records;
   }
 
+  // ── Migrate existing records to canonical schema ───────────────────────────
+  function migrateExistingRecords() {
+    var existing = JSON.parse(localStorage.getItem('nexus_settlements') || '[]');
+    var changed = 0;
+    existing = existing.map(function(s) {
+      var updated = false;
+      if (!s.weekMonday && s.week_start) { s.weekMonday = s.week_start; updated = true; }
+      if (!s.weekLabel && s.week_label) { s.weekLabel = s.week_label; updated = true; }
+      if (!s.totalDeductions && s.total_deductions) { s.totalDeductions = s.total_deductions; updated = true; }
+      if (updated) changed++;
+      return s;
+    });
+    if (changed > 0) {
+      localStorage.setItem('nexus_settlements', JSON.stringify(existing));
+    }
+    return changed;
+  }
+
   // ── Inject into localStorage ────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', function() {
+    var migrated = migrateExistingRecords();
     const newRecords = generateRecords();
 
     let existing = [];
@@ -368,7 +390,8 @@
       '<span class="big">✅ Injected ' + toInject.length + ' new settlement records.</span><br>' +
       'Total in localStorage: <strong>' + merged.length + '</strong> &nbsp;&nbsp;|&nbsp;&nbsp; ' +
       'Duplicates skipped: <strong>' + skipped + '</strong> &nbsp;&nbsp;|&nbsp;&nbsp; ' +
-      'Records generated this run: <strong>' + newRecords.length + '</strong>';
+      'Records generated this run: <strong>' + newRecords.length + '</strong> &nbsp;&nbsp;|&nbsp;&nbsp; ' +
+      'Migrated existing: <strong>' + migrated + '</strong> records to new schema';
 
     // Summary table
     const driverTotals = {};
