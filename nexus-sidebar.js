@@ -37,6 +37,7 @@
     { key:'maint',   label:'Maintenance', pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','tires.html','fuel.html','dvir.html'] },
     { key:'admin',   label:'Admin',       pages:['member-management.html','admin-users.html'] },
     { key:'intel',   label:'Intelligence',pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html'] },
+    { key:'comms',   label:'Communications',pages:['nexus-connect.html'] },
   ];
 
   // Determine which section the current page lives in
@@ -159,7 +160,8 @@
     ai:      '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 4H7v5l4.5 2.7-.7-1.2-3.8-2.3V5z"/></svg>',
     file:    '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V7L8 2z"/><polyline points="8 2 8 7 13 7"/></svg>',
     eld:     '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 00-3 3c0 1.3.83 2.4 2 2.82V8H5v2h2v1.18A3 3 0 108 14.93V10h2V8H8V6.82A3.001 3.001 0 008 1zm0 12a1 1 0 110-2 1 1 0 010 2zm0-8a1 1 0 110-2 1 1 0 010 2z"/></svg>',
-    map:     '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 2l5 2 4-2 5 2v11l-5-2-4 2-5-2V2zm5 2.5v8l4-2V4.5l-4 2z"/></svg>',
+    map:     '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 2l5 2 4-2 5 2v11l-5-2-4 2-5-2V2zm5 2.5v8l4-2V4.5l-4 2z"></path></svg>',
+    connect: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
   };
 
   var navHtml =
@@ -222,6 +224,9 @@
       lnk('drive-settings.html',       I.file,    'Integrations') +
       lnk('eld-settings.html',         I.eld,     'ELD Integration') +
       lnk('search.html',                 I.bar,     'Global Search')
+    ) +
+    sec('comms', 'Communications',
+      lnk('nexus-connect.html',          I.connect, 'Nexus Connect')
     );
 
   const html = `
