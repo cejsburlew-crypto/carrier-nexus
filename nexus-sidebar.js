@@ -44,7 +44,7 @@
     { key:'maint',   label:'Maintenance',    pages:['equipment.html','tires.html','pm-schedule.html','dvir.html','fuel.html','scale-tickets.html','weight-calculator.html','driver-services.html'] },
     { key:'compliance', label:'Compliance',  pages:['dot-compliance.html','permits.html'] },
     { key:'comms',   label:'Communications', pages:['nexus-connect.html','whatsapp-import.html'] },
-    { key:'admin',   label:'Admin',          pages:['admin-users.html','member-management.html','nexus-ai.html'] },
+    { key:'admin',   label:'Admin',          pages:['admin-users.html','member-management.html','nexus-ai.html','data-import.html'] },
   ];
 
   // Determine which section the current page lives in
@@ -175,6 +175,7 @@
     people:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
     signal:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>',
     wallet:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 12h.01M2 10h20"/><path d="M14 12a2 2 0 0 1 4 0v2a2 2 0 0 1-4 0v-2z"/></svg>',
+    dbimport:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4.03 3-9 3S3 13.66 3 12"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/></svg>',
   };
 
   var navHtml =
@@ -229,7 +230,8 @@
     sec('admin', 'Admin',
       lnk('admin-users.html',         I.admin,   'User Accounts') +
       lnk('member-management.html',   I.members, 'Members') +
-      lnk('nexus-ai.html',            I.ai,      'AI Assistant')
+      lnk('nexus-ai.html',            I.ai,      'AI Assistant') +
+      lnk('data-import.html',         I.dbimport,'Data Import')
     );
 
   const html = `
