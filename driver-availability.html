@@ -458,7 +458,10 @@ function switchTab(id){
   document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
   document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
   document.getElementById('tab-'+id).classList.add('active');
-  event.target.classList.add('active');
+  // Re-activate the tab button by matching onclick attribute
+  document.querySelectorAll('.tab-btn').forEach(function(b){
+    if(b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+id+"'"))b.classList.add('active');
+  });
   if(id==='network')renderNetwork('all');
 }
 
@@ -530,7 +533,5 @@ function showToast(msg){
   setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(20px)';},3000);
 }
 </script>
-<script src="nexus-core.js?v=6"></script>
-<script src="nexus-search.js?v=6"></script>
 </body>
 </html>

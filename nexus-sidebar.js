@@ -39,7 +39,7 @@
   var SECTIONS = [
     { key:'ops',     label:'Operations',     pages:['fleet-command.html','active-loads.html','settlements.html','weekly-settlements.html','settlement-review.html','drivers.html','permits.html','pods.html','issues.html'] },
     { key:'dispatch',label:'Dispatch',       pages:['dispatcher-hub.html','load-board.html','commissions.html','available-dispatchers.html','available-drivers.html'] },
-    { key:'driver',  label:'Driver',         pages:['driver-command.html','driver-availability.html','equipment-marketplace.html','my-pay.html','social-recruiting.html','driver-intake.html'] },
+    { key:'driver',  label:'Driver',         pages:['driver-command.html','driver-availability.html','equipment-marketplace.html','my-pay.html','social-recruiting.html','driver-intake.html','driver-profile.html'] },
     { key:'finance', label:'Finance',        pages:['invoicing.html','whatsapp-import.html','expenses.html','financials.html','ifta.html'] },
     { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','emails.html','doc-inbox.html'] },
     { key:'contacts',label:'Contacts',       pages:['contacts.html'] },
@@ -203,6 +203,7 @@
       lnk('my-pay.html',               I.wallet,  'My Pay') +
       lnk('driver-command.html',       I.signal,  'Driver Command') +
       lnk('driver-intake.html',         I.upload,  'Driver Intake') +
+      lnk('driver-profile.html',         I.person,  'My Profile') +
       lnk('driver-availability.html',  I.signal,  'Availability Network') +
       lnk('equipment-marketplace.html', I.market,  'Equipment Marketplace') +
       lnk('social-recruiting.html',     I.people,  'Community &amp; Jobs')
