@@ -37,17 +37,14 @@
 
   // Section definitions — key, label, pages in section (for auto-expand)
   var SECTIONS = [
-    { key:'ops',     label:'Operations',     pages:['fleet-command.html','active-loads.html','settlements.html','weekly-settlements.html','settlement-review.html','drivers.html','permits.html','pods.html','issues.html'] },
-    { key:'dispatch',label:'Dispatch',       pages:['dispatcher-hub.html','load-board.html','commissions.html','available-dispatchers.html','available-drivers.html'] },
-    { key:'driver',  label:'Driver',         pages:['driver-command.html','driver-availability.html','equipment-marketplace.html','my-pay.html','social-recruiting.html','driver-intake.html','driver-profile.html'] },
-    { key:'finance', label:'Finance',        pages:['invoicing.html','whatsapp-import.html','expenses.html','financials.html','ifta.html'] },
-    { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','emails.html','doc-inbox.html'] },
-    { key:'contacts',label:'Contacts',       pages:['contacts.html'] },
-    { key:'taxhr',   label:'Tax & HR',       pages:['tax-forms.html','w9.html'] },
-    { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','tires.html','fuel.html','dvir.html','driver-services.html','scale-tickets.html','weight-calculator.html'] },
-    { key:'admin',   label:'Admin',          pages:['member-management.html','admin-users.html'] },
-    { key:'intel',   label:'Intelligence',   pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html','search.html'] },
-    { key:'comms',   label:'Communications', pages:['nexus-connect.html'] },
+    { key:'ops',     label:'Operations',     pages:['index.html','active-loads.html','dispatcher-hub.html','load-board.html'] },
+    { key:'driver',  label:'Driver',         pages:['driver-command.html','driver-intake.html','my-pay.html','driver-availability.html','driver-profile.html','social-recruiting.html','equipment-marketplace.html'] },
+    { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','doc-inbox.html'] },
+    { key:'finance', label:'Finance',        pages:['financials.html','settlements.html','weekly-settlements.html','invoicing.html','expenses.html','ifta.html','tax-forms.html'] },
+    { key:'maint',   label:'Maintenance',    pages:['equipment.html','tires.html','pm-schedule.html','dvir.html','fuel.html','scale-tickets.html','weight-calculator.html','driver-services.html'] },
+    { key:'compliance', label:'Compliance',  pages:['dot-compliance.html','permits.html'] },
+    { key:'comms',   label:'Communications', pages:['nexus-connect.html','whatsapp-import.html'] },
+    { key:'admin',   label:'Admin',          pages:['admin-users.html','member-management.html','nexus-ai.html'] },
   ];
 
   // Determine which section the current page lives in
@@ -182,79 +179,57 @@
 
   var navHtml =
     sec('ops', 'Operations',
-      lnk('fleet-command.html',        I.grid,    'Operations Dashboard') +
-      lnk('active-loads.html',         I.loads,   'Active Loads') +
-      lnk('settlements.html',          I.settle,  'Settlements') +
-      lnk('weekly-settlements.html',   I.builder, 'Settlement Builder') +
-      lnk('settlement-review.html',    I.review,  'Approval Queue') +
-      lnk('drivers.html',              I.driver,  'Drivers') +
-      lnk('permits.html',              I.permit,  'Permits') +
-      lnk('pods.html',                 I.clock,   'Missing PODs') +
-      lnk('issues.html',               I.issue,   'Issues')
-    ) +
-    sec('dispatch', 'Dispatch',
-      lnk('dispatcher-hub.html',       I.monitor, 'Dispatch Board') +
-      lnk('load-board.html',           I.map,     'Load Board') +
-      lnk('commissions.html',          I.comm,    'Commissions') +
-      lnk('available-dispatchers.html',I.team,    'Dispatcher Roster') +
-      lnk('available-drivers.html',    I.person,  'Driver Pool')
+      lnk('index.html',               I.grid,    'Dashboard') +
+      lnk('active-loads.html',        I.loads,   'Active Loads') +
+      lnk('dispatcher-hub.html',      I.monitor, 'Dispatch Board') +
+      lnk('load-board.html',          I.map,     'Load Board')
     ) +
     sec('driver', 'Driver',
-      lnk('my-pay.html',               I.wallet,  'My Pay') +
-      lnk('driver-command.html',       I.signal,  'Driver Command') +
-      lnk('driver-intake.html',         I.upload,  'Driver Intake') +
-      lnk('driver-profile.html',         I.person,  'My Profile') +
-      lnk('driver-availability.html',  I.signal,  'Availability Network') +
-      lnk('equipment-marketplace.html', I.market,  'Equipment Marketplace') +
-      lnk('social-recruiting.html',     I.people,  'Community &amp; Jobs')
-    ) +
-    sec('finance', 'Finance',
-      lnk('invoicing.html',            I.invoice, 'Invoicing') +
-      lnk('whatsapp-import.html',      I.chat,    'WhatsApp Import') +
-      lnk('expenses.html',             I.expense, 'Expenses') +
-      lnk('financials.html',           I.bar,     'Financials') +
-      lnk('ifta.html',                 I.ifta,    'IFTA Reporting')
+      lnk('driver-command.html',      I.signal,  'Driver Command') +
+      lnk('driver-intake.html',       I.upload,  'Driver Intake') +
+      lnk('my-pay.html',              I.wallet,  'My Pay') +
+      lnk('driver-availability.html', I.signal,  'Availability') +
+      lnk('driver-profile.html',      I.person,  'Driver Profile') +
+      lnk('social-recruiting.html',   I.people,  'Driver Recruiting') +
+      lnk('equipment-marketplace.html', I.market, 'Equipment Marketplace')
     ) +
     sec('docs', 'Documents',
-      lnk('documents.html',            I.vault,   'Document Vault') +
-      lnk('upload.html',               I.upload,  'Upload Docs') +
-      lnk('inbox-sync.html',           I.sync,    'Email Import') +
-      lnk('doc-inbox.html',            I.inbox,   'Review Queue') +
-      lnk('emails.html',               I.email,   'Emails')
+      lnk('documents.html',           I.vault,   'Document Vault') +
+      lnk('upload.html',              I.upload,  'Upload Docs') +
+      lnk('inbox-sync.html',          I.sync,    'Email Import') +
+      lnk('doc-inbox.html',           I.inbox,   'Review Queue')
     ) +
-    sec('contacts', 'Contacts',
-      lnk('contacts.html',             I.contact, 'Directory') +
-      '<a href="contacts.html?tab=broker" class="sidebar-link">' + I.team + 'Brokers</a>'
-    ) +
-    sec('taxhr', 'Tax & HR',
-      lnk('tax-forms.html',            I.tax,     '1099-NEC') +
-      lnk('w9.html',                   I.tax,     'W-9 Forms')
+    sec('finance', 'Finance',
+      lnk('financials.html',          I.bar,     'Financials') +
+      lnk('settlements.html',         I.settle,  'Settlements') +
+      lnk('weekly-settlements.html',  I.builder, 'Settlement Builder') +
+      lnk('invoicing.html',           I.invoice, 'Invoicing') +
+      lnk('expenses.html',            I.expense, 'Expenses') +
+      lnk('ifta.html',                I.ifta,    'IFTA Reporting') +
+      lnk('tax-forms.html',           I.tax,     '1099-NEC / W-9')
     ) +
     sec('maint', 'Maintenance',
-      lnk('equipment.html',            I.truck,   'Fleet & Equipment') +
-      lnk('maintenance.html',          I.wrench,  'Maintenance Log') +
-      lnk('pm-schedule.html',          I.cal,     'PM Schedule') +
-      lnk('dvir.html',                 I.dvir,    'Inspection Reports') +
-      lnk('dot-compliance.html',       I.dot,     'DOT Compliance') +
-      lnk('tires.html',                I.tire,    'Tires') +
-      lnk('fuel.html',                 I.fuel,    'Fuel') +
-      lnk('driver-services.html',      I.service, 'Driver Services') +
-      lnk('scale-tickets.html',        I.scale,   'Scale Tickets') +
-      lnk('weight-calculator.html',   I.scale,   'Weight Calculator')
+      lnk('equipment.html',           I.truck,   'Fleet & Equipment') +
+      lnk('tires.html',               I.tire,    'Tires') +
+      lnk('pm-schedule.html',         I.cal,     'PM Schedule') +
+      lnk('dvir.html',                I.dvir,    'Inspection Reports') +
+      lnk('fuel.html',                I.fuel,    'Fuel') +
+      lnk('scale-tickets.html',       I.scale,   'Scale Tickets') +
+      lnk('weight-calculator.html',   I.scale,   'Weight Calculator') +
+      lnk('driver-services.html',     I.service, 'Driver Services')
     ) +
-    sec('admin', 'Admin',
-      lnk('member-management.html',    I.members, 'Members') +
-      lnk('admin-users.html',          I.admin,   'User Accounts')
-    ) +
-    sec('intel', 'Intelligence',
-      lnk('nexus-ai.html',             I.ai,      'AI Assistant') +
-      lnk('analysis.html',             I.bar,     'Analytics') +
-      lnk('drive-settings.html',       I.file,    'Integrations') +
-      lnk('eld-settings.html',         I.eld,     'ELD Integration') +
-      lnk('search.html',               I.search,  'Search Everything')
+    sec('compliance', 'Compliance',
+      lnk('dot-compliance.html',      I.dot,     'DOT Compliance') +
+      lnk('permits.html',             I.permit,  'Permits')
     ) +
     sec('comms', 'Communications',
-      lnk('nexus-connect.html',        I.connect, 'Nexus Connect')
+      lnk('nexus-connect.html',       I.connect, 'Nexus Connect') +
+      lnk('whatsapp-import.html',     I.chat,    'WhatsApp Import')
+    ) +
+    sec('admin', 'Admin',
+      lnk('admin-users.html',         I.admin,   'User Accounts') +
+      lnk('member-management.html',   I.members, 'Members') +
+      lnk('nexus-ai.html',            I.ai,      'AI Assistant')
     );
 
   const html = `

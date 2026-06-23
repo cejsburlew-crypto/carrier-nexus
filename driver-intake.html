@@ -325,6 +325,56 @@
 
 <!-- CONTENT -->
 <div id="content">
+  <!-- HOME SCREEN -->
+  <div id="panel-home" class="tab-panel" style="display:none;">
+    <div style="padding:20px 16px 100px;">
+      
+      <!-- Greeting -->
+      <div style="background:var(--navy);border-radius:14px;padding:20px 18px;margin-bottom:20px;">
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">DRIVER INTAKE PORTAL</div>
+        <div id="home-greeting" style="font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;">Good morning</div>
+        <div id="home-name" style="font-size:15px;color:var(--teal);font-weight:600;">Carrier Nexus</div>
+      </div>
+
+      <!-- 2x2 Action Grid -->
+      <div style="font-size:11px;font-weight:700;color:var(--gray-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Quick Actions</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
+        
+        <button onclick="goToTab('ratecon')" style="background:var(--navy);border:2px solid var(--teal);border-radius:14px;padding:20px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:background 0.15s;">
+          <span style="font-size:28px;">📋</span>
+          <div style="font-size:14px;font-weight:700;color:#fff;">Submit Rate Con</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55);">Add a new load</div>
+        </button>
+
+        <button onclick="goToTab('docs')" style="background:var(--navy);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:20px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:background 0.15s;">
+          <span style="font-size:28px;">📄</span>
+          <div style="font-size:14px;font-weight:700;color:#fff;">Upload Document</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55);">BOL, CDL, permits…</div>
+        </button>
+
+        <button onclick="goToTab('expenses')" style="background:var(--navy);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:20px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:background 0.15s;">
+          <span style="font-size:28px;">💳</span>
+          <div style="font-size:14px;font-weight:700;color:#fff;">Log Expense</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55);">Fuel, tolls, repairs…</div>
+        </button>
+
+        <button onclick="goToTab('camera')" style="background:var(--navy);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:20px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:background 0.15s;">
+          <span style="font-size:28px;">📷</span>
+          <div style="font-size:14px;font-weight:700;color:#fff;">Scan / Capture</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55);">Camera upload</div>
+        </button>
+
+      </div>
+
+      <!-- Recent Activity -->
+      <div style="font-size:11px;font-weight:700;color:var(--gray-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Recent Submissions</div>
+      <div id="home-recent-list" style="display:flex;flex-direction:column;gap:8px;">
+        <div style="background:#f5f7fa;border-radius:10px;padding:14px 16px;font-size:13px;color:var(--gray-text);text-align:center;">No recent submissions</div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- TAB 1: RATE CON -->
   <div id="panel-ratecon" class="tab-panel active">
     
@@ -337,7 +387,7 @@
     <!-- PHOTO MODE -->
     <div id="photo-mode">
       <div class="form-section">
-        <div class="form-section-title">Capture or Upload Rate Con</div>
+        <div class="form-section-title">Capture or Upload Rate Confirmation</div>
         <label class="photo-capture-btn" id="rc-photo-label">
           <span class="icon">📷</span>
           <div class="label">PHOTOGRAPH RATE CON</div>
@@ -536,9 +586,13 @@
 
 <!-- TAB BAR -->
 <div id="tabbar">
-  <button class="tab-btn active" id="tab-ratecon" onclick="switchTab('ratecon')">
+  <button class="tab-btn" id="tab-home" onclick="switchTab('home')">
+    <span class="tab-icon">🏠</span>
+    <span>Home</span>
+  </button>
+  <button class="tab-btn" id="tab-ratecon" onclick="switchTab('ratecon')">
     <span class="tab-icon">📋</span>
-    <span>Rate Con</span>
+    <span>Rate Confirmation</span>
   </button>
   <button class="tab-btn" id="tab-docs" onclick="switchTab('docs')">
     <span class="tab-icon">📄</span>
@@ -564,10 +618,10 @@
 <!-- SUCCESS SCREEN -->
 <div id="success-screen">
   <div class="success-icon">✅</div>
-  <h2>Rate Con Submitted!</h2>
+  <h2>Rate Confirmation Submitted!</h2>
   <div class="load-id" id="success-load-id"></div>
   <div class="action-btns">
-    <button class="btn-primary" onclick="hideSuccess(); clearRCForm();">Add Another Rate Con</button>
+    <button class="btn-primary" onclick="hideSuccess(); clearRCForm();">Submit Another Rate Confirmation</button>
     <a href="active-loads.html"><button class="btn-outline" style="width:100%;">View Active Loads</button></a>
     <button class="btn-outline" onclick="hideSuccess(); switchTab('docs');">Upload BOL</button>
   </div>
@@ -581,7 +635,7 @@
     <ul class="splash-list">
       <li>
         <span class="s-icon">📋</span>
-        <div class="s-text"><div class="s-label">Rate Con</div><div class="s-sub">Submit loads from your rate con</div></div>
+        <div class="s-text"><div class="s-label">Rate Confirmation</div><div class="s-sub">Submit loads from your rate con</div></div>
       </li>
       <li>
         <span class="s-icon">📄</span>
@@ -608,6 +662,7 @@
 // SECTION BAR LABELS
 // ============================================================
 const SECTION_LABELS = {
+  home:    { title: '🏠 HOME',              desc: 'Driver Intake Portal' },
   ratecon: { title: '📋 RATE CONFIRMATION', desc: 'Submit a new load from rate con' },
   docs:    { title: '📄 DOCUMENTS',         desc: 'Upload or photograph your docs' },
   expenses:{ title: '💰 EXPENSES',          desc: 'Log fuel, food, repairs' },
@@ -637,7 +692,7 @@ function maybeShowSplash() {
 // ============================================================
 // GLOBALS
 // ============================================================
-let currentTab = 'ratecon';
+let currentTab = localStorage.getItem('nexus_intake_toured') === 'true' ? 'ratecon' : 'home';
 let rcPhotoData = null;
 let cameraRotation = 0;
 let cameraImageData = null;
@@ -681,9 +736,50 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Handle hash navigation
   const hash = location.hash.replace('#','');
-  if (hash && ['ratecon','docs','expenses','camera'].includes(hash)) switchTab(hash);
+  if (hash && ['home','ratecon','docs','expenses','camera'].includes(hash)) switchTab(hash);
+  else switchTab(currentTab);
   // Show onboarding splash on first visit
   maybeShowSplash();
+
+  // Home screen greeting and recent activity
+  (function() {
+    var greetEl = document.getElementById('home-greeting');
+    var nameEl = document.getElementById('home-name');
+    if (greetEl) {
+      var h = new Date().getHours();
+      var greeting = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+      greetEl.textContent = greeting;
+    }
+    if (nameEl) {
+      try {
+        var u = localStorage.getItem('nexus_current_user');
+        if (u) {
+          var users = JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS') || '[]');
+          var me = users.find(function(x) { return x.email === u; });
+          if (me && me.name) nameEl.textContent = me.name;
+        }
+      } catch(e) {}
+    }
+    // Recent activity
+    var recentEl = document.getElementById('home-recent-list');
+    if (recentEl) {
+      try {
+        var docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]');
+        var recent = docs.slice(-3).reverse();
+        if (recent.length) {
+          recentEl.innerHTML = recent.map(function(d) {
+            return '<div style="background:#f5f7fa;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;">' +
+              '<span style="font-size:20px;">' + (d.type === 'ratecon' ? '📋' : d.type === 'bol' ? '📜' : '📄') + '</span>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<div style="font-size:13px;font-weight:600;color:#1a1a2e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (d.title || d.type || 'Document') + '</div>' +
+                '<div style="font-size:11px;color:#6b7a99;">' + (d.date || d.submittedAt || '') + '</div>' +
+              '</div>' +
+            '</div>';
+          }).join('');
+        }
+      } catch(e) {}
+    }
+  })();
 });
 
 // ============================================================
@@ -724,6 +820,14 @@ function saveDriverName() {
   document.getElementById('content').style.top = '';
   prefillDriverSelect(n);
 }
+
+// ============================================================
+// HOME SCREEN HELPERS
+// ============================================================
+  function goToTab(tab) {
+    localStorage.setItem('nexus_intake_toured', 'true');
+    switchTab(tab);
+  }
 
 // ============================================================
 // TAB SWITCHING
