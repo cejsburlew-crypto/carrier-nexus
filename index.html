@@ -680,12 +680,18 @@ body {
         <div class="kpi-label">Week Revenue</div>
         <div class="kpi-value" id="kpi-revenue">$36.8K</div>
         <div class="kpi-sub" id="kpi-revenue-sub">6 loads this settlement period</div>
+        <div id="kpi-revenue-net" style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:4px;"></div>
       </div>
       <div class="kpi-card kpi-red">
         <div class="kpi-label">Missing PODs</div>
         <div class="kpi-value" id="kpi-docs">3</div>
         <div class="kpi-sub" id="kpi-docs-sub">Missing PODs · Action required</div>
       </div>
+    </div>
+    <div style="font-size:11px; color:rgba(255,255,255,0.35); margin-top:8px; text-align:center;">
+      Financial data from <span id="data-source-label">settlements</span> ·
+      <a href="data-import.html" style="color:rgba(255,255,255,0.45);">Import data</a> ·
+      <a href="inject_settlements_full.html" style="color:rgba(255,255,255,0.45);">Inject settlements</a>
     </div>
 
     <!-- EXPIRATION ALERTS WIDGET -->
@@ -873,73 +879,11 @@ body {
       <!-- SETTLEMENT QUEUE -->
       <div class="panel">
         <div class="panel-header">
-          <h2>Settlement Queue</h2>
-          <span class="panel-count">7 PENDING</span>
+          <h2>Recent Settlements</h2>
+          <span class="panel-count" id="settle-queue-count">—</span>
         </div>
-        <div class="settlement-list">
-          <div class="settlement-row">
-            <div class="driver-avatar" style="background:#d6e4f0;">AM</div>
-            <div class="settlement-name">
-              <div class="name">Avis Modesto</div>
-              <div class="week">May 18 – May 24, 2026</div>
-            </div>
-            <div class="settlement-amount">$5,380</div>
-            <span class="badge badge-yellow">DRAFT</span>
-          </div>
-          <div class="settlement-row">
-            <div class="driver-avatar" style="background:#d5e8d4;">MF</div>
-            <div class="settlement-name">
-              <div class="name">Miguel Fonseca</div>
-              <div class="week">May 18 – May 24, 2026</div>
-            </div>
-            <div class="settlement-amount">$4,120</div>
-            <span class="badge badge-yellow">DRAFT</span>
-          </div>
-          <div class="settlement-row">
-            <div class="driver-avatar" style="background:#fff3cd;">GP</div>
-            <div class="settlement-name">
-              <div class="name">Guillermo Pinera</div>
-              <div class="week">May 18 – May 24, 2026</div>
-            </div>
-            <div class="settlement-amount">$5,850</div>
-            <span class="badge badge-orange">PENDING APPROVAL</span>
-          </div>
-          <div class="settlement-row">
-            <div class="driver-avatar" style="background:#f8d7da;">DF</div>
-            <div class="settlement-name">
-              <div class="name">David Fonseca</div>
-              <div class="week">May 18 – May 24, 2026</div>
-            </div>
-            <div class="settlement-amount">$4,060</div>
-            <span class="badge badge-orange">PENDING APPROVAL</span>
-          </div>
-          <div class="settlement-row">
-            <div class="driver-avatar" style="background:#e8d5f5;">YP</div>
-            <div class="settlement-name">
-              <div class="name">Yosviel Pinera</div>
-              <div class="week">May 18 – May 24, 2026</div>
-            </div>
-            <div class="settlement-amount">$1,560</div>
-            <span class="badge badge-yellow">DRAFT</span>
-          </div>
-          <div class="settlement-row">
-            <div class="driver-avatar" style="background:#d4edda;">AA</div>
-            <div class="settlement-name">
-              <div class="name">Amet Abreu</div>
-              <div class="week">May 18 – May 24, 2026</div>
-            </div>
-            <div class="settlement-amount">$5,590</div>
-            <span class="badge badge-green">APPROVED</span>
-          </div>
-          <div class="settlement-row">
-            <div class="driver-avatar" style="background:#d1ecf1;">NE</div>
-            <div class="settlement-name">
-              <div class="name">Nelson</div>
-              <div class="week">May 18 – May 24, 2026</div>
-            </div>
-            <div class="settlement-amount">$3,640</div>
-            <span class="badge badge-yellow">DRAFT</span>
-          </div>
+        <div class="settlement-list" id="settle-queue-list">
+          <div style="padding:32px;text-align:center;color:var(--text-muted);font-size:13px;">Loading…</div>
         </div>
       </div>
     </div>
@@ -1044,18 +988,59 @@ body {
     const loads = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]');
     const permits = JSON.parse(localStorage.getItem('nexus_permits_v1') || '[]');
 
-    // Revenue
-    const totalRev = loads.reduce((s, l) => s + (Number(l.rate) || 0), 0);
+    // Financial KPIs — read from nexus_settlements (authoritative)
+    // Fall back to nexus_loads_v2 if no settlements exist
+    var settlements = [];
+    try { settlements = JSON.parse(localStorage.getItem('nexus_settlements') || '[]'); } catch(e) {}
+
+    var totalGross = 0, totalNet = 0, totalDisp = 0, paidCount = 0, pendingCount = 0;
+    var usedSettlements = settlements.length > 0;
+
+    if (usedSettlements) {
+      // Use settlements as financial source of truth
+      settlements.forEach(function(s) {
+        totalGross += Number(s.gross) || 0;
+        totalNet   += Number(s.net)   || 0;
+        totalDisp  += Number(s.dispatch_fee) || Number(s.total_deductions) || 0;
+        if (s.status === 'paid' || s.status === 'PAID') paidCount++;
+        else pendingCount++;
+      });
+    } else {
+      // Fall back to loads
+      loads.forEach(function(l) { totalGross += Number(l.rate) || 0; });
+      totalNet = totalGross * 0.86; // estimate
+    }
+
+    // Revenue KPI card
     const revEl = document.getElementById('kpi-revenue');
     const revSub = document.getElementById('kpi-revenue-sub');
     if (revEl) {
-      revEl.textContent = totalRev >= 1000
-        ? '$' + (totalRev / 1000).toFixed(1) + 'K'
-        : '$' + totalRev.toLocaleString();
+      revEl.textContent = totalGross >= 1000
+        ? '$' + (totalGross / 1000).toFixed(1) + 'K'
+        : '$' + totalGross.toLocaleString();
     }
     if (revSub) {
-      const activeCount = loads.filter(l => l.status === 'active' || l.status === 'transit').length;
-      revSub.textContent = activeCount + ' active loads · ' + loads.length + ' total';
+      if (usedSettlements) {
+        revSub.textContent = paidCount + ' weeks paid · ' + pendingCount + ' pending';
+      } else {
+        const activeCount = loads.filter(l => l.status === 'active' || l.status === 'transit').length;
+        revSub.textContent = activeCount + ' active loads · ' + loads.length + ' total';
+      }
+    }
+
+    // Net + dispatch subtitle under revenue KPI
+    var revNetEl = document.getElementById('kpi-revenue-net');
+    if (revNetEl) {
+      revNetEl.textContent = 'Net to Drivers: $' + totalNet.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})
+        + ' · Dispatch Fees: $' + totalDisp.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+    }
+
+    // Data source label
+    var srcLabel = document.getElementById('data-source-label');
+    if (srcLabel) {
+      srcLabel.textContent = usedSettlements
+        ? 'settlements (' + settlements.length + ' records)'
+        : 'loads (' + loads.length + ' records)';
     }
 
     // Active drivers (unique drivers on active/transit loads)
@@ -1080,6 +1065,93 @@ body {
     if (docsSub) docsSub.textContent = missingPods + ' missing POD' + (missingPods !== 1 ? 's' : '') + ' · Action required';
 
   } catch(e) { console.warn('KPI load error:', e); }
+})();
+</script>
+
+<script>
+// ── SETTLEMENT QUEUE WIDGET (reads nexus_settlements) ────────────────────────
+(function() {
+  var AVATAR_COLORS = ['#d6e4f0','#d5e8d4','#fff3cd','#f8d7da','#e8d5f5','#d4edda','#d1ecf1','#fde8d8'];
+  function initials(name) {
+    if (!name) return '??';
+    var parts = name.trim().split(/\s+/);
+    return parts.length >= 2
+      ? (parts[0][0] + parts[parts.length-1][0]).toUpperCase()
+      : name.slice(0,2).toUpperCase();
+  }
+  function badgeClass(status) {
+    if (!status) return 'badge-yellow';
+    var s = status.toLowerCase();
+    if (s === 'paid') return 'badge-green';
+    if (s === 'approved') return 'badge-green';
+    if (s === 'pending_approval' || s === 'pending approval') return 'badge-orange';
+    if (s === 'draft') return 'badge-yellow';
+    return 'badge-yellow';
+  }
+  function badgeLabel(status) {
+    if (!status) return 'DRAFT';
+    var s = status.toLowerCase();
+    if (s === 'paid') return 'PAID';
+    if (s === 'approved') return 'APPROVED';
+    if (s === 'pending_approval' || s === 'pending approval') return 'PENDING';
+    return s.toUpperCase();
+  }
+  function fmtWeek(s) {
+    var w = s.week_label || s.weekLabel || s.week || s.week_start || s.weekMonday || '';
+    return w || '—';
+  }
+  function fmtMoney(n) {
+    return '$' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+  }
+
+  var list = document.getElementById('settle-queue-list');
+  var countEl = document.getElementById('settle-queue-count');
+  if (!list) return;
+
+  var settlements = [];
+  try { settlements = JSON.parse(localStorage.getItem('nexus_settlements') || '[]'); } catch(e) {}
+
+  if (!settlements.length) {
+    list.innerHTML = '<div style="padding:32px;text-align:center;color:var(--text-muted);font-size:13px;">No settlements yet — add loads and run settlements</div>';
+    if (countEl) countEl.textContent = '0 RECORDS';
+    return;
+  }
+
+  // Sort descending by week start date
+  var sorted = settlements.slice().sort(function(a, b) {
+    var da = a.week_start || a.weekMonday || a.week || '';
+    var db = b.week_start || b.weekMonday || b.week || '';
+    return db.localeCompare(da);
+  });
+
+  // Count pending
+  var pending = sorted.filter(function(s) {
+    var st = (s.status||'').toLowerCase();
+    return st !== 'paid';
+  }).length;
+  if (countEl) countEl.textContent = pending + ' PENDING';
+
+  // Render last 5
+  var display = sorted.slice(0, 5);
+  list.innerHTML = display.map(function(s, i) {
+    var name = s.driver_name || s.driverName || s.member || s.name || '—';
+    var av = initials(name);
+    var col = AVATAR_COLORS[i % AVATAR_COLORS.length];
+    var gross = fmtMoney(s.gross);
+    var net = fmtMoney(s.net);
+    var bc = badgeClass(s.status);
+    var bl = badgeLabel(s.status);
+    var week = fmtWeek(s);
+    return '<div class="settlement-row">'
+      + '<div class="driver-avatar" style="background:' + col + ';">' + av + '</div>'
+      + '<div class="settlement-name">'
+      +   '<div class="name">' + name + '</div>'
+      +   '<div class="week">' + week + '</div>'
+      + '</div>'
+      + '<div class="settlement-amount">' + gross + '<span style="display:block;font-size:10px;color:var(--text-muted);">net ' + net + '</span></div>'
+      + '<span class="badge ' + bc + '">' + bl + '</span>'
+      + '</div>';
+  }).join('');
 })();
 </script>
 

@@ -209,6 +209,9 @@
         <div class="kpi-delta down">7.3% of RC</div>
       </div>
     </div>
+    <div style="font-size:11px; color:rgba(255,255,255,0.35); margin-top:8px; text-align:center;" id="financials-data-source">
+      Financial data from nexus_loads_v2 (settlements not yet loaded)
+    </div>
 
     <!-- MAIN CHART + VARIABLE TABLE -->
     <div class="chart-grid">
@@ -713,6 +716,46 @@ function fmt$(n) {
 function buildProfitPerLoad() {
   let loads = [];
   let expenses = [];
+  // Primary: use settlements for financial totals
+  var settlements = [];
+  try { settlements = JSON.parse(localStorage.getItem('nexus_settlements') || '[]'); } catch(e) {}
+
+  if (settlements.length > 0) {
+    var settGross = settlements.reduce(function(s,r){ return s + (Number(r.gross)||0); }, 0);
+    var settNet   = settlements.reduce(function(s,r){ return s + (Number(r.net)||0); }, 0);
+    var settDisp  = settlements.reduce(function(s,r){ return s + (Number(r.dispatch_fee)||Number(r.total_deductions)||0); }, 0);
+    var settPaid  = settlements.filter(function(r){ return (r.status||'').toLowerCase()==='paid'; }).length;
+
+    // Update KPI display elements (gross revenue card)
+    var grossEl = document.getElementById('total-revenue') || document.getElementById('kpi-gross') || document.getElementById('gross-revenue');
+    if (grossEl) grossEl.textContent = '$' + settGross.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+    // Update the static KPI card values if elements exist
+    var kpiCards = document.querySelectorAll('.kpi-card');
+    kpiCards.forEach(function(card) {
+      var label = (card.querySelector('.kpi-label')||{}).textContent || '';
+      var valEl = card.querySelector('.kpi-value');
+      var subEl = card.querySelector('.kpi-sub');
+      if (!valEl) return;
+      if (/gross revenue/i.test(label)) {
+        valEl.textContent = '$' + settGross.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+        if (subEl) subEl.textContent = settlements.length + ' settlement records';
+      } else if (/net margin/i.test(label)) {
+        valEl.textContent = '$' + settNet.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+        var pct = settGross > 0 ? (settNet/settGross*100).toFixed(1) : '0.0';
+        if (subEl) subEl.textContent = pct + '% of gross';
+      } else if (/dispatch fee/i.test(label)) {
+        valEl.textContent = '$' + settDisp.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+        var dispPct = settGross > 0 ? (settDisp/settGross*100).toFixed(1) : '0.0';
+        if (subEl) subEl.textContent = dispPct + '% of gross';
+      }
+    });
+
+    // Data source note
+    var srcNote = document.getElementById('financials-data-source');
+    if (srcNote) srcNote.textContent = 'Financial totals from nexus_settlements (' + settlements.length + ' records, ' + settPaid + ' paid)';
+  }
+
   try { loads = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]'); } catch(e){}
   try { expenses = JSON.parse(localStorage.getItem('nexus_expenses') || '[]'); } catch(e){}
 
