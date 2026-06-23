@@ -26,9 +26,6 @@ body{background:#0f1724;color:#f0f4f8;font-family:'Barlow',sans-serif;min-height
 .online-dot{width:5px;height:5px;border-radius:50%;background:#00d4aa;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 
-/* ADMIN BANNER */
-.admin-banner{background:rgba(251,191,36,.1);border-bottom:1px solid rgba(251,191,36,.3);padding:8px 20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#fbbf24;letter-spacing:.04em;display:flex;align-items:center;gap:8px;}
-
 /* SECTION LABEL */
 .section-label{padding:18px 20px 8px;font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.2em;text-transform:uppercase;}
 
@@ -111,6 +108,44 @@ body{background:#0f1724;color:#f0f4f8;font-family:'Barlow',sans-serif;min-height
 .bnav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:rgba(255,255,255,.35);font-size:9px;font-weight:500;letter-spacing:.04em;text-decoration:none;transition:color .12s;-webkit-tap-highlight-color:transparent;}
 .bnav-tab.active{color:#00d4aa;}
 .bnav-tab svg{width:18px;height:18px;}
+
+/* DRIVER PROFILE CARD */
+.driver-profile-card{margin:12px 20px 0;background:#1a2236;border:1px solid rgba(0,212,170,.25);padding:14px 16px;display:flex;align-items:center;gap:14px;position:relative;}
+.driver-avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;color:#fff;flex-shrink:0;letter-spacing:.03em;}
+.driver-card-info{flex:1;min-width:0;}
+.driver-card-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.06em;color:#fff;line-height:1.1;}
+.driver-card-meta{font-size:11px;color:rgba(255,255,255,.5);margin-top:3px;line-height:1.4;}
+.driver-card-avail{display:flex;align-items:center;gap:5px;margin-top:5px;font-size:11px;font-weight:600;}
+.avail-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.avail-dot.on{background:#00d4aa;box-shadow:0 0 5px #00d4aa;}
+.avail-dot.off{background:rgba(255,255,255,.25);}
+.switch-driver-btn{background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.35);color:#00d4aa;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;cursor:pointer;display:flex;align-items:center;gap:5px;flex-shrink:0;transition:background .12s,border-color .12s;-webkit-tap-highlight-color:transparent;}
+.switch-driver-btn:hover{background:rgba(0,212,170,.22);border-color:rgba(0,212,170,.6);}
+.switch-driver-btn:active{transform:scale(.97);}
+
+/* BOTTOM SHEET */
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;opacity:0;pointer-events:none;transition:opacity .22s;}
+.sheet-overlay.open{opacity:1;pointer-events:all;}
+.bottom-sheet{position:fixed;bottom:0;left:0;right:0;background:#131b2e;border-top:1px solid rgba(255,255,255,.12);border-radius:18px 18px 0 0;z-index:201;transform:translateY(100%);transition:transform .28s cubic-bezier(.22,1,.36,1);max-height:85vh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,12px);}
+.bottom-sheet.open{transform:translateY(0);}
+.sheet-handle{width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin:12px auto 0;}
+.sheet-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;}
+.sheet-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.08em;color:#fff;}
+.sheet-close{width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.07);border:none;color:rgba(255,255,255,.6);font-size:18px;cursor:pointer;border-radius:50%;flex-shrink:0;}
+.sheet-close:hover{background:rgba(255,255,255,.14);color:#fff;}
+.sheet-section-label{padding:8px 20px 4px;font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.18em;text-transform:uppercase;}
+.sheet-divider{height:1px;background:rgba(255,255,255,.07);margin:4px 0;}
+.sheet-row{display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;border-left:3px solid transparent;transition:background .12s,border-color .12s;-webkit-tap-highlight-color:transparent;}
+.sheet-row:hover{background:rgba(255,255,255,.04);}
+.sheet-row:active{background:rgba(255,255,255,.07);}
+.sheet-row.selected{border-left-color:#00d4aa;background:rgba(0,212,170,.07);}
+.sheet-row-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;color:#fff;flex-shrink:0;}
+.sheet-row-info{flex:1;min-width:0;}
+.sheet-row-name{font-size:14px;font-weight:600;color:#f0f4f8;}
+.sheet-row-role{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px;text-transform:capitalize;}
+.sheet-row-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sheet-row-dot.on{background:#00d4aa;}
+.sheet-row-dot.off{background:rgba(255,255,255,.2);}
 </style>
 <style id="nexus-unified">
 .sidebar,nav.sidebar{background:#000!important;border-right:1px solid #1a1a1a!important;}
@@ -142,12 +177,6 @@ if ('serviceWorker' in navigator) {
 <div class="layout">
 <div class="main-content">
 
-<!-- ADMIN BANNER -->
-<div class="admin-banner" id="adminBanner" style="display:none;">
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-  Driver Command Preview &mdash; viewing as <span id="adminRole">admin</span> &bull; Data shown for all drivers
-</div>
-
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-left">
@@ -162,7 +191,24 @@ if ('serviceWorker' in navigator) {
   </div>
 </div>
 
-<div style="padding: 16px; background: #1a2744; border-radius: 12px; margin-bottom: 16px;">
+<!-- DRIVER PROFILE CARD -->
+<div class="driver-profile-card" id="driverProfileCard">
+  <div class="driver-avatar" id="driverAvatar" style="background:#0e7490;">—</div>
+  <div class="driver-card-info">
+    <div class="driver-card-name" id="driverCardName">Loading…</div>
+    <div class="driver-card-meta" id="driverCardMeta">Driver</div>
+    <div class="driver-card-avail" id="driverCardAvail">
+      <div class="avail-dot off" id="driverAvailDot"></div>
+      <span id="driverAvailTxt" style="color:rgba(255,255,255,.4);">Unknown</span>
+    </div>
+  </div>
+  <button class="switch-driver-btn" id="switchDriverBtn" onclick="openDriverSheet()" style="display:none;">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    Switch
+  </button>
+</div>
+
+<div style="padding: 16px; background: #1a2744; border-radius: 0; margin-bottom: 0; padding-top:14px;">
   <div style="color: #00d4aa; font-size: 12px; font-weight: 700; letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase;">Quick Actions</div>
   <div style="display: flex; gap: 10px;">
     <a href="driver-intake.html" style="flex:1; display:block; background:#00d4aa; color:#1a2744; text-align:center; padding:14px; border-radius:10px; font-weight:800; font-size:16px; text-decoration:none;">📋 Add Rate Con</a>
@@ -263,6 +309,20 @@ if ('serviceWorker' in navigator) {
 </div><!-- /main-content -->
 </div><!-- /layout -->
 
+<!-- SWITCH DRIVER BOTTOM SHEET -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeDriverSheet()"></div>
+<div class="bottom-sheet" id="driverSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div class="sheet-title">Select Driver</div>
+    <button class="sheet-close" onclick="closeDriverSheet()">&#x2715;</button>
+  </div>
+  <div id="sheetDriverList"></div>
+  <div class="sheet-divider"></div>
+  <div id="sheetDispatcherList"></div>
+  <div style="height:12px;"></div>
+</div>
+
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <a href="driver-command.html" class="bnav-tab active">
@@ -279,30 +339,295 @@ if ('serviceWorker' in navigator) {
 
 <script>
 (function(){
+  // ── Avatar color palette (same as driver-profile.html) ──────────────────
+  var AVATAR_COLORS=['#0e7490','#0f766e','#1d4ed8','#7c3aed','#b91c1c','#b45309','#15803d','#9d174d','#1e40af','#065f46'];
+  function avatarColor(str){
+    var h=0;for(var i=0;i<(str||'').length;i++){h=(h*31+str.charCodeAt(i))&0xffffffff;}
+    return AVATAR_COLORS[Math.abs(h)%AVATAR_COLORS.length];
+  }
+  function initials(name){
+    if(!name)return'??';
+    var p=name.trim().split(/\s+/);
+    return p.length>=2?(p[0][0]+p[p.length-1][0]).toUpperCase():name.slice(0,2).toUpperCase();
+  }
+  function fmt$(n){return'$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
   function getNextFriday(){
     var d=new Date(),day=d.getDay(),diff=(5-day+7)%7||7;
     d.setDate(d.getDate()+diff);
     return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
   }
-  function fmt$(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
   function today(){return new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});}
 
-  // Current user
+  // ── Logged-in user (permissions) ─────────────────────────────────────────
   var users=[];
   try{users=JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS')||'[]');}catch(e){}
   var currentEmail=localStorage.getItem('nexus_current_user')||'';
   var currentUser=users.find(function(u){return u.email===currentEmail;})||null;
-  var isDriver=currentUser&&currentUser.role==='driver';
+  var loggedInRole=(currentUser&&currentUser.role)||'driver';
+  var canSwitch=(loggedInRole==='admin'||loggedInRole==='dispatcher');
 
-  // Topbar
-  var driverName=(currentUser&&(currentUser.name||currentUser.email))||'Driver';
-  document.getElementById('topbarSub').textContent=driverName+' · '+today();
+  // ── Active driver selection ───────────────────────────────────────────────
+  var activeDriver=null;
+  try{activeDriver=JSON.parse(localStorage.getItem('nexus_command_active_driver')||'null');}catch(e){}
 
-  // Admin banner
-  if(!isDriver){
-    document.getElementById('adminBanner').style.display='flex';
-    document.getElementById('adminRole').textContent=(currentUser&&currentUser.role)||'admin';
+  // If canSwitch and no saved selection, default to first driver in user list
+  if(canSwitch && !activeDriver){
+    var firstDriver=users.find(function(u){return u.role==='driver';});
+    if(firstDriver) activeDriver={id:firstDriver.id,name:firstDriver.name||firstDriver.email,email:firstDriver.email,role:firstDriver.role};
   }
+  // If not canSwitch, always use logged-in user as the active driver
+  if(!canSwitch && currentUser){
+    activeDriver={id:currentUser.id,name:currentUser.name||currentUser.email,email:currentUser.email,role:currentUser.role};
+  }
+  // Fallback: currentUser
+  if(!activeDriver && currentUser){
+    activeDriver={id:currentUser.id,name:currentUser.name||currentUser.email,email:currentUser.email,role:currentUser.role};
+  }
+
+  // ── Availability helper ───────────────────────────────────────────────────
+  function getDriverAvail(driverId,driverEmail){
+    var arr=[];try{arr=JSON.parse(localStorage.getItem('nexus_driver_availability')||'[]');}catch(e){}
+    return arr.find(function(a){return a.driverId===driverId||a.driverId===driverEmail;})||{available:false,equipmentTypes:[],radius:'Regional'};
+  }
+
+  // ── Render profile card ───────────────────────────────────────────────────
+  function renderProfileCard(driver){
+    if(!driver)return;
+    var name=driver.name||driver.email||'Driver';
+    var ini=initials(name);
+    var bg=avatarColor(name);
+    document.getElementById('driverAvatar').textContent=ini;
+    document.getElementById('driverAvatar').style.background=bg;
+    document.getElementById('driverCardName').textContent=name.toUpperCase();
+
+    // Meta line: Role · unit · home (use whatever we have)
+    var userObj=users.find(function(u){return u.id===driver.id||u.email===driver.email;})||{};
+    var meta=[];
+    var roleLabel=(driver.role||'driver');roleLabel=roleLabel.charAt(0).toUpperCase()+roleLabel.slice(1);
+    meta.push(roleLabel);
+    if(userObj.unit||userObj.truckUnit)meta.push(userObj.unit||userObj.truckUnit);
+    if(userObj.homeBase||userObj.location)meta.push(userObj.homeBase||userObj.location);
+    document.getElementById('driverCardMeta').textContent=meta.join(' · ');
+
+    // Availability
+    var av=getDriverAvail(driver.id,driver.email);
+    var dot=document.getElementById('driverAvailDot');
+    var txt=document.getElementById('driverAvailTxt');
+    if(av.available){dot.className='avail-dot on';txt.textContent='Available for Work';txt.style.color='#00d4aa';}
+    else{dot.className='avail-dot off';txt.textContent='Not Available';txt.style.color='rgba(255,255,255,.4)';}
+
+    // Show switch button only for admin/dispatcher
+    document.getElementById('switchDriverBtn').style.display=canSwitch?'flex':'none';
+
+    // Topbar subtitle
+    var sub=name;
+    if(canSwitch)sub+=' · Admin View';
+    else sub+=' · Driver';
+    document.getElementById('topbarSub').textContent=sub;
+  }
+
+  // ── Render sheet row ──────────────────────────────────────────────────────
+  function renderSheetRow(u,isSelected){
+    var name=u.name||u.email||'?';
+    var ini=initials(name);
+    var bg=avatarColor(name);
+    var isDriverRole=(u.role==='driver');
+    var av=isDriverRole?getDriverAvail(u.id,u.email):{available:false};
+    var dotHtml=isDriverRole?('<div class="sheet-row-dot '+(av.available?'on':'off')+'"></div>'):'';
+    var div=document.createElement('div');
+    div.className='sheet-row'+(isSelected?' selected':'');
+    div.innerHTML='<div class="sheet-row-avatar" style="background:'+bg+';">'+ini+'</div>'
+      +'<div class="sheet-row-info"><div class="sheet-row-name">'+name+'</div>'
+      +'<div class="sheet-row-role">'+(u.role||'driver')+'</div></div>'
+      +dotHtml;
+    div.addEventListener('click',function(){setActiveDriver({id:u.id,name:name,email:u.email,role:u.role});});
+    return div;
+  }
+
+  // ── Populate bottom sheet ─────────────────────────────────────────────────
+  function populateSheet(){
+    var drivers=users.filter(function(u){return u.role==='driver';});
+    var dispatchers=users.filter(function(u){return u.role==='dispatcher'||u.role==='admin';});
+    var dListEl=document.getElementById('sheetDriverList');
+    var dispListEl=document.getElementById('sheetDispatcherList');
+    dListEl.innerHTML='';dispListEl.innerHTML='';
+    if(drivers.length){
+      var lbl=document.createElement('div');lbl.className='sheet-section-label';lbl.textContent='Drivers';
+      dListEl.appendChild(lbl);
+      drivers.forEach(function(u){
+        var sel=activeDriver&&(u.id===activeDriver.id||u.email===activeDriver.email);
+        dListEl.appendChild(renderSheetRow(u,sel));
+      });
+    }
+    if(dispatchers.length){
+      var lbl2=document.createElement('div');lbl2.className='sheet-section-label';lbl2.textContent='Dispatchers & Admin';
+      dispListEl.appendChild(lbl2);
+      dispatchers.forEach(function(u){
+        var sel=activeDriver&&(u.id===activeDriver.id||u.email===activeDriver.email);
+        dispListEl.appendChild(renderSheetRow(u,sel));
+      });
+    }
+  }
+
+  // ── Open / close sheet ────────────────────────────────────────────────────
+  window.openDriverSheet=function(){
+    populateSheet();
+    document.getElementById('sheetOverlay').classList.add('open');
+    document.getElementById('driverSheet').classList.add('open');
+  };
+  window.closeDriverSheet=function(){
+    document.getElementById('sheetOverlay').classList.remove('open');
+    document.getElementById('driverSheet').classList.remove('open');
+  };
+
+  // ── Set active driver + reload tiles ─────────────────────────────────────
+  window.setActiveDriver=function(driver){
+    activeDriver=driver;
+    try{localStorage.setItem('nexus_command_active_driver',JSON.stringify(driver));}catch(e){}
+    closeDriverSheet();
+    renderProfileCard(driver);
+    loadAllTiles(driver);
+  };
+
+  // ── Tile loader ───────────────────────────────────────────────────────────
+  function loadAllTiles(driver){
+    var dId=driver&&(driver.id||driver.memberId);
+    var dEmail=driver&&driver.email;
+    var isViewingDriver=(driver&&driver.role==='driver');
+
+    // MY PAY
+    (function(){
+      var setts=[];try{setts=JSON.parse(localStorage.getItem('nexus_settlements')||'[]');}catch(e){}
+      var pending=setts.filter(function(s){
+        if(!isViewingDriver)return s.status==='pending'||s.status==='active';
+        return(s.driverId===dId||s.memberEmail===dEmail)&&(s.status==='pending'||s.status==='active');
+      });
+      var total=pending.reduce(function(sum,s){return sum+parseFloat(s.netPay||s.net||0);},0);
+      var payEl=document.getElementById('payAmount'),expEl=document.getElementById('payExpected');
+      var dedEl=document.getElementById('dedList');dedEl.innerHTML='';
+      if(pending.length){
+        payEl.className='tile-main c-green';
+        payEl.textContent='Pending: '+fmt$(total);
+        expEl.textContent='Expected: '+getNextFriday();
+        var deds=pending[0].deductions||pending[0].deductionsList||[];
+        deds.slice(0,2).forEach(function(d){
+          var item=document.createElement('div');item.className='ded-item';
+          item.innerHTML='<span>'+(d.label||d.description||d.type||'Deduction')+'</span><span>-'+fmt$(d.amount)+'</span>';
+          dedEl.appendChild(item);
+        });
+      } else {
+        payEl.style.cssText='font-size:11px;color:rgba(255,255,255,.4);';
+        payEl.textContent='No pending settlement';
+        expEl.textContent='Check back after your next load';
+      }
+    })();
+
+    // MY LOADS
+    (function(){
+      var loads=[];try{loads=JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]');}catch(e){}
+      var myLoads=loads.filter(function(l){
+        if(!isViewingDriver)return l.status==='active'||l.status==='in_progress';
+        return(l.driverId===dId||l.driverEmail===dEmail)&&(l.status==='active'||l.status==='in_progress');
+      });
+      var cEl=document.getElementById('loadsCount'),dEl=document.getElementById('loadsDest');
+      if(myLoads.length){
+        cEl.textContent=myLoads.length+' Active Load'+(myLoads.length!==1?'s':'');
+        var r=myLoads[0];
+        dEl.textContent=(r.origin||r.from||'')+(r.destination||r.to?' → '+(r.destination||r.to):'');
+      } else {
+        cEl.textContent='0 Active Loads';
+        dEl.textContent='No active loads';
+      }
+    })();
+
+    // AVAILABILITY (tile)
+    (function(){
+      var av=getDriverAvail(dId,dEmail);
+      var tog=document.getElementById('availToggle');
+      tog.checked=av.available;
+      var lbl=document.getElementById('availLabelTxt'),sts=document.getElementById('availStatusTxt');
+      if(av.available){lbl.textContent='Available';sts.textContent='Visible to approved brokers';sts.className='avail-status-txt on';}
+      else{lbl.textContent='Not Available';sts.textContent='Tap to go available';sts.className='avail-status-txt off';}
+      var pills=document.getElementById('equipPills');pills.innerHTML='';
+      var types=av.equipmentTypes||[];
+      types.slice(0,3).forEach(function(t){var p=document.createElement('span');p.className='equip-pill sel';p.textContent=t;pills.appendChild(p);});
+      if(types.length>3){var m=document.createElement('span');m.className='equip-pill';m.textContent='+'+(types.length-3)+' more';pills.appendChild(m);}
+    })();
+
+    // DOCUMENTS
+    (function(){
+      var docs=[];try{docs=JSON.parse(localStorage.getItem('nexus_documents')||'[]');}catch(e){}
+      var myDocs=docs.filter(function(d){return!isViewingDriver||d.driverId===dId||d.driverEmail===dEmail;});
+      var cdl=myDocs.find(function(d){return d.type==='cdl'||d.docType==='cdl';});
+      var med=myDocs.find(function(d){return d.type==='medical'||d.docType==='medical'||((d.description||d.label||'').toLowerCase().includes('medical'));});
+      function makeDocItem(label,doc){
+        if(!doc)return{label:label,badge:'No file',cls:'b-yellow',dot:'#fbbf24'};
+        var exp=doc.expiryDate||doc.expiry||doc.expDate;
+        var daysLeft=exp?Math.ceil((new Date(exp)-new Date())/(864e5)):null;
+        var cls=daysLeft!==null&&daysLeft<60?'b-red':'b-green';
+        var txt=daysLeft!==null?(daysLeft<0?'EXPIRED':daysLeft+'d left'):'Valid';
+        return{label:label,badge:txt,cls:cls,dot:cls==='b-red'?'#f87171':'#4ade80'};
+      }
+      var items=[makeDocItem('CDL',cdl),makeDocItem('Medical Card',med)];
+      document.getElementById('docAlerts').innerHTML=items.map(function(i){
+        return '<div class="doc-alert"><div class="doc-dot" style="background:'+i.dot+';"></div><div class="doc-name">'+i.label+'</div><div class="doc-badge '+i.cls+'">'+i.badge+'</div></div>';
+      }).join('');
+    })();
+
+    // MESSAGES
+    (function(){
+      var msgs=[];try{msgs=JSON.parse(localStorage.getItem('nexus_messages')||'[]');}catch(e){}
+      var myMsgs=msgs.filter(function(m){return!isViewingDriver||m.toId===dId||m.toEmail===dEmail;});
+      var unread=myMsgs.filter(function(m){return!m.read;});
+      document.getElementById('unreadCount').textContent=unread.length||'0';
+      if(myMsgs.length){var last=myMsgs[myMsgs.length-1];document.getElementById('lastMessage').textContent=last.text||last.body||last.preview||'New message';}
+      else{document.getElementById('lastMessage').textContent='No recent messages';}
+    })();
+
+    // ACTIVITY FEED
+    (function(){
+      var items=[];
+      try{
+        JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]')
+          .filter(function(l){return!isViewingDriver||(l.driverId===dId||l.driverEmail===dEmail);})
+          .slice(-3).forEach(function(l){items.push({icon:'🚛',title:'Load '+(l.loadId||l.id||'#—')+' · '+(l.origin||'')+(l.destination?' → '+l.destination:''),sub:l.status||'',time:l.updatedAt||l.createdAt||''});});
+      }catch(e){}
+      try{
+        JSON.parse(localStorage.getItem('nexus_settlements')||'[]')
+          .filter(function(s){return!isViewingDriver||(s.driverId===dId||s.memberEmail===dEmail);})
+          .slice(-2).forEach(function(s){items.push({icon:'💵',title:'Settlement '+(s.weekLabel||s.week||'')+(s.netPay?' · '+fmt$(s.netPay):''),sub:s.status||'',time:s.updatedAt||s.createdAt||''});});
+      }catch(e){}
+      try{
+        JSON.parse(localStorage.getItem('nexus_expenses')||'[]')
+          .filter(function(e2){return!isViewingDriver||(e2.driverId===dId||e2.driverEmail===dEmail);})
+          .slice(-2).forEach(function(e2){items.push({icon:'💳',title:(e2.description||e2.vendor||'Expense')+(e2.amount?' · '+fmt$(e2.amount):''),sub:e2.category||'',time:e2.date||e2.createdAt||''});});
+      }catch(e){}
+      items.sort(function(a,b){return(b.time||'').localeCompare(a.time||'');});
+      items=items.slice(0,5);
+      var feed=document.getElementById('activityFeed');
+      if(!items.length){feed.innerHTML='<div class="empty-state">No activity yet today</div>';return;}
+      feed.innerHTML=items.map(function(it){
+        var ts=it.time?new Date(it.time).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'';
+        return '<div class="activity-item"><div class="ai-icon">'+it.icon+'</div><div class="ai-body"><div class="ai-title">'+it.title+'</div>'+(it.sub?'<div class="ai-sub">'+it.sub+'</div>':'')+'</div><div class="ai-time">'+ts+'</div></div>';
+      }).join('');
+    })();
+  }
+
+  // AVAILABILITY toggle (writes for active driver)
+  var AVAIL_KEY='nexus_driver_availability';
+  window.toggleAvail=function(checked){
+    var dId2=activeDriver&&(activeDriver.id||activeDriver.email);
+    var availArr=[];try{availArr=JSON.parse(localStorage.getItem(AVAIL_KEY)||'[]');}catch(e){}
+    var myAvail=availArr.find(function(a){return a.driverId===dId2;})||{driverId:dId2,available:false,equipmentTypes:[],radius:'Regional'};
+    myAvail.available=checked;myAvail.driverId=dId2;myAvail.updatedAt=new Date().toISOString();
+    var idx=availArr.findIndex(function(a){return a.driverId===dId2;});
+    if(idx>-1)availArr[idx]=myAvail;else availArr.push(myAvail);
+    try{localStorage.setItem(AVAIL_KEY,JSON.stringify(availArr));}catch(e){}
+    renderProfileCard(activeDriver);
+    var lbl=document.getElementById('availLabelTxt'),sts=document.getElementById('availStatusTxt');
+    if(checked){lbl.textContent='Available';sts.textContent='Visible to approved brokers';sts.className='avail-status-txt on';}
+    else{lbl.textContent='Not Available';sts.textContent='Tap to go available';sts.className='avail-status-txt off';}
+  };
 
   // Online/offline
   function updateOnline(){
@@ -314,137 +639,9 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('online',updateOnline);
   window.addEventListener('offline',updateOnline);
 
-  // MY PAY
-  (function(){
-    var setts=[];try{setts=JSON.parse(localStorage.getItem('nexus_settlements')||'[]');}catch(e){}
-    var dId=currentUser&&(currentUser.id||currentUser.memberId);
-    var pending=setts.filter(function(s){
-      if(!isDriver)return s.status==='pending'||s.status==='active';
-      return(s.driverId===dId||s.memberEmail===currentEmail)&&(s.status==='pending'||s.status==='active');
-    });
-    var total=pending.reduce(function(sum,s){return sum+parseFloat(s.netPay||s.net||0);},0);
-    var payEl=document.getElementById('payAmount'),expEl=document.getElementById('payExpected');
-    if(pending.length){
-      payEl.textContent='Pending: '+fmt$(total);
-      expEl.textContent='Expected: '+getNextFriday();
-      var deds=pending[0].deductions||pending[0].deductionsList||[];
-      var dedEl=document.getElementById('dedList');
-      deds.slice(0,2).forEach(function(d){
-        var item=document.createElement('div');item.className='ded-item';
-        item.innerHTML='<span>'+(d.label||d.description||d.type||'Deduction')+'</span><span>-'+fmt$(d.amount)+'</span>';
-        dedEl.appendChild(item);
-      });
-    } else {
-      payEl.style.cssText='font-size:11px;color:rgba(255,255,255,.4);';
-      payEl.textContent='No pending settlement';
-      expEl.textContent='Check back after your next load';
-    }
-  })();
-
-  // MY LOADS
-  (function(){
-    var loads=[];try{loads=JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]');}catch(e){}
-    var dId=currentUser&&(currentUser.id||currentUser.memberId);
-    var myLoads=loads.filter(function(l){
-      if(!isDriver)return l.status==='active'||l.status==='in_progress';
-      return(l.driverId===dId||l.driverEmail===currentEmail)&&(l.status==='active'||l.status==='in_progress');
-    });
-    var cEl=document.getElementById('loadsCount'),dEl=document.getElementById('loadsDest');
-    if(myLoads.length){
-      cEl.textContent=myLoads.length+' Active Load'+(myLoads.length!==1?'s':'');
-      var r=myLoads[0];
-      dEl.textContent=(r.origin||r.from||'')+(r.destination||r.to?' → '+(r.destination||r.to):'');
-    }
-  })();
-
-  // AVAILABILITY
-  var AVAIL_KEY='nexus_driver_availability';
-  var availArr=[];try{availArr=JSON.parse(localStorage.getItem(AVAIL_KEY)||'[]');}catch(e){}
-  var dId=currentUser&&(currentUser.id||currentUser.memberId||currentUser.email);
-  var myAvail=availArr.find(function(a){return a.driverId===dId;})||{available:false,equipmentTypes:[],radius:'Regional'};
-
-  function renderAvail(av){
-    var tog=document.getElementById('availToggle');
-    tog.checked=av.available;
-    var lbl=document.getElementById('availLabelTxt'),sts=document.getElementById('availStatusTxt');
-    if(av.available){lbl.textContent='Available';sts.textContent='Visible to approved brokers';sts.className='avail-status-txt on';}
-    else{lbl.textContent='Not Available';sts.textContent='Tap to go available';sts.className='avail-status-txt off';}
-    var pills=document.getElementById('equipPills');pills.innerHTML='';
-    var types=av.equipmentTypes||[];
-    types.slice(0,3).forEach(function(t){var p=document.createElement('span');p.className='equip-pill sel';p.textContent=t;pills.appendChild(p);});
-    if(types.length>3){var m=document.createElement('span');m.className='equip-pill';m.textContent='+' +(types.length-3)+' more';pills.appendChild(m);}
-  }
-  renderAvail(myAvail);
-
-  window.toggleAvail=function(checked){
-    myAvail.available=checked;myAvail.driverId=dId;myAvail.updatedAt=new Date().toISOString();
-    var idx=availArr.findIndex(function(a){return a.driverId===dId;});
-    if(idx>-1)availArr[idx]=myAvail;else availArr.push(myAvail);
-    try{localStorage.setItem(AVAIL_KEY,JSON.stringify(availArr));}catch(e){}
-    renderAvail(myAvail);
-  };
-
-  // DOCUMENTS
-  (function(){
-    var docs=[];try{docs=JSON.parse(localStorage.getItem('nexus_documents')||'[]');}catch(e){}
-    var dId2=currentUser&&(currentUser.id||currentUser.memberId);
-    var myDocs=docs.filter(function(d){return!isDriver||d.driverId===dId2||d.driverEmail===currentEmail;});
-    var cdl=myDocs.find(function(d){return d.type==='cdl'||d.docType==='cdl';});
-    var med=myDocs.find(function(d){return d.type==='medical'||d.docType==='medical'||((d.description||d.label||'').toLowerCase().includes('medical'));});
-    var items=[];
-    function makeDocItem(label,doc){
-      if(!doc)return{label:label,badge:'No file',cls:'b-yellow',dot:'#fbbf24'};
-      var exp=doc.expiryDate||doc.expiry||doc.expDate;
-      var daysLeft=exp?Math.ceil((new Date(exp)-new Date())/(864e5)):null;
-      var cls=daysLeft!==null&&daysLeft<60?'b-red':'b-green';
-      var txt=daysLeft!==null?(daysLeft<0?'EXPIRED':daysLeft+'d left'):'Valid';
-      return{label:label,badge:txt,cls:cls,dot:cls==='b-red'?'#f87171':'#4ade80'};
-    }
-    items.push(makeDocItem('CDL',cdl));
-    items.push(makeDocItem('Medical Card',med));
-    document.getElementById('docAlerts').innerHTML=items.map(function(i){
-      return '<div class="doc-alert"><div class="doc-dot" style="background:'+i.dot+';"></div><div class="doc-name">'+i.label+'</div><div class="doc-badge '+i.cls+'">'+i.badge+'</div></div>';
-    }).join('');
-  })();
-
-  // MESSAGES
-  (function(){
-    var msgs=[];try{msgs=JSON.parse(localStorage.getItem('nexus_messages')||'[]');}catch(e){}
-    var dId3=currentUser&&(currentUser.id||currentUser.memberId);
-    var myMsgs=msgs.filter(function(m){return!isDriver||m.toId===dId3||m.toEmail===currentEmail;});
-    var unread=myMsgs.filter(function(m){return!m.read;});
-    document.getElementById('unreadCount').textContent=unread.length||'0';
-    if(myMsgs.length){var last=myMsgs[myMsgs.length-1];document.getElementById('lastMessage').textContent=last.text||last.body||last.preview||'New message';}
-  })();
-
-  // ACTIVITY FEED
-  (function(){
-    var items=[];
-    var dId4=currentUser&&(currentUser.id||currentUser.memberId);
-    try{
-      JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]')
-        .filter(function(l){return!isDriver||(l.driverId===dId4||l.driverEmail===currentEmail);})
-        .slice(-3).forEach(function(l){items.push({icon:'🚛',title:'Load '+(l.loadId||l.id||'#—')+' · '+(l.origin||'')+(l.destination?' → '+l.destination:''),sub:l.status||'',time:l.updatedAt||l.createdAt||'');});});
-    }catch(e){}
-    try{
-      JSON.parse(localStorage.getItem('nexus_settlements')||'[]')
-        .filter(function(s){return!isDriver||(s.driverId===dId4||s.memberEmail===currentEmail);})
-        .slice(-2).forEach(function(s){items.push({icon:'💵',title:'Settlement '+(s.weekLabel||s.week||'')+(s.netPay?' · '+fmt$(s.netPay):''),sub:s.status||'',time:s.updatedAt||s.createdAt||'');});});
-    }catch(e){}
-    try{
-      JSON.parse(localStorage.getItem('nexus_expenses')||'[]')
-        .filter(function(e2){return!isDriver||(e2.driverId===dId4||e2.driverEmail===currentEmail);})
-        .slice(-2).forEach(function(e2){items.push({icon:'💳',title:(e2.description||e2.vendor||'Expense')+(e2.amount?' · '+fmt$(e2.amount):''),sub:e2.category||'',time:e2.date||e2.createdAt||'');});});
-    }catch(e){}
-    items.sort(function(a,b){return(b.time||'').localeCompare(a.time||'');});
-    items=items.slice(0,5);
-    var feed=document.getElementById('activityFeed');
-    if(!items.length){feed.innerHTML='<div class="empty-state">No activity yet today</div>';return;}
-    feed.innerHTML=items.map(function(it){
-      var ts=it.time?new Date(it.time).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'';
-      return '<div class="activity-item"><div class="ai-icon">'+it.icon+'</div><div class="ai-body"><div class="ai-title">'+it.title+'</div>'+(it.sub?'<div class="ai-sub">'+it.sub+'</div>':'')+'</div><div class="ai-time">'+ts+'</div></div>';
-    }).join('');
-  })();
+  // ── Initial render ────────────────────────────────────────────────────────
+  renderProfileCard(activeDriver);
+  loadAllTiles(activeDriver);
 })();
 </script>
 <script src="nexus-core.js?v=6"></script>
