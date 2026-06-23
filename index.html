@@ -629,6 +629,23 @@ body {
   .exp-section-hdr { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
   .exp-panel { background:var(--gunmetal-light); border:1px solid var(--border); border-radius:10px; padding:14px 18px; margin-bottom:18px; }
 </style>
+
+  <style>
+  /* ── RESPONSIVE LAYOUT ── */
+  @media (max-width: 900px) {
+    .main, body { margin-left: 0 !important; padding-top: 56px !important; }
+  }
+  @media (max-width: 768px) {
+    .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .table-wrap, .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-max-width: min(90vw, 640px); }
+  }
+  @media (max-width: 480px) {
+    body { font-size: 14px; }
+    .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: 1fr !important; }
+    .small-text, .meta { font-size: 12px !important; }
+  }
+  </style>
 </head>
 <body>
 

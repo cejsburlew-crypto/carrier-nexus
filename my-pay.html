@@ -123,6 +123,23 @@
     .empty-state{text-align:center;padding:32px 20px;color:#4b5563;font-size:13px}
     .panel-card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px;overflow-x:auto}
   </style>
+
+  <style>
+  /* ── RESPONSIVE LAYOUT ── */
+  @media (max-width: 900px) {
+    .main, body { margin-left: 0 !important; padding-top: 56px !important; }
+  }
+  @media (max-width: 768px) {
+    .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .table-wrap, .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-max-width: min(90vw, 640px); }
+  }
+  @media (max-width: 480px) {
+    body { font-size: 14px; }
+    .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: 1fr !important; }
+    .small-text, .meta { font-size: 12px !important; }
+  }
+  </style>
 </head>
 <body>
 <script src="nexus-config.js?v=6"></script>

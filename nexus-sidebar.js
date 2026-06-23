@@ -291,6 +291,42 @@
     document.body.insertAdjacentHTML('afterbegin', html);
   }
 
+
+  // ── Hamburger + Overlay for mobile ──
+  var hamburger = document.createElement('button');
+  hamburger.className = 'nexus-hamburger';
+  hamburger.setAttribute('aria-label', 'Open navigation menu');
+  hamburger.innerHTML = '<span></span><span></span><span></span>';
+  document.body.appendChild(hamburger);
+
+  var overlay = document.createElement('div');
+  overlay.className = 'nexus-overlay';
+  document.body.appendChild(overlay);
+
+  var sidebarEl = document.getElementById('nexus-sidebar');
+
+  function openSidebar() {
+    sidebarEl.classList.add('sidebar-open');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    sidebarEl.classList.remove('sidebar-open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  hamburger.addEventListener('click', function() {
+    sidebarEl.classList.contains('sidebar-open') ? closeSidebar() : openSidebar();
+  });
+  overlay.addEventListener('click', closeSidebar);
+
+  sidebarEl.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) closeSidebar();
+    });
+  });
+
   // ── Sidebar CSS ──
   if (!document.getElementById('nexus-sidebar-styles')) {
     const style = document.createElement('style');
@@ -313,6 +349,81 @@
       .sidebar-link svg{width:14px!important;height:14px!important;flex-shrink:0!important;opacity:.7!important;}
       .sidebar-link.active svg{opacity:1!important;}
       #nexus-sidebar .sidebar-nav{overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;}
+      /* ── HAMBURGER BUTTON (mobile/tablet only) ── */
+      .nexus-hamburger {
+        display: none;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 1001;
+        background: #0f172a;
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 8px;
+        padding: 8px 10px;
+        cursor: pointer;
+        flex-direction: column;
+        gap: 5px;
+        align-items: center;
+        justify-content: center;
+      }
+      .nexus-hamburger span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: #fff;
+        border-radius: 2px;
+        transition: all 0.2s;
+      }
+      .nexus-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.55);
+        z-index: 999;
+        backdrop-filter: blur(2px);
+      }
+      @media (max-width: 900px) {
+        .nexus-hamburger { display: flex !important; }
+        .nexus-overlay.active { display: block !important; }
+        nav.sidebar {
+          transform: translateX(-240px) !important;
+          transition: transform 0.28s cubic-bezier(0.4,0,0.2,1) !important;
+          z-index: 1000 !important;
+          top: 0 !important;
+        }
+        nav.sidebar.sidebar-open {
+          transform: translateX(0) !important;
+        }
+        body { padding-left: 0 !important; margin-left: 0 !important; }
+        .main, .content, .page-content, .content-area,
+        .content-wrapper, .page-wrapper, .main-content,
+        [class*="main-"], [class*="-main"] {
+          margin-left: 0 !important;
+          padding-left: 12px !important;
+          padding-right: 12px !important;
+        }
+        body > .main, body > .content, body > div:not(nav):first-of-type {
+          padding-top: 56px !important;
+        }
+        table { display: block !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
+        .sidebar-footer .user-email { display: none !important; }
+      }
+      @media (max-width: 480px) {
+        .sidebar-link { padding: 10px 16px !important; font-size: 14px !important; }
+        button, .btn, [class*="btn-"], a[class*="btn"] {
+          min-height: 44px !important;
+          font-size: 14px !important;
+        }
+        .kpi-grid, .stats-grid, .metrics-grid,
+        [class*="kpi-"], [class*="stat-card"],
+        .grid-2, .grid-3, .grid-4 {
+          grid-template-columns: 1fr !important;
+        }
+        .card, .panel, [class*="card-"], [class*="-card"] {
+          padding: 12px !important;
+        }
+      }
+
     `;
     document.head.appendChild(style);
   }

@@ -315,6 +315,23 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 /* ── NAV BADGE ── */
 .nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
+
+  <style>
+  /* ── RESPONSIVE LAYOUT ── */
+  @media (max-width: 900px) {
+    .main, body { margin-left: 0 !important; padding-top: 56px !important; }
+  }
+  @media (max-width: 768px) {
+    .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .table-wrap, .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-max-width: min(90vw, 640px); }
+  }
+  @media (max-width: 480px) {
+    body { font-size: 14px; }
+    .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: 1fr !important; }
+    .small-text, .meta { font-size: 12px !important; }
+  }
+  </style>
 </head>
 <body>
 
@@ -1052,7 +1069,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- SYNC NEXUS DOCS MODAL -->
 <div id="sync-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9999;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;">
+  <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;width:100%;max-max-width: min(90vw, 640px);max-height:90vh;overflow-y:auto;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid #334155;">
       <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#f1f5f9;letter-spacing:.06em;">SYNC NEXUS DOCUMENTS</span>
       <button onclick="closeSyncModal()" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;line-height:1;">&#10005;</button>

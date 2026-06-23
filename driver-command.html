@@ -170,6 +170,12 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function(){});
 }
 </script>
+
+  <style>
+  @media (min-width: 600px) and (max-width: 900px) {
+    .tiles-grid { grid-template-columns: repeat(3, 1fr) !important; }
+  }
+  </style>
 </head>
 <body>
 <script src="nexus-config.js"></script>

@@ -127,6 +127,23 @@ tr:hover td{background:#f8fafc;}
 .sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
 .nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
+
+  <style>
+  /* ── RESPONSIVE LAYOUT ── */
+  @media (max-width: 900px) {
+    .main, body { margin-left: 0 !important; padding-top: 56px !important; }
+  }
+  @media (max-width: 768px) {
+    .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .table-wrap, .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-max-width: min(90vw, 640px); }
+  }
+  @media (max-width: 480px) {
+    body { font-size: 14px; }
+    .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: 1fr !important; }
+    .small-text, .meta { font-size: 12px !important; }
+  }
+  </style>
 </head>
 <body>
 <script src="nexus-sidebar.js"></script>
