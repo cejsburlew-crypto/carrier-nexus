@@ -39,7 +39,7 @@
   var SECTIONS = [
     { key:'ops',     label:'Operations',     pages:['fleet-command.html','active-loads.html','settlements.html','weekly-settlements.html','settlement-review.html','drivers.html','permits.html','pods.html','issues.html'] },
     { key:'dispatch',label:'Dispatch',       pages:['dispatcher-hub.html','load-board.html','commissions.html','available-dispatchers.html','available-drivers.html'] },
-    { key:'driver',  label:'Driver',         pages:['driver-command.html','driver-availability.html','equipment-marketplace.html','my-pay.html'] },
+    { key:'driver',  label:'Driver',         pages:['driver-command.html','driver-availability.html','equipment-marketplace.html','my-pay.html','social-recruiting.html'] },
     { key:'finance', label:'Finance',        pages:['invoicing.html','whatsapp-import.html','expenses.html','financials.html','ifta.html'] },
     { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','emails.html','doc-inbox.html'] },
     { key:'contacts',label:'Contacts',       pages:['contacts.html'] },
@@ -175,6 +175,7 @@
     search:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
     service: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 4.93 19.07"/><path d="M4.93 4.93A10 10 0 0 1 19.07 19.07"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>',
     market:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1-6h16l1 6"/><path d="M3 9h18v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9z"/><path d="M9 9v6m6-6v6"/></svg>',
+    people:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
     signal:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>',
     wallet:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 12h.01M2 10h20"/><path d="M14 12a2 2 0 0 1 4 0v2a2 2 0 0 1-4 0v-2z"/></svg>',
   };
@@ -202,7 +203,8 @@
       lnk('my-pay.html',               I.wallet,  'My Pay') +
       lnk('driver-command.html',       I.signal,  'Driver Command') +
       lnk('driver-availability.html',  I.signal,  'Availability Network') +
-      lnk('equipment-marketplace.html', I.market,  'Equipment Marketplace')
+      lnk('equipment-marketplace.html', I.market,  'Equipment Marketplace') +
+      lnk('social-recruiting.html',     I.people,  'Community &amp; Jobs')
     ) +
     sec('finance', 'Finance',
       lnk('invoicing.html',            I.invoice, 'Invoicing') +

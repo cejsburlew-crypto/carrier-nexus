@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f1724">
+<title>Community & Jobs — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{height:100%;-webkit-text-size-adjust:100%;}
+body{background:#0f1724;color:#f0f4f8;font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;}
+.layout{display:flex;min-height:100vh;}
+.main-content{flex:1;min-width:0;margin-left:220px;padding-bottom:40px;}
+@media(max-width:768px){.main-content{margin-left:0;padding-bottom:80px;}}
+
+/* TOPBAR */
+.topbar{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-left{display:flex;flex-direction:column;}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;letter-spacing:.06em;text-transform:uppercase;color:#fff;}
+.topbar-sub{font-size:12px;color:rgba(255,255,255,.65);margin-top:2px;font-weight:300;}
+.topbar-actions{display:flex;align-items:center;gap:8px;}
+
+/* THREE-COLUMN LAYOUT */
+.community-layout{display:grid;grid-template-columns:250px 1fr 230px;gap:0;min-height:calc(100vh - 54px);}
+@media(max-width:1200px){.community-layout{grid-template-columns:250px 1fr;}}.right-panel-wrapper{display:block;}
+@media(max-width:1200px){.right-panel-wrapper{display:none;}}
+@media(max-width:768px){.community-layout{grid-template-columns:1fr;}.left-sidebar-wrapper{display:none;}}
+
+/* LEFT SIDEBAR */
+.left-sidebar{padding:16px;border-right:1px solid rgba(255,255,255,.07);position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;}
+.sidebar-card{background:#1a2236;border:1px solid rgba(255,255,255,.07);padding:16px;margin-bottom:14px;}
+.sidebar-card-title{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px;}
+
+/* AVATAR */
+.avatar-lg{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;color:#fff;flex-shrink:0;}
+.avatar-sm{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:#fff;flex-shrink:0;}
+.avatar-xs{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;color:#fff;flex-shrink:0;}
+
+/* STATUS CARD */
+.profile-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.profile-info{flex:1;min-width:0;}
+.profile-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:.04em;color:#fff;}
+.profile-role{font-size:11px;color:rgba(255,255,255,.45);margin-top:1px;}
+
+.toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.toggle-label{font-size:13px;font-weight:500;color:#e2e8f0;}
+.toggle-sub{font-size:10px;color:rgba(255,255,255,.35);}
+.toggle-sm{position:relative;width:44px;height:24px;cursor:pointer;flex-shrink:0;}
+.toggle-sm input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-sm-track{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:12px;transition:background .2s;border:1px solid rgba(255,255,255,.15);}
+.toggle-sm input:checked + .toggle-sm-track{background:#00d4aa;border-color:#00d4aa;}
+.toggle-sm-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.4);}
+.toggle-sm input:checked ~ .toggle-sm-thumb{transform:translateX(20px);}
+
+.seeking-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.3);font-size:10px;font-weight:600;color:#00d4aa;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;}
+.profile-link{display:block;font-size:11px;color:#60a5fa;text-decoration:none;transition:color .15s;}
+.profile-link:hover{color:#93c5fd;}
+
+/* POST BUTTONS */
+.post-btn{width:100%;display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#e2e8f0;font-family:'Barlow',sans-serif;font-size:13px;font-weight:500;cursor:pointer;margin-bottom:8px;transition:all .15s;text-align:left;}
+.post-btn:hover{background:rgba(233,30,140,.12);border-color:#c2185b;color:#fff;}
+.post-btn:last-child{margin-bottom:0;}
+.post-btn-icon{font-size:15px;flex-shrink:0;}
+
+/* CATEGORY CHIPS */
+.chip-grid{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{padding:4px 10px;border:1px solid rgba(255,255,255,.1);font-size:11px;font-weight:600;color:rgba(255,255,255,.5);cursor:pointer;transition:all .15s;font-family:'Barlow Condensed',sans-serif;letter-spacing:.04em;text-transform:uppercase;background:transparent;}
+.chip:hover{border-color:rgba(233,30,140,.4);color:rgba(233,30,140,.9);}
+.chip.active{background:rgba(233,30,140,.15);border-color:#e91e8c;color:#f472b6;}
+
+/* TRENDING TAGS */
+.tag-grid{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{font-size:11px;color:#60a5fa;font-weight:500;cursor:pointer;}
+.tag:hover{color:#93c5fd;text-decoration:underline;}
+
+/* MAIN FEED AREA */
+.feed-area{padding:0;min-width:0;}
+
+/* TAB BAR */
+.tab-bar{display:flex;background:#131c2e;border-bottom:1px solid rgba(255,255,255,.07);position:sticky;top:54px;z-index:40;}
+.tab-btn{padding:12px 20px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
+.tab-btn:hover{color:rgba(255,255,255,.7);}
+.tab-btn.active{color:#e91e8c;border-bottom-color:#e91e8c;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* FEED HEADER */
+.feed-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;}
+.feed-header-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:#fff;}
+.sort-select{background:#1a2236;border:1px solid rgba(255,255,255,.1);color:#c9d1d9;padding:5px 10px;font-size:12px;font-family:'Barlow',sans-serif;cursor:pointer;outline:none;}
+.sort-select option{background:#1a2236;}
+
+/* FEED POST CARD */
+.post-card{margin:0 20px 14px;background:#1a2236;border:1px solid rgba(255,255,255,.07);border-left:4px solid #374151;transition:border-color .15s;}
+.post-card:hover{border-top-color:rgba(255,255,255,.12);border-right-color:rgba(255,255,255,.12);border-bottom-color:rgba(255,255,255,.12);}
+.post-card.type-job{border-left-color:#3b82f6;}
+.post-card.type-avail{border-left-color:#00d4aa;}
+.post-card.type-help{border-left-color:#f97316;}
+.post-card.type-news{border-left-color:#1e3a5f;}
+.post-card.type-general{border-left-color:#374151;}
+.post-card.pinned{border-top:1px solid rgba(233,30,140,.3);background:rgba(233,30,140,.03);}
+
+.post-header{display:flex;align-items:flex-start;gap:10px;padding:14px 16px 10px;}
+.post-meta{flex:1;min-width:0;}
+.post-author-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.post-author{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.04em;color:#fff;}
+.role-badge{padding:2px 7px;font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;border:1px solid;}
+.role-badge.driver{color:#60a5fa;border-color:rgba(96,165,250,.35);background:rgba(96,165,250,.08);}
+.role-badge.dispatcher{color:#a78bfa;border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.08);}
+.role-badge.admin{color:#f472b6;border-color:rgba(244,114,182,.35);background:rgba(244,114,182,.08);}
+.cat-badge{padding:2px 7px;font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;border:1px solid;}
+.cat-badge.job{color:#93c5fd;border-color:rgba(147,197,253,.3);background:rgba(147,197,253,.07);}
+.cat-badge.avail{color:#00d4aa;border-color:rgba(0,212,170,.3);background:rgba(0,212,170,.07);}
+.cat-badge.help{color:#fb923c;border-color:rgba(251,146,60,.3);background:rgba(251,146,60,.07);}
+.cat-badge.news{color:#7dd3fc;border-color:rgba(125,211,252,.3);background:rgba(125,211,252,.07);}
+.cat-badge.general{color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.12);background:transparent;}
+.post-time{font-size:10px;color:rgba(255,255,255,.3);margin-top:3px;font-family:'JetBrains Mono',monospace;}
+.pin-indicator{font-size:12px;margin-left:2px;}
+
+.post-body{padding:0 16px 12px;}
+.post-text{font-size:14px;line-height:1.6;color:#c9d1d9;}
+.post-text-expanded{display:none;}
+.post-read-more{font-size:12px;color:#60a5fa;cursor:pointer;margin-top:4px;}
+.post-read-more:hover{color:#93c5fd;text-decoration:underline;}
+
+/* SPECIAL POST BLOCKS */
+.post-detail-block{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.06);padding:12px;margin:10px 0 0;font-size:13px;}
+.pdb-row{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;}
+.pdb-row:last-child{margin-bottom:0;}
+.pdb-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;flex-shrink:0;width:90px;}
+.pdb-val{font-size:13px;color:#e2e8f0;flex:1;}
+.pdb-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:#fff;margin-bottom:8px;}
+
+/* ACTION ROW */
+.post-actions{display:flex;align-items:center;gap:0;padding:10px 16px;border-top:1px solid rgba(255,255,255,.05);}
+.action-btn{display:flex;align-items:center;gap:5px;background:none;border:none;color:rgba(255,255,255,.4);font-family:'Barlow',sans-serif;font-size:12px;cursor:pointer;padding:5px 12px;transition:all .15s;border-radius:4px;}
+.action-btn:hover{background:rgba(255,255,255,.05);color:#fff;}
+.action-btn.liked{color:#f472b6;}
+.action-btn svg{width:14px;height:14px;}
+.action-sep{width:1px;height:18px;background:rgba(255,255,255,.07);}
+
+/* COMMENTS */
+.comments-section{padding:10px 16px 14px;border-top:1px solid rgba(255,255,255,.05);background:rgba(0,0,0,.15);}
+.comment-item{display:flex;gap:8px;margin-bottom:10px;}
+.comment-body{flex:1;min-width:0;}
+.comment-author{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#fff;}
+.comment-time{font-size:10px;color:rgba(255,255,255,.3);margin-left:6px;font-family:'JetBrains Mono',monospace;}
+.comment-text{font-size:12px;color:#a0aec0;line-height:1.5;margin-top:2px;}
+.show-all-btn{font-size:11px;color:#60a5fa;cursor:pointer;background:none;border:none;padding:0;font-family:'Barlow',sans-serif;}
+.show-all-btn:hover{text-decoration:underline;}
+.comment-input-row{display:flex;gap:8px;align-items:center;margin-top:8px;}
+.comment-input{flex:1;background:#0f1724;border:1px solid rgba(255,255,255,.1);color:#f0f4f8;font-family:'Barlow',sans-serif;font-size:12px;padding:7px 10px;outline:none;transition:border-color .15s;}
+.comment-input:focus{border-color:rgba(233,30,140,.4);}
+.comment-input::placeholder{color:rgba(255,255,255,.25);}
+.comment-submit{background:#e91e8c;border:none;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;padding:7px 14px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:background .15s;}
+.comment-submit:hover{background:#c2185b;}
+
+/* ACTION BUTTONS */
+.post-cta{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;border:none;margin-top:10px;transition:all .15s;}
+.post-cta.primary{background:#e91e8c;color:#fff;}
+.post-cta.primary:hover{background:#c2185b;}
+.post-cta.secondary{background:transparent;border:1px solid rgba(0,212,170,.4);color:#00d4aa;}
+.post-cta.secondary:hover{background:rgba(0,212,170,.1);}
+.post-cta.blue{background:transparent;border:1px solid rgba(96,165,250,.4);color:#60a5fa;}
+.post-cta.blue:hover{background:rgba(96,165,250,.1);}
+
+/* JOB BOARD */
+.job-board-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;}
+.job-board-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:#fff;}
+.job-grid{display:grid;grid-template-columns:1fr;gap:14px;padding:4px 20px 20px;}
+@media(min-width:900px){.job-grid{grid-template-columns:1fr 1fr;}}
+@media(min-width:1400px){.job-grid{grid-template-columns:1fr 1fr 1fr;}}
+
+.job-card{background:#1a2236;border:1px solid rgba(255,255,255,.07);padding:18px;transition:border-color .15s;position:relative;}
+.job-card:hover{border-color:rgba(255,255,255,.15);}
+.job-card.carrier{border-top:2px solid #e91e8c;}
+.job-card-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+.job-logo{width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;color:#fff;flex-shrink:0;}
+.job-info{flex:1;min-width:0;}
+.job-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:.04em;color:#fff;margin-bottom:3px;}
+.job-company{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:2px;}
+.job-location{font-size:11px;color:rgba(255,255,255,.35);display:flex;align-items:center;gap:4px;}
+.job-save-btn{position:absolute;top:14px;right:14px;background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;transition:color .15s;font-size:18px;padding:0;line-height:1;}
+.job-save-btn:hover{color:#f472b6;}
+.job-save-btn.saved{color:#f472b6;}
+
+.job-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.job-tag{padding:3px 8px;border:1px solid rgba(255,255,255,.1);font-size:10px;font-weight:600;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;}
+.job-tag.green{border-color:rgba(0,212,170,.3);color:#00d4aa;background:rgba(0,212,170,.07);}
+.job-tag.blue{border-color:rgba(96,165,250,.3);color:#60a5fa;background:rgba(96,165,250,.07);}
+
+.job-pay{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;color:#fff;margin-bottom:4px;}
+.job-pay-sub{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:12px;}
+.job-footer{display:flex;align-items:center;justify-content:space-between;}
+.job-posted{font-size:10px;color:rgba(255,255,255,.3);font-family:'JetBrains Mono',monospace;}
+.job-detail-btn{background:#e91e8c;border:none;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;padding:7px 16px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:background .15s;}
+.job-detail-btn:hover{background:#c2185b;}
+
+/* RIGHT PANEL */
+.right-panel{padding:16px;border-left:1px solid rgba(255,255,255,.07);position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;}
+.panel-card{background:#1a2236;border:1px solid rgba(255,255,255,.07);padding:14px;margin-bottom:14px;}
+.panel-card-title{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.avail-dot{width:7px;height:7px;border-radius:50%;background:#00d4aa;flex-shrink:0;animation:pulse-dot 2s ease-in-out infinite;}
+@keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+.avail-driver-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05);}
+.avail-driver-row:last-of-type{border-bottom:none;margin-bottom:8px;padding-bottom:0;}
+.avail-driver-info{flex:1;min-width:0;}
+.avail-driver-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:#fff;}
+.avail-driver-equip{font-size:10px;color:rgba(255,255,255,.4);}
+.avail-driver-loc{font-size:10px;color:rgba(255,255,255,.3);}
+.msg-btn{padding:4px 10px;background:transparent;border:1px solid rgba(233,30,140,.4);color:#f472b6;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;cursor:pointer;text-transform:uppercase;letter-spacing:.06em;transition:all .15s;white-space:nowrap;text-decoration:none;}
+.msg-btn:hover{background:rgba(233,30,140,.12);}
+.view-all-link{font-size:11px;color:#60a5fa;text-decoration:none;display:block;text-align:center;margin-top:4px;}
+.view-all-link:hover{color:#93c5fd;text-decoration:underline;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#1a2236;border:1px solid rgba(255,255,255,.1);width:100%;max-width:540px;max-height:90vh;overflow-y:auto;}
+.modal-hdr{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between;}
+.modal-hdr-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:#fff;}
+.modal-close{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:22px;line-height:1;padding:0;transition:color .15s;}
+.modal-close:hover{color:#fff;}
+.modal-body{padding:20px;}
+.form-group{margin-bottom:16px;}
+.form-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:8px;}
+.form-input{width:100%;padding:10px 14px;background:#0f1724;border:1px solid rgba(255,255,255,.12);color:#f0f4f8;font-family:'Barlow',sans-serif;font-size:14px;outline:none;transition:border-color .15s;}
+.form-input:focus{border-color:rgba(233,30,140,.5);}
+.form-input::placeholder{color:rgba(255,255,255,.25);}
+textarea.form-input{resize:vertical;min-height:100px;}
+select.form-input{cursor:pointer;}
+select.form-input option{background:#1a2236;}
+.char-counter{font-size:10px;color:rgba(255,255,255,.3);text-align:right;margin-top:4px;font-family:'JetBrains Mono',monospace;}
+.pin-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid rgba(255,255,255,.07);margin-top:4px;}
+.pin-label{font-size:13px;color:#c9d1d9;}
+.submit-btn{width:100%;padding:13px;background:#e91e8c;border:none;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .15s;margin-top:8px;}
+.submit-btn:hover{background:#c2185b;}
+
+/* JOB DETAIL MODAL */
+.job-detail-section{margin-bottom:16px;}
+.job-detail-section-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
+.job-detail-body{font-size:14px;color:#c9d1d9;line-height:1.6;}
+.job-req-list{list-style:none;padding:0;}
+.job-req-list li{font-size:13px;color:#c9d1d9;padding:4px 0;display:flex;gap:8px;align-items:baseline;}
+.job-req-list li::before{content:"→";color:#e91e8c;font-size:11px;flex-shrink:0;}
+
+/* MOBILE FLOATING BUTTON */
+.mobile-post-btn{display:none;position:fixed;bottom:80px;right:20px;z-index:200;width:52px;height:52px;border-radius:50%;background:#e91e8c;border:none;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 4px 12px rgba(233,30,140,.4);align-items:center;justify-content:center;transition:background .15s;}
+.mobile-post-btn:hover{background:#c2185b;}
+@media(max-width:768px){.mobile-post-btn{display:flex;}}
+
+/* SECTION LABEL */
+.section-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.2em;text-transform:uppercase;padding:6px 20px 4px;}
+</style>
+</head>
+<body>
+<div class="layout">
+  <script src="nexus-sidebar.js?v=7"></script>
+
+  <div class="main-content">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">👥 Community &amp; Jobs</div>
+        <div class="topbar-sub">Driver network · Job board · Industry news</div>
+      </div>
+      <div class="topbar-actions">
+        <button onclick="openPostModal('general')" class="post-cta primary" style="font-size:13px;padding:8px 16px;">+ Post</button>
+      </div>
+    </div>
+
+    <!-- THREE-COLUMN LAYOUT -->
+    <div class="community-layout">
+
+      <!-- LEFT SIDEBAR -->
+      <div class="left-sidebar-wrapper">
+        <div class="left-sidebar">
+
+          <!-- MY STATUS -->
+          <div class="sidebar-card">
+            <div class="sidebar-card-title">My Status</div>
+            <div class="profile-row">
+              <div class="avatar-lg" id="my-avatar" style="background:#e91e8c;">JB</div>
+              <div class="profile-info">
+                <div class="profile-name" id="my-name">Jim Burlew</div>
+                <div class="profile-role" id="my-role">Admin</div>
+              </div>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Available</div>
+                <div class="toggle-sub" id="avail-status-text">Tap to set availability</div>
+              </div>
+              <label class="toggle-sm">
+                <input type="checkbox" id="avail-toggle" onchange="onAvailToggle()">
+                <div class="toggle-sm-track"></div>
+                <div class="toggle-sm-thumb"></div>
+              </label>
+            </div>
+            <div id="seeking-tag" class="seeking-tag" style="display:none;">✅ Seeking Work</div>
+            <a href="driver-availability.html" class="profile-link">Edit full profile →</a>
+          </div>
+
+          <!-- POST BUTTONS -->
+          <div class="sidebar-card">
+            <div class="sidebar-card-title">Post Something</div>
+            <button class="post-btn" onclick="openPostModal('general')"><span class="post-btn-icon">📢</span> Post to Feed</button>
+            <button class="post-btn" onclick="openPostModal('job')"><span class="post-btn-icon">💼</span> Post Job Opening</button>
+            <button class="post-btn" onclick="openPostModal('help')"><span class="post-btn-icon">🔧</span> Request Help</button>
+          </div>
+
+          <!-- CATEGORIES -->
+          <div class="sidebar-card">
+            <div class="sidebar-card-title">Filter by Category</div>
+            <div class="chip-grid">
+              <div class="chip active" data-cat="all" onclick="filterFeed('all')">All</div>
+              <div class="chip" data-cat="job" onclick="filterFeed('job')">Jobs</div>
+              <div class="chip" data-cat="news" onclick="filterFeed('news')">News</div>
+              <div class="chip" data-cat="avail" onclick="filterFeed('avail')">Availability</div>
+              <div class="chip" data-cat="help" onclick="filterFeed('help')">Help Wanted</div>
+              <div class="chip" data-cat="general" onclick="filterFeed('general')">Industry</div>
+              <div class="chip" data-cat="company" onclick="filterFeed('company')">Company</div>
+            </div>
+          </div>
+
+          <!-- TRENDING TAGS -->
+          <div class="sidebar-card">
+            <div class="sidebar-card-title">Trending</div>
+            <div class="tag-grid">
+              <span class="tag" onclick="filterFeed('all')">#HeavyHaul</span>
+              <span class="tag" onclick="filterFeed('all')">#RGN</span>
+              <span class="tag" onclick="filterFeed('all')">#FlatbedLife</span>
+              <span class="tag" onclick="filterFeed('all')">#OwnerOperator</span>
+              <span class="tag" onclick="filterFeed('all')">#CDLJobs</span>
+              <span class="tag" onclick="filterFeed('all')">#TruckerLife</span>
+              <span class="tag" onclick="filterFeed('all')">#Tampa</span>
+              <span class="tag" onclick="filterFeed('all')">#OTR</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- MAIN FEED -->
+      <div class="feed-area">
+        <!-- TAB BAR -->
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchTab('feed',this)">Community Feed</button>
+          <button class="tab-btn" onclick="switchTab('jobs',this)">Job Board</button>
+        </div>
+
+        <!-- FEED TAB -->
+        <div class="tab-panel active" id="tab-feed">
+          <div class="feed-header">
+            <div class="feed-header-title">Community Feed</div>
+            <select class="sort-select" onchange="sortFeed(this.value)">
+              <option value="latest">Latest</option>
+              <option value="engaged">Most Engaged</option>
+            </select>
+          </div>
+          <div id="feed-container"></div>
+        </div>
+
+        <!-- JOB BOARD TAB -->
+        <div class="tab-panel" id="tab-jobs">
+          <div class="job-board-header">
+            <div class="job-board-title">Job Board</div>
+            <button onclick="openPostModal('job')" class="post-cta primary" style="font-size:12px;padding:7px 14px;">+ Post Opening</button>
+          </div>
+          <div class="section-label">8 Active Openings</div>
+          <div class="job-grid" id="job-grid-container"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="right-panel-wrapper">
+        <div class="right-panel">
+          <div class="panel-card">
+            <div class="panel-card-title"><span class="avail-dot"></span> Who's Available</div>
+            <div id="available-drivers-list">
+              <div style="font-size:12px;color:rgba(255,255,255,.3);">Loading…</div>
+            </div>
+            <a href="driver-availability.html" class="view-all-link">View all →</a>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-card-title">📊 Community Stats</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div style="text-align:center;padding:8px;background:rgba(0,0,0,.2);">
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:#fff;" id="stat-posts">12</div>
+                <div style="font-size:10px;color:rgba(255,255,255,.4);">Posts</div>
+              </div>
+              <div style="text-align:center;padding:8px;background:rgba(0,0,0,.2);">
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:#00d4aa;" id="stat-avail">2</div>
+                <div style="font-size:10px;color:rgba(255,255,255,.4);">Available</div>
+              </div>
+              <div style="text-align:center;padding:8px;background:rgba(0,0,0,.2);">
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:#3b82f6;" id="stat-jobs">8</div>
+                <div style="font-size:10px;color:rgba(255,255,255,.4);">Jobs Open</div>
+              </div>
+              <div style="text-align:center;padding:8px;background:rgba(0,0,0,.2);">
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:#f472b6;" id="stat-members">10</div>
+                <div style="font-size:10px;color:rgba(255,255,255,.4);">Members</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-card-title">🔗 Quick Links</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <a href="driver-availability.html" style="font-size:12px;color:#60a5fa;text-decoration:none;">Availability Network</a>
+              <a href="load-board.html" style="font-size:12px;color:#60a5fa;text-decoration:none;">Load Board</a>
+              <a href="nexus-connect.html" style="font-size:12px;color:#60a5fa;text-decoration:none;">Nexus Connect (Chat)</a>
+              <a href="drivers.html" style="font-size:12px;color:#60a5fa;text-decoration:none;">Driver Roster</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.community-layout -->
+  </div><!-- /.main-content -->
+</div><!-- /.layout -->
+
+<!-- MOBILE FLOATING BUTTON -->
+<button class="mobile-post-btn" onclick="openPostModal('general')">+</button>
+
+<!-- POST MODAL -->
+<div class="modal-overlay" id="post-modal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title" id="post-modal-title">📢 Post to Feed</div>
+      <button class="modal-close" onclick="closePostModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-input" id="post-cat-select" onchange="onCatChange()">
+          <option value="general">General</option>
+          <option value="job">Job Opening</option>
+          <option value="avail">Availability</option>
+          <option value="news">Company News</option>
+          <option value="help">Help Wanted</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message <span id="post-char-count" style="color:rgba(255,255,255,.3);">(0/500)</span></label>
+        <textarea class="form-input" id="post-content" rows="4" maxlength="500" placeholder="What's on your mind? Share news, ask for help, post availability…" oninput="updateCharCount()"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Location (optional)</label>
+        <input type="text" class="form-input" id="post-location" placeholder="e.g., Tampa, FL">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Equipment Type (optional)</label>
+        <input type="text" class="form-input" id="post-equipment" placeholder="e.g., RGN, Flatbed, Heavy Haul">
+      </div>
+      <div class="pin-row" id="pin-row" style="display:none;">
+        <span class="pin-label">📌 Pin to top of feed (admin only)</span>
+        <label class="toggle-sm">
+          <input type="checkbox" id="post-pin">
+          <div class="toggle-sm-track"></div>
+          <div class="toggle-sm-thumb"></div>
+        </label>
+      </div>
+      <button class="submit-btn" onclick="submitPost()">Post to Community</button>
+    </div>
+  </div>
+</div>
+
+<!-- JOB DETAIL MODAL -->
+<div class="modal-overlay" id="job-detail-modal">
+  <div class="modal-box" style="max-width:600px;">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title" id="jdm-title">Job Details</div>
+      <button class="modal-close" onclick="closeJobModal()">×</button>
+    </div>
+    <div class="modal-body" id="jdm-body"></div>
+  </div>
+</div>
+
+<script>
+// ── SEED DATA ────────────────────────────────────────────────────────────────
+const now = Date.now();
+const ago = (h) => new Date(now - h * 3600000).toISOString();
+
+const SEED_POSTS = [
+  {
+    id:'p001', pinned:true, type:'news', cat:'news',
+    author:'Jim B.', role:'admin', initials:'JB', color:'#e91e8c',
+    time: ago(1),
+    text:'🏆 Welcome to Carrier Nexus Driver Community — your hub for jobs, news, and connecting with fellow drivers. Post availability, find work, share tips, and stay connected with the team. Carrier Trucking US is glad to have you here.',
+    likes:7, comments:[
+      {author:'David', initials:'DH', color:'#3b82f6', time: ago(0.5), text:'Great to have this! 🙌'},
+      {author:'Amet', initials:'AA', color:'#a78bfa', time: ago(0.4), text:'This will be very useful for the team.'}
+    ]
+  },
+  {
+    id:'p002', pinned:false, type:'news', cat:'company',
+    author:'Amet Abreu', role:'dispatcher', initials:'AA', color:'#a78bfa',
+    time: ago(3),
+    text:'📢 All drivers — please have permits renewed by end of Q2. Reach out to the office with any questions. We can help coordinate the paperwork.',
+    likes:4, comments:[
+      {author:'Guillermo', initials:'GP', color:'#f97316', time: ago(2.5), text:'Got mine already. Thanks Amet!'}
+    ]
+  },
+  {
+    id:'p003', pinned:false, type:'avail', cat:'avail',
+    author:'Guillermo Pinera', role:'driver', initials:'GP', color:'#f97316',
+    time: ago(5),
+    text:'✅ Available for work — RGN, Heavy Haul, flatbed. Based Tampa FL. Nationwide. DM me.',
+    location:'Tampa, FL', equipment:'RGN, Heavy Haul, Flatbed',
+    likes:3, comments:[]
+  },
+  {
+    id:'p004', pinned:false, type:'general', cat:'general',
+    author:'David Hernandez', role:'driver', initials:'DH', color:'#3b82f6',
+    time: ago(8),
+    text:'Just wrapped a 110-ton RGN move from Tampa to Charlotte. Clean run, tight permits, no issues. Thanks to Amet for the solid dispatch on this one. 💪 #HeavyHaul #RGN',
+    likes:11, comments:[
+      {author:'Yosviel', initials:'YM', color:'#00d4aa', time: ago(7), text:'Great work man! Those Charlotte runs are no joke.'},
+      {author:'Amet', initials:'AA', color:'#a78bfa', time: ago(6.5), text:'Team effort! David is always reliable on big moves.'}
+    ]
+  },
+  {
+    id:'p005', pinned:false, type:'help', cat:'help',
+    author:'Nelson', role:'driver', initials:'NL', color:'#fb923c',
+    time: ago(14),
+    text:'🔧 Anyone know a good 24hr mobile mechanic near I-10 exit 203 Alabama? Trailer tire blew — need someone fast. Loaded with oversize equipment.',
+    location:'I-10 Exit 203, Alabama',
+    likes:2, comments:[
+      {author:'Guillermo', initials:'GP', color:'#f97316', time: ago(13.5), text:'Try calling John at Mobile Truck Repair (251) 555-0182 — he\'s helped me twice on I-10.'},
+      {author:'David', initials:'DH', color:'#3b82f6', time: ago(13), text:'Also try the Flying J at exit 195, they sometimes have mobile service contacts.'}
+    ]
+  },
+  {
+    id:'p006', pinned:false, type:'general', cat:'general',
+    author:'Yosviel', role:'driver', initials:'YM', color:'#00d4aa',
+    time: ago(20),
+    text:'Good week. 3 loads, all on time, no issues. Headed home Friday — the wife will be happy. #TruckerLife',
+    likes:9, comments:[
+      {author:'Avis', initials:'AV', color:'#f472b6', time: ago(19), text:'Enjoy the weekend Yosviel! Well earned.'}
+    ]
+  },
+  {
+    id:'p007', pinned:false, type:'job', cat:'job',
+    author:'Jim B.', role:'admin', initials:'JB', color:'#e91e8c',
+    time: ago(26),
+    text:'💼 NOW HIRING — CDL-A Owner-Operator drivers for Heavy Haul / RGN runs out of Tampa. We offer 86% gross, permit support, and dedicated dispatch. Serious inquiries only — DM or call the office.',
+    location:'Tampa, FL', equipment:'Heavy Haul, RGN',
+    likes:6, comments:[
+      {author:'Guillermo', initials:'GP', color:'#f97316', time: ago(25), text:'Can vouch — great company to work with. Good dispatch support.'}
+    ]
+  },
+  {
+    id:'p008', pinned:false, type:'general', cat:'general',
+    author:'Avis', role:'driver', initials:'AV', color:'#f472b6',
+    time: ago(30),
+    text:'Anyone running I-95 north this week? Got a buddy looking for a co-driver on a flatbed run. Let me know. #FlatbedLife',
+    likes:2, comments:[]
+  },
+  {
+    id:'p009', pinned:false, type:'help', cat:'help',
+    author:'David Hernandez', role:'driver', initials:'DH', color:'#3b82f6',
+    time: ago(48),
+    text:'Need a permit service recommendation for an oversize load GA→TN. Anyone worked with a service they trust? Looking for someone who knows the mountain routes. #OwnerOperator',
+    location:'Atlanta, GA',
+    likes:4, comments:[
+      {author:'Amet', initials:'AA', color:'#a78bfa', time: ago(47), text:'DM me — we use a good one for TN runs.'},
+      {author:'Guillermo', initials:'GP', color:'#f97316', time: ago(46), text:'Southern States Permits out of Nashville is solid for TN routes.'}
+    ]
+  },
+  {
+    id:'p010', pinned:false, type:'avail', cat:'avail',
+    author:'Avis', role:'driver', initials:'AV', color:'#f472b6',
+    time: ago(50),
+    text:'✅ Available starting Monday — Flatbed, RGN. Tampa area, can go nationwide. Prefer Southeast but open to all routes. Updated profile with current equipment.',
+    location:'Tampa, FL', equipment:'Flatbed, RGN',
+    likes:5, comments:[]
+  },
+  {
+    id:'p011', pinned:false, type:'general', cat:'general',
+    author:'Guillermo Pinera', role:'driver', initials:'GP', color:'#f97316',
+    time: ago(72),
+    text:'Tip for the newer guys: always confirm the dims and weight with the shipper before you leave the yard. Saved me twice this month from running an unpermitted load. A 5-min call is worth it. #HeavyHaul',
+    likes:14, comments:[
+      {author:'Nelson', initials:'NL', color:'#fb923c', time: ago(71), text:'This right here. Hard lesson learned the first time.'},
+      {author:'David', initials:'DH', color:'#3b82f6', time: ago(70), text:'💯 confirm weight AND width. Sometimes they estimate wrong.'},
+      {author:'Yosviel', initials:'YM', color:'#00d4aa', time: ago(69), text:'Adding this to my pre-load checklist.'}
+    ]
+  },
+  {
+    id:'p012', pinned:false, type:'news', cat:'company',
+    author:'Jim B.', role:'admin', initials:'JB', color:'#e91e8c',
+    time: ago(96),
+    text:'📢 New platform feature — you can now upload your docs directly from the app. Check the Documents section. BOLs, rate cons, permits all accepted. Questions? Message the admin.',
+    likes:8, comments:[
+      {author:'Avis', initials:'AV', color:'#f472b6', time: ago(95), text:'Finally! This will save so much time.'}
+    ]
+  }
+];
+
+const SEED_JOBS = [
+  {
+    id:'j001', isCarrier:true,
+    company:'Carrier Trucking US', companyShort:'CT', companyColor:'#e91e8c',
+    title:'CDL-A Owner-Op — Heavy Haul / RGN',
+    location:'Tampa, FL', region:'Nationwide',
+    equipment:['Heavy Haul','RGN'],
+    pay:'86% Gross', payType:'Owner-Operator',
+    posted: ago(24),
+    openings:2,
+    description:'Carrier Trucking US is seeking experienced CDL-A Owner-Operator drivers for heavy haul and RGN runs out of Tampa. Permit support, dedicated dispatch, and flexible scheduling. Great for drivers with their own equipment looking for consistent loads.',
+    requirements:['CDL-A Class A license','Minimum 3 years OTR experience','Clean MVR (no major violations in 3 yrs)','Own truck preferred','RGN / lowboy experience required'],
+    contact:'Call (813) 555-0101 or DM via Nexus Connect'
+  },
+  {
+    id:'j002', isCarrier:true,
+    company:'Carrier Trucking US', companyShort:'CT', companyColor:'#e91e8c',
+    title:'CDL-A Company Driver — RGN Southeast',
+    location:'Tampa, FL', region:'Southeast US',
+    equipment:['RGN','Lowboy'],
+    pay:'65% + Fuel Card', payType:'Company Driver',
+    posted: ago(48),
+    openings:1,
+    description:'Looking for a reliable CDL-A company driver for Southeast RGN runs based out of Tampa. Fuel card provided. Home weekends when possible. Steady work with consistent loads.',
+    requirements:['CDL-A license','2+ years flatbed/RGN experience','Clean driving record','Home base Tampa FL area'],
+    contact:'Email betty@carriertuckingus.com or call office'
+  },
+  {
+    id:'j003', isCarrier:false,
+    company:'Southeast Heavy Haul LLC', companyShort:'SH', companyColor:'#3b82f6',
+    title:'CDL-A Flatbed Driver (2 Openings)',
+    location:'Atlanta, GA', region:'Southeast',
+    equipment:['Flatbed','Step Deck'],
+    pay:'$0.75 CPM', payType:'Per Mile',
+    posted: ago(72),
+    openings:2,
+    description:'Southeast Heavy Haul LLC has 2 immediate openings for experienced CDL-A flatbed drivers based in Atlanta, GA. Consistent Southeast regional freight, mostly steel and construction materials.',
+    requirements:['CDL-A','1+ year flatbed experience','Tarping experience required','Home base Atlanta GA'],
+    contact:'Apply at southeastheavyhaul.com or call (404) 555-0200'
+  },
+  {
+    id:'j004', isCarrier:false,
+    company:'Gulf Coast Transport', companyShort:'GC', companyColor:'#0ea5e9',
+    title:'Heavy Haul OTR Driver',
+    location:'Houston, TX', region:'Nationwide OTR',
+    equipment:['Heavy Haul','RGN','Lowboy'],
+    pay:'80% Gross', payType:'Owner-Operator',
+    posted: ago(96),
+    openings:3,
+    description:'Gulf Coast Transport runs heavy haul and oversize loads nationwide. Owner-ops earn 80% gross. Home weekends when possible. Strong permit team on staff.',
+    requirements:['CDL-A','3+ years heavy haul OTR','Oversize permit experience preferred','Own unit preferred but not required'],
+    contact:'Call (713) 555-0300 or email dispatch@gulfcoasttransport.com'
+  },
+  {
+    id:'j005', isCarrier:false,
+    company:'Coastal Crane & Rigging', companyShort:'CC', companyColor:'#f59e0b',
+    title:'CDL-A Driver + Crane Operator',
+    location:'Tampa, FL', region:'Florida + Southeast',
+    equipment:['Crane Truck','Lowboy'],
+    pay:'$95K–$115K/yr', payType:'Salary',
+    posted: ago(120),
+    openings:1,
+    description:'Coastal Crane & Rigging is seeking a CDL-A driver with crane operator certification. Based in Tampa, FL. Competitive salary, health benefits, paid vacation. Local and regional work.',
+    requirements:['CDL-A Class A','Crane operator certification (NCCCO preferred)','3+ years experience','Clean background check'],
+    contact:'Email hr@coastalcranerigging.com'
+  },
+  {
+    id:'j006', isCarrier:false,
+    company:'Ag Transport Services', companyShort:'AG', companyColor:'#22c55e',
+    title:'CDL-A Driver — Farm Equipment Haul',
+    location:'Ocala, FL', region:'Florida',
+    equipment:['Lowboy','RGN','Step Deck'],
+    pay:'$0.70 CPM + bonuses', payType:'Seasonal',
+    posted: ago(144),
+    openings:4,
+    description:'Seasonal CDL-A drivers needed for farm equipment hauling season in Ocala / Central Florida. Tractors, combines, large ag equipment. Seasonal April–October with potential to extend.',
+    requirements:['CDL-A','1+ year flatbed or lowboy experience','Oversize move experience a plus','Florida preferred but not required'],
+    contact:'Call (352) 555-0400'
+  },
+  {
+    id:'j007', isCarrier:false,
+    company:'Nationwide Oversize', companyShort:'NO', companyColor:'#8b5cf6',
+    title:'Class A Driver — Oversize Specialist (3 Openings)',
+    location:'Multiple', region:'Nationwide',
+    equipment:['RGN','Multi-Axle','Widener'],
+    pay:'$1.20 CPM', payType:'Per Mile',
+    posted: ago(168),
+    openings:3,
+    description:'Nationwide Oversize is expanding and needs 3 CDL-A drivers experienced with oversize and overweight loads. Top CPM rate in the industry. Permit team handles all routing. Regular freight.',
+    requirements:['CDL-A','Oversize experience required','Permit and routing knowledge','Clean MVR + PSP report'],
+    contact:'Apply online nationwideoversize.com/careers'
+  },
+  {
+    id:'j008', isCarrier:true,
+    company:'Carrier Trucking US', companyShort:'CT', companyColor:'#e91e8c',
+    title:'Dispatcher (Remote) — Help Wanted',
+    location:'Remote', region:'Remote',
+    equipment:['N/A'],
+    pay:'Salary + Commission', payType:'W-2 Employee',
+    posted: ago(192),
+    openings:1,
+    description:'Carrier Trucking US is looking for an experienced freight dispatcher to join our remote team. You will manage driver assignments, coordinate permits, communicate with brokers, and support the ops team. Commission on booked loads.',
+    requirements:['2+ years dispatch experience','Knowledge of heavy haul / oversize logistics','Proficient with load boards (DAT, Truckstop)','Strong communication skills','Remote — must have reliable internet'],
+    contact:'Email crtruckus@gmail.com with resume'
+  }
+];
+
+// ── LOCALSTORAGE HELPERS ───────────────────────────────────────────────────
+function getPosts() {
+  try {
+    const stored = JSON.parse(localStorage.getItem('nexus_community_feed') || 'null');
+    if (stored && stored.length > 0) return stored;
+  } catch(e) {}
+  localStorage.setItem('nexus_community_feed', JSON.stringify(SEED_POSTS));
+  return SEED_POSTS;
+}
+function savePosts(posts) { localStorage.setItem('nexus_community_feed', JSON.stringify(posts)); }
+
+function getJobs() {
+  try {
+    const stored = JSON.parse(localStorage.getItem('nexus_job_board') || 'null');
+    if (stored && stored.length > 0) return stored;
+  } catch(e) {}
+  localStorage.setItem('nexus_job_board', JSON.stringify(SEED_JOBS));
+  return SEED_JOBS;
+}
+
+function getLikes() {
+  try { return JSON.parse(localStorage.getItem('nexus_community_likes') || '{}'); } catch(e) { return {}; }
+}
+function saveLikes(obj) { localStorage.setItem('nexus_community_likes', JSON.stringify(obj)); }
+
+function getSaved() {
+  try { return JSON.parse(localStorage.getItem('nexus_job_saved') || '[]'); } catch(e) { return []; }
+}
+function saveSaved(arr) { localStorage.setItem('nexus_job_saved', JSON.stringify(arr)); }
+
+function getAvailability() {
+  try { return JSON.parse(localStorage.getItem('nexus_driver_availability') || '{}'); } catch(e) { return {}; }
+}
+
+// ── TIME FORMAT ────────────────────────────────────────────────────────────
+function timeAgo(isoStr) {
+  const diff = (Date.now() - new Date(isoStr).getTime()) / 1000;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  if (diff < 604800) return Math.floor(diff/86400) + 'd ago';
+  return Math.floor(diff/604800) + 'w ago';
+}
+
+function fmtDate(isoStr) {
+  const d = new Date(isoStr);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
+// ── AVATAR COLORS ──────────────────────────────────────────────────────────
+const COLORS = ['#e91e8c','#3b82f6','#a78bfa','#f97316','#00d4aa','#f59e0b','#22c55e','#ec4899'];
+function colorForName(name) {
+  let h = 0;
+  for (let i=0;i<name.length;i++) h = name.charCodeAt(i) + ((h<<5)-h);
+  return COLORS[Math.abs(h) % COLORS.length];
+}
+
+// ── CURRENT USER ──────────────────────────────────────────────────────────
+function getCurrentUser() {
+  try {
+    const u = JSON.parse(localStorage.getItem('nexus_current_user') || 'null');
+    if (u) return u;
+    const users = JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS') || '[]');
+    const active = users.find(x => x.active);
+    if (active) return active;
+  } catch(e) {}
+  return { name:'Jim Burlew', email:'crtruckus@gmail.com', role:'admin' };
+}
+
+function initUserCard() {
+  const u = getCurrentUser();
+  const name = u.name || u.email || 'Driver';
+  const initials = name.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+  const color = colorForName(name);
+  const roleLabel = (u.role||'').charAt(0).toUpperCase() + (u.role||'').slice(1);
+  document.getElementById('my-avatar').textContent = initials;
+  document.getElementById('my-avatar').style.background = color;
+  document.getElementById('my-name').textContent = name;
+  document.getElementById('my-role').textContent = roleLabel;
+
+  // Restore availability
+  const avail = getAvailability();
+  const myKey = u.email || u.id || name;
+  const isAvail = avail[myKey] && avail[myKey].available;
+  document.getElementById('avail-toggle').checked = isAvail;
+  document.getElementById('seeking-tag').style.display = isAvail ? 'flex' : 'none';
+  document.getElementById('avail-status-text').textContent = isAvail ? 'You are available for work' : 'Set as available for work';
+
+  // Show pin option for admin
+  if (u.role === 'admin') document.getElementById('pin-row').style.display = 'flex';
+}
+
+window.onAvailToggle = function() {
+  const u = getCurrentUser();
+  const isOn = document.getElementById('avail-toggle').checked;
+  const avail = getAvailability();
+  const myKey = u.email || u.id || u.name;
+  avail[myKey] = {
+    available: isOn,
+    name: u.name || myKey,
+    role: u.role || 'driver',
+    equipment: 'Heavy Haul, RGN',
+    location: 'Tampa, FL',
+    updatedAt: new Date().toISOString()
+  };
+  localStorage.setItem('nexus_driver_availability', JSON.stringify(avail));
+  document.getElementById('seeking-tag').style.display = isOn ? 'flex' : 'none';
+  document.getElementById('avail-status-text').textContent = isOn ? 'You are available for work' : 'Set as available for work';
+  renderAvailableDrivers();
+};
+
+// ── RENDER FEED ────────────────────────────────────────────────────────────
+let currentFilter = 'all';
+let currentSort = 'latest';
+
+function renderFeed() {
+  let posts = getPosts();
+  const likes = getLikes();
+
+  // Apply likes from localStorage
+  posts = posts.map(p => ({ ...p, likes: likes[p.id] !== undefined ? likes[p.id] : p.likes }));
+
+  // Filter
+  if (currentFilter !== 'all') {
+    const catMap = { job:'job', news:'news', avail:'avail', help:'help', general:'general', company:'news' };
+    posts = posts.filter(p => {
+      if (currentFilter === 'company') return p.cat === 'company' || (p.type === 'news' && p.role === 'admin');
+      return p.type === currentFilter || p.cat === currentFilter;
+    });
+  }
+
+  // Sort — pinned always first
+  const pinned = posts.filter(p => p.pinned);
+  let rest = posts.filter(p => !p.pinned);
+  if (currentSort === 'latest') rest.sort((a,b) => new Date(b.time) - new Date(a.time));
+  else rest.sort((a,b) => (b.likes + (b.comments||[]).length) - (a.likes + (a.comments||[]).length));
+  posts = [...pinned, ...rest];
+
+  const container = document.getElementById('feed-container');
+  if (posts.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:40px 20px;color:rgba(255,255,255,.3);font-size:14px;">No posts in this category yet.</div>';
+    return;
+  }
+  container.innerHTML = posts.map(p => renderPostCard(p)).join('');
+
+  document.getElementById('stat-posts').textContent = getPosts().length;
+}
+
+function renderPostCard(p) {
+  const likes = getLikes();
+  const likeCount = likes[p.id] !== undefined ? likes[p.id] : p.likes;
+  const commentCount = (p.comments||[]).length;
+  const isLiked = (localStorage.getItem('nexus_liked_' + p.id) === '1');
+  const pinHtml = p.pinned ? '<span class="pin-indicator">📌</span>' : '';
+
+  // Special detail blocks
+  let detailBlock = '';
+  if (p.type === 'job' || p.type === 'avail') {
+    const rows = [];
+    if (p.location) rows.push(`<div class="pdb-row"><span class="pdb-label">Location</span><span class="pdb-val">📍 ${p.location}</span></div>`);
+    if (p.equipment) rows.push(`<div class="pdb-row"><span class="pdb-label">Equipment</span><span class="pdb-val">🚚 ${p.equipment}</span></div>`);
+    if (rows.length) detailBlock = `<div class="post-detail-block">${rows.join('')}</div>`;
+  }
+
+  // CTA button
+  let ctaHtml = '';
+  if (p.type === 'job') ctaHtml = `<button class="post-cta blue" onclick="event.stopPropagation();">Apply via Message</button>`;
+  else if (p.type === 'avail') ctaHtml = `<a href="nexus-connect.html" class="post-cta secondary">Contact via Platform</a>`;
+  else if (p.type === 'help') ctaHtml = `<button class="post-cta primary" onclick="event.stopPropagation();">Reply / Help</button>`;
+
+  // Comments (max 3 shown)
+  const allComments = p.comments || [];
+  const shownComments = allComments.slice(0,3);
+  const extraCount = allComments.length - 3;
+  const commentsHtml = allComments.length > 0 ? `
+    <div class="comments-section">
+      ${shownComments.map(c => `
+        <div class="comment-item">
+          <div class="avatar-xs" style="background:${c.color||colorForName(c.author)};">${c.initials||c.author.slice(0,2).toUpperCase()}</div>
+          <div class="comment-body">
+            <span class="comment-author">${c.author}</span>
+            <span class="comment-time">${timeAgo(c.time)}</span>
+            <div class="comment-text">${c.text}</div>
+          </div>
+        </div>
+      `).join('')}
+      ${extraCount > 0 ? `<button class="show-all-btn" onclick="showAllComments('${p.id}')">Show all ${allComments.length} comments</button>` : ''}
+      <div class="comment-input-row">
+        <input type="text" class="comment-input" id="ci-${p.id}" placeholder="Write a comment…" onkeydown="if(event.key==='Enter')submitComment('${p.id}')">
+        <button class="comment-submit" onclick="submitComment('${p.id}')">Post</button>
+      </div>
+    </div>
+  ` : `
+    <div class="comments-section" style="padding:8px 16px 12px;">
+      <div class="comment-input-row">
+        <input type="text" class="comment-input" id="ci-${p.id}" placeholder="Be the first to comment…" onkeydown="if(event.key==='Enter')submitComment('${p.id}')">
+        <button class="comment-submit" onclick="submitComment('${p.id}')">Post</button>
+      </div>
+    </div>
+  `;
+
+  const roleBadgeClass = p.role === 'admin' ? 'admin' : p.role === 'dispatcher' ? 'dispatcher' : 'driver';
+  const catBadgeMap = { job:'job', avail:'avail', help:'help', news:'news', general:'general', company:'news' };
+  const catLabel = { job:'Job', avail:'Availability', help:'Help', news:'News', general:'General', company:'Company' };
+
+  return `
+    <div class="post-card type-${p.type}${p.pinned?' pinned':''}" id="post-${p.id}">
+      <div class="post-header">
+        <div class="avatar-sm" style="background:${p.color||colorForName(p.author)};">${p.initials||p.author.slice(0,2).toUpperCase()}</div>
+        <div class="post-meta">
+          <div class="post-author-row">
+            <span class="post-author">${p.author}</span>
+            ${pinHtml}
+            <span class="role-badge ${roleBadgeClass}">${p.role||'driver'}</span>
+            <span class="cat-badge ${catBadgeMap[p.cat]||'general'}">${catLabel[p.cat]||p.cat}</span>
+          </div>
+          <div class="post-time">${timeAgo(p.time)}</div>
+        </div>
+      </div>
+      <div class="post-body">
+        <div class="post-text">${p.text}</div>
+        ${detailBlock}
+        ${ctaHtml}
+      </div>
+      <div class="post-actions">
+        <button class="action-btn${isLiked?' liked':''}" onclick="toggleLike('${p.id}')">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 14s-7-3.5-7-7.5C1 3.5 3 1 5.5 1c1.5 0 2.5 1 2.5 1S9 1 10.5 1C13 1 15 3.5 15 6.5 15 10.5 8 14 8 14z"/></svg>
+          <span id="like-count-${p.id}">${likeCount}</span>
+        </button>
+        <div class="action-sep"></div>
+        <button class="action-btn" onclick="focusComment('${p.id}')">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 9a1 1 0 01-1 1H5l-3 3V3a1 1 0 011-1h10a1 1 0 011 1v6z"/></svg>
+          ${commentCount}
+        </button>
+        <div class="action-sep"></div>
+        <button class="action-btn" onclick="sharePost('${p.id}')">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 2l4 4-4 4M14 6H6a4 4 0 000 8h2"/></svg>
+          Share
+        </button>
+      </div>
+      ${commentsHtml}
+    </div>
+  `;
+}
+
+// ── FEED INTERACTIONS ──────────────────────────────────────────────────────
+window.toggleLike = function(postId) {
+  const likes = getLikes();
+  const posts = getPosts();
+  const post = posts.find(p => p.id === postId);
+  const liked = localStorage.getItem('nexus_liked_' + postId) === '1';
+  if (liked) {
+    localStorage.removeItem('nexus_liked_' + postId);
+    likes[postId] = Math.max(0, (likes[postId] !== undefined ? likes[postId] : post.likes) - 1);
+  } else {
+    localStorage.setItem('nexus_liked_' + postId, '1');
+    likes[postId] = (likes[postId] !== undefined ? likes[postId] : post.likes) + 1;
+  }
+  saveLikes(likes);
+  const btn = document.querySelector(`#post-${postId} .action-btn`);
+  if (btn) btn.classList.toggle('liked', !liked);
+  const countEl = document.getElementById('like-count-' + postId);
+  if (countEl) countEl.textContent = likes[postId];
+};
+
+window.focusComment = function(postId) {
+  const el = document.getElementById('ci-' + postId);
+  if (el) el.focus();
+};
+
+window.submitComment = function(postId) {
+  const input = document.getElementById('ci-' + postId);
+  if (!input || !input.value.trim()) return;
+  const u = getCurrentUser();
+  const name = u.name || 'You';
+  const initials = name.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+  const posts = getPosts();
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  if (!post.comments) post.comments = [];
+  post.comments.push({
+    author: name, initials, color: colorForName(name),
+    time: new Date().toISOString(), text: input.value.trim()
+  });
+  savePosts(posts);
+  input.value = '';
+  renderFeed();
+};
+
+window.showAllComments = function(postId) {
+  const posts = getPosts();
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  const likes = getLikes();
+  const likeCount = likes[postId] !== undefined ? likes[postId] : post.likes;
+  const allComments = post.comments || [];
+  const section = document.querySelector(`#post-${postId} .comments-section`);
+  if (!section) return;
+  section.innerHTML = allComments.map(c => `
+    <div class="comment-item">
+      <div class="avatar-xs" style="background:${c.color||colorForName(c.author)};">${c.initials||c.author.slice(0,2).toUpperCase()}</div>
+      <div class="comment-body">
+        <span class="comment-author">${c.author}</span>
+        <span class="comment-time">${timeAgo(c.time)}</span>
+        <div class="comment-text">${c.text}</div>
+      </div>
+    </div>
+  `).join('') + `
+    <div class="comment-input-row">
+      <input type="text" class="comment-input" id="ci-${postId}" placeholder="Write a comment…" onkeydown="if(event.key==='Enter')submitComment('${postId}')">
+      <button class="comment-submit" onclick="submitComment('${postId}')">Post</button>
+    </div>
+  `;
+};
+
+window.sharePost = function(postId) {
+  const url = window.location.href.split('?')[0] + '?post=' + postId;
+  if (navigator.clipboard) navigator.clipboard.writeText(url).then(() => alert('Link copied to clipboard!'));
+  else alert('Post link: ' + url);
+};
+
+window.filterFeed = function(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.cat === cat);
+  });
+  renderFeed();
+};
+
+window.sortFeed = function(val) {
+  currentSort = val;
+  renderFeed();
+};
+
+// ── RENDER JOB BOARD ────────────────────────────────────────────────────────
+function renderJobBoard() {
+  const jobs = getJobs();
+  const saved = getSaved();
+  const container = document.getElementById('job-grid-container');
+  container.innerHTML = jobs.map(j => renderJobCard(j, saved)).join('');
+  document.getElementById('stat-jobs').textContent = jobs.length;
+}
+
+function renderJobCard(j, saved) {
+  const isSaved = saved.includes(j.id);
+  const tagsHtml = j.equipment.filter(e=>e!=='N/A').map(e =>
+    `<span class="job-tag green">${e}</span>`
+  ).join('') + `<span class="job-tag blue">${j.payType}</span>`;
+
+  return `
+    <div class="job-card${j.isCarrier?' carrier':''}">
+      <button class="job-save-btn${isSaved?' saved':''}" onclick="toggleSaveJob('${j.id}')" title="${isSaved?'Unsave':'Save'} job">
+        ${isSaved ? '♥' : '♡'}
+      </button>
+      <div class="job-card-top">
+        <div class="job-logo" style="background:${j.companyColor};">${j.companyShort}</div>
+        <div class="job-info">
+          <div class="job-title">${j.title}</div>
+          <div class="job-company">${j.company}${j.openings>1?' · '+j.openings+' openings':''}</div>
+          <div class="job-location">
+            <svg viewBox="0 0 16 16" fill="currentColor" style="width:10px;height:10px;"><path d="M8 1a5 5 0 00-5 5c0 3.5 5 9 5 9s5-5.5 5-9a5 5 0 00-5-5zm0 7a2 2 0 110-4 2 2 0 010 4z"/></svg>
+            ${j.location} · ${j.region}
+          </div>
+        </div>
+      </div>
+      <div class="job-tags">${tagsHtml}</div>
+      <div class="job-pay">${j.pay}</div>
+      <div class="job-pay-sub">${j.payType}</div>
+      <div class="job-footer">
+        <div class="job-posted">Posted ${timeAgo(j.posted)}</div>
+        <button class="job-detail-btn" onclick="openJobDetail('${j.id}')">Details</button>
+      </div>
+    </div>
+  `;
+}
+
+window.toggleSaveJob = function(jobId) {
+  const saved = getSaved();
+  const idx = saved.indexOf(jobId);
+  if (idx > -1) saved.splice(idx,1);
+  else saved.push(jobId);
+  saveSaved(saved);
+  renderJobBoard();
+};
+
+window.openJobDetail = function(jobId) {
+  const jobs = getJobs();
+  const j = jobs.find(x=>x.id===jobId);
+  if (!j) return;
+  document.getElementById('jdm-title').textContent = '💼 ' + j.title;
+  document.getElementById('jdm-body').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div class="job-logo" style="background:${j.companyColor};width:48px;height:48px;font-size:15px;">${j.companyShort}</div>
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;color:#fff;">${j.company}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.45);">📍 ${j.location} · ${j.region}</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+      <span style="padding:4px 10px;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.3);color:#00d4aa;font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:700;">${j.pay}</span>
+      <span style="padding:4px 10px;background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.3);color:#60a5fa;font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:700;">${j.payType}</span>
+      ${j.openings > 1 ? `<span style="padding:4px 10px;background:rgba(233,30,140,.1);border:1px solid rgba(233,30,140,.3);color:#f472b6;font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:700;">${j.openings} Openings</span>` : ''}
+    </div>
+    <div class="job-detail-section">
+      <div class="job-detail-section-title">About This Role</div>
+      <div class="job-detail-body">${j.description}</div>
+    </div>
+    <div class="job-detail-section">
+      <div class="job-detail-section-title">Requirements</div>
+      <ul class="job-req-list">${j.requirements.map(r=>`<li>${r}</li>`).join('')}</ul>
+    </div>
+    <div class="job-detail-section">
+      <div class="job-detail-section-title">How to Apply</div>
+      <div class="job-detail-body">${j.contact}</div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <a href="nexus-connect.html" class="post-cta primary" style="flex:1;justify-content:center;text-decoration:none;">Apply via Message</a>
+      <button onclick="toggleSaveJob('${j.id}');closeJobModal();" class="post-cta secondary">Save Job</button>
+    </div>
+  `;
+  document.getElementById('job-detail-modal').classList.add('open');
+};
+
+window.closeJobModal = function() {
+  document.getElementById('job-detail-modal').classList.remove('open');
+};
+
+// ── AVAILABLE DRIVERS PANEL ────────────────────────────────────────────────
+function renderAvailableDrivers() {
+  const avail = getAvailability();
+  const entries = Object.entries(avail).filter(([k,v]) => v.available);
+  const container = document.getElementById('available-drivers-list');
+  const statEl = document.getElementById('stat-avail');
+
+  // Seed some availability if empty
+  if (entries.length === 0) {
+    const defaults = [
+      { key:'guillermo@carriertuckingus.com', name:'Guillermo Pinera', equipment:'RGN, Heavy Haul', location:'Tampa, FL' },
+      { key:'avis@carriertuckingus.com', name:'Avis', equipment:'Flatbed, RGN', location:'Tampa, FL' }
+    ];
+    defaults.forEach(d => {
+      if (!avail[d.key]) avail[d.key] = { available:true, name:d.name, equipment:d.equipment, location:d.location, updatedAt: new Date().toISOString() };
+    });
+    localStorage.setItem('nexus_driver_availability', JSON.stringify(avail));
+  }
+
+  const availEntries = Object.entries(avail).filter(([k,v]) => v.available).slice(0,5);
+  if (statEl) statEl.textContent = Object.values(avail).filter(v=>v.available).length;
+
+  if (availEntries.length === 0) {
+    container.innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,.3);text-align:center;padding:8px 0;">No drivers available right now.</div>';
+    return;
+  }
+
+  container.innerHTML = availEntries.map(([k,v]) => {
+    const name = v.name || k;
+    const initials = name.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+    const color = colorForName(name);
+    return `
+      <div class="avail-driver-row">
+        <div class="avatar-xs" style="background:${color};">${initials}</div>
+        <div class="avail-driver-info">
+          <div class="avail-driver-name">${name}</div>
+          <div class="avail-driver-equip">${v.equipment||'Equipment not listed'}</div>
+          <div class="avail-driver-loc">📍 ${v.location||'Location not set'}</div>
+        </div>
+        <a href="nexus-connect.html" class="msg-btn">Msg</a>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── MODALS ────────────────────────────────────────────────────────────────
+window.openPostModal = function(defaultCat) {
+  const modal = document.getElementById('post-modal');
+  const catSelect = document.getElementById('post-cat-select');
+  const titleEl = document.getElementById('post-modal-title');
+  catSelect.value = defaultCat || 'general';
+  const titles = { general:'📢 Post to Feed', job:'💼 Post Job Opening', avail:'✅ Post Availability', news:'📢 Company News', help:'🔧 Request Help' };
+  titleEl.textContent = titles[catSelect.value] || '📢 Post to Feed';
+  document.getElementById('post-content').value = '';
+  document.getElementById('post-location').value = '';
+  document.getElementById('post-equipment').value = '';
+  document.getElementById('post-char-count').textContent = '(0/500)';
+  modal.classList.add('open');
+};
+
+window.closePostModal = function() {
+  document.getElementById('post-modal').classList.remove('open');
+};
+
+window.onCatChange = function() {
+  const val = document.getElementById('post-cat-select').value;
+  const titles = { general:'📢 Post to Feed', job:'💼 Post Job Opening', avail:'✅ Post Availability', news:'📢 Company News', help:'🔧 Request Help' };
+  document.getElementById('post-modal-title').textContent = titles[val] || '📢 Post to Feed';
+};
+
+window.updateCharCount = function() {
+  const len = document.getElementById('post-content').value.length;
+  document.getElementById('post-char-count').textContent = `(${len}/500)`;
+};
+
+window.submitPost = function() {
+  const content = document.getElementById('post-content').value.trim();
+  if (!content) { alert('Please write something before posting.'); return; }
+  const cat = document.getElementById('post-cat-select').value;
+  const location = document.getElementById('post-location').value.trim();
+  const equipment = document.getElementById('post-equipment').value.trim();
+  const pinned = document.getElementById('post-pin').checked;
+  const u = getCurrentUser();
+  const name = u.name || 'Driver';
+  const initials = name.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+
+  const newPost = {
+    id: 'p' + Date.now(),
+    pinned,
+    type: cat,
+    cat,
+    author: name,
+    role: u.role || 'driver',
+    initials,
+    color: colorForName(name),
+    time: new Date().toISOString(),
+    text: content,
+    location: location || null,
+    equipment: equipment || null,
+    likes: 0,
+    comments: []
+  };
+
+  const posts = getPosts();
+  posts.unshift(newPost);
+  savePosts(posts);
+  closePostModal();
+  renderFeed();
+  document.getElementById('feed-container').scrollIntoView({ behavior:'smooth' });
+};
+
+// ── TABS ───────────────────────────────────────────────────────────────────
+window.switchTab = function(tabId, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  btn.classList.add('active');
+};
+
+// Close modals on overlay click
+document.getElementById('post-modal').addEventListener('click', function(e) {
+  if (e.target === this) closePostModal();
+});
+document.getElementById('job-detail-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeJobModal();
+});
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+initUserCard();
+renderFeed();
+renderJobBoard();
+renderAvailableDrivers();
+</script>
+</body>
+</html>
