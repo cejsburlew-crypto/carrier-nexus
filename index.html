@@ -185,6 +185,16 @@
   .doc-desc, .alert-desc { color: #475569 !important; }
   </style>
 
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Carrier Nexus">
+<meta name="theme-color" content="#1a2744">
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function(){});
+}
+</script>
 </head>
 <body>
 <script>

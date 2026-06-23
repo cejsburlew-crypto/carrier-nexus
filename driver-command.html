@@ -125,6 +125,16 @@ body{background:#0f1724;color:#f0f4f8;font-family:'Barlow',sans-serif;min-height
 .sidebar-link svg{width:14px!important;height:14px!important;flex-shrink:0!important;opacity:.7!important;}
 .sidebar-link.active svg{opacity:1!important;}
 </style>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Carrier Nexus">
+<meta name="theme-color" content="#1a2744">
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function(){});
+}
+</script>
 </head>
 <body>
 <script src="nexus-config.js"></script>
@@ -152,6 +162,13 @@ body{background:#0f1724;color:#f0f4f8;font-family:'Barlow',sans-serif;min-height
   </div>
 </div>
 
+<div style="padding: 16px; background: #1a2744; border-radius: 12px; margin-bottom: 16px;">
+  <div style="color: #00d4aa; font-size: 12px; font-weight: 700; letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase;">Quick Actions</div>
+  <div style="display: flex; gap: 10px;">
+    <a href="driver-intake.html" style="flex:1; display:block; background:#00d4aa; color:#1a2744; text-align:center; padding:14px; border-radius:10px; font-weight:800; font-size:16px; text-decoration:none;">📋 Add Rate Con</a>
+    <a href="driver-intake.html#docs" style="flex:1; display:block; background:rgba(255,255,255,0.1); color:white; text-align:center; padding:14px; border-radius:10px; font-weight:800; font-size:16px; text-decoration:none; border:2px solid rgba(255,255,255,0.2);">📄 Upload Doc</a>
+  </div>
+</div>
 <!-- TILE GRID -->
 <div class="section-label">Quick Access</div>
 <div class="tile-grid">
