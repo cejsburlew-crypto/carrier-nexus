@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expiration Alerts — Carrier Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #0a0a0a;
+  --navy: #111827;
+  --navy2: #1f2937;
+  --navy3: #374151;
+  --border: #21262d;
+  --border2: #30363d;
+  --text: #c9d1d9;
+  --text-muted: #6b7280;
+  --text-bright: #e6edf3;
+  --orange: #e91e8c;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --green: #22c55e;
+  --blue: #3b82f6;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0a0a0a;
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  display: flex;
+  min-height: 100vh;
+}
+.main { margin-left: 220px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+.topbar {
+  height: 56px;
+  background: linear-gradient(135deg, #000 0%, #6b0000 45%, #c2185b 80%, #e91e8c 100%);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  gap: 16px;
+  position: sticky; top: 0; z-index: 50;
+}
+.topbar-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 20px; letter-spacing: 1px;
+  color: #fff; flex: 1;
+}
+.btn {
+  padding: 7px 16px; border-radius: 5px; border: none;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
+  font-size: 13px; letter-spacing: 0.8px; cursor: pointer; transition: all 0.15s;
+}
+.btn-primary { background: #e91e8c; color: #fff; }
+.btn-primary:hover { background: #f50057; }
+.btn-ghost { background: transparent; color: rgba(255,255,255,.8); border: 1px solid rgba(255,255,255,.3); }
+.btn-ghost:hover { border-color: rgba(255,255,255,.6); color: #fff; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.content { padding: 24px 28px; }
+
+/* ── SUMMARY BAR ── */
+.summary-bar {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px;
+  background: var(--navy); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px 20px; align-items: center;
+}
+.sum-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: 20px; font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 700; letter-spacing: .5px; cursor: pointer;
+  border: 1.5px solid; transition: all .15s; user-select: none;
+}
+.sum-pill:hover { transform: translateY(-1px); }
+.sum-pill.active { box-shadow: 0 0 0 2px rgba(255,255,255,.25); }
+.pill-red   { background: rgba(239,68,68,.15);  color: #f87171;  border-color: rgba(239,68,68,.4); }
+.pill-yellow{ background: rgba(245,158,11,.15); color: #fcd34d;  border-color: rgba(245,158,11,.4); }
+.pill-green { background: rgba(34,197,94,.12);  color: #86efac;  border-color: rgba(34,197,94,.35); }
+.pill-gray  { background: rgba(107,114,128,.12);color: #9ca3af;  border-color: rgba(107,114,128,.3); }
+.sum-pill .cnt { font-size: 16px; font-weight: 900; }
+.sum-bar-title {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: 15px; letter-spacing: 1px; color: var(--text-bright); margin-right: auto;
+}
+
+/* ── SECTION HEADERS ── */
+.sec-hdr {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-muted); margin: 24px 0 10px; display: flex;
+  align-items: center; gap: 10px;
+}
+.sec-hdr::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ── ALERT TABLE ── */
+.alert-table-wrap { background: var(--navy); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 24px; }
+.alert-table { width: 100%; border-collapse: collapse; }
+.alert-table th {
+  padding: 10px 14px; text-align: left;
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  font-weight: 700; color: var(--text-muted); letter-spacing: 1.5px;
+  text-transform: uppercase; border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,.03);
+}
+.alert-table td { padding: 11px 14px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,.04); vertical-align: middle; }
+.alert-table tr:last-child td { border-bottom: none; }
+.alert-table tr:hover td { background: rgba(255,255,255,.03); }
+.alert-table tr.hidden-row { display: none; }
+
+/* status dot */
+.status-dot {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 50%; font-size: 13px; flex-shrink: 0;
+}
+.dot-red    { background: rgba(239,68,68,.2); }
+.dot-yellow { background: rgba(245,158,11,.2); }
+.dot-green  { background: rgba(34,197,94,.2); }
+.dot-gray   { background: rgba(107,114,128,.2); }
+
+.days-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  padding: 3px 9px; border-radius: 4px; display: inline-block;
+}
+.days-expired { background: rgba(239,68,68,.15); color: #f87171; }
+.days-warning { background: rgba(245,158,11,.15); color: #fcd34d; }
+.days-ok      { background: rgba(34,197,94,.12);  color: #86efac; }
+.days-none    { background: rgba(107,114,128,.12); color: #9ca3af; }
+
+.cat-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
+  padding: 2px 8px; border-radius: 3px; letter-spacing: .5px; text-transform: uppercase;
+  background: rgba(255,255,255,.07); color: var(--text-muted); border: 1px solid var(--border2);
+}
+
+/* inline edit row */
+.edit-row { display: none; }
+.edit-row td { background: rgba(233,30,140,.04) !important; border-bottom: 1px solid rgba(233,30,140,.2) !important; }
+.edit-row.open { display: table-row; }
+.edit-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; padding: 4px 0; }
+.ef-group { display: flex; flex-direction: column; gap: 4px; }
+.ef-group label { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .8px; }
+.ef-group input, .ef-group select, .ef-group textarea {
+  background: #0d1117; border: 1px solid var(--border2); border-radius: 5px;
+  color: var(--text); font-family: 'Barlow', sans-serif; font-size: 13px;
+  padding: 6px 10px;
+}
+.ef-group input:focus, .ef-group select:focus { border-color: var(--orange); outline: none; }
+.ef-group textarea { resize: vertical; min-height: 52px; width: 100%; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.7); z-index: 500; align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: #161b22; border: 1px solid var(--border); border-radius: 12px;
+  width: 560px; max-width: 96vw; max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(0,0,0,.6);
+}
+.modal-hdr {
+  padding: 18px 22px 14px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-hdr h3 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .5px; color: var(--text-bright); }
+.modal-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 20px; line-height: 1; padding: 2px 6px; border-radius: 4px; }
+.modal-close:hover { background: var(--navy2); color: var(--text-bright); }
+.modal-body { padding: 20px 22px; }
+.modal-footer { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.form-row.full { grid-template-columns: 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .8px; }
+.form-group input, .form-group select, .form-group textarea {
+  background: #0d1117; border: 1px solid var(--border2); border-radius: 6px;
+  color: var(--text); font-family: 'Barlow', sans-serif; font-size: 14px; padding: 9px 12px;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--orange); outline: none; }
+.form-group textarea { resize: vertical; min-height: 60px; }
+
+/* ── EMPTY STATE ── */
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+.empty-state svg { opacity: .3; margin-bottom: 12px; }
+.empty-state p { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  .main { margin-left: 0 !important; }
+  .content { padding: 14px 12px 80px; }
+  .topbar { padding: 0 14px; }
+  .summary-bar { gap: 6px; padding: 12px 14px; }
+  .sum-pill { font-size: 10px; padding: 6px 10px; }
+  .alert-table th:nth-child(4), .alert-table td:nth-child(4),
+  .alert-table th:nth-child(6), .alert-table td:nth-child(6) { display: none; }
+  .form-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<script src="nexus-config.js"></script>
+<script src="nexus-sidebar.js"></script>
+
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title">⏰ EXPIRATION ALERT MANAGER</div>
+    <button class="btn btn-ghost btn-sm" onclick="exportCSV()">Export CSV</button>
+    <button class="btn btn-primary" onclick="openAddModal()">+ Add Alert</button>
+  </div>
+
+  <div class="content">
+
+    <!-- SUMMARY BAR -->
+    <div class="summary-bar">
+      <span class="sum-bar-title">ALERT SUMMARY</span>
+      <button class="sum-pill pill-red active" id="pill-expired" onclick="filterBy('expired')">
+        <span>🔴</span><span class="cnt" id="cnt-expired">0</span><span>EXPIRED</span>
+      </button>
+      <button class="sum-pill pill-yellow" id="pill-expiring" onclick="filterBy('expiring')">
+        <span>🟡</span><span class="cnt" id="cnt-expiring">0</span><span>EXPIRING SOON</span>
+      </button>
+      <button class="sum-pill pill-green" id="pill-ok" onclick="filterBy('ok')">
+        <span>🟢</span><span class="cnt" id="cnt-ok">0</span><span>OK</span>
+      </button>
+      <button class="sum-pill pill-gray" id="pill-notset" onclick="filterBy('notset')">
+        <span>⚪</span><span class="cnt" id="cnt-notset">0</span><span>NOT SET</span>
+      </button>
+      <button class="sum-pill" style="background:rgba(255,255,255,.07);color:var(--text-muted);border-color:var(--border2);margin-left:4px;" onclick="filterBy('all')">ALL</button>
+    </div>
+
+    <!-- SYSTEM ALERTS -->
+    <div class="sec-hdr">System Alerts <span style="color:var(--text-muted);font-size:9px;margin-left:4px;">auto-populated from driver &amp; vehicle records</span></div>
+    <div class="alert-table-wrap">
+      <table class="alert-table" id="system-table">
+        <thead>
+          <tr>
+            <th style="width:36px;"></th>
+            <th>Item</th>
+            <th>Assigned To</th>
+            <th>Expiry Date</th>
+            <th>Days Remaining</th>
+            <th>Threshold</th>
+            <th style="width:60px;"></th>
+          </tr>
+        </thead>
+        <tbody id="system-tbody">
+          <tr><td colspan="7" class="empty-state"><p>Loading system alerts…</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CUSTOM ALERTS -->
+    <div class="sec-hdr">Custom Alerts <span style="color:var(--text-muted);font-size:9px;margin-left:4px;">user-created, unlimited</span></div>
+    <div class="alert-table-wrap">
+      <table class="alert-table" id="custom-table">
+        <thead>
+          <tr>
+            <th style="width:36px;"></th>
+            <th>Item</th>
+            <th>Category / Assigned To</th>
+            <th>Expiry Date</th>
+            <th>Days Remaining</th>
+            <th>Threshold</th>
+            <th style="width:100px;"></th>
+          </tr>
+        </thead>
+        <tbody id="custom-tbody">
+          <tr><td colspan="7" class="empty-state"><p>No custom alerts yet. Click "+ Add Alert" to create one.</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="alertModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3 id="modal-title">Add Custom Alert</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id">
+      <div class="form-row">
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Alert Name *</label>
+          <input type="text" id="f-name" placeholder="e.g. Trailer Annual Inspection — TR-001">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="f-category">
+            <option>CDL</option><option>Medical</option><option>Registration</option>
+            <option>Insurance</option><option>Inspection</option><option>Permit</option>
+            <option>Lease</option><option>Contract</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Assigned To</label>
+          <select id="f-assigned">
+            <option value="">— Unassigned —</option>
+            <option>Company</option>
+            <option>Avis Modesto</option><option>David Fonseca</option>
+            <option>Miguel Fonseca</option><option>Nelson</option>
+            <option>Yosviel Pinera</option><option>Guillermo Pinera</option>
+            <option>Amet Abreu</option><option>Betty</option>
+            <option>TR-001</option><option>TR-002</option>
+            <option>T-001</option><option>T-002</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Expiry Date *</label>
+          <input type="date" id="f-expiry">
+        </div>
+        <div class="form-group">
+          <label>Alert Threshold (days before)</label>
+          <input type="number" id="f-threshold" value="30" min="1" max="365">
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="f-notes" placeholder="Optional notes…"></textarea>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;">
+          <input type="checkbox" id="f-active" checked style="width:18px;height:18px;cursor:pointer;">
+          <label for="f-active" style="font-size:13px;color:var(--text);text-transform:none;letter-spacing:0;">Alert active</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="saveAlert()">Save Alert</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<script>
+(async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); })();
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  CARRIER NEXUS — EXPIRATION ALERT MANAGER
+// ═══════════════════════════════════════════════════════════
+
+var CUSTOM_KEY = 'nexus_custom_alerts';
+var today = new Date(); today.setHours(0,0,0,0);
+var activeFilter = 'all';
+var editingId = null;
+
+// ── SEED DEFAULT CUSTOM ALERTS (run once) ──
+(function seedCustomAlerts() {
+  var existing = JSON.parse(localStorage.getItem(CUSTOM_KEY) || 'null');
+  if (existing && existing.length > 0) return; // already seeded
+  var seed = [
+    { id: 'ca_1', name: 'Trailer Annual Inspection — TR-001', category: 'Inspection', assignedTo: 'TR-001',     expiry: '2026-08-15', threshold: 30, notes: '', active: true },
+    { id: 'ca_2', name: 'Trailer Annual Inspection — TR-002', category: 'Inspection', assignedTo: 'TR-002',     expiry: '2026-11-22', threshold: 30, notes: '', active: true },
+    { id: 'ca_3', name: 'Truck Annual DOT — T-001',           category: 'Inspection', assignedTo: 'T-001',      expiry: '2026-09-30', threshold: 30, notes: '', active: true },
+    { id: 'ca_4', name: 'Truck Annual DOT — T-002',           category: 'Inspection', assignedTo: 'T-002',      expiry: '2026-07-14', threshold: 30, notes: 'Schedule shop time ASAP', active: true },
+    { id: 'ca_5', name: 'Carrier Operating Authority Renewal',category: 'Contract',   assignedTo: 'Company',    expiry: '2027-03-01', threshold: 60, notes: 'FMCSA filing required', active: true },
+    { id: 'ca_6', name: 'Liability Insurance',                category: 'Insurance',  assignedTo: 'Company',    expiry: '2026-12-31', threshold: 60, notes: 'Renew with broker 60 days out', active: true },
+    { id: 'ca_7', name: 'David CDL',                          category: 'CDL',        assignedTo: 'David Fonseca', expiry: '2026-08-20', threshold: 30, notes: '', active: true },
+    { id: 'ca_8', name: 'Avis Medical Card',                  category: 'Medical',    assignedTo: 'Avis Modesto',  expiry: '2026-07-05', threshold: 30, notes: 'Schedule DOT physical', active: true },
+  ];
+  localStorage.setItem(CUSTOM_KEY, JSON.stringify(seed));
+})();
+
+// ── UTILS ──
+function daysDiff(dateStr) {
+  if (!dateStr) return null;
+  var d = new Date(dateStr + 'T12:00:00');
+  if (isNaN(d)) return null;
+  return Math.round((d - today) / 86400000);
+}
+
+function getStatus(days, threshold) {
+  if (days === null) return 'notset';
+  if (days < 0)   return 'expired';
+  if (days <= (threshold || 30)) return 'expiring';
+  return 'ok';
+}
+
+function statusDot(status) {
+  var icons = { expired: '🔴', expiring: '🟡', ok: '🟢', notset: '⚪' };
+  var cls   = { expired: 'dot-red', expiring: 'dot-yellow', ok: 'dot-green', notset: 'dot-gray' };
+  return '<span class="status-dot ' + cls[status] + '">' + icons[status] + '</span>';
+}
+
+function daysBadge(days, threshold) {
+  if (days === null) return '<span class="days-badge days-none">—</span>';
+  if (days < 0)  return '<span class="days-badge days-expired">EXPIRED ' + Math.abs(days) + 'd ago</span>';
+  if (days === 0) return '<span class="days-badge days-expired">EXPIRES TODAY</span>';
+  if (days <= (threshold || 30)) return '<span class="days-badge days-warning">' + days + ' days</span>';
+  return '<span class="days-badge days-ok">' + days + ' days</span>';
+}
+
+function fmtDate(ds) {
+  if (!ds) return '<span style="color:var(--text-muted);">—</span>';
+  var d = new Date(ds + 'T12:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function genId() { return 'ca_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }
+
+// ── LOAD CUSTOM ALERTS ──
+function getCustomAlerts() {
+  try { return JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveCustomAlerts(arr) { localStorage.setItem(CUSTOM_KEY, JSON.stringify(arr)); }
+
+// ── LOAD SYSTEM ALERTS ──
+function buildSystemAlerts() {
+  var alerts = [];
+
+  function addAlert(name, assignedTo, expiry, type, source) {
+    var days = daysDiff(expiry);
+    alerts.push({ name: name, assignedTo: assignedTo, expiry: expiry || null, days: days, type: type, source: source });
+  }
+
+  // nexus_driver_profiles — CDL + Medical
+  try {
+    var profiles = JSON.parse(localStorage.getItem('nexus_driver_profiles') || '[]');
+    profiles.forEach(function(p) {
+      var name = p.name || p.firstName + ' ' + p.lastName || 'Driver';
+      if (p.credentials) {
+        if (p.credentials.cdl) addAlert('CDL — ' + name, name, p.credentials.cdl.expiry, 'CDL', 'Driver Profile');
+        if (p.credentials.medical) addAlert('Medical Card — ' + name, name, p.credentials.medical.expiry, 'Medical', 'Driver Profile');
+      }
+      // Also check top-level fields
+      if (!p.credentials && p.cdlExpiry) addAlert('CDL — ' + name, name, p.cdlExpiry, 'CDL', 'Driver Profile');
+      if (!p.credentials && p.medicalExpiry) addAlert('Medical Card — ' + name, name, p.medicalExpiry, 'Medical', 'Driver Profile');
+    });
+  } catch(e) {}
+
+  // nexus_drivers (alternate key)
+  try {
+    var drivers = JSON.parse(localStorage.getItem('nexus_drivers') || '[]');
+    drivers.forEach(function(d) {
+      var name = d.name || d.firstName + ' ' + (d.lastName||'');
+      if (d.cdlExpiry || d.cdl_expiry) addAlert('CDL — ' + name, name, d.cdlExpiry || d.cdl_expiry, 'CDL', 'Drivers');
+      if (d.medicalExpiry || d.medical_expiry) addAlert('Medical Card — ' + name, name, d.medicalExpiry || d.medical_expiry, 'Medical', 'Drivers');
+    });
+  } catch(e) {}
+
+  // nexus_equipment — Registration + Annual Inspection
+  try {
+    var equip = JSON.parse(localStorage.getItem('nexus_equipment') || '[]');
+    equip.forEach(function(v) {
+      var unit = v.unit || v.unitNumber || v.id || 'Vehicle';
+      if (v.registration_expiry || v.regExpiry) addAlert('Registration — ' + unit, unit, v.registration_expiry || v.regExpiry, 'Registration', 'Equipment');
+      // Annual inspection: last_inspection_date + 12 months
+      var lastInsp = v.last_inspection_date || v.lastInspection || v.lastInspectionDate;
+      if (lastInsp) {
+        var inspExp = new Date(lastInsp + 'T12:00:00');
+        inspExp.setFullYear(inspExp.getFullYear() + 1);
+        var expStr = inspExp.toISOString().slice(0,10);
+        addAlert('Annual DOT Inspection — ' + unit, unit, expStr, 'Inspection', 'Equipment');
+      }
+    });
+  } catch(e) {}
+
+  // nexus_dot_insurance
+  try {
+    var ins = JSON.parse(localStorage.getItem('nexus_dot_insurance') || 'null');
+    if (ins && ins.expiry) addAlert('Vehicle Insurance', 'Company', ins.expiry, 'Insurance', 'DOT');
+  } catch(e) {}
+
+  // nexus_dot_ifta
+  try {
+    var ifta = JSON.parse(localStorage.getItem('nexus_dot_ifta') || 'null');
+    if (ifta && ifta.expiry) addAlert('IFTA License', 'Company', ifta.expiry, 'IFTA', 'DOT');
+  } catch(e) {}
+
+  // nexus_dot_cdl_{driverId} — per-driver CDL records
+  ['usr_005','usr_006','usr_007','usr_008','usr_009','usr_010'].forEach(function(dId) {
+    try {
+      var rec = JSON.parse(localStorage.getItem('nexus_dot_cdl_' + dId) || 'null');
+      if (rec && rec.expiry) {
+        var dname = rec.name || dId;
+        addAlert('CDL (DOT) — ' + dname, dname, rec.expiry, 'CDL', 'DOT CDL');
+      }
+    } catch(e) {}
+  });
+
+  // Sort: expired first, then by days asc
+  alerts.sort(function(a, b) {
+    var sa = getStatus(a.days, 30), sb = getStatus(b.days, 30);
+    var order = { expired:0, expiring:1, ok:2, notset:3 };
+    if (order[sa] !== order[sb]) return order[sa] - order[sb];
+    if (a.days === null && b.days === null) return 0;
+    if (a.days === null) return 1;
+    if (b.days === null) return -1;
+    return a.days - b.days;
+  });
+
+  return alerts;
+}
+
+// ── COUNTS ──
+function refreshCounts(sysAlerts, custAlerts) {
+  var all = [];
+  sysAlerts.forEach(function(a) { all.push(getStatus(a.days, 30)); });
+  custAlerts.forEach(function(a) {
+    var days = daysDiff(a.expiry);
+    all.push(getStatus(days, a.threshold));
+  });
+
+  var cnts = { expired:0, expiring:0, ok:0, notset:0 };
+  all.forEach(function(s) { cnts[s]++; });
+
+  document.getElementById('cnt-expired').textContent  = cnts.expired;
+  document.getElementById('cnt-expiring').textContent = cnts.expiring;
+  document.getElementById('cnt-ok').textContent       = cnts.ok;
+  document.getElementById('cnt-notset').textContent   = cnts.notset;
+}
+
+// ── RENDER SYSTEM ALERTS TABLE ──
+function renderSystemTable(alerts) {
+  var tbody = document.getElementById('system-tbody');
+  if (!alerts.length) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No system records found in localStorage yet. Data will appear as drivers and vehicles are added.</p></div></td></tr>';
+    return;
+  }
+
+  var html = '';
+  alerts.forEach(function(a, i) {
+    var status  = getStatus(a.days, 30);
+    var rowClass = filterMatches(status) ? '' : ' hidden-row';
+    var editId   = 'sys_edit_' + i;
+    html += '<tr data-status="' + status + '" class="' + rowClass + '">';
+    html += '<td>' + statusDot(status) + '</td>';
+    html += '<td><strong style="color:var(--text-bright);">' + esc(a.name) + '</strong><br><span style="font-size:11px;color:var(--text-muted);">Source: ' + esc(a.source) + '</span></td>';
+    html += '<td>' + esc(a.assignedTo || '—') + '</td>';
+    html += '<td style="font-family:\'JetBrains Mono\',monospace;font-size:12px;">' + fmtDate(a.expiry) + '</td>';
+    html += '<td>' + daysBadge(a.days, 30) + '</td>';
+    html += '<td><span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-muted);">≤ 30d</span></td>';
+    html += '<td><button class="btn btn-ghost btn-sm" onclick="toggleSysEdit(\'' + editId + '\')" style="font-size:11px;padding:3px 10px;">Edit</button></td>';
+    html += '</tr>';
+    // Inline edit row
+    html += '<tr class="edit-row" id="' + editId + '">';
+    html += '<td colspan="7"><div class="edit-form">';
+    html += '<div class="ef-group"><label>Alert Threshold (days)</label><input type="number" id="' + editId + '_thresh" value="30" min="1" max="365" style="width:90px;"></div>';
+    html += '<div class="ef-group" style="flex:1;min-width:200px;"><label>Notes</label><input type="text" id="' + editId + '_notes" placeholder="Optional notes…" style="width:100%;"></div>';
+    html += '<button class="btn btn-primary btn-sm" onclick="saveSysEdit(\'' + editId + '\')">Save</button>';
+    html += '<button class="btn btn-ghost btn-sm" onclick="toggleSysEdit(\'' + editId + '\')">Cancel</button>';
+    html += '</div></td></tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function toggleSysEdit(id) {
+  var row = document.getElementById(id);
+  if (!row) return;
+  row.classList.toggle('open');
+}
+function saveSysEdit(id) {
+  // System alerts don't persist — just close
+  toggleSysEdit(id);
+}
+
+// ── RENDER CUSTOM ALERTS TABLE ──
+function renderCustomTable() {
+  var alerts = getCustomAlerts();
+  var tbody   = document.getElementById('custom-tbody');
+
+  // Sort: most urgent first
+  var sorted = alerts.slice().sort(function(a, b) {
+    var da = daysDiff(a.expiry), db = daysDiff(b.expiry);
+    var sa = getStatus(da, a.threshold), sb = getStatus(db, b.threshold);
+    var order = { expired:0, expiring:1, ok:2, notset:3 };
+    if (order[sa] !== order[sb]) return order[sa] - order[sb];
+    if (da === null && db === null) return 0;
+    if (da === null) return 1;
+    if (db === null) return -1;
+    return da - db;
+  });
+
+  if (!sorted.length) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No custom alerts yet. Click "+ Add Alert" to create one.</p></div></td></tr>';
+    return;
+  }
+
+  var html = '';
+  sorted.forEach(function(a) {
+    var days   = daysDiff(a.expiry);
+    var status = getStatus(days, a.threshold);
+    var rowClass = filterMatches(status) ? '' : ' hidden-row';
+    html += '<tr data-status="' + status + '" data-id="' + a.id + '" class="' + rowClass + '">';
+    html += '<td>' + statusDot(status) + '</td>';
+    html += '<td><strong style="color:var(--text-bright);">' + esc(a.name) + '</strong>' +
+            (a.notes ? '<br><span style="font-size:11px;color:var(--text-muted);">' + esc(a.notes) + '</span>' : '') + '</td>';
+    html += '<td><span class="cat-badge">' + esc(a.category||'Other') + '</span>' +
+            (a.assignedTo ? ' <span style="font-size:12px;color:var(--text-muted);">' + esc(a.assignedTo) + '</span>' : '') + '</td>';
+    html += '<td style="font-family:\'JetBrains Mono\',monospace;font-size:12px;">' + fmtDate(a.expiry) + '</td>';
+    html += '<td>' + daysBadge(days, a.threshold) + '</td>';
+    html += '<td><span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-muted);">≤ ' + (a.threshold||30) + 'd</span></td>';
+    html += '<td style="display:flex;gap:5px;align-items:center;">' +
+            '<button class="btn btn-ghost btn-sm" onclick="editAlert(\'' + a.id + '\')" style="font-size:11px;padding:3px 10px;">Edit</button>' +
+            '<button class="btn btn-sm" onclick="deleteAlert(\'' + a.id + '\')" style="background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.3);font-size:11px;padding:3px 8px;">Del</button>' +
+            '</td>';
+    html += '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+// ── FILTER ──
+function filterMatches(status) {
+  if (activeFilter === 'all') return true;
+  if (activeFilter === 'expiring') return status === 'expiring';
+  return status === activeFilter;
+}
+
+function filterBy(f) {
+  activeFilter = f;
+  // Update pill active states
+  ['expired','expiring','ok','notset'].forEach(function(k) {
+    var p = document.getElementById('pill-' + k);
+    if (p) p.classList.toggle('active', f === k);
+  });
+  // Show/hide rows
+  document.querySelectorAll('#system-table tr[data-status], #custom-table tr[data-status]').forEach(function(row) {
+    row.classList.toggle('hidden-row', !filterMatches(row.getAttribute('data-status')));
+  });
+}
+
+// ── MODAL ──
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modal-title').textContent = 'Add Custom Alert';
+  document.getElementById('edit-id').value = '';
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-category').value = 'Other';
+  document.getElementById('f-assigned').value = '';
+  document.getElementById('f-expiry').value = '';
+  document.getElementById('f-threshold').value = '30';
+  document.getElementById('f-notes').value = '';
+  document.getElementById('f-active').checked = true;
+  document.getElementById('alertModal').classList.add('open');
+}
+
+function editAlert(id) {
+  var alerts = getCustomAlerts();
+  var a = alerts.find(function(x) { return x.id === id; });
+  if (!a) return;
+  editingId = id;
+  document.getElementById('modal-title').textContent = 'Edit Alert';
+  document.getElementById('edit-id').value = id;
+  document.getElementById('f-name').value = a.name || '';
+  document.getElementById('f-category').value = a.category || 'Other';
+  document.getElementById('f-assigned').value = a.assignedTo || '';
+  document.getElementById('f-expiry').value = a.expiry || '';
+  document.getElementById('f-threshold').value = a.threshold || 30;
+  document.getElementById('f-notes').value = a.notes || '';
+  document.getElementById('f-active').checked = a.active !== false;
+  document.getElementById('alertModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('alertModal').classList.remove('open');
+  editingId = null;
+}
+
+function saveAlert() {
+  var name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('Alert name is required.'); return; }
+
+  var rec = {
+    id:         editingId || genId(),
+    name:       name,
+    category:   document.getElementById('f-category').value,
+    assignedTo: document.getElementById('f-assigned').value,
+    expiry:     document.getElementById('f-expiry').value,
+    threshold:  parseInt(document.getElementById('f-threshold').value) || 30,
+    notes:      document.getElementById('f-notes').value.trim(),
+    active:     document.getElementById('f-active').checked,
+    updatedAt:  new Date().toISOString(),
+  };
+
+  var alerts = getCustomAlerts();
+  if (editingId) {
+    var idx = alerts.findIndex(function(x) { return x.id === editingId; });
+    if (idx > -1) alerts[idx] = rec; else alerts.push(rec);
+  } else {
+    alerts.push(rec);
+  }
+  saveCustomAlerts(alerts);
+  closeModal();
+  renderAll();
+}
+
+function deleteAlert(id) {
+  if (!confirm('Delete this alert?')) return;
+  var alerts = getCustomAlerts().filter(function(a) { return a.id !== id; });
+  saveCustomAlerts(alerts);
+  renderAll();
+}
+
+// ── EXPORT CSV ──
+function exportCSV() {
+  var rows = [['Name','Type','Assigned To','Expiry Date','Days Remaining','Status','Threshold','Notes','Source']];
+
+  var sys = buildSystemAlerts();
+  sys.forEach(function(a) {
+    var status = getStatus(a.days, 30);
+    rows.push([a.name, a.type||'', a.assignedTo||'', a.expiry||'', a.days!==null?a.days:'', status, 30, '', a.source||'System']);
+  });
+
+  var cust = getCustomAlerts();
+  cust.forEach(function(a) {
+    var days = daysDiff(a.expiry);
+    var status = getStatus(days, a.threshold);
+    rows.push([a.name, a.category||'', a.assignedTo||'', a.expiry||'', days!==null?days:'', status, a.threshold||30, a.notes||'', 'Custom']);
+  });
+
+  var csv = rows.map(function(r) {
+    return r.map(function(c) { return '"' + String(c).replace(/"/g,'""') + '"'; }).join(',');
+  }).join('\n');
+
+  var blob = new Blob([csv], { type: 'text/csv' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'carrier-nexus-alerts-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ── ESC ──
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── RENDER ALL ──
+function renderAll() {
+  var sys  = buildSystemAlerts();
+  var cust = getCustomAlerts();
+  refreshCounts(sys, cust);
+  renderSystemTable(sys);
+  renderCustomTable();
+}
+
+// Close modal on overlay click
+document.getElementById('alertModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Keyboard close
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+document.addEventListener('DOMContentLoaded', renderAll);
+</script>
+
+<script src="nexus-lang.js"></script>
+</body>
+</html>

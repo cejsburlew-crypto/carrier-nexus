@@ -671,8 +671,8 @@ body {
       </div>
     </div>
 
-    <!-- EXPIRATION ALERTS -->
-    <div id="expirationAlerts" style="margin-bottom:18px;"></div>
+    <!-- EXPIRATION ALERTS WIDGET -->
+    <div id="expAlertsWidget" style="margin-bottom:20px;"></div>
 
     <!-- ACTIVE LOADS + MISSING DOCS -->
     <div class="panels-row">
@@ -1068,21 +1068,10 @@ body {
 
 
 <script>
-// ── EXPIRATION ALERTS ──────────────────────────────────────────────────────────
+// ── EXPIRATION ALERTS WIDGET (Dashboard) ─────────────────────────────────────
 (function() {
-  var DISMISSED_KEY = 'nexus_dismissed_alerts';
-  var today = new Date();
-  today.setHours(0,0,0,0);
-
-  function getDismissed() {
-    try { return JSON.parse(localStorage.getItem(DISMISSED_KEY)||'[]'); } catch(e){ return []; }
-  }
-  function dismiss(id) {
-    var d = getDismissed();
-    if (!d.includes(id)) d.push(id);
-    localStorage.setItem(DISMISSED_KEY, JSON.stringify(d));
-    renderAlerts();
-  }
+  var CUSTOM_KEY = 'nexus_custom_alerts';
+  var today = new Date(); today.setHours(0,0,0,0);
 
   function daysDiff(dateStr) {
     if (!dateStr) return null;
@@ -1091,125 +1080,118 @@ body {
     return Math.round((d - today) / 86400000);
   }
 
-  function collectAlerts() {
-    var alerts = [];
-    var dismissed = getDismissed();
-
-    // Scan nexus_documents
-    try {
-      var docs = JSON.parse(localStorage.getItem('nexus_documents')||'[]');
-      docs.forEach(function(doc) {
-        var expDate = doc.expiration_date || doc.expiry_date || doc.expiration || doc.expiry;
-        if (!expDate) return;
-        var days = daysDiff(expDate);
-        if (days === null || days > 60) return;
-        var id = 'doc_' + (doc.id || doc.name);
-        if (dismissed.includes(id)) return;
-        var label = (doc.type || doc.doc_type || 'Document').toString().toUpperCase();
-        var owner = doc.driver || doc.owner || doc.assignedTo || '';
-        alerts.push({
-          id: id,
-          name: (doc.name || doc.fileName || label),
-          owner: owner,
-          days: days,
-          type: days <= 14 ? 'critical' : days <= 30 ? 'warning' : 'notice'
-        });
-      });
-    } catch(e) {}
-
-    // Scan nexus_loads_v2 for any embedded expiry fields
-    try {
-      var loads = JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]');
-      loads.forEach(function(l) {
-        ['cdl_expiry','ins_expiry','permit_expiry'].forEach(function(field) {
-          if (!l[field]) return;
-          var days = daysDiff(l[field]);
-          if (days === null || days > 60) return;
-          var id = 'load_' + l.id + '_' + field;
-          if (dismissed.includes(id)) return;
-          alerts.push({
-            id: id,
-            name: field.replace(/_/g,' ').replace('expiry','Expiry'),
-            owner: l.driver || '',
-            days: days,
-            type: days <= 14 ? 'critical' : days <= 30 ? 'warning' : 'notice'
-          });
-        });
-      });
-    } catch(e) {}
-
-    // Sort: critical first, then by days ascending
-    alerts.sort(function(a,b) {
-      var order = {critical:0, warning:1, notice:2};
-      if (order[a.type] !== order[b.type]) return order[a.type] - order[b.type];
-      return a.days - b.days;
-    });
-    return alerts;
+  function getStatus(days, threshold) {
+    if (days === null) return 'notset';
+    if (days < 0) return 'expired';
+    if (days <= (threshold || 30)) return 'expiring';
+    return 'ok';
   }
 
-  function renderAlerts() {
-    var container = document.getElementById('expirationAlerts');
-    if (!container) return;
-    var alerts = collectAlerts();
+  function collectAllAlerts() {
+    var items = [];
 
-    if (!alerts.length) {
-      container.innerHTML = '<div class="exp-panel"><div class="exp-all-clear">✓ All documents current — no expirations within 60 days</div></div>';
+    // Custom alerts
+    try {
+      var customs = JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]');
+      customs.forEach(function(a) {
+        if (!a.active && a.active !== undefined) return;
+        var days = daysDiff(a.expiry);
+        var status = getStatus(days, a.threshold);
+        if (status === 'expired' || status === 'expiring') {
+          items.push({ name: a.name, assignedTo: a.assignedTo || '', days: days, status: status, threshold: a.threshold || 30 });
+        }
+      });
+    } catch(e) {}
+
+    // System: driver profiles
+    try {
+      var profiles = JSON.parse(localStorage.getItem('nexus_driver_profiles') || '[]');
+      profiles.forEach(function(p) {
+        var name = p.name || (p.firstName + ' ' + p.lastName) || 'Driver';
+        if (p.credentials) {
+          var cdlDays = daysDiff(p.credentials.cdl && p.credentials.cdl.expiry);
+          if (cdlDays !== null && cdlDays <= 30) items.push({ name: 'CDL — ' + name, assignedTo: name, days: cdlDays, status: getStatus(cdlDays, 30) });
+          var medDays = daysDiff(p.credentials.medical && p.credentials.medical.expiry);
+          if (medDays !== null && medDays <= 30) items.push({ name: 'Medical Card — ' + name, assignedTo: name, days: medDays, status: getStatus(medDays, 30) });
+        }
+      });
+    } catch(e) {}
+
+    // System: equipment
+    try {
+      var equip = JSON.parse(localStorage.getItem('nexus_equipment') || '[]');
+      equip.forEach(function(v) {
+        var unit = v.unit || v.unitNumber || v.id || 'Vehicle';
+        var days = daysDiff(v.registration_expiry || v.regExpiry);
+        if (days !== null && days <= 30) items.push({ name: 'Registration — ' + unit, assignedTo: unit, days: days, status: getStatus(days, 30) });
+      });
+    } catch(e) {}
+
+    // Sort most urgent first
+    items.sort(function(a, b) {
+      var order = { expired: 0, expiring: 1 };
+      if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
+      return a.days - b.days;
+    });
+    return items;
+  }
+
+  function render() {
+    var container = document.getElementById('expAlertsWidget');
+    if (!container) return;
+    var items = collectAllAlerts();
+
+    if (!items.length) {
+      container.innerHTML =
+        '<div style="background:#111827;border:1px solid #21262d;border-radius:10px;padding:14px 20px;display:flex;align-items:center;gap:10px;">' +
+          '<span style="font-size:18px;">✅</span>' +
+          '<span style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:#86efac;font-weight:600;">All documents current — no expirations within alert thresholds</span>' +
+          '<a href="alerts.html" style="margin-left:auto;font-family:\'Barlow Condensed\',sans-serif;font-size:12px;font-weight:700;color:#e91e8c;text-decoration:none;letter-spacing:.5px;white-space:nowrap;">Manage Alerts →</a>' +
+        '</div>';
       return;
     }
 
-    var critical = alerts.filter(function(a){ return a.type==='critical'; });
-    var warning  = alerts.filter(function(a){ return a.type==='warning'; });
-    var notice   = alerts.filter(function(a){ return a.type==='notice'; });
+    var top5 = items.slice(0, 5);
+    var rows = top5.map(function(item) {
+      var dotColor = item.status === 'expired' ? '#ef4444' : '#f59e0b';
+      var dayLabel = item.days < 0 ? 'EXPIRED ' + Math.abs(item.days) + 'd ago'
+                   : item.days === 0 ? 'TODAY'
+                   : item.days + 'd';
+      var dayColor = item.status === 'expired' ? '#f87171' : '#fcd34d';
+      return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);">' +
+        '<span style="width:9px;height:9px;border-radius:50%;background:' + dotColor + ';flex-shrink:0;"></span>' +
+        '<span style="flex:1;font-size:13px;color:#c9d1d9;">' + escH(item.name) +
+          (item.assignedTo && item.assignedTo !== item.name ? '<span style="color:#6b7280;font-size:11px;"> — ' + escH(item.assignedTo) + '</span>' : '') +
+        '</span>' +
+        '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:700;color:' + dayColor + ';white-space:nowrap;">' + dayLabel + '</span>' +
+      '</div>';
+    }).join('');
 
-    function badge(count, cls, label) {
-      if (!count) return '';
-      return '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;' +
-        (cls==='critical'?'background:rgba(239,68,68,0.18);color:#f87171;':
-         cls==='warning'?'background:rgba(251,191,36,0.18);color:#fcd34d;':
-         'background:rgba(59,130,246,0.18);color:#93c5fd;') +
-        '">' + count + ' ' + label + '</span>';
-    }
+    var expiredCnt  = items.filter(function(i) { return i.status === 'expired'; }).length;
+    var expiringCnt = items.filter(function(i) { return i.status === 'expiring'; }).length;
+    var totalMore   = items.length - top5.length;
 
-    function renderAlertItem(a) {
-      var dayLabel = a.days < 0 ? 'EXPIRED ' + Math.abs(a.days) + ' days ago' :
-                     a.days === 0 ? 'EXPIRES TODAY' :
-                     'in ' + a.days + ' day' + (a.days===1?'':'s');
-      var cls = 'exp-alert exp-' + a.type;
-      return '<span class="' + cls + '">' +
-        (a.type==='critical'?'🔴':a.type==='warning'?'🟡':'🔵') + ' ' +
-        '<strong>' + a.name + '</strong>' +
-        (a.owner ? ' &mdash; ' + a.owner : '') +
-        ' &nbsp;<span style="opacity:.75;">' + dayLabel + '</span>' +
-        '<button class="exp-dismiss" onclick="(function(){' +
-          'var d=JSON.parse(localStorage.getItem('nexus_dismissed_alerts')||'[]');' +
-          'd.push('' + a.id.replace(/'/g,"\'") + '');' +
-          'localStorage.setItem('nexus_dismissed_alerts',JSON.stringify(d));' +
-          'document.getElementById('expirationAlerts').dispatchEvent(new Event('refresh'));' +
-        '})()">✕</button>' +
-        '</span>';
-    }
-
-    var html = '<div class="exp-panel">';
-    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">';
-    html += '<span class="exp-section-hdr">⚠ Document Expiration Alerts</span>';
-    html += '<div style="display:flex;gap:6px;">' +
-      badge(critical.length,'critical','Critical') +
-      badge(warning.length,'warning','Warning') +
-      badge(notice.length,'notice','Notice') +
-      '</div></div>';
-    html += '<div class="exp-strip">';
-    alerts.forEach(function(a){ html += renderAlertItem(a); });
-    html += '</div></div>';
-    container.innerHTML = html;
+    container.innerHTML =
+      '<div style="background:#111827;border:1px solid #21262d;border-left:3px solid #f59e0b;border-radius:10px;overflow:hidden;">' +
+        '<div style="padding:12px 18px;border-bottom:1px solid #21262d;display:flex;align-items:center;gap:10px;">' +
+          '<span style="font-size:16px;">⚠️</span>' +
+          '<span style="font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:#e6edf3;flex:1;">Expiration Alerts</span>' +
+          (expiredCnt ? '<span style="background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);padding:2px 9px;border-radius:3px;font-family:\'JetBrains Mono\',monospace;font-size:9px;font-weight:700;">' + expiredCnt + ' EXPIRED</span>' : '') +
+          (expiringCnt ? '<span style="background:rgba(245,158,11,.15);color:#fcd34d;border:1px solid rgba(245,158,11,.3);padding:2px 9px;border-radius:3px;font-family:\'JetBrains Mono\',monospace;font-size:9px;font-weight:700;">' + expiringCnt + ' SOON</span>' : '') +
+        '</div>' +
+        '<div style="padding:4px 18px 8px;">' +
+          rows +
+          (totalMore > 0 ? '<div style="padding:8px 0 4px;font-family:\'JetBrains Mono\',monospace;font-size:10px;color:#6b7280;">+ ' + totalMore + ' more alerts…</div>' : '') +
+        '</div>' +
+        '<div style="padding:10px 18px;border-top:1px solid #21262d;text-align:right;">' +
+          '<a href="alerts.html" style="font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;color:#e91e8c;text-decoration:none;letter-spacing:.5px;">Manage All Alerts →</a>' +
+        '</div>' +
+      '</div>';
   }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    var container = document.getElementById('expirationAlerts');
-    if (container) {
-      container.addEventListener('refresh', renderAlerts);
-      renderAlerts();
-    }
-  });
+  function escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  document.addEventListener('DOMContentLoaded', render);
 })();
 </script>
 

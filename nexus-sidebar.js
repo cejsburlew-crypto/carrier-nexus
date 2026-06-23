@@ -42,7 +42,7 @@
     { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','doc-inbox.html'] },
     { key:'finance', label:'Finance',        pages:['financials.html','settlements.html','weekly-settlements.html','invoicing.html','expenses.html','ifta.html','tax-forms.html'] },
     { key:'maint',   label:'Maintenance',    pages:['equipment.html','tires.html','pm-schedule.html','dvir.html','fuel.html','scale-tickets.html','weight-calculator.html','driver-services.html'] },
-    { key:'compliance', label:'Compliance',  pages:['dot-compliance.html','permits.html'] },
+    { key:'compliance', label:'Compliance',  pages:['dot-compliance.html','permits.html','alerts.html'] },
     { key:'comms',   label:'Communications', pages:['nexus-connect.html','whatsapp-import.html'] },
     { key:'admin',   label:'Admin',          pages:['admin-users.html','member-management.html','nexus-ai.html','data-import.html'] },
   ];
@@ -221,7 +221,8 @@
     ) +
     sec('compliance', 'Compliance',
       lnk('dot-compliance.html',      I.dot,     'DOT Compliance') +
-      lnk('permits.html',             I.permit,  'Permits')
+      lnk('permits.html',             I.permit,  'Permits') +
+      lnk('alerts.html',              I.clock,   'Expiration Alerts')
     ) +
     sec('comms', 'Communications',
       lnk('nexus-connect.html',       I.connect, 'Nexus Connect') +
@@ -433,5 +434,136 @@
     var btn = document.getElementById('nexus-co-selector');
     if (dd && btn && !btn.contains(e.target)) dd.style.display = 'none';
   });
+
+
+
+// ══════════════════════════════════════════════════════════════════
+//  NexusAlerts — Global Expiration Banner (injected on every page)
+// ══════════════════════════════════════════════════════════════════
+window.NexusAlerts = (function() {
+  var CUSTOM_KEY = 'nexus_custom_alerts';
+  var BANNER_ID  = 'nexus-alert-banner';
+  var SESSION_KEY= 'nexus_banner_dismissed';
+
+  function daysDiff(dateStr) {
+    if (!dateStr) return null;
+    var today = new Date(); today.setHours(0,0,0,0);
+    var d = new Date(dateStr + 'T12:00:00');
+    if (isNaN(d)) return null;
+    return Math.round((d - today) / 86400000);
+  }
+
+  function collectUrgent() {
+    var items = [];
+
+    // Custom alerts
+    try {
+      var customs = JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]');
+      customs.forEach(function(a) {
+        if (!a.active && a.active !== undefined) return;
+        var days = daysDiff(a.expiry);
+        if (days === null) return;
+        if (days <= (a.threshold || 30)) {
+          items.push({ label: a.name + (a.assignedTo ? ' (' + a.assignedTo + ')' : ''), days: days });
+        }
+      });
+    } catch(e) {}
+
+    // System: driver profiles CDL + medical
+    try {
+      var profiles = JSON.parse(localStorage.getItem('nexus_driver_profiles') || '[]');
+      profiles.forEach(function(p) {
+        var name = p.name || (p.firstName + ' ' + p.lastName) || 'Driver';
+        if (p.credentials) {
+          var cdlDays = daysDiff(p.credentials.cdl && p.credentials.cdl.expiry);
+          if (cdlDays !== null && cdlDays <= 30) items.push({ label: name + ' CDL', days: cdlDays });
+          var medDays = daysDiff(p.credentials.medical && p.credentials.medical.expiry);
+          if (medDays !== null && medDays <= 30) items.push({ label: name + ' Medical', days: medDays });
+        }
+      });
+    } catch(e) {}
+
+    // System: equipment registrations
+    try {
+      var equip = JSON.parse(localStorage.getItem('nexus_equipment') || '[]');
+      equip.forEach(function(v) {
+        var unit = v.unit || v.unitNumber || v.id || 'Vehicle';
+        var days = daysDiff(v.registration_expiry || v.regExpiry);
+        if (days !== null && days <= 30) items.push({ label: unit + ' Registration', days: days });
+      });
+    } catch(e) {}
+
+    // Sort most urgent first
+    items.sort(function(a, b) { return a.days - b.days; });
+    return items;
+  }
+
+  function checkAndShowBanner() {
+    // Don't show if already dismissed this session
+    if (sessionStorage.getItem(SESSION_KEY)) return;
+
+    // Don't show on alerts.html itself
+    var page = location.pathname.split('/').pop() || '';
+    if (page === 'alerts.html') return;
+
+    var items = collectUrgent();
+    if (!items.length) return;
+
+    var existing = document.getElementById(BANNER_ID);
+    if (existing) existing.remove();
+
+    // Build label string — up to 2 items
+    var parts = items.slice(0, 2).map(function(it) {
+      if (it.days < 0) return it.label + ' (EXPIRED)';
+      if (it.days === 0) return it.label + ' (TODAY)';
+      return it.label + ' (' + it.days + 'd)';
+    });
+    var extra = items.length > 2 ? ' and ' + (items.length - 2) + ' more' : '';
+    var msg = parts.join(' · ') + extra;
+
+    var banner = document.createElement('div');
+    banner.id = BANNER_ID;
+    banner.style.cssText = [
+      'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:9999',
+      'background:#f59e0b', 'color:#1c1917',
+      'height:36px', 'display:flex', 'align-items:center',
+      'padding:0 16px', 'gap:10px',
+      'font-family:\'Barlow\',sans-serif', 'font-size:13px', 'font-weight:600',
+      'box-shadow:0 2px 8px rgba(0,0,0,.35)'
+    ].join(';');
+
+    banner.innerHTML =
+      '<span style="flex-shrink:0;">⚠️</span>' +
+      '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' +
+        items.length + ' item' + (items.length !== 1 ? 's' : '') + ' expiring soon: ' + msg +
+      '</span>' +
+      '<a href="alerts.html" style="color:#1c1917;font-weight:700;white-space:nowrap;text-decoration:underline;flex-shrink:0;">View Alerts →</a>' +
+      '<button id="nexus-banner-dismiss" style="background:none;border:none;cursor:pointer;font-size:16px;line-height:1;color:#1c1917;flex-shrink:0;padding:0 4px;" title="Dismiss for this session">×</button>';
+
+    document.body.insertBefore(banner, document.body.firstChild);
+
+    // Shift page content down to avoid overlap
+    var style = document.createElement('style');
+    style.id = 'nexus-banner-shift';
+    style.textContent = 'body { padding-top: 36px !important; } nav.sidebar { top: 36px !important; } .topbar { top: 36px !important; }';
+    document.head.appendChild(style);
+
+    document.getElementById('nexus-banner-dismiss').addEventListener('click', function() {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      banner.remove();
+      var s = document.getElementById('nexus-banner-shift');
+      if (s) s.remove();
+    });
+  }
+
+  // Auto-run after DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkAndShowBanner);
+  } else {
+    setTimeout(checkAndShowBanner, 0);
+  }
+
+  return { checkAndShowBanner: checkAndShowBanner };
+})();
 
 })();
