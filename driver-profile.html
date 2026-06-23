@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Driver Profile — Carrier Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #f1f5f9;
+  --gunmetal: #ffffff;
+  --gunmetal-light: #f8fafc;
+  --steel: #f0f4f8;
+  --steel-blue: #2e6da4;
+  --steel-blue-light: #3d87c8;
+  --ice: #1e3a5f;
+  --white: #0f172a;
+  --white-pure: #0f172a;
+  --orange: #e8640a;
+  --orange-bright: #ff7518;
+  --text-muted: #64748b;
+  --text-mid: #475569;
+  --border: #e2e8f0;
+  --red: #ef4444;
+  --green: #22c55e;
+  --yellow: #fbbf24;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Barlow', sans-serif;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── MAIN ── */
+.main {
+  margin-left: 220px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  height: 56px;
+  background: var(--gunmetal);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: var(--white-pure);
+  flex: 1;
+}
+.topbar-viewer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+.topbar-viewer select {
+  background: var(--gunmetal);
+  border: 1px solid var(--border);
+  color: var(--white);
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+}
+.topbar-viewer select:focus { outline: none; border-color: var(--steel-blue); }
+
+/* ── BUTTONS ── */
+.btn {
+  padding: 7px 16px;
+  border-radius: 5px;
+  border: none;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary { background: var(--orange); color: #fff; }
+.btn-primary:hover { background: var(--orange-bright); }
+.btn-ghost { background: transparent; color: var(--ice); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--steel-blue); color: var(--white); }
+.btn-sm { padding: 5px 12px; font-size: 11px; }
+.btn-danger { background: rgba(239,68,68,0.12); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
+.btn-danger:hover { background: rgba(239,68,68,0.2); }
+.btn-save { position: relative; }
+.btn-save .unsaved-dot {
+  display: none;
+  position: absolute;
+  top: -3px; right: -3px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--yellow);
+  border: 2px solid var(--gunmetal);
+}
+.btn-save.has-changes .unsaved-dot { display: block; }
+
+/* ── CONTENT LAYOUT ── */
+.content {
+  padding: 24px 28px;
+  flex: 1;
+}
+.profile-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ── LEFT COLUMN — PROFILE CARD ── */
+.profile-card {
+  background: var(--gunmetal);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  position: sticky;
+  top: 72px;
+}
+.profile-card-header {
+  background: linear-gradient(135deg, var(--ice) 0%, #2e4a7a 100%);
+  padding: 28px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+.avatar-circle {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  color: #fff;
+  border: 3px solid rgba(255,255,255,0.25);
+  flex-shrink: 0;
+}
+.profile-name-big {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  color: #fff;
+  line-height: 1.1;
+}
+.profile-location {
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.profile-member-since {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── AVAILABILITY BADGE ── */
+.availability-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  margin-top: 4px;
+}
+.availability-toggle.available {
+  background: rgba(34,197,94,0.2);
+  color: var(--green);
+  border: 2px solid rgba(34,197,94,0.5);
+}
+.availability-toggle.not-available {
+  background: rgba(100,116,139,0.15);
+  color: var(--text-muted);
+  border: 2px solid var(--border);
+}
+.availability-toggle .avail-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+}
+.availability-toggle.available .avail-dot { background: var(--green); animation: pulse 2s infinite; }
+.availability-toggle.not-available .avail-dot { background: var(--text-muted); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ── QUICK STATS ── */
+.profile-card-body { padding: 16px 20px; }
+.quick-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.stat-cell {
+  text-align: center;
+  padding: 10px 6px;
+  background: var(--black);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.stat-cell-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--orange);
+}
+.stat-cell-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.stat-cell input {
+  background: transparent;
+  border: none;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--orange);
+  text-align: center;
+  width: 100%;
+  cursor: pointer;
+}
+.stat-cell input:focus { outline: none; background: rgba(232,100,10,0.08); border-radius: 4px; }
+
+/* ── PROFILE CARD ACTIONS ── */
+.profile-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 20px 20px;
+}
+
+/* ── RIGHT COLUMN ── */
+.profile-right {
+  background: var(--gunmetal);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ── TABS ── */
+.tabs-nav {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--gunmetal-light);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  padding: 14px 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-mid);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: all 0.15s;
+  position: relative;
+}
+.tab-btn:hover { color: var(--white); }
+.tab-btn.active {
+  color: var(--orange);
+  border-bottom-color: var(--orange);
+  background: transparent;
+}
+.tab-panel { display: none; padding: 24px; }
+.tab-panel.active { display: block; }
+
+/* ── SECTION HEADINGS ── */
+.section-heading {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  margin-top: 20px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.section-heading:first-child { margin-top: 0; }
+
+/* ── FORM FIELDS ── */
+.form-row { display: flex; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+.form-field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 120px; }
+.form-field label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.form-field input, .form-field select, .form-field textarea {
+  background: var(--black);
+  border: 1px solid var(--border);
+  color: var(--white);
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  transition: border-color 0.15s;
+}
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus {
+  outline: none;
+  border-color: var(--steel-blue);
+}
+.form-field textarea { resize: vertical; min-height: 80px; }
+.char-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 2px;
+}
+
+/* ── CHIPS ── */
+.chips-group { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+.chip {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+  background: transparent;
+  transition: all 0.15s;
+  user-select: none;
+}
+.chip:hover { border-color: var(--steel-blue); color: var(--white); }
+.chip.selected {
+  background: rgba(46,109,164,0.18);
+  border-color: var(--steel-blue);
+  color: var(--steel-blue);
+}
+.chip.selected.orange {
+  background: rgba(232,100,10,0.15);
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+/* ── BADGES ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+.badge-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+.badge-yellow { background: rgba(251,191,36,0.15); color: var(--yellow); border: 1px solid rgba(251,191,36,0.25); }
+.badge-red { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
+.badge-gray { background: rgba(100,116,139,0.15); color: var(--text-muted); border: 1px solid var(--border); }
+
+/* ── CREDENTIALS TABLE ── */
+.cred-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+.cred-table th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  background: var(--black);
+}
+.cred-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  vertical-align: middle;
+}
+.cred-table tr:last-child td { border-bottom: none; }
+.cred-table td input, .cred-table td select {
+  background: var(--black);
+  border: 1px solid var(--border);
+  color: var(--white);
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 12px;
+  width: 100%;
+}
+.cred-table td input:focus, .cred-table td select:focus { outline: none; border-color: var(--steel-blue); }
+
+/* ── WORK HISTORY TABLE ── */
+.wh-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.wh-table th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  background: var(--black);
+}
+.wh-table td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.wh-table tr:last-child td { border-bottom: none; }
+.wh-table td.muted { color: var(--text-muted); }
+
+/* ── CERT CARDS ── */
+.certs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.cert-card {
+  background: var(--black);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+}
+.cert-card-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--white-pure);
+  margin-bottom: 4px;
+}
+.cert-card-org {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.cert-card-dates {
+  display: flex;
+  gap: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.cert-card-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.cert-delete-btn {
+  background: none;
+  border: none;
+  color: var(--red);
+  cursor: pointer;
+  font-size: 11px;
+  opacity: 0.6;
+  padding: 4px;
+  margin-left: auto;
+}
+.cert-delete-btn:hover { opacity: 1; }
+
+/* ── PERFORMANCE STATS ── */
+.perf-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.perf-card {
+  background: var(--black);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+.perf-card-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 36px;
+  color: var(--orange);
+  line-height: 1;
+}
+.perf-card-value.green { color: var(--green); }
+.perf-card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+.perf-bar-wrap { margin: 16px 0 8px; }
+.perf-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.perf-bar-track {
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.perf-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--steel-blue), var(--green));
+  transition: width 0.5s ease;
+}
+
+/* ── PRIVACY TOGGLES ── */
+.privacy-section {
+  background: var(--gunmetal);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-top: 24px;
+}
+.privacy-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  color: var(--white-pure);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.privacy-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.privacy-toggle-row:last-child { border-bottom: none; }
+.privacy-toggle-info { flex: 1; }
+.privacy-toggle-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--white);
+  margin-bottom: 2px;
+}
+.privacy-toggle-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--border);
+  border-radius: 12px;
+  transition: 0.3s;
+}
+.toggle-slider:before {
+  content: '';
+  position: absolute;
+  height: 18px; width: 18px;
+  left: 3px; bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+.toggle-switch input:checked + .toggle-slider { background: var(--green); }
+.toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+/* ── SAVE BAR ── */
+.save-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--gunmetal-light);
+}
+.save-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+.save-status.saved { color: var(--green); }
+.save-status.pending { color: var(--yellow); }
+
+/* ── MODALS ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--gunmetal);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  max-width: 520px;
+  width: 95%;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.5px;
+  color: var(--white-pure);
+  margin-bottom: 20px;
+}
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text-muted);
+  line-height: 1;
+}
+.modal-close:hover { color: var(--white); }
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+/* ── QR MODAL ── */
+.qr-link-box {
+  background: var(--black);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--steel-blue);
+  word-break: break-all;
+  margin-bottom: 16px;
+}
+.qr-img { display: block; margin: 0 auto 16px; border-radius: 8px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .main { margin-left: 0; }
+  .profile-layout { grid-template-columns: 1fr; }
+  .profile-card { position: static; }
+  .perf-grid { grid-template-columns: 1fr; }
+  .content { padding: 16px; }
+  .certs-grid { grid-template-columns: 1fr; }
+  .quick-stats { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<script src="nexus-sidebar.js"></script>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">DRIVER PROFILE</div>
+    <div class="topbar-viewer" id="viewer-section" style="display:none;">
+      <span>VIEWING:</span>
+      <select id="driver-selector" onchange="switchDriver(this.value)"></select>
+    </div>
+    <div class="btn-save btn btn-primary" id="save-btn" onclick="saveProfile()">
+      <span>Save Profile</span>
+      <span class="unsaved-dot"></span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="profile-layout">
+
+      <!-- LEFT: PROFILE CARD -->
+      <div class="profile-card" id="profile-card">
+        <div class="profile-card-header">
+          <div class="avatar-circle" id="avatar-circle" style="background:#2e6da4;">DH</div>
+          <div class="profile-name-big" id="profile-name-display">David Hernandez</div>
+          <div class="profile-location" id="profile-location-display">
+            <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M8 1.5A4.5 4.5 0 0113.5 6c0 3.5-5.5 8.5-5.5 8.5S2.5 9.5 2.5 6A4.5 4.5 0 018 1.5z" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="8" cy="6" r="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+            <span id="location-text">Miami, FL</span>
+          </div>
+          <div class="profile-member-since" id="member-since-display">MEMBER SINCE 2022</div>
+          <button class="availability-toggle not-available" id="avail-btn" onclick="toggleAvailability()">
+            <span class="avail-dot"></span>
+            <span id="avail-text">NOT AVAILABLE</span>
+          </button>
+        </div>
+        <div class="profile-card-body">
+          <div class="quick-stats">
+            <div class="stat-cell">
+              <div class="stat-cell-value"><input type="number" id="stat-years" value="14" min="0" max="50" title="Click to edit"></div>
+              <div class="stat-cell-label">YRS EXP</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-cell-value"><input type="text" id="stat-cdl" value="A" maxlength="1" title="CDL Class" style="width:40px;"></div>
+              <div class="stat-cell-label">CDL CLASS</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-cell-value"><input type="text" id="stat-miles" value="850K" maxlength="6" title="Estimated miles" style="width:60px;"></div>
+              <div class="stat-cell-label">MILES</div>
+            </div>
+          </div>
+        </div>
+        <div class="profile-card-actions">
+          <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="openShareModal()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="12" cy="3" r="1.5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="13" r="1.5" stroke="currentColor" stroke-width="1.5"/><circle cx="3" cy="8" r="1.5" stroke="currentColor" stroke-width="1.5"/><line x1="4.3" y1="7.3" x2="10.7" y2="3.7" stroke="currentColor" stroke-width="1.5"/><line x1="4.3" y1="8.7" x2="10.7" y2="12.3" stroke="currentColor" stroke-width="1.5"/></svg>
+            Share Profile
+          </button>
+          <button class="btn btn-ghost" style="width:100%;justify-content:center;" id="contact-btn" onclick="contactDriver()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><polyline points="1,4 8,9 15,4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+            Contact Driver
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT: TABS -->
+      <div class="profile-right">
+        <div class="tabs-nav" id="tabs-nav">
+          <button class="tab-btn active" data-tab="career" onclick="switchTab('career', this)">Career Summary</button>
+          <button class="tab-btn" data-tab="creds" onclick="switchTab('creds', this)">Credentials</button>
+          <button class="tab-btn" data-tab="workhistory" onclick="switchTab('workhistory', this)">Work History</button>
+          <button class="tab-btn" data-tab="certifications" onclick="switchTab('certifications', this)">Certifications</button>
+          <button class="tab-btn" data-tab="performance" id="perf-tab-btn" onclick="switchTab('performance', this)">Performance</button>
+        </div>
+
+        <!-- TAB 1: CAREER SUMMARY -->
+        <div class="tab-panel active" id="tab-career">
+          <div class="section-heading">Bio / Personal Statement</div>
+          <div class="form-field">
+            <textarea id="bio-field" maxlength="300" oninput="updateCharCount(this); markUnsaved();"></textarea>
+            <div class="char-count"><span id="bio-count">0</span>/300 characters</div>
+          </div>
+
+          <div class="section-heading">Equipment I Operate</div>
+          <div class="chips-group" id="equipment-chips">
+            <!-- rendered by JS -->
+          </div>
+
+          <div class="section-heading">Haul Types</div>
+          <div class="chips-group" id="haultype-chips"></div>
+
+          <div class="section-heading">Work Preference</div>
+          <div class="chips-group" id="workpref-chips"></div>
+
+          <div class="section-heading">Location & Availability</div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Home Base</label>
+              <input type="text" id="home-base" placeholder="City, State" oninput="markUnsaved()">
+            </div>
+            <div class="form-field">
+              <label>Location (Profile Display)</label>
+              <input type="text" id="location-field" placeholder="City, State" oninput="updateLocationDisplay(); markUnsaved()">
+            </div>
+            <div class="form-field" style="max-width:160px;">
+              <label>Willing to Travel</label>
+              <select id="travel-pref" onchange="markUnsaved()">
+                <option value="Yes">Yes</option>
+                <option value="Temporary">Temporarily</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: CREDENTIALS -->
+        <div class="tab-panel" id="tab-creds">
+          <div class="section-heading">Commercial Driver's License</div>
+          <table class="cred-table" id="cred-cdl-table">
+            <thead><tr><th>Class</th><th>State</th><th>License #</th><th>Expiry</th><th>Status</th><th></th></tr></thead>
+            <tbody id="cred-cdl-body"></tbody>
+          </table>
+
+          <div class="section-heading">Medical Card</div>
+          <table class="cred-table">
+            <thead><tr><th>Expiry Date</th><th>Status</th><th></th></tr></thead>
+            <tbody id="cred-med-body"></tbody>
+          </table>
+
+          <div class="section-heading">Endorsements & Certifications</div>
+          <table class="cred-table">
+            <thead><tr><th>Endorsement / Cert</th><th>Held</th><th>Expiry</th><th>Status</th><th></th></tr></thead>
+            <tbody id="cred-endorse-body"></tbody>
+          </table>
+        </div>
+
+        <!-- TAB 3: WORK HISTORY -->
+        <div class="tab-panel" id="tab-workhistory">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <span class="section-heading" style="margin:0;border:none;">Employment History</span>
+            <button class="btn btn-ghost btn-sm" onclick="openWorkHistModal()">+ Add Entry</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="wh-table" id="wh-table">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Role</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th>Equipment</th>
+                  <th>Notes</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="wh-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 4: CERTIFICATIONS -->
+        <div class="tab-panel" id="tab-certifications">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <span class="section-heading" style="margin:0;border:none;">Training & Certifications</span>
+            <button class="btn btn-ghost btn-sm" onclick="openCertModal()">+ Add Certification</button>
+          </div>
+          <div class="certs-grid" id="certs-grid"></div>
+          <div id="certs-empty" style="display:none;text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">
+            No certifications added yet. Click "+ Add Certification" to add one.
+          </div>
+        </div>
+
+        <!-- TAB 5: PERFORMANCE -->
+        <div class="tab-panel" id="tab-performance">
+          <div id="perf-restricted-msg" style="display:none;text-align:center;padding:32px;">
+            <div style="font-size:32px;margin-bottom:8px;">🔒</div>
+            <div style="font-weight:600;margin-bottom:4px;">Performance stats are private</div>
+            <div style="color:var(--text-muted);font-size:13px;">Enable "Show performance stats on profile" in Privacy Settings below.</div>
+          </div>
+          <div id="perf-content">
+            <div class="perf-grid" id="perf-grid"></div>
+            <div class="section-heading">Safety Record</div>
+            <div class="form-row">
+              <div class="form-field">
+                <label>Accidents / Incidents (Total)</label>
+                <input type="number" id="perf-incidents" value="0" min="0" oninput="markUnsaved()">
+              </div>
+            </div>
+            <div class="section-heading">Performance Trend</div>
+            <div class="perf-bar-wrap" id="perf-bar-wrap"></div>
+          </div>
+        </div>
+
+        <!-- SAVE BAR -->
+        <div class="save-bar">
+          <span class="save-status" id="save-status">All changes saved</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRIVACY SETTINGS -->
+    <div class="privacy-section" id="privacy-section">
+      <div class="privacy-title">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L2 3.5v4C2 10.5 4.5 13.5 8 15c3.5-1.5 6-4.5 6-7.5v-4L8 1z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        Profile Privacy Settings
+      </div>
+      <div class="privacy-toggle-row">
+        <div class="privacy-toggle-info">
+          <div class="privacy-toggle-label">Show profile to dispatchers</div>
+          <div class="privacy-toggle-desc">Dispatchers at Carrier Trucking can view your full profile</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="priv-dispatchers" checked onchange="markUnsaved()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="privacy-toggle-row">
+        <div class="privacy-toggle-info">
+          <div class="privacy-toggle-label">Show profile to external brokers</div>
+          <div class="privacy-toggle-desc">Allow freight brokers to view your profile via shared link</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="priv-brokers" onchange="markUnsaved()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="privacy-toggle-row">
+        <div class="privacy-toggle-info">
+          <div class="privacy-toggle-label">Show performance stats on profile</div>
+          <div class="privacy-toggle-desc">Display on-time rate, loads completed, and average settlement</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="priv-performance" onchange="onPrivacyPerformanceChange()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="privacy-toggle-row">
+        <div class="privacy-toggle-info">
+          <div class="privacy-toggle-label">Show work history on profile</div>
+          <div class="privacy-toggle-desc">Employment history is visible when profile is shared</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="priv-workhistory" checked onchange="markUnsaved()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- SHARE / QR MODAL -->
+<div class="modal-overlay" id="share-modal" onclick="if(event.target===this)closeShareModal()">
+  <div class="modal-box" style="max-width:440px;text-align:center;">
+    <button class="modal-close" onclick="closeShareModal()">✕</button>
+    <div class="modal-title">Share Profile</div>
+    <div class="qr-link-box" id="share-link-text"></div>
+    <img class="qr-img" id="share-qr-img" src="" alt="QR Code" width="200" height="200">
+    <div class="modal-footer" style="justify-content:center;">
+      <button class="btn btn-primary" onclick="copyShareLink()">Copy Link</button>
+      <button class="btn btn-ghost" onclick="closeShareModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- WORK HISTORY MODAL -->
+<div class="modal-overlay" id="wh-modal" onclick="if(event.target===this)closeWorkHistModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeWorkHistModal()">✕</button>
+    <div class="modal-title" id="wh-modal-title">Add Work History</div>
+    <input type="hidden" id="wh-edit-id">
+    <div class="form-row">
+      <div class="form-field flex2">
+        <label>Company Name</label>
+        <input type="text" id="wh-company" placeholder="Company name">
+      </div>
+      <div class="form-field">
+        <label>Role / Title</label>
+        <input type="text" id="wh-role" placeholder="Driver, Owner-Operator…">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Start Date</label>
+        <input type="date" id="wh-start">
+      </div>
+      <div class="form-field">
+        <label>End Date (blank if current)</label>
+        <input type="date" id="wh-end">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Equipment Used</label>
+        <input type="text" id="wh-equipment" placeholder="Flatbed, RGN, Lowboy…">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Notes</label>
+        <input type="text" id="wh-notes" placeholder="Brief description…">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeWorkHistModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveWorkHistEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- CERT MODAL -->
+<div class="modal-overlay" id="cert-modal" onclick="if(event.target===this)closeCertModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeCertModal()">✕</button>
+    <div class="modal-title" id="cert-modal-title">Add Certification</div>
+    <input type="hidden" id="cert-edit-id">
+    <div class="form-row">
+      <div class="form-field flex2">
+        <label>Certificate Name</label>
+        <input type="text" id="cert-name" placeholder="e.g. Cargo Securement Training">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Issuing Organization</label>
+        <input type="text" id="cert-org" placeholder="FMCSA, DOT, OSHA…">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Issue Date</label>
+        <input type="date" id="cert-date">
+      </div>
+      <div class="form-field">
+        <label>Expiry Date (blank if none)</label>
+        <input type="date" id="cert-expiry">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeCertModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCertEntry()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── SEED DATA ───────────────────────────────────────────────────────────────
+const DRIVER_PROFILE_SEEDS = {
+  usr_006: {
+    driverId: 'usr_006',
+    name: 'David Hernandez',
+    location: 'Miami, FL',
+    yearsExp: 14,
+    cdlClass: 'A',
+    totalMiles: 850000,
+    bio: 'Experienced heavy haul specialist with 14 years operating RGN and lowboy equipment on oversize and permit loads across the Southeast and nationwide.',
+    equipment: ['Semi Truck', 'RGN', 'Lowboy', 'Flatbed'],
+    haulTypes: ['Heavy Haul', 'Oversize', 'Overweight', 'Permit Loads'],
+    workPref: ['OTR', 'Nationwide'],
+    homeBase: 'Miami, FL',
+    willingToTravel: 'Yes',
+    availability: false,
+    credentials: {
+      cdl: { class: 'A', state: 'FL', expiry: '2027-03-15', number: '' },
+      medCard: { expiry: '2026-09-20' },
+      twic: { has: false, expiry: '' },
+      hazmat: false, doublesTriples: true, tanker: false,
+      oversizePermit: true, osha10: true, flagger: false, annualInspection: true
+    },
+    workHistory: [
+      { id: 'wh1', company: 'Carrier Trucking US', role: 'Driver', start: '2022-01-01', end: '', equipment: 'RGN, Lowboy', notes: 'Heavy haul specialist, oversize/permit loads' }
+    ],
+    certs: [
+      { id: 'c1', name: 'Cargo Securement Training', org: 'FMCSA', date: '2024-06-01', expiry: '2026-06-01' },
+      { id: 'c2', name: 'OSHA 10-Hour', org: 'OSHA', date: '2023-03-15', expiry: '' }
+    ],
+    performance: { onTimeRate: 96, avgSettlement: 2800, totalLoads: 187, incidents: 0 },
+    privacy: { showToDispatchers: true, showToExternalBrokers: false, showPerformance: false, showWorkHistory: true }
+  },
+  usr_005: {
+    driverId: 'usr_005',
+    name: 'Avis',
+    location: 'Miami, FL',
+    yearsExp: 8,
+    cdlClass: 'A',
+    totalMiles: 420000,
+    bio: 'Reliable flatbed driver with 8 years hauling freight across the Southeast. Strong safety record and on-time delivery focus.',
+    equipment: ['Semi Truck', 'Flatbed', 'Step Deck'],
+    haulTypes: ['Standard', 'Oversize'],
+    workPref: ['Regional', 'OTR'],
+    homeBase: 'Miami, FL',
+    willingToTravel: 'Yes',
+    availability: false,
+    credentials: {
+      cdl: { class: 'A', state: 'FL', expiry: '2026-11-30', number: '' },
+      medCard: { expiry: '2026-12-15' },
+      twic: { has: false, expiry: '' },
+      hazmat: false, doublesTriples: false, tanker: false,
+      oversizePermit: false, osha10: false, flagger: false, annualInspection: true
+    },
+    workHistory: [
+      { id: 'wh1', company: 'Carrier Trucking US', role: 'Driver', start: '2023-01-01', end: '', equipment: 'Flatbed', notes: 'Southeast regional routes' }
+    ],
+    certs: [],
+    performance: { onTimeRate: 94, avgSettlement: 1950, totalLoads: 112, incidents: 0 },
+    privacy: { showToDispatchers: true, showToExternalBrokers: false, showPerformance: false, showWorkHistory: true }
+  },
+  usr_008: {
+    driverId: 'usr_008',
+    name: 'Nelson',
+    location: 'Hialeah, FL',
+    yearsExp: 11,
+    cdlClass: 'A',
+    totalMiles: 620000,
+    bio: 'Heavy haul driver with 11 years of experience in oversize loads, permit coordination, and specialized equipment. Known for safe, on-time delivery.',
+    equipment: ['Semi Truck', 'RGN', 'Lowboy', 'Flatbed', 'Step Deck'],
+    haulTypes: ['Heavy Haul', 'Oversize', 'Overweight', 'Permit Loads', 'Standard'],
+    workPref: ['OTR', 'Nationwide'],
+    homeBase: 'Hialeah, FL',
+    willingToTravel: 'Yes',
+    availability: false,
+    credentials: {
+      cdl: { class: 'A', state: 'FL', expiry: '2027-08-22', number: '' },
+      medCard: { expiry: '2027-01-10' },
+      twic: { has: false, expiry: '' },
+      hazmat: false, doublesTriples: true, tanker: false,
+      oversizePermit: true, osha10: true, flagger: true, annualInspection: true
+    },
+    workHistory: [
+      { id: 'wh1', company: 'Carrier Trucking US', role: 'Driver', start: '2023-03-01', end: '', equipment: 'RGN, Lowboy', notes: 'Heavy haul, oversize loads' }
+    ],
+    certs: [
+      { id: 'c1', name: 'DOT Compliance Training', org: 'DOT', date: '2024-01-15', expiry: '2026-01-15' }
+    ],
+    performance: { onTimeRate: 97, avgSettlement: 2450, totalLoads: 143, incidents: 0 },
+    privacy: { showToDispatchers: true, showToExternalBrokers: false, showPerformance: false, showWorkHistory: true }
+  },
+  usr_009: {
+    driverId: 'usr_009',
+    name: 'Yosviel',
+    location: 'Miami, FL',
+    yearsExp: 6,
+    cdlClass: 'A',
+    totalMiles: 280000,
+    bio: 'CDL-A driver with 6 years of experience and a strong commitment to safety and professionalism. Eager to take on new routes and equipment challenges.',
+    equipment: ['Semi Truck', 'Flatbed'],
+    haulTypes: ['Standard', 'Oversize'],
+    workPref: ['Regional', 'OTR'],
+    homeBase: 'Miami, FL',
+    willingToTravel: 'Temporary',
+    availability: false,
+    credentials: {
+      cdl: { class: 'A', state: 'FL', expiry: '2027-05-18', number: '' },
+      medCard: { expiry: '2026-08-30' },
+      twic: { has: false, expiry: '' },
+      hazmat: false, doublesTriples: false, tanker: false,
+      oversizePermit: false, osha10: false, flagger: false, annualInspection: false
+    },
+    workHistory: [
+      { id: 'wh1', company: 'Carrier Trucking US', role: 'Driver', start: '2023-06-01', end: '', equipment: 'Flatbed', notes: '' }
+    ],
+    certs: [],
+    performance: { onTimeRate: 93, avgSettlement: 1750, totalLoads: 87, incidents: 0 },
+    privacy: { showToDispatchers: true, showToExternalBrokers: false, showPerformance: false, showWorkHistory: true }
+  },
+  usr_010: {
+    driverId: 'usr_010',
+    name: 'Guillermo Pinera',
+    location: 'Miami, FL',
+    yearsExp: 12,
+    cdlClass: 'A',
+    totalMiles: 710000,
+    bio: 'Owner-operator with 12 years of experience running heavy haul and specialized freight. I own and maintain my own equipment and bring a business-owner mindset to every load.',
+    equipment: ['Semi Truck', 'RGN', 'Lowboy', 'Flatbed', 'Step Deck'],
+    haulTypes: ['Heavy Haul', 'Oversize', 'Permit Loads', 'Standard'],
+    workPref: ['OTR', 'Nationwide'],
+    homeBase: 'Miami, FL',
+    willingToTravel: 'Yes',
+    availability: false,
+    credentials: {
+      cdl: { class: 'A', state: 'FL', expiry: '2026-10-05', number: '' },
+      medCard: { expiry: '2026-07-12' },
+      twic: { has: true, expiry: '2028-03-20' },
+      hazmat: false, doublesTriples: true, tanker: false,
+      oversizePermit: true, osha10: true, flagger: false, annualInspection: true
+    },
+    workHistory: [
+      { id: 'wh1', company: 'Carrier Trucking US', role: 'Owner-Operator', start: '2022-06-01', end: '', equipment: 'RGN, Lowboy, Flatbed', notes: 'Owner-operator, heavy haul and oversize loads' }
+    ],
+    certs: [
+      { id: 'c1', name: 'Cargo Securement Training', org: 'FMCSA', date: '2023-09-01', expiry: '2025-09-01' },
+      { id: 'c2', name: 'OSHA 10-Hour', org: 'OSHA', date: '2022-11-10', expiry: '' }
+    ],
+    performance: { onTimeRate: 95, avgSettlement: 3100, totalLoads: 201, incidents: 0 },
+    privacy: { showToDispatchers: true, showToExternalBrokers: false, showPerformance: false, showWorkHistory: true }
+  }
+};
+
+// ─── CONSTANTS ──────────────────────────────────────────────────────────────
+const LS_KEY = 'nexus_driver_profiles';
+const LS_AVAIL = 'nexus_driver_availability';
+
+const EQUIPMENT_OPTIONS = ['Semi Truck', 'Lowboy', 'RGN', 'Flatbed', 'Step Deck', 'Hotshot', 'Tanker', 'Doubles', 'B-Train'];
+const HAUL_OPTIONS = ['Heavy Haul', 'Oversize', 'Overweight', 'Permit Loads', 'Standard', 'Hazmat'];
+const WORK_PREF_OPTIONS = ['Local', 'Regional', 'OTR', 'Nationwide'];
+
+const AVATAR_COLORS = ['#2e6da4', '#e8640a', '#22c55e', '#9333ea', '#f59e0b', '#ef4444', '#06b6d4'];
+
+// ─── STATE ────────────────────────────────────────────────────────────────
+let currentDriverId = null;
+let currentProfile = null;
+let sessionInfo = null;
+let isAdmin = false;
+let debounceTimer = null;
+
+// ─── SESSION ─────────────────────────────────────────────────────────────
+function getSession() {
+  try { return JSON.parse(localStorage.getItem('nexus_session') || '{}'); } catch(e) { return {}; }
+}
+
+// ─── PROFILES STORE ──────────────────────────────────────────────────────
+function getAllProfiles() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch(e) { return {}; }
+}
+function saveAllProfiles(profiles) {
+  localStorage.setItem(LS_KEY, JSON.stringify(profiles));
+}
+function getProfile(driverId) {
+  const all = getAllProfiles();
+  if (all[driverId]) return all[driverId];
+  if (DRIVER_PROFILE_SEEDS[driverId]) return JSON.parse(JSON.stringify(DRIVER_PROFILE_SEEDS[driverId]));
+  return null;
+}
+
+// ─── AVAILABILITY ────────────────────────────────────────────────────────
+function getAvailability(driverId) {
+  try {
+    const avMap = JSON.parse(localStorage.getItem(LS_AVAIL) || '{}');
+    const profile = getProfile(driverId);
+    if (typeof avMap[driverId] !== 'undefined') return avMap[driverId];
+    return profile ? profile.availability : false;
+  } catch(e) { return false; }
+}
+function setAvailability(driverId, val) {
+  try {
+    const avMap = JSON.parse(localStorage.getItem(LS_AVAIL) || '{}');
+    avMap[driverId] = val;
+    localStorage.setItem(LS_AVAIL, JSON.stringify(avMap));
+  } catch(e) {}
+}
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────
+function fmtDateShort(d) {
+  if (!d) return '—';
+  const [y, m, day] = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(m)-1] + ' ' + parseInt(day) + ', ' + y;
+}
+function expiryBadge(dateStr) {
+  if (!dateStr) return '<span class="badge badge-gray">N/A</span>';
+  const today = new Date();
+  const exp = new Date(dateStr);
+  const days = Math.floor((exp - today) / 86400000);
+  if (days < 0) return '<span class="badge badge-red">Expired</span>';
+  if (days < 90) return '<span class="badge badge-yellow">Expiring Soon</span>';
+  return '<span class="badge badge-green">Active</span>';
+}
+function getInitials(name) {
+  return (name || '').split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2) || 'DR';
+}
+function avatarColor(driverId) {
+  const idx = (driverId || '').split('').reduce((a,c) => a + c.charCodeAt(0), 0) % AVATAR_COLORS.length;
+  return AVATAR_COLORS[idx];
+}
+function formatMiles(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return Math.round(n/1000) + 'K';
+  return String(n);
+}
+function parseMiles(s) {
+  s = String(s).trim().toUpperCase();
+  if (s.endsWith('M')) return parseFloat(s) * 1000000;
+  if (s.endsWith('K')) return parseFloat(s) * 1000;
+  return parseInt(s) || 0;
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────
+function init() {
+  sessionInfo = getSession();
+  const role = (sessionInfo.role || '').toLowerCase();
+  isAdmin = (role === 'admin' || role === 'approver');
+
+  // Determine which driver to load
+  const params = new URLSearchParams(location.search);
+  let targetId = params.get('driver');
+
+  if (!targetId) {
+    if (isAdmin) {
+      targetId = 'usr_006'; // default for admin
+    } else {
+      // Find driver ID from session email
+      targetId = getDriverIdFromEmail(sessionInfo.email);
+    }
+  }
+
+  // Admin: show viewer section + populate dropdown
+  if (isAdmin) {
+    document.getElementById('viewer-section').style.display = 'flex';
+    populateDriverSelector(targetId);
+  } else {
+    // Non-admin: hide contact button if own profile
+    document.getElementById('contact-btn').style.display = 'none';
+    // Hide performance tab if privacy off
+    document.getElementById('perf-tab-btn').style.display = 'none';
+  }
+
+  if (targetId) {
+    currentDriverId = targetId;
+    loadProfile(targetId);
+  } else {
+    document.querySelector('.profile-layout').innerHTML = '<div style="padding:32px;color:var(--text-muted);">No driver profile found. Please log in first.</div>';
+  }
+}
+
+function getDriverIdFromEmail(email) {
+  if (!email) return null;
+  const users = (window.NEXUS_LOCAL_USERS || []);
+  const u = users.find(x => (x.email || '').toLowerCase() === (email || '').toLowerCase());
+  if (u) return u.id;
+  // Fallback: check seeds
+  for (const id in DRIVER_PROFILE_SEEDS) {
+    if (id === 'usr_006') continue; // skip — not a default match
+  }
+  return 'usr_006'; // fallback
+}
+
+function populateDriverSelector(selectedId) {
+  const sel = document.getElementById('driver-selector');
+  const drivers = [
+    { id: 'usr_005', name: 'Avis' },
+    { id: 'usr_006', name: 'David Hernandez' },
+    { id: 'usr_008', name: 'Nelson' },
+    { id: 'usr_009', name: 'Yosviel' },
+    { id: 'usr_010', name: 'Guillermo Pinera' }
+  ];
+  sel.innerHTML = drivers.map(d =>
+    `<option value="${d.id}" ${d.id === selectedId ? 'selected' : ''}>${d.name}</option>`
+  ).join('');
+}
+
+function switchDriver(driverId) {
+  currentDriverId = driverId;
+  loadProfile(driverId);
+  // Update URL without reload
+  const url = new URL(location.href);
+  url.searchParams.set('driver', driverId);
+  history.replaceState(null, '', url.toString());
+}
+
+// ─── LOAD PROFILE INTO UI ────────────────────────────────────────────────
+function loadProfile(driverId) {
+  const profile = getProfile(driverId);
+  if (!profile) return;
+  currentProfile = JSON.parse(JSON.stringify(profile));
+
+  // Merge availability from separate store
+  currentProfile.availability = getAvailability(driverId);
+
+  // ── LEFT CARD ──
+  const initials = getInitials(currentProfile.name);
+  const color = avatarColor(driverId);
+  document.getElementById('avatar-circle').textContent = initials;
+  document.getElementById('avatar-circle').style.background = color;
+  document.getElementById('profile-name-display').textContent = currentProfile.name;
+  document.getElementById('location-text').textContent = currentProfile.location || '';
+
+  // Member since
+  const wh = (currentProfile.workHistory || []).find(w => w.company === 'Carrier Trucking US');
+  if (wh && wh.start) {
+    const yr = wh.start.split('-')[0];
+    document.getElementById('member-since-display').textContent = 'MEMBER SINCE ' + yr;
+  }
+
+  // Availability
+  updateAvailabilityUI(currentProfile.availability);
+
+  // Quick stats
+  document.getElementById('stat-years').value = currentProfile.yearsExp || 0;
+  document.getElementById('stat-cdl').value = currentProfile.cdlClass || 'A';
+  document.getElementById('stat-miles').value = formatMiles(currentProfile.totalMiles || 0);
+
+  // ── TAB 1: CAREER ──
+  document.getElementById('bio-field').value = currentProfile.bio || '';
+  document.getElementById('bio-count').textContent = (currentProfile.bio || '').length;
+  document.getElementById('location-field').value = currentProfile.location || '';
+  document.getElementById('home-base').value = currentProfile.homeBase || '';
+  document.getElementById('travel-pref').value = currentProfile.willingToTravel || 'Yes';
+
+  renderChips('equipment-chips', EQUIPMENT_OPTIONS, currentProfile.equipment || [], 'equipment');
+  renderChips('haultype-chips', HAUL_OPTIONS, currentProfile.haulTypes || [], 'haul');
+  renderChips('workpref-chips', WORK_PREF_OPTIONS, currentProfile.workPref || [], 'workpref', 'orange');
+
+  // ── TAB 2: CREDENTIALS ──
+  renderCredentials(currentProfile.credentials || {});
+
+  // ── TAB 3: WORK HISTORY ──
+  renderWorkHistory(currentProfile.workHistory || []);
+
+  // ── TAB 4: CERTS ──
+  renderCerts(currentProfile.certs || []);
+
+  // ── TAB 5: PERFORMANCE ──
+  renderPerformance(currentProfile.performance || {});
+
+  // ── PRIVACY ──
+  const priv = currentProfile.privacy || {};
+  document.getElementById('priv-dispatchers').checked = priv.showToDispatchers !== false;
+  document.getElementById('priv-brokers').checked = !!priv.showToExternalBrokers;
+  document.getElementById('priv-performance').checked = !!priv.showPerformance;
+  document.getElementById('priv-workhistory').checked = priv.showWorkHistory !== false;
+
+  // Performance tab visibility
+  if (isAdmin) {
+    document.getElementById('perf-tab-btn').style.display = 'block';
+    document.getElementById('perf-restricted-msg').style.display = 'none';
+    document.getElementById('perf-content').style.display = 'block';
+  } else {
+    document.getElementById('perf-tab-btn').style.display = priv.showPerformance ? 'block' : 'none';
+  }
+
+  markSaved();
+}
+
+// ─── CHIP RENDERER ────────────────────────────────────────────────────────
+function renderChips(containerId, options, selected, type, variant) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = options.map(opt => {
+    const sel = selected.includes(opt);
+    return `<button class="chip ${sel ? 'selected' + (variant ? ' ' + variant : '') : ''}"
+      onclick="toggleChip(this, '${opt}', '${type}')" type="button">${opt}</button>`;
+  }).join('');
+}
+
+function toggleChip(btn, value, type) {
+  const wasSelected = btn.classList.contains('selected');
+  btn.classList.toggle('selected', !wasSelected);
+  if (type === 'equipment') {
+    if (!wasSelected) btn.classList.add('');
+    else btn.classList.remove('orange');
+  } else if (type === 'workpref') {
+    if (!wasSelected) btn.classList.add('orange');
+    else btn.classList.remove('orange');
+  }
+  markUnsaved();
+}
+
+function getSelectedChips(containerId) {
+  return Array.from(document.querySelectorAll(`#${containerId} .chip.selected`)).map(c => c.textContent.trim());
+}
+
+// ─── CREDENTIALS RENDERER ────────────────────────────────────────────────
+function renderCredentials(cred) {
+  // CDL
+  const cdl = cred.cdl || {};
+  document.getElementById('cred-cdl-body').innerHTML = `
+    <tr>
+      <td><select onchange="markUnsaved()" id="c-cdl-class" style="width:70px;">
+        <option ${cdl.class==='A'?'selected':''}>A</option>
+        <option ${cdl.class==='B'?'selected':''}>B</option>
+        <option ${cdl.class==='C'?'selected':''}>C</option>
+      </select></td>
+      <td><input type="text" id="c-cdl-state" value="${cdl.state||''}" placeholder="FL" maxlength="2" style="width:60px;" oninput="markUnsaved()"></td>
+      <td><input type="text" id="c-cdl-number" value="${cdl.number||''}" placeholder="Optional" oninput="markUnsaved()"></td>
+      <td><input type="date" id="c-cdl-expiry" value="${cdl.expiry||''}" oninput="markUnsaved()"></td>
+      <td>${expiryBadge(cdl.expiry)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="window.open('documents.html','_blank')">Upload Doc</button></td>
+    </tr>`;
+
+  // Medical Card
+  const med = cred.medCard || {};
+  document.getElementById('cred-med-body').innerHTML = `
+    <tr>
+      <td><input type="date" id="c-med-expiry" value="${med.expiry||''}" oninput="markUnsaved()"></td>
+      <td>${expiryBadge(med.expiry)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="window.open('documents.html','_blank')">Upload Doc</button></td>
+    </tr>`;
+
+  // Endorsements
+  const endorsements = [
+    { key: 'twic', label: 'TWIC Card', hasExpiry: true, twic: true },
+    { key: 'hazmat', label: 'Hazmat Endorsement', hasExpiry: false },
+    { key: 'doublesTriples', label: 'Doubles/Triples Endorsement', hasExpiry: false },
+    { key: 'tanker', label: 'Tanker Endorsement', hasExpiry: false },
+    { key: 'oversizePermit', label: 'Oversize/Permit Certification', hasExpiry: false },
+    { key: 'osha10', label: 'OSHA 10-Hour', hasExpiry: false },
+    { key: 'flagger', label: 'Flagger Certification', hasExpiry: false },
+    { key: 'annualInspection', label: 'Annual Inspection Certification', hasExpiry: false }
+  ];
+
+  document.getElementById('cred-endorse-body').innerHTML = endorsements.map(e => {
+    let held, expiry = '', statusBadge = '';
+    if (e.key === 'twic') {
+      const t = cred.twic || {};
+      held = t.has;
+      expiry = t.expiry || '';
+    } else {
+      held = !!cred[e.key];
+    }
+    const heldBadge = held
+      ? '<span class="badge badge-green">YES</span>'
+      : '<span class="badge badge-gray">NO</span>';
+    statusBadge = held ? (expiry ? expiryBadge(expiry) : '<span class="badge badge-green">Active</span>') : '<span class="badge badge-gray">N/A</span>';
+    const expiryCell = e.key === 'twic'
+      ? `<input type="date" class="cred-expiry-input" data-key="twic-expiry" value="${expiry}" oninput="markUnsaved()" ${!held ? 'disabled' : ''}>`
+      : '—';
+    return `<tr>
+      <td><strong>${e.label}</strong></td>
+      <td>
+        <label class="toggle-switch" style="display:inline-flex;vertical-align:middle;margin-right:6px;">
+          <input type="checkbox" class="cred-bool-input" data-key="${e.key}" ${held ? 'checked' : ''} onchange="onCredBoolChange(this);markUnsaved()">
+          <span class="toggle-slider"></span>
+        </label>
+        ${heldBadge}
+      </td>
+      <td>${expiryCell}</td>
+      <td id="cred-status-${e.key}">${statusBadge}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="window.open('documents.html','_blank')">Upload Doc</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function onCredBoolChange(input) {
+  const key = input.dataset.key;
+  if (key === 'twic') {
+    const expiryInput = document.querySelector('[data-key="twic-expiry"]');
+    if (expiryInput) expiryInput.disabled = !input.checked;
+  }
+}
+
+// ─── WORK HISTORY ────────────────────────────────────────────────────────
+function renderWorkHistory(history) {
+  const tbody = document.getElementById('wh-tbody');
+  if (!history.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:20px;">No work history entries. Click "+ Add Entry" to start.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = history.map(e => `
+    <tr>
+      <td><strong>${e.company}</strong></td>
+      <td class="muted">${e.role}</td>
+      <td class="muted">${fmtDateShort(e.start)}</td>
+      <td class="muted">${e.end ? fmtDateShort(e.end) : '<span class="badge badge-green">Current</span>'}</td>
+      <td class="muted" style="font-size:12px;">${e.equipment || '—'}</td>
+      <td class="muted" style="font-size:12px;max-width:180px;">${e.notes || '—'}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="editWorkHistEntry('${e.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteWorkHistEntry('${e.id}')">Del</button>
+      </td>
+    </tr>`).join('');
+}
+
+// ─── CERTS ────────────────────────────────────────────────────────────────
+function renderCerts(certs) {
+  const grid = document.getElementById('certs-grid');
+  const empty = document.getElementById('certs-empty');
+  if (!certs.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.innerHTML = certs.map(c => `
+    <div class="cert-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+        <div>
+          <div class="cert-card-name">${c.name}</div>
+          <div class="cert-card-org">${c.org || '—'}</div>
+        </div>
+        <button class="cert-delete-btn" onclick="deleteCertEntry('${c.id}')" title="Delete">✕</button>
+      </div>
+      <div class="cert-card-dates">
+        <span>Issued: ${fmtDateShort(c.date)}</span>
+        ${c.expiry ? `<span>Expires: ${fmtDateShort(c.expiry)}</span>` : '<span>No expiry</span>'}
+      </div>
+      <div class="cert-card-actions">
+        ${c.expiry ? expiryBadge(c.expiry) : '<span class="badge badge-green">Active</span>'}
+        <button class="btn btn-ghost btn-sm" onclick="editCertEntry('${c.id}')">Edit</button>
+        <button class="btn btn-ghost btn-sm" onclick="window.open('documents.html','_blank')">Upload Doc</button>
+      </div>
+    </div>`).join('');
+}
+
+// ─── PERFORMANCE ──────────────────────────────────────────────────────────
+function renderPerformance(perf) {
+  const priv = currentProfile ? currentProfile.privacy : {};
+  const canSee = isAdmin || priv.showPerformance;
+
+  if (!canSee) {
+    document.getElementById('perf-restricted-msg').style.display = 'block';
+    document.getElementById('perf-content').style.display = 'none';
+    return;
+  }
+  document.getElementById('perf-restricted-msg').style.display = 'none';
+  document.getElementById('perf-content').style.display = 'block';
+
+  document.getElementById('perf-grid').innerHTML = `
+    <div class="perf-card">
+      <div class="perf-card-value green">${perf.onTimeRate || 0}%</div>
+      <div class="perf-card-label">On-Time Delivery Rate</div>
+    </div>
+    <div class="perf-card">
+      <div class="perf-card-value">$${(perf.avgSettlement || 0).toLocaleString()}</div>
+      <div class="perf-card-label">Avg Settlement / Week</div>
+    </div>
+    <div class="perf-card">
+      <div class="perf-card-value">${perf.totalLoads || 0}</div>
+      <div class="perf-card-label">Total Loads Completed</div>
+    </div>
+    <div class="perf-card">
+      <div class="perf-card-value ${perf.incidents === 0 ? 'green' : ''}">${perf.incidents || 0}</div>
+      <div class="perf-card-label">Incidents / Accidents</div>
+    </div>`;
+
+  document.getElementById('perf-incidents').value = perf.incidents || 0;
+
+  document.getElementById('perf-bar-wrap').innerHTML = `
+    <div class="perf-bar-label"><span>On-Time Rate</span><span>${perf.onTimeRate || 0}%</span></div>
+    <div class="perf-bar-track"><div class="perf-bar-fill" style="width:${perf.onTimeRate || 0}%"></div></div>
+    <div style="height:10px"></div>
+    <div class="perf-bar-label"><span>Load Volume Index</span><span>${Math.min(100, Math.round((perf.totalLoads||0)/2))}%</span></div>
+    <div class="perf-bar-track"><div class="perf-bar-fill" style="width:${Math.min(100, Math.round((perf.totalLoads||0)/2))}%;background:linear-gradient(90deg,var(--orange),var(--yellow))"></div></div>`;
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ─── AVAILABILITY ────────────────────────────────────────────────────────
+function toggleAvailability() {
+  const newVal = !currentProfile.availability;
+  currentProfile.availability = newVal;
+  setAvailability(currentDriverId, newVal);
+  updateAvailabilityUI(newVal);
+  markUnsaved();
+}
+function updateAvailabilityUI(available) {
+  const btn = document.getElementById('avail-btn');
+  const text = document.getElementById('avail-text');
+  if (available) {
+    btn.className = 'availability-toggle available';
+    text.textContent = 'AVAILABLE';
+  } else {
+    btn.className = 'availability-toggle not-available';
+    text.textContent = 'NOT AVAILABLE';
+  }
+}
+
+// ─── UNSAVED CHANGES ─────────────────────────────────────────────────────
+function markUnsaved() {
+  document.getElementById('save-btn').classList.add('has-changes');
+  const status = document.getElementById('save-status');
+  status.className = 'save-status pending';
+  status.textContent = 'Unsaved changes...';
+  // Debounce auto-save
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(saveProfile, 800);
+}
+function markSaved() {
+  document.getElementById('save-btn').classList.remove('has-changes');
+  const status = document.getElementById('save-status');
+  status.className = 'save-status saved';
+  status.textContent = 'All changes saved';
+}
+
+// ─── SAVE PROFILE ────────────────────────────────────────────────────────
+function saveProfile() {
+  if (!currentProfile || !currentDriverId) return;
+
+  // Collect from UI
+  currentProfile.yearsExp = parseInt(document.getElementById('stat-years').value) || 0;
+  currentProfile.cdlClass = document.getElementById('stat-cdl').value.toUpperCase().trim() || 'A';
+  currentProfile.totalMiles = parseMiles(document.getElementById('stat-miles').value);
+  currentProfile.bio = document.getElementById('bio-field').value;
+  currentProfile.location = document.getElementById('location-field').value;
+  currentProfile.homeBase = document.getElementById('home-base').value;
+  currentProfile.willingToTravel = document.getElementById('travel-pref').value;
+  currentProfile.equipment = getSelectedChips('equipment-chips');
+  currentProfile.haulTypes = getSelectedChips('haultype-chips');
+  currentProfile.workPref = getSelectedChips('workpref-chips');
+
+  // Credentials
+  currentProfile.credentials = currentProfile.credentials || {};
+  const cdlClass = document.getElementById('c-cdl-class');
+  const cdlState = document.getElementById('c-cdl-state');
+  const cdlNumber = document.getElementById('c-cdl-number');
+  const cdlExpiry = document.getElementById('c-cdl-expiry');
+  if (cdlClass) currentProfile.credentials.cdl = {
+    class: cdlClass.value,
+    state: cdlState ? cdlState.value : '',
+    number: cdlNumber ? cdlNumber.value : '',
+    expiry: cdlExpiry ? cdlExpiry.value : ''
+  };
+  const medExpiry = document.getElementById('c-med-expiry');
+  if (medExpiry) currentProfile.credentials.medCard = { expiry: medExpiry.value };
+
+  // Endorsements
+  document.querySelectorAll('.cred-bool-input').forEach(inp => {
+    const key = inp.dataset.key;
+    if (key === 'twic') {
+      const expiryEl = document.querySelector('[data-key="twic-expiry"]');
+      currentProfile.credentials.twic = { has: inp.checked, expiry: expiryEl ? expiryEl.value : '' };
+    } else {
+      currentProfile.credentials[key] = inp.checked;
+    }
+  });
+
+  // Performance
+  const incEl = document.getElementById('perf-incidents');
+  if (incEl) currentProfile.performance = Object.assign({}, currentProfile.performance, { incidents: parseInt(incEl.value) || 0 });
+
+  // Privacy
+  currentProfile.privacy = {
+    showToDispatchers: document.getElementById('priv-dispatchers').checked,
+    showToExternalBrokers: document.getElementById('priv-brokers').checked,
+    showPerformance: document.getElementById('priv-performance').checked,
+    showWorkHistory: document.getElementById('priv-workhistory').checked
+  };
+
+  // Update location display
+  document.getElementById('location-text').textContent = currentProfile.location || '';
+  document.getElementById('profile-name-display').textContent = currentProfile.name;
+
+  // Persist
+  const all = getAllProfiles();
+  all[currentDriverId] = currentProfile;
+  saveAllProfiles(all);
+  markSaved();
+}
+
+// ─── LOCATION DISPLAY ────────────────────────────────────────────────────
+function updateLocationDisplay() {
+  document.getElementById('location-text').textContent = document.getElementById('location-field').value;
+}
+
+// ─── BIO CHAR COUNT ──────────────────────────────────────────────────────
+function updateCharCount(el) {
+  document.getElementById('bio-count').textContent = el.value.length;
+}
+
+// ─── PRIVACY: PERFORMANCE TOGGLE ─────────────────────────────────────────
+function onPrivacyPerformanceChange() {
+  markUnsaved();
+  const checked = document.getElementById('priv-performance').checked;
+  if (!isAdmin) {
+    document.getElementById('perf-tab-btn').style.display = checked ? 'block' : 'none';
+  }
+  renderPerformance(currentProfile ? (currentProfile.performance || {}) : {});
+}
+
+// ─── WORK HISTORY MODALS ─────────────────────────────────────────────────
+function openWorkHistModal(editId) {
+  const modal = document.getElementById('wh-modal');
+  document.getElementById('wh-edit-id').value = editId || '';
+  document.getElementById('wh-modal-title').textContent = editId ? 'Edit Work History' : 'Add Work History';
+  if (editId) {
+    const entry = (currentProfile.workHistory || []).find(e => e.id === editId);
+    if (entry) {
+      document.getElementById('wh-company').value = entry.company || '';
+      document.getElementById('wh-role').value = entry.role || '';
+      document.getElementById('wh-start').value = entry.start || '';
+      document.getElementById('wh-end').value = entry.end || '';
+      document.getElementById('wh-equipment').value = entry.equipment || '';
+      document.getElementById('wh-notes').value = entry.notes || '';
+    }
+  } else {
+    document.getElementById('wh-company').value = '';
+    document.getElementById('wh-role').value = '';
+    document.getElementById('wh-start').value = '';
+    document.getElementById('wh-end').value = '';
+    document.getElementById('wh-equipment').value = '';
+    document.getElementById('wh-notes').value = '';
+  }
+  modal.classList.add('open');
+}
+function closeWorkHistModal() {
+  document.getElementById('wh-modal').classList.remove('open');
+}
+function editWorkHistEntry(id) { openWorkHistModal(id); }
+function deleteWorkHistEntry(id) {
+  if (!confirm('Delete this work history entry?')) return;
+  currentProfile.workHistory = (currentProfile.workHistory || []).filter(e => e.id !== id);
+  renderWorkHistory(currentProfile.workHistory);
+  markUnsaved();
+}
+function saveWorkHistEntry() {
+  const editId = document.getElementById('wh-edit-id').value;
+  const entry = {
+    id: editId || 'wh_' + Date.now(),
+    company: document.getElementById('wh-company').value.trim(),
+    role: document.getElementById('wh-role').value.trim(),
+    start: document.getElementById('wh-start').value,
+    end: document.getElementById('wh-end').value,
+    equipment: document.getElementById('wh-equipment').value.trim(),
+    notes: document.getElementById('wh-notes').value.trim()
+  };
+  if (!entry.company) { alert('Company name is required.'); return; }
+  if (!currentProfile.workHistory) currentProfile.workHistory = [];
+  if (editId) {
+    const idx = currentProfile.workHistory.findIndex(e => e.id === editId);
+    if (idx >= 0) currentProfile.workHistory[idx] = entry;
+    else currentProfile.workHistory.push(entry);
+  } else {
+    currentProfile.workHistory.push(entry);
+  }
+  renderWorkHistory(currentProfile.workHistory);
+  closeWorkHistModal();
+  markUnsaved();
+}
+
+// ─── CERT MODALS ──────────────────────────────────────────────────────────
+function openCertModal(editId) {
+  const modal = document.getElementById('cert-modal');
+  document.getElementById('cert-edit-id').value = editId || '';
+  document.getElementById('cert-modal-title').textContent = editId ? 'Edit Certification' : 'Add Certification';
+  if (editId) {
+    const c = (currentProfile.certs || []).find(x => x.id === editId);
+    if (c) {
+      document.getElementById('cert-name').value = c.name || '';
+      document.getElementById('cert-org').value = c.org || '';
+      document.getElementById('cert-date').value = c.date || '';
+      document.getElementById('cert-expiry').value = c.expiry || '';
+    }
+  } else {
+    document.getElementById('cert-name').value = '';
+    document.getElementById('cert-org').value = '';
+    document.getElementById('cert-date').value = '';
+    document.getElementById('cert-expiry').value = '';
+  }
+  modal.classList.add('open');
+}
+function closeCertModal() {
+  document.getElementById('cert-modal').classList.remove('open');
+}
+function editCertEntry(id) { openCertModal(id); }
+function deleteCertEntry(id) {
+  if (!confirm('Delete this certification?')) return;
+  currentProfile.certs = (currentProfile.certs || []).filter(c => c.id !== id);
+  renderCerts(currentProfile.certs);
+  markUnsaved();
+}
+function saveCertEntry() {
+  const editId = document.getElementById('cert-edit-id').value;
+  const entry = {
+    id: editId || 'cert_' + Date.now(),
+    name: document.getElementById('cert-name').value.trim(),
+    org: document.getElementById('cert-org').value.trim(),
+    date: document.getElementById('cert-date').value,
+    expiry: document.getElementById('cert-expiry').value
+  };
+  if (!entry.name) { alert('Certificate name is required.'); return; }
+  if (!currentProfile.certs) currentProfile.certs = [];
+  if (editId) {
+    const idx = currentProfile.certs.findIndex(c => c.id === editId);
+    if (idx >= 0) currentProfile.certs[idx] = entry;
+    else currentProfile.certs.push(entry);
+  } else {
+    currentProfile.certs.push(entry);
+  }
+  renderCerts(currentProfile.certs);
+  closeCertModal();
+  markUnsaved();
+}
+
+// ─── SHARE / QR MODAL ────────────────────────────────────────────────────
+function openShareModal() {
+  const url = `https://cejsburlew-crypto.github.io/carrier-nexus/driver-profile.html?driver=${currentDriverId}`;
+  document.getElementById('share-link-text').textContent = url;
+  document.getElementById('share-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(url)}&size=200x200`;
+  document.getElementById('share-modal').classList.add('open');
+}
+function closeShareModal() {
+  document.getElementById('share-modal').classList.remove('open');
+}
+function copyShareLink() {
+  const url = document.getElementById('share-link-text').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  }).catch(() => {
+    prompt('Copy this link:', url);
+  });
+}
+
+// ─── CONTACT ─────────────────────────────────────────────────────────────
+function contactDriver() {
+  if (!currentProfile) return;
+  const users = window.NEXUS_LOCAL_USERS || [];
+  const u = users.find(x => x.id === currentDriverId);
+  if (u && u.email) {
+    window.location.href = `mailto:${u.email}?subject=Carrier Nexus: Message for ${currentProfile.name}`;
+  } else {
+    alert('Email address not found for this driver.');
+  }
+}
+
+// ─── STAT INPUTS: mark unsaved on change ────────────────────────────────
+document.getElementById('stat-years').addEventListener('input', markUnsaved);
+document.getElementById('stat-cdl').addEventListener('input', markUnsaved);
+document.getElementById('stat-miles').addEventListener('input', markUnsaved);
+
+// ─── BOOT ─────────────────────────────────────────────────────────────────
+// Wait for nexus-core to finish loading
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>
