@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" data-nexus-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Search — Carrier Nexus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #0a0a0a;
+      color: #c9d1d9;
+      min-height: 100vh;
+      display: flex;
+    }
+    .main-content {
+      margin-left: 220px;
+      flex: 1;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .topbar {
+      background: #111827;
+      border-bottom: 1px solid #21262d;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .page-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #e6edf3;
+    }
+    .search-hero {
+      padding: 40px 28px 24px;
+      border-bottom: 1px solid #1f2937;
+    }
+    .search-hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: #e6edf3;
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+    }
+    .search-hero p {
+      color: #6b7280;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    .search-bar-wrap {
+      display: flex;
+      gap: 8px;
+      max-width: 700px;
+    }
+    .search-bar {
+      flex: 1;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 15px;
+      color: #f9fafb;
+      font-family: 'Barlow', sans-serif;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .search-bar:focus { border-color: #e91e8c; }
+    .search-bar::placeholder { color: #4b5563; }
+    .btn-search {
+      background: #e91e8c;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Barlow', sans-serif;
+      cursor: pointer;
+      transition: background .15s;
+      white-space: nowrap;
+    }
+    .btn-search:hover { background: #c2185b; }
+    .results-area {
+      flex: 1;
+      padding: 24px 28px;
+    }
+    .results-empty {
+      padding: 60px 0;
+      text-align: center;
+      color: #4b5563;
+    }
+    .results-empty .big-icon { font-size: 48px; margin-bottom: 12px; }
+    .results-empty h3 { color: #6b7280; font-size: 16px; margin-bottom: 6px; }
+    .results-stats {
+      font-size: 12px;
+      color: #6b7280;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 20px;
+    }
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 12px;
+    }
+    .category-section { margin-bottom: 32px; }
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .category-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .category-count {
+      background: #1f2937;
+      color: #6b7280;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+    .category-divider {
+      flex: 1;
+      height: 1px;
+      background: #1f2937;
+    }
+    .result-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-left: 3px solid transparent;
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      transition: all .15s;
+      text-decoration: none;
+    }
+    .result-card:hover {
+      background: rgba(233,30,140,0.08);
+      border-left-color: #e91e8c;
+      border-color: #374151;
+    }
+    .result-icon {
+      font-size: 22px;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .result-body { flex: 1; min-width: 0; }
+    .result-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f9fafb;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 3px;
+    }
+    .result-subtitle {
+      font-size: 11px;
+      color: #9ca3af;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .result-meta {
+      font-size: 11px;
+      color: #6b7280;
+      background: #1f2937;
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      align-self: flex-start;
+      margin-top: 2px;
+    }
+    .result-arrow {
+      font-size: 12px;
+      color: #374151;
+      flex-shrink: 0;
+      align-self: center;
+    }
+    .result-card:hover .result-arrow { color: #e91e8c; }
+    @media (max-width: 768px) {
+      .main-content { margin-left: 0; }
+      .search-hero, .results-area { padding-left: 16px; padding-right: 16px; }
+      .results-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <script src="nexus-sidebar.js?v=6"></script>
+  <script src="nexus-search.js?v=6"></script>
+
+  <div class="main-content">
+    <div class="topbar">
+      <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18" style="color:#e91e8c;flex-shrink:0;">
+        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+      </svg>
+      <span class="page-title">GLOBAL SEARCH</span>
+    </div>
+
+    <div class="search-hero">
+      <h1>Search Everything</h1>
+      <p>Search across loads, drivers, documents, expenses, invoices, inspections, and more. Press <kbd style="background:#1f2937;border:1px solid #374151;padding:1px 5px;border-radius:3px;font-size:11px;font-family:'JetBrains Mono',monospace;">⌘K</kbd> from any page for quick access.</p>
+      <div class="search-bar-wrap">
+        <input type="text" id="search-page-input" class="search-bar" placeholder="Search loads, drivers, documents, expenses…" autocomplete="off" autocorrect="off" spellcheck="false">
+        <button class="btn-search" onclick="doPageSearch()">Search</button>
+      </div>
+    </div>
+
+    <div class="results-area" id="search-results-area">
+      <div class="results-empty">
+        <div class="big-icon">🔍</div>
+        <h3>Search all records</h3>
+        <p style="font-size:13px;">Type above to search loads, drivers, documents, expenses, invoices, and more.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var CATEGORY_COLORS = {
+      'Loads':       '#3b82f6',
+      'Drivers':     '#10b981',
+      'Documents':   '#f59e0b',
+      'Expenses':    '#ef4444',
+      'Invoices':    '#8b5cf6',
+      'Inspections': '#06b6d4',
+      'IFTA':        '#f97316',
+      'Vendors':     '#64748b'
+    };
+
+    var _debounce = null;
+
+    function esc(s) {
+      if (!s) return '';
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function doPageSearch() {
+      var q = document.getElementById('search-page-input').value.trim();
+      renderPageSearch(q);
+    }
+
+    function renderPageSearch(query) {
+      var area = document.getElementById('search-results-area');
+      if (!query) {
+        area.innerHTML = '<div class="results-empty"><div class="big-icon">🔍</div><h3>Search all records</h3><p style="font-size:13px;">Type above to search loads, drivers, documents, expenses, invoices, and more.</p></div>';
+        return;
+      }
+      if (!window.NexusSearch) {
+        area.innerHTML = '<div class="results-empty"><h3>Search engine loading…</h3></div>';
+        return;
+      }
+      var res = window.NexusSearch.search(query);
+      if (!res.results.length) {
+        area.innerHTML = '<div class="results-empty"><div class="big-icon">🤷</div><h3>No results for "' + esc(query) + '"</h3><p style="font-size:13px;">Try a different keyword, or check that records are loaded on their respective pages.</p></div>';
+        return;
+      }
+
+      var html = '<div class="results-stats">' + res.totalCount + ' result' + (res.totalCount !== 1 ? 's' : '') + ' for <strong style="color:#9ca3af;">"' + esc(query) + '"</strong></div>';
+
+      // Group results by category
+      var grouped = {};
+      res.results.forEach(function(r) {
+        if (!grouped[r.category]) grouped[r.category] = [];
+        grouped[r.category].push(r);
+      });
+
+      var catOrder = ['Loads','Drivers','Documents','Expenses','Invoices','Inspections','IFTA','Vendors'];
+      var allCats = [];
+      catOrder.forEach(function(c) { if (grouped[c]) allCats.push(c); });
+      Object.keys(grouped).forEach(function(c) { if (allCats.indexOf(c) === -1) allCats.push(c); });
+
+      allCats.forEach(function(cat) {
+        var items = grouped[cat];
+        var color = CATEGORY_COLORS[cat] || '#9ca3af';
+        html += '<div class="category-section">';
+        html += '<div class="category-header">';
+        html += '<span class="category-label" style="color:' + color + ';">' + esc(cat) + '</span>';
+        html += '<span class="category-count">' + items.length + '</span>';
+        html += '<div class="category-divider"></div>';
+        html += '</div>';
+        html += '<div class="results-grid">';
+        items.forEach(function(r) {
+          html += '<a href="' + esc(r.url) + '" class="result-card">';
+          html += '<span class="result-icon">' + r.icon + '</span>';
+          html += '<div class="result-body">';
+          html += '<div class="result-title">' + esc(r.title) + '</div>';
+          if (r.subtitle) html += '<div class="result-subtitle">' + esc(r.subtitle) + '</div>';
+          html += '</div>';
+          if (r.meta) html += '<span class="result-meta">' + esc(r.meta) + '</span>';
+          html += '<span class="result-arrow">→</span>';
+          html += '</a>';
+        });
+        html += '</div></div>';
+      });
+
+      area.innerHTML = html;
+    }
+
+    // Live search as user types
+    document.getElementById('search-page-input').addEventListener('input', function() {
+      clearTimeout(_debounce);
+      var q = this.value;
+      _debounce = setTimeout(function() { renderPageSearch(q.trim()); }, 150);
+    });
+
+    document.getElementById('search-page-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { doPageSearch(); }
+    });
+
+    // Handle ?q= URL parameter
+    (function() {
+      var params = new URLSearchParams(location.search);
+      var q = params.get('q');
+      if (q) {
+        document.getElementById('search-page-input').value = q;
+        // Wait for NexusSearch to load
+        var attempts = 0;
+        function trySearch() {
+          if (window.NexusSearch) { renderPageSearch(q); }
+          else if (attempts++ < 20) { setTimeout(trySearch, 100); }
+        }
+        trySearch();
+      }
+    })();
+  </script>
+</body>
+</html>

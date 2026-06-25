@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Pay — Carrier Nexus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0a0a0a;color:#c9d1d9;font-family:'Barlow',sans-serif;margin-left:220px;min-height:100vh}
+    @media(max-width:768px){body{margin-left:0}}
+    .topbar{background:#111827;border-bottom:1px solid #1f2937;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50}
+    .topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:1px;color:#fff}
+    .topbar-right{display:flex;align-items:center;gap:12px}
+    .driver-select{background:#1f2937;border:1px solid #374151;color:#e5e7eb;padding:7px 12px;border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;cursor:pointer}
+    .driver-select option{background:#1f2937}
+    .status-banner{padding:12px 20px;border-radius:10px;margin:16px 20px 0;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;cursor:pointer}
+    .banner-approved{background:rgba(20,184,166,.15);border:1px solid rgba(20,184,166,.4);color:#5eead4}
+    .banner-paid{background:rgba(34,197,94,.13);border:1px solid rgba(34,197,94,.35);color:#86efac}
+    .banner-dispute{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.35);color:#fde68a}
+    .page-wrap{padding:16px 20px 40px;max-width:760px;margin:0 auto}
+    .week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:8px}
+    .week-label{font-family:'JetBrains Mono',monospace;font-size:12px;color:#9ca3af;text-align:center;flex:1}
+    .week-btn{background:#1f2937;border:1px solid #374151;color:#9ca3af;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+    .week-btn:hover{background:#374151;color:#fff}
+    .week-btn:disabled{opacity:.35;cursor:not-allowed}
+    .hero-card{background:#0f1923;border:1.5px solid #1a3a3a;border-left:4px solid #14b8a6;border-radius:14px;padding:22px 22px 18px;margin-bottom:16px;position:relative;overflow:hidden}
+    .hero-card::before{content:'';position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle at top right,rgba(20,184,166,.08),transparent 70%);pointer-events:none}
+    .hero-pending-label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:2px;color:#6b7280;text-transform:uppercase;margin-bottom:14px}
+    .hero-divider{border:none;border-top:1px solid #1f2937;margin:12px 0}
+    .hero-row{display:flex;justify-content:space-between;align-items:baseline;padding:3px 0}
+    .hero-row-label{font-size:13px;color:#9ca3af}
+    .hero-row-amount{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
+    .hero-row-amount.green{color:#4ade80}
+    .hero-row-amount.red{color:#f87171}
+    .hero-line-item{display:flex;justify-content:space-between;padding:3px 0 3px 16px;border-left:2px solid #1f2937}
+    .hero-line-label{font-size:12px;color:#6b7280}
+    .hero-line-amount{font-family:'JetBrains Mono',monospace;font-size:12px}
+    .hero-line-amount.green{color:#4ade80}
+    .hero-line-amount.red{color:#f87171}
+    .hero-net-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0 2px}
+    .hero-net-label{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:.5px;color:#e5e7eb}
+    .hero-net-amount{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:#14b8a6}
+    .hero-meta{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid #1f2937}
+    .hero-meta-item{font-size:12px;color:#6b7280}
+    .hero-meta-item span{font-weight:600;color:#9ca3af}
+    .status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.5px}
+    .badge-pending{background:rgba(251,191,36,.15);color:#fde68a;border:1px solid rgba(251,191,36,.3)}
+    .badge-approved{background:rgba(20,184,166,.15);color:#5eead4;border:1px solid rgba(20,184,166,.3)}
+    .badge-paid{background:rgba(34,197,94,.15);color:#86efac;border:1px solid rgba(34,197,94,.3)}
+    .badge-processing{background:rgba(99,102,241,.15);color:#a5b4fc;border:1px solid rgba(99,102,241,.3)}
+    .hero-pdf-btn{margin-top:14px;width:100%;background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.3);color:#5eead4;padding:9px;border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;text-decoration:none;display:block}
+    .hero-pdf-btn:hover{background:rgba(20,184,166,.2)}
+    .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+    .metric-card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 16px}
+    .metric-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:#6b7280;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+    .metric-value{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#e5e7eb}
+    .metric-sub{font-size:11px;color:#4b5563;margin-top:3px}
+    .tabs{display:flex;gap:2px;background:#0d1117;border:1px solid #1f2937;border-radius:10px;padding:3px;margin-bottom:16px}
+    .tab-btn{flex:1;padding:8px 6px;background:transparent;border:none;color:#6b7280;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border-radius:7px;transition:all .15s;white-space:nowrap}
+    .tab-btn.active{background:#1f2937;color:#e5e7eb}
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+    .history-row{background:#111827;border:1px solid #1f2937;border-radius:10px;margin-bottom:8px;overflow:hidden;cursor:pointer;transition:border-color .15s}
+    .history-row:hover{border-color:#374151}
+    .history-row-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
+    .history-row-left{flex:1;min-width:0}
+    .history-week{font-family:'JetBrains Mono',monospace;font-size:11px;color:#9ca3af}
+    .history-loads{font-size:11px;color:#6b7280;margin-top:2px}
+    .history-row-right{display:flex;align-items:center;gap:12px;flex-shrink:0}
+    .history-net{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#4ade80}
+    .history-chevron{color:#4b5563;font-size:18px;transition:transform .2s;display:inline-block}
+    .history-expand{display:none;padding:0 16px 14px;border-top:1px solid #1a1a1a}
+    .history-expand.open{display:block}
+    .history-expand-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px}
+    .history-expand-label{color:#6b7280}
+    .history-expand-amt{font-family:'JetBrains Mono',monospace;color:#9ca3af}
+    .history-expand-section{font-size:10px;font-weight:700;letter-spacing:.5px;color:#4b5563;text-transform:uppercase;margin-top:8px;margin-bottom:4px}
+    .ded-grid{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;margin-bottom:16px}
+    .ded-leg-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12px}
+    .ded-leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .ded-leg-label{color:#9ca3af;flex:1}
+    .ded-leg-amt{font-family:'JetBrains Mono',monospace;color:#e5e7eb;font-size:11px}
+    .ded-table{width:100%;border-collapse:collapse}
+    .ded-table th{font-size:10px;font-weight:700;letter-spacing:.5px;color:#6b7280;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid #1f2937;text-align:left}
+    .ded-table td{padding:7px 8px;font-size:12px;border-bottom:1px solid #0d1117}
+    .ded-table tr:last-child td{border-bottom:none}
+    .ded-table td:nth-child(2),.ded-table td:nth-child(3){font-family:'JetBrains Mono',monospace;font-size:11px}
+    .trend-up{color:#f87171}
+    .trend-down{color:#4ade80}
+    .trend-same{color:#6b7280}
+    .loads-table{width:100%;border-collapse:collapse}
+    .loads-table th{font-size:10px;font-weight:700;letter-spacing:.5px;color:#6b7280;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid #1f2937;text-align:left;white-space:nowrap}
+    .loads-table td{padding:9px 10px;font-size:12px;color:#c9d1d9;border-bottom:1px solid #0d1117;vertical-align:middle}
+    .loads-table tr:last-child td{border-bottom:none}
+    .load-route{font-weight:600;color:#e5e7eb}
+    .load-id{font-family:'JetBrains Mono',monospace;font-size:10px;color:#4b5563}
+    .badge-completed{background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.25);padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
+    .badge-progress{background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.25);padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
+    .badge-cancelled{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.25);padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
+    .dispute-form-card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:18px;margin-bottom:16px}
+    .dispute-form-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:#e5e7eb;margin-bottom:14px}
+    .form-group{margin-bottom:12px}
+    .form-label{display:block;font-size:11px;font-weight:600;color:#6b7280;letter-spacing:.3px;margin-bottom:5px}
+    .form-select,.form-textarea{width:100%;background:#0d1117;border:1px solid #1f2937;border-radius:8px;color:#c9d1d9;padding:9px 12px;font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border-color .15s}
+    .form-select:focus,.form-textarea:focus{border-color:#374151}
+    .form-textarea{resize:vertical;min-height:80px}
+    .char-count{font-size:10px;color:#4b5563;text-align:right;margin-top:3px}
+    .btn-submit{background:#e91e8c;border:none;color:#fff;padding:10px 20px;border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;width:100%}
+    .btn-submit:hover{background:#c2185b}
+    .disputes-list-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:#9ca3af;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+    .dispute-item{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:14px 16px;margin-bottom:8px}
+    .dispute-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
+    .dispute-week{font-family:'JetBrains Mono',monospace;font-size:10px;color:#6b7280}
+    .dispute-deduction{font-size:13px;font-weight:600;color:#e5e7eb}
+    .dispute-desc{font-size:12px;color:#9ca3af;margin-bottom:6px}
+    .dispute-meta{font-size:10px;color:#4b5563}
+    .badge-open{background:rgba(251,191,36,.13);color:#fde68a;border:1px solid rgba(251,191,36,.3);padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+    .badge-resolved{background:rgba(20,184,166,.12);color:#5eead4;border:1px solid rgba(20,184,166,.3);padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+    .dispute-resolve-row{margin-top:10px;padding-top:10px;border-top:1px solid #1a1a1a;display:flex;gap:8px;align-items:center}
+    .dispute-resolve-input{flex:1;background:#0d1117;border:1px solid #1f2937;border-radius:6px;color:#c9d1d9;padding:7px 10px;font-size:12px;font-family:'Barlow',sans-serif}
+    .btn-resolve{background:#14b8a6;border:none;color:#fff;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+    .empty-state{text-align:center;padding:32px 20px;color:#4b5563;font-size:13px}
+    .panel-card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px;overflow-x:auto}
+  </style>
+
+  <style>
+  /* ── RESPONSIVE LAYOUT ── */
+  @media (max-width: 900px) {
+    .main, body { margin-left: 0 !important; padding-top: 56px !important; }
+  }
+  @media (max-width: 768px) {
+    .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .table-wrap, .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-max-width: min(90vw, 640px); }
+  }
+  @media (max-width: 480px) {
+    body { font-size: 14px; }
+    .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: 1fr !important; }
+    .small-text, .meta { font-size: 12px !important; }
+  }
+  </style>
+</head>
+<body>
+<script src="nexus-config.js?v=6"></script>
+<script src="nexus-sidebar.js?v=6"></script>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="topbar-title">My Pay</div>
+    <span id="driverNameBadge" style="font-size:12px;color:#6b7280;font-family:'JetBrains Mono',monospace;"></span>
+  </div>
+  <div class="topbar-right">
+    <select class="driver-select" id="driverSelect" style="display:none" onchange="onDriverChange()">
+      <option value="">Select Driver</option>
+    </select>
+  </div>
+</div>
+
+<div id="bannerContainer"></div>
+
+<div class="page-wrap">
+  <div class="week-nav">
+    <button class="week-btn" id="prevWeekBtn" onclick="shiftWeek(-1)">&#8592;</button>
+    <div class="week-label" id="weekLabel">Loading&hellip;</div>
+    <button class="week-btn" id="nextWeekBtn" onclick="shiftWeek(1)">&#8594;</button>
+  </div>
+
+  <div class="hero-card">
+    <div class="hero-pending-label" id="heroStatusLabel">PENDING SETTLEMENT</div>
+    <div id="heroContent"><div style="color:#4b5563;font-size:13px">Loading&hellip;</div></div>
+  </div>
+
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="metric-label">Year to Date</div>
+      <div class="metric-value" id="metYTD">&mdash;</div>
+      <div class="metric-sub" id="metYTDSub">net earnings</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Best Week</div>
+      <div class="metric-value" id="metBest">&mdash;</div>
+      <div class="metric-sub">single week</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Avg Weekly</div>
+      <div class="metric-value" id="metAvg">&mdash;</div>
+      <div class="metric-sub" id="metAvgSub">per active week</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Total Loads</div>
+      <div class="metric-value" id="metLoads">&mdash;</div>
+      <div class="metric-sub">completed loads</div>
+    </div>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" onclick="switchTab('history',this)">Pay History</button>
+    <button class="tab-btn" onclick="switchTab('deductions',this)">Deductions</button>
+    <button class="tab-btn" onclick="switchTab('loads',this)">Loads</button>
+    <button class="tab-btn" onclick="switchTab('disputes',this)">Disputes</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-history">
+    <div id="historyList"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-deductions">
+    <div class="panel-card">
+      <div class="ded-grid">
+        <div style="display:flex;justify-content:center">
+          <svg id="dedPie" viewBox="0 0 120 120" width="130" height="130"></svg>
+        </div>
+        <div id="dedLegend"></div>
+      </div>
+      <table class="ded-table">
+        <thead><tr><th>Category</th><th>Amount</th><th>% of Gross</th><th>vs Prior</th></tr></thead>
+        <tbody id="dedTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-loads">
+    <div class="panel-card" style="padding:0">
+      <table class="loads-table">
+        <thead><tr><th>Load</th><th>Route</th><th>Pickup</th><th>Gross Revenue</th><th>Your Share</th><th>Status</th></tr></thead>
+        <tbody id="loadsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-disputes">
+    <div class="dispute-form-card">
+      <div class="dispute-form-title">Question a Deduction</div>
+      <div class="form-group">
+        <label class="form-label">Week</label>
+        <select class="form-select" id="disputeWeek" onchange="updateDisputeDeductions()"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Deduction Item</label>
+        <select class="form-select" id="disputeDeduction"><option value="">Select week first</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" id="disputeDesc" maxlength="250" placeholder="Describe your question&hellip;" oninput="document.getElementById('charCount').textContent=this.value.length+'/250'"></textarea>
+        <div class="char-count" id="charCount">0/250</div>
+      </div>
+      <button class="btn-submit" onclick="submitDispute()">Submit Question</button>
+    </div>
+    <div class="disputes-list-title">Open &amp; Resolved Questions</div>
+    <div id="disputesList"></div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+//  CARRIER NEXUS — MY PAY
+//  Reads: nexus_settlements, nexus_loads_v2, nexus_expenses
+//  Writes: nexus_pay_disputes
+// =====================================================
+
+function fmt(n){return '$'+(+n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function parseLS(k,d){try{return JSON.parse(localStorage.getItem(k)||'null')||d;}catch(e){return d;}}
+function saveLS(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function addDays(d,n){var r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function getMonday(d){var dt=new Date(d),day=dt.getDay(),diff=day===0?-6:1-day;dt.setDate(dt.getDate()+diff);dt.setHours(0,0,0,0);return dt;}
+function padDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function weekLabelFull(mon){var sun=addDays(mon,6);return 'Mon '+MS[mon.getMonth()]+' '+String(mon.getDate()).padStart(2,'0')+'/'+mon.getFullYear()+' - Sun '+MS[sun.getMonth()]+' '+String(sun.getDate()).padStart(2,'0')+'/'+sun.getFullYear();}
+function fmtExpDate(str){if(!str)return '';var d=new Date(str+'T12:00:00');return DAYS[d.getDay()]+', '+MS[d.getMonth()]+' '+d.getDate();}
+
+function getCurrentUser(){
+  try{var u=localStorage.getItem('nexus_current_user');if(u)return JSON.parse(u);}catch(e){}
+  try{var s=localStorage.getItem('nexus_session');if(s){var p=JSON.parse(s);return p.user||p;}}catch(e){}
+  return {id:'usr_001',name:'Jim Burlew',role:'admin',email:'crtruckus@gmail.com'};
+}
+
+var DISPATCH_RATES={usr_006:0.14,usr_010:0.13,usr_005:0.30,usr_007:0.30,usr_008:0.30,usr_009:0.30};
+var DRIVER_NAMES={usr_001:'Jim Burlew',usr_002:'Laura Moreno',usr_003:'Amet Abreu',usr_004:'Betty',usr_005:'Avis',usr_006:'David Hernandez',usr_007:'Miguel',usr_008:'Nelson',usr_009:'Yosviel',usr_010:'Guillermo Pinera'};
+var DRIVERS_LIST=[{id:'usr_006',name:'David Hernandez'},{id:'usr_010',name:'Guillermo Pinera'},{id:'usr_005',name:'Avis'},{id:'usr_007',name:'Miguel'},{id:'usr_008',name:'Nelson'},{id:'usr_009',name:'Yosviel'}];
+var PIE_COLORS={dispatch:'#e91e8c',fuel:'#f97316',toll:'#a78bfa',repair:'#fb923c',equipment:'#38bdf8',other:'#94a3b8'};
+
+var currentUser=getCurrentUser();
+var viewingDriver='usr_006';
+var weekOffset=0;
+
+// ─── SEED ─────────────────────────────────────────
+function seedIfNeeded(){
+  if(localStorage.getItem('nexus_mypay_seeded_v2'))return;
+  var today=new Date('2026-06-22');
+  var thisMonday=getMonday(today);
+  var settlements=parseLS('nexus_settlements',[]);
+  var loadsV2=parseLS('nexus_loads_v2',[]);
+  var ROUTES=[
+    ['Dallas TX','Memphis TN'],['Memphis TN','Atlanta GA'],['Atlanta GA','Birmingham AL'],
+    ['Birmingham AL','Nashville TN'],['Nashville TN','Louisville KY'],['Louisville KY','Cincinnati OH'],
+    ['Jacksonville FL','Savannah GA'],['Savannah GA','Charlotte NC'],['Charlotte NC','Richmond VA'],
+    ['Richmond VA','Baltimore MD'],['Miami FL','Orlando FL'],['Orlando FL','Tampa FL']
+  ];
+  var DW=[
+    {r:[1800,2100,1400,1600],fuel:140,toll:38,extra:0,status:'PAID'},
+    {r:[2200,1900,2800],fuel:175,toll:52,extra:0,status:'PAID'},
+    {r:[1600,1400,1800,2100],fuel:160,toll:44,extra:85,status:'PAID'},
+    {r:[2400,1800,2200],fuel:190,toll:60,extra:0,status:'PAID'},
+    {r:[1900,2600,1400,1500],fuel:155,toll:35,extra:0,status:'PAID'},
+    {r:[2800,2100,1700],fuel:200,toll:65,extra:110,status:'PAID'},
+    {r:[1500,2200,1900,2400],fuel:145,toll:42,extra:0,status:'APPROVED'},
+    {r:[2100,1800,1400],fuel:130,toll:50,extra:0,status:'PENDING APPROVAL'}
+  ];
+  var GW=[
+    {r:[1900,2400],fuel:115,toll:28,extra:0,status:'PAID'},
+    {r:[2200,1600,1800],fuel:130,toll:35,extra:0,status:'PAID'},
+    {r:[1700,2600],fuel:105,toll:22,extra:60,status:'PAID'},
+    {r:[2000,1900,1500],fuel:120,toll:30,extra:0,status:'PAID'},
+    {r:[1800,2300],fuel:135,toll:45,extra:0,status:'PAID'},
+    {r:[2100,2400,1700],fuel:155,toll:38,extra:90,status:'PAID'},
+    {r:[1900,2200],fuel:110,toll:32,extra:0,status:'APPROVED'},
+    {r:[2000,1800,2100],fuel:100,toll:28,extra:0,status:'PENDING APPROVAL'}
+  ];
+  function makeWeek(driverId,dr,wk,wi){
+    var mon=new Date(thisMonday);
+    mon.setDate(mon.getDate()-(7*(DW.length-1-wi)));
+    var wMon=getMonday(mon),wSun=addDays(wMon,6);
+    var gross=wk.r.reduce(function(a,b){return a+b;},0);
+    var dispFee=Math.round(gross*dr*100)/100;
+    var deds=[{type:'dispatch',label:'Dispatch ('+Math.round(dr*100)+'%)',amount:dispFee},{type:'fuel',label:'Fuel',amount:wk.fuel}];
+    if(wk.toll>0)deds.push({type:'toll',label:'Tolls / Scales',amount:wk.toll});
+    if(wk.extra>0)deds.push({type:'repair',label:'Maintenance',amount:wk.extra});
+    var td=deds.reduce(function(a,d){return a+d.amount;},0),monStr=padDate(wMon);
+    var loadRecs=wk.r.map(function(rate,li){
+      var route=ROUTES[(wi*4+li)%ROUTES.length];
+      var pd=new Date(wMon);pd.setDate(pd.getDate()+li*2);
+      return {id:'LD-'+monStr.replace(/-/g,'')+'-'+driverId.slice(-3)+'-'+li,driverId:driverId,origin:route[0],destination:route[1],pickupDate:padDate(pd),rate:rate,status:li===wk.r.length-1&&wk.status==='PENDING APPROVAL'?'In Progress':'Completed',weekMonday:monStr};
+    });
+    var sid='SET-'+monStr+'-'+driverId;
+    if(!settlements.find(function(s){return s.id===sid;})){
+      settlements.push({id:sid,driverId:driverId,weekMonday:monStr,weekLabel:weekLabelFull(wMon),gross:gross,deductions:deds,totalDeductions:td,net:gross-td,status:wk.status,loads:loadRecs.map(function(l){return {id:l.id,origin:l.origin,destination:l.destination,rate:l.rate};}),expectedPayDate:padDate(addDays(wSun,5))});
+    }
+    loadRecs.forEach(function(l){if(!loadsV2.find(function(x){return x.id===l.id;}))loadsV2.push(l);});
+  }
+  DW.forEach(function(w,i){makeWeek('usr_006',0.14,w,i);});
+  GW.forEach(function(w,i){makeWeek('usr_010',0.13,w,i);});
+  saveLS('nexus_settlements',settlements);
+  saveLS('nexus_loads_v2',loadsV2);
+  localStorage.setItem('nexus_mypay_seeded_v2','1');
+}
+
+// ─── INIT ─────────────────────────────────────────
+function init(){
+  seedIfNeeded();
+  var role=(currentUser.role||'driver').toLowerCase();
+  var isAdmin=role==='admin'||role==='approver'||role==='dispatcher';
+  if(isAdmin){
+    var sel=document.getElementById('driverSelect');
+    sel.style.display='block';
+    DRIVERS_LIST.forEach(function(d){var o=document.createElement('option');o.value=d.id;o.textContent=d.name;sel.appendChild(o);});
+    viewingDriver=DRIVERS_LIST[0].id;sel.value=viewingDriver;
+  } else {
+    viewingDriver=currentUser.id||'usr_006';
+    document.getElementById('driverNameBadge').textContent=DRIVER_NAMES[viewingDriver]||currentUser.name||'';
+  }
+  render();
+}
+
+function onDriverChange(){viewingDriver=document.getElementById('driverSelect').value||DRIVERS_LIST[0].id;document.getElementById('driverNameBadge').textContent='';render();}
+
+function getViewMonday(){var today=new Date('2026-06-22'),mon=getMonday(today);mon.setDate(mon.getDate()+(weekOffset*7));return mon;}
+
+function shiftWeek(dir){weekOffset+=dir;if(weekOffset>0)weekOffset=0;render();}
+
+// ─── DATA ─────────────────────────────────────────
+function getSettForWeek(driverId,monStr){return parseLS('nexus_settlements',[]).find(function(s){return s.driverId===driverId&&(s.weekMonday===monStr||s.week_start===monStr);})||null;}
+function getLoadsForWeek(driverId,monStr,sunStr){return parseLS('nexus_loads_v2',[]).filter(function(l){if(l.driverId!==driverId)return false;if(l.weekMonday)return l.weekMonday===monStr;return (l.pickupDate||'')>=monStr&&(l.pickupDate||'')<=sunStr;});}
+function getExpensesForWeek(driverId,monStr,sunStr){return parseLS('nexus_expenses',[]).filter(function(e){if(e.driverId&&e.driverId!==driverId)return false;var dt=e.date||e.transactionDate||'';return dt>=monStr&&dt<=sunStr;});}
+function calcOnTheFly(driverId,loads,expenses){
+  var dr=DISPATCH_RATES[driverId]||0.30;
+  var gross=loads.reduce(function(a,l){return a+(+l.rate||0);},0);
+  var dispFee=Math.round(gross*dr*100)/100;
+  var deds=[{type:'dispatch',label:'Dispatch ('+Math.round(dr*100)+'%)',amount:dispFee}];
+  var fuel=0,toll=0,repair=0,other=0;
+  expenses.forEach(function(e){var a=+(e.amount||0),c=(e.category||e.type||'other').toLowerCase();if(c.includes('fuel'))fuel+=a;else if(c.includes('toll')||c.includes('scale'))toll+=a;else if(c.includes('repair')||c.includes('maint'))repair+=a;else other+=a;});
+  if(fuel>0)deds.push({type:'fuel',label:'Fuel',amount:Math.round(fuel*100)/100});
+  if(toll>0)deds.push({type:'toll',label:'Tolls / Scales',amount:Math.round(toll*100)/100});
+  if(repair>0)deds.push({type:'repair',label:'Maintenance',amount:Math.round(repair*100)/100});
+  if(other>0)deds.push({type:'other',label:'Other',amount:Math.round(other*100)/100});
+  var td=deds.reduce(function(a,d){return a+d.amount;},0);
+  return {gross:gross,deductions:deds,totalDeductions:td,net:gross-td,status:'PENDING APPROVAL'};
+}
+
+// ─── RENDER ───────────────────────────────────────
+function render(){
+  var mon=getViewMonday(),sun=addDays(mon,6),monStr=padDate(mon),sunStr=padDate(sun);
+  document.getElementById('weekLabel').textContent='Week of Mon '+MS[mon.getMonth()]+' '+String(mon.getDate()).padStart(2,'0')+'/'+mon.getFullYear()+' - Sun '+MS[sun.getMonth()]+' '+String(sun.getDate()).padStart(2,'0')+'/'+sun.getFullYear();
+  document.getElementById('nextWeekBtn').disabled=(weekOffset>=0);
+  var sett=getSettForWeek(viewingDriver,monStr);
+  var loads=getLoadsForWeek(viewingDriver,monStr,sunStr);
+  var exps=getExpensesForWeek(viewingDriver,monStr,sunStr);
+  var wd;
+  if(sett){wd={gross:sett.gross,deductions:sett.deductions,totalDeductions:sett.totalDeductions,net:sett.net,status:sett.status,loads:sett.loads||loads,expectedPayDate:sett.expectedPayDate};}
+  else{var c=calcOnTheFly(viewingDriver,loads,exps);wd={gross:c.gross,deductions:c.deductions,totalDeductions:c.totalDeductions,net:c.net,status:c.status,loads:loads,expectedPayDate:padDate(addDays(sun,5))};}
+  renderBanners(wd);renderHero(wd);renderMetrics();renderHistory();renderDeductions(wd,monStr);renderLoads(loads,wd);renderDisputeForm();renderDisputeList();
+}
+
+function renderBanners(wd){
+  var disputes=parseLS('nexus_pay_disputes',[]).filter(function(d){return d.driverId===viewingDriver&&d.status==='OPEN';});
+  var h='';
+  if(wd.status==='APPROVED')h+='<div class="status-banner banner-approved" onclick="switchTab(\'history\',null)">&#10003; Your settlement for this week has been approved &mdash; payment processing</div>';
+  else if(wd.status==='PAID')h+='<div class="status-banner banner-paid">&#x1F4B5; Payment sent &mdash; check your account</div>';
+  if(disputes.length)h+='<div class="status-banner banner-dispute" onclick="switchTab(\'disputes\',null)">&#9888; You have '+disputes.length+' open pay question'+(disputes.length>1?'s':'')+' &mdash; tap to view</div>';
+  document.getElementById('bannerContainer').innerHTML=h;
+}
+
+function statusBadgeHtml(s){
+  if(s==='PENDING APPROVAL')return '<span class="status-badge badge-pending">&#9679; PENDING APPROVAL</span>';
+  if(s==='APPROVED')return '<span class="status-badge badge-approved">&#10003; APPROVED</span>';
+  if(s==='PAID')return '<span class="status-badge badge-paid">&#10003; PAID</span>';
+  if(s==='PROCESSING')return '<span class="status-badge badge-processing">&#8635; PROCESSING</span>';
+  return '<span class="status-badge badge-pending">&#9679; '+(s||'PENDING')+'</span>';
+}
+
+function renderHero(wd){
+  var loads=wd.loads||[];
+  var loadsHtml=loads.length===0?'<div style="color:#4b5563;font-size:12px;padding:4px 0 4px 16px;">No loads this week</div>':'';
+  loads.forEach(function(l){loadsHtml+='<div class="hero-line-item"><span class="hero-line-label">'+(l.origin&&l.destination?l.origin+' → '+l.destination:l.id||'Load')+'</span><span class="hero-line-amount green">'+fmt(l.rate||0)+'</span></div>';});
+  var dedsHtml='';
+  (wd.deductions||[]).forEach(function(d){dedsHtml+='<div class="hero-line-item"><span class="hero-line-label">'+d.label+'</span><span class="hero-line-amount red">- '+fmt(d.amount)+'</span></div>';});
+  var h='<div class="hero-row"><span class="hero-row-label">Gross Revenue</span><span class="hero-row-amount green">'+fmt(wd.gross)+'</span></div>';
+  h+=loadsHtml;
+  h+='<hr class="hero-divider"/>';
+  h+='<div class="hero-row"><span class="hero-row-label">DEDUCTIONS</span><span class="hero-row-amount red">- '+fmt(wd.totalDeductions)+'</span></div>';
+  h+=dedsHtml;
+  h+='<hr class="hero-divider"/>';
+  h+='<div class="hero-net-row"><span class="hero-net-label">NET PAY</span><span class="hero-net-amount">'+fmt(wd.net)+'</span></div>';
+  h+='<div class="hero-meta"><div class="hero-meta-item">Expected Pay Date: <span>'+fmtExpDate(wd.expectedPayDate)+'</span></div>'+statusBadgeHtml(wd.status||'PENDING APPROVAL')+'</div>';
+  h+='<a href="settlements.html" class="hero-pdf-btn">View Settlement PDF &#8599;</a>';
+  document.getElementById('heroContent').innerHTML=h;
+}
+
+function renderMetrics(){
+  var setts=parseLS('nexus_settlements',[]).filter(function(s){return s.driverId===viewingDriver&&((s.weekMonday||s.week_start||'').startsWith('2026'));});
+  var ytdNet=setts.reduce(function(a,s){return a+(s.net||0);},0);
+  var bestNet=setts.reduce(function(a,s){return Math.max(a,s.net||0);},0);
+  var active=setts.filter(function(s){return (s.gross||0)>0;}).length;
+  var avg=active?ytdNet/active:0;
+  var totalLoads=0;setts.forEach(function(s){totalLoads+=(s.loads||[]).length;});
+  if(!totalLoads)totalLoads=parseLS('nexus_loads_v2',[]).filter(function(l){return l.driverId===viewingDriver&&(l.status||'Completed').toLowerCase().includes('comp');}).length;
+  document.getElementById('metYTD').textContent=fmt(ytdNet);
+  document.getElementById('metYTDSub').textContent=active+' weeks YTD';
+  document.getElementById('metBest').textContent=fmt(bestNet);
+  document.getElementById('metAvg').textContent=fmt(avg);
+  document.getElementById('metAvgSub').textContent='over '+active+' weeks';
+  document.getElementById('metLoads').textContent=totalLoads||'0';
+}
+
+function renderHistory(){
+  var setts=parseLS('nexus_settlements',[]).filter(function(s){return s.driverId===viewingDriver;}).sort(function(a,b){var aDate=a.weekMonday||a.week_start||'';var bDate=b.weekMonday||b.week_start||'';return bDate>aDate?1:-1;}).slice(0,12);
+  if(!setts.length){document.getElementById('historyList').innerHTML='<div class="empty-state">No pay history found.</div>';return;}
+  var h='';
+  setts.forEach(function(s,i){
+    var mon=new Date((s.weekMonday||s.week_start)+'T12:00:00'),sun=addDays(mon,6);
+    var wl=MS[mon.getMonth()]+' '+String(mon.getDate()).padStart(2,'0')+' - '+MS[sun.getMonth()]+' '+String(sun.getDate()).padStart(2,'0');
+    var lc=(s.loads||[]).length;
+    var expH='<div class="history-expand" id="hexp'+i+'">';
+    if(lc){expH+='<div class="history-expand-section">Loads</div>';(s.loads||[]).forEach(function(l){expH+='<div class="history-expand-row"><span class="history-expand-label">'+(l.origin&&l.destination?l.origin+' → '+l.destination:l.id)+'</span><span class="history-expand-amt" style="color:#4ade80">'+fmt(l.rate||0)+'</span></div>';});}
+    if((s.deductions||[]).length){expH+='<div class="history-expand-section">Deductions</div>';s.deductions.forEach(function(d){expH+='<div class="history-expand-row"><span class="history-expand-label">'+d.label+'</span><span class="history-expand-amt" style="color:#f87171">- '+fmt(d.amount)+'</span></div>';});}
+    expH+='<div class="history-expand-row" style="margin-top:8px;padding-top:8px;border-top:1px solid #1a1a1a;"><span class="history-expand-label" style="font-weight:700;color:#9ca3af">Net Pay</span><span class="history-expand-amt" style="color:#14b8a6;font-size:14px">'+fmt(s.net)+'</span></div></div>';
+    h+='<div class="history-row"><div class="history-row-header" onclick="toggleHist('+i+')"><div class="history-row-left"><div class="history-week">'+wl+'</div><div class="history-loads">'+lc+' load'+(lc!==1?'s':'')+' &middot; Gross '+fmt(s.gross)+' &middot; Ded. '+fmt(s.totalDeductions||s.total_deductions||0)+'</div></div><div class="history-row-right">'+statusBadgeHtml(s.status||'PENDING APPROVAL')+'<div class="history-net">'+fmt(s.net)+'</div><span class="history-chevron" id="hchev'+i+'">&rsaquo;</span></div></div>'+expH+'</div>';
+  });
+  document.getElementById('historyList').innerHTML=h;
+}
+
+function toggleHist(i){var e=document.getElementById('hexp'+i),c=document.getElementById('hchev'+i);if(!e)return;var open=e.classList.toggle('open');if(c)c.style.transform=open?'rotate(90deg)':'';}
+
+function renderDeductions(wd,monStr){
+  var deds=wd.deductions||[],gross=wd.gross||1;
+  var priorMon=new Date(monStr+'T12:00:00');priorMon.setDate(priorMon.getDate()-7);
+  var priorSett=getSettForWeek(viewingDriver,padDate(priorMon));
+  var priorDeds=(priorSett&&priorSett.deductions)||[];
+  function pa(type){var p=priorDeds.find(function(d){return d.type===type;});return p?p.amount:null;}
+  var total=deds.reduce(function(a,d){return a+(d.amount||0);},0)||1;
+  var angle=0,cx=60,cy=60,r=50,inner=28,paths='';
+  deds.forEach(function(d){
+    var sl=(d.amount/total)*2*Math.PI,end=angle+sl;
+    var x1=cx+r*Math.sin(angle),y1=cy-r*Math.cos(angle),x2=cx+r*Math.sin(end),y2=cy-r*Math.cos(end);
+    var xi1=cx+inner*Math.sin(angle),yi1=cy-inner*Math.cos(angle),xi2=cx+inner*Math.sin(end),yi2=cy-inner*Math.cos(end);
+    var large=sl>Math.PI?1:0,col=PIE_COLORS[d.type]||PIE_COLORS.other;
+    paths+='<path d="M'+xi1+','+yi1+' L'+x1+','+y1+' A'+r+','+r+' 0 '+large+',1 '+x2+','+y2+' L'+xi2+','+yi2+' A'+inner+','+inner+' 0 '+large+',0 '+xi1+','+yi1+' Z" fill="'+col+'" opacity=".9"/>';
+    angle=end;
+  });
+  document.getElementById('dedPie').innerHTML=paths||'<circle cx="60" cy="60" r="50" fill="#1f2937"/><text x="60" y="65" text-anchor="middle" fill="#4b5563" font-size="10">No data</text>';
+  var legH='';
+  deds.forEach(function(d){legH+='<div class="ded-leg-item"><div class="ded-leg-dot" style="background:'+(PIE_COLORS[d.type]||PIE_COLORS.other)+'"></div><span class="ded-leg-label">'+d.label+'</span><span class="ded-leg-amt">'+fmt(d.amount)+'</span></div>';});
+  document.getElementById('dedLegend').innerHTML=legH||'<div style="color:#4b5563;font-size:12px">No deductions</div>';
+  var tbH='';
+  deds.forEach(function(d){
+    var pct=((d.amount/gross)*100).toFixed(1)+'%';
+    var p=pa(d.type),trend='<span class="trend-same">&mdash;</span>';
+    if(p!==null)trend=d.amount>p?'<span class="trend-up">&#8593;</span>':d.amount<p?'<span class="trend-down">&#8595;</span>':'<span class="trend-same">&mdash;</span>';
+    tbH+='<tr><td>'+d.label+'</td><td>'+fmt(d.amount)+'</td><td>'+pct+'</td><td>'+trend+'</td></tr>';
+  });
+  document.getElementById('dedTableBody').innerHTML=tbH||'<tr><td colspan="4" style="color:#4b5563;text-align:center;padding:16px">No deductions this week</td></tr>';
+}
+
+function renderLoads(loads,wd){
+  var dr=DISPATCH_RATES[viewingDriver]||0.30;
+  var all=loads.length>0?loads:(wd.loads||[]);
+  if(!all.length){document.getElementById('loadsTableBody').innerHTML='<tr><td colspan="6" style="text-align:center;color:#4b5563;padding:24px">No loads this week</td></tr>';return;}
+  var h='';
+  all.forEach(function(l){
+    var rate=+(l.rate||0),share=Math.round((rate-(rate*dr))*100)/100;
+    var ls=(l.status||'').toLowerCase();
+    var badge=ls.includes('progress')||ls.includes('active')?'<span class="badge-progress">In Progress</span>':ls.includes('cancel')?'<span class="badge-cancelled">Cancelled</span>':'<span class="badge-completed">Completed</span>';
+    h+='<tr><td><div class="load-id">'+l.id+'</div></td><td><div class="load-route">'+(l.origin&&l.destination?l.origin+' → '+l.destination:'&mdash;')+'</div></td><td style="white-space:nowrap">'+(l.pickupDate||'&mdash;')+'</td><td style="font-family:\'JetBrains Mono\',monospace;color:#4ade80">'+fmt(rate)+'</td><td style="font-family:\'JetBrains Mono\',monospace;color:#14b8a6">'+fmt(share)+'</td><td>'+badge+'</td></tr>';
+  });
+  document.getElementById('loadsTableBody').innerHTML=h;
+}
+
+function renderDisputeForm(){
+  var setts=parseLS('nexus_settlements',[]).filter(function(s){return s.driverId===viewingDriver;}).sort(function(a,b){var aDate=a.weekMonday||a.week_start||'';var bDate=b.weekMonday||b.week_start||'';return bDate>aDate?1:-1;}).slice(0,12);
+  var sel=document.getElementById('disputeWeek');
+  sel.innerHTML='<option value="">Select week&hellip;</option>';
+  setts.forEach(function(s){var o=document.createElement('option');o.value=s.weekMonday||s.week_start;o.textContent=s.weekLabel||s.week_label||s.weekMonday||s.week_start;sel.appendChild(o);});
+}
+
+function updateDisputeDeductions(){
+  var wk=document.getElementById('disputeWeek').value;
+  var sel=document.getElementById('disputeDeduction');
+  if(!wk){sel.innerHTML='<option value="">Select week first</option>';return;}
+  var sett=getSettForWeek(viewingDriver,wk);
+  var deds=(sett&&sett.deductions)||[];
+  sel.innerHTML='<option value="">Select deduction&hellip;</option>';
+  deds.forEach(function(d){var o=document.createElement('option');o.value=d.label+'|'+d.amount;o.textContent=d.label+' — '+fmt(d.amount);sel.appendChild(o);});
+}
+
+function submitDispute(){
+  var wk=document.getElementById('disputeWeek').value;
+  var ded=document.getElementById('disputeDeduction').value;
+  var desc=document.getElementById('disputeDesc').value.trim();
+  if(!wk||!ded){alert('Please select a week and deduction.');return;}
+  if(!desc){alert('Please describe your question.');return;}
+  var disputes=parseLS('nexus_pay_disputes',[]);
+  disputes.push({id:'DIS-'+Date.now(),driverId:viewingDriver,driverName:DRIVER_NAMES[viewingDriver]||viewingDriver,weekMonday:wk,deduction:ded,description:desc,status:'OPEN',submittedAt:new Date().toISOString(),resolvedNote:''});
+  saveLS('nexus_pay_disputes',disputes);
+  document.getElementById('disputeDesc').value='';
+  document.getElementById('charCount').textContent='0/250';
+  document.getElementById('disputeWeek').value='';
+  document.getElementById('disputeDeduction').innerHTML='<option value="">Select week first</option>';
+  renderDisputeList();renderBanners({status:'',deductions:[]});
+  alert('Your question has been submitted.');
+}
+
+function renderDisputeList(){
+  var isAdmin=['admin','approver'].indexOf((currentUser.role||'').toLowerCase())>-1;
+  var disputes=parseLS('nexus_pay_disputes',[]);
+  var filtered=isAdmin?disputes:disputes.filter(function(d){return d.driverId===viewingDriver;});
+  filtered=filtered.sort(function(a,b){return b.submittedAt>a.submittedAt?1:-1;});
+  if(!filtered.length){document.getElementById('disputesList').innerHTML='<div class="empty-state">No questions submitted yet.</div>';return;}
+  var h='';
+  filtered.forEach(function(d){
+    var badge=d.status==='OPEN'?'<span class="badge-open">OPEN</span>':'<span class="badge-resolved">RESOLVED</span>';
+    var rr=isAdmin&&d.status==='OPEN'?'<div class="dispute-resolve-row"><input class="dispute-resolve-input" id="rn_'+d.id+'" placeholder="Resolution note&hellip;"/><button class="btn-resolve" onclick="resolveDispute(\''+d.id+'\')">Mark Resolved</button></div>':'';
+    h+='<div class="dispute-item"><div class="dispute-header"><div><div class="dispute-deduction">'+d.deduction.split('|')[0]+'</div><div class="dispute-week">'+d.weekMonday+(isAdmin?' &middot; '+d.driverName:'')+'</div></div>'+badge+'</div><div class="dispute-desc">'+d.description+'</div>'+(d.resolvedNote?'<div class="dispute-meta">Resolution: '+d.resolvedNote+'</div>':'')+rr+'</div>';
+  });
+  document.getElementById('disputesList').innerHTML=h;
+}
+
+function resolveDispute(id){
+  var note=document.getElementById('rn_'+id);
+  saveLS('nexus_pay_disputes',parseLS('nexus_pay_disputes',[]).map(function(d){if(d.id===id){d.status='RESOLVED';d.resolvedNote=note?note.value:'Resolved by admin';}return d;}));
+  renderDisputeList();
+}
+
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  var panel=document.getElementById('tab-'+name);if(panel)panel.classList.add('active');
+  if(btn)btn.classList.add('active');
+  else document.querySelectorAll('.tab-btn').forEach(function(b){if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+name+"'"))b.classList.add('active');});
+}
+
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+</script>
+</body>
+</html>

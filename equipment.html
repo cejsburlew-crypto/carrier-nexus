@@ -4,1158 +4,885 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fleet &amp; Equipment — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --black: #f1f5f9;
-  --gunmetal: #ffffff;
-  --gunmetal-light: #f8fafc;
-  --steel: #f0f4f8;
-  --steel-blue: #2e6da4;
-  --steel-blue-light: #3d87c8;
-  --ice: #1e3a5f;
-  --white: #0f172a;
-  --white-pure: #0f172a;
-  --orange: #e8640a;
-  --orange-bright: #ff7518;
-  --text-muted: #64748b;
-  --text-mid: #475569;
-  --border: #e2e8f0;
-  --red: #ef4444;
-  --green: #22c55e;
-  --yellow: #fbbf24;
+:root{--orange:#e8640a;--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--purple:#8b5cf6;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+.sidebar{width:220px;min-height:100vh;background:#000;border-right:1px solid #1a1a1a;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:56px;background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#fff;flex:1;}
+.topbar-actions{display:flex;gap:10px;}
+.content{padding:24px 28px 64px;}
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;}
+.kpi-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:#0f172a;line-height:1;}
+.kpi-sub{font-size:11px;color:var(--blue);margin-top:4px;}
+.kpi-val.green{color:var(--green);}
+.kpi-val.red{color:var(--red);}
+.kpi-val.yellow{color:var(--yellow);}
+/* FILTER */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.filter-group{display:flex;gap:6px;}
+.fbtn{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--mid);font-family:'Barlow',sans-serif;transition:all .15s;}
+.fbtn:hover{border-color:var(--blue);color:var(--blue);}
+.fbtn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+.ml-auto{margin-left:auto;}
+/* BTNS */
+.btn{padding:7px 16px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.8px;cursor:pointer;border:1px solid var(--border);background:#fff;color:#334155;display:inline-flex;align-items:center;gap:6px;transition:all .15s;}
+.btn:hover{background:#f1f5f9;}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn-primary:hover{background:#1d5a8a;}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.btn-danger{background:var(--red);color:#fff;border-color:var(--red);}
+.btn-danger:hover{background:#dc2626;}
+/* CARD GRID */
+.eq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+@media(max-width:1100px){.eq-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:680px){.eq-grid{grid-template-columns:1fr;}}
+.eq-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .1s;}
+.eq-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.1);transform:translateY(-2px);}
+.eq-card-header{padding:16px 18px 12px;display:flex;align-items:flex-start;gap:14px;}
+.eq-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.eq-icon.tractor{background:rgba(46,109,164,.15);}
+.eq-icon.trailer{background:rgba(34,197,94,.15);}
+.eq-icon.jeep{background:rgba(232,100,10,.15);}
+.eq-icon.spreader{background:rgba(139,92,246,.15);}
+.eq-icon svg{width:26px;height:26px;}
+.eq-icon.tractor svg{color:var(--blue);}
+.eq-icon.trailer svg{color:var(--green);}
+.eq-icon.jeep svg{color:var(--orange);}
+.eq-icon.spreader svg{color:var(--purple);}
+.eq-info{flex:1;min-width:0;}
+.eq-unit{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.08em;margin-bottom:2px;}
+.eq-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.eq-vin{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;}
+.eq-card-body{padding:0 18px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;display:inline-block;}
+.badge-active{background:#dcfce7;color:#15803d;}
+.badge-oos{background:#fee2e2;color:#b91c1c;}
+.badge-forsale{background:#fef9c3;color:#a16207;}
+.badge-sold{background:#f1f5f9;color:#64748b;}
+.eq-meta{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.eq-meta svg{width:12px;height:12px;opacity:.6;}
+.eq-expiry-warn{color:var(--red);font-weight:700;}
+/* EMPTY */
+.empty-state{text-align:center;padding:80px 40px;color:var(--muted);}
+.empty-state svg{width:56px;height:56px;opacity:.3;margin-bottom:16px;}
+.empty-state h3{font-family:'Barlow Condensed',sans-serif;font-size:20px;color:#334155;margin-bottom:6px;}
+/* DETAIL PANEL */
+.detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:8000;align-items:flex-start;justify-content:flex-end;}
+.detail-overlay.open{display:flex;}
+.detail-panel{background:#fff;width:620px;max-width:100vw;height:100vh;overflow-y:auto;display:flex;flex-direction:column;box-shadow:-8px 0 40px rgba(0,0,0,.2);}
+.detail-hdr{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:20px 24px;display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.detail-hdr-icon{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.detail-hdr-icon svg{width:24px;height:24px;color:#fff;}
+.detail-hdr-info{flex:1;min-width:0;}
+.detail-hdr-unit{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.1em;}
+.detail-hdr-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:1px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.detail-close{background:none;border:none;color:rgba(255,255,255,.7);font-size:24px;cursor:pointer;flex-shrink:0;line-height:1;padding:4px;}
+.detail-close:hover{color:#fff;}
+/* TABS */
+.tab-bar{display:flex;border-bottom:2px solid var(--border);padding:0 24px;flex-shrink:0;background:#fff;position:sticky;top:0;z-index:10;}
+.tab-btn{padding:12px 18px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;}
+.tab-btn:hover{color:#0f172a;}
+.tab-btn.active{color:var(--pink);border-bottom-color:var(--pink);}
+.tab-content{flex:1;padding:24px;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+/* FIELDS GRID */
+.fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.field-group{display:flex;flex-direction:column;gap:3px;}
+.field-group.full{grid-column:1/3;}
+.field-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+.field-value{font-size:14px;color:#0f172a;font-family:'Barlow',sans-serif;}
+.field-value.mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue);}
+.field-edit{width:100%;padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:6px;font-size:13px;font-family:'Barlow',sans-serif;color:#0f172a;background:#fff;transition:border-color .15s;}
+.field-edit:focus{outline:none;border-color:var(--blue);}
+.section-hdr{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--mid);border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:14px;margin-top:24px;}
+.section-hdr:first-child{margin-top:0;}
+/* SUB TABLES */
+.sub-table{width:100%;border-collapse:collapse;font-size:12px;}
+.sub-table th{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:8px 12px;background:#f8fafc;border-bottom:1px solid var(--border);text-align:left;}
+.sub-table td{padding:9px 12px;border-bottom:1px solid #f1f5f9;color:#0f172a;vertical-align:middle;}
+.sub-table tr:last-child td{border-bottom:none;}
+.sub-table tr:hover td{background:#f8fafc;}
+.no-records{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#fff;border-radius:12px;width:94%;max-width:640px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.3);}
+.modal-hdr{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:18px 24px;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:space-between;}
+.modal-hdr-title{color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;}
+.modal-close{background:none;border:none;color:#fff;font-size:24px;cursor:pointer;}
+.modal-body{padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group.full{grid-column:1/3;}
+.form-label{font-size:11px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.08em;}
+.form-input,.form-select{width:100%;padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:6px;font-size:13px;color:#0f172a;font-family:'Barlow',sans-serif;background:#fff;}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--blue);}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+/* RESPONSIVE */
+@media(max-width:768px){
+  .main{margin-left:0;}
+  .kpi-row{grid-template-columns:1fr 1fr;}
+  .sidebar{display:none;}
+  .detail-panel{width:100vw;}
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  background: var(--black);
-  color: var(--white);
-  font-family: 'Barlow', sans-serif;
-  display: flex;
-  min-height: 100vh;
-}
-
-/* ── SIDEBAR ── */
-.sidebar {
-  width: 220px;
-  min-height: 100vh;
-  background: var(--gunmetal);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  top: 0; left: 0;
-  z-index: 100;
-}
-.sidebar-logo {
-  padding: 20px 16px 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  border-bottom: 1px solid var(--border);
-}
-.logo-hex svg { width: 36px; height: 36px; }
-.logo-text { display: flex; flex-direction: column; }
-.logo-text .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: 2px; color: var(--white-pure); }
-.logo-text .sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--orange); letter-spacing: 1px; }
-.sidebar-section { padding: 12px 0 4px; }
-.sidebar-section-label {
-  padding: 0 16px 6px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  font-weight: 500;
-  color: var(--text-muted);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-}
-.sidebar-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 16px;
-  text-decoration: none;
-  color: var(--text-mid);
-  font-size: 13px;
-  font-weight: 400;
-  transition: all 0.15s;
-  position: relative;
-}
-.sidebar-link:hover { color: var(--white); background: rgba(46,109,164,0.08); }
-.sidebar-link.active {
-  color: var(--white-pure);
-  background: rgba(232,100,10,0.10);
-  border-left: 3px solid var(--orange);
-  padding-left: 13px;
-  font-weight: 500;
-}
-.sidebar-link svg { width: 14px; height: 14px; opacity: 0.7; flex-shrink: 0; }
-.sidebar-link.active svg { opacity: 1; }
-.nav-badge {
-  margin-left: auto;
-  background: var(--red);
-  color: #fff;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  font-weight: 500;
-  padding: 2px 6px;
-  border-radius: 10px;
-  min-width: 18px;
-  text-align: center;
-}
-.sidebar-spacer { flex: 1; }
-.sidebar-user {
-  padding: 14px 16px;
-  border-top: 1px solid var(--border);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: var(--orange);
-  letter-spacing: 0.5px;
-}
-.sidebar-user .user-name { font-weight: 500; }
-.sidebar-user .user-role { color: var(--text-muted); font-size: 9px; margin-top: 2px; }
-
-/* ── MAIN ── */
-.main {
-  margin-left: 220px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-.topbar {
-  height: 56px;
-  background: var(--gunmetal);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  padding: 0 28px;
-  gap: 16px;
-  position: sticky;
-  top: 0;
-  z-index: 50;
-}
-.topbar-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: 1px;
-  color: var(--white-pure);
-  flex: 1;
-}
-.status-live {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: var(--green);
-  letter-spacing: 1px;
-}
-.status-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--green);
-  animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-.btn {
-  padding: 7px 16px;
-  border-radius: 5px;
-  border: none;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.8px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.btn-primary { background: var(--orange); color: #fff; }
-.btn-primary:hover { background: var(--orange-bright); }
-.btn-ghost { background: transparent; color: var(--ice); border: 1px solid var(--border); }
-.btn-ghost:hover { border-color: var(--steel-blue); color: var(--white); }
-.btn-sm {
-  padding: 5px 12px;
-  font-size: 11px;
-}
-.content { padding: 24px 28px; }
-
-/* ── FLEET SUMMARY BAR ── */
-.fleet-summary-bar {
-  background: var(--gunmetal);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 14px 24px;
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  margin-bottom: 24px;
-}
-.summary-stat { display: flex; align-items: center; gap: 10px; }
-.summary-stat-value {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 800;
-  font-size: 28px;
-  color: var(--white-pure);
-  line-height: 1;
-}
-.summary-stat-label {
-  font-size: 11px;
-  color: var(--text-muted);
-  line-height: 1.3;
-}
-.summary-divider {
-  width: 1px;
-  height: 36px;
-  background: var(--border);
-}
-.summary-stat-value.green { color: var(--green); }
-.summary-stat-value.red { color: var(--red); }
-.summary-stat-value.orange { color: var(--orange); }
-
-/* ── BADGES ── */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 9px;
-  border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-}
-.badge-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
-.badge-blue { background: rgba(46,109,164,0.18); color: #1e3a6e; border: 1px solid rgba(46,109,164,0.3); }
-.badge-orange { background: rgba(232,100,10,0.18); color: var(--orange-bright); border: 1px solid rgba(232,100,10,0.3); }
-.badge-gray { background: rgba(107,122,153,0.18); color: var(--text-mid); border: 1px solid rgba(107,122,153,0.25); }
-.badge-red { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
-
-/* ── TRUCK CARDS GRID ── */
-.trucks-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-  margin-bottom: 28px;
-}
-.truck-card {
-  background: var(--gunmetal);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
-.truck-card:hover { border-color: rgba(46,109,164,0.4); }
-.truck-card-header {
-  background: linear-gradient(135deg, var(--gunmetal-light) 0%, var(--steel) 100%);
-  padding: 18px 20px;
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  border-bottom: 1px solid var(--border);
-}
-.unit-circle {
-  width: 60px;
-  height: 60px;
-  border-radius: 8px;
-  background: var(--black);
-  border: 2px solid var(--steel-blue);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.unit-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 8px;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-}
-.unit-number {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900;
-  font-size: 28px;
-  color: var(--orange);
-  line-height: 1;
-}
-.truck-header-info { flex: 1; }
-.truck-ymm {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--white-pure);
-  letter-spacing: 0.5px;
-  line-height: 1.1;
-}
-.truck-vin {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--text-muted);
-  margin-top: 4px;
-  letter-spacing: 0.5px;
-}
-.truck-driver-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 6px;
-  background: rgba(46,109,164,0.2);
-  border: 1px solid rgba(46,109,164,0.3);
-  border-radius: 4px;
-  padding: 3px 9px;
-}
-.truck-driver-badge .label { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--text-muted); letter-spacing: 1px; }
-.truck-driver-badge .value { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 12px; color: #0f172a; }
-.truck-card-body {
-  padding: 16px 20px;
-}
-.truck-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-  margin-bottom: 14px;
-}
-.truck-stat {
-  background: var(--gunmetal);
-  padding: 10px 12px;
-  text-align: center;
-}
-.truck-stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 8px;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-  margin-bottom: 4px;
-}
-.truck-stat-value {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 15px;
-  color: var(--white-pure);
-}
-.truck-stat-value.na { color: var(--text-muted); font-weight: 400; font-size: 12px; }
-.truck-stat-value.green { color: var(--green); }
-.insurance-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: rgba(34,197,94,0.06);
-  border: 1px solid rgba(34,197,94,0.15);
-  border-radius: 5px;
-  margin-bottom: 14px;
-}
-.insurance-check {
-  width: 18px; height: 18px;
-  background: rgba(34,197,94,0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.insurance-text {
-  flex: 1;
-  font-size: 11px;
-  color: var(--green);
-}
-.insurance-text strong { font-weight: 600; }
-.insurance-text .ins-detail { font-size: 10px; color: rgba(34,197,94,0.7); margin-top: 1px; }
-.truck-actions {
-  display: flex;
-  gap: 8px;
-}
-.btn-action {
-  flex: 1;
-  padding: 7px 0;
-  border-radius: 5px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text-mid);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 600;
-  font-size: 11px;
-  letter-spacing: 0.8px;
-  cursor: pointer;
-  transition: all 0.15s;
-  text-align: center;
-}
-.btn-action:hover { border-color: var(--steel-blue); color: var(--ice); background: rgba(46,109,164,0.08); }
-.btn-action.btn-pm { color: var(--orange); border-color: rgba(232,100,10,0.3); }
-.btn-action.btn-pm:hover { background: rgba(232,100,10,0.1); border-color: var(--orange); }
-
-/* ── STATS ROW AT BOTTOM ── */
-.stats-bottom {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
-}
-.stats-bottom-card {
-  background: var(--gunmetal);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 18px 20px;
-}
-.stats-bottom-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--text-muted);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-.stats-bottom-value {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 800;
-  font-size: 26px;
-  color: var(--white-pure);
-}
-.stats-bottom-sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
-
-/* ═══════════════════════════════════════════════
-   MOBILE RESPONSIVE — Carrier Nexus Admin Pages
-   Breakpoint: 768px
-═══════════════════════════════════════════════ */
-
-/* Mobile bottom nav */
-.mobile-nav {
-  display: none;
-}
-
-@media (max-width: 768px) {
-
-  /* Hide desktop sidebar */
-  .sidebar, nav.sidebar { display: none !important; }
-
-  /* Full-width main */
-  .main { margin-left: 0 !important; }
-
-  /* Topbar adjustments */
-  .topbar {
-    padding: 10px 14px !important;
-    height: auto !important;
-    min-height: 52px !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-  }
-  .topbar-title { font-size: 13px !important; }
-  .topbar .btn-ghost { display: none !important; }
-  .topbar .btn-primary { font-size: 11px !important; padding: 6px 10px !important; }
-  .status-live, .topbar-status { font-size: 10px !important; }
-  .topbar-actions { gap: 6px !important; }
-
-  /* Content padding */
-  .content { padding: 14px 12px 80px !important; }
-  main.main > *:not(.topbar) { padding-left: 12px !important; padding-right: 12px !important; }
-
-  /* KPI grid: 2 columns */
-  .kpi-row { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
-  .kpi-card { padding: 12px 14px !important; }
-  .kpi-value { font-size: 26px !important; }
-  .kpi-sub { font-size: 10px !important; }
-
-  /* Panels: single column stack */
-  .panels-row { grid-template-columns: 1fr !important; gap: 12px !important; }
-  .panel-full { grid-column: auto !important; }
-
-  /* Tables: scrollable horizontally */
-  .load-table, .doc-table, table { font-size: 11px !important; }
-  .panel { overflow-x: auto !important; }
-
-  /* Equipment grid: 1 column */
-  .truck-grid { grid-template-columns: 1fr !important; }
-  .fleet-stats, .summary-stats { grid-template-columns: 1fr 1fr !important; }
-  .bottom-stats { grid-template-columns: 1fr 1fr !important; }
-
-  /* Drivers grid: 1 column (or 2 on wider phones) */
-  .driver-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
-  .driver-card { padding: 12px !important; }
-  .driver-avatar { width: 40px !important; height: 40px !important; font-size: 14px !important; }
-
-  /* Settlements expand grid */
-  .expand-grid { grid-template-columns: 1fr !important; }
-
-  /* Filter bar: wrap nicely */
-  .filter-bar {
-    padding: 0 12px 12px !important;
-    gap: 6px !important;
-    flex-wrap: wrap !important;
-  }
-  .filter-bar select, .filter-bar input { font-size: 12px !important; padding: 6px 8px !important; }
-
-  /* Settlement table: make rows cards on very small screens */
-  .stmt-table th:nth-child(n+5),
-  .stmt-table td:nth-child(n+5) { display: none !important; }
-
-  /* Add bottom padding to avoid mobile nav overlap */
-  .content, main { padding-bottom: 80px !important; }
-
-  /* Show mobile bottom nav */
-  .mobile-nav {
-    display: flex !important;
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: 60px;
-    background: rgba(26, 31, 46, 0.97);
-    border-top: 1px solid rgba(46, 109, 164, 0.2);
-    justify-content: space-around;
-    align-items: center;
-    z-index: 200;
-    backdrop-filter: blur(12px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  .mobile-nav-tab {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    text-decoration: none;
-    color: rgba(168, 196, 224, 0.45);
-    font-size: 9px;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.05em;
-    padding: 6px 8px;
-    border-radius: 8px;
-    transition: color 0.15s;
-    flex: 1;
-  }
-  .mobile-nav-tab svg { width: 20px; height: 20px; opacity: 0.6; }
-  .mobile-nav-tab.active { color: var(--orange); }
-  .mobile-nav-tab.active svg { opacity: 1; stroke: var(--orange); }
-  .mobile-nav-tab:hover { color: var(--ice); }
-  .mobile-nav-tab:hover svg { opacity: 0.9; }
-  .mobile-nav-center {
-    background: var(--orange);
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: -14px;
-    flex-shrink: 0;
-    box-shadow: 0 4px 14px rgba(232, 100, 10, 0.4);
-  }
-  .mobile-nav-center svg { width: 20px; height: 20px; stroke: white; opacity: 1; }
-
-  /* Hide desktop-only topbar buttons on mobile */
-  .topbar-btn { display: none !important; }
-
-  /* Settlements detail panel */
-  .detail-panel { padding: 12px !important; }
-  .detail-grid { grid-template-columns: 1fr !important; }
-}
-
-/* Extra small phones */
-@media (max-width: 400px) {
-  .driver-grid { grid-template-columns: 1fr !important; }
-  .kpi-value { font-size: 22px !important; }
-}
-
-</style>
-<style id="nexus-unified">
-/* ── SIDEBAR BLACK ── */
-.sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
-/* ── LOGO AREA ── */
-.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
-.sidebar-logo .logo-hex { flex-shrink:0 !important; }
-.sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
-.sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
-.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
-.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
-/* ── NAV LINKS ── */
-.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
-.sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
-.sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
-.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
-.sidebar-link.active svg { opacity:1 !important; }
-/* ── SECTION LABELS ── */
-.sidebar-section { padding:12px 0 4px !important; }
-.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
-/* ── TOPBAR ── */
-.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
-.topbar *, .top-bar * { color:#ffffff !important; }
-.topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
-/* ── MOBILE NAV ── */
-.mobile-nav { background:#000000 !important; }
-.mobile-nav-tab.active { color:#e91e8c !important; }
-/* ── SIDEBAR USER ── */
-.sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
-.sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
-.sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
-/* ── NAV BADGE ── */
-.nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
 </head>
 <body>
-
-<!-- SIDEBAR -->
-<script src="nexus-sidebar.js"></script>
-<!-- MAIN -->
+<div class="sidebar" id="nexus-sidebar-placeholder"></div>
 <div class="main">
   <div class="topbar">
     <div class="topbar-title">FLEET &amp; EQUIPMENT</div>
-    <div class="status-live"><span class="status-dot"></span>LIVE</div>
-    <button class="btn btn-ghost">Export Fleet Report</button>
-    <button class="btn btn-primary" onclick="openAddModal()">+ Add Unit</button>
+    <div class="topbar-actions">
+      <button class="btn btn-primary" onclick="openAddModal()">
+        <svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13"><path d="M7 7V2h2v5h5v2H9v5H7V9H2V7z"/></svg>
+        Add Unit
+      </button>
+    </div>
   </div>
-
   <div class="content">
-
-    <!-- FLEET SUMMARY BAR -->
-    <div class="fleet-summary-bar">
-      <div class="summary-stat">
-        <div class="summary-stat-value">6</div>
-        <div class="summary-stat-label">Total<br>Units</div>
+    <!-- KPI BAR -->
+    <div class="kpi-row" id="kpiRow">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Units</div>
+        <div class="kpi-val" id="kpiTotal">—</div>
+        <div class="kpi-sub">in fleet</div>
       </div>
-      <div class="summary-divider"></div>
-      <div class="summary-stat">
-        <div class="summary-stat-value green">6</div>
-        <div class="summary-stat-label">Power<br>Units</div>
+      <div class="kpi-card">
+        <div class="kpi-label">Active</div>
+        <div class="kpi-val green" id="kpiActive">—</div>
+        <div class="kpi-sub">operational</div>
       </div>
-      <div class="summary-divider"></div>
-      <div class="summary-stat">
-        <div class="summary-stat-value" style="color:#1e3a6e;">2</div>
-        <div class="summary-stat-label">Trailers</div>
+      <div class="kpi-card">
+        <div class="kpi-label">Est. Fleet Value</div>
+        <div class="kpi-val" id="kpiValue">$0</div>
+        <div class="kpi-sub">combined current value</div>
       </div>
-      <div class="summary-divider"></div>
-      <div class="summary-stat">
-        <div class="summary-stat-value orange">2</div>
-        <div class="summary-stat-label">Jeeps &amp;<br>Spreaders</div>
-      </div>
-      <div class="summary-divider"></div>
-      <div class="summary-stat">
-        <div class="summary-stat-value" style="color:#1e3a6e;">100%</div>
-        <div class="summary-stat-label">Fleet<br>Availability</div>
-      </div>
-      <div class="summary-divider"></div>
-      <div class="summary-stat">
-        <div class="summary-stat-value" id="ins-badge-top" style="font-size:18px;color:var(--green);">COVERED</div>
-        <div class="summary-stat-label">Insurance<br>Status</div>
+      <div class="kpi-card">
+        <div class="kpi-label">Insurance Expiring</div>
+        <div class="kpi-val" id="kpiExpiring">0</div>
+        <div class="kpi-sub" id="kpiExpiringSub">within 30 days</div>
       </div>
     </div>
-
-    <!-- TRUCKS GRID -->
-    <div class="trucks-grid" id="trucks-grid">
-      <!-- Rendered dynamically by JS -->
-    </div><!-- /trucks-grid -->
-
-    <!-- STATS BOTTOM ROW -->
-    <div class="stats-bottom">
-      <div class="stats-bottom-card">
-        <div class="stats-bottom-label">Estimated Fleet Value</div>
-        <div class="stats-bottom-value">~$720K</div>
-        <div class="stats-bottom-sub">6 units · 2016–2020 model years</div>
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <div class="filter-group" id="statusFilters">
+        <button class="fbtn active" data-status="all" onclick="setFilter('all',this)">All</button>
+        <button class="fbtn" data-status="active" onclick="setFilter('active',this)">Active</button>
+        <button class="fbtn" data-status="out_of_service" onclick="setFilter('out_of_service',this)">Out of Service</button>
+        <button class="fbtn" data-status="for_sale" onclick="setFilter('for_sale',this)">For Sale</button>
+        <button class="fbtn" data-status="sold" onclick="setFilter('sold',this)">Sold</button>
       </div>
-      <div class="stats-bottom-card">
-        <div class="stats-bottom-label">Insurance Coverage</div>
-        <div class="stats-bottom-value" id="ins-status-bottom" style="color:var(--green);">ACTIVE</div>
-        <div class="stats-bottom-sub">Transverse Specialty · $1M CSL + $250K Cargo · <span id="ins-expiry-text">Expires Apr 2026</span></div>
-      </div>
-      <div class="stats-bottom-card">
-        <div class="stats-bottom-label">Next PM Due</div>
-        <div class="stats-bottom-value" style="color:var(--yellow);">—</div>
-        <div class="stats-bottom-sub">Log PM dates to enable scheduling</div>
+      <div class="filter-group ml-auto">
+        <button class="fbtn" data-type="all" onclick="setTypeFilter('all',this)">All Types</button>
+        <button class="fbtn" data-type="tractor" onclick="setTypeFilter('tractor',this)">Tractors</button>
+        <button class="fbtn" data-type="trailer" onclick="setTypeFilter('trailer',this)">Trailers</button>
+        <button class="fbtn" data-type="jeep" onclick="setTypeFilter('jeep',this)">Jeep/Dolly</button>
+        <button class="fbtn" data-type="spreader" onclick="setTypeFilter('spreader',this)">Spreader</button>
       </div>
     </div>
-
-  </div><!-- /content -->
-</div><!-- /main -->
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="nexus-config.js"></script>
-<script src="nexus-db.js"></script>
-<script src="nexus-data.js"></script>
-<script src="nexus-lang.js"></script>
-
-<!-- Mobile Bottom Nav -->
-<nav class="mobile-nav" role="navigation" aria-label="Mobile navigation">
-
-  <a href="fleet-command.html" class="mobile-nav-tab" aria-label="DASH">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-    DASH
-  </a>
-  <a href="settlements.html" class="mobile-nav-tab" aria-label="PAY">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-    PAY
-  </a>
-  <a href="documents.html" class="mobile-nav-tab" aria-label="Documents">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-    DOCS
-  </a>
-  <a href="equipment.html" class="mobile-nav-tab active" aria-label="FLEET">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-    FLEET
-  </a>
-  <a href="drivers.html" class="mobile-nav-tab" aria-label="TEAM">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-    TEAM
-  </a>
-</nav>
-
-
-<!-- ══ EQUIPMENT CRUD SYSTEM ══ -->
-<div id="equip-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:10px;width:92%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-    <div style="background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:18px 24px;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between;">
-      <span id="equip-modal-title" style="color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:2px;">ADD UNIT</span>
-      <button onclick="closeEquipModal()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1;">✕</button>
+    <!-- GRID -->
+    <div class="eq-grid" id="eqGrid"></div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      <h3>No units found</h3>
+      <p>Adjust filters or add a new unit to the fleet.</p>
     </div>
-    <form id="equip-form" onsubmit="saveUnit(event)" style="padding:24px;">
-      <input type="hidden" id="equip-edit-id" value="">
-
-      <!-- Equipment Type Selector — always visible -->
-      <div style="margin-bottom:16px;">
-        <label style="display:block;font-size:11px;font-weight:600;color:#475569;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;">Equipment Type *</label>
-        <select id="eq-type" required onchange="renderFormFields()" style="width:100%;padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:6px;font-size:14px;color:#0f172a;">
-          <option value="TRUCK">🚛  Truck (Power Unit)</option>
-          <option value="TRAILER_RGN">🔩  Trailer — RGN / Removable Gooseneck</option>
-          <option value="TRAILER_LOWBOY">⬇  Trailer — Lowboy / Fixed Neck</option>
-          <option value="TRAILER_FLATBED">▬  Trailer — Flatbed</option>
-          <option value="TRAILER_STEPDECK">↘  Trailer — Step Deck / Drop Deck</option>
-          <option value="TRAILER_DOUBLEDROP">⬛  Trailer — Double Drop / Well</option>
-          <option value="TRAILER_EXTRGN">↔  Trailer — Extendable RGN</option>
-          <option value="TRAILER_MULTIAXLE">🔢  Trailer — Multi-Axle / Stretch</option>
-          <option value="TRAILER_PERIMETER">⬡  Trailer — Perimeter Frame</option>
-          <option value="TRAILER_BEAM">⟵  Trailer — Beam / Coil</option>
-          <option value="TRAILER_SPREADAXLE">⇿  Trailer — Spread Axle Flatbed</option>
-          <option value="JEEP_2AX">🔗  Jeep — 2-Axle Lead Dolly</option>
-          <option value="JEEP_3AX">🔗  Jeep — 3-Axle Lead Dolly</option>
-          <option value="BOOSTER_2AX">🔧  Booster — 2-Axle Rear Dolly</option>
-          <option value="BOOSTER_STEER">🔧  Booster — Steerable Rear Dolly</option>
-          <option value="SPREADER">↔  Spreader Bar / Spread Attachment</option>
-        </select>
-      </div>
-
-      <!-- Dynamic fields injected here -->
-      <div id="equip-dynamic-fields" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;"></div>
-
-      <!-- Buttons -->
-      <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end;">
-        <button type="button" onclick="closeEquipModal()" style="padding:10px 20px;border:1.5px solid #cbd5e1;border-radius:6px;background:#fff;color:#475569;font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
-        <button type="submit" style="padding:10px 24px;background:linear-gradient(135deg,#6b0000,#c2185b);border:none;border-radius:6px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px;">SAVE UNIT</button>
-      </div>
-    </form>
   </div>
 </div>
 
+<!-- DETAIL PANEL -->
+<div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-hdr">
+      <div class="detail-hdr-icon" id="detailHdrIcon"></div>
+      <div class="detail-hdr-info">
+        <div class="detail-hdr-unit" id="detailHdrUnit"></div>
+        <div class="detail-hdr-title" id="detailHdrTitle"></div>
+      </div>
+      <button class="detail-close" onclick="closeDetail()">&#215;</button>
+    </div>
+    <div class="tab-bar" id="detailTabBar">
+      <button class="tab-btn active" onclick="switchTab('overview',this)">Overview</button>
+      <button class="tab-btn" onclick="switchTab('maintenance',this)">Maintenance</button>
+      <button class="tab-btn" onclick="switchTab('tires',this)">Tires</button>
+      <button class="tab-btn" onclick="switchTab('documents',this)">Documents</button>
+      <button class="tab-btn" onclick="switchTab('financials',this)">Financials</button>
+    </div>
+    <div class="tab-content">
+      <div class="tab-pane active" id="tab-overview"></div>
+      <div class="tab-pane" id="tab-maintenance"></div>
+      <div class="tab-pane" id="tab-tires"></div>
+      <div class="tab-pane" id="tab-documents"></div>
+      <div class="tab-pane" id="tab-financials"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD UNIT MODAL -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span class="modal-hdr-title">ADD FLEET UNIT</span>
+      <button class="modal-close" onclick="closeAddModal()">&#215;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Unit Number *</label>
+        <input class="form-input" id="f_unit_number" placeholder="T-003" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Type *</label>
+        <select class="form-select" id="f_type">
+          <option value="tractor">Tractor</option>
+          <option value="trailer">Trailer</option>
+          <option value="jeep">Jeep / Dolly</option>
+          <option value="spreader">Spreader Bar</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Year</label>
+        <input class="form-input" id="f_year" type="number" placeholder="2024" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Make</label>
+        <input class="form-input" id="f_make" placeholder="Peterbilt" />
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Model</label>
+        <input class="form-input" id="f_model" placeholder="389" />
+      </div>
+      <div class="form-group full">
+        <label class="form-label">VIN</label>
+        <input class="form-input" id="f_vin" placeholder="1XPWD49X1JD484744" style="font-family:'JetBrains Mono',monospace;" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">License Plate</label>
+        <input class="form-input" id="f_plate" placeholder="ABC1234" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Plate State</label>
+        <input class="form-input" id="f_plate_state" placeholder="FL" maxlength="2" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Color</label>
+        <input class="form-input" id="f_color" placeholder="Red" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="f_status">
+          <option value="active">Active</option>
+          <option value="out_of_service">Out of Service</option>
+          <option value="for_sale">For Sale</option>
+          <option value="sold">Sold</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mileage</label>
+        <input class="form-input" id="f_mileage" type="number" placeholder="125000" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Purchase Date</label>
+        <input class="form-input" id="f_purchase_date" type="date" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Purchase Price ($)</label>
+        <input class="form-input" id="f_purchase_price" type="number" placeholder="85000" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Current Value ($)</label>
+        <input class="form-input" id="f_current_value" type="number" placeholder="60000" />
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Insurance Carrier</label>
+        <input class="form-input" id="f_ins_carrier" placeholder="Progressive Commercial" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Insurance Policy #</label>
+        <input class="form-input" id="f_ins_policy" placeholder="POL-12345" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Insurance Expiry</label>
+        <input class="form-input" id="f_ins_expiry" type="date" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Registration Expiry</label>
+        <input class="form-input" id="f_reg_expiry" type="date" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Registration State</label>
+        <input class="form-input" id="f_reg_state" placeholder="FL" maxlength="2" />
+      </div>
+      <div class="form-group full">
+        <label class="form-label">USDOT #</label>
+        <input class="form-input" id="f_usdot" placeholder="3956182" />
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Notes</label>
+        <textarea class="form-input" id="f_notes" rows="3" placeholder="Any notes about this unit..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeAddModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveUnit()">Save Unit</button>
+    </div>
+  </div>
+</div>
+
+<script src="nexus-config.js?v=6"></script>
+<script src="nexus-sidebar.js"></script>
 <script>
-// ── DEFAULT FLEET DATA ──
-const DEFAULT_FLEET = [
-  // ── TRUCKS ──────────────────────────────────────────────────────────────
-  {id:'unit-01',type:'TRUCK',unit:'01',year:2020,make:'PETERBILT',model:'379',vin:'1XPBD49X9LD683445',driver:'AVIS MODESTO',status:'ACTIVE',odometer:'',lastPM:'',nextPM:'',equipType:'',axles:'',notes:''},
-  {id:'unit-03',type:'TRUCK',unit:'03',year:2019,make:'FREIGHTLINER',model:'CASCADIA',vin:'3AKJHHDR5KSKG0547',driver:'GUILLERMO PINERA',status:'IN-TRANSIT',odometer:'',lastPM:'',nextPM:'',equipType:'',axles:'',notes:''},
-  {id:'unit-04',type:'TRUCK',unit:'04',year:2020,make:'KENWORTH',model:'T680',vin:'1XKYDP9X9LJ395872',driver:'AMET ABREU',status:'IN-TRANSIT',odometer:'',lastPM:'',nextPM:'',equipType:'',axles:'',notes:''},
-  {id:'unit-05',type:'TRUCK',unit:'05',year:2017,make:'PETERBILT',model:'389',vin:'1XPBD49X5HD374219',driver:'MIGUEL FONSECA',status:'ACTIVE',odometer:'',lastPM:'',nextPM:'',equipType:'',axles:'',notes:''},
-  {id:'unit-06',type:'TRUCK',unit:'06',year:2018,make:'FREIGHTLINER',model:'CASCADIA',vin:'3AKJHHDR5JSJH7234',driver:'NELSON',status:'ACTIVE',odometer:'',lastPM:'',nextPM:'',equipType:'',axles:'',notes:''},
-  {id:'unit-09',type:'TRUCK',unit:'09',year:2016,make:'KENWORTH',model:'T800',vin:'1NKDX4EX5GJ358902',driver:'DAVID FONSECA',status:'IN-TRANSIT',odometer:'',lastPM:'',nextPM:'',equipType:'',axles:'',notes:''},
-  // ── TRAILERS ────────────────────────────────────────────────────────────
-  {id:'trailer-T01',type:'TRAILER',unit:'T01',year:0,make:'',model:'',vin:'',driver:'',status:'ACTIVE',odometer:'',lastPM:'',nextPM:'',equipType:'RGN / Lowboy',axles:'3-Axle',notes:'Assigned — Truck 01'},
-  {id:'trailer-T02',type:'TRAILER',unit:'T02',year:0,make:'',model:'',vin:'',driver:'',status:'ACTIVE',odometer:'',lastPM:'',nextPM:'',equipType:'RGN / Lowboy',axles:'3-Axle',notes:'Assigned — Truck 05 / Rental #2'},
-  // ── JEEPS ───────────────────────────────────────────────────────────────
-  {id:'jeep-J01',type:'JEEP',unit:'J01',year:0,make:'',model:'',vin:'',driver:'',status:'ACTIVE',odometer:'',lastPM:'',nextPM:'',equipType:'Jeep Dolly',axles:'2-Axle',notes:'Oversize support'},
-  // ── SPREADERS ───────────────────────────────────────────────────────────
-  {id:'spreader-S01',type:'SPREADER',unit:'S01',year:0,make:'',model:'',vin:'',driver:'',status:'ACTIVE',odometer:'',lastPM:'',nextPM:'',equipType:'Spread Axle',axles:'2-Axle',notes:'Oversize / permit loads'},
-];
+// ─────────────────────────────────────────────────────────────
+// Equipment Lifecycle — VIN-primary-key fleet management
+// Storage key: nexus_equipment
+// ─────────────────────────────────────────────────────────────
 
-let _fleetCache = null;
-async function loadFleet() {
-  const rows = await NexusDB.Fleet.list();
-  // Seed from DEFAULT_FLEET if empty (first run)
-  if (!rows.length && typeof DEFAULT_FLEET !== 'undefined') {
-    for (const u of DEFAULT_FLEET) await NexusDB.Fleet.create(u).catch(()=>{});
-    _fleetCache = await NexusDB.Fleet.list();
-  } else {
-    _fleetCache = rows;
-  }
-  return _fleetCache;
-}
-function getFleetCache() { return _fleetCache || []; }
+var EQ_KEY = 'nexus_equipment';
+var currentFilter = 'all';
+var currentTypeFilter = 'all';
+var activeUnitId = null;
+var editMode = false;
 
-function statusBadge(s) {
-  const map = {
-    'ACTIVE':'badge-green','IN-TRANSIT':'badge-blue','DOWN':'badge-red','INACTIVE':'badge-yellow'
+// ── SVG Icons per type ──
+function typeIcon(type, size) {
+  size = size || 26;
+  var icons = {
+    tractor: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="'+size+'" height="'+size+'"><rect x="1" y="7" width="14" height="10" rx="1.5"/><path d="M15 9h4l3 4v4h-7V9z"/><circle cx="5.5" cy="19" r="2"/><circle cx="18.5" cy="19" r="2"/><path d="M7 7V5a2 2 0 012-2h3"/></svg>',
+    trailer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="'+size+'" height="'+size+'"><rect x="2" y="6" width="18" height="11" rx="1.5"/><circle cx="6" cy="19" r="2"/><circle cx="16" cy="19" r="2"/><path d="M20 12h2"/></svg>',
+    jeep:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="'+size+'" height="'+size+'"><rect x="3" y="9" width="16" height="8" rx="1.5"/><circle cx="7" cy="19" r="2"/><circle cx="17" cy="19" r="2"/><path d="M19 13h2v2h-2z"/></svg>',
+    spreader:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="'+size+'" height="'+size+'"><rect x="1" y="10" width="22" height="4" rx="1"/><circle cx="4" cy="12" r="2"/><circle cx="20" cy="12" r="2"/><path d="M4 10V7M20 10V7M4 14v3M20 14v3"/></svg>'
   };
-  return `<span class="badge ${map[s]||'badge-gray'}">${s}</span>`;
+  return icons[type] || icons.tractor;
 }
 
-// ── EQUIPMENT TYPE CONFIG ──────────────────────────────────────────────────
-const EQUIP_GROUPS = {
-  TRUCK:     'TRUCK',
-  TRAILER_RGN:'TRAILER', TRAILER_LOWBOY:'TRAILER', TRAILER_FLATBED:'TRAILER',
-  TRAILER_STEPDECK:'TRAILER', TRAILER_DOUBLEDROP:'TRAILER', TRAILER_EXTRGN:'TRAILER',
-  TRAILER_MULTIAXLE:'TRAILER', TRAILER_PERIMETER:'TRAILER', TRAILER_BEAM:'TRAILER',
-  TRAILER_SPREADAXLE:'TRAILER',
-  JEEP_2AX:'JEEP', JEEP_3AX:'JEEP',
-  BOOSTER_2AX:'BOOSTER', BOOSTER_STEER:'BOOSTER',
-  SPREADER:'SPREADER'
-};
+// ── Status badge HTML ──
+function statusBadge(status) {
+  var map = {
+    active:         {cls:'badge-active',  label:'Active'},
+    out_of_service: {cls:'badge-oos',     label:'Out of Service'},
+    for_sale:       {cls:'badge-forsale', label:'For Sale'},
+    sold:           {cls:'badge-sold',    label:'Sold'}
+  };
+  var s = map[status] || map.active;
+  return '<span class="badge '+s.cls+'">'+s.label+'</span>';
+}
 
-const TYPE_META = {
-  'TRUCK':    { label:'TRUCK',    icon:'🚛', unitLabel:'UNIT',  color:'#2e6da4' },
-  'TRAILER':  { label:'TRAILER',  icon:'🔩', unitLabel:'TRL',   color:'#7c3aed' },
-  'JEEP':     { label:'JEEP',     icon:'🔗', unitLabel:'JEEP',  color:'#0891b2' },
-  'BOOSTER':  { label:'BOOSTER',  icon:'🔧', unitLabel:'BSTR',  color:'#d97706' },
-  'SPREADER': { label:'SPREADER', icon:'↔',  unitLabel:'SPRD',  color:'#059669' },
-};
+// ── Load from localStorage ──
+function loadEquipment() {
+  try { return JSON.parse(localStorage.getItem(EQ_KEY) || '[]'); } catch(e){ return []; }
+}
+function saveEquipment(data) {
+  localStorage.setItem(EQ_KEY, JSON.stringify(data));
+}
 
-// Dynamic field definitions per type group
-const FIELD_DEFS = {
-  TRUCK: [
-    { id:'eq-unit',    label:'Unit Number *', type:'text',   placeholder:'01',                  span:2, required:true },
-    { id:'eq-year',    label:'Year *',         type:'number', placeholder:'2020',                required:true },
-    { id:'eq-make',    label:'Make *',         type:'text',   placeholder:'Peterbilt',           required:true },
-    { id:'eq-model',   label:'Model *',        type:'text',   placeholder:'389',                 required:true },
-    { id:'eq-vin',     label:'VIN',            type:'text',   placeholder:'1XPBD49X...',         mono:true },
-    { id:'eq-driver',  label:'Assigned Driver',type:'text',   placeholder:'Driver Name' },
-    { id:'eq-status',  label:'Status',         type:'select', options:['ACTIVE','IN-TRANSIT','DOWN','INACTIVE'] },
-    { id:'eq-odo',     label:'Odometer (mi)',  type:'number', placeholder:'—' },
-    { id:'eq-last-pm', label:'Last PM Date',   type:'date' },
-    { id:'eq-next-pm', label:'Next PM Date',   type:'date' },
-    { id:'eq-notes',   label:'Notes',          type:'text',   placeholder:'Notes…',              span:2 },
-  ],
-  TRAILER: [
-    { id:'eq-unit',      label:'Trailer # *',       type:'text',   placeholder:'T01',           span:2, required:true },
-    { id:'eq-equip-type',label:'Trailer Type',       type:'text',   placeholder:'RGN, Lowboy, Flatbed…', span:2, readonly:true },
-    { id:'eq-year',      label:'Year',               type:'number', placeholder:'2019' },
-    { id:'eq-make',      label:'Make / Brand',       type:'text',   placeholder:'Fontaine, Trail King…' },
-    { id:'eq-model',     label:'Model',              type:'text',   placeholder:'Magnitude, Renegade…' },
-    { id:'eq-vin',       label:'VIN / Serial',       type:'text',   placeholder:'Serial or VIN',  mono:true },
-    { id:'eq-axles',     label:'Axle Config',        type:'text',   placeholder:'3-Axle, 5-Axle…' },
-    { id:'eq-length',    label:'Length (ft)',         type:'number', placeholder:'48' },
-    { id:'eq-width',     label:'Width (in)',          type:'number', placeholder:'96' },
-    { id:'eq-capacity',  label:'Capacity (tons)',     type:'number', placeholder:'40' },
-    { id:'eq-driver',    label:'Assigned Truck/Driver',type:'text', placeholder:'Unit 01 / AVIS' },
-    { id:'eq-status',    label:'Status',              type:'select', options:['ACTIVE','IN-TRANSIT','DOWN','INACTIVE'] },
-    { id:'eq-last-pm',   label:'Last Inspection',    type:'date' },
-    { id:'eq-next-pm',   label:'Next Inspection',    type:'date' },
-    { id:'eq-notes',     label:'Notes',               type:'text',  placeholder:'Rental info, ownership…', span:2 },
-  ],
-  JEEP: [
-    { id:'eq-unit',      label:'Jeep # *',           type:'text',   placeholder:'J01',           span:2, required:true },
-    { id:'eq-equip-type',label:'Jeep Type',           type:'text',   placeholder:'2-Axle Jeep, 3-Axle…', readonly:true },
-    { id:'eq-axles',     label:'Axle Config',        type:'text',   placeholder:'2-Axle, 3-Axle' },
-    { id:'eq-make',      label:'Make / Brand',       type:'text',   placeholder:'XL Specialized…' },
-    { id:'eq-vin',       label:'VIN / Serial',       type:'text',   placeholder:'Serial',         mono:true },
-    { id:'eq-driver',    label:'Assigned Truck',     type:'text',   placeholder:'Unit 01' },
-    { id:'eq-status',    label:'Status',             type:'select', options:['ACTIVE','IN-TRANSIT','DOWN','INACTIVE'] },
-    { id:'eq-last-pm',   label:'Last Inspection',    type:'date' },
-    { id:'eq-next-pm',   label:'Next Inspection',    type:'date' },
-    { id:'eq-notes',     label:'Notes',              type:'text',   placeholder:'Notes…',         span:2 },
-  ],
-  BOOSTER: [
-    { id:'eq-unit',      label:'Booster # *',        type:'text',   placeholder:'B01',           span:2, required:true },
-    { id:'eq-equip-type',label:'Booster Type',        type:'text',   placeholder:'2-Axle, Steerable…', readonly:true },
-    { id:'eq-axles',     label:'Axle Config',        type:'text',   placeholder:'2-Axle, Steerable' },
-    { id:'eq-make',      label:'Make / Brand',       type:'text',   placeholder:'Talbert, XL…' },
-    { id:'eq-vin',       label:'VIN / Serial',       type:'text',   placeholder:'Serial',         mono:true },
-    { id:'eq-driver',    label:'Assigned Trailer',   type:'text',   placeholder:'TRL T01' },
-    { id:'eq-status',    label:'Status',             type:'select', options:['ACTIVE','IN-TRANSIT','DOWN','INACTIVE'] },
-    { id:'eq-last-pm',   label:'Last Inspection',    type:'date' },
-    { id:'eq-next-pm',   label:'Next Inspection',    type:'date' },
-    { id:'eq-notes',     label:'Notes',              type:'text',   placeholder:'Notes…',         span:2 },
-  ],
-  SPREADER: [
-    { id:'eq-unit',      label:'Spreader # *',       type:'text',   placeholder:'S01',           span:2, required:true },
-    { id:'eq-equip-type',label:'Spreader Type',       type:'text',   placeholder:'Spread Axle, Fixed Spreader…', readonly:true },
-    { id:'eq-length',    label:'Spread Width (in)',   type:'number', placeholder:'120' },
-    { id:'eq-make',      label:'Make / Brand',       type:'text',   placeholder:'Brand or Custom' },
-    { id:'eq-vin',       label:'Serial #',           type:'text',   placeholder:'Serial',         mono:true },
-    { id:'eq-driver',    label:'Assigned Trailer',   type:'text',   placeholder:'TRL T01' },
-    { id:'eq-status',    label:'Status',             type:'select', options:['ACTIVE','IN-TRANSIT','DOWN','INACTIVE'] },
-    { id:'eq-last-pm',   label:'Last Inspection',    type:'date' },
-    { id:'eq-next-pm',   label:'Next Inspection',    type:'date' },
-    { id:'eq-notes',     label:'Notes',              type:'text',   placeholder:'Notes…',         span:2 },
-  ],
-};
+// ── Seed default fleet if empty ──
+function seedIfEmpty() {
+  var data = loadEquipment();
+  if (data.length > 0) return;
+  var seed = [
+    { id: 'eq_t001', vin: '1XPWD49X1JD484744',  unit_number: 'T-001',  type: 'tractor',  year: 2018, make: 'Peterbilt', model: '389',           color: 'Red',   status: 'active', mileage: 0, license_plate: '', plate_state: '', usdot: '', fleet_number: '', insurance_policy: '', insurance_carrier: '', insurance_expiry: '', insurance_coverage: '', registration_expiry: '', registration_state: '', purchase_date: '', purchase_price: '', current_value: '', monthly_depreciation: '', notes: '' },
+    { id: 'eq_t002', vin: '1NKDLB0X1KJ213842',  unit_number: 'T-002',  type: 'tractor',  year: 2019, make: 'Kenworth', model: 'W900',           color: 'Black', status: 'active', mileage: 0, license_plate: '', plate_state: '', usdot: '', fleet_number: '', insurance_policy: '', insurance_carrier: '', insurance_expiry: '', insurance_coverage: '', registration_expiry: '', registration_state: '', purchase_date: '', purchase_price: '', current_value: '', monthly_depreciation: '', notes: '' },
+    { id: 'eq_tr01', vin: '13N14820XH1560123',   unit_number: 'TR-001', type: 'trailer',  year: 2017, make: 'Fontaine', model: '48ft Flatbed',   color: '',      status: 'active', mileage: 0, license_plate: '', plate_state: '', usdot: '', fleet_number: '', insurance_policy: '', insurance_carrier: '', insurance_expiry: '', insurance_coverage: '', registration_expiry: '', registration_state: '', purchase_date: '', purchase_price: '', current_value: '', monthly_depreciation: '', notes: '' },
+    { id: 'eq_tr02', vin: '13N14820XL1560456',   unit_number: 'TR-002', type: 'trailer',  year: 2020, make: 'Fontaine', model: '53ft Step Deck', color: '',      status: 'active', mileage: 0, license_plate: '', plate_state: '', usdot: '', fleet_number: '', insurance_policy: '', insurance_carrier: '', insurance_expiry: '', insurance_coverage: '', registration_expiry: '', registration_state: '', purchase_date: '', purchase_price: '', current_value: '', monthly_depreciation: '', notes: '' },
+    { id: 'eq_j001', vin: '1FT8W3DT0GEA12345',   unit_number: 'J-001',  type: 'jeep',     year: 2016, make: 'Jeep',    model: 'Dolly',          color: '',      status: 'active', mileage: 0, license_plate: '', plate_state: '', usdot: '', fleet_number: '', insurance_policy: '', insurance_carrier: '', insurance_expiry: '', insurance_coverage: '', registration_expiry: '', registration_state: '', purchase_date: '', purchase_price: '', current_value: '', monthly_depreciation: '', notes: '' },
+    { id: 'eq_sp01', vin: 'N/A',                 unit_number: 'SP-001', type: 'spreader', year: 2018, make: 'Spreader',model: 'Bar',            color: '',      status: 'active', mileage: 0, license_plate: '', plate_state: '', usdot: '', fleet_number: '', insurance_policy: '', insurance_carrier: '', insurance_expiry: '', insurance_coverage: '', registration_expiry: '', registration_state: '', purchase_date: '', purchase_price: '', current_value: '', monthly_depreciation: '', notes: '' }
+  ];
+  saveEquipment(seed);
+}
 
-// Trailer sub-type labels auto-fill
-const TRAILER_SUBTYPE_LABELS = {
-  TRAILER_RGN:'RGN / Removable Gooseneck', TRAILER_LOWBOY:'Lowboy / Fixed Neck',
-  TRAILER_FLATBED:'Flatbed', TRAILER_STEPDECK:'Step Deck / Drop Deck',
-  TRAILER_DOUBLEDROP:'Double Drop / Well', TRAILER_EXTRGN:'Extendable RGN',
-  TRAILER_MULTIAXLE:'Multi-Axle / Stretch', TRAILER_PERIMETER:'Perimeter Frame',
-  TRAILER_BEAM:'Beam / Coil', TRAILER_SPREADAXLE:'Spread Axle Flatbed',
-  JEEP_2AX:'2-Axle Lead Dolly', JEEP_3AX:'3-Axle Lead Dolly',
-  BOOSTER_2AX:'2-Axle Rear Dolly', BOOSTER_STEER:'Steerable Rear Dolly',
-  SPREADER:'Spread Axle / Spreader Bar',
-};
+// ── Update KPIs ──
+function updateKPIs(data) {
+  var total = data.length;
+  var active = data.filter(function(u){ return u.status==='active'; }).length;
+  var value = data.reduce(function(s,u){ return s + (parseFloat(u.current_value)||0); }, 0);
+  var today = new Date();
+  var in30 = new Date(today); in30.setDate(in30.getDate()+30);
+  var expiring = data.filter(function(u){
+    if (!u.insurance_expiry) return false;
+    var d = new Date(u.insurance_expiry);
+    return d >= today && d <= in30;
+  }).length;
 
-function renderFormFields() {
-  const eqTypeVal = document.getElementById('eq-type').value;
-  const group = EQUIP_GROUPS[eqTypeVal] || 'TRUCK';
-  const fields = FIELD_DEFS[group] || FIELD_DEFS['TRUCK'];
-  const container = document.getElementById('equip-dynamic-fields');
-  container.innerHTML = '';
+  document.getElementById('kpiTotal').textContent = total;
+  document.getElementById('kpiActive').textContent = active;
+  document.getElementById('kpiValue').textContent = value > 0 ? '$'+value.toLocaleString() : '$0';
 
-  // Auto-fill equip-type label for non-truck types
-  const subtypeLabel = TRAILER_SUBTYPE_LABELS[eqTypeVal] || '';
+  var kpiExp = document.getElementById('kpiExpiring');
+  kpiExp.textContent = expiring;
+  if (expiring > 0) {
+    kpiExp.className = 'kpi-val red';
+    document.getElementById('kpiExpiringSub').textContent = 'within 30 days — URGENT';
+  } else {
+    kpiExp.className = 'kpi-val green';
+    document.getElementById('kpiExpiringSub').textContent = 'within 30 days';
+  }
+}
 
-  fields.forEach(f => {
-    const wrap = document.createElement('div');
-    wrap.style.gridColumn = f.span === 2 ? '1 / 3' : '';
-    const label = document.createElement('label');
-    label.style.cssText = 'display:block;font-size:11px;font-weight:600;color:#475569;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;';
-    label.textContent = f.label;
-    wrap.appendChild(label);
+// ── Days until a date ──
+function daysUntil(dateStr) {
+  if (!dateStr) return null;
+  var diff = new Date(dateStr) - new Date();
+  return Math.ceil(diff / 86400000);
+}
 
-    let input;
-    if(f.type === 'select') {
-      input = document.createElement('select');
-      f.options.forEach(opt => {
-        const o = document.createElement('option');
-        o.value = opt; o.textContent = opt;
-        input.appendChild(o);
-      });
-    } else {
-      input = document.createElement('input');
-      input.type = f.type || 'text';
-      input.placeholder = f.placeholder || '';
-      if(f.type === 'number') { input.min = 0; }
-    }
-    input.id = f.id;
-    input.style.cssText = 'width:100%;padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:6px;font-size:14px;color:#0f172a;'
-      + (f.mono ? "font-family:'JetBrains Mono',monospace;" : '');
-    if(f.required) input.required = true;
-    if(f.readonly) { input.readOnly = true; input.style.background = '#f8fafc'; }
-    wrap.appendChild(input);
-    container.appendChild(wrap);
+// ── Render card grid ──
+function renderGrid() {
+  var data = loadEquipment();
+  updateKPIs(data);
 
-    // Auto-fill subtype label
-    if(f.id === 'eq-equip-type' && subtypeLabel) {
-      input.value = subtypeLabel;
-    }
+  var filtered = data.filter(function(u){
+    var statusOk = currentFilter === 'all' || u.status === currentFilter;
+    var typeOk   = currentTypeFilter === 'all' || u.type === currentTypeFilter;
+    return statusOk && typeOk;
   });
-}
 
-// ── MODAL OPEN / CLOSE ──
-function openAddModal() {
-  document.getElementById('equip-modal-title').textContent = 'ADD UNIT';
-  document.getElementById('equip-edit-id').value = '';
-  document.getElementById('eq-type').value = 'TRUCK';
-  renderFormFields();
-  document.getElementById('equip-modal-overlay').style.display = 'flex';
-}
+  var grid = document.getElementById('eqGrid');
+  var empty = document.getElementById('emptyState');
 
-async function openEditModal(id) {
-  const fleet = await loadFleet();
-  const u = fleet.find(x=>x.id===id);
-  if (!u) return;
-  document.getElementById('equip-modal-title').textContent = 'EDIT ' + (u.type||'UNIT') + ' ' + u.unit;
-  document.getElementById('equip-edit-id').value = id;
-  // Set the type select to match both the stored type AND subtype
-  const storedType = u.typeKey || u.type || 'TRUCK';
-  document.getElementById('eq-type').value = storedType;
-  renderFormFields();
-  // Restore all field values
-  const setVal = (id, val) => { const el = document.getElementById(id); if(el && val !== undefined) el.value = val || ''; };
-  setVal('eq-unit', u.unit);
-  setVal('eq-year', u.year && u.year > 0 ? u.year : '');
-  setVal('eq-make', u.make);
-  setVal('eq-model', u.model);
-  setVal('eq-vin', u.vin);
-  setVal('eq-driver', u.driver);
-  setVal('eq-status', u.status);
-  setVal('eq-odo', u.odometer);
-  setVal('eq-last-pm', u.lastPM);
-  setVal('eq-next-pm', u.nextPM);
-  setVal('eq-equip-type', u.equipType);
-  setVal('eq-axles', u.axles);
-  setVal('eq-length', u.length);
-  setVal('eq-width', u.width);
-  setVal('eq-capacity', u.capacity);
-  setVal('eq-notes', u.notes);
-  document.getElementById('equip-modal-overlay').style.display = 'flex';
-}
-
-// ── SAVE (Add or Edit) ──
-async function saveUnit(e) {
-  e.preventDefault();
-  const fleet = await loadFleet();
-  const editId = document.getElementById('equip-edit-id').value;
-  const eqTypeKey = document.getElementById('eq-type').value || 'TRUCK';
-  const group = EQUIP_GROUPS[eqTypeKey] || 'TRUCK';
-  const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
-  const unitRaw = getVal('eq-unit');
-  const unitNum = group === 'TRUCK' ? unitRaw.padStart(2,'0') : unitRaw;
-  const prefixMap = {TRUCK:'unit',TRAILER:'trailer',JEEP:'jeep',BOOSTER:'booster',SPREADER:'spreader'};
-  const prefix = prefixMap[group] || 'unit';
-  const data = {
-    id:         editId || prefix + '-' + unitNum.replace(/\s+/g,'') + '-' + Date.now(),
-    typeKey:    eqTypeKey,
-    type:       group,
-    unit:       unitNum,
-    year:       parseInt(getVal('eq-year')) || 0,
-    make:       getVal('eq-make').toUpperCase(),
-    model:      getVal('eq-model').toUpperCase(),
-    vin:        getVal('eq-vin').toUpperCase(),
-    driver:     getVal('eq-driver').toUpperCase(),
-    status:     getVal('eq-status') || 'ACTIVE',
-    odometer:   getVal('eq-odo'),
-    lastPM:     getVal('eq-last-pm'),
-    nextPM:     getVal('eq-next-pm'),
-    equipType:  getVal('eq-equip-type'),
-    axles:      getVal('eq-axles'),
-    length:     getVal('eq-length'),
-    width:      getVal('eq-width'),
-    capacity:   getVal('eq-capacity'),
-    notes:      getVal('eq-notes'),
-  };
-  if (editId) {
-    const idx = fleet.findIndex(x=>x.id===editId);
-    if (idx>=0) fleet[idx] = data;
-  } else {
-    fleet.push(data);
-    fleet.sort((a,b)=>{
-      const order = {TRUCK:0,TRAILER:1,JEEP:2,BOOSTER:3,SPREADER:4};
-      const ga = order[a.type]??5, gb = order[b.type]??5;
-      if(ga!==gb) return ga-gb;
-      return String(a.unit).localeCompare(String(b.unit), undefined, {numeric:true});
-    });
-  }
-  // Persist each changed unit
-  const editId = document.getElementById('equip-edit-id').value;
-  if (editId) { await NexusDB.Fleet.update(editId, fleet.find(u=>u.id===editId)); }
-  else { await NexusDB.Fleet.create(fleet[fleet.length-1]); }
-  _fleetCache = fleet;
-  closeEquipModal();
-  await renderFleet();
-}
-
-// ── REMOVE ──
-function removeUnit(id, unit) {
-  if (!confirm('Remove Unit ' + unit + ' from fleet? This cannot be undone.')) return;
-  await NexusDB.Fleet.delete(id);
-  await renderFleet();
-}
-
-// ── LOG PM ──
-function logPM(id) {
-  const today = new Date().toISOString().split('T')[0];
-  const fleet = await loadFleet();
-  const u = fleet.find(x=>x.id===id);
-  if (!u) return;
-  u.lastPM = today;
-  const next = new Date(); next.setDate(next.getDate()+90);
-  u.nextPM = next.toISOString().split('T')[0];
-  await NexusDB.Fleet.update(id, {lastPM: u.lastPM, nextPM: u.nextPM});
-  await renderFleet();
-  alert('PM logged for Unit ' + u.unit + '. Next PM scheduled: ' + u.nextPM);
-}
-
-// ── REPORT ISSUE ──
-function reportIssue(id, unit) {
-  const issue = prompt('Describe the issue for Unit ' + unit + ':');
-  if (issue) alert('Issue logged for Unit ' + unit + ':\n"' + issue + '"\n\nStatus updated to DOWN.');
-  const fleet = await loadFleet();
-  const u = fleet.find(x=>x.id===id);
-  if (u && issue) { await NexusDB.Fleet.update(id, {status:'DOWN'}); await renderFleet(); }
-}
-
-// Close modal on overlay click
-document.getElementById('equip-modal-overlay').addEventListener('click', function(e){
-  if(e.target===this) closeEquipModal();
-});
-
-
-// ── RENDER FLEET CARDS ──────────────────────────────────────────────────────
-async function renderFleet() {
-  const grid = document.getElementById('trucks-grid');
-  if (!grid) return;
-  grid.innerHTML = '<div style="color:var(--text-muted);padding:40px;text-align:center;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">LOADING FLEET...</div>';
-  let fleet;
-  try { fleet = await loadFleet(); } catch(e) { fleet = []; }
-  if (!fleet.length) {
-    grid.innerHTML = '<div style="color:var(--text-muted);padding:40px;text-align:center;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">NO UNITS — CLICK + ADD UNIT TO BEGIN</div>';
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
     return;
   }
-  const statusMap = {'ACTIVE':'badge-green','IN-TRANSIT':'badge-blue','DOWN':'badge-red','INACTIVE':'badge-yellow'};
-  grid.innerHTML = fleet.map(u => {
-    const unitNum = u.unit || '??';
-    const ymm = [u.year && u.year > 0 ? u.year : '', u.make, u.model].filter(Boolean).join(' ') || 'Unit ' + unitNum;
-    const vin = u.vin ? 'VIN: ' + u.vin : 'VIN: —';
-    const driver = u.driver || '—';
-    const status = u.status || 'ACTIVE';
-    const badgeCls = statusMap[status] || 'badge-gray';
-    const odo = u.odometer ? Number(u.odometer).toLocaleString() : '—';
-    const lastPM = u.lastPM || '—';
-    const nextPM = u.nextPM || '—';
-    const notes = u.notes || '—';
-    const typeLabel = u.equipType || u.type || 'UNIT';
-    return \`
-    <div class="truck-card">
-      <div class="truck-card-header">
-        <div class="unit-circle">
-          <span class="unit-label">\${u.type||'UNIT'}</span>
-          <span class="unit-number">\${unitNum}</span>
-        </div>
-        <div class="truck-header-info">
-          <div class="truck-ymm">\${ymm}</div>
-          <div class="truck-vin">\${vin}</div>
-          <div class="truck-driver-badge">
-            <span class="label">DRIVER</span>
-            <span class="value">\${driver}</span>
-          </div>
-        </div>
-        <span class="badge \${badgeCls}">\${status}</span>
-      </div>
-      <div class="truck-card-body">
-        <div class="truck-stats-grid">
-          <div class="truck-stat">
-            <div class="truck-stat-label">TYPE</div>
-            <div class="truck-stat-value" style="font-size:12px;">\${typeLabel}</div>
-          </div>
-          <div class="truck-stat">
-            <div class="truck-stat-label">ODO</div>
-            <div class="truck-stat-value \${odo==='—'?'na':''}">\${odo}</div>
-          </div>
-          <div class="truck-stat">
-            <div class="truck-stat-label">LAST PM</div>
-            <div class="truck-stat-value \${lastPM==='—'?'na':''}" style="font-size:11px;">\${lastPM}</div>
-          </div>
-          <div class="truck-stat">
-            <div class="truck-stat-label">NEXT PM</div>
-            <div class="truck-stat-value \${nextPM==='—'?'na':''}" style="font-size:11px;">\${nextPM}</div>
-          </div>
-        </div>
-        \${notes !== '—' ? \`<div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:4px;border-left:2px solid var(--steel-blue);">\${notes}</div>\` : ''}
-        <div class="truck-actions">
-          <button class="btn-action" onclick="openEditModal('\${u.id}')">EDIT</button>
-          <button class="btn-action" onclick="reportIssue('\${u.id}')">ISSUE</button>
-          <button class="btn-action" onclick="updatePM('\${u.id}')">LOG PM</button>
-        </div>
-      </div>
-    </div>\`;
+  empty.style.display = 'none';
+
+  grid.innerHTML = filtered.map(function(u) {
+    var days = daysUntil(u.insurance_expiry);
+    var insHtml = '';
+    if (u.insurance_expiry) {
+      var warn = days !== null && days <= 30;
+      insHtml = '<span class="eq-meta'+(warn?' eq-expiry-warn':'')+'">' +
+        '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.5 4h1v5h-1zm0 6h1v1.5h-1z"/></svg>' +
+        'Ins. '+u.insurance_expiry+(warn?' ('+days+'d)':'')+
+        '</span>';
+    }
+    var mileHtml = u.mileage ? '<span class="eq-meta"><svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zM3 8h2M11 8h2M8 3v2M8 11v2"/></svg>'+Number(u.mileage).toLocaleString()+' mi</span>' : '';
+    return '<div class="eq-card" onclick="openDetail(\''+u.id+'\')">'+
+      '<div class="eq-card-header">'+
+        '<div class="eq-icon '+u.type+'">'+typeIcon(u.type, 26)+'</div>'+
+        '<div class="eq-info">'+
+          '<div class="eq-unit">'+u.unit_number+' &nbsp;·&nbsp; '+u.type.toUpperCase()+'</div>'+
+          '<div class="eq-name">'+u.year+' '+u.make+' '+u.model+'</div>'+
+          '<div class="eq-vin">VIN: '+u.vin+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="eq-card-body">'+
+        statusBadge(u.status)+
+        mileHtml+
+        insHtml+
+      '</div>'+
+    '</div>';
   }).join('');
 }
 
-// Initial render
-(async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); await renderFleet(); })();
-</script>
+// ── Status filter ──
+function setFilter(status, el) {
+  currentFilter = status;
+  document.querySelectorAll('[data-status]').forEach(function(b){ b.classList.remove('active'); });
+  el.classList.add('active');
+  renderGrid();
+}
 
+// ── Type filter ──
+function setTypeFilter(type, el) {
+  currentTypeFilter = type;
+  document.querySelectorAll('[data-type]').forEach(function(b){ b.classList.remove('active'); });
+  el.classList.add('active');
+  renderGrid();
+}
 
-<script>
-(function(){
-  var INS_EXPIRY = new Date('2026-04-30T23:59:59');
-  var today = new Date();
-  var expired = today > INS_EXPIRY;
-  var topBadge = document.getElementById('ins-badge-top');
-  var bottomStatus = document.getElementById('ins-status-bottom');
-  var expiryText = document.getElementById('ins-expiry-text');
-  if(expired){
-    if(topBadge){ topBadge.textContent='EXPIRED'; topBadge.style.color='var(--red)'; }
-    if(bottomStatus){ bottomStatus.textContent='EXPIRED'; bottomStatus.style.color='var(--red)'; }
-    if(expiryText){ expiryText.textContent='Expired Apr 2026 — Renewal required'; expiryText.style.color='var(--red)'; }
+// ── Open detail panel ──
+function openDetail(id) {
+  activeUnitId = id;
+  editMode = false;
+  var data = loadEquipment();
+  var unit = data.find(function(u){ return u.id === id; });
+  if (!unit) return;
+
+  // Header
+  document.getElementById('detailHdrUnit').textContent = unit.unit_number + ' · ' + unit.type.toUpperCase();
+  document.getElementById('detailHdrTitle').textContent = unit.year + ' ' + unit.make + ' ' + unit.model;
+  document.getElementById('detailHdrIcon').innerHTML = typeIcon(unit.type, 24);
+
+  // Render tabs
+  renderTabOverview(unit);
+  renderTabMaintenance(unit);
+  renderTabTires(unit);
+  renderTabDocuments(unit);
+  renderTabFinancials(unit);
+
+  // Switch to overview
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelector('.tab-btn').classList.add('active');
+  document.getElementById('tab-overview').classList.add('active');
+
+  document.getElementById('detailOverlay').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('open');
+  activeUnitId = null;
+  editMode = false;
+}
+
+// ── Tab switcher ──
+function switchTab(name, el) {
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+// ── Helper: render a field row ──
+function fv(label, value, mono) {
+  return '<div class="field-group">'+
+    '<div class="field-label">'+label+'</div>'+
+    '<div class="field-value'+(mono?' mono':'')+'">'+( value||'<span style="color:#cbd5e1;">—</span>' )+'</div>'+
+  '</div>';
+}
+
+// ── Tab: Overview ──
+function renderTabOverview(unit) {
+  var html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">'+
+    statusBadge(unit.status)+
+    '<button class="btn btn-sm btn-primary" onclick="enterEditMode()">Edit Unit</button>'+
+    '<button class="btn btn-sm btn-danger" onclick="deleteUnit(\''+unit.id+'\')" style="margin-left:6px;">Delete</button>'+
+  '</div>';
+
+  html += '<div class="section-hdr">Identification</div>';
+  html += '<div class="fields-grid">'+
+    fv('Unit Number', unit.unit_number, true) +
+    fv('Type', unit.type ? unit.type.charAt(0).toUpperCase()+unit.type.slice(1) : '') +
+    fv('Year', unit.year) +
+    fv('Make', unit.make) +
+    fv('Model', unit.model) +
+    fv('Color', unit.color) +
+    '<div class="field-group full">'+fv('VIN', unit.vin, true).replace('field-group','')+'</div>'+
+    fv('Fleet Number', unit.fleet_number) +
+    fv('USDOT', unit.usdot, true) +
+    fv('License Plate', unit.license_plate, true) +
+    fv('Plate State', unit.plate_state) +
+    fv('Mileage', unit.mileage ? Number(unit.mileage).toLocaleString()+' mi' : '') +
+  '</div>';
+
+  html += '<div class="section-hdr">Insurance</div>';
+  html += '<div class="fields-grid">'+
+    fv('Insurance Carrier', unit.insurance_carrier) +
+    fv('Policy Number', unit.insurance_policy, true) +
+    fv('Expiry Date', unit.insurance_expiry) +
+    fv('Coverage', unit.insurance_coverage) +
+  '</div>';
+
+  html += '<div class="section-hdr">Registration</div>';
+  html += '<div class="fields-grid">'+
+    fv('Registration Expiry', unit.registration_expiry) +
+    fv('Registration State', unit.registration_state) +
+    fv('Purchase Date', unit.purchase_date) +
+  '</div>';
+
+  if (unit.notes) {
+    html += '<div class="section-hdr">Notes</div>';
+    html += '<p style="font-size:13px;color:#334155;line-height:1.6;">'+unit.notes+'</p>';
   }
-})();
+
+  document.getElementById('tab-overview').innerHTML = html;
+}
+
+// ── Enter edit mode ──
+function enterEditMode() {
+  var data = loadEquipment();
+  var unit = data.find(function(u){ return u.id === activeUnitId; });
+  if (!unit) return;
+
+  var fields = [
+    {id:'e_unit_number',   label:'Unit Number',           val:unit.unit_number,          type:'text'},
+    {id:'e_type',          label:'Type',                  val:unit.type,                 type:'select', opts:['tractor','trailer','jeep','spreader']},
+    {id:'e_year',          label:'Year',                  val:unit.year,                 type:'number'},
+    {id:'e_make',          label:'Make',                  val:unit.make,                 type:'text'},
+    {id:'e_model',         label:'Model',                 val:unit.model,                type:'text', full:true},
+    {id:'e_vin',           label:'VIN',                   val:unit.vin,                  type:'text', mono:true, full:true},
+    {id:'e_color',         label:'Color',                 val:unit.color,                type:'text'},
+    {id:'e_status',        label:'Status',                val:unit.status,               type:'select', opts:['active','out_of_service','for_sale','sold']},
+    {id:'e_mileage',       label:'Mileage',               val:unit.mileage,              type:'number'},
+    {id:'e_fleet_number',  label:'Fleet Number',          val:unit.fleet_number,         type:'text'},
+    {id:'e_usdot',         label:'USDOT #',               val:unit.usdot,                type:'text'},
+    {id:'e_license_plate', label:'License Plate',         val:unit.license_plate,        type:'text'},
+    {id:'e_plate_state',   label:'Plate State',           val:unit.plate_state,          type:'text'},
+    {id:'e_ins_carrier',   label:'Insurance Carrier',     val:unit.insurance_carrier,    type:'text', full:true},
+    {id:'e_ins_policy',    label:'Insurance Policy #',    val:unit.insurance_policy,     type:'text'},
+    {id:'e_ins_expiry',    label:'Insurance Expiry',      val:unit.insurance_expiry,     type:'date'},
+    {id:'e_ins_coverage',  label:'Coverage',              val:unit.insurance_coverage,   type:'text'},
+    {id:'e_reg_expiry',    label:'Registration Expiry',   val:unit.registration_expiry,  type:'date'},
+    {id:'e_reg_state',     label:'Registration State',    val:unit.registration_state,   type:'text'},
+    {id:'e_purchase_date', label:'Purchase Date',         val:unit.purchase_date,        type:'date'},
+    {id:'e_purchase_price',label:'Purchase Price ($)',    val:unit.purchase_price,       type:'number'},
+    {id:'e_current_value', label:'Current Value ($)',     val:unit.current_value,        type:'number'},
+    {id:'e_monthly_dep',   label:'Monthly Depreciation',  val:unit.monthly_depreciation, type:'number'},
+    {id:'e_notes',         label:'Notes',                 val:unit.notes,                type:'textarea', full:true},
+  ];
+
+  var html = '<div style="display:flex;gap:10px;margin-bottom:20px;">'+
+    '<button class="btn btn-primary btn-sm" onclick="saveEditMode()">Save Changes</button>'+
+    '<button class="btn btn-sm" onclick="cancelEditMode()">Cancel</button>'+
+  '</div>';
+  html += '<div class="fields-grid">';
+
+  fields.forEach(function(f) {
+    var cls = f.full ? 'field-group full' : 'field-group';
+    html += '<div class="'+cls+'">';
+    html += '<label class="field-label" for="'+f.id+'">'+f.label+'</label>';
+    if (f.type === 'select') {
+      html += '<select class="field-edit" id="'+f.id+'">';
+      f.opts.forEach(function(o){ html += '<option value="'+o+'"'+(o===f.val?' selected':'')+'>'+o.replace(/_/g,' ')+'</option>'; });
+      html += '</select>';
+    } else if (f.type === 'textarea') {
+      html += '<textarea class="field-edit" id="'+f.id+'" rows="3">'+(f.val||'')+'</textarea>';
+    } else {
+      html += '<input class="field-edit'+(f.mono?' mono':'')+'" id="'+f.id+'" type="'+f.type+'" value="'+(f.val||'')+'" />';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+
+  document.getElementById('tab-overview').innerHTML = html;
+  editMode = true;
+}
+
+function saveEditMode() {
+  var data = loadEquipment();
+  var idx = data.findIndex(function(u){ return u.id === activeUnitId; });
+  if (idx < 0) return;
+  var u = data[idx];
+  var fields = {
+    unit_number: 'e_unit_number', type: 'e_type', year: 'e_year', make: 'e_make',
+    model: 'e_model', vin: 'e_vin', color: 'e_color', status: 'e_status',
+    mileage: 'e_mileage', fleet_number: 'e_fleet_number', usdot: 'e_usdot',
+    license_plate: 'e_license_plate', plate_state: 'e_plate_state',
+    insurance_carrier: 'e_ins_carrier', insurance_policy: 'e_ins_policy',
+    insurance_expiry: 'e_ins_expiry', insurance_coverage: 'e_ins_coverage',
+    registration_expiry: 'e_reg_expiry', registration_state: 'e_reg_state',
+    purchase_date: 'e_purchase_date', purchase_price: 'e_purchase_price',
+    current_value: 'e_current_value', monthly_depreciation: 'e_monthly_dep',
+    notes: 'e_notes'
+  };
+  Object.keys(fields).forEach(function(key) {
+    var el = document.getElementById(fields[key]);
+    if (el) u[key] = el.value;
+  });
+  data[idx] = u;
+  saveEquipment(data);
+  renderGrid();
+  openDetail(activeUnitId); // re-render panel
+}
+
+function cancelEditMode() {
+  var data = loadEquipment();
+  var unit = data.find(function(u){ return u.id === activeUnitId; });
+  if (unit) renderTabOverview(unit);
+  editMode = false;
+}
+
+function deleteUnit(id) {
+  if (!confirm('Delete this unit? This cannot be undone.')) return;
+  var data = loadEquipment().filter(function(u){ return u.id !== id; });
+  saveEquipment(data);
+  closeDetail();
+  renderGrid();
+}
+
+// ── Tab: Maintenance ──
+function renderTabMaintenance(unit) {
+  var records = [];
+  try { records = JSON.parse(localStorage.getItem('nexus_maintenance') || '[]'); } catch(e){}
+  var relevant = records.filter(function(r){
+    return (r.unit_number || r.unit || '').toLowerCase() === unit.unit_number.toLowerCase();
+  });
+  if (relevant.length === 0) {
+    document.getElementById('tab-maintenance').innerHTML = '<div class="no-records">No maintenance records found for '+unit.unit_number+'.</div>';
+    return;
+  }
+  var html = '<table class="sub-table"><thead><tr>'+
+    '<th>Date</th><th>Type</th><th>Description</th><th>Cost</th><th>Vendor</th>'+
+    '</tr></thead><tbody>';
+  relevant.forEach(function(r) {
+    html += '<tr><td class="mono">'+( r.date||r.service_date||'—' )+'</td>'+
+      '<td>'+( r.type||r.service_type||'—' )+'</td>'+
+      '<td>'+( r.description||r.notes||'—' )+'</td>'+
+      '<td>'+( r.cost ? '$'+Number(r.cost).toLocaleString() : '—' )+'</td>'+
+      '<td>'+( r.vendor||'—' )+'</td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('tab-maintenance').innerHTML = html;
+}
+
+// ── Tab: Tires ──
+function renderTabTires(unit) {
+  var records = [];
+  try { records = JSON.parse(localStorage.getItem('nexus_tires') || '[]'); } catch(e){}
+  var relevant = records.filter(function(r){
+    return (r.unit_number || r.unit || '').toLowerCase() === unit.unit_number.toLowerCase();
+  });
+  if (relevant.length === 0) {
+    document.getElementById('tab-tires').innerHTML = '<div class="no-records">No tire records found for '+unit.unit_number+'.</div>';
+    return;
+  }
+  var html = '<table class="sub-table"><thead><tr>'+
+    '<th>Position</th><th>Brand</th><th>Size</th><th>Tread Depth</th><th>Installed</th><th>Notes</th>'+
+    '</tr></thead><tbody>';
+  relevant.forEach(function(r) {
+    html += '<tr><td>'+( r.position||'—' )+'</td>'+
+      '<td>'+( r.brand||'—' )+'</td>'+
+      '<td class="mono">'+( r.size||'—' )+'</td>'+
+      '<td>'+( r.tread_depth ? r.tread_depth+'/32"' : '—' )+'</td>'+
+      '<td class="mono">'+( r.installed_date||'—' )+'</td>'+
+      '<td>'+( r.notes||'—' )+'</td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('tab-tires').innerHTML = html;
+}
+
+// ── Tab: Documents ──
+function renderTabDocuments(unit) {
+  var records = [];
+  try { records = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e){}
+  var relevant = records.filter(function(r){
+    var ref = (r.unit_number||r.unit||r.truck||r.trailer||'').toLowerCase();
+    return ref === unit.unit_number.toLowerCase() || ref.includes(unit.unit_number.toLowerCase());
+  });
+  if (relevant.length === 0) {
+    document.getElementById('tab-documents').innerHTML = '<div class="no-records">No documents linked to '+unit.unit_number+'.</div>';
+    return;
+  }
+  var html = '<table class="sub-table"><thead><tr>'+
+    '<th>Type</th><th>File Name</th><th>Date</th><th>Action</th>'+
+    '</tr></thead><tbody>';
+  relevant.forEach(function(r) {
+    html += '<tr>'+
+      '<td><span class="badge badge-blue" style="font-size:10px;">'+( r.doc_type||r.type||'DOC' ).toUpperCase()+'</span></td>'+
+      '<td>'+( r.filename||r.name||'—' )+'</td>'+
+      '<td class="mono">'+( r.date||r.upload_date||'—' )+'</td>'+
+      '<td>'+(r.drive_url ? '<a href="'+r.drive_url+'" target="_blank" class="btn btn-sm">Open</a>' : '—')+'</td>'+
+    '</tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('tab-documents').innerHTML = html;
+}
+
+// ── Tab: Financials ──
+function renderTabFinancials(unit) {
+  // Calc total repair cost from maintenance records
+  var maint = [];
+  try { maint = JSON.parse(localStorage.getItem('nexus_maintenance') || '[]'); } catch(e){}
+  var repairCost = maint
+    .filter(function(r){ return (r.unit_number||r.unit||'').toLowerCase() === unit.unit_number.toLowerCase(); })
+    .reduce(function(s,r){ return s + (parseFloat(r.cost)||0); }, 0);
+
+  var purchasePrice = parseFloat(unit.purchase_price) || 0;
+  var currentValue  = parseFloat(unit.current_value)  || 0;
+  var monthlyDep    = parseFloat(unit.monthly_depreciation) || 0;
+  var totalDepreciation = purchasePrice > 0 && currentValue > 0 ? purchasePrice - currentValue : 0;
+
+  var html = '<div class="section-hdr">Purchase &amp; Value</div>';
+  html += '<div class="fields-grid">'+
+    fv('Purchase Date', unit.purchase_date) +
+    fv('Purchase Price', purchasePrice > 0 ? '$'+purchasePrice.toLocaleString() : '—') +
+    fv('Current Est. Value', currentValue > 0 ? '$'+currentValue.toLocaleString() : '—') +
+    fv('Monthly Depreciation', monthlyDep > 0 ? '$'+monthlyDep.toLocaleString()+'/mo' : '—') +
+  '</div>';
+
+  html += '<div class="section-hdr" style="margin-top:20px;">Cost Summary</div>';
+  html += '<div class="fields-grid">'+
+    fv('Total Depreciation', totalDepreciation > 0 ? '$'+totalDepreciation.toLocaleString() : '—') +
+    fv('Total Repair Costs', repairCost > 0 ? '$'+repairCost.toLocaleString() : '$0') +
+    fv('Total Cost of Ownership', (totalDepreciation + repairCost) > 0 ? '$'+(totalDepreciation + repairCost).toLocaleString() : '—') +
+  '</div>';
+
+  if (repairCost === 0 && purchasePrice === 0) {
+    html += '<div class="no-records" style="margin-top:20px;">No financial data entered yet. Edit this unit to add purchase price and current value.</div>';
+  }
+
+  document.getElementById('tab-financials').innerHTML = html;
+}
+
+// ── Add Unit Modal ──
+function openAddModal() {
+  ['f_unit_number','f_year','f_make','f_model','f_vin','f_plate','f_plate_state','f_color',
+   'f_mileage','f_purchase_date','f_purchase_price','f_current_value',
+   'f_ins_carrier','f_ins_policy','f_ins_expiry','f_reg_expiry','f_reg_state','f_usdot','f_notes'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('f_type').value = 'tractor';
+  document.getElementById('f_status').value = 'active';
+  document.getElementById('addModal').classList.add('open');
+}
+
+function closeAddModal() {
+  document.getElementById('addModal').classList.remove('open');
+}
+
+function saveUnit() {
+  var unit_number = document.getElementById('f_unit_number').value.trim();
+  if (!unit_number) { alert('Unit Number is required.'); return; }
+
+  var data = loadEquipment();
+  var vin = document.getElementById('f_vin').value.trim() || 'N/A';
+
+  // Check for duplicate VIN (unless N/A)
+  if (vin !== 'N/A') {
+    var exists = data.find(function(u){ return u.vin === vin; });
+    if (exists) { alert('A unit with VIN "'+vin+'" already exists ('+exists.unit_number+').'); return; }
+  }
+
+  var unit = {
+    id:                   'eq_'+Date.now(),
+    vin:                  vin,
+    unit_number:          unit_number,
+    type:                 document.getElementById('f_type').value,
+    year:                 document.getElementById('f_year').value,
+    make:                 document.getElementById('f_make').value,
+    model:                document.getElementById('f_model').value,
+    color:                document.getElementById('f_color').value,
+    license_plate:        document.getElementById('f_plate').value,
+    plate_state:          document.getElementById('f_plate_state').value,
+    usdot:                document.getElementById('f_usdot').value,
+    fleet_number:         '',
+    status:               document.getElementById('f_status').value,
+    purchase_date:        document.getElementById('f_purchase_date').value,
+    purchase_price:       document.getElementById('f_purchase_price').value,
+    current_value:        document.getElementById('f_current_value').value,
+    monthly_depreciation: '',
+    mileage:              document.getElementById('f_mileage').value,
+    insurance_policy:     document.getElementById('f_ins_policy').value,
+    insurance_carrier:    document.getElementById('f_ins_carrier').value,
+    insurance_expiry:     document.getElementById('f_ins_expiry').value,
+    insurance_coverage:   '',
+    registration_expiry:  document.getElementById('f_reg_expiry').value,
+    registration_state:   document.getElementById('f_reg_state').value,
+    notes:                document.getElementById('f_notes').value,
+  };
+  data.push(unit);
+  saveEquipment(data);
+  closeAddModal();
+  renderGrid();
+}
+
+// ── Keyboard shortcut ──
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeDetail();
+});
+
+// ── Init ──
+seedIfEmpty();
+renderGrid();
 </script>
 </body>
 </html>

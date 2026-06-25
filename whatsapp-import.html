@@ -76,6 +76,30 @@
   .tag-new{background:#1a3a1a;color:var(--green);padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;margin-left:4px}
   .tag-dup{background:#3a2a00;color:var(--yellow);padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;margin-left:4px}
 </style>
+
+<style id="nexus-responsive-fix">
+*{box-sizing:border-box;}
+body{overflow-x:hidden;}
+@media(max-width:768px){
+  .sidebar{display:none!important;}
+  .main,.content-area,.page-content,.content{margin-left:0!important;padding:12px!important;}
+  .topbar,.top-bar{padding:8px 12px!important;}
+  table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .kpi-row,.kpi-grid,.stat-row{grid-template-columns:1fr 1fr!important;gap:8px!important;}
+  .panels-row,.panel-grid{grid-template-columns:1fr!important;}
+  input,select,textarea{font-size:16px!important;min-height:44px!important;}
+  button,.btn{min-height:44px!important;font-size:14px!important;}
+  h1{font-size:20px!important;}
+  h2{font-size:16px!important;}
+  .modal-content,.modal-body{width:95vw!important;max-width:95vw!important;margin:10px auto!important;}
+  .form-grid,.field-row{grid-template-columns:1fr!important;}
+}
+@media(max-width:480px){
+  .kpi-row,.kpi-grid,.stat-row{grid-template-columns:1fr!important;}
+  .topbar-actions,.header-actions{gap:6px!important;}
+  .btn-sm{padding:6px 10px!important;font-size:13px!important;}
+}
+</style>
 </head>
 <body>
 <div id="nexus-sidebar"></div>

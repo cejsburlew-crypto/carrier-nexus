@@ -299,6 +299,23 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
 <!-- v20260614-sett1 -->
+
+  <style>
+  /* ── RESPONSIVE LAYOUT ── */
+  @media (max-width: 900px) {
+    .main, body { margin-left: 0 !important; padding-top: 56px !important; }
+  }
+  @media (max-width: 768px) {
+    .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .table-wrap, .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-max-width: min(90vw, 640px); }
+  }
+  @media (max-width: 480px) {
+    body { font-size: 14px; }
+    .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: 1fr !important; }
+    .small-text, .meta { font-size: 12px !important; }
+  }
+  </style>
 </head>
 <body>
 
@@ -980,7 +997,7 @@ function emailSettlement(){
 <!-- Mobile Bottom Nav -->
 <nav class="mobile-nav" role="navigation" aria-label="Mobile navigation">
 
-  <a href="fleet-command.html" class="mobile-nav-tab" aria-label="DASH">
+  <a href="index.html" class="mobile-nav-tab" aria-label="DASH">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
     DASH
   </a>

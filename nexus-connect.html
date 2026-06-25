@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus Connect — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+
+<script src="nexus-search.js" defer></script>
+<script src="nexus-core.js" defer></script>
+<style>
+:root {
+  --bg: #0f1117;
+  --card: #1a1d27;
+  --card2: #1e2130;
+  --border: #2a2d3e;
+  --accent: #6c63ff;
+  --accent-dim: rgba(108,99,255,0.15);
+  --pink: #e91e8c;
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.15);
+  --red: #ef4444;
+  --yellow: #fbbf24;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --text3: #4b5563;
+  --white: #ffffff;
+  --muted: #6b7280;
+  --unread-bg: #1f2437;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  display: flex;
+  min-height: 100vh;
+}
+.main-content {
+  margin-left: 220px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Top Bar ── */
+.topbar {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.page-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  color: var(--white);
+}
+.search-input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'Barlow', sans-serif;
+  width: 260px;
+  transition: border-color .15s;
+}
+.search-input:focus { outline: none; border-color: var(--accent); }
+.search-input::placeholder { color: var(--text3); }
+
+/* ── KPI Strip ── */
+.kpi-strip {
+  display: flex;
+  gap: 16px;
+  padding: 16px 24px;
+  flex-shrink: 0;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.kpi-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.kpi-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text2);
+  font-family: 'JetBrains Mono', monospace;
+}
+.kpi-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--green);
+  line-height: 1;
+}
+
+/* ── Inbox Layout ── */
+.inbox-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Channel Panel ── */
+.channel-panel {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.channel-panel-header {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.channel-panel-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text2);
+  font-family: 'JetBrains Mono', monospace;
+}
+.compose-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Barlow', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background .15s;
+}
+.compose-btn:hover { background: #5a52e0; }
+.channel-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+.channel-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background .12s;
+  user-select: none;
+  border-left: 3px solid transparent;
+}
+.channel-item:hover { background: rgba(108,99,255,0.08); }
+.channel-item.active {
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+}
+.channel-icon { font-size: 16px; width: 22px; text-align: center; flex-shrink: 0; }
+.channel-name {
+  font-size: 13px;
+  color: var(--text);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.channel-badge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 1px 7px;
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+.channel-badge.live { background: var(--green); }
+.channel-badge.stub {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: .04em;
+}
+.channel-badge.active-badge {
+  background: rgba(34,197,94,.15);
+  color: var(--green);
+  border: 1px solid rgba(34,197,94,.3);
+}
+
+/* ── Message Panel ── */
+.message-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+.message-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.message-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .12s;
+  position: relative;
+}
+.message-item:hover { background: rgba(255,255,255,.025); }
+.message-item.unread { background: var(--unread-bg); }
+.message-item.unread:hover { background: rgba(31,36,55,.8); }
+.unread-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+.unread-dot.hidden { visibility: hidden; }
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  flex-shrink: 0;
+  color: #fff;
+}
+.msg-body { flex: 1; min-width: 0; }
+.msg-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+.msg-sender {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+.message-item.unread .msg-sender { color: var(--white); }
+.msg-time {
+  font-size: 11px;
+  color: var(--text2);
+  white-space: nowrap;
+  font-family: 'JetBrains Mono', monospace;
+}
+.msg-subject {
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.message-item.unread .msg-subject {
+  color: var(--text);
+  font-weight: 600;
+}
+.msg-snippet {
+  font-size: 12px;
+  color: var(--text3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Thread View ── */
+.thread-view {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+.thread-view.open { display: flex; }
+.thread-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--text2);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  transition: color .12s;
+}
+.back-btn:hover { color: var(--text); }
+.thread-subject {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.thread-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.thread-msg {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.thread-msg-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,.02);
+}
+.thread-msg-sender { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+.thread-msg-time { font-size: 11px; color: var(--text2); font-family: 'JetBrains Mono', monospace; }
+.thread-msg-body {
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text2);
+  max-height: 300px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.thread-msg-body iframe {
+  width: 100%;
+  border: none;
+  background: #fff;
+  border-radius: 4px;
+}
+
+/* ── Welcome / Empty States ── */
+.welcome-card {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  color: var(--muted);
+  padding: 40px;
+  text-align: center;
+}
+.welcome-icon { font-size: 48px; margin-bottom: 8px; opacity: .5; }
+.welcome-title { font-size: 18px; font-weight: 600; color: var(--text2); }
+.welcome-sub { font-size: 14px; color: var(--muted); max-width: 360px; }
+
+/* ── Stub Channel Panel ── */
+.stub-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 40px 32px;
+  gap: 20px;
+}
+.stub-icon { font-size: 56px; }
+.stub-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  color: var(--text);
+}
+.stub-meta {
+  font-size: 13px;
+  color: var(--text2);
+  text-align: center;
+  max-width: 360px;
+  line-height: 1.6;
+}
+.stub-status {
+  background: rgba(251,191,36,.12);
+  border: 1px solid rgba(251,191,36,.3);
+  color: var(--yellow);
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+}
+.stub-connect-btn {
+  background: var(--border);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 9px 22px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: not-allowed;
+  opacity: .6;
+  font-family: 'Barlow', sans-serif;
+}
+.stub-skeletons { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.skel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.skel-circle { width: 36px; height: 36px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+.skel-lines { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.skel-line {
+  height: 10px;
+  border-radius: 4px;
+  background: var(--border);
+}
+.skel-line.short { width: 55%; }
+.skel-line.xshort { width: 35%; }
+
+/* ── Gmail connect state ── */
+.gmail-connect-card {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
+  padding: 40px;
+  text-align: center;
+}
+.connect-icon { font-size: 48px; opacity: .7; }
+.connect-title { font-size: 18px; font-weight: 700; color: var(--text); }
+.connect-desc { font-size: 13px; color: var(--text2); max-width: 360px; line-height: 1.6; }
+.connect-btn-real {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Barlow', sans-serif;
+  transition: background .15s;
+}
+.connect-btn-real:hover { background: #5a52e0; }
+
+/* ── Compose Modal ── */
+.moverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.moverlay.hidden { display: none; }
+.mbox {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  width: min(540px, 96vw);
+  box-shadow: 0 24px 80px rgba(0,0,0,.6);
+  overflow: hidden;
+}
+.mhdr {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mtitle {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+.mclose {
+  background: rgba(255,255,255,.07);
+  border: none;
+  color: var(--text);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mclose:hover { background: rgba(255,255,255,.14); }
+.mbody { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.mfield { display: flex; flex-direction: column; gap: 5px; }
+.mfield label { font-size: 11px; color: var(--text2); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.mfield select,
+.mfield input,
+.mfield textarea {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 9px 12px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-family: 'Barlow', sans-serif;
+  width: 100%;
+  transition: border-color .15s;
+}
+.mfield select:focus,
+.mfield input:focus,
+.mfield textarea:focus { outline: none; border-color: var(--accent); }
+.mfield textarea { min-height: 120px; resize: vertical; }
+.mfooter {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 7px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all .15s;
+}
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover { background: #5a52e0; }
+.btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+.btn-ghost:hover { color: var(--text); border-color: var(--text3); }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── Mobile ── */
+@media (max-width: 700px) {
+  .main-content { margin-left: 0; }
+  .kpi-strip { flex-wrap: wrap; gap: 10px; padding: 12px 16px; }
+  .channel-panel { width: 220px; }
+  .search-input { width: 180px; }
+}
+@media (max-width: 540px) {
+  .inbox-body { flex-direction: column; }
+  .channel-panel { width: 100%; height: auto; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  .channel-item { padding: 10px 12px; flex-direction: column; align-items: center; gap: 4px; min-width: 70px; }
+  .channel-name { font-size: 10px; }
+}
+</style>
+</head>
+<body>
+<script src="nexus-config.js?v=6"></script>
+<script src="nexus-sidebar.js?v=6"></script>
+<div class="main-content">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title">Nexus Connect</div>
+      <input type="text" class="search-input" id="searchInput" placeholder="Search messages…" oninput="handleSearch(this.value)">
+    </div>
+  </div>
+
+  <!-- KPI Strip -->
+  <div class="kpi-strip">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Unread</div>
+      <div class="kpi-value" id="kpiTotal">0</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Gmail Unread</div>
+      <div class="kpi-value" id="kpiGmail">0</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Internal Unread</div>
+      <div class="kpi-value" id="kpiInternal">0</div>
+    </div>
+  </div>
+
+  <!-- Inbox Body -->
+  <div class="inbox-body">
+
+    <!-- Channel Panel -->
+    <div class="channel-panel">
+      <div class="channel-panel-header">
+        <span class="channel-panel-title">Channels</span>
+        <button class="compose-btn" onclick="openCompose()">
+          <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12"><path d="M12 1l3 3-9 9H3v-3L12 1z"/></svg>
+          Compose
+        </button>
+      </div>
+
+      <div class="channel-item active" data-channel="all" onclick="selectChannel('all', this)">
+        <span class="channel-icon">
+          <svg viewBox="0 0 16 16" fill="currentColor" width="16" height="16"><path d="M1 2h14v2H1zm0 4h14v2H1zm0 4h6v4H1zm8 0h6v4H9z"/></svg>
+        </span>
+        <span class="channel-name">All Messages</span>
+        <span class="channel-badge" id="badgeAll">0</span>
+      </div>
+
+      <div class="channel-divider"></div>
+
+      <div class="channel-item" data-channel="gmail" onclick="selectChannel('gmail', this)">
+        <span class="channel-icon">✉</span>
+        <span class="channel-name">Gmail</span>
+        <span class="channel-badge live" id="badgeGmail">0</span>
+      </div>
+
+      <div class="channel-item" data-channel="internal" onclick="selectChannel('internal', this)">
+        <span class="channel-icon">📢</span>
+        <span class="channel-name">Internal</span>
+        <span class="channel-badge active-badge">ACTIVE</span>
+      </div>
+
+      <div class="channel-divider"></div>
+
+      <div class="channel-item" data-channel="whatsapp" onclick="selectChannel('whatsapp', this)">
+        <span class="channel-icon">💬</span>
+        <span class="channel-name">WhatsApp</span>
+        <span class="channel-badge stub">Connect</span>
+      </div>
+
+      <div class="channel-item" data-channel="facebook" onclick="selectChannel('facebook', this)">
+        <span class="channel-icon">📘</span>
+        <span class="channel-name">Facebook</span>
+        <span class="channel-badge stub">Connect</span>
+      </div>
+
+      <div class="channel-item" data-channel="instagram" onclick="selectChannel('instagram', this)">
+        <span class="channel-icon">📸</span>
+        <span class="channel-name">Instagram</span>
+        <span class="channel-badge stub">Connect</span>
+      </div>
+
+      <div class="channel-item" data-channel="linkedin" onclick="selectChannel('linkedin', this)">
+        <span class="channel-icon">💼</span>
+        <span class="channel-name">LinkedIn</span>
+        <span class="channel-badge stub">Connect</span>
+      </div>
+
+      <div class="channel-item" data-channel="tiktok" onclick="selectChannel('tiktok', this)">
+        <span class="channel-icon">🎵</span>
+        <span class="channel-name">TikTok</span>
+        <span class="channel-badge stub">Connect</span>
+      </div>
+
+    </div><!-- /channel-panel -->
+
+    <!-- Message Panel -->
+    <div class="message-panel" id="messagePanel">
+
+      <!-- Welcome state (default) -->
+      <div class="welcome-card" id="welcomeState">
+        <div class="welcome-icon">📬</div>
+        <div class="welcome-title">Select a channel to view messages</div>
+        <div class="welcome-sub">Your unified inbox brings Gmail, internal messages, and social channels into one place.</div>
+      </div>
+
+      <!-- Message list view -->
+      <div class="message-list" id="messageList" style="display:none;"></div>
+
+      <!-- Thread view (slides in) -->
+      <div class="thread-view" id="threadView">
+        <div class="thread-header">
+          <button class="back-btn" onclick="closeThread()">
+            <svg viewBox="0 0 16 16" fill="currentColor" width="16" height="16"><path d="M10 3l-5 5 5 5V3z"/></svg>
+          </button>
+          <span class="thread-subject" id="threadSubject"></span>
+        </div>
+        <div class="thread-messages" id="threadMessages"></div>
+      </div>
+
+      <!-- Gmail connect card -->
+      <div class="gmail-connect-card" id="gmailConnectCard" style="display:none;">
+        <div class="connect-icon">✉️</div>
+        <div class="connect-title">Connect Gmail</div>
+        <div class="connect-desc">
+          Google OAuth is required to read your Gmail inbox. Sign in via
+          <a href="inbox-sync.html" style="color:var(--accent);">Email Import</a> first
+          to authorize access, then return here.
+        </div>
+        <a href="inbox-sync.html" class="connect-btn-real">Go to Email Import →</a>
+      </div>
+
+      <!-- Stub channel panel -->
+      <div id="stubPanel" style="display:none; flex:1; overflow-y:auto;">
+        <div class="stub-panel">
+          <div class="stub-icon" id="stubIcon"></div>
+          <div class="stub-title" id="stubTitle"></div>
+          <div class="stub-meta">What will sync: DMs, comments, and mentions will appear here once connected.</div>
+          <div class="stub-status">Status: Pending API Approval</div>
+          <button class="stub-connect-btn" disabled id="stubConnectBtn">Connect</button>
+          <div class="stub-skeletons">
+            <div class="skel"><div class="skel-circle"></div><div class="skel-lines"><div class="skel-line"></div><div class="skel-line short"></div></div></div>
+            <div class="skel"><div class="skel-circle"></div><div class="skel-lines"><div class="skel-line short"></div><div class="skel-line"></div></div></div>
+            <div class="skel"><div class="skel-circle"></div><div class="skel-lines"><div class="skel-line xshort"></div><div class="skel-line"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /message-panel -->
+  </div><!-- /inbox-body -->
+</div><!-- /main-content -->
+
+<!-- Compose Modal -->
+<div class="moverlay hidden" id="composeModal">
+  <div class="mbox">
+    <div class="mhdr">
+      <span class="mtitle">New Message</span>
+      <button class="mclose" onclick="closeCompose()">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="mfield">
+        <label>To</label>
+        <select id="composeTo"></select>
+      </div>
+      <div class="mfield">
+        <label>Subject</label>
+        <input type="text" id="composeSubject" placeholder="Enter subject…">
+      </div>
+      <div class="mfield">
+        <label>Message</label>
+        <textarea id="composeBody" placeholder="Write your message…"></textarea>
+      </div>
+    </div>
+    <div class="mfooter">
+      <button class="btn btn-ghost" onclick="closeCompose()">Cancel</button>
+      <button class="btn btn-accent" onclick="sendMessage()">Send Message</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+var _currentChannel = 'all';
+var _gmailThreads   = [];
+var _internalMsgs   = [];
+var _searchQuery    = '';
+var _gmailToken     = null;
+
+window._gmailThreads = _gmailThreads;
+
+// ── Init ───────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+  loadInternalMessages();
+  detectGmailToken();
+  updateKPIs();
+  selectChannel('all', document.querySelector('[data-channel="all"]'));
+  populateComposeTo();
+});
+
+// ── Token detection ────────────────────────────────────────────────────────
+function detectGmailToken() {
+  var candidates = ['nexus_google_token', 'gapi_access_token'];
+  // Also scan all localStorage keys for anything containing 'google_token'
+  try {
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf('google_token') > -1 && candidates.indexOf(k) === -1) {
+        candidates.push(k);
+      }
+    }
+  } catch (e) {}
+
+  for (var j = 0; j < candidates.length; j++) {
+    var val = localStorage.getItem(candidates[j]);
+    if (val) {
+      try {
+        var parsed = JSON.parse(val);
+        _gmailToken = parsed.access_token || parsed.token || parsed;
+      } catch (e) {
+        _gmailToken = val;
+      }
+      if (_gmailToken && typeof _gmailToken === 'string' && _gmailToken.length > 10) break;
+    }
+  }
+}
+
+// ── Load Gmail threads ─────────────────────────────────────────────────────
+function loadGmailThreads(token) {
+  return fetch('https://gmail.googleapis.com/gmail/v1/users/me/threads?q=is:unread&maxResults=50', {
+    headers: { Authorization: 'Bearer ' + token }
+  })
+  .then(function (r) { return r.json(); })
+  .then(function (data) {
+    if (!data.threads || !data.threads.length) return;
+    var ids = data.threads.map(function (t) { return t.id; });
+    return Promise.all(ids.map(function (id) {
+      return fetch('https://gmail.googleapis.com/gmail/v1/users/me/threads/' + id + '?format=metadata&metadataHeaders=From&metadataHeaders=Subject', {
+        headers: { Authorization: 'Bearer ' + token }
+      }).then(function (r) { return r.json(); });
+    }));
+  })
+  .then(function (threads) {
+    if (!threads) return;
+    _gmailThreads = threads.filter(Boolean).map(function (t) {
+      var msg = (t.messages && t.messages[t.messages.length - 1]) || {};
+      var hdrs = (msg.payload && msg.payload.headers) || [];
+      function hdr(n) {
+        var h = hdrs.find(function (h) { return h.name.toLowerCase() === n.toLowerCase(); });
+        return h ? h.value : '';
+      }
+      var from = hdr('From');
+      var nameMatch = from.match(/^"?([^"<]+)"?\s*</);
+      var emailMatch = from.match(/<([^>]+)>/) || from.match(/(\S+@\S+)/);
+      return {
+        id: t.id,
+        from: nameMatch ? nameMatch[1].trim() : (emailMatch ? emailMatch[1] : from),
+        fromEmail: emailMatch ? emailMatch[1] : from,
+        subject: hdr('Subject') || '(no subject)',
+        snippet: t.snippet || '',
+        internalDate: parseInt(msg.internalDate || '0', 10),
+        unread: true,
+        source: 'gmail'
+      };
+    });
+    window._gmailThreads = _gmailThreads;
+    updateKPIs();
+    if (_currentChannel === 'gmail' || _currentChannel === 'all') {
+      renderMessageList();
+    }
+  })
+  .catch(function (err) {
+    console.warn('[NexusConnect] Gmail fetch error:', err);
+  });
+}
+
+// ── Load internal messages ─────────────────────────────────────────────────
+function loadInternalMessages() {
+  try {
+    _internalMsgs = JSON.parse(localStorage.getItem('nexus_messages') || '[]');
+  } catch (e) {
+    _internalMsgs = [];
+  }
+}
+
+function saveInternalMessages() {
+  try { localStorage.setItem('nexus_messages', JSON.stringify(_internalMsgs)); } catch (e) {}
+}
+
+// ── KPI ────────────────────────────────────────────────────────────────────
+function updateKPIs() {
+  var gmailUnread  = _gmailThreads.filter(function (t) { return t.unread; }).length;
+  var intUnread    = _internalMsgs.filter(function (m) { return !m.read; }).length;
+  var total        = gmailUnread + intUnread;
+  document.getElementById('kpiTotal').textContent    = total;
+  document.getElementById('kpiGmail').textContent    = gmailUnread;
+  document.getElementById('kpiInternal').textContent = intUnread;
+  document.getElementById('badgeAll').textContent    = total;
+  document.getElementById('badgeGmail').textContent  = gmailUnread;
+}
+
+// ── Channel selection ──────────────────────────────────────────────────────
+var STUB_CHANNELS = {
+  whatsapp:  { icon: '💬', name: 'WhatsApp'  },
+  facebook:  { icon: '📘', name: 'Facebook'  },
+  instagram: { icon: '📸', name: 'Instagram' },
+  linkedin:  { icon: '💼', name: 'LinkedIn'  },
+  tiktok:    { icon: '🎵', name: 'TikTok'    },
+};
+
+function selectChannel(channel, el) {
+  _currentChannel = channel;
+  _searchQuery    = '';
+  document.getElementById('searchInput').value = '';
+
+  // Update active state on channel items
+  document.querySelectorAll('.channel-item').forEach(function (item) {
+    item.classList.remove('active');
+  });
+  if (el) el.classList.add('active');
+
+  // Hide all panel states
+  document.getElementById('welcomeState').style.display    = 'none';
+  document.getElementById('messageList').style.display     = 'none';
+  document.getElementById('threadView').classList.remove('open');
+  document.getElementById('gmailConnectCard').style.display = 'none';
+  document.getElementById('stubPanel').style.display       = 'none';
+
+  if (STUB_CHANNELS[channel]) {
+    showStubPanel(channel);
+    return;
+  }
+
+  if (channel === 'gmail') {
+    if (!_gmailToken) {
+      document.getElementById('gmailConnectCard').style.display = 'flex';
+      loadGmailThreads && detectGmailToken();
+      if (!_gmailToken) return;
+    }
+    if (_gmailThreads.length === 0 && _gmailToken) {
+      loadGmailThreads(_gmailToken);
+    }
+  }
+
+  document.getElementById('messageList').style.display = 'block';
+  renderMessageList();
+}
+
+// ── Stub panel ─────────────────────────────────────────────────────────────
+function showStubPanel(channel) {
+  var info = STUB_CHANNELS[channel];
+  document.getElementById('stubIcon').textContent = info.icon;
+  document.getElementById('stubTitle').textContent = info.name;
+  document.getElementById('stubConnectBtn').textContent = 'Connect ' + info.name;
+  document.getElementById('stubPanel').style.display = 'block';
+}
+
+// ── Message list rendering ─────────────────────────────────────────────────
+function getVisibleMessages() {
+  var msgs = [];
+  if (_currentChannel === 'gmail' || _currentChannel === 'all') {
+    msgs = msgs.concat(_gmailThreads.map(function (t) {
+      return { id: t.id, from: t.from, fromEmail: t.fromEmail, subject: t.subject,
+               snippet: t.snippet, ts: t.internalDate, unread: t.unread, source: 'gmail' };
+    }));
+  }
+  if (_currentChannel === 'internal' || _currentChannel === 'all') {
+    msgs = msgs.concat(_internalMsgs.map(function (m) {
+      return { id: m.id, from: m.from, fromEmail: '', subject: m.subject,
+               snippet: m.body ? m.body.substring(0, 120) : '', ts: m.timestamp || 0,
+               unread: !m.read, source: 'internal' };
+    }));
+  }
+
+  // Apply search filter
+  if (_searchQuery) {
+    var q = _searchQuery.toLowerCase();
+    msgs = msgs.filter(function (m) {
+      return (m.from || '').toLowerCase().indexOf(q) > -1 ||
+             (m.subject || '').toLowerCase().indexOf(q) > -1 ||
+             (m.snippet || '').toLowerCase().indexOf(q) > -1;
+    });
+  }
+
+  // Sort newest first
+  msgs.sort(function (a, b) { return b.ts - a.ts; });
+  return msgs;
+}
+
+function avatarColor(name) {
+  var colors = ['#6c63ff','#e91e8c','#22c55e','#f97316','#3b82f6','#a855f7','#06b6d4','#ef4444'];
+  var idx = ((name || ' ').charCodeAt(0) - 65) % colors.length;
+  return colors[Math.max(0, idx)];
+}
+
+function formatTime(ts) {
+  if (!ts) return '';
+  var d = new Date(ts);
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var msgDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  if (msgDay.getTime() === today.getTime()) {
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+  return d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+}
+
+function renderMessageList() {
+  var list = document.getElementById('messageList');
+  var msgs = getVisibleMessages();
+
+  if (msgs.length === 0) {
+    list.innerHTML = '<div style="padding:48px 28px;text-align:center;color:var(--muted);font-size:14px;">' +
+      (_currentChannel === 'gmail' && _gmailToken ? 'Loading Gmail messages…' : 'No messages to show.') +
+      '</div>';
+    return;
+  }
+
+  list.innerHTML = msgs.map(function (m) {
+    var initial = (m.from || '?').charAt(0).toUpperCase();
+    var snippet = (m.snippet || '').substring(0, 80) + ((m.snippet || '').length > 80 ? '…' : '');
+    var unreadCls = m.unread ? ' unread' : '';
+    return '<div class="message-item' + unreadCls + '" onclick="openMessage(\'' + m.source + '\',\'' + esc(m.id) + '\')">' +
+      '<div class="unread-dot' + (m.unread ? '' : ' hidden') + '"></div>' +
+      '<div class="avatar" style="background:' + avatarColor(m.from) + '">' + initial + '</div>' +
+      '<div class="msg-body">' +
+        '<div class="msg-top">' +
+          '<span class="msg-sender">' + esc(m.from) + '</span>' +
+          '<span class="msg-time">' + formatTime(m.ts) + '</span>' +
+        '</div>' +
+        '<div class="msg-subject">' + esc(m.subject) + '</div>' +
+        '<div class="msg-snippet">' + esc(snippet) + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function esc(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ── Open message / thread ──────────────────────────────────────────────────
+function openMessage(source, id) {
+  if (source === 'gmail') {
+    openGmailThread(id);
+  } else {
+    openInternalMessage(id);
+  }
+}
+
+function openGmailThread(id) {
+  var thread = _gmailThreads.find(function (t) { return t.id === id; });
+  if (!thread) return;
+
+  document.getElementById('messageList').style.display = 'none';
+  var tv = document.getElementById('threadView');
+  tv.classList.add('open');
+  document.getElementById('threadSubject').textContent = thread.subject;
+  var container = document.getElementById('threadMessages');
+  container.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:10px;">Loading…</div>';
+
+  if (!_gmailToken) return;
+  fetch('https://gmail.googleapis.com/gmail/v1/users/me/threads/' + id + '?format=full', {
+    headers: { Authorization: 'Bearer ' + _gmailToken }
+  })
+  .then(function (r) { return r.json(); })
+  .then(function (data) {
+    var msgs = data.messages || [];
+    container.innerHTML = msgs.map(function (msg) {
+      var hdrs = (msg.payload && msg.payload.headers) || [];
+      function hdr(n) {
+        var h = hdrs.find(function (h) { return h.name.toLowerCase() === n; });
+        return h ? h.value : '';
+      }
+      var from = hdr('from');
+      var date = hdr('date');
+      var body = extractBody(msg.payload);
+      return '<div class="thread-msg">' +
+        '<div class="thread-msg-header">' +
+          '<div class="avatar" style="background:' + avatarColor(from) + ';width:28px;height:28px;font-size:12px;">' + (from.charAt(0) || '?').toUpperCase() + '</div>' +
+          '<span class="thread-msg-sender">' + esc(from) + '</span>' +
+          '<span class="thread-msg-time">' + esc(date) + '</span>' +
+        '</div>' +
+        '<div class="thread-msg-body">' + sanitizeBody(body) + '</div>' +
+      '</div>';
+    }).join('');
+    // Mark as read in local state
+    var t = _gmailThreads.find(function (x) { return x.id === id; });
+    if (t) { t.unread = false; updateKPIs(); }
+  })
+  .catch(function () {
+    container.innerHTML = '<div style="color:var(--red);font-size:13px;padding:10px;">Failed to load thread.</div>';
+  });
+}
+
+function extractBody(payload) {
+  if (!payload) return '';
+  if (payload.body && payload.body.data) {
+    return atob(payload.body.data.replace(/-/g, '+').replace(/_/g, '/'));
+  }
+  if (payload.parts) {
+    for (var i = 0; i < payload.parts.length; i++) {
+      var part = payload.parts[i];
+      if (part.mimeType === 'text/html' && part.body && part.body.data) {
+        return atob(part.body.data.replace(/-/g, '+').replace(/_/g, '/'));
+      }
+    }
+    for (var j = 0; j < payload.parts.length; j++) {
+      var p2 = payload.parts[j];
+      if (p2.mimeType === 'text/plain' && p2.body && p2.body.data) {
+        return atob(p2.body.data.replace(/-/g, '+').replace(/_/g, '/'));
+      }
+    }
+  }
+  return '';
+}
+
+function sanitizeBody(html) {
+  // Strip scripts, return safe HTML or plain text fallback
+  var cleaned = html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '');
+  // If it's HTML, wrap in iframe-like div; otherwise show pre-formatted text
+  if (/<[a-z]/i.test(cleaned)) {
+    return '<div style="font-size:13px;line-height:1.6;color:var(--text2);">' + cleaned + '</div>';
+  }
+  return cleaned;
+}
+
+function openInternalMessage(id) {
+  var msg = _internalMsgs.find(function (m) { return m.id === id; });
+  if (!msg) return;
+
+  // Mark as read
+  msg.read = true;
+  saveInternalMessages();
+  updateKPIs();
+
+  document.getElementById('messageList').style.display = 'none';
+  var tv = document.getElementById('threadView');
+  tv.classList.add('open');
+  document.getElementById('threadSubject').textContent = msg.subject || '(no subject)';
+  document.getElementById('threadMessages').innerHTML =
+    '<div class="thread-msg">' +
+      '<div class="thread-msg-header">' +
+        '<div class="avatar" style="background:' + avatarColor(msg.from) + ';width:28px;height:28px;font-size:12px;">' + (msg.from || '?').charAt(0).toUpperCase() + '</div>' +
+        '<span class="thread-msg-sender">' + esc(msg.from) + '</span>' +
+        '<span class="thread-msg-time">' + formatTime(msg.timestamp) + '</span>' +
+      '</div>' +
+      '<div class="thread-msg-body">' + esc(msg.body || '') + '</div>' +
+    '</div>';
+}
+
+function closeThread() {
+  document.getElementById('threadView').classList.remove('open');
+  document.getElementById('messageList').style.display = 'block';
+  renderMessageList();
+}
+
+// ── Compose ────────────────────────────────────────────────────────────────
+function populateComposeTo() {
+  var sel = document.getElementById('composeTo');
+  var users = [];
+  try {
+    if (window.NexusCore && window.NexusCore.Drivers) {
+      users = window.NexusCore.Drivers.getAll();
+    } else {
+      users = JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS') || '[]');
+    }
+  } catch (e) {}
+  sel.innerHTML = '<option value="">Select recipient…</option>' +
+    users.filter(function (u) { return u && u.email; }).map(function (u) {
+      return '<option value="' + esc(u.email) + '">' + esc(u.name || u.email) + ' &lt;' + esc(u.email) + '&gt;</option>';
+    }).join('');
+}
+
+function openCompose() {
+  populateComposeTo();
+  document.getElementById('composeModal').classList.remove('hidden');
+}
+
+function closeCompose() {
+  document.getElementById('composeModal').classList.add('hidden');
+  document.getElementById('composeTo').value    = '';
+  document.getElementById('composeSubject').value = '';
+  document.getElementById('composeBody').value    = '';
+}
+
+function sendMessage() {
+  var to      = document.getElementById('composeTo').value;
+  var subject = document.getElementById('composeSubject').value.trim();
+  var body    = document.getElementById('composeBody').value.trim();
+
+  if (!to)      { alert('Please select a recipient.'); return; }
+  if (!subject) { alert('Please enter a subject.'); return; }
+  if (!body)    { alert('Please enter a message.'); return; }
+
+  var newMsg = {
+    id:        (window.NexusCore ? window.NexusCore.generateId() : generateFallbackId()),
+    from:      'Jim Burlew',
+    to:        to,
+    subject:   subject,
+    body:      body,
+    timestamp: Date.now(),
+    read:      false,
+    thread_id: null,
+    source:    'internal'
+  };
+
+  _internalMsgs.unshift(newMsg);
+  saveInternalMessages();
+  updateKPIs();
+  closeCompose();
+
+  if (_currentChannel === 'internal' || _currentChannel === 'all') {
+    renderMessageList();
+  }
+}
+
+function generateFallbackId() {
+  return 'msg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+}
+
+// ── Search ─────────────────────────────────────────────────────────────────
+function handleSearch(val) {
+  _searchQuery = val.trim();
+  if (_currentChannel !== 'all' && _currentChannel !== 'gmail' && _currentChannel !== 'internal') return;
+  document.getElementById('messageList').style.display = 'block';
+  document.getElementById('threadView').classList.remove('open');
+  renderMessageList();
+}
+
+// ── Initial Gmail load (deferred until after sidebar loads) ────────────────
+window.addEventListener('load', function () {
+  detectGmailToken();
+  if (_gmailToken) {
+    loadGmailThreads(_gmailToken);
+  }
+  updateKPIs();
+});
+</script>
+</body>
+</html>

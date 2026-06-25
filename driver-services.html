@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Driver Services — Carrier Nexus</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0a;
+      color: #e5e7eb;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+    }
+
+    .main-wrap {
+      margin-left: 220px;
+      padding: 24px;
+      max-width: 1400px;
+    }
+
+    /* PAGE HEADER */
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .page-header p  { color: #9ca3af; font-size: 1rem; }
+
+    /* KPI STRIP */
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .kpi-card {
+      background: #111827;
+      border: 1px solid #21262d;
+      border-radius: 12px;
+      padding: 20px 24px;
+      transition: border-color 0.2s;
+    }
+    .kpi-card:hover { border-color: #e91e8c; }
+    .kpi-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: #6b7280; margin-bottom: 8px; }
+    .kpi-value { font-size: 2rem; font-weight: 700; color: #e91e8c; }
+    .kpi-sub   { font-size: .8rem; color: #9ca3af; margin-top: 4px; }
+
+    /* SECTION HEADINGS */
+    .section-heading {
+      font-size: 1.2rem; font-weight: 600; color: #fff;
+      margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+    }
+    .section-heading .badge {
+      background: #e91e8c22; color: #e91e8c;
+      font-size: .7rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 99px; text-transform: uppercase; letter-spacing: .06em;
+    }
+
+    /* RECENT VENDORS */
+    .recent-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+    .recent-card {
+      background: #111827; border: 1px solid #21262d; border-radius: 12px;
+      padding: 18px 16px; display: flex; flex-direction: column; gap: 8px;
+      transition: border-color .2s, transform .15s;
+    }
+    .recent-card:hover { border-color: #e91e8c; transform: translateY(-2px); }
+    .recent-card.placeholder { opacity: .4; border-style: dashed; }
+    .recent-card .vendor-name { font-weight: 600; font-size: .95rem; color: #fff; }
+    .recent-card .vendor-address { font-size: .78rem; color: #9ca3af; line-height: 1.4; }
+    .cat-badge {
+      display: inline-block; font-size: .68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 99px;
+      background: #e91e8c22; color: #e91e8c; margin-bottom: 2px; width: fit-content;
+    }
+    .btn-call {
+      background: #22c55e; color: #fff; border: none; border-radius: 8px;
+      padding: 10px 12px; font-weight: 700; font-size: .88rem; cursor: pointer;
+      text-decoration: none; display: block; text-align: center; margin-top: auto;
+      transition: background .15s;
+    }
+    .btn-call:hover { background: #16a34a; }
+    .btn-call.disabled { background: #374151; cursor: not-allowed; pointer-events: none; }
+
+    /* CATEGORY GRID */
+    .category-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-bottom: 36px;
+    }
+    .cat-card {
+      background: #111827; border: 1px solid #21262d; border-radius: 14px;
+      padding: 22px 18px; display: flex; flex-direction: column;
+      align-items: center; gap: 8px; text-align: center;
+      transition: border-color .2s, transform .15s, box-shadow .2s;
+    }
+    .cat-card:hover {
+      border-color: #e91e8c; transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(233,30,140,.15);
+    }
+    .cat-icon  { font-size: 2.4rem; line-height: 1; }
+    .cat-name  { font-weight: 700; font-size: 1rem; color: #fff; }
+    .cat-count { font-size: .78rem; color: #6b7280; margin-bottom: 4px; }
+    .cat-actions { display: flex; gap: 6px; width: 100%; margin-top: 6px; }
+    .cat-actions .btn {
+      flex: 1; border: none; border-radius: 7px; padding: 8px 4px;
+      font-size: .72rem; font-weight: 600; cursor: pointer;
+      transition: opacity .15s, background .15s; text-align: center;
+    }
+    .btn-nearby { background: #3b82f6; color: #fff; }
+    .btn-nearby:hover { background: #2563eb; }
+    .btn-best   { background: #e91e8c; color: #fff; }
+    .btn-best:hover   { background: #c2185b; }
+    .btn-best:disabled, .btn-best.disabled { background: #374151; cursor: not-allowed; }
+    .btn-add    { background: #374151; color: #d1d5db; }
+    .btn-add:hover    { background: #4b5563; }
+
+    /* VENDOR TABLE */
+    .vendor-section {
+      background: #111827; border: 1px solid #21262d;
+      border-radius: 14px; padding: 24px; margin-bottom: 40px;
+    }
+    .vendor-controls {
+      display: flex; gap: 12px; align-items: center;
+      margin-bottom: 18px; flex-wrap: wrap;
+    }
+    .vendor-controls select,
+    .vendor-controls input[type="text"] {
+      background: #0a0a0a; border: 1px solid #21262d;
+      color: #e5e7eb; border-radius: 8px;
+      padding: 9px 14px; font-size: .88rem; outline: none;
+      transition: border-color .2s;
+    }
+    .vendor-controls select:focus,
+    .vendor-controls input[type="text"]:focus { border-color: #e91e8c; }
+    .vendor-controls input[type="text"] { flex: 1; min-width: 180px; }
+    .btn-primary {
+      background: #e91e8c; color: #fff; border: none;
+      border-radius: 8px; padding: 9px 18px;
+      font-weight: 700; font-size: .88rem; cursor: pointer;
+      transition: background .15s; margin-left: auto;
+    }
+    .btn-primary:hover { background: #c2185b; }
+    .vendor-table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .87rem; }
+    thead th {
+      text-align: left; padding: 10px 12px; color: #6b7280;
+      font-weight: 600; font-size: .75rem; text-transform: uppercase;
+      letter-spacing: .05em; border-bottom: 1px solid #21262d; white-space: nowrap;
+    }
+    tbody tr { border-bottom: 1px solid #1f2937; transition: background .1s; }
+    tbody tr:hover { background: #1a2234; }
+    tbody td { padding: 12px 12px; vertical-align: middle; color: #e5e7eb; }
+    .stars { color: #f59e0b; letter-spacing: 1px; font-size: .85rem; }
+    .table-actions { display: flex; gap: 6px; flex-wrap: nowrap; }
+    .tbl-btn {
+      border: none; border-radius: 6px; padding: 6px 10px;
+      font-size: .78rem; font-weight: 600; cursor: pointer;
+      transition: opacity .15s; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 3px;
+    }
+    .tbl-btn:hover { opacity: .85; }
+    .tbl-btn-call { background: #22c55e; color: #fff; }
+    .tbl-btn-map  { background: #3b82f6; color: #fff; }
+    .tbl-btn-edit { background: #6b7280; color: #fff; }
+    .tbl-btn-del  { background: #ef4444; color: #fff; }
+    .empty-state { text-align: center; padding: 40px 20px; color: #6b7280; font-size: .95rem; }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.7); z-index: 1000;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #111827; border: 1px solid #21262d;
+      border-radius: 16px; padding: 28px 28px 24px;
+      width: 100%; max-width: 520px;
+      max-height: 90vh; overflow-y: auto; position: relative;
+    }
+    .modal h2 { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 20px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-grid .full { grid-column: 1 / -1; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label {
+      font-size: .78rem; font-weight: 600; color: #9ca3af;
+      text-transform: uppercase; letter-spacing: .05em;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: #0a0a0a; border: 1px solid #21262d;
+      color: #e5e7eb; border-radius: 8px;
+      padding: 9px 12px; font-size: .88rem; outline: none;
+      font-family: inherit; transition: border-color .2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: #e91e8c; }
+    .form-group textarea { resize: vertical; min-height: 70px; }
+
+    /* Star rating selector */
+    .star-selector { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 2px; }
+    .star-selector input[type="radio"] { display: none; }
+    .star-selector label {
+      font-size: 1.6rem; cursor: pointer; color: #374151;
+      transition: color .1s; text-transform: none; letter-spacing: 0;
+    }
+    .star-selector label:hover,
+    .star-selector label:hover ~ label { color: #f59e0b; }
+    .star-selector input[type="radio"]:checked ~ label { color: #f59e0b; }
+
+    .modal-footer { display: flex; gap: 10px; margin-top: 22px; justify-content: flex-end; }
+    .btn-cancel {
+      background: #374151; color: #d1d5db; border: none;
+      border-radius: 8px; padding: 9px 20px;
+      font-weight: 600; font-size: .88rem; cursor: pointer; transition: background .15s;
+    }
+    .btn-cancel:hover { background: #4b5563; }
+
+    /* RESPONSIVE */
+    @media (max-width: 1100px) {
+      .recent-grid    { grid-template-columns: repeat(2, 1fr); }
+      .category-grid  { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .main-wrap { margin-left: 0; padding: 16px; }
+      .kpi-strip { grid-template-columns: 1fr; }
+      .recent-grid   { grid-template-columns: 1fr 1fr; }
+      .category-grid { grid-template-columns: 1fr 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .recent-grid   { grid-template-columns: 1fr; }
+      .category-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="main-wrap">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <h1>&#x1F6E3;&#xFE0F; Driver Services</h1>
+    <p>Find what you need, wherever you are</p>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="kpi-strip">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Vendors Saved</div>
+      <div class="kpi-value" id="kpiTotal">0</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Categories Covered</div>
+      <div class="kpi-value" id="kpiCats">0</div>
+      <div class="kpi-sub">of 9 categories</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Most Used Vendor</div>
+      <div class="kpi-value" id="kpiMostUsed" style="font-size:1.1rem;margin-top:4px;">&#x2014;</div>
+      <div class="kpi-sub" id="kpiMostUsedSub"></div>
+    </div>
+  </div>
+
+  <!-- QUICK DIAL -->
+  <div class="section-heading">
+    &#x1F4DE; Recent Vendors <span class="badge">Quick Dial</span>
+  </div>
+  <div class="recent-grid" id="recentGrid"></div>
+
+  <!-- CATEGORY GRID -->
+  <div class="section-heading" style="margin-top:8px;">
+    &#x1F5C2;&#xFE0F; Service Categories
+  </div>
+  <div class="category-grid" id="categoryGrid"></div>
+
+  <!-- VENDOR TABLE -->
+  <div class="vendor-section">
+    <div class="section-heading" style="margin-bottom:0;">
+      &#x1F4CB; Saved Vendors
+    </div>
+    <div class="vendor-controls" style="margin-top:16px;">
+      <select id="filterCategory">
+        <option value="">All Categories</option>
+        <option>Repair</option>
+        <option>Tire</option>
+        <option>Mechanic</option>
+        <option>Parking</option>
+        <option>Hotel</option>
+        <option>Food</option>
+        <option>Scale</option>
+        <option>Parts</option>
+        <option>Towing</option>
+      </select>
+      <input type="text" id="filterSearch" placeholder="Search vendors&#x2026;" />
+      <button class="btn-primary" onclick="openAddModal('')">+ Add Vendor</button>
+    </div>
+    <div class="vendor-table-wrap">
+      <table id="vendorTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Address</th>
+            <th>Phone</th>
+            <th>Rating</th>
+            <th>Times Used</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="vendorTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /.main-wrap -->
+
+<!-- ADD / EDIT VENDOR MODAL -->
+<div class="modal-overlay" id="vendorModal">
+  <div class="modal">
+    <h2 id="modalTitle">Add Vendor</h2>
+    <input type="hidden" id="editId" />
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Category *</label>
+        <select id="fCategory">
+          <option value="">Select&#x2026;</option>
+          <option>Repair</option>
+          <option>Tire</option>
+          <option>Mechanic</option>
+          <option>Parking</option>
+          <option>Hotel</option>
+          <option>Food</option>
+          <option>Scale</option>
+          <option>Parts</option>
+          <option>Towing</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Driver</label>
+        <select id="fDriver">
+          <option value="All Drivers">All Drivers</option>
+          <option>Guillermo</option>
+          <option>David</option>
+          <option>Avis</option>
+          <option>Miguel</option>
+          <option>Nelson</option>
+          <option>Yosviel</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Vendor Name *</label>
+        <input type="text" id="fName" placeholder="e.g. Joe&#x27;s Truck Repair" />
+      </div>
+      <div class="form-group full">
+        <label>Address *</label>
+        <input type="text" id="fAddress" placeholder="e.g. 123 Main St, Tampa FL" />
+      </div>
+      <div class="form-group">
+        <label>Phone *</label>
+        <input type="tel" id="fPhone" placeholder="555-1234" />
+      </div>
+      <div class="form-group">
+        <label>Rating (1&#x2013;5)</label>
+        <div class="star-selector" id="starSelector">
+          <input type="radio" name="fRating" id="r-5" value="5" />
+          <label for="r-5" title="5 stars">&#x2605;</label>
+          <input type="radio" name="fRating" id="r-4" value="4" />
+          <label for="r-4" title="4 stars">&#x2605;</label>
+          <input type="radio" name="fRating" id="r-3" value="3" checked />
+          <label for="r-3" title="3 stars">&#x2605;</label>
+          <input type="radio" name="fRating" id="r-2" value="2" />
+          <label for="r-2" title="2 stars">&#x2605;</label>
+          <input type="radio" name="fRating" id="r-1" value="1" />
+          <label for="r-1" title="1 star">&#x2605;</label>
+        </div>
+      </div>
+      <div class="form-group full">
+        <label>Notes</label>
+        <textarea id="fNotes" placeholder="24hr mobile, good prices&#x2026;"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveVendor()">Save Vendor</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════
+   CONSTANTS
+════════════════════════════════════════ */
+var LS_KEY = 'nexus_vendors';
+
+var CATEGORIES = [
+  { key:'Repair',   label:'Repair Shop',     icon:'&#x1F527;', mapKw:'truck+repair+shop' },
+  { key:'Tire',     label:'Tire Shop',        icon:'&#x1F6DE;', mapKw:'truck+tire+shop' },
+  { key:'Mechanic', label:'Mobile Mechanic',  icon:'&#x1FA9B;', mapKw:'mobile+truck+mechanic' },
+  { key:'Parking',  label:'Parking',          icon:'&#x1F17F;&#xFE0F;', mapKw:'truck+parking' },
+  { key:'Hotel',    label:'Hotel',            icon:'&#x1F6CF;&#xFE0F;', mapKw:'truck+stop+hotel' },
+  { key:'Food',     label:'Food',             icon:'&#x1F354;', mapKw:'truck+stop+food' },
+  { key:'Scale',    label:'Scale',            icon:'&#x2696;&#xFE0F;', mapKw:'weigh+station+truck+scale' },
+  { key:'Parts',    label:'Parts',            icon:'&#x1F4E6;', mapKw:'truck+parts+store' },
+  { key:'Towing',   label:'Towing',           icon:'&#x1F6A8;', mapKw:'semi+truck+towing' }
+];
+
+var SEED_VENDORS = [
+  { id:'seed-001', category:'Repair',  name:'Speedco Truck Lube & Tire', address:'I-75 Exit 328, Tampa FL', phone:'813-555-0101', rating:4.5, notes:'Fast oil changes, 24hr', driver:'All Drivers', date_added:'2026-01-01', times_used:7 },
+  { id:'seed-002', category:'Parking', name:'Pilot Travel Center',        address:'US-301, Riverview FL',    phone:'813-555-0202', rating:4.0, notes:'Showers, reserved parking', driver:'All Drivers', date_added:'2026-01-01', times_used:12 },
+  { id:'seed-003', category:'Towing',  name:'Big Rig Recovery',           address:'Hwy 60, Tampa FL',        phone:'813-555-0303', rating:4.8, notes:'Heavy tow, fast response', driver:'All Drivers', date_added:'2026-01-01', times_used:2 }
+];
+
+/* ════════════════════════════════════════
+   DATA HELPERS
+════════════════════════════════════════ */
+function loadVendors() {
+  try { var raw = localStorage.getItem(LS_KEY); return raw ? JSON.parse(raw) : null; }
+  catch(e) { return null; }
+}
+function saveVendors(arr) { localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
+function getVendors() {
+  var v = loadVendors();
+  if (!v || v.length === 0) { v = SEED_VENDORS.map(function(s){ return Object.assign({},s); }); saveVendors(v); }
+  return v;
+}
+function genUUID() {
+  if (crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random()*16|0; return (c==='x'?r:(r&0x3|0x8)).toString(16);
+  });
+}
+function todayStr() { return new Date().toISOString().slice(0,10); }
+
+function renderStars(rating) {
+  var r = parseFloat(rating)||0;
+  var full = Math.floor(r);
+  var half = (r - full) >= 0.25 && (r - full) < 0.75;
+  var empty = 5 - full - (half?1:0);
+  if (empty < 0) empty = 0;
+  return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(empty);
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ════════════════════════════════════════
+   RENDER: KPIs
+════════════════════════════════════════ */
+function renderKPIs(vendors) {
+  document.getElementById('kpiTotal').textContent = vendors.length;
+  var cats = {};
+  vendors.forEach(function(v){ cats[v.category]=1; });
+  document.getElementById('kpiCats').textContent = Object.keys(cats).length;
+  if (!vendors.length) { document.getElementById('kpiMostUsed').textContent='—'; document.getElementById('kpiMostUsedSub').textContent=''; return; }
+  var top = vendors.slice().sort(function(a,b){ return (b.times_used||0)-(a.times_used||0); })[0];
+  document.getElementById('kpiMostUsed').textContent = top.name;
+  document.getElementById('kpiMostUsedSub').textContent = (top.times_used||0)+' uses · '+top.category;
+}
+
+/* ════════════════════════════════════════
+   RENDER: RECENT VENDORS
+════════════════════════════════════════ */
+function renderRecent(vendors) {
+  var grid = document.getElementById('recentGrid');
+  var sorted = vendors.slice().sort(function(a,b){ return (b.times_used||0)-(a.times_used||0); }).slice(0,4);
+  var html = '';
+  for (var i=0; i<4; i++) {
+    if (i < sorted.length) {
+      var v = sorted[i];
+      var phone = v.phone ? v.phone.replace(/\D/g,'') : '';
+      html += '<div class="recent-card">'
+        + '<span class="cat-badge">'+esc(v.category)+'</span>'
+        + '<div class="vendor-name">'+esc(v.name)+'</div>'
+        + '<div class="vendor-address">'+esc(v.address)+'</div>'
+        + (phone ? '<a class="btn-call" href="tel:'+phone+'">&#x1F4DE; Call</a>'
+                 : '<span class="btn-call disabled">No Phone</span>')
+        + '</div>';
+    } else {
+      html += '<div class="recent-card placeholder">'
+        + '<span class="cat-badge">&mdash;</span>'
+        + '<div class="vendor-name">No vendor yet</div>'
+        + '<div class="vendor-address">Add a vendor to see it here</div>'
+        + '<span class="btn-call disabled">&#x1F4DE; Call</span>'
+        + '</div>';
+    }
+  }
+  grid.innerHTML = html;
+}
+
+/* ════════════════════════════════════════
+   RENDER: CATEGORY GRID
+════════════════════════════════════════ */
+function renderCategories(vendors) {
+  var grid = document.getElementById('categoryGrid');
+  var html = '';
+  CATEGORIES.forEach(function(cat) {
+    var catVendors = vendors.filter(function(v){ return v.category===cat.key; });
+    var count = catVendors.length;
+    var best = count>0 ? catVendors.slice().sort(function(a,b){ return (b.rating||0)-(a.rating||0); })[0] : null;
+    var bestPhone = best ? best.phone.replace(/\D/g,'') : '';
+    var bestDis = best ? '' : 'disabled';
+    var bestTitle = best ? esc(best.name) : 'No vendors saved';
+    html += '<div class="cat-card">'
+      + '<div class="cat-icon">'+cat.icon+'</div>'
+      + '<div class="cat-name">'+cat.label+'</div>'
+      + '<div class="cat-count">'+count+' vendor'+(count!==1?'s':'')+' saved</div>'
+      + '<div class="cat-actions">'
+      + '<button class="btn btn-nearby" onclick="findNearby(\''+cat.mapKw+'\')">&#x1F4CD; Nearby</button>'
+      + '<button class="btn btn-best '+bestDis+'" '+bestDis+' onclick="callVendor(\''+bestPhone+'\')" title="'+bestTitle+'">&#x1F4DE; Best</button>'
+      + '<button class="btn btn-add" onclick="openAddModal(\''+cat.key+'\')">+ Add</button>'
+      + '</div>'
+      + '</div>';
+  });
+  grid.innerHTML = html;
+}
+
+/* ════════════════════════════════════════
+   RENDER: VENDOR TABLE
+════════════════════════════════════════ */
+function renderTable(vendors) {
+  var catFilter = document.getElementById('filterCategory').value;
+  var searchFilter = document.getElementById('filterSearch').value.toLowerCase();
+  var filtered = vendors.filter(function(v) {
+    if (catFilter && v.category !== catFilter) return false;
+    if (searchFilter) {
+      var hay = (v.name+' '+v.address+' '+v.phone+' '+(v.notes||'')).toLowerCase();
+      if (hay.indexOf(searchFilter) === -1) return false;
+    }
+    return true;
+  });
+  filtered.sort(function(a,b){ return (b.times_used||0)-(a.times_used||0); });
+  var tbody = document.getElementById('vendorTableBody');
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No vendors saved yet. Add one above!</td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map(function(v) {
+    var phone = v.phone ? v.phone.replace(/\D/g,'') : '';
+    var mapUrl = v.address
+      ? 'https://www.google.com/maps/search/'+encodeURIComponent(v.address)
+      : 'https://www.google.com/maps/search/'+v.category+'+near+me';
+    return '<tr>'
+      + '<td><strong>'+esc(v.name)+'</strong></td>'
+      + '<td><span class="cat-badge">'+esc(v.category)+'</span></td>'
+      + '<td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(v.address)+'</td>'
+      + '<td>'+esc(v.phone)+'</td>'
+      + '<td><span class="stars" title="'+(v.rating||0)+' / 5">'+renderStars(v.rating||0)+'</span> '+(v.rating||0)+'</td>'
+      + '<td style="text-align:center;">'+(v.times_used||0)+'</td>'
+      + '<td><div class="table-actions">'
+      + (phone ? '<a class="tbl-btn tbl-btn-call" href="tel:'+phone+'">&#x1F4DE;</a>' : '')
+      + '<a class="tbl-btn tbl-btn-map" href="'+mapUrl+'" target="_blank" rel="noopener">&#x1F5FA;&#xFE0F;</a>'
+      + '<button class="tbl-btn tbl-btn-edit" onclick="openEditModal(\''+v.id+'\')">&#x270F;&#xFE0F;</button>'
+      + '<button class="tbl-btn tbl-btn-del"  onclick="deleteVendor(\''+v.id+'\')">&#x1F5D1;&#xFE0F;</button>'
+      + '</div></td>'
+      + '</tr>';
+  }).join('');
+}
+
+/* ════════════════════════════════════════
+   FULL REFRESH
+════════════════════════════════════════ */
+function refresh() {
+  var vendors = getVendors();
+  renderKPIs(vendors);
+  renderRecent(vendors);
+  renderCategories(vendors);
+  renderTable(vendors);
+}
+
+/* ════════════════════════════════════════
+   GEO / MAP
+════════════════════════════════════════ */
+function findNearby(kw) {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function(pos) {
+        var lat = pos.coords.latitude, lng = pos.coords.longitude;
+        window.open('https://www.google.com/maps/search/'+kw+'/@'+lat+','+lng+',13z','_blank');
+      },
+      function() { window.open('https://www.google.com/maps/search/'+kw+'+near+me','_blank'); },
+      { timeout: 5000 }
+    );
+  } else {
+    window.open('https://www.google.com/maps/search/'+kw+'+near+me','_blank');
+  }
+}
+function callVendor(phone) { if (phone) window.location.href = 'tel:'+phone; }
+
+/* ════════════════════════════════════════
+   DELETE
+════════════════════════════════════════ */
+function deleteVendor(id) {
+  if (!confirm('Delete this vendor?')) return;
+  var vendors = getVendors().filter(function(v){ return v.id !== id; });
+  saveVendors(vendors);
+  refresh();
+}
+
+/* ════════════════════════════════════════
+   MODAL OPEN
+════════════════════════════════════════ */
+function openAddModal(category) {
+  document.getElementById('modalTitle').textContent = 'Add Vendor';
+  document.getElementById('editId').value = '';
+  document.getElementById('fCategory').value = category || '';
+  document.getElementById('fName').value = '';
+  document.getElementById('fAddress').value = '';
+  document.getElementById('fPhone').value = '';
+  document.getElementById('fNotes').value = '';
+  document.getElementById('fDriver').value = 'All Drivers';
+  var r3 = document.getElementById('r-3');
+  if (r3) r3.checked = true;
+  document.getElementById('vendorModal').classList.add('open');
+}
+
+function openEditModal(id) {
+  var vendors = getVendors();
+  var v = null;
+  for (var i=0; i<vendors.length; i++) { if (vendors[i].id===id) { v=vendors[i]; break; } }
+  if (!v) return;
+  document.getElementById('modalTitle').textContent = 'Edit Vendor';
+  document.getElementById('editId').value = v.id;
+  document.getElementById('fCategory').value = v.category || '';
+  document.getElementById('fName').value = v.name || '';
+  document.getElementById('fAddress').value = v.address || '';
+  document.getElementById('fPhone').value = v.phone || '';
+  document.getElementById('fNotes').value = v.notes || '';
+  document.getElementById('fDriver').value = v.driver || 'All Drivers';
+  var rInt = Math.round(v.rating || 3);
+  if (rInt < 1) rInt = 1;
+  if (rInt > 5) rInt = 5;
+  var rEl = document.getElementById('r-'+rInt);
+  if (rEl) rEl.checked = true;
+  document.getElementById('vendorModal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('vendorModal').classList.remove('open'); }
+
+/* ════════════════════════════════════════
+   SAVE VENDOR
+════════════════════════════════════════ */
+function saveVendor() {
+  var category = document.getElementById('fCategory').value.trim();
+  var name     = document.getElementById('fName').value.trim();
+  var address  = document.getElementById('fAddress').value.trim();
+  var phone    = document.getElementById('fPhone').value.trim();
+  var notes    = document.getElementById('fNotes').value.trim();
+  var driver   = document.getElementById('fDriver').value;
+  if (!category) { alert('Please select a category.'); return; }
+  if (!name)     { alert('Vendor name is required.'); return; }
+  if (!address)  { alert('Address is required.'); return; }
+  if (!phone)    { alert('Phone is required.'); return; }
+  var rEl = document.querySelector('input[name="fRating"]:checked');
+  var rating = rEl ? parseFloat(rEl.value) : 3;
+  var editId = document.getElementById('editId').value;
+  var vendors = getVendors();
+  if (editId) {
+    vendors = vendors.map(function(v) {
+      return v.id === editId ? Object.assign({},v,{category:category,name:name,address:address,phone:phone,rating:rating,notes:notes,driver:driver}) : v;
+    });
+  } else {
+    vendors.push({ id:genUUID(), category:category, name:name, address:address, phone:phone, rating:rating, notes:notes, driver:driver, date_added:todayStr(), times_used:0 });
+  }
+  saveVendors(vendors);
+  closeModal();
+  refresh();
+}
+
+/* ════════════════════════════════════════
+   FILTER EVENTS
+════════════════════════════════════════ */
+document.getElementById('filterCategory').addEventListener('change', function(){ renderTable(getVendors()); });
+document.getElementById('filterSearch').addEventListener('input', function(){ renderTable(getVendors()); });
+document.getElementById('vendorModal').addEventListener('click', function(e){ if (e.target===this) closeModal(); });
+
+/* ════════════════════════════════════════
+   INIT
+════════════════════════════════════════ */
+refresh();
+</script>
+
+<script src="nexus-config.js?v=6"></script>
+<script src="nexus-sidebar.js?v=6"></script>
+<script src="nexus-search.js?v=6"></script>
+</body>
+</html>

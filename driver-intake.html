@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#1a2744">
+  <title>Driver Intake — Carrier Nexus</title>
+  <style>
+    :root {
+      --navy: #1a2744;
+      --teal: #00d4aa;
+      --teal-light: #00f0c0;
+      --white: #ffffff;
+      --gray-bg: #f5f7fa;
+      --gray-border: #dde3ed;
+      --gray-text: #6b7a99;
+      --danger: #e53e3e;
+      --warning: #dd6b20;
+      --success: #38a169;
+      --tab-h: 64px;
+      --top-h: 56px;
+      --section-bar-h: 52px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; background: var(--white); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 16px; color: #1a1a2e; overflow: hidden; }
+    
+    /* TOP BAR */
+    #topbar {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--top-h);
+      background: var(--navy); color: white; display: flex; align-items: center;
+      padding: 0 12px; gap: 10px; z-index: 100;
+      padding-top: env(safe-area-inset-top);
+    }
+    #topbar .back-btn {
+      font-size: 22px; cursor: pointer; padding: 8px; min-width: 44px; text-align: center;
+      color: var(--teal); text-decoration: none;
+    }
+    #topbar .title { flex: 1; font-size: 17px; font-weight: 700; letter-spacing: 0.3px; }
+    #topbar .title span { color: var(--teal); }
+    #draft-indicator { font-size: 11px; color: rgba(255,255,255,0.6); white-space: nowrap; }
+
+    /* WHO ARE YOU */
+    #who-bar {
+      position: fixed; top: calc(var(--top-h) + var(--section-bar-h) + env(safe-area-inset-top)); left: 0; right: 0;
+      background: var(--teal); padding: 8px 16px; z-index: 99;
+      display: flex; align-items: center; gap: 10px; display: none;
+    }
+    #who-bar label { font-size: 14px; font-weight: 600; color: var(--navy); white-space: nowrap; }
+    #who-bar input { flex: 1; padding: 6px 10px; border-radius: 6px; border: none; font-size: 15px; }
+    #who-bar button { background: var(--navy); color: white; border: none; padding: 7px 14px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+    /* CONTENT AREA */
+    #content {
+      position: fixed; top: calc(var(--top-h) + var(--section-bar-h)); bottom: var(--tab-h); left: 0; right: 0;
+      overflow-y: auto; -webkit-overflow-scrolling: touch;
+      background: var(--gray-bg);
+      padding-top: env(safe-area-inset-top);
+    }
+    .tab-panel { display: none; padding: 16px 16px; padding-bottom: 24px; }
+    .tab-panel.active { display: block; }
+
+    /* TAB BAR */
+    #tabbar {
+      position: fixed; bottom: 0; left: 0; right: 0; height: var(--tab-h);
+      background: #111d38; border-top: 2px solid rgba(0,212,170,0.15);
+      display: flex; z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .tab-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 3px; cursor: pointer; border: none; background: none; padding: 6px 4px;
+      color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 600; transition: color 0.2s;
+    }
+    .tab-btn .tab-icon { font-size: 24px; }
+    .tab-btn.active { color: var(--teal); border-top: 3px solid var(--teal); margin-top: -2px; }
+    .tab-btn.active .tab-icon { filter: drop-shadow(0 0 5px rgba(0,212,170,0.6)); }
+
+    /* FORMS */
+    .form-section { background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .form-section-title { font-size: 13px; font-weight: 700; color: var(--gray-text); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 12px 14px; border: 1.5px solid var(--gray-border); border-radius: 8px;
+      font-size: 16px; color: #1a1a2e; background: white; outline: none;
+      -webkit-appearance: none; appearance: none; transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--teal); }
+    .form-group textarea { resize: vertical; min-height: 72px; }
+    .form-group select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7a99'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+    .input-prefix { display: flex; align-items: center; border: 1.5px solid var(--gray-border); border-radius: 8px; overflow: hidden; background: white; }
+    .input-prefix span { padding: 12px 12px; background: var(--gray-bg); font-size: 16px; font-weight: 600; color: var(--gray-text); border-right: 1.5px solid var(--gray-border); }
+    .input-prefix input { border: none; border-radius: 0; flex: 1; }
+    .input-prefix input:focus { outline: 2px solid var(--teal); outline-offset: -2px; }
+    .dim-row { display: flex; gap: 8px; align-items: center; }
+    .dim-row input { flex: 1; }
+    .dim-row span { color: var(--gray-text); font-weight: 700; font-size: 18px; flex-shrink: 0; }
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; }
+    .toggle-row label { font-size: 15px; font-weight: 600; color: var(--navy); }
+    .toggle { position: relative; display: inline-block; width: 52px; height: 30px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #ccc; border-radius: 30px; transition: 0.3s; }
+    .toggle-slider:before { content: ''; position: absolute; height: 24px; width: 24px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+    .toggle input:checked + .toggle-slider { background: var(--teal); }
+    .toggle input:checked + .toggle-slider:before { transform: translateX(22px); }
+
+    /* BUTTONS */
+    .btn-primary {
+      width: 100%; padding: 16px; background: var(--navy); color: white; border: none;
+      border-radius: 10px; font-size: 17px; font-weight: 700; cursor: pointer; letter-spacing: 0.3px;
+      min-height: 52px; transition: background 0.2s;
+    }
+    .btn-primary:active { background: #0f1a33; }
+    .btn-teal {
+      width: 100%; padding: 14px; background: var(--teal); color: var(--navy); border: none;
+      border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer;
+      min-height: 50px;
+    }
+    .btn-outline {
+      padding: 12px 20px; background: white; color: var(--navy); border: 2px solid var(--navy);
+      border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; min-height: 48px;
+    }
+    .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+    .btn-row .btn-outline { flex: 1; }
+
+    /* MODE TOGGLE */
+    .mode-toggle { display: flex; background: var(--gray-bg); border-radius: 10px; padding: 4px; margin-bottom: 20px; border: 1.5px solid var(--gray-border); }
+    .mode-btn { flex: 1; padding: 10px; text-align: center; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; background: none; color: var(--gray-text); transition: all 0.2s; }
+    .mode-btn.active { background: var(--navy); color: white; }
+
+    /* PHOTO CAPTURE */
+    .photo-capture-btn {
+      display: block; width: 100%; padding: 40px 20px; background: var(--gray-bg);
+      border: 2px dashed var(--gray-border); border-radius: 12px; text-align: center;
+      cursor: pointer; min-height: 140px; position: relative; overflow: hidden;
+    }
+    .photo-capture-btn:active { background: #e8f4f0; border-color: var(--teal); }
+    .photo-capture-btn .icon { font-size: 48px; display: block; margin-bottom: 10px; }
+    .photo-capture-btn .label { font-size: 17px; font-weight: 700; color: var(--navy); }
+    .photo-capture-btn .sub { font-size: 13px; color: var(--gray-text); margin-top: 4px; }
+    .photo-capture-btn input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .preview-img { width: 100%; max-height: 220px; object-fit: contain; border-radius: 8px; margin-top: 12px; border: 1.5px solid var(--gray-border); display: none; }
+    .preview-label { display: none; background: var(--gray-bg); padding: 10px 14px; border-radius: 8px; font-size: 13px; color: var(--gray-text); margin-top: 8px; word-break: break-all; }
+    .photo-note { display: none; font-size: 13px; color: var(--success); font-weight: 600; margin-top: 8px; text-align: center; }
+
+    /* SUCCESS SCREEN */
+    #success-screen {
+      display: none; position: fixed; inset: 0; background: white; z-index: 200;
+      flex-direction: column; align-items: center; justify-content: center; padding: 32px;
+      text-align: center;
+    }
+    #success-screen .success-icon { font-size: 72px; margin-bottom: 20px; }
+    #success-screen h2 { font-size: 24px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+    #success-screen .load-id { font-size: 20px; color: var(--teal); font-weight: 700; margin-bottom: 32px; font-family: monospace; }
+    #success-screen .action-btns { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+
+    /* DOC GRID */
+    .doc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .doc-tile {
+      background: white; border-radius: 12px; padding: 16px 10px; text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08); cursor: pointer; min-height: 90px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 6px; position: relative; border: 2px solid transparent; transition: border-color 0.2s;
+    }
+    .doc-tile:active { border-color: var(--teal); }
+    .doc-tile .tile-icon { font-size: 26px; }
+    .doc-tile .tile-label { font-size: 13px; font-weight: 700; color: var(--navy); line-height: 1.2; }
+    .doc-tile .tile-count { font-size: 11px; color: var(--gray-text); }
+    .doc-tile .tile-expiry { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; background: var(--gray-bg); color: var(--gray-text); }
+    .doc-tile .tile-expiry.urgent { background: #fff0f0; color: var(--danger); }
+    .doc-tile .badge { position: absolute; top: 8px; right: 8px; background: var(--teal); color: var(--navy); font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
+
+    /* BOTTOM SHEET */
+    #sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; display: none; }
+    #bottom-sheet {
+      position: fixed; bottom: 0; left: 0; right: 0; background: white; border-radius: 20px 20px 0 0;
+      z-index: 301; max-height: 90vh; overflow-y: auto; padding: 20px 20px;
+      transform: translateY(100%); transition: transform 0.3s ease; -webkit-overflow-scrolling: touch;
+      padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    }
+    #bottom-sheet.open { transform: translateY(0); }
+    #sheet-overlay.open { display: block; }
+    .sheet-handle { width: 40px; height: 4px; background: #ddd; border-radius: 4px; margin: 0 auto 16px; }
+    .sheet-title { font-size: 18px; font-weight: 800; color: var(--navy); margin-bottom: 16px; }
+    .upload-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .upload-btn {
+      padding: 20px 12px; border-radius: 12px; border: 2px solid var(--gray-border);
+      background: white; text-align: center; cursor: pointer; font-size: 14px; font-weight: 600;
+      color: var(--navy); min-height: 80px; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 8px; position: relative; overflow: hidden;
+    }
+    .upload-btn:active { background: var(--gray-bg); border-color: var(--teal); }
+    .upload-btn .u-icon { font-size: 28px; }
+    .upload-btn input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+    /* EXPENSE */
+    .quick-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
+    .quick-btn {
+      background: white; border-radius: 12px; padding: 14px 6px; text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08); cursor: pointer; border: 2px solid transparent;
+      font-size: 11px; font-weight: 700; color: var(--navy); transition: border-color 0.2s;
+    }
+    .quick-btn:active { border-color: var(--teal); }
+    .quick-btn .q-icon { font-size: 24px; display: block; margin-bottom: 4px; }
+    .expense-list { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .expense-item { display: flex; align-items: center; padding: 14px 16px; gap: 12px; border-bottom: 1px solid var(--gray-bg); }
+    .expense-item:last-child { border-bottom: none; }
+    .expense-item .e-icon { font-size: 24px; }
+    .expense-item .e-info { flex: 1; }
+    .expense-item .e-cat { font-size: 14px; font-weight: 600; color: var(--navy); }
+    .expense-item .e-date { font-size: 12px; color: var(--gray-text); }
+    .expense-item .e-amount { font-size: 17px; font-weight: 800; color: var(--navy); }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--gray-text); }
+    .empty-state .e-icon { font-size: 40px; margin-bottom: 10px; }
+
+    /* CAMERA TAB */
+    .camera-capture {
+      background: var(--navy); border-radius: 16px; padding: 60px 20px; text-align: center;
+      margin-bottom: 20px; position: relative; overflow: hidden; cursor: pointer;
+    }
+    .camera-capture .c-icon { font-size: 64px; display: block; margin-bottom: 14px; }
+    .camera-capture .c-label { font-size: 20px; font-weight: 800; color: white; }
+    .camera-capture .c-sub { font-size: 14px; color: rgba(255,255,255,0.6); margin-top: 6px; }
+    .camera-capture input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .thumb-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 20px; }
+    .thumb-item { aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: var(--gray-bg); position: relative; }
+    .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb-item .thumb-type { position: absolute; bottom: 2px; left: 2px; right: 2px; background: rgba(0,0,0,0.6); color: white; font-size: 9px; text-align: center; padding: 2px; border-radius: 3px; font-weight: 600; }
+    .type-select-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .type-chip { padding: 10px 6px; text-align: center; border-radius: 8px; border: 2px solid var(--gray-border); font-size: 12px; font-weight: 600; color: var(--navy); cursor: pointer; background: white; }
+    .type-chip.selected { border-color: var(--teal); background: #e8faf6; }
+    .rotate-controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 10px; }
+    .rotate-btn { background: var(--gray-bg); border: none; border-radius: 8px; padding: 10px 18px; font-size: 15px; cursor: pointer; }
+    
+    /* HAZMAT/OVERSIZE extra fields */
+    .conditional-fields { display: none; padding: 12px; background: #fff8e1; border-radius: 8px; margin-top: 8px; }
+    .conditional-fields.visible { display: block; }
+    .conditional-fields .form-group:last-child { margin-bottom: 0; }
+
+    .section-divider { height: 1px; background: var(--gray-border); margin: 16px 0; }
+    .helper-text { font-size: 12px; color: var(--gray-text); margin-top: 4px; }
+    .link-btn { background: none; border: none; color: var(--teal); font-size: 15px; font-weight: 700; cursor: pointer; padding: 10px 0; text-decoration: underline; }
+
+    /* SECTION SUB-HEADER BAR */
+    #section-bar {
+      position: fixed; left: 0; right: 0; z-index: 99;
+      top: var(--top-h);
+      background: #111d38; padding: 10px 16px 10px 16px;
+      display: flex; flex-direction: column; justify-content: center;
+      border-bottom: 1px solid rgba(0,212,170,0.15);
+      margin-top: env(safe-area-inset-top);
+    }
+    #section-bar .sb-title {
+      font-size: 15px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px;
+      line-height: 1.2;
+    }
+    #section-bar .sb-desc {
+      font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 1px; font-weight: 400;
+    }
+    --section-bar-h: 52px;
+
+    /* WELCOME SPLASH OVERLAY */
+    #intake-splash {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 500;
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+    }
+    #intake-splash .splash-card {
+      background: #1a2744; border-radius: 18px; padding: 32px 24px 28px;
+      max-width: 360px; width: 100%; text-align: center;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    }
+    #intake-splash .splash-title {
+      font-size: 22px; font-weight: 900; color: #fff; letter-spacing: 0.5px; margin-bottom: 6px;
+    }
+    #intake-splash .splash-phone { font-size: 28px; margin-bottom: 16px; display: block; }
+    #intake-splash .splash-list {
+      list-style: none; padding: 0; margin: 0 0 20px 0; text-align: left;
+    }
+    #intake-splash .splash-list li {
+      font-size: 15px; color: rgba(255,255,255,0.9); padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; gap: 12px;
+    }
+    #intake-splash .splash-list li:last-child { border-bottom: none; }
+    #intake-splash .splash-list li .s-icon { font-size: 20px; flex-shrink: 0; }
+    #intake-splash .splash-list li .s-text { line-height: 1.3; }
+    #intake-splash .splash-list li .s-label { font-weight: 700; color: #fff; }
+    #intake-splash .splash-list li .s-sub { font-size: 12px; color: rgba(255,255,255,0.5); }
+    #intake-splash .splash-hint {
+      font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 20px;
+    }
+    #intake-splash .splash-btn {
+      width: 100%; padding: 16px; background: var(--teal); color: var(--navy);
+      border: none; border-radius: 10px; font-size: 16px; font-weight: 900;
+      cursor: pointer; letter-spacing: 0.5px;
+    }
+    #intake-splash .splash-btn:active { background: var(--teal-light); }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <a href="driver-command.html" class="back-btn" id="back-btn" onclick="return confirmBack()">←</a>
+  <div class="title" style="display:flex;flex-direction:column;gap:1px;"><span style="font-size:16px;font-weight:900;letter-spacing:0.5px;color:#fff;line-height:1.1;">DRIVER INTAKE</span><span style="font-size:11px;font-weight:500;color:var(--teal);letter-spacing:0.3px;line-height:1;">Carrier Nexus</span></div>
+  <div id="draft-indicator"></div>
+</div>
+
+<!-- SECTION SUB-HEADER BAR -->
+<div id="section-bar">
+  <div class="sb-title" id="sb-title">📋 RATE CONFIRMATION</div>
+  <div class="sb-desc" id="sb-desc">Submit a new load from rate con</div>
+</div>
+
+
+<!-- WHO ARE YOU BAR (shown if not logged in) -->
+<div id="who-bar">
+  <label>Who are you?</label>
+  <input type="text" id="driver-name-input" placeholder="Your name..." autocomplete="name">
+  <button onclick="saveDriverName()">OK</button>
+</div>
+
+<!-- CONTENT -->
+<div id="content">
+  <!-- HOME SCREEN -->
+  <div id="panel-home" class="tab-panel" style="display:none;">
+    <div style="padding:20px 16px 100px;">
+      
+      <!-- Greeting -->
+      <div style="background:var(--navy);border-radius:14px;padding:20px 18px;margin-bottom:20px;">
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">DRIVER INTAKE PORTAL</div>
+        <div id="home-greeting" style="font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;">Good morning</div>
+        <div id="home-name" style="font-size:15px;color:var(--teal);font-weight:600;">Carrier Nexus</div>
+      </div>
+
+      <!-- 2x2 Action Grid -->
+      <div style="font-size:11px;font-weight:700;color:var(--gray-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Quick Actions</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
+        
+        <button onclick="goToTab('ratecon')" style="background:var(--navy);border:2px solid var(--teal);border-radius:14px;padding:20px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:background 0.15s;">
+          <span style="font-size:28px;">📋</span>
+          <div style="font-size:14px;font-weight:700;color:#fff;">Submit Rate Con</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55);">Add a new load</div>
+        </button>
+
+        <button onclick="goToTab('docs')" style="background:var(--navy);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:20px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:background 0.15s;">
+          <span style="font-size:28px;">📄</span>
+          <div style="font-size:14px;font-weight:700;color:#fff;">Upload Document</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55);">BOL, CDL, permits…</div>
+        </button>
+
+        <button onclick="goToTab('expenses')" style="background:var(--navy);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:20px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:background 0.15s;">
+          <span style="font-size:28px;">💳</span>
+          <div style="font-size:14px;font-weight:700;color:#fff;">Log Expense</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55);">Fuel, tolls, repairs…</div>
+        </button>
+
+        <button onclick="goToTab('camera')" style="background:var(--navy);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:20px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:background 0.15s;">
+          <span style="font-size:28px;">📷</span>
+          <div style="font-size:14px;font-weight:700;color:#fff;">Scan / Capture</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55);">Camera upload</div>
+        </button>
+
+      </div>
+
+      <!-- Recent Activity -->
+      <div style="font-size:11px;font-weight:700;color:var(--gray-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Recent Submissions</div>
+      <div id="home-recent-list" style="display:flex;flex-direction:column;gap:8px;">
+        <div style="background:#f5f7fa;border-radius:10px;padding:14px 16px;font-size:13px;color:var(--gray-text);text-align:center;">No recent submissions</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TAB 1: RATE CON -->
+  <div id="panel-ratecon" class="tab-panel active">
+    
+    <!-- Mode toggle -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="mode-photo-btn" onclick="setMode('photo')">📷 Photo / Upload</button>
+      <button class="mode-btn" id="mode-manual-btn" onclick="setMode('manual')">✏️ Manual Entry</button>
+    </div>
+
+    <!-- PHOTO MODE -->
+    <div id="photo-mode">
+      <div class="form-section">
+        <div class="form-section-title">Capture or Upload Rate Confirmation</div>
+        <label class="photo-capture-btn" id="rc-photo-label">
+          <span class="icon">📷</span>
+          <div class="label">PHOTOGRAPH RATE CON</div>
+          <div class="sub">Tap to take photo or choose PDF from files</div>
+          <input type="file" accept="image/*,application/pdf" capture="environment" id="rc-photo-input" onchange="handleRCPhoto(this)">
+        </label>
+        <img id="rc-preview" class="preview-img" alt="Rate con preview">
+        <div id="rc-preview-label" class="preview-label"></div>
+        <div id="rc-photo-note" class="photo-note">📸 Photo saved — complete the fields below</div>
+        <div id="rc-photo-continue" style="display:none; margin-top:14px;">
+          <button class="btn-teal" onclick="setMode('manual', true)">Looks good — Continue →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MANUAL MODE -->
+    <div id="manual-mode" style="display:none;">
+      <div id="photo-saved-note" style="display:none;" class="form-section">
+        <div style="color: var(--success); font-weight: 700; font-size: 14px;">✅ Photo saved — complete the fields below to submit</div>
+      </div>
+
+      <!-- LOAD INFO -->
+      <div class="form-section">
+        <div class="form-section-title">📋 Load Info</div>
+        <div class="form-group"><label>Rate Con #</label><input type="text" id="rc-num" placeholder="e.g. RC-12345" oninput="autoSaveDraft()"></div>
+        <div class="form-group"><label>Broker / Company Name *</label><input type="text" id="broker-name" placeholder="ABC Freight Brokers" oninput="autoSaveDraft()"></div>
+        <div class="form-group"><label>Broker Phone</label><input type="tel" id="broker-phone" placeholder="(555) 000-0000" oninput="formatPhone(this); autoSaveDraft()"></div>
+        <div class="form-group"><label>Broker Email</label><input type="email" id="broker-email" placeholder="broker@example.com" oninput="autoSaveDraft()"></div>
+        <div class="form-group"><label>Broker MC #</label><input type="text" id="broker-mc" placeholder="MC-XXXXXX" oninput="autoSaveDraft()"></div>
+      </div>
+
+      <!-- PICKUP -->
+      <div class="form-section">
+        <div class="form-section-title">📍 Pickup</div>
+        <div class="form-group"><label>Pickup Date *</label><input type="date" id="pickup-date" oninput="autoSaveDraft()"></div>
+        <div class="form-group"><label>Pickup Time</label><input type="time" id="pickup-time" oninput="autoSaveDraft()"></div>
+        <div class="form-group"><label>Pickup Address</label><textarea id="pickup-addr" placeholder="123 Warehouse Dr, Dallas, TX 75001" oninput="autoSaveDraft()"></textarea></div>
+        <div class="form-group"><label>Shipper Name</label><input type="text" id="shipper-name" placeholder="Acme Manufacturing" oninput="autoSaveDraft()"></div>
+        <div class="form-group"><label>Shipper Phone</label><input type="tel" id="shipper-phone" placeholder="(555) 000-0000" oninput="formatPhone(this); autoSaveDraft()"></div>
+      </div>
+
+      <!-- DELIVERY -->
+      <div class="form-section">
+        <div class="form-section-title">🏁 Delivery</div>
+        <div class="form-group"><label>Delivery Date *</label><input type="date" id="delivery-date" oninput="autoSaveDraft()"></div>
+        <div class="form-group"><label>Delivery Time</label><input type="time" id="delivery-time" oninput="autoSaveDraft()"></div>
+        <div class="form-group"><label>Delivery Address</label><textarea id="delivery-addr" placeholder="456 Distribution Blvd, Atlanta, GA 30301" oninput="autoSaveDraft()"></textarea></div>
+        <div class="form-group"><label>Consignee Name</label><input type="text" id="consignee-name" placeholder="XYZ Distribution" oninput="autoSaveDraft()"></div>
+        <div class="form-group"><label>Consignee Phone</label><input type="tel" id="consignee-phone" placeholder="(555) 000-0000" oninput="formatPhone(this); autoSaveDraft()"></div>
+      </div>
+
+      <!-- LOAD DETAILS -->
+      <div class="form-section">
+        <div class="form-section-title">⚖️ Load Details</div>
+        <div class="form-group">
+          <label>Rate ($) *</label>
+          <div class="input-prefix"><span>$</span><input type="number" id="rate-amount" placeholder="0.00" min="0" step="0.01" oninput="autoSaveDraft()"></div>
+        </div>
+        <div class="form-group"><label>Commodity / Description</label><input type="text" id="commodity" placeholder="Steel coils, machinery, etc." oninput="autoSaveDraft()"></div>
+        <div class="form-group">
+          <label>Weight (lbs)</label>
+          <div class="input-prefix"><input type="number" id="weight" placeholder="40000" min="0"><span style="border-left:1.5px solid var(--gray-border);border-right:none;padding-left:12px;font-size:13px;">lbs</span></div>
+        </div>
+        <div class="form-group">
+          <label>Dimensions (L × W × H)</label>
+          <div class="dim-row">
+            <input type="number" id="dim-l" placeholder="L ft" oninput="autoSaveDraft()">
+            <span>×</span>
+            <input type="number" id="dim-w" placeholder="W ft" oninput="autoSaveDraft()">
+            <span>×</span>
+            <input type="number" id="dim-h" placeholder="H ft" oninput="autoSaveDraft()">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Equipment Required</label>
+          <select id="equipment" onchange="autoSaveDraft()">
+            <option value="">Select equipment...</option>
+            <option>Flatbed</option>
+            <option>Step Deck</option>
+            <option>RGN</option>
+            <option>Lowboy</option>
+            <option>Hotshot</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Special Instructions</label><textarea id="special-instructions" placeholder="Tarps required, escort needed, etc." oninput="autoSaveDraft()"></textarea></div>
+        
+        <!-- HAZMAT TOGGLE -->
+        <div class="form-group">
+          <div class="toggle-row">
+            <label>Hazmat?</label>
+            <label class="toggle"><input type="checkbox" id="hazmat-toggle" onchange="toggleHazmat(this)"><span class="toggle-slider"></span></label>
+          </div>
+          <div id="hazmat-fields" class="conditional-fields">
+            <div class="form-group"><label>UN Number</label><input type="text" id="hazmat-un" placeholder="e.g. UN1993" oninput="autoSaveDraft()"></div>
+            <div class="form-group"><label>Hazmat Class</label><input type="text" id="hazmat-class" placeholder="e.g. Class 3 Flammable" oninput="autoSaveDraft()"></div>
+          </div>
+        </div>
+
+        <!-- OVERSIZE TOGGLE -->
+        <div class="form-group">
+          <div class="toggle-row">
+            <label>Oversize Load?</label>
+            <label class="toggle"><input type="checkbox" id="oversize-toggle" onchange="autoSaveDraft()"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ASSIGN -->
+      <div class="form-section">
+        <div class="form-section-title">👤 Assign</div>
+        <div class="form-group">
+          <label>Driver</label>
+          <select id="assign-driver" onchange="autoSaveDraft()">
+            <option value="">Select driver...</option>
+            <option value="avis">Avis</option>
+            <option value="david">David</option>
+            <option value="miguel">Miguel</option>
+            <option value="nelson">Nelson</option>
+            <option value="yosviel">Yosviel</option>
+            <option value="guillermo">Guillermo Pinera</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Dispatcher</label>
+          <select id="assign-dispatcher" onchange="autoSaveDraft()">
+            <option value="">Select dispatcher...</option>
+            <option value="amet">Amet</option>
+            <option value="betty">Betty</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="submitRateCon()" style="margin-bottom:20px;">SUBMIT RATE CON</button>
+      <div style="height:8px;"></div>
+    </div>
+  </div>
+
+  <!-- TAB 2: DOCUMENTS -->
+  <div id="panel-docs" class="tab-panel">
+    <div class="doc-grid" id="doc-grid"></div>
+  </div>
+
+  <!-- TAB 3: EXPENSES -->
+  <div id="panel-expenses" class="tab-panel">
+    <div class="form-section">
+      <div class="form-section-title">Quick Add</div>
+      <div class="quick-btns">
+        <div class="quick-btn" onclick="openExpenseSheet('Fuel', '⛽')"><span class="q-icon">⛽</span>Fuel</div>
+        <div class="quick-btn" onclick="openExpenseSheet('Meals', '🍔')"><span class="q-icon">🍔</span>Food</div>
+        <div class="quick-btn" onclick="openExpenseSheet('Parking', '🅿️')"><span class="q-icon">🅿️</span>Parking</div>
+        <div class="quick-btn" onclick="openExpenseSheet('Repair', '🔧')"><span class="q-icon">🔧</span>Repair</div>
+      </div>
+      <button class="link-btn" onclick="openExpenseSheet('Other', '📝')">+ Custom Expense</button>
+    </div>
+    <div class="form-section">
+      <div class="form-section-title">Recent Expenses</div>
+      <div id="expense-list-container"></div>
+    </div>
+  </div>
+
+  <!-- TAB 4: CAMERA -->
+  <div id="panel-camera" class="tab-panel">
+    <div class="camera-capture" id="camera-zone">
+      <span class="c-icon">📷</span>
+      <div class="c-label">TAP TO CAPTURE</div>
+      <div class="c-sub">Document, receipt, permit, or anything</div>
+      <input type="file" accept="image/*" capture="environment" id="camera-input" onchange="handleCameraCapture(this)">
+    </div>
+    
+    <!-- Preview + type select (shown after capture) -->
+    <div id="camera-preview-section" style="display:none;">
+      <div class="form-section">
+        <div class="form-section-title">Preview</div>
+        <img id="camera-preview-img" class="preview-img" style="display:block;" alt="capture preview">
+        <div class="rotate-controls">
+          <button class="rotate-btn" onclick="rotateCameraImg(-90)">↺ Rotate Left</button>
+          <button class="rotate-btn" onclick="rotateCameraImg(90)">Rotate Right ↻</button>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="form-section-title" style="margin-bottom:10px;">Document Type</div>
+          <div class="type-select-grid" id="cam-type-grid"></div>
+        </div>
+        <button class="btn-primary" style="margin-top:16px;" onclick="saveCameraCapture()">SAVE TO NEXUS</button>
+        <button class="link-btn" style="width:100%;text-align:center;" onclick="clearCameraCapture()">Discard</button>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Recent Captures</div>
+      <div id="thumb-grid-container" class="thumb-grid"></div>
+      <a href="doc-inbox.html" style="display:block;text-align:center;color:var(--teal);font-weight:700;font-size:15px;padding:10px;">View Staged Files →</a>
+    </div>
+  </div>
+</div>
+
+<!-- TAB BAR -->
+<div id="tabbar">
+  <button class="tab-btn" id="tab-home" onclick="switchTab('home')">
+    <span class="tab-icon">🏠</span>
+    <span>Home</span>
+  </button>
+  <button class="tab-btn" id="tab-ratecon" onclick="switchTab('ratecon')">
+    <span class="tab-icon">📋</span>
+    <span>Rate Confirmation</span>
+  </button>
+  <button class="tab-btn" id="tab-docs" onclick="switchTab('docs')">
+    <span class="tab-icon">📄</span>
+    <span>Docs</span>
+  </button>
+  <button class="tab-btn" id="tab-expenses" onclick="switchTab('expenses')">
+    <span class="tab-icon">💰</span>
+    <span>Expenses</span>
+  </button>
+  <button class="tab-btn" id="tab-camera" onclick="switchTab('camera')">
+    <span class="tab-icon">📸</span>
+    <span>Camera</span>
+  </button>
+</div>
+
+<!-- BOTTOM SHEET -->
+<div id="sheet-overlay" onclick="closeSheet()"></div>
+<div id="bottom-sheet">
+  <div class="sheet-handle"></div>
+  <div id="sheet-content"></div>
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div id="success-screen">
+  <div class="success-icon">✅</div>
+  <h2>Rate Confirmation Submitted!</h2>
+  <div class="load-id" id="success-load-id"></div>
+  <div class="action-btns">
+    <button class="btn-primary" onclick="hideSuccess(); clearRCForm();">Submit Another Rate Confirmation</button>
+    <a href="active-loads.html"><button class="btn-outline" style="width:100%;">View Active Loads</button></a>
+    <button class="btn-outline" onclick="hideSuccess(); switchTab('docs');">Upload BOL</button>
+  </div>
+</div>
+
+<!-- WELCOME SPLASH (first-time onboarding) -->
+<div id="intake-splash" style="display:none;">
+  <div class="splash-card">
+    <span class="splash-phone">📱</span>
+    <div class="splash-title">DRIVER INTAKE PORTAL</div>
+    <ul class="splash-list">
+      <li>
+        <span class="s-icon">📋</span>
+        <div class="s-text"><div class="s-label">Rate Confirmation</div><div class="s-sub">Submit loads from your rate con</div></div>
+      </li>
+      <li>
+        <span class="s-icon">📄</span>
+        <div class="s-text"><div class="s-label">Documents</div><div class="s-sub">Upload or photograph your docs</div></div>
+      </li>
+      <li>
+        <span class="s-icon">💰</span>
+        <div class="s-text"><div class="s-label">Expenses</div><div class="s-sub">Log fuel, food, repairs fast</div></div>
+      </li>
+      <li>
+        <span class="s-icon">📸</span>
+        <div class="s-text"><div class="s-label">Camera</div><div class="s-sub">Capture any document on the spot</div></div>
+      </li>
+    </ul>
+    <div class="splash-hint">Use the tabs at the bottom to switch sections</div>
+    <button class="splash-btn" onclick="dismissSplash()">GOT IT — LET'S GO</button>
+  </div>
+</div>
+
+
+<script>
+
+// ============================================================
+// SECTION BAR LABELS
+// ============================================================
+const SECTION_LABELS = {
+  home:    { title: '🏠 HOME',              desc: 'Driver Intake Portal' },
+  ratecon: { title: '📋 RATE CONFIRMATION', desc: 'Submit a new load from rate con' },
+  docs:    { title: '📄 DOCUMENTS',         desc: 'Upload or photograph your docs' },
+  expenses:{ title: '💰 EXPENSES',          desc: 'Log fuel, food, repairs' },
+  camera:  { title: '📸 CAMERA',            desc: 'Capture any document' }
+};
+function updateSectionBar(tab) {
+  const s = SECTION_LABELS[tab] || SECTION_LABELS.ratecon;
+  const titleEl = document.getElementById('sb-title');
+  const descEl  = document.getElementById('sb-desc');
+  if (titleEl) titleEl.textContent = s.title;
+  if (descEl)  descEl.textContent  = s.desc;
+}
+
+// ============================================================
+// SPLASH LOGIC
+// ============================================================
+function dismissSplash() {
+  localStorage.setItem('nexus_intake_toured', 'true');
+  document.getElementById('intake-splash').style.display = 'none';
+}
+function maybeShowSplash() {
+  if (!localStorage.getItem('nexus_intake_toured')) {
+    document.getElementById('intake-splash').style.display = 'flex';
+  }
+}
+
+// ============================================================
+// GLOBALS
+// ============================================================
+let currentTab = localStorage.getItem('nexus_intake_toured') === 'true' ? 'ratecon' : 'home';
+let rcPhotoData = null;
+let cameraRotation = 0;
+let cameraImageData = null;
+let selectedCamType = null;
+let draftTimer = null;
+let draftChanged = false;
+
+const DOC_TYPES = [
+  {key:'ratecon', label:'Rate Con', icon:'📋'},
+  {key:'bol', label:'Bill of Lading', icon:'📜'},
+  {key:'cdl', label:'CDL', icon:'🪪', hasExpiry:true},
+  {key:'medcard', label:'Medical Card', icon:'💊', hasExpiry:true},
+  {key:'registration', label:'Registration', icon:'🚗', hasExpiry:true},
+  {key:'insurance', label:'Insurance Card', icon:'🛡️', hasExpiry:true},
+  {key:'annualdot', label:'Annual DOT', icon:'🔍', hasExpiry:true},
+  {key:'permit', label:'State Permit', icon:'🗺️', hasExpiry:true},
+  {key:'weighttkt', label:'Weight Ticket', icon:'⚖️'},
+  {key:'receipt', label:'Expense Receipt', icon:'💸'},
+  {key:'dvir', label:'DVIR', icon:'📝'},
+  {key:'other', label:'Other Document', icon:'➕'},
+];
+
+const CAM_TYPES = ['Rate Con','BOL','Receipt','Permit','CDL','Medical Card','Registration','Insurance','Other'];
+
+const CAT_ICONS = {Fuel:'⛽', Meals:'🍔', Parking:'🅿️', Repair:'🔧', Tolls:'🛣️', Other:'📝', Lodging:'🏨', Supplies:'📦'};
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  checkLoginState();
+  renderDocGrid();
+  renderExpenseList();
+  renderThumbs();
+  renderCamTypeGrid();
+  restoreDraft();
+  // Pre-set pickup date to today
+  const today = new Date().toISOString().split('T')[0];
+  const pdEl = document.getElementById('pickup-date');
+  if (pdEl && !pdEl.value) pdEl.value = today;
+  
+  // Handle hash navigation
+  const hash = location.hash.replace('#','');
+  if (hash && ['home','ratecon','docs','expenses','camera'].includes(hash)) switchTab(hash);
+  else switchTab(currentTab);
+  // Show onboarding splash on first visit
+  maybeShowSplash();
+
+  // Home screen greeting and recent activity
+  (function() {
+    var greetEl = document.getElementById('home-greeting');
+    var nameEl = document.getElementById('home-name');
+    if (greetEl) {
+      var h = new Date().getHours();
+      var greeting = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+      greetEl.textContent = greeting;
+    }
+    if (nameEl) {
+      try {
+        var u = localStorage.getItem('nexus_current_user');
+        if (u) {
+          var users = JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS') || '[]');
+          var me = users.find(function(x) { return x.email === u; });
+          if (me && me.name) nameEl.textContent = me.name;
+        }
+      } catch(e) {}
+    }
+    // Recent activity
+    var recentEl = document.getElementById('home-recent-list');
+    if (recentEl) {
+      try {
+        var docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]');
+        var recent = docs.slice(-3).reverse();
+        if (recent.length) {
+          recentEl.innerHTML = recent.map(function(d) {
+            return '<div style="background:#f5f7fa;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;">' +
+              '<span style="font-size:20px;">' + (d.type === 'ratecon' ? '📋' : d.type === 'bol' ? '📜' : '📄') + '</span>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<div style="font-size:13px;font-weight:600;color:#1a1a2e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (d.title || d.type || 'Document') + '</div>' +
+                '<div style="font-size:11px;color:#6b7a99;">' + (d.date || d.submittedAt || '') + '</div>' +
+              '</div>' +
+            '</div>';
+          }).join('');
+        }
+      } catch(e) {}
+    }
+  })();
+});
+
+// ============================================================
+// LOGIN / WHO ARE YOU
+// ============================================================
+function checkLoginState() {
+  let users = [];
+  try { users = JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS') || '[]'); } catch(e){}
+  const loggedIn = users.find(u => u.active && u.loggedIn);
+  if (!loggedIn) {
+    const saved = localStorage.getItem('nexus_current_user');
+    if (!saved) {
+      document.getElementById('who-bar').style.display = 'flex';
+      document.getElementById('content').style.top = 'calc(var(--top-h) + 44px + env(safe-area-inset-top))';
+    } else {
+      prefillDriverSelect(saved);
+    }
+  } else {
+    prefillDriverSelect(loggedIn.name || loggedIn.email);
+  }
+}
+
+function prefillDriverSelect(name) {
+  const sel = document.getElementById('assign-driver');
+  const lname = (name || '').toLowerCase();
+  for (let opt of sel.options) {
+    if (opt.text.toLowerCase().includes(lname) || lname.includes(opt.value)) {
+      opt.selected = true; break;
+    }
+  }
+}
+
+function saveDriverName() {
+  const n = document.getElementById('driver-name-input').value.trim();
+  if (!n) return;
+  localStorage.setItem('nexus_current_user', n);
+  document.getElementById('who-bar').style.display = 'none';
+  document.getElementById('content').style.top = '';
+  prefillDriverSelect(n);
+}
+
+// ============================================================
+// HOME SCREEN HELPERS
+// ============================================================
+  function goToTab(tab) {
+    localStorage.setItem('nexus_intake_toured', 'true');
+    switchTab(tab);
+  }
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+  updateSectionBar(tab);
+  if (tab === 'docs') renderDocGrid();
+  if (tab === 'expenses') renderExpenseList();
+  if (tab === 'camera') renderThumbs();
+}
+
+// ============================================================
+// RATE CON — PHOTO MODE
+// ============================================================
+function setMode(mode, photoSaved) {
+  const isPhoto = mode === 'photo';
+  document.getElementById('photo-mode').style.display = isPhoto ? 'block' : 'none';
+  document.getElementById('manual-mode').style.display = isPhoto ? 'none' : 'block';
+  document.getElementById('mode-photo-btn').classList.toggle('active', isPhoto);
+  document.getElementById('mode-manual-btn').classList.toggle('active', !isPhoto);
+  if (!isPhoto) {
+    document.getElementById('photo-saved-note').style.display = photoSaved ? 'block' : 'none';
+    document.getElementById('content').scrollTop = 0;
+  }
+}
+
+async function handleRCPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  
+  if (file.size > 5 * 1024 * 1024) {
+    alert('⚠️ File is larger than 5MB. It will be saved but may take longer to upload.');
+  }
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    rcPhotoData = e.target.result;
+    const preview = document.getElementById('rc-preview');
+    const labelEl = document.getElementById('rc-preview-label');
+    const note = document.getElementById('rc-photo-note');
+    const cont = document.getElementById('rc-photo-continue');
+    
+    if (file.type.startsWith('image/')) {
+      preview.src = rcPhotoData;
+      preview.style.display = 'block';
+      labelEl.style.display = 'none';
+    } else {
+      preview.style.display = 'none';
+      labelEl.textContent = '📄 ' + file.name;
+      labelEl.style.display = 'block';
+    }
+    note.style.display = 'block';
+    cont.style.display = 'block';
+    autoSaveDraft();
+  };
+  reader.readAsDataURL(file);
+}
+
+// ============================================================
+// RATE CON — FORM SUBMIT
+// ============================================================
+function submitRateCon() {
+  const brokerName = document.getElementById('broker-name').value.trim();
+  const pickupDate = document.getElementById('pickup-date').value;
+  const rate = document.getElementById('rate-amount').value;
+
+  if (!brokerName) { alert('Please enter the Broker / Company Name'); return; }
+  if (!pickupDate) { alert('Please enter the Pickup Date'); return; }
+  if (!rate) { alert('Please enter the Rate amount'); return; }
+
+  const loadId = 'LOAD-' + String(Date.now()).slice(-6) + Math.random().toString(36).slice(2,4).toUpperCase();
+  
+  const load = {
+    id: loadId,
+    createdAt: new Date().toISOString(),
+    rcNum: document.getElementById('rc-num').value,
+    brokerName,
+    brokerPhone: document.getElementById('broker-phone').value,
+    brokerEmail: document.getElementById('broker-email').value,
+    brokerMC: document.getElementById('broker-mc').value,
+    pickupDate,
+    pickupTime: document.getElementById('pickup-time').value,
+    pickupAddr: document.getElementById('pickup-addr').value,
+    shipperName: document.getElementById('shipper-name').value,
+    shipperPhone: document.getElementById('shipper-phone').value,
+    deliveryDate: document.getElementById('delivery-date').value,
+    deliveryTime: document.getElementById('delivery-time').value,
+    deliveryAddr: document.getElementById('delivery-addr').value,
+    consigneeName: document.getElementById('consignee-name').value,
+    consigneePhone: document.getElementById('consignee-phone').value,
+    rate: parseFloat(rate) || 0,
+    commodity: document.getElementById('commodity').value,
+    weight: document.getElementById('weight').value,
+    dimL: document.getElementById('dim-l').value,
+    dimW: document.getElementById('dim-w').value,
+    dimH: document.getElementById('dim-h').value,
+    equipment: document.getElementById('equipment').value,
+    specialInstructions: document.getElementById('special-instructions').value,
+    hazmat: document.getElementById('hazmat-toggle').checked,
+    hazmatUN: document.getElementById('hazmat-un').value,
+    hazmatClass: document.getElementById('hazmat-class').value,
+    oversize: document.getElementById('oversize-toggle').checked,
+    driver: document.getElementById('assign-driver').value,
+    dispatcher: document.getElementById('assign-dispatcher').value,
+    status: 'pending',
+    source: 'driver-intake',
+    hasPhoto: !!rcPhotoData
+  };
+
+  // Save to nexus_loads_v2
+  let loads = [];
+  try { loads = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]'); } catch(e){}
+  loads.unshift(load);
+  localStorage.setItem('nexus_loads_v2', JSON.stringify(loads));
+
+  // Save photo to nexus_staged_files if present
+  if (rcPhotoData) {
+    let staged = [];
+    try { staged = JSON.parse(localStorage.getItem('nexus_staged_files') || '[]'); } catch(e){}
+    staged.unshift({
+      id: 'stg-' + Date.now(),
+      data: rcPhotoData,
+      type: 'ratecon',
+      loadId: loadId,
+      name: 'RateCon_' + loadId + (rcPhotoData.includes('pdf') ? '.pdf' : '.jpg'),
+      savedAt: new Date().toISOString(),
+      driver: load.driver
+    });
+    localStorage.setItem('nexus_staged_files', JSON.stringify(staged));
+  }
+
+  // Clear draft
+  localStorage.removeItem('nexus_intake_draft');
+  draftChanged = false;
+
+  // Show success
+  document.getElementById('success-load-id').textContent = loadId;
+  document.getElementById('success-screen').style.display = 'flex';
+}
+
+function clearRCForm() {
+  ['rc-num','broker-name','broker-phone','broker-email','broker-mc','pickup-date','pickup-time',
+   'pickup-addr','shipper-name','shipper-phone','delivery-date','delivery-time','delivery-addr',
+   'consignee-name','consignee-phone','rate-amount','commodity','weight','dim-l','dim-w','dim-h',
+   'special-instructions','hazmat-un','hazmat-class'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('equipment').value = '';
+  document.getElementById('assign-driver').value = '';
+  document.getElementById('assign-dispatcher').value = '';
+  document.getElementById('hazmat-toggle').checked = false;
+  document.getElementById('oversize-toggle').checked = false;
+  document.getElementById('hazmat-fields').classList.remove('visible');
+  rcPhotoData = null;
+  document.getElementById('rc-preview').style.display = 'none';
+  document.getElementById('rc-preview-label').style.display = 'none';
+  document.getElementById('rc-photo-note').style.display = 'none';
+  document.getElementById('rc-photo-continue').style.display = 'none';
+  setMode('photo');
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('pickup-date').value = today;
+}
+
+function hideSuccess() {
+  document.getElementById('success-screen').style.display = 'none';
+}
+
+// ============================================================
+// HAZMAT TOGGLE
+// ============================================================
+function toggleHazmat(cb) {
+  document.getElementById('hazmat-fields').classList.toggle('visible', cb.checked);
+  autoSaveDraft();
+}
+
+// ============================================================
+// AUTO SAVE DRAFT
+// ============================================================
+function autoSaveDraft() {
+  draftChanged = true;
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(() => {
+    const draft = {
+      rcNum: v('rc-num'), brokerName: v('broker-name'), brokerPhone: v('broker-phone'),
+      brokerEmail: v('broker-email'), brokerMC: v('broker-mc'), pickupDate: v('pickup-date'),
+      pickupTime: v('pickup-time'), pickupAddr: v('pickup-addr'), shipperName: v('shipper-name'),
+      shipperPhone: v('shipper-phone'), deliveryDate: v('delivery-date'), deliveryTime: v('delivery-time'),
+      deliveryAddr: v('delivery-addr'), consigneeName: v('consignee-name'), consigneePhone: v('consignee-phone'),
+      rate: v('rate-amount'), commodity: v('commodity'), weight: v('weight'),
+      dimL: v('dim-l'), dimW: v('dim-w'), dimH: v('dim-h'), equipment: v('equipment'),
+      specialInstructions: v('special-instructions'), hazmat: document.getElementById('hazmat-toggle').checked,
+      hazmatUN: v('hazmat-un'), hazmatClass: v('hazmat-class'), oversize: document.getElementById('oversize-toggle').checked,
+      driver: v('assign-driver'), dispatcher: v('assign-dispatcher'), savedAt: Date.now()
+    };
+    localStorage.setItem('nexus_intake_draft', JSON.stringify(draft));
+    document.getElementById('draft-indicator').textContent = 'Draft saved';
+    setTimeout(() => { document.getElementById('draft-indicator').textContent = ''; }, 3000);
+  }, 1500);
+}
+
+function v(id) { const el = document.getElementById(id); return el ? el.value : ''; }
+
+function restoreDraft() {
+  let draft;
+  try { draft = JSON.parse(localStorage.getItem('nexus_intake_draft') || 'null'); } catch(e){}
+  if (!draft) return;
+  const fields = ['rc-num','broker-name','broker-phone','broker-email','broker-mc','pickup-date','pickup-time',
+    'pickup-addr','shipper-name','shipper-phone','delivery-date','delivery-time','delivery-addr',
+    'consignee-name','consignee-phone','rate-amount','commodity','weight','dim-l','dim-w','dim-h',
+    'equipment','special-instructions','hazmat-un','hazmat-class','assign-driver','assign-dispatcher'];
+  const keys = ['rcNum','brokerName','brokerPhone','brokerEmail','brokerMC','pickupDate','pickupTime',
+    'pickupAddr','shipperName','shipperPhone','deliveryDate','deliveryTime','deliveryAddr',
+    'consigneeName','consigneePhone','rate','commodity','weight','dimL','dimW','dimH',
+    'equipment','specialInstructions','hazmatUN','hazmatClass','driver','dispatcher'];
+  fields.forEach((fid,i) => {
+    const el = document.getElementById(fid);
+    if (el && draft[keys[i]] !== undefined) el.value = draft[keys[i]];
+  });
+  if (draft.hazmat) { document.getElementById('hazmat-toggle').checked = true; document.getElementById('hazmat-fields').classList.add('visible'); }
+  if (draft.oversize) document.getElementById('oversize-toggle').checked = true;
+  if (Object.keys(draft).some(k => draft[k] && k !== 'savedAt')) {
+    setMode('manual');
+  }
+}
+
+// ============================================================
+// BACK BUTTON
+// ============================================================
+function confirmBack() {
+  if (draftChanged && localStorage.getItem('nexus_intake_draft')) {
+    return confirm('Leave without finishing? Your draft will be saved.');
+  }
+  return true;
+}
+
+// ============================================================
+// PHONE FORMAT
+// ============================================================
+function formatPhone(input) {
+  let v = input.value.replace(/\D/g,'');
+  if (v.length >= 10) { v = '(' + v.slice(0,3) + ') ' + v.slice(3,6) + '-' + v.slice(6,10); }
+  input.value = v;
+}
+
+// ============================================================
+// DOC GRID
+// ============================================================
+function renderDocGrid() {
+  const grid = document.getElementById('doc-grid');
+  if (!grid) return;
+  let docs = [];
+  try { docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e){}
+  
+  grid.innerHTML = DOC_TYPES.map(dt => {
+    const count = docs.filter(d => d.docType === dt.key).length;
+    const latestExpiry = docs.filter(d => d.docType === dt.key && d.expiryDate)
+      .map(d => d.expiryDate).sort().pop();
+    let expiryHtml = '';
+    if (latestExpiry) {
+      const days = Math.round((new Date(latestExpiry) - new Date()) / 86400000);
+      const urgentClass = days < 30 ? 'urgent' : '';
+      expiryHtml = '<div class="tile-expiry ' + urgentClass + '">' + (days < 0 ? 'EXPIRED' : days < 30 ? days + 'd left' : latestExpiry) + '</div>';
+    }
+    return '<div class="doc-tile" onclick="openDocSheet(\'' + dt.key + '\')">' +
+      (count > 0 ? '<div class="badge">' + count + '</div>' : '') +
+      '<div class="tile-icon">' + dt.icon + '</div>' +
+      '<div class="tile-label">' + dt.label + '</div>' +
+      '<div class="tile-count">' + (count > 0 ? count + ' on file' : 'None on file') + '</div>' +
+      expiryHtml +
+      '</div>';
+  }).join('');
+}
+
+// ============================================================
+// DOC UPLOAD SHEET
+// ============================================================
+function openDocSheet(typeKey) {
+  const dt = DOC_TYPES.find(d => d.key === typeKey) || {key:typeKey, label:typeKey, icon:'📄'};
+  let extraFields = '';
+  if (typeKey === 'cdl') extraFields =
+    '<div class="form-group"><label>Expiry Date</label><input type="date" id="sh-expiry"></div>' +
+    '<div class="form-group"><label>State</label><input type="text" id="sh-state" placeholder="TX"></div>' +
+    '<div class="form-group"><label>CDL Class</label><select id="sh-cdl-class"><option value="">Select...</option><option>Class A</option><option>Class B</option><option>Class C</option></select></div>';
+  else if (typeKey === 'medcard') extraFields = '<div class="form-group"><label>Expiry Date</label><input type="date" id="sh-expiry"></div>';
+  else if (typeKey === 'registration') extraFields =
+    '<div class="form-group"><label>Vehicle #</label><input type="text" id="sh-vehicle" placeholder="Truck or trailer #"></div>' +
+    '<div class="form-group"><label>Expiry Date</label><input type="date" id="sh-expiry"></div>';
+  else if (typeKey === 'insurance') extraFields =
+    '<div class="form-group"><label>Policy Number</label><input type="text" id="sh-policy"></div>' +
+    '<div class="form-group"><label>Insurance Carrier</label><input type="text" id="sh-carrier"></div>' +
+    '<div class="form-group"><label>Expiry Date</label><input type="date" id="sh-expiry"></div>';
+  else if (typeKey === 'permit') extraFields =
+    '<div class="form-group"><label>State</label><input type="text" id="sh-state" placeholder="TX"></div>' +
+    '<div class="form-group"><label>Permit Number</label><input type="text" id="sh-permit-num"></div>' +
+    '<div class="form-group"><label>Expiry Date</label><input type="date" id="sh-expiry"></div>' +
+    '<div class="form-group"><label>Oversize Dimensions</label><input type="text" id="sh-os-dims" placeholder="e.g. 14ft wide x 120ft long"></div>';
+  else if (typeKey === 'weighttkt') extraFields =
+    '<div class="form-group"><label>Scale Location</label><input type="text" id="sh-scale"></div>' +
+    '<div class="form-group"><label>Total Weight (lbs)</label><input type="number" id="sh-total-wt" placeholder="80000"></div>' +
+    '<div class="form-group"><label>Axle Weights (optional)</label><input type="text" id="sh-axle-wt" placeholder="Steer: 12000, Drive: 34000, Trail: 34000"></div>';
+  else if (typeKey === 'receipt') extraFields =
+    '<div class="form-group"><label>Amount ($)</label><div class="input-prefix"><span>$</span><input type="number" id="sh-amount" placeholder="0.00"></div></div>' +
+    '<div class="form-group"><label>Category</label><select id="sh-cat"><option>Fuel</option><option>Meals</option><option>Parking</option><option>Repair</option><option>Tolls</option><option>Lodging</option><option>Supplies</option><option>Other</option></select></div>' +
+    '<div class="form-group"><label>Date</label><input type="date" id="sh-date" value="' + new Date().toISOString().split('T')[0] + '"></div>' +
+    '<div class="form-group"><label>Description</label><input type="text" id="sh-desc" placeholder="Optional note"></div>';
+  else if (typeKey === 'ratecon' || typeKey === 'bol') extraFields = '<div class="form-group"><label>Load # (optional)</label><input type="text" id="sh-load-num" placeholder="e.g. LOAD-123456"></div>';
+  else if (typeKey === 'annualdot') extraFields = '<div class="form-group"><label>Expiry Date</label><input type="date" id="sh-expiry"></div>';
+
+  document.getElementById('sheet-content').innerHTML =
+    '<div class="sheet-title">' + dt.icon + ' ' + dt.label + '</div>' +
+    '<div class="upload-btns">' +
+    '<label class="upload-btn"><div class="u-icon">📷</div><div>Take Photo</div><input type="file" accept="image/*" capture="environment" onchange="handleDocUpload(this, \'' + typeKey + '\')"></label>' +
+    '<label class="upload-btn"><div class="u-icon">📁</div><div>Choose File</div><input type="file" accept="image/*,application/pdf" onchange="handleDocUpload(this, \'' + typeKey + '\')"></label>' +
+    '</div>' +
+    '<img id="doc-sh-preview" class="preview-img" alt="doc preview">' +
+    '<div id="doc-sh-preview-label" class="preview-label"></div>' +
+    extraFields +
+    '<div style="margin-top:16px;"><button class="btn-primary" onclick="saveDocFromSheet(\'' + typeKey + '\')">SAVE DOCUMENT</button></div>';
+  window._docSheetFile = null;
+  openSheet();
+}
+
+function handleDocUpload(input, typeKey) {
+  const file = input.files[0];
+  if (!file) return;
+  window._docSheetFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const data = e.target.result;
+    window._docSheetData = data;
+    const preview = document.getElementById('doc-sh-preview');
+    const labelEl = document.getElementById('doc-sh-preview-label');
+    if (file.type.startsWith('image/')) {
+      preview.src = data;
+      preview.style.display = 'block';
+      labelEl.style.display = 'none';
+    } else {
+      preview.style.display = 'none';
+      labelEl.textContent = '📄 ' + file.name;
+      labelEl.style.display = 'block';
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveDocFromSheet(typeKey) {
+  const dt = DOC_TYPES.find(d => d.key === typeKey) || {label: typeKey};
+  const doc = {
+    id: 'doc-' + Date.now(),
+    docType: typeKey,
+    label: dt.label,
+    icon: dt.icon,
+    createdAt: new Date().toISOString(),
+    data: window._docSheetData || null,
+    fileName: window._docSheetFile ? window._docSheetFile.name : 'document',
+    source: 'driver-intake'
+  };
+  const fields = {
+    expiry: 'sh-expiry', state: 'sh-state', cdlClass: 'sh-cdl-class', vehicle: 'sh-vehicle',
+    policy: 'sh-policy', carrier: 'sh-carrier', permitNum: 'sh-permit-num', osDims: 'sh-os-dims',
+    scale: 'sh-scale', totalWt: 'sh-total-wt', axleWt: 'sh-axle-wt', amount: 'sh-amount',
+    cat: 'sh-cat', date: 'sh-date', desc: 'sh-desc', loadNum: 'sh-load-num'
+  };
+  for (const [k, id] of Object.entries(fields)) {
+    const el = document.getElementById(id);
+    if (el) { doc[k] = el.value; if (k === 'expiry') doc.expiryDate = el.value; }
+  }
+  
+  let docs = [];
+  try { docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e){}
+  docs.unshift(doc);
+  localStorage.setItem('nexus_documents', JSON.stringify(docs));
+  
+  closeSheet();
+  renderDocGrid();
+  setTimeout(() => alert('✅ Document saved!'), 100);
+}
+
+// ============================================================
+// EXPENSE SHEET
+// ============================================================
+function openExpenseSheet(category, icon) {
+  const today = new Date().toISOString().split('T')[0];
+  const allCats = ['Fuel','Meals','Parking','Repair','Tolls','Lodging','Supplies','Other'];
+  document.getElementById('sheet-content').innerHTML =
+    '<div class="sheet-title">' + icon + ' ' + category + '</div>' +
+    '<div class="form-group"><label>Amount ($) *</label><div class="input-prefix"><span>$</span><input type="number" id="exp-amount" placeholder="0.00" min="0" step="0.01" style="font-size:24px;padding:16px;" autofocus></div></div>' +
+    '<div class="form-group"><label>Category</label><select id="exp-cat">' + allCats.map(c => '<option' + (c===category?' selected':'') + '>' + c + '</option>').join('') + '</select></div>' +
+    '<div class="form-group"><label>Date</label><input type="date" id="exp-date" value="' + today + '"></div>' +
+    '<div class="form-group"><label>Description (optional)</label><input type="text" id="exp-desc" placeholder="E.g. Flying J Amarillo"></div>' +
+    '<div style="margin-top:16px;"><button class="btn-primary" onclick="saveExpense()">ADD EXPENSE</button></div>';
+  openSheet();
+  setTimeout(() => { const el = document.getElementById('exp-amount'); if (el) el.focus(); }, 400);
+}
+
+function saveExpense() {
+  const amount = document.getElementById('exp-amount').value;
+  if (!amount) { alert('Please enter an amount'); return; }
+  const exp = {
+    id: 'exp-' + Date.now(),
+    amount: parseFloat(amount),
+    category: document.getElementById('exp-cat').value,
+    date: document.getElementById('exp-date').value,
+    desc: document.getElementById('exp-desc').value,
+    createdAt: new Date().toISOString()
+  };
+  let expenses = [];
+  try { expenses = JSON.parse(localStorage.getItem('nexus_expenses') || '[]'); } catch(e){}
+  expenses.unshift(exp);
+  localStorage.setItem('nexus_expenses', JSON.stringify(expenses));
+  closeSheet();
+  renderExpenseList();
+}
+
+function renderExpenseList() {
+  const container = document.getElementById('expense-list-container');
+  if (!container) return;
+  let expenses = [];
+  try { expenses = JSON.parse(localStorage.getItem('nexus_expenses') || '[]'); } catch(e){}
+  const recent = expenses.slice(0, 10);
+  if (!recent.length) {
+    container.innerHTML = '<div class="empty-state"><div class="e-icon">💰</div><div>No expenses yet</div></div>';
+    return;
+  }
+  container.innerHTML = '<div class="expense-list">' + recent.map(e => {
+    const icon = CAT_ICONS[e.category] || '📝';
+    return '<div class="expense-item">' +
+      '<div class="e-icon">' + icon + '</div>' +
+      '<div class="e-info"><div class="e-cat">' + e.category + '</div><div class="e-date">' + e.date + (e.desc ? ' · ' + e.desc : '') + '</div></div>' +
+      '<div class="e-amount">$' + Number(e.amount).toFixed(2) + '</div>' +
+      '</div>';
+  }).join('') + '</div>';
+}
+
+// ============================================================
+// CAMERA TAB
+// ============================================================
+function renderCamTypeGrid() {
+  const grid = document.getElementById('cam-type-grid');
+  if (!grid) return;
+  grid.innerHTML = CAM_TYPES.map(t => '<div class="type-chip" onclick="selectCamType(\'' + t + '\', this)">' + t + '</div>').join('');
+}
+
+function selectCamType(type, el) {
+  selectedCamType = type;
+  document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+let cameraRotDeg = 0;
+
+function handleCameraCapture(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    cameraImageData = e.target.result;
+    cameraRotDeg = 0;
+    const img = document.getElementById('camera-preview-img');
+    img.src = cameraImageData;
+    img.style.transform = '';
+    document.getElementById('camera-preview-section').style.display = 'block';
+    document.getElementById('content').scrollTop = 0;
+  };
+  reader.readAsDataURL(file);
+}
+
+function rotateCameraImg(deg) {
+  cameraRotDeg = (cameraRotDeg + deg + 360) % 360;
+  document.getElementById('camera-preview-img').style.transform = 'rotate(' + cameraRotDeg + 'deg)';
+}
+
+function saveCameraCapture() {
+  if (!cameraImageData) { alert('No image to save'); return; }
+  let staged = [];
+  try { staged = JSON.parse(localStorage.getItem('nexus_staged_files') || '[]'); } catch(e){}
+  staged.unshift({
+    id: 'stg-' + Date.now(),
+    data: cameraImageData,
+    type: selectedCamType || 'other',
+    name: (selectedCamType || 'Document') + '_' + new Date().toISOString().slice(0,10) + '.jpg',
+    savedAt: new Date().toISOString(),
+    rotation: cameraRotDeg
+  });
+  localStorage.setItem('nexus_staged_files', JSON.stringify(staged));
+  clearCameraCapture();
+  renderThumbs();
+  alert('✅ Saved to staged files!');
+}
+
+function clearCameraCapture() {
+  cameraImageData = null;
+  cameraRotDeg = 0;
+  selectedCamType = null;
+  document.getElementById('camera-preview-section').style.display = 'none';
+  document.getElementById('camera-input').value = '';
+  document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('selected'));
+}
+
+function renderThumbs() {
+  const container = document.getElementById('thumb-grid-container');
+  if (!container) return;
+  let staged = [];
+  try { staged = JSON.parse(localStorage.getItem('nexus_staged_files') || '[]'); } catch(e){}
+  const recent = staged.slice(0, 8);
+  if (!recent.length) {
+    container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--gray-text);padding:20px 0;">No captures yet</div>';
+    return;
+  }
+  container.innerHTML = recent.map(f => {
+    const src = f.data && f.data.startsWith('data:image') ? f.data : null;
+    return '<div class="thumb-item">' +
+      (src ? '<img src="' + src + '" alt="capture"' + (f.rotation ? ' style="transform:rotate(' + f.rotation + 'deg)"' : '') + '>' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px;">📄</div>') +
+      '<div class="thumb-type">' + (f.type||'doc').toUpperCase() + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+// ============================================================
+// SHEET HELPERS
+// ============================================================
+function openSheet() {
+  document.getElementById('sheet-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('bottom-sheet').classList.add('open'), 10);
+}
+
+function closeSheet() {
+  document.getElementById('bottom-sheet').classList.remove('open');
+  document.getElementById('sheet-overlay').classList.remove('open');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weight Intelligence Calculator | Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#e8640a;--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#eab308;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+.sidebar{width:220px;min-height:100vh;background:#000;border-right:1px solid #1a1a1a;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:56px;background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#fff;flex:1;}
+.content{padding:0 28px 64px;}
+.disclaimer-banner{background:#fef3c7;border:1.5px solid #f59e0b;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;color:#92400e;margin:20px 0 16px;display:flex;align-items:center;gap:10px;}
+.tab-nav{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:24px;background:#fff;border-radius:10px 10px 0 0;overflow:hidden;}
+.tab-nav-btn{padding:14px 24px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all 0.15s;letter-spacing:0.03em;min-height:44px;}
+.tab-nav-btn:hover{color:#0f172a;background:#f8fafc;}
+.tab-nav-btn.active{color:var(--pink);border-bottom-color:var(--pink);background:#fff;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.panel{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:20px;}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:1px;color:#0f172a;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.search-row{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+.search-input{flex:1;min-width:200px;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:'Barlow',sans-serif;color:#0f172a;background:#fff;min-height:44px;}
+.search-input:focus{outline:none;border-color:var(--blue);}
+.cat-filters{display:flex;gap:6px;flex-wrap:wrap;}
+.cat-btn{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--mid);font-family:'Barlow',sans-serif;transition:all 0.15s;min-height:36px;}
+.cat-btn:hover{border-color:var(--blue);color:var(--blue);}
+.cat-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+.eq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media(max-width:1100px){.eq-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:700px){.eq-grid{grid-template-columns:1fr;}}
+.eq-card{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:box-shadow 0.15s,transform 0.1s,border-color 0.15s;}
+.eq-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.10);transform:translateY(-1px);border-color:var(--blue);}
+.eq-card-make{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;}
+.eq-card-model{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;color:#0f172a;margin-bottom:6px;}
+.eq-card-weight{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue);font-weight:600;margin-bottom:4px;}
+.eq-card-notes{font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.4;min-height:16px;}
+.eq-card-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+.eq-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#f1f5f9;color:var(--mid);letter-spacing:0.04em;}
+.eq-badge.excavator{background:#dbeafe;color:#1d4ed8;}
+.eq-badge.dozer{background:#fef3c7;color:#92400e;}
+.eq-badge.grader{background:#d1fae5;color:#065f46;}
+.eq-badge.loader{background:#ede9fe;color:#6d28d9;}
+.eq-badge.crane{background:#fee2e2;color:#991b1b;}
+.eq-badge.farm{background:#dcfce7;color:#15803d;}
+.eq-badge.custom{background:#f0f9ff;color:#0369a1;}
+.use-load-btn{width:100%;padding:8px 0;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.8px;cursor:pointer;border:none;background:var(--blue);color:#fff;transition:background 0.15s;min-height:36px;}
+.use-load-btn:hover{background:#1d5a8a;}
+.custom-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:700px){.custom-grid{grid-template-columns:1fr;}}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group.full{grid-column:1/-1;}
+.form-label{font-size:11px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:0.08em;}
+.form-input,.form-select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:'Barlow',sans-serif;color:#0f172a;background:#fff;transition:border-color 0.15s;min-height:44px;}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--blue);}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:900px){.calc-grid{grid-template-columns:1fr;}}
+.inputs-panel{display:flex;flex-direction:column;gap:14px;}
+.input-section{background:#f8fafc;border-radius:8px;padding:14px 16px;}
+.input-section-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;}
+.slider-wrap{display:flex;align-items:center;gap:12px;}
+.slider-wrap input[type=range]{flex:1;height:6px;border-radius:3px;background:#e2e8f0;cursor:pointer;accent-color:var(--blue);}
+.slider-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--blue);min-width:48px;text-align:right;}
+.cg-presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+.cg-preset-btn{padding:7px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--mid);font-family:'Barlow',sans-serif;transition:all 0.15s;min-height:36px;}
+.cg-preset-btn:hover{border-color:var(--blue);color:var(--blue);}
+.cg-preset-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+.radio-row{display:flex;gap:16px;}
+.radio-label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;cursor:pointer;min-height:36px;}
+.radio-label input[type=radio]{width:16px;height:16px;accent-color:var(--blue);cursor:pointer;}
+.diagram-wrap{background:#0f172a;border-radius:10px;padding:16px;margin-bottom:16px;}
+.diagram-title{font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
+.results-panel{display:flex;flex-direction:column;gap:12px;}
+.axle-gauge-card{background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;}
+.axle-gauge-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.axle-gauge-name{font-size:12px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:0.07em;}
+.axle-badge{font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:0.06em;}
+.axle-badge.legal{background:#dcfce7;color:#15803d;}
+.axle-badge.warning{background:#fef9c3;color:#854d0e;}
+.axle-badge.overweight{background:#fee2e2;color:#b91c1c;}
+.axle-gauge-bar-bg{background:#e2e8f0;border-radius:4px;height:10px;position:relative;overflow:hidden;}
+.axle-gauge-bar{height:100%;border-radius:4px;transition:width 0.4s ease,background 0.3s ease;}
+.axle-gauge-values{display:flex;justify-content:space-between;margin-top:6px;}
+.axle-val-main{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#0f172a;}
+.axle-val-pct{font-size:11px;color:var(--muted);font-weight:600;}
+.axle-val-limit{font-size:11px;color:var(--muted);}
+.permit-banner{background:#fef3c7;border:1.5px solid #f59e0b;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:700;color:#92400e;display:none;align-items:center;gap:8px;margin-bottom:12px;}
+.permit-banner.show{display:flex;}
+.shift-guidance{background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:8px;padding:14px 16px;margin-top:16px;}
+.shift-guidance-title{font-size:11px;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+.shift-item{font-size:13px;color:#1e3a5f;margin-bottom:4px;padding-left:16px;position:relative;}
+.shift-item::before{content:'→';position:absolute;left:0;color:var(--blue);font-weight:700;}
+.shift-none{font-size:13px;color:var(--muted);}
+.formula-section{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-top:20px;}
+.formula-title{font-size:12px;font-weight:800;color:var(--mid);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;}
+.formula-item{font-size:12px;color:var(--muted);margin-bottom:6px;line-height:1.5;}
+.formula-item strong{color:#0f172a;}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:900px){.compare-grid{grid-template-columns:1fr;}}
+.compare-table{width:100%;border-collapse:collapse;}
+.compare-table th{text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.07em;border-bottom:2px solid var(--border);background:#f8fafc;}
+.compare-table td{padding:11px 12px;font-size:13px;color:#0f172a;border-bottom:1px solid var(--border);vertical-align:middle;}
+.compare-table tr:last-child td{border-bottom:none;}
+.var-ok{color:#15803d;font-weight:700;}
+.var-warn{color:#854d0e;font-weight:700;}
+.var-bad{color:#b91c1c;font-weight:700;}
+.cg-note{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;font-size:13px;color:#1e3a5f;margin-top:14px;}
+.history-item{background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-size:12px;color:var(--mid);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
+.history-item-label{font-weight:600;color:#0f172a;}
+.history-delete{background:none;border:none;color:#94a3b8;cursor:pointer;font-size:14px;padding:4px 6px;border-radius:4px;}
+.history-delete:hover{color:var(--red);background:#fee2e2;}
+.btn{padding:10px 20px;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.8px;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:#334155;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;min-height:44px;}
+.btn:hover{background:#f1f5f9;}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn-primary:hover{background:#1d5a8a;}
+.btn-green{background:#15803d;color:#fff;border-color:#15803d;}
+.btn-green:hover{background:#166534;}
+.no-results{text-align:center;padding:48px 20px;color:var(--muted);font-size:14px;grid-column:1/-1;}
+.selected-load-chip{background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.selected-load-chip-text{font-size:13px;color:#1e3a5f;font-weight:600;flex:1;}
+.chip-clear{background:none;border:none;color:#94a3b8;cursor:pointer;font-size:16px;line-height:1;padding:2px 4px;border-radius:4px;}
+.chip-clear:hover{color:var(--red);background:#fee2e2;}
+@media(max-width:768px){.main{margin-left:0;}.sidebar{display:none;}.content{padding:0 16px 64px;}.topbar{padding:0 16px;}}
+</style>
+</head>
+<body>
+<div class="sidebar" id="nexus-sidebar-placeholder"></div>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">&#9878;&#65039; WEIGHT INTELLIGENCE CALCULATOR</div>
+  </div>
+  <div class="content">
+
+    <div class="disclaimer-banner">
+      &#9888;&#65039; ESTIMATES ONLY &mdash; Actual weights vary. Always verify with a certified scale before operating on public roads.
+    </div>
+
+    <div class="tab-nav">
+      <button class="tab-nav-btn active" onclick="switchTab('select')" id="tab-btn-select">&#128230; Select Load</button>
+      <button class="tab-nav-btn" onclick="switchTab('calculate')" id="tab-btn-calculate">&#129518; Calculate</button>
+      <button class="tab-nav-btn" onclick="switchTab('compare')" id="tab-btn-compare">&#128202; Compare vs Scale</button>
+    </div>
+
+    <!-- TAB 1: SELECT LOAD -->
+    <div class="tab-pane active" id="tab-select">
+      <div class="panel">
+        <div class="panel-title">&#128269; Equipment Database</div>
+        <div class="search-row">
+          <input class="search-input" type="text" id="eqSearch" placeholder="Search make or model&hellip;" oninput="renderEquipGrid()">
+          <div class="cat-filters">
+            <button class="cat-btn active" onclick="setCat('all',this)">All</button>
+            <button class="cat-btn" onclick="setCat('excavator',this)">Excavator</button>
+            <button class="cat-btn" onclick="setCat('dozer',this)">Dozer</button>
+            <button class="cat-btn" onclick="setCat('grader',this)">Grader</button>
+            <button class="cat-btn" onclick="setCat('loader',this)">Loader</button>
+            <button class="cat-btn" onclick="setCat('crane',this)">Crane</button>
+            <button class="cat-btn" onclick="setCat('farm',this)">Farm</button>
+            <button class="cat-btn" onclick="setCat('custom',this)">Custom</button>
+          </div>
+        </div>
+        <div class="eq-grid" id="equipGrid"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">&#9997;&#65039; Custom Equipment Entry</div>
+        <div class="custom-grid">
+          <div class="form-group">
+            <label class="form-label">Make</label>
+            <input class="form-input" type="text" id="custMake" placeholder="e.g. Caterpillar">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Model</label>
+            <input class="form-input" type="text" id="custModel" placeholder="e.g. 320 Excavator">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Weight (lbs)</label>
+            <input class="form-input" type="number" id="custWeight" placeholder="48000" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Load Length (ft)</label>
+            <input class="form-input" type="number" id="custLength" placeholder="20" min="1" max="53">
+          </div>
+          <div class="form-group">
+            <label class="form-label">CG Ratio (0.0 &ndash; 1.0)</label>
+            <input class="form-input" type="number" id="custCG" placeholder="0.50" min="0.05" max="0.95" step="0.01">
+          </div>
+          <div class="form-group" style="align-items:flex-end;">
+            <button class="btn btn-primary" onclick="useCustomLoad()" style="width:100%;">Use Custom Load &rarr;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: CALCULATE -->
+    <div class="tab-pane" id="tab-calculate">
+      <div id="selectedLoadChip" class="selected-load-chip" style="display:none;">
+        <span style="font-size:20px;">&#128230;</span>
+        <span class="selected-load-chip-text" id="selectedLoadLabel">No load selected</span>
+        <button class="chip-clear" onclick="clearSelectedLoad()" title="Clear load">&#10005;</button>
+      </div>
+
+      <div class="calc-grid">
+        <!-- LEFT: INPUTS -->
+        <div class="inputs-panel">
+          <div class="input-section">
+            <div class="input-section-title">Trailer</div>
+            <div class="form-group">
+              <label class="form-label">Select Trailer</label>
+              <select class="form-select" id="trailerSel" onchange="recalculate()">
+                <option value="TR-001">TR-001 &mdash; 2017 Fontaine 48ft Flatbed (13,500 lbs)</option>
+                <option value="TR-002">TR-002 &mdash; 2020 Fontaine 53ft Step Deck (14,800 lbs)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="input-section">
+            <div class="input-section-title">Load</div>
+            <div class="form-group" style="margin-bottom:10px;">
+              <label class="form-label">Load Weight (lbs)</label>
+              <input class="form-input" type="number" id="loadWeight" placeholder="48000" min="0" oninput="recalculate()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Load Length (ft)</label>
+              <input class="form-input" type="number" id="loadLength" placeholder="20" min="1" max="53" oninput="recalculate()">
+            </div>
+          </div>
+
+          <div class="input-section">
+            <div class="input-section-title">Load Position &mdash; Front of Load from Deck Front</div>
+            <div class="slider-wrap">
+              <input type="range" id="loadFrontSlider" min="0" max="40" step="0.5" value="4"
+                     oninput="document.getElementById('loadFrontVal').textContent=this.value+'ft'; recalculate();">
+              <span class="slider-val" id="loadFrontVal">4ft</span>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px;">Distance from front of trailer deck to front of load</div>
+          </div>
+
+          <div class="input-section">
+            <div class="input-section-title">Center of Gravity (CG) Position</div>
+            <div class="cg-presets">
+              <button class="cg-preset-btn" onclick="setCGPreset(0.33,this)">Front Third (0.33)</button>
+              <button class="cg-preset-btn active" onclick="setCGPreset(0.50,this)">Center (0.50)</button>
+              <button class="cg-preset-btn" onclick="setCGPreset(0.67,this)">Rear Third (0.67)</button>
+            </div>
+            <div class="form-group" style="margin-top:6px;">
+              <label class="form-label">Manual CG Ratio</label>
+              <input class="form-input" type="number" id="cgRatio" value="0.50" min="0.05" max="0.95" step="0.01"
+                     oninput="clearCGPresets(); recalculate();" style="max-width:140px;">
+            </div>
+          </div>
+
+          <div class="input-section">
+            <div class="input-section-title">Surface Type</div>
+            <div class="radio-row">
+              <label class="radio-label"><input type="radio" name="surface" value="paved" checked onchange="recalculate()"> Paved</label>
+              <label class="radio-label"><input type="radio" name="surface" value="gravel" onchange="recalculate()"> Gravel</label>
+              <label class="radio-label"><input type="radio" name="surface" value="track" onchange="recalculate()"> Track</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: RESULTS -->
+        <div>
+          <div class="diagram-wrap">
+            <div class="diagram-title">Live Trailer Diagram</div>
+            <svg id="trailerDiagram" viewBox="0 0 440 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+              <!-- Tractor cab -->
+              <rect x="8" y="38" width="68" height="44" rx="6" fill="#374151"/>
+              <rect x="8" y="38" width="68" height="12" rx="3" fill="#4b5563"/>
+              <text x="42" y="67" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="8" font-family="Barlow Condensed,sans-serif" font-weight="700">TRACTOR</text>
+              <ellipse cx="24" cy="83" rx="6" ry="6" fill="#1f2937" stroke="#4b5563" stroke-width="1"/>
+              <ellipse cx="62" cy="83" rx="6" ry="6" fill="#1f2937" stroke="#4b5563" stroke-width="1"/>
+              <!-- Trailer deck -->
+              <rect x="76" y="50" width="358" height="28" rx="3" fill="#1e3a5f"/>
+              <!-- Kingpin -->
+              <line x1="96" y1="46" x2="96" y2="82" stroke="#e91e8c" stroke-width="1.5" stroke-dasharray="3,2"/>
+              <text x="96" y="44" text-anchor="middle" fill="#e91e8c" font-size="7" font-family="Barlow Condensed,sans-serif" font-weight="700">KP</text>
+              <!-- Tandem -->
+              <line id="tandemMarker" x1="390" y1="46" x2="390" y2="82" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="3,2"/>
+              <text id="tandemLabel" x="390" y="44" text-anchor="middle" fill="#22c55e" font-size="7" font-family="Barlow Condensed,sans-serif" font-weight="700">TDM</text>
+              <ellipse id="twLeft" cx="382" cy="83" rx="7" ry="7" fill="#1f2937" stroke="#4b5563" stroke-width="1"/>
+              <ellipse id="twRight" cx="398" cy="83" rx="7" ry="7" fill="#1f2937" stroke="#4b5563" stroke-width="1"/>
+              <!-- Load block (dynamic) -->
+              <rect id="loadBlock" x="96" y="52" width="80" height="24" rx="3" fill="#e91e8c" opacity="0.85"/>
+              <text id="loadBlockLabel" x="136" y="67" text-anchor="middle" fill="#fff" font-size="8" font-family="Barlow Condensed,sans-serif" font-weight="700">LOAD</text>
+              <!-- CG dot -->
+              <circle id="cgDot" cx="136" cy="64" r="4" fill="#fbbf24" stroke="#fff" stroke-width="1.5"/>
+            </svg>
+            <div style="display:flex;gap:16px;margin-top:8px;font-size:10px;color:rgba(255,255,255,0.45);flex-wrap:wrap;">
+              <span><span style="color:#e91e8c;font-weight:700;">&#9679;</span> Kingpin</span>
+              <span><span style="color:#22c55e;font-weight:700;">&#9679;</span> Tandem</span>
+              <span><span style="color:#fbbf24;font-weight:700;">&#9679;</span> Center of Gravity</span>
+              <span><span style="background:#e91e8c;display:inline-block;width:10px;height:6px;border-radius:1px;vertical-align:middle;opacity:0.85;"></span> Load</span>
+            </div>
+          </div>
+
+          <div class="permit-banner" id="permitBanner">
+            &#9888;&#65039; GROSS WEIGHT EXCEEDS 80,000 LBS &mdash; OVERWEIGHT PERMIT REQUIRED
+          </div>
+
+          <div class="results-panel" id="resultsPanel">
+            <div style="text-align:center;color:var(--muted);font-size:14px;padding:32px;">
+              Enter load details on the left to see axle weight estimates
+            </div>
+          </div>
+
+          <div class="shift-guidance" id="shiftGuidance" style="display:none;">
+            <div class="shift-guidance-title">&#9881;&#65039; Load Shift Guidance</div>
+            <div id="shiftItems"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="formula-section">
+        <div class="formula-title">&#128208; How This Calculator Works</div>
+        <div class="formula-item"><strong>Trailer Tandem Reaction</strong> = Load Weight &times; (CG distance from kingpin &divide; kingpin-to-tandem distance). The farther back the load CG, the more weight goes to the trailer tandems.</div>
+        <div class="formula-item"><strong>Kingpin Reaction</strong> = Load Weight &minus; Trailer Tandem Reaction. This force is transferred through the fifth wheel to the tractor.</div>
+        <div class="formula-item"><strong>Steer Axle</strong> = Tractor steer unladen + Kingpin Reaction &times; (kingpin-to-drive &divide; tractor wheelbase). A rear-heavy load shifts weight toward drive axles and away from steers.</div>
+        <div class="formula-item"><strong>Drive Tandem</strong> = Tractor drive unladen + Kingpin Reaction &times; (steer-to-kingpin &divide; tractor wheelbase).</div>
+        <div class="formula-item"><strong>Trailer Tandem Total</strong> = Trailer empty tandem weight (60% of trailer GVW) + Load trailer reaction.</div>
+        <div class="formula-item"><strong>Legal limits (Federal Bridge Formula basis):</strong> Steer 12,000 lbs &bull; Drive Tandem 34,000 lbs &bull; Trailer Tandem 34,000 lbs &bull; Gross 80,000 lbs.</div>
+        <div class="formula-item" style="color:#b91c1c;font-weight:600;"><strong>Note:</strong> This is a simplified beam-model estimate. Real-world results depend on fifth-wheel position, suspension type, trailer balance, and cargo density distribution. Always verify with a certified scale.</div>
+      </div>
+    </div>
+
+    <!-- TAB 3: COMPARE -->
+    <div class="tab-pane" id="tab-compare">
+      <div class="compare-grid">
+        <div class="panel">
+          <div class="panel-title">&#128203; Scale Ticket Actuals</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="form-group">
+              <label class="form-label">Steer Axle &mdash; Actual (lbs)</label>
+              <input class="form-input" type="number" id="actSteer" placeholder="12000" oninput="updateComparison()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Drive Tandem &mdash; Actual (lbs)</label>
+              <input class="form-input" type="number" id="actDrive" placeholder="34000" oninput="updateComparison()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Trailer Tandem &mdash; Actual (lbs)</label>
+              <input class="form-input" type="number" id="actTrailer" placeholder="34000" oninput="updateComparison()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Gross &mdash; Actual (lbs)</label>
+              <input class="form-input" type="number" id="actGross" placeholder="80000" oninput="updateComparison()">
+            </div>
+            <button class="btn btn-green" onclick="saveComparison()" style="margin-top:4px;">
+              &#128190; Save Comparison
+            </button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">&#128202; Comparison Results</div>
+          <div id="compareNoCalc" style="color:var(--muted);font-size:13px;padding:8px 0;">
+            Complete a calculation in the Calculate tab first, then enter scale ticket actuals here.
+          </div>
+          <div id="compareResults" style="display:none;">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>Axle</th><th>Estimated</th><th>Actual</th><th>Difference</th><th>% Variance</th>
+                </tr>
+              </thead>
+              <tbody id="compareBody"></tbody>
+            </table>
+            <div class="cg-note" id="cgNote" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">&#128193; Saved Comparisons</div>
+        <div id="historyList">
+          <div style="color:var(--muted);font-size:13px;">No saved comparisons yet.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="nexus-config.js?v=6"></script>
+<script src="nexus-sidebar.js?v=6"></script>
+<script>
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
+var TRACTOR = {steerUnladen:12000,driveUnladen:33000,steerToKP:18,kpToDrive:2,wheelbase:20};
+var TRAILERS = {
+  'TR-001':{name:'2017 Fontaine 48ft Flatbed',emptyWeight:13500,deckLength:48,kingPinToTandem:43.5,kingPinFromDeckFront:4},
+  'TR-002':{name:'2020 Fontaine 53ft Step Deck',emptyWeight:14800,deckLength:53,kingPinToTandem:44.5,kingPinFromDeckFront:4}
+};
+var LIMITS = {steer:12000,drive:34000,trailer:34000,gross:80000};
+
+var OEM_DATABASE = [
+  {id:'cat-320',make:'Caterpillar',model:'320 Excavator',category:'excavator',weight:48501,cgRatio:0.45,notes:'Standard hydraulic excavator'},
+  {id:'cat-323',make:'Caterpillar',model:'323 Excavator',category:'excavator',weight:52911,cgRatio:0.45,notes:''},
+  {id:'cat-336',make:'Caterpillar',model:'336 Excavator',category:'excavator',weight:82673,cgRatio:0.45,notes:''},
+  {id:'cat-349',make:'Caterpillar',model:'349 Excavator',category:'excavator',weight:115080,cgRatio:0.45,notes:'Requires oversize permit in most states'},
+  {id:'cat-390f',make:'Caterpillar',model:'390F Excavator',category:'excavator',weight:198416,cgRatio:0.45,notes:'Large excavator — requires heavy haul permit'},
+  {id:'cat-d6',make:'Caterpillar',model:'D6 Dozer',category:'dozer',weight:42918,cgRatio:0.50,notes:''},
+  {id:'cat-d7',make:'Caterpillar',model:'D7 Dozer',category:'dozer',weight:65321,cgRatio:0.50,notes:''},
+  {id:'cat-d8',make:'Caterpillar',model:'D8 Dozer',category:'dozer',weight:82100,cgRatio:0.50,notes:''},
+  {id:'cat-d9',make:'Caterpillar',model:'D9 Dozer',category:'dozer',weight:114110,cgRatio:0.50,notes:'Requires oversize permit'},
+  {id:'cat-d11',make:'Caterpillar',model:'D11 Dozer',category:'dozer',weight:230000,cgRatio:0.50,notes:'Requires heavy haul permit — multi-axle trailer likely needed'},
+  {id:'cat-963',make:'Caterpillar',model:'963 Track Loader',category:'loader',weight:46200,cgRatio:0.48,notes:''},
+  {id:'cat-973',make:'Caterpillar',model:'973 Track Loader',category:'loader',weight:61400,cgRatio:0.48,notes:''},
+  {id:'cat-140m',make:'Caterpillar',model:'140M Grader',category:'grader',weight:45400,cgRatio:0.52,notes:'Long machine — verify overhang'},
+  {id:'cat-160m',make:'Caterpillar',model:'160M Grader',category:'grader',weight:50200,cgRatio:0.52,notes:'Long machine — verify overhang'},
+  {id:'cat-950',make:'Caterpillar',model:'950 Wheel Loader',category:'loader',weight:45300,cgRatio:0.50,notes:''},
+  {id:'cat-966',make:'Caterpillar',model:'966 Wheel Loader',category:'loader',weight:55900,cgRatio:0.50,notes:''},
+  {id:'cat-980',make:'Caterpillar',model:'980 Wheel Loader',category:'loader',weight:82700,cgRatio:0.50,notes:''},
+  {id:'kom-pc290',make:'Komatsu',model:'PC290 Excavator',category:'excavator',weight:62700,cgRatio:0.45,notes:''},
+  {id:'kom-pc360',make:'Komatsu',model:'PC360 Excavator',category:'excavator',weight:78700,cgRatio:0.45,notes:''},
+  {id:'kom-pc490',make:'Komatsu',model:'PC490 Excavator',category:'excavator',weight:107100,cgRatio:0.45,notes:'Requires oversize permit'},
+  {id:'kom-pc650',make:'Komatsu',model:'PC650 Excavator',category:'excavator',weight:141100,cgRatio:0.45,notes:'Requires heavy haul permit'},
+  {id:'kom-d61',make:'Komatsu',model:'D61 Dozer',category:'dozer',weight:39200,cgRatio:0.50,notes:''},
+  {id:'kom-d65',make:'Komatsu',model:'D65 Dozer',category:'dozer',weight:47400,cgRatio:0.50,notes:''},
+  {id:'kom-d85',make:'Komatsu',model:'D85 Dozer',category:'dozer',weight:85000,cgRatio:0.50,notes:''},
+  {id:'kom-d155',make:'Komatsu',model:'D155 Dozer',category:'dozer',weight:106000,cgRatio:0.50,notes:'Requires oversize permit'},
+  {id:'jd-245g',make:'John Deere',model:'245G Excavator',category:'excavator',weight:53700,cgRatio:0.45,notes:''},
+  {id:'jd-350g',make:'John Deere',model:'350G Excavator',category:'excavator',weight:79100,cgRatio:0.45,notes:''},
+  {id:'jd-470g',make:'John Deere',model:'470G Excavator',category:'excavator',weight:103600,cgRatio:0.45,notes:'Requires oversize permit'},
+  {id:'jd-650k',make:'John Deere',model:'650K Dozer',category:'dozer',weight:33800,cgRatio:0.50,notes:''},
+  {id:'jd-700k',make:'John Deere',model:'700K Dozer',category:'dozer',weight:47400,cgRatio:0.50,notes:''},
+  {id:'jd-850k',make:'John Deere',model:'850K Dozer',category:'dozer',weight:70300,cgRatio:0.50,notes:''},
+  {id:'vol-ec220',make:'Volvo',model:'EC220 Excavator',category:'excavator',weight:50700,cgRatio:0.45,notes:''},
+  {id:'vol-ec300',make:'Volvo',model:'EC300 Excavator',category:'excavator',weight:67600,cgRatio:0.45,notes:''},
+  {id:'vol-ec380',make:'Volvo',model:'EC380 Excavator',category:'excavator',weight:85100,cgRatio:0.45,notes:''},
+  {id:'vol-ec480',make:'Volvo',model:'EC480 Excavator',category:'excavator',weight:106700,cgRatio:0.45,notes:'Requires oversize permit'},
+  {id:'hit-zx210',make:'Hitachi',model:'ZX210 Excavator',category:'excavator',weight:50700,cgRatio:0.45,notes:''},
+  {id:'hit-zx350',make:'Hitachi',model:'ZX350 Excavator',category:'excavator',weight:80200,cgRatio:0.45,notes:''},
+  {id:'hit-zx470',make:'Hitachi',model:'ZX470 Excavator',category:'excavator',weight:106000,cgRatio:0.45,notes:'Requires oversize permit'},
+  {id:'lb-250x4',make:'Link-Belt',model:'250X4 Excavator',category:'excavator',weight:56600,cgRatio:0.45,notes:''},
+  {id:'lb-350x4',make:'Link-Belt',model:'350X4 Excavator',category:'excavator',weight:79400,cgRatio:0.45,notes:''},
+  {id:'lieb-ltm1050',make:'Liebherr',model:'LTM 1050-3.1 Crane',category:'crane',weight:119000,cgRatio:0.50,notes:'Boom removed for transport'},
+  {id:'lieb-ltm1100',make:'Liebherr',model:'LTM 1100-4.2 Crane',category:'crane',weight:145500,cgRatio:0.50,notes:'Requires permit — boom removed'},
+  {id:'lieb-ltm1200',make:'Liebherr',model:'LTM 1200-5.1 Crane',category:'crane',weight:157000,cgRatio:0.50,notes:'Requires heavy haul permit'},
+  {id:'grove-gmk3060',make:'Grove',model:'GMK3060 Crane',category:'crane',weight:108000,cgRatio:0.50,notes:''},
+  {id:'grove-gmk4100',make:'Grove',model:'GMK4100 Crane',category:'crane',weight:140000,cgRatio:0.50,notes:'Requires permit'},
+  {id:'grove-gmk5200',make:'Grove',model:'GMK5200 Crane',category:'crane',weight:175600,cgRatio:0.50,notes:'Requires heavy haul permit'},
+  {id:'man-10000',make:'Manitowoc',model:'10000 Lattice Boom Crane',category:'crane',weight:370000,cgRatio:0.50,notes:'TOTAL WEIGHT — requires special permits; multiple trips typical'},
+  {id:'jd-s760',make:'John Deere',model:'S760 Combine',category:'farm',weight:37500,cgRatio:0.55,notes:'Base weight; up to 52,000 lbs with header loaded'},
+  {id:'jd-s770',make:'John Deere',model:'S770 Combine',category:'farm',weight:39000,cgRatio:0.55,notes:'Base weight without header'},
+  {id:'jd-s780',make:'John Deere',model:'S780 Combine',category:'farm',weight:41000,cgRatio:0.55,notes:'Base weight without header'},
+  {id:'jd-x9',make:'John Deere',model:'X9 Combine',category:'farm',weight:52000,cgRatio:0.55,notes:'Base weight without header'},
+  {id:'cih-af8250',make:'Case IH',model:'AF8250 Combine',category:'farm',weight:41600,cgRatio:0.55,notes:''},
+  {id:'cih-af9250',make:'Case IH',model:'AF9250 Combine',category:'farm',weight:45800,cgRatio:0.55,notes:''},
+  {id:'nh-cr890',make:'New Holland',model:'CR8.90 Combine',category:'farm',weight:43000,cgRatio:0.55,notes:''},
+  {id:'nh-cr1090',make:'New Holland',model:'CR10.90 Combine',category:'farm',weight:48000,cgRatio:0.55,notes:''},
+  {id:'jd-9570rx',make:'John Deere',model:'9570RX Tractor',category:'farm',weight:66000,cgRatio:0.50,notes:'Track tractor'},
+  {id:'jd-9620rx',make:'John Deere',model:'9620RX Tractor',category:'farm',weight:70000,cgRatio:0.50,notes:'Track tractor'},
+  {id:'cih-620',make:'Case IH',model:'Steiger 620 Tractor',category:'farm',weight:56000,cgRatio:0.50,notes:''},
+  {id:'jd-7r330',make:'John Deere',model:'7R 330 Tractor',category:'farm',weight:23000,cgRatio:0.50,notes:''},
+  {id:'jd-8r370',make:'John Deere',model:'8R 370 Tractor',category:'farm',weight:30800,cgRatio:0.50,notes:''},
+  {id:'cat-mt875e',make:'Caterpillar',model:'Challenger MT875E Tractor',category:'farm',weight:59000,cgRatio:0.50,notes:'Track tractor'},
+  {id:'jd-cp770',make:'John Deere',model:'CP770 Cotton Picker',category:'farm',weight:55500,cgRatio:0.52,notes:'Loaded weight'},
+  {id:'jd-r4045',make:'John Deere',model:'R4045 Sprayer',category:'farm',weight:28700,cgRatio:0.48,notes:'Empty weight; up to 56,000 lbs loaded'}
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+var activeCat = 'all';
+var lastResult = null;
+var lastInputs = null;
+
+// ─── PHYSICS ──────────────────────────────────────────────────────────────────
+function calculate(loadWeight, loadFrontFromDeckFront, loadLength, cgRatio, trailerId) {
+  var trailer = TRAILERS[trailerId];
+  var loadCGFromDeckFront = loadFrontFromDeckFront + (loadLength * cgRatio);
+  var loadCGFromKP = loadCGFromDeckFront - trailer.kingPinFromDeckFront;
+  var cgFromKP = Math.max(0, Math.min(trailer.kingPinToTandem, loadCGFromKP));
+  var trailerReaction = loadWeight * (cgFromKP / trailer.kingPinToTandem);
+  var kingPinReaction = loadWeight - trailerReaction;
+  var trailerTandemUnladen = trailer.emptyWeight * 0.6;
+  var trailerTandem = trailerTandemUnladen + trailerReaction;
+  var steerAdded = kingPinReaction * (TRACTOR.kpToDrive / TRACTOR.wheelbase);
+  var driveAdded = kingPinReaction * (TRACTOR.steerToKP / TRACTOR.wheelbase);
+  var steer = TRACTOR.steerUnladen + steerAdded;
+  var drive = TRACTOR.driveUnladen + driveAdded;
+  var gross = steer + drive + trailerTandem;
+  return {steer:steer,drive:drive,trailerTandem:trailerTandem,gross:gross,kingPinReaction:kingPinReaction,trailerReaction:trailerReaction,cgFromKP:cgFromKP};
+}
+
+function shiftGuidance(axle, weight, limit, loadWeight, trailerTandemFt) {
+  var overage = weight - limit;
+  if (overage <= 0) return null;
+  var tandemInches = trailerTandemFt * 12;
+  var shiftInches = Math.round(overage / (loadWeight / tandemInches));
+  var direction = axle === 'trailer' ? 'forward' : 'backward';
+  return 'Move load approximately ' + shiftInches + ' inches ' + direction + ' to reduce ' + axle + ' axle by ~' + Math.round(overage).toLocaleString() + ' lbs';
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-pane').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab-nav-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('tab-btn-' + tab).classList.add('active');
+  if (tab === 'compare') updateComparison();
+}
+
+// ─── TAB 1 ────────────────────────────────────────────────────────────────────
+function setCat(cat, btn) {
+  activeCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('active');});
+  if (btn) btn.classList.add('active');
+  renderEquipGrid();
+}
+
+function renderEquipGrid() {
+  var q = (document.getElementById('eqSearch').value || '').toLowerCase().trim();
+  var grid = document.getElementById('equipGrid');
+  var customItems = getCustomItems();
+  var allItems = OEM_DATABASE.concat(customItems);
+  var filtered = allItems.filter(function(eq) {
+    var catMatch = activeCat === 'all' || eq.category === activeCat;
+    var qMatch = !q || (eq.make + ' ' + eq.model).toLowerCase().indexOf(q) > -1;
+    return catMatch && qMatch;
+  });
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="no-results">No equipment matched your search.</div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(function(eq) {
+    return '<div class="eq-card">' +
+      '<div class="eq-card-make">' + eq.make + '</div>' +
+      '<div class="eq-card-model">' + eq.model + '</div>' +
+      '<div class="eq-card-weight">' + eq.weight.toLocaleString() + ' lbs</div>' +
+      '<div class="eq-card-meta">' +
+        '<span class="eq-badge ' + eq.category + '">' + eq.category + '</span>' +
+        '<span class="eq-badge">CG ' + eq.cgRatio + '</span>' +
+      '</div>' +
+      '<div class="eq-card-notes">' + (eq.notes || '') + '</div>' +
+      '<button class="use-load-btn" onclick="useLoad(\'' + eq.id + '\')">Use This Load &rarr;</button>' +
+    '</div>';
+  }).join('');
+}
+
+function useLoad(id) {
+  var allItems = OEM_DATABASE.concat(getCustomItems());
+  var eq = null;
+  for (var i = 0; i < allItems.length; i++) { if (allItems[i].id === id) { eq = allItems[i]; break; } }
+  if (!eq) return;
+  var defaultLengths = {excavator:20,dozer:16,grader:28,loader:18,crane:30,farm:30,custom:20};
+  var len = defaultLengths[eq.category] || 20;
+  document.getElementById('loadWeight').value = eq.weight;
+  document.getElementById('loadLength').value = len;
+  document.getElementById('cgRatio').value = eq.cgRatio;
+  setCGPresetByVal(eq.cgRatio);
+  document.getElementById('selectedLoadLabel').textContent = eq.make + ' ' + eq.model + ' — ' + eq.weight.toLocaleString() + ' lbs';
+  document.getElementById('selectedLoadChip').style.display = 'flex';
+  switchTab('calculate');
+  recalculate();
+}
+
+function clearSelectedLoad() {
+  document.getElementById('selectedLoadChip').style.display = 'none';
+  document.getElementById('loadWeight').value = '';
+  document.getElementById('loadLength').value = '';
+  recalculate();
+}
+
+function getCustomItems() {
+  try { return JSON.parse(localStorage.getItem('nexus_wc_custom_eq') || '[]'); } catch(e) { return []; }
+}
+
+function useCustomLoad() {
+  var make   = (document.getElementById('custMake').value || '').trim() || 'Custom';
+  var model  = (document.getElementById('custModel').value || '').trim() || 'Equipment';
+  var weight = parseFloat(document.getElementById('custWeight').value);
+  var length = parseFloat(document.getElementById('custLength').value) || 20;
+  var cg     = parseFloat(document.getElementById('custCG').value) || 0.50;
+  if (!weight || isNaN(weight)) { alert('Please enter a load weight.'); return; }
+  var customEq = {id:'custom-'+Date.now(),make:make,model:model,category:'custom',weight:weight,cgRatio:cg,notes:'Custom entry'};
+  var existing = getCustomItems();
+  existing.unshift(customEq);
+  if (existing.length > 20) existing.pop();
+  localStorage.setItem('nexus_wc_custom_eq', JSON.stringify(existing));
+  document.getElementById('loadWeight').value = weight;
+  document.getElementById('loadLength').value = length;
+  document.getElementById('cgRatio').value = cg;
+  setCGPresetByVal(cg);
+  document.getElementById('selectedLoadLabel').textContent = make + ' ' + model + ' — ' + weight.toLocaleString() + ' lbs';
+  document.getElementById('selectedLoadChip').style.display = 'flex';
+  renderEquipGrid();
+  switchTab('calculate');
+  recalculate();
+}
+
+// ─── TAB 2 ────────────────────────────────────────────────────────────────────
+function setCGPreset(val, btn) {
+  document.getElementById('cgRatio').value = val;
+  document.querySelectorAll('.cg-preset-btn').forEach(function(b){b.classList.remove('active');});
+  if (btn) btn.classList.add('active');
+  recalculate();
+}
+
+function setCGPresetByVal(val) {
+  document.getElementById('cgRatio').value = val;
+  var presetMap = {'0.33':'Front Third (0.33)','0.50':'Center (0.50)','0.67':'Rear Third (0.67)'};
+  document.querySelectorAll('.cg-preset-btn').forEach(function(b){
+    b.classList.remove('active');
+    if (presetMap[String(val)] === b.textContent) b.classList.add('active');
+  });
+}
+
+function clearCGPresets() {
+  document.querySelectorAll('.cg-preset-btn').forEach(function(b){b.classList.remove('active');});
+}
+
+function recalculate() {
+  var loadWeight = parseFloat(document.getElementById('loadWeight').value);
+  var loadLength = parseFloat(document.getElementById('loadLength').value);
+  var loadFront  = parseFloat(document.getElementById('loadFrontSlider').value) || 4;
+  var cgRatio    = parseFloat(document.getElementById('cgRatio').value) || 0.50;
+  var trailerId  = document.getElementById('trailerSel').value;
+  updateDiagram(trailerId, loadFront, loadLength || 20, cgRatio);
+  if (!loadWeight || !loadLength || isNaN(loadWeight) || isNaN(loadLength)) {
+    resetResults(); return;
+  }
+  var trailer = TRAILERS[trailerId];
+  var r = calculate(loadWeight, loadFront, loadLength, cgRatio, trailerId);
+  lastResult = r;
+  lastInputs = {loadWeight:loadWeight,loadLength:loadLength,loadFront:loadFront,cgRatio:cgRatio,trailerId:trailerId};
+  renderGauges(r, loadWeight, trailer.kingPinToTandem);
+  saveCalcHistory(r, lastInputs);
+}
+
+function resetResults() {
+  lastResult = null; lastInputs = null;
+  document.getElementById('resultsPanel').innerHTML = '<div style="text-align:center;color:var(--muted);font-size:14px;padding:32px;">Enter load details on the left to see axle weight estimates</div>';
+  document.getElementById('permitBanner').classList.remove('show');
+  document.getElementById('shiftGuidance').style.display = 'none';
+}
+
+function gaugeColor(pct) { return pct > 100 ? '#ef4444' : pct > 85 ? '#eab308' : '#22c55e'; }
+function badgeClass(pct) { return pct > 100 ? 'overweight' : pct > 85 ? 'warning' : 'legal'; }
+function badgeText(pct)  { return pct > 100 ? 'OVERWEIGHT' : pct > 85 ? 'WARNING' : 'LEGAL'; }
+
+function renderGauges(r, loadWeight, tandemFt) {
+  var axles = [
+    {key:'steer',label:'Steer Axle',val:r.steer,limit:LIMITS.steer,limitLabel:'12,000 lbs'},
+    {key:'drive',label:'Drive Tandem',val:r.drive,limit:LIMITS.drive,limitLabel:'34,000 lbs'},
+    {key:'trailer',label:'Trailer Tandem',val:r.trailerTandem,limit:LIMITS.trailer,limitLabel:'34,000 lbs'},
+    {key:'gross',label:'Gross Vehicle Weight',val:r.gross,limit:LIMITS.gross,limitLabel:'80,000 lbs'}
+  ];
+  var panel = document.getElementById('resultsPanel');
+  panel.innerHTML = axles.map(function(a) {
+    var pct = Math.round((a.val / a.limit) * 100);
+    var barPct = Math.min(pct, 100);
+    var color = gaugeColor(pct);
+    return '<div class="axle-gauge-card">' +
+      '<div class="axle-gauge-header">' +
+        '<div class="axle-gauge-name">' + a.label + '</div>' +
+        '<span class="axle-badge ' + badgeClass(pct) + '">' + badgeText(pct) + '</span>' +
+      '</div>' +
+      '<div class="axle-gauge-bar-bg"><div class="axle-gauge-bar" style="width:' + barPct + '%;background:' + color + ';"></div></div>' +
+      '<div class="axle-gauge-values">' +
+        '<div class="axle-val-main" style="color:' + color + '">' + Math.round(a.val).toLocaleString() + ' lbs</div>' +
+        '<div class="axle-val-pct">' + pct + '% of limit</div>' +
+        '<div class="axle-val-limit">Max: ' + a.limitLabel + '</div>' +
+      '</div></div>';
+  }).join('');
+
+  document.getElementById('permitBanner').classList[r.gross > LIMITS.gross ? 'add' : 'remove']('show');
+
+  var guidances = [
+    shiftGuidance('steer', r.steer, LIMITS.steer, loadWeight, tandemFt),
+    shiftGuidance('drive', r.drive, LIMITS.drive, loadWeight, tandemFt),
+    shiftGuidance('trailer', r.trailerTandem, LIMITS.trailer, loadWeight, tandemFt)
+  ].filter(Boolean);
+
+  var shiftDiv = document.getElementById('shiftGuidance');
+  var shiftItems = document.getElementById('shiftItems');
+  if (guidances.length > 0) {
+    shiftItems.innerHTML = guidances.map(function(g){return '<div class="shift-item">'+g+'</div>';}).join('');
+  } else {
+    shiftItems.innerHTML = '<div class="shift-none">All axles within legal limits — no load shift needed.</div>';
+  }
+  shiftDiv.style.display = 'block';
+}
+
+// ─── SVG DIAGRAM ──────────────────────────────────────────────────────────────
+function updateDiagram(trailerId, loadFront, loadLength, cgRatio) {
+  var trailer = TRAILERS[trailerId];
+  var deckPx = 358;
+  var deckStartX = 76;
+  var scale = deckPx / trailer.deckLength;
+  var tandemX = deckStartX + ((trailer.kingPinFromDeckFront + trailer.kingPinToTandem) * scale);
+  var loadStartX = deckStartX + (loadFront * scale);
+  var loadWidthPx = Math.max(4, Math.min(loadLength * scale, deckStartX + deckPx - loadStartX));
+  var cgX = Math.max(deckStartX + 4, Math.min(deckStartX + deckPx - 4, loadStartX + (loadLength * cgRatio * scale)));
+
+  var lb = document.getElementById('loadBlock');
+  var ll = document.getElementById('loadBlockLabel');
+  var cd = document.getElementById('cgDot');
+  var tm = document.getElementById('tandemMarker');
+  var tl = document.getElementById('tandemLabel');
+  var wl = document.getElementById('twLeft');
+  var wr = document.getElementById('twRight');
+
+  if (lb) { lb.setAttribute('x', Math.max(deckStartX, loadStartX)); lb.setAttribute('width', loadWidthPx); }
+  if (ll) { ll.setAttribute('x', Math.max(deckStartX + 20, Math.max(deckStartX, loadStartX) + loadWidthPx / 2)); }
+  if (cd) { cd.setAttribute('cx', cgX); }
+  var tx = Math.min(tandemX, deckStartX + deckPx - 4);
+  if (tm) { tm.setAttribute('x1', tx); tm.setAttribute('x2', tx); }
+  if (tl) { tl.setAttribute('x', tx); }
+  if (wl) { wl.setAttribute('cx', tx - 8); }
+  if (wr) { wr.setAttribute('cx', tx + 8); }
+}
+
+// ─── HISTORY ──────────────────────────────────────────────────────────────────
+function saveCalcHistory(r, inputs) {
+  try {
+    var history = JSON.parse(localStorage.getItem('nexus_weight_calc_history') || '[]');
+    history.unshift({ts:new Date().toISOString(),inputs:inputs,result:{steer:Math.round(r.steer),drive:Math.round(r.drive),trailerTandem:Math.round(r.trailerTandem),gross:Math.round(r.gross)}});
+    if (history.length > 20) history.splice(20);
+    localStorage.setItem('nexus_weight_calc_history', JSON.stringify(history));
+  } catch(e) {}
+}
+
+// ─── TAB 3 ────────────────────────────────────────────────────────────────────
+function updateComparison() {
+  if (!lastResult) {
+    document.getElementById('compareNoCalc').style.display = 'block';
+    document.getElementById('compareResults').style.display = 'none';
+    return;
+  }
+  document.getElementById('compareNoCalc').style.display = 'none';
+  document.getElementById('compareResults').style.display = 'block';
+
+  var axles = [
+    {label:'Steer Axle',est:Math.round(lastResult.steer),inputId:'actSteer'},
+    {label:'Drive Tandem',est:Math.round(lastResult.drive),inputId:'actDrive'},
+    {label:'Trailer Tandem',est:Math.round(lastResult.trailerTandem),inputId:'actTrailer'},
+    {label:'Gross Vehicle Wt',est:Math.round(lastResult.gross),inputId:'actGross'}
+  ];
+
+  var tbody = document.getElementById('compareBody');
+  tbody.innerHTML = axles.map(function(a) {
+    var actual = parseFloat(document.getElementById(a.inputId).value);
+    if (!actual || isNaN(actual)) {
+      return '<tr><td>'+a.label+'</td><td>'+a.est.toLocaleString()+' lbs</td><td style="color:var(--muted);">—</td><td style="color:var(--muted);">—</td><td style="color:var(--muted);">—</td></tr>';
+    }
+    var diff = actual - a.est;
+    var pctVar = Math.abs((diff / a.est) * 100);
+    var vc = pctVar > 15 ? 'var-bad' : pctVar > 5 ? 'var-warn' : 'var-ok';
+    var diffSign = diff >= 0 ? '+' : '';
+    return '<tr><td>'+a.label+'</td><td>'+a.est.toLocaleString()+' lbs</td><td>'+actual.toLocaleString()+' lbs</td><td class="'+vc+'">'+diffSign+diff.toLocaleString()+' lbs</td><td class="'+vc+'">'+pctVar.toFixed(1)+'%</td></tr>';
+  }).join('');
+
+  var actTrailer = parseFloat(document.getElementById('actTrailer').value);
+  var cgNote = document.getElementById('cgNote');
+  if (actTrailer && lastInputs && !isNaN(actTrailer)) {
+    var trailer = TRAILERS[lastInputs.trailerId];
+    var trailerTandemUnladen = trailer.emptyWeight * 0.6;
+    var actualTrailerReaction = actTrailer - trailerTandemUnladen;
+    var actualCGFromKP = (actualTrailerReaction / lastInputs.loadWeight) * trailer.kingPinToTandem;
+    var estimatedCGFromKP = lastResult.cgFromKP;
+    cgNote.style.display = 'block';
+    cgNote.innerHTML = '<strong>CG Learning Note:</strong> Based on your scale ticket, the actual CG was approximately <strong>' + actualCGFromKP.toFixed(1) + ' ft from the kingpin</strong> vs estimated <strong>' + estimatedCGFromKP.toFixed(1) + ' ft</strong>. ' +
+      (Math.abs(actualCGFromKP - estimatedCGFromKP) > 2 ? 'Consider adjusting the CG ratio or load position for future loads of this type.' : 'Good CG estimate — your positioning was accurate.');
+  } else {
+    cgNote.style.display = 'none';
+  }
+}
+
+function saveComparison() {
+  if (!lastResult) { alert('No calculation to save. Run a calculation first.'); return; }
+  var actSteer   = parseFloat(document.getElementById('actSteer').value);
+  var actDrive   = parseFloat(document.getElementById('actDrive').value);
+  var actTrailer = parseFloat(document.getElementById('actTrailer').value);
+  var actGross   = parseFloat(document.getElementById('actGross').value);
+  if (!actSteer && !actDrive && !actTrailer && !actGross) { alert('Enter at least one actual scale ticket weight before saving.'); return; }
+  var comparisons = JSON.parse(localStorage.getItem('nexus_wc_comparisons') || '[]');
+  comparisons.unshift({id:'cmp-'+Date.now(),ts:new Date().toISOString(),estimated:{steer:Math.round(lastResult.steer),drive:Math.round(lastResult.drive),trailerTandem:Math.round(lastResult.trailerTandem),gross:Math.round(lastResult.gross)},actual:{steer:actSteer||null,drive:actDrive||null,trailerTandem:actTrailer||null,gross:actGross||null},inputs:lastInputs});
+  if (comparisons.length > 50) comparisons.splice(50);
+  localStorage.setItem('nexus_wc_comparisons', JSON.stringify(comparisons));
+  renderHistory();
+  alert('Comparison saved successfully.');
+}
+
+function renderHistory() {
+  var comparisons = JSON.parse(localStorage.getItem('nexus_wc_comparisons') || '[]');
+  var container = document.getElementById('historyList');
+  if (!comparisons.length) { container.innerHTML = '<div style="color:var(--muted);font-size:13px;">No saved comparisons yet.</div>'; return; }
+  container.innerHTML = comparisons.map(function(c) {
+    var trailer = (c.inputs && TRAILERS[c.inputs.trailerId]) || {};
+    var dt = new Date(c.ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    var lw = c.inputs ? c.inputs.loadWeight.toLocaleString() : '—';
+    return '<div class="history-item">' +
+      '<div><div class="history-item-label">' + dt + ' — ' + lw + ' lbs load</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-top:2px;">Est. Gross: ' + c.estimated.gross.toLocaleString() + ' lbs' +
+      (c.actual.gross ? ' | Actual: ' + c.actual.gross.toLocaleString() + ' lbs' : '') +
+      ' — ' + (trailer.name || (c.inputs && c.inputs.trailerId) || 'Unknown trailer') + '</div></div>' +
+      '<button class="history-delete" onclick="deleteComparison(\'' + c.id + '\')" title="Delete">🗑</button>' +
+    '</div>';
+  }).join('');
+}
+
+function deleteComparison(id) {
+  var comparisons = JSON.parse(localStorage.getItem('nexus_wc_comparisons') || '[]').filter(function(c){return c.id!==id;});
+  localStorage.setItem('nexus_wc_comparisons', JSON.stringify(comparisons));
+  renderHistory();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  renderEquipGrid();
+  renderHistory();
+  updateDiagram('TR-001', 4, 20, 0.50);
+});
+</script>
+</body>
+</html>

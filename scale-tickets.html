@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scale Ticket Intelligence | Carrier Nexus</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0a; color: #e5e7eb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+  .main-wrap { margin-left: 220px; padding: 24px; }
+  h1 { font-size: 1.8rem; font-weight: 700; color: #fff; }
+  h2 { font-size: 1.2rem; font-weight: 600; color: #fff; margin-bottom: 16px; }
+  .subtitle { color: #9ca3af; font-size: 0.95rem; margin-top: 4px; margin-bottom: 24px; }
+
+  /* KPI Cards */
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  .kpi-card { background: #111827; border: 1px solid #21262d; border-radius: 10px; padding: 20px; }
+  .kpi-label { font-size: 0.8rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .kpi-value { font-size: 1.8rem; font-weight: 700; color: #fff; }
+  .kpi-value.danger { color: #ef4444; }
+
+  /* Two-panel layout */
+  .entry-panels { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; margin-bottom: 28px; }
+  .panel { background: #111827; border: 1px solid #21262d; border-radius: 10px; padding: 20px; }
+  .panel h2 { margin-bottom: 16px; }
+
+  /* Drop zone */
+  .drop-zone { border: 2px dashed #21262d; border-radius: 8px; padding: 40px 20px; text-align: center; cursor: pointer; transition: all 0.2s; color: #6b7280; }
+  .drop-zone:hover, .drop-zone.drag-over { border-color: #e91e8c; color: #e91e8c; background: rgba(233,30,140,0.05); }
+  .drop-zone .dz-icon { font-size: 2.5rem; margin-bottom: 10px; }
+  .drop-zone p { font-size: 0.9rem; }
+  .drop-zone .dz-sub { font-size: 0.78rem; color: #6b7280; margin-top: 6px; }
+  .file-preview { background: #1f2937; border-radius: 8px; padding: 12px 16px; margin-top: 12px; display: flex; align-items: center; gap: 12px; }
+  .file-preview .file-icon { font-size: 1.5rem; }
+  .file-preview .file-info { flex: 1; font-size: 0.85rem; color: #d1d5db; }
+  .file-preview .file-name { font-weight: 600; color: #fff; }
+
+  /* Smart extract */
+  .smart-extract-btn { margin-top: 12px; width: 100%; padding: 10px; background: #1f2937; border: 1px solid #374151; color: #e91e8c; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; }
+  .smart-extract-btn:hover { background: #374151; }
+  .smart-extract-msg { font-size: 0.78rem; color: #9ca3af; margin-top: 8px; display: none; }
+
+  /* Form */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label { font-size: 0.78rem; color: #9ca3af; font-weight: 500; }
+  .form-group input, .form-group select, .form-group textarea { background: #1f2937; border: 1px solid #374151; color: #e5e7eb; padding: 8px 10px; border-radius: 6px; font-size: 0.875rem; width: 100%; transition: border-color 0.2s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #e91e8c; }
+  .form-group textarea { resize: vertical; min-height: 60px; }
+
+  /* Weight status live */
+  .weight-status-live { margin-top: 14px; padding: 12px 16px; background: #0d1117; border-radius: 8px; border: 1px solid #21262d; }
+  .weight-status-live .ws-label { font-size: 0.75rem; color: #6b7280; margin-bottom: 8px; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+  .badge-legal { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+  .badge-overweight { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+  .badge-permit { background: rgba(234,179,8,0.15); color: #eab308; border: 1px solid rgba(234,179,8,0.3); }
+  .badge-axle { background: rgba(249,115,22,0.15); color: #f97316; border: 1px solid rgba(249,115,22,0.3); }
+  .badge-neutral { background: #1f2937; color: #6b7280; border: 1px solid #374151; }
+
+  .save-btn { margin-top: 16px; width: 100%; padding: 12px; background: #e91e8c; color: #fff; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+  .save-btn:hover { background: #c2185b; }
+
+  /* Table section */
+  .table-section { background: #111827; border: 1px solid #21262d; border-radius: 10px; padding: 20px; margin-bottom: 28px; }
+  .table-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .count-badge { background: #1f2937; color: #9ca3af; border-radius: 20px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; }
+  .search-box { flex: 1; min-width: 160px; background: #1f2937; border: 1px solid #374151; color: #e5e7eb; padding: 7px 12px; border-radius: 6px; font-size: 0.875rem; }
+  .search-box:focus { outline: none; border-color: #e91e8c; }
+  .filter-select { background: #1f2937; border: 1px solid #374151; color: #e5e7eb; padding: 7px 12px; border-radius: 6px; font-size: 0.875rem; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { text-align: left; padding: 10px 12px; font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #21262d; }
+  tbody tr { border-bottom: 1px solid #21262d; transition: background 0.15s; }
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+  tbody tr.axle-violation { border-left: 3px solid rgba(249,115,22,0.6); }
+  tbody td { padding: 10px 12px; font-size: 0.85rem; color: #d1d5db; vertical-align: middle; }
+  .empty-state { text-align: center; padding: 40px; color: #6b7280; }
+
+  .action-btn { padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 0.78rem; font-weight: 600; transition: all 0.2s; }
+  .btn-view { background: #1f2937; color: #9ca3af; border: 1px solid #374151; }
+  .btn-view:hover { background: #374151; color: #fff; }
+  .btn-delete { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+  .btn-delete:hover { background: #ef4444; color: #fff; }
+
+  /* Intelligence panel */
+  .intel-panel { background: #111827; border: 1px solid #21262d; border-radius: 10px; padding: 20px; margin-bottom: 28px; }
+  .intel-panel h2 { margin-bottom: 4px; }
+  .intel-subtitle { color: #9ca3af; font-size: 0.85rem; margin-bottom: 16px; }
+  .intel-placeholder { color: #6b7280; font-size: 0.9rem; text-align: center; padding: 24px; }
+
+  /* Modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #111827; border: 1px solid #21262d; border-radius: 12px; padding: 24px; width: 560px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+  .modal h2 { margin-bottom: 16px; }
+  .modal-close { float: right; background: none; border: none; color: #9ca3af; font-size: 1.4rem; cursor: pointer; }
+  .modal-close:hover { color: #fff; }
+  .detail-row { display: flex; gap: 12px; margin-bottom: 10px; border-bottom: 1px solid #21262d; padding-bottom: 10px; }
+  .detail-label { font-size: 0.78rem; color: #6b7280; width: 140px; flex-shrink: 0; padding-top: 2px; }
+  .detail-value { font-size: 0.875rem; color: #e5e7eb; }
+  .axle-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #1f2937; border-radius: 6px; margin-bottom: 6px; }
+  .axle-name { font-size: 0.85rem; color: #9ca3af; }
+  .axle-val { font-size: 0.9rem; font-weight: 600; color: #fff; }
+  .axle-ok { color: #22c55e; }
+  .axle-viol { color: #ef4444; }
+
+  @media (max-width: 900px) {
+    .main-wrap { margin-left: 0; padding: 16px; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .entry-panels { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="main-wrap">
+  <h1>⚖️ Scale Ticket Intelligence</h1>
+  <p class="subtitle">Weight history, axle compliance, and fleet load profile</p>
+
+  <!-- KPI Cards -->
+  <div class="kpi-row" id="kpiRow">
+    <div class="kpi-card"><div class="kpi-label">Total Tickets</div><div class="kpi-value" id="kpiTotal">0</div></div>
+    <div class="kpi-card"><div class="kpi-label">Avg Gross Weight</div><div class="kpi-value" id="kpiAvg">— lbs</div></div>
+    <div class="kpi-card"><div class="kpi-label">Overweight Count</div><div class="kpi-value" id="kpiOW">0</div></div>
+    <div class="kpi-card"><div class="kpi-label">Fleet Max Gross</div><div class="kpi-value" id="kpiMax">— lbs</div></div>
+  </div>
+
+  <!-- Entry Panels -->
+  <div class="entry-panels">
+    <!-- Drop Zone -->
+    <div class="panel">
+      <h2>📎 Upload Ticket</h2>
+      <div class="drop-zone" id="dropZone">
+        <div class="dz-icon">📄</div>
+        <p>Drop scale ticket image or PDF here</p>
+        <div class="dz-sub">Supports JPG, PNG, PDF</div>
+        <input type="file" id="fileInput" accept="image/*,.pdf" style="display:none">
+      </div>
+      <div class="file-preview" id="filePreview" style="display:none">
+        <div class="file-icon" id="fileIcon">📄</div>
+        <div class="file-info">
+          <div class="file-name" id="fileName">—</div>
+          <div id="fileSize" style="color:#9ca3af;font-size:0.78rem;"></div>
+        </div>
+      </div>
+      <button class="smart-extract-btn" id="smartExtractBtn" style="display:none" onclick="smartExtract()">⚡ Smart Extract Weights</button>
+      <div class="smart-extract-msg" id="smartMsg">Smart Extract works best with filenames containing weight data (e.g. "ticket_80000_34000.jpg"). Review and confirm all fields before saving.</div>
+    </div>
+
+    <!-- Entry Form -->
+    <div class="panel">
+      <h2>📝 Entry Form</h2>
+      <div class="form-grid">
+        <div class="form-group"><label>Truck Unit</label><input type="text" id="fTruck" placeholder="Unit 101"></div>
+        <div class="form-group"><label>Date</label><input type="date" id="fDate"></div>
+        <div class="form-group full"><label>Location / Scale Name</label><input type="text" id="fLocation" placeholder="Ocala Weigh Station, FL"></div>
+        <div class="form-group full"><label>Load Description</label><input type="text" id="fLoad" placeholder="Steel Coils, Lumber..."></div>
+        <div class="form-group"><label>Steer Axle (lbs)</label><input type="number" id="fSteer" placeholder="12000" oninput="updateGross();updateStatus()"></div>
+        <div class="form-group"><label>Drive Axle / Tandem (lbs)</label><input type="number" id="fDrive" placeholder="34000" oninput="updateGross();updateStatus()"></div>
+        <div class="form-group"><label>Trailer Axle 1 (lbs)</label><input type="number" id="fT1" placeholder="20000" oninput="updateGross();updateStatus()"></div>
+        <div class="form-group"><label>Trailer Axle 2 (lbs, opt)</label><input type="number" id="fT2" placeholder="" oninput="updateGross();updateStatus()"></div>
+        <div class="form-group"><label>Trailer Axle 3 (lbs, opt)</label><input type="number" id="fT3" placeholder="" oninput="updateGross();updateStatus()"></div>
+        <div class="form-group"><label>Gross Weight (lbs)</label><input type="number" id="fGross" placeholder="80000" oninput="updateStatus()"></div>
+        <div class="form-group"><label>Legal Gross Limit (lbs)</label><input type="number" id="fLimit" value="80000"></div>
+        <div class="form-group"><label>Permit Weight (lbs, if any)</label><input type="number" id="fPermit" placeholder="" oninput="updateStatus()"></div>
+        <div class="form-group full"><label>Notes</label><textarea id="fNotes" placeholder="Additional notes..."></textarea></div>
+      </div>
+      <div class="weight-status-live">
+        <div class="ws-label">LIVE WEIGHT STATUS</div>
+        <div class="badge-row" id="liveStatus"><span class="badge badge-neutral">Enter weights above</span></div>
+      </div>
+      <button class="save-btn" onclick="saveTicket()">💾 Save Scale Ticket</button>
+    </div>
+  </div>
+
+  <!-- Ticket Table -->
+  <div class="table-section">
+    <div class="table-header">
+      <h2 style="margin-bottom:0">Ticket History</h2>
+      <span class="count-badge" id="ticketCount">0 tickets</span>
+      <input class="search-box" type="text" id="ticketSearch" placeholder="Search location, load, truck..." oninput="renderTable()">
+      <select class="filter-select" id="truckFilter" onchange="renderTable()"><option value="">All Trucks</option></select>
+    </div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr>
+          <th>Date</th><th>Truck</th><th>Location</th><th>Steer</th><th>Drives</th><th>Trailer</th><th>Gross</th><th>Status</th><th>Load</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="ticketTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Weight Intelligence -->
+  <div class="intel-panel">
+    <h2>🧠 Fleet Weight Profile</h2>
+    <div class="intel-subtitle">Average axle weights per truck across all recorded tickets</div>
+    <div id="intelContent">
+      <div class="intel-placeholder">Record at least 2 tickets to build your fleet weight profile.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2>Scale Ticket Detail</h2>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const LS_KEY = 'nexus_scale_tickets';
+
+const SEED = [
+  { truck:"Unit 101", date:"2026-06-10", location:"Ocala Weigh Station, FL", load_desc:"Steel Coils", steer:12000, drive:34000, trailer1:20000, trailer2:14000, trailer3:null, gross:80000, legal_limit:80000, permit_weight:null, notes:"Max legal load", file_name:null, file_size:null },
+  { truck:"Unit 102", date:"2026-06-12", location:"I-75 Portable Scale, Wildwood FL", load_desc:"Lumber", steer:11200, drive:33400, trailer1:19200, trailer2:null, trailer3:null, gross:63800, legal_limit:80000, permit_weight:null, notes:"", file_name:null, file_size:null },
+  { truck:"Unit 101", date:"2026-06-15", location:"Tampa Port Weigh Station", load_desc:"Machinery", steer:12500, drive:34000, trailer1:20000, trailer2:20000, trailer3:null, gross:86500, legal_limit:80000, permit_weight:90000, notes:"Super load permit obtained", file_name:null, file_size:null },
+  { truck:"Unit 103", date:"2026-06-18", location:"Gainesville Scale, FL", load_desc:"Produce", steer:10800, drive:32000, trailer1:18500, trailer2:null, trailer3:null, gross:61300, legal_limit:80000, permit_weight:null, notes:"", file_name:null, file_size:null },
+  { truck:"Unit 102", date:"2026-06-20", location:"I-10 Weigh Station, FL", load_desc:"Auto Parts", steer:11500, drive:33200, trailer1:19800, trailer2:9500, trailer3:null, gross:74000, legal_limit:80000, permit_weight:null, notes:"", file_name:null, file_size:null }
+];
+
+function loadTickets() {
+  let d = localStorage.getItem(LS_KEY);
+  if (!d) {
+    const seeded = SEED.map(t => ({ ...t, id: crypto.randomUUID(), created_at: new Date().toISOString() }));
+    localStorage.setItem(LS_KEY, JSON.stringify(seeded));
+    return seeded;
+  }
+  return JSON.parse(d);
+}
+
+function saveTickets(arr) { localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
+
+function fmtLbs(v) { return v != null ? Number(v).toLocaleString() + ' lbs' : '—'; }
+function fmtNum(v) { return v != null ? Number(v).toLocaleString() : '—'; }
+
+function getStatus(t) {
+  const statuses = [];
+  const limit = t.legal_limit || 80000;
+  let axleViol = false;
+  if (t.steer > 12000) axleViol = true;
+  if (t.drive > 34000) axleViol = true;
+  if (t.trailer1 > 20000) axleViol = true;
+  if (t.trailer2 && t.trailer2 > 20000) axleViol = true;
+  if (t.trailer3 && t.trailer3 > 20000) axleViol = true;
+  if (t.permit_weight) statuses.push('permit');
+  if (t.gross > limit) statuses.push('overweight');
+  if (axleViol) statuses.push('axle');
+  if (statuses.length === 0) statuses.push('legal');
+  return statuses;
+}
+
+function statusBadges(statuses) {
+  return statuses.map(s => {
+    if (s === 'legal') return '<span class="badge badge-legal">✓ Legal</span>';
+    if (s === 'overweight') return '<span class="badge badge-overweight">⚠ Overweight</span>';
+    if (s === 'permit') return '<span class="badge badge-permit">📋 Permit Load</span>';
+    if (s === 'axle') return '<span class="badge badge-axle">⚡ Axle Violation</span>';
+    return '';
+  }).join(' ');
+}
+
+function updateKPIs() {
+  const tickets = loadTickets();
+  document.getElementById('kpiTotal').textContent = tickets.length;
+  if (tickets.length === 0) {
+    document.getElementById('kpiAvg').textContent = '— lbs';
+    document.getElementById('kpiOW').textContent = '0';
+    document.getElementById('kpiMax').textContent = '— lbs';
+    return;
+  }
+  const avg = Math.round(tickets.reduce((s,t) => s + (t.gross||0), 0) / tickets.length);
+  document.getElementById('kpiAvg').textContent = avg.toLocaleString() + ' lbs';
+  const ow = tickets.filter(t => (t.gross||0) > (t.legal_limit||80000)).length;
+  const owEl = document.getElementById('kpiOW');
+  owEl.textContent = ow;
+  owEl.className = 'kpi-value' + (ow > 0 ? ' danger' : '');
+  const maxG = Math.max(...tickets.map(t => t.gross||0));
+  document.getElementById('kpiMax').textContent = maxG.toLocaleString() + ' lbs';
+}
+
+function populateTruckFilter() {
+  const tickets = loadTickets();
+  const trucks = [...new Set(tickets.map(t => t.truck).filter(Boolean))].sort();
+  const sel = document.getElementById('truckFilter');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">All Trucks</option>' + trucks.map(tr => `<option value="${tr}" ${cur===tr?'selected':''}>${tr}</option>`).join('');
+}
+
+function renderTable() {
+  const tickets = loadTickets().sort((a,b) => b.date.localeCompare(a.date));
+  const search = document.getElementById('ticketSearch').value.toLowerCase();
+  const truckF = document.getElementById('truckFilter').value;
+  const filtered = tickets.filter(t => {
+    if (truckF && t.truck !== truckF) return false;
+    if (search) {
+      const hay = [t.truck, t.location, t.load_desc, t.notes].join(' ').toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+  document.getElementById('ticketCount').textContent = filtered.length + ' ticket' + (filtered.length !== 1 ? 's' : '');
+  const tbody = document.getElementById('ticketTbody');
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10" class="empty-state">No scale tickets recorded yet. Add your first ticket above.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map(t => {
+    const statuses = getStatus(t);
+    const hasAxle = statuses.includes('axle');
+    const trailerSum = (t.trailer1||0) + (t.trailer2||0) + (t.trailer3||0);
+    return `<tr class="${hasAxle ? 'axle-violation' : ''}">
+      <td>${t.date}</td>
+      <td>${t.truck||'—'}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.location||''}">${t.location||'—'}</td>
+      <td>${fmtNum(t.steer)}</td>
+      <td>${fmtNum(t.drive)}</td>
+      <td>${fmtNum(trailerSum || t.trailer1)}</td>
+      <td style="font-weight:600">${fmtNum(t.gross)}</td>
+      <td>${statusBadges(statuses)}</td>
+      <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.load_desc||'—'}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="action-btn btn-view" onclick="viewTicket('${t.id}')">👁 View</button>
+        <button class="action-btn btn-delete" onclick="deleteTicket('${t.id}')">🗑</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderIntel() {
+  const tickets = loadTickets();
+  const el = document.getElementById('intelContent');
+  if (tickets.length < 2) {
+    el.innerHTML = '<div class="intel-placeholder">Record at least 2 tickets to build your fleet weight profile.</div>';
+    return;
+  }
+  const truckMap = {};
+  tickets.forEach(t => {
+    if (!t.truck) return;
+    if (!truckMap[t.truck]) truckMap[t.truck] = [];
+    truckMap[t.truck].push(t);
+  });
+  const rows = Object.entries(truckMap).map(([truck, arr]) => {
+    const avg = fn => Math.round(arr.filter(t => t[fn]).reduce((s,t) => s+(t[fn]||0),0) / arr.filter(t=>t[fn]).length) || 0;
+    const avgGross = Math.round(arr.reduce((s,t)=>s+(t.gross||0),0)/arr.length);
+    const typicalSt = getStatus({ steer: avg('steer'), drive: avg('drive'), trailer1: avg('trailer1'), gross: avgGross, legal_limit: 80000, permit_weight: null });
+    return `<tr>
+      <td style="font-weight:600;color:#fff">${truck}</td>
+      <td>${arr.length}</td>
+      <td>${avg('steer').toLocaleString()}</td>
+      <td>${avg('drive').toLocaleString()}</td>
+      <td>${avg('trailer1').toLocaleString()}</td>
+      <td style="font-weight:600">${avgGross.toLocaleString()}</td>
+      <td>${statusBadges(typicalSt)}</td>
+    </tr>`;
+  }).join('');
+  el.innerHTML = `<div style="overflow-x:auto"><table>
+    <thead><tr><th>Truck</th><th>Tickets</th><th>Avg Steer</th><th>Avg Drive</th><th>Avg Trailer</th><th>Avg Gross</th><th>Typical Status</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+}
+
+function updateGross() {
+  const vals = ['fSteer','fDrive','fT1','fT2','fT3'].map(id => parseFloat(document.getElementById(id).value)||0);
+  const sum = vals.reduce((a,b)=>a+b,0);
+  if (sum > 0) document.getElementById('fGross').value = sum;
+}
+
+function updateStatus() {
+  const steer = parseFloat(document.getElementById('fSteer').value)||0;
+  const drive = parseFloat(document.getElementById('fDrive').value)||0;
+  const t1 = parseFloat(document.getElementById('fT1').value)||0;
+  const t2 = parseFloat(document.getElementById('fT2').value)||0;
+  const t3 = parseFloat(document.getElementById('fT3').value)||0;
+  const gross = parseFloat(document.getElementById('fGross').value)||0;
+  const permit = parseFloat(document.getElementById('fPermit').value)||0;
+  const limit = parseFloat(document.getElementById('fLimit').value)||80000;
+  const el = document.getElementById('liveStatus');
+  if (!gross && !steer && !drive) { el.innerHTML = '<span class="badge badge-neutral">Enter weights above</span>'; return; }
+  const fake = { steer, drive, trailer1:t1, trailer2:t2||null, trailer3:t3||null, gross, legal_limit:limit, permit_weight:permit||null };
+  const statuses = getStatus(fake);
+  el.innerHTML = statusBadges(statuses);
+}
+
+function saveTicket() {
+  const truck = document.getElementById('fTruck').value.trim();
+  const date = document.getElementById('fDate').value;
+  const location = document.getElementById('fLocation').value.trim();
+  const load_desc = document.getElementById('fLoad').value.trim();
+  const steer = parseFloat(document.getElementById('fSteer').value)||null;
+  const drive = parseFloat(document.getElementById('fDrive').value)||null;
+  const t1 = parseFloat(document.getElementById('fT1').value)||null;
+  const t2 = parseFloat(document.getElementById('fT2').value)||null;
+  const t3 = parseFloat(document.getElementById('fT3').value)||null;
+  const gross = parseFloat(document.getElementById('fGross').value)||null;
+  const limit = parseFloat(document.getElementById('fLimit').value)||80000;
+  const permit = parseFloat(document.getElementById('fPermit').value)||null;
+  const notes = document.getElementById('fNotes').value.trim();
+  if (!date) { alert('Please enter a date.'); return; }
+  const ticket = {
+    id: crypto.randomUUID(),
+    truck: truck||'Unknown',
+    date, location, load_desc,
+    steer, drive, trailer1:t1, trailer2:t2, trailer3:t3,
+    gross, legal_limit:limit, permit_weight:permit, notes,
+    file_name: window._uploadedFileName || null,
+    file_size: window._uploadedFileSize || null,
+    created_at: new Date().toISOString()
+  };
+  const tickets = loadTickets();
+  tickets.unshift(ticket);
+  saveTickets(tickets);
+  resetForm();
+  refreshAll();
+  window._uploadedFileName = null;
+  window._uploadedFileSize = null;
+}
+
+function resetForm() {
+  ['fTruck','fDate','fLocation','fLoad','fSteer','fDrive','fT1','fT2','fT3','fGross','fPermit','fNotes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('fLimit').value = '80000';
+  document.getElementById('liveStatus').innerHTML = '<span class="badge badge-neutral">Enter weights above</span>';
+  document.getElementById('filePreview').style.display = 'none';
+  document.getElementById('smartExtractBtn').style.display = 'none';
+  document.getElementById('smartMsg').style.display = 'none';
+}
+
+function deleteTicket(id) {
+  if (!confirm('Delete this scale ticket?')) return;
+  const tickets = loadTickets().filter(t => t.id !== id);
+  saveTickets(tickets);
+  refreshAll();
+}
+
+function viewTicket(id) {
+  const t = loadTickets().find(t => t.id === id);
+  if (!t) return;
+  const statuses = getStatus(t);
+  const trailerRows = [
+    { label: 'Trailer Axle 1', val: t.trailer1, limit: 20000 },
+    { label: 'Trailer Axle 2', val: t.trailer2, limit: 20000 },
+    { label: 'Trailer Axle 3', val: t.trailer3, limit: 20000 },
+  ].filter(r => r.val).map(r => {
+    const ok = r.val <= r.limit;
+    return `<div class="axle-row">
+      <span class="axle-name">${r.label}</span>
+      <span class="axle-val">${r.val.toLocaleString()} lbs</span>
+      <span class="${ok ? 'axle-ok' : 'axle-viol'}">${ok ? '✓ OK' : '✗ VIOLATION'} (max ${r.limit.toLocaleString()})</span>
+    </div>`;
+  }).join('');
+  document.getElementById('modalBody').innerHTML = `
+    <div class="badge-row" style="margin-bottom:16px">${statusBadges(statuses)}</div>
+    <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${t.date}</div></div>
+    <div class="detail-row"><div class="detail-label">Truck Unit</div><div class="detail-value">${t.truck||'—'}</div></div>
+    <div class="detail-row"><div class="detail-label">Location</div><div class="detail-value">${t.location||'—'}</div></div>
+    <div class="detail-row"><div class="detail-label">Load Description</div><div class="detail-value">${t.load_desc||'—'}</div></div>
+    <div class="detail-row"><div class="detail-label">Notes</div><div class="detail-value">${t.notes||'—'}</div></div>
+    ${t.file_name ? `<div class="detail-row"><div class="detail-label">Attachment</div><div class="detail-value">📄 ${t.file_name} (${t.file_size||''})</div></div>` : ''}
+    <h2 style="margin-top:16px;margin-bottom:12px;font-size:1rem">Axle Breakdown</h2>
+    <div class="axle-row">
+      <span class="axle-name">Steer Axle</span>
+      <span class="axle-val">${(t.steer||0).toLocaleString()} lbs</span>
+      <span class="${(t.steer||0) <= 12000 ? 'axle-ok' : 'axle-viol'}">${(t.steer||0) <= 12000 ? '✓ OK' : '✗ VIOLATION'} (max 12,000)</span>
+    </div>
+    <div class="axle-row">
+      <span class="axle-name">Drive Axle / Tandem</span>
+      <span class="axle-val">${(t.drive||0).toLocaleString()} lbs</span>
+      <span class="${(t.drive||0) <= 34000 ? 'axle-ok' : 'axle-viol'}">${(t.drive||0) <= 34000 ? '✓ OK' : '✗ VIOLATION'} (max 34,000)</span>
+    </div>
+    ${trailerRows}
+    <div class="axle-row" style="background:#1a1f2e;border:1px solid #374151">
+      <span class="axle-name" style="color:#fff;font-weight:600">Gross Weight</span>
+      <span class="axle-val" style="font-size:1.05rem">${(t.gross||0).toLocaleString()} lbs</span>
+      <span class="${(t.gross||0) <= (t.legal_limit||80000) ? 'axle-ok' : 'axle-viol'}">${(t.gross||0) <= (t.legal_limit||80000) ? '✓ Legal' : '✗ Overweight'} (max ${(t.legal_limit||80000).toLocaleString()})</span>
+    </div>
+    ${t.permit_weight ? `<div class="axle-row"><span class="axle-name">Permit Weight</span><span class="axle-val">${t.permit_weight.toLocaleString()} lbs</span><span class="badge badge-permit">PERMITTED</span></div>` : ''}
+  `;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('detailModal').classList.remove('open'); }
+
+function smartExtract() {
+  const fname = window._uploadedFileName || '';
+  const nums = (fname.match(/\d{4,6}/g) || []).map(Number).filter(n => n >= 1000 && n <= 150000);
+  const msg = document.getElementById('smartMsg');
+  msg.style.display = 'block';
+  if (nums.length === 0) { msg.textContent = 'No weight values found in filename. Please enter weights manually.'; return; }
+  const sorted = [...nums].sort((a,b) => b-a);
+  if (sorted[0]) document.getElementById('fGross').value = sorted[0];
+  if (sorted[1]) document.getElementById('fDrive').value = sorted[1];
+  if (sorted[2]) document.getElementById('fT1').value = sorted[2];
+  updateStatus();
+  msg.textContent = `Smart Extract found ${nums.length} value(s): ${nums.map(n=>n.toLocaleString()).join(', ')} lbs. Review and confirm all fields before saving.`;
+}
+
+// Drop zone setup
+(function() {
+  const dz = document.getElementById('dropZone');
+  const fi = document.getElementById('fileInput');
+  dz.addEventListener('click', () => fi.click());
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault();
+    dz.classList.remove('drag-over');
+    handleFile(e.dataTransfer.files[0]);
+  });
+  fi.addEventListener('change', () => handleFile(fi.files[0]));
+  function handleFile(f) {
+    if (!f) return;
+    window._uploadedFileName = f.name;
+    window._uploadedFileSize = (f.size / 1024).toFixed(0) + ' KB';
+    const ext = f.name.split('.').pop().toLowerCase();
+    document.getElementById('fileIcon').textContent = ['jpg','jpeg','png','gif','webp'].includes(ext) ? '🖼️' : '📄';
+    document.getElementById('fileName').textContent = f.name;
+    document.getElementById('fileSize').textContent = window._uploadedFileSize;
+    document.getElementById('filePreview').style.display = 'flex';
+    document.getElementById('smartExtractBtn').style.display = 'block';
+    document.getElementById('smartMsg').style.display = 'none';
+  }
+})();
+
+// Set default date
+document.getElementById('fDate').value = new Date().toISOString().split('T')[0];
+
+// Close modal on overlay click
+document.getElementById('detailModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+function refreshAll() {
+  updateKPIs();
+  populateTruckFilter();
+  renderTable();
+  renderIntel();
+}
+
+refreshAll();
+</script>
+
+<script src="nexus-config.js?v=6"></script>
+<script src="nexus-sidebar.js?v=6"></script>
+<script src="nexus-search.js?v=6"></script>
+</body>
+</html>

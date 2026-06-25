@@ -1,144 +1,1207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tires — Carrier Nexus</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tire Intelligence — Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--steel-blue:#2e6da4;--orange:#e8640a;--red:#ef4444;--green:#22c55e;--yellow:#fbbf24;}
+:root{--bg:#0a0a0a;--card:#111827;--accent:#e91e8c;--border:#21262d;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#eab308;--orange:#e8640a;--muted:#8b949e;--text:#e6edf3;--text2:#c9d1d9;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
-.sidebar{width:220px;min-height:100vh;background:#1a2744;border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
-.sidebar-logo{padding:20px 20px 12px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:#2e6da4;letter-spacing:.08em;text-decoration:none;display:block;}
-.sidebar-section{font-size:9px;font-weight:700;color:#4a6080;letter-spacing:.12em;padding:16px 20px 6px;text-transform:uppercase;}
-.sidebar-link{display:flex;align-items:center;gap:10px;padding:8px 20px;font-size:13px;color:#c8d8ea;text-decoration:none;transition:all .15s;}
-.sidebar-link:hover{background:rgba(255,255,255,0.07);color:#fff;}
-.sidebar-link.active{background:rgba(46,109,164,0.35);color:#fff;border-right:2px solid #2e6da4;}
-.sidebar-link svg{width:14px;height:14px;opacity:.7;flex-shrink:0;}
-.main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
-.topbar{height:56px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
-.topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:#0f172a;letter-spacing:.04em;}
-.content{padding:24px 28px 40px;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+/* SIDEBAR */
+.sidebar{width:220px;min-height:100vh;background:#000;border-right:1px solid #1a1a1a;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
+.sidebar-logo{padding:16px;display:flex;align-items:center;gap:10px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.07);}
+.brand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:2px;color:#fff;}
+.sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.45);letter-spacing:1px;}
+.sidebar-section{padding:12px 0 4px;}
+.sidebar-section-label{padding:0 16px 6px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:rgba(255,255,255,0.3);letter-spacing:1.5px;text-transform:uppercase;display:block;}
+.sidebar-link{display:flex;align-items:center;gap:10px;padding:7px 16px;text-decoration:none;color:#a0aec0;font-size:13px;border-left:3px solid transparent;transition:all .15s;}
+.sidebar-link:hover{background:rgba(233,30,140,0.14);border-left-color:#c2185b;color:#fff;}
+.sidebar-link.active{background:rgba(233,30,140,0.22);border-left:3px solid #e91e8c;color:#fff;}
+.sidebar-link svg{width:14px;height:14px;flex-shrink:0;opacity:.7;}
+.sidebar-spacer{flex:1;}
+.sidebar-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.07);}
+.user-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.6);}
+.user-role{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);margin-top:2px;}
+/* MAIN */
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:56px;background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#fff;flex:1;}
+.topbar-btn{padding:7px 16px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.8px;cursor:pointer;border:1px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.1);color:#fff;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.topbar-btn:hover{background:rgba(255,255,255,0.22);}
+.content{padding:24px 28px 48px;}
+/* KPI */
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
-.kpi-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;}
-.kpi-label{font-size:10px;font-weight:700;color:#64748b;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
-.kpi-val{font-size:28px;font-weight:700;color:#0f172a;line-height:1;}
-.kpi-sub{font-size:11px;color:#2e6da4;margin-top:4px;}
-.panel{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:20px;}
-.panel-head{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:#0f172a;letter-spacing:.04em;text-transform:uppercase;}
-table{width:100%;border-collapse:collapse;}
-th{font-size:10px;font-weight:700;color:#64748b;letter-spacing:.08em;text-transform:uppercase;padding:10px 16px;text-align:left;background:#f8fafc;border-bottom:1px solid #e2e8f0;}
-td{padding:11px 16px;font-size:13px;color:#0f172a;border-bottom:1px solid #f8fafc;}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px;border-left:4px solid var(--accent);}
+.kpi-card:nth-child(2){border-left-color:var(--green);}
+.kpi-card:nth-child(3){border-left-color:var(--red);}
+.kpi-card:nth-child(4){border-left-color:var(--blue);}
+.kpi-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:var(--text);line-height:1;}
+.kpi-sub{font-size:11px;color:var(--accent);margin-top:4px;}
+/* PANEL */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.panel-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text);letter-spacing:.06em;text-transform:uppercase;}
+/* TABS */
+.tab-bar{display:flex;gap:0;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.03);overflow-x:auto;}
+.tab-btn{padding:10px 18px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .15s;}
+.tab-btn:hover{color:var(--text);background:rgba(255,255,255,0.04);}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+/* FLEET MAP */
+.fleet-map-container{padding:20px;}
+.truck-diagram{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:18px 24px;margin-bottom:14px;}
+.truck-label{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--text);letter-spacing:2px;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.truck-label span{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);font-weight:400;letter-spacing:1px;}
+.axle-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.axle-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;width:56px;flex-shrink:0;text-align:right;}
+.axle-line{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;position:relative;}
+.axle-shaft{position:absolute;left:0;right:0;height:4px;background:rgba(255,255,255,0.12);border-radius:2px;z-index:0;}
+.tire-pos{width:28px;height:42px;border-radius:5px;border:2px solid rgba(255,255,255,0.25);background:var(--bg);cursor:pointer;transition:all .18s;position:relative;z-index:1;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.tire-pos:hover{transform:scale(1.12);box-shadow:0 4px 18px rgba(0,0,0,0.5);}
+.tire-pos.good{border-color:var(--green);background:rgba(34,197,94,0.15);}
+.tire-pos.monitor{border-color:var(--yellow);background:rgba(234,179,8,0.15);}
+.tire-pos.replace{border-color:var(--red);background:rgba(239,68,68,0.15);}
+.tire-pos.empty{border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.03);}
+.tire-dot{width:10px;height:10px;border-radius:50%;}
+.tire-pos.good .tire-dot{background:var(--green);}
+.tire-pos.monitor .tire-dot{background:var(--yellow);}
+.tire-pos.replace .tire-dot{background:var(--red);}
+.tire-pos.empty .tire-dot{background:#374151;}
+.tire-pos-label{font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--muted);margin-top:2px;line-height:1;}
+.axle-gap{width:40px;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;}
+.chassis-line{width:6px;height:120px;background:rgba(255,255,255,0.1);border-radius:3px;flex-shrink:0;}
+/* TABLE */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:1000px;}
+th{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:10px 12px;text-align:left;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:10px 12px;font-size:12px;color:var(--text2);border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
-tr:hover td{background:#f8fafc;}
-.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;}
-.badge-green{background:#dcfce7;color:#15803d;}
-.badge-red{background:#fee2e2;color:#b91c1c;}
-.badge-yellow{background:#fef9c3;color:#a16207;}
-.badge-blue{background:#dbeafe;color:#1d4ed8;}
-.badge-gray{background:#f1f5f9;color:#64748b;}
-.badge-orange{background:#ffedd5;color:#c2410c;}
-.badge-purple{background:#ede9fe;color:#6d28d9;}
-.mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:#2e6da4;font-weight:600;}
-.btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #e2e8f0;background:#fff;color:#334155;transition:background .15s;}
-.btn:hover{background:#f1f5f9;}
-.btn-primary{background:#2e6da4;color:#fff;border-color:#2e6da4;}
-.btn-primary:hover{background:#1d5a8a;}
-.btn-orange{background:#e8640a;color:#fff;border-color:#e8640a;}
-.btn-orange:hover{background:#c4520a;}
-.disp-amet{background:#dbeafe;color:#1d4ed8;}
-.disp-betty{background:#fce7f3;color:#9d174d;}
-.mobile-nav{display:none;}
-@media(max-width:768px){
-  .sidebar{display:none!important;}
-  .main{margin-left:0!important;}
-  .content{padding:14px 12px 80px!important;}
-  .kpi-row{grid-template-columns:1fr 1fr!important;gap:10px!important;}
-  .mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;height:56px;background:#fff;border-top:1px solid #e2e8f0;z-index:200;}
-  .mobile-nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;font-size:9px;font-weight:700;color:#94a3b8;letter-spacing:.06em;}
-  .mobile-nav-tab.active{color:#2e6da4;border-top:2px solid #2e6da4;}
-}
-</style>
-<style id="nexus-unified">
-/* ── SIDEBAR BLACK ── */
-.sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
-/* ── LOGO AREA ── */
-.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
-.sidebar-logo .logo-hex { flex-shrink:0 !important; }
-.sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
-.sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
-.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
-.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
-/* ── NAV LINKS ── */
-.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
-.sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
-.sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
-.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
-.sidebar-link.active svg { opacity:1 !important; }
-/* ── SECTION LABELS ── */
-.sidebar-section { padding:12px 0 4px !important; }
-.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
-/* ── TOPBAR ── */
-.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
-.topbar *, .top-bar * { color:#ffffff !important; }
-.topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
-/* ── MOBILE NAV ── */
-.mobile-nav { background:#000000 !important; }
-.mobile-nav-tab.active { color:#e91e8c !important; }
-/* ── SIDEBAR USER ── */
-.sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
-.sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
-.sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
-/* ── NAV BADGE ── */
-.nav-badge { background:#e91e8c !important; color:#fff !important; }
+tr:hover td{background:rgba(255,255,255,0.03);}
+.mono{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);}
+.mono-dim{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+/* BADGES */
+.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;display:inline-block;}
+.badge-green{background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}
+.badge-red{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}
+.badge-yellow{background:rgba(234,179,8,0.15);color:#eab308;border:1px solid rgba(234,179,8,0.3);}
+.badge-blue{background:rgba(46,109,164,0.2);color:#60a5fa;border:1px solid rgba(46,109,164,0.4);}
+.badge-gray{background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid var(--border);}
+.badge-pink{background:rgba(233,30,140,0.15);color:#e91e8c;border:1px solid rgba(233,30,140,0.3);}
+.badge-orange{background:rgba(232,100,10,0.15);color:#e8640a;border:1px solid rgba(232,100,10,0.3);}
+/* BTNS */
+.btn{padding:6px 14px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.6px;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.06);color:var(--text2);transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
+.btn:hover{background:rgba(255,255,255,0.12);}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+.btn-primary:hover{background:#c2185b;border-color:#c2185b;}
+.btn-blue{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn-blue:hover{background:#1d5a8a;}
+.btn-green{background:#16a34a;color:#fff;border-color:#16a34a;}
+.btn-sm{padding:4px 10px;font-size:11px;}
+.btn-icon{padding:5px 8px;min-width:0;}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#161b22;border:1px solid var(--border);border-radius:12px;width:96%;max-width:680px;max-height:92vh;overflow-y:auto;box-shadow:0 25px 80px rgba(0,0,0,.6);}
+.modal-hdr{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:18px 24px;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1;}
+.modal-hdr-title{color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:2px;}
+.modal-close{background:none;border:none;color:#fff;font-size:24px;cursor:pointer;line-height:1;opacity:.8;}
+.modal-close:hover{opacity:1;}
+.modal-body{padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.modal-body.single-col{grid-template-columns:1fr;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:1/3;}
+.form-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.form-label .req{color:#ef4444;}
+.form-input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;color:var(--text);font-family:'Barlow',sans-serif;background:#0d1117;transition:border .15s;}
+.form-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(233,30,140,.12);}
+select.form-input option{background:#161b22;}
+.section-divider{grid-column:1/3;border:none;border-top:1px dashed var(--border);margin:4px 0;}
+.section-label{grid-column:1/3;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.modal-footer{padding:0 24px 24px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
+/* ANALYTICS */
+.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:20px;}
+.analytics-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:16px;}
+.analytics-card.full{grid-column:1/3;}
+.analytics-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;}
+.bar-chart{display:flex;flex-direction:column;gap:8px;}
+.bar-row{display:flex;align-items:center;gap:10px;}
+.bar-name{font-size:12px;color:var(--text2);width:100px;flex-shrink:0;}
+.bar-track{flex:1;background:rgba(255,255,255,0.06);border-radius:4px;height:18px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;transition:width .5s ease;display:flex;align-items:center;padding-left:8px;}
+.bar-fill span{font-family:'JetBrains Mono',monospace;font-size:10px;color:#fff;font-weight:600;}
+.bar-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);width:60px;text-align:right;flex-shrink:0;}
+/* TREAD GAUGE */
+.tread-gauge{display:flex;align-items:center;gap:6px;}
+.tread-track{width:60px;height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;}
+.tread-fill{height:100%;border-radius:4px;}
+.tread-text{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;}
+/* LOG event type colors */
+.event-pressure{color:#60a5fa;}
+.event-tread{color:#22c55e;}
+.event-repair{color:#e8640a;}
+.event-rotation{color:#a78bfa;}
+.event-removal{color:#ef4444;}
+.event-install{color:#e91e8c;}
+/* DETAIL MODAL tire info */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.detail-item label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px;}
+.detail-item span{font-size:13px;color:var(--text);}
+.detail-divider{grid-column:1/3;border-top:1px solid var(--border);}
+/* EMPTY STATE */
+.empty-state{padding:40px;text-align:center;color:var(--muted);}
+.empty-state svg{width:48px;height:48px;opacity:.3;margin-bottom:12px;}
+.empty-state p{font-size:14px;}
+/* SECTION TABS */
+.sections-row{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 20px;overflow-x:auto;}
+/* UPCOMING TABLE */
+.upcoming-row-red td{background:rgba(239,68,68,0.06);}
+.upcoming-row-yellow td{background:rgba(234,179,8,0.06);}
+/* SCROLL */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#21262d;border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:#30363d;}
 </style>
 </head>
-<body><script src="nexus-sidebar.js"></script>
+<body>
+
+<!-- SIDEBAR injected by nexus-sidebar.js -->
+<div id="sidebar-mount"></div>
+
 <div class="main">
   <div class="topbar">
-    <span class="topbar-title">TIRE TRACKING</span>
-    <button class="btn btn-primary" onclick="alert('New tire record added')">+ Log Tire Change</button>
+    <div class="topbar-title">🛞 TIRE INTELLIGENCE</div>
+    <button class="topbar-btn" onclick="openAddTireModal()">
+      <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M8 1.5a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5a.5.5 0 0 1 .5-.5z"/></svg>
+      ADD TIRE
+    </button>
+    <button class="topbar-btn" onclick="openLogEventModal(null)">
+      <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M9.5 0a.5.5 0 0 1 .5.5.5.5 0 0 0 .5.5.5.5 0 0 1 .5.5V2a.5.5 0 0 1-.5.5h-5A.5.5 0 0 1 5 2v-.5a.5.5 0 0 1 .5-.5.5.5 0 0 0 .5-.5.5.5 0 0 1 .5-.5h2z"/><path d="M3 2.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 0 0-1h-.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1H12a.5.5 0 0 0 0 1h.5a.5.5 0 0 1 .5.5v12a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-12z"/></svg>
+      LOG EVENT
+    </button>
   </div>
+
   <div class="content">
-    <div class="kpi-row">
-      <div class="kpi-card"><div class="kpi-label">Tires Needing Replacement</div><div class="kpi-val" style="color:#ef4444">6</div><div class="kpi-sub">2 units affected</div></div>
-      <div class="kpi-card"><div class="kpi-label">Replaced This Month</div><div class="kpi-val" style="color:#22c55e">8</div><div class="kpi-sub">Units 01, 05</div></div>
-      <div class="kpi-card"><div class="kpi-label">Avg Tire Cost</div><div class="kpi-val" style="font-size:22px">$480</div><div class="kpi-sub">Per tire installed</div></div>
-      <div class="kpi-card"><div class="kpi-label">YTD Tire Spend</div><div class="kpi-val" style="font-size:22px">$11,520</div><div class="kpi-sub">24 tires replaced</div></div>
+    <!-- KPI ROW -->
+    <div class="kpi-row" id="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Tires Tracked</div>
+        <div class="kpi-val" id="kpi-total">—</div>
+        <div class="kpi-sub" id="kpi-total-sub">across all trucks</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Fleet Avg Tread</div>
+        <div class="kpi-val" id="kpi-tread">—</div>
+        <div class="kpi-sub" id="kpi-tread-sub">out of 32/32</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Need Replacement</div>
+        <div class="kpi-val" id="kpi-replace">—</div>
+        <div class="kpi-sub" id="kpi-replace-sub">&lt;25% tread life</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Tire Spend YTD</div>
+        <div class="kpi-val" id="kpi-spend">—</div>
+        <div class="kpi-sub" id="kpi-spend-sub">2026 purchases</div>
+      </div>
     </div>
-    <div class="panel">
-      <div class="panel-head"><span class="panel-title">Tire Status by Unit</span></div>
-      <table>
-        <thead><tr><th>Unit</th><th>Position</th><th>Brand</th><th>Installed</th><th>Miles on Tire</th><th>Tread Depth</th><th>Status</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr><td><b>Unit 01</b></td><td>Steer (2)</td><td>Michelin X Line</td><td>Jan 15, 2026</td><td>42,000</td><td>6/32</td><td><span class="badge badge-yellow">Monitor</span></td><td><button class="btn" onclick="alert('Unit 01 steer tire details')">Details</button></td></tr>
-          <tr><td><b>Unit 01</b></td><td>Drive (8)</td><td>Bridgestone R283A</td><td>Mar 1, 2026</td><td>18,000</td><td>14/32</td><td><span class="badge badge-green">Good</span></td><td><button class="btn" onclick="alert('Unit 01 drive tire details')">Details</button></td></tr>
-          <tr><td><b>Unit 03</b></td><td>Steer (2)</td><td>Michelin X Line</td><td>Nov 10, 2025</td><td>67,000</td><td>4/32</td><td><span class="badge badge-red">Replace</span></td><td><button class="btn btn-orange" onclick="alert('Service order created')">Order Tires</button></td></tr>
-          <tr><td><b>Unit 03</b></td><td>Drive (8)</td><td>Goodyear G572</td><td>Nov 10, 2025</td><td>67,000</td><td>5/32</td><td><span class="badge badge-red">Replace</span></td><td><button class="btn btn-orange" onclick="alert('Service order created')">Order Tires</button></td></tr>
-          <tr><td><b>Unit 04</b></td><td>All (18)</td><td>Bridgestone R283A</td><td>Apr 20, 2026</td><td>8,000</td><td>18/32</td><td><span class="badge badge-green">New</span></td><td><button class="btn" onclick="alert('Unit 04 tire details')">Details</button></td></tr>
-          <tr><td><b>Unit 05</b></td><td>Steer (2)</td><td>Michelin X Line</td><td>May 5, 2026</td><td>3,000</td><td>16/32</td><td><span class="badge badge-green">New</span></td><td><button class="btn" onclick="alert('Unit 05 steer details')">Details</button></td></tr>
-          <tr><td><b>Unit 06</b></td><td>All (18)</td><td>Goodyear G572</td><td>Feb 14, 2026</td><td>31,000</td><td>11/32</td><td><span class="badge badge-green">Good</span></td><td><button class="btn" onclick="alert('Unit 06 tire details')">Details</button></td></tr>
-          <tr><td><b>Unit 09</b></td><td>All (18)</td><td>Michelin X Line</td><td>Dec 1, 2025</td><td>58,000</td><td>7/32</td><td><span class="badge badge-yellow">Monitor</span></td><td><button class="btn" onclick="alert('Unit 09 tire details')">Details</button></td></tr>
-        </tbody>
-      </table>
+
+    <!-- SECTION TABS -->
+    <div class="panel" style="overflow:visible;">
+      <div class="sections-row" id="sections-row">
+        <button class="tab-btn active" onclick="showSection('map',this)">Fleet Tire Map</button>
+        <button class="tab-btn" onclick="showSection('inventory',this)">Inventory</button>
+        <button class="tab-btn" onclick="showSection('log',this)">History Log</button>
+        <button class="tab-btn" onclick="showSection('analytics',this)">Analytics</button>
+      </div>
+
+      <!-- SECTION: FLEET MAP -->
+      <div id="section-map" class="section-content">
+        <div class="panel-head" style="border-top:none;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">
+            <span style="color:var(--green);">●</span> &gt;50% life &nbsp;
+            <span style="color:var(--yellow);">●</span> 25–50% &nbsp;
+            <span style="color:var(--red);">●</span> &lt;25% — replace &nbsp;
+            <span style="color:#374151;">●</span> no record
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="font-size:11px;color:var(--muted);">Truck:</span>
+            <select id="map-truck-select" onchange="renderFleetMap()" style="background:#0d1117;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 8px;font-size:12px;">
+              <option value="ALL">All Trucks</option>
+              <option value="T-001">T-001</option>
+              <option value="T-002">T-002</option>
+              <option value="T-003">T-003</option>
+              <option value="T-004">T-004</option>
+              <option value="T-005">T-005</option>
+              <option value="T-006">T-006</option>
+            </select>
+          </div>
+        </div>
+        <div class="fleet-map-container" id="fleet-map-container">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+
+      <!-- SECTION: INVENTORY -->
+      <div id="section-inventory" class="section-content" style="display:none;">
+        <div class="panel-head" style="border-top:none;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <input type="text" id="inv-search" placeholder="Search tires..." oninput="renderInventory()" style="background:#0d1117;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 12px;font-size:12px;width:200px;">
+            <select id="inv-truck-filter" onchange="renderInventory()" style="background:#0d1117;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;font-size:12px;">
+              <option value="">All Trucks</option>
+              <option value="T-001">T-001</option>
+              <option value="T-002">T-002</option>
+              <option value="T-003">T-003</option>
+              <option value="T-004">T-004</option>
+              <option value="T-005">T-005</option>
+              <option value="T-006">T-006</option>
+            </select>
+            <select id="inv-status-filter" onchange="renderInventory()" style="background:#0d1117;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;font-size:12px;">
+              <option value="">All Status</option>
+              <option value="good">Good</option>
+              <option value="monitor">Monitor</option>
+              <option value="replace">Replace</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="openAddTireModal()">+ Add Tire</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Position</th>
+                <th>Truck</th>
+                <th>Brand / Model</th>
+                <th>Size</th>
+                <th>Install Date</th>
+                <th>Install Mi.</th>
+                <th>Current Mi.</th>
+                <th>Tread</th>
+                <th>PSI</th>
+                <th>Status</th>
+                <th>Cost</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-tbody">
+              <tr><td colspan="12"><div class="empty-state"><p>No tires found.</p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SECTION: HISTORY LOG -->
+      <div id="section-log" class="section-content" style="display:none;">
+        <div class="panel-head" style="border-top:none;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <select id="log-type-filter" onchange="renderLog()" style="background:#0d1117;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;font-size:12px;">
+              <option value="">All Events</option>
+              <option value="Pressure Check">Pressure Check</option>
+              <option value="Tread Check">Tread Check</option>
+              <option value="Repair">Repair</option>
+              <option value="Rotation">Rotation</option>
+              <option value="Removal">Removal</option>
+              <option value="Install">Install</option>
+            </select>
+            <select id="log-truck-filter" onchange="renderLog()" style="background:#0d1117;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;font-size:12px;">
+              <option value="">All Trucks</option>
+              <option value="T-001">T-001</option>
+              <option value="T-002">T-002</option>
+              <option value="T-003">T-003</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="openLogEventModal(null)">+ Log Event</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Tire ID</th>
+                <th>Truck</th>
+                <th>Position</th>
+                <th>Event Type</th>
+                <th>Value</th>
+                <th>Technician</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="log-tbody">
+              <tr><td colspan="8"><div class="empty-state"><p>No log entries.</p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SECTION: ANALYTICS -->
+      <div id="section-analytics" class="section-content" style="display:none;">
+        <div class="analytics-grid" id="analytics-grid">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+
+    </div><!-- end panel -->
+  </div><!-- end content -->
+</div><!-- end main -->
+
+<!-- ===== ADD/EDIT TIRE MODAL ===== -->
+<div class="modal-overlay" id="modal-tire" onclick="closeModalIf(event,'modal-tire')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title" id="modal-tire-title">ADD TIRE</div>
+      <button class="modal-close" onclick="closeModal('modal-tire')">×</button>
+    </div>
+    <div class="modal-body" id="modal-tire-body">
+      <div class="form-group">
+        <label class="form-label">Truck Unit <span class="req">*</span></label>
+        <select class="form-input" id="f-truck">
+          <option value="">Select truck...</option>
+          <option>T-001</option><option>T-002</option><option>T-003</option>
+          <option>T-004</option><option>T-005</option><option>T-006</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Wheel Position <span class="req">*</span></label>
+        <select class="form-input" id="f-position">
+          <option value="">Select position...</option>
+          <optgroup label="Steer Axle">
+            <option>S1</option><option>S2</option>
+          </optgroup>
+          <optgroup label="Drive Axle 1">
+            <option>D1L-O</option><option>D1L-I</option><option>D1R-I</option><option>D1R-O</option>
+          </optgroup>
+          <optgroup label="Drive Axle 2">
+            <option>D2L-O</option><option>D2L-I</option><option>D2R-I</option><option>D2R-O</option>
+          </optgroup>
+          <optgroup label="Trailer Axle 1">
+            <option>T1L-O</option><option>T1L-I</option><option>T1R-I</option><option>T1R-O</option>
+          </optgroup>
+          <optgroup label="Trailer Axle 2">
+            <option>T2L-O</option><option>T2L-I</option><option>T2R-I</option><option>T2R-O</option>
+          </optgroup>
+          <optgroup label="Spare">
+            <option>SPARE</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Brand</label>
+        <input type="text" class="form-input" id="f-brand" placeholder="e.g. Michelin">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Model</label>
+        <input type="text" class="form-input" id="f-model" placeholder="e.g. XZA3">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Size</label>
+        <select class="form-input" id="f-size">
+          <option value="">Select size...</option>
+          <option>11R22.5</option>
+          <option>11R24.5</option>
+          <option>425/65R22.5</option>
+          <option>295/75R22.5</option>
+          <option>285/75R24.5</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Serial / DOT #</label>
+        <input type="text" class="form-input" id="f-serial" placeholder="DOT XXXX...">
+      </div>
+      <hr class="section-divider">
+      <div class="section-label">Purchase & Vendor</div>
+      <div class="form-group">
+        <label class="form-label">Purchase Date</label>
+        <input type="date" class="form-input" id="f-purchase-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Purchase Cost ($)</label>
+        <input type="number" class="form-input" id="f-cost" placeholder="0.00" step="0.01">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Vendor</label>
+        <input type="text" class="form-input" id="f-vendor" placeholder="e.g. TA Truck Service, Love's">
+      </div>
+      <hr class="section-divider">
+      <div class="section-label">Installation</div>
+      <div class="form-group">
+        <label class="form-label">Install Date</label>
+        <input type="date" class="form-input" id="f-install-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Install Odometer (mi)</label>
+        <input type="number" class="form-input" id="f-install-odo" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tread at Install (/32)</label>
+        <input type="number" class="form-input" id="f-tread-install" placeholder="32" min="0" max="32">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Current Tread (/32)</label>
+        <input type="number" class="form-input" id="f-tread-current" placeholder="32" min="0" max="32">
+      </div>
+      <hr class="section-divider">
+      <div class="section-label">Current Condition</div>
+      <div class="form-group">
+        <label class="form-label">Current Odometer (mi)</label>
+        <input type="number" class="form-input" id="f-current-odo" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tire Pressure (PSI)</label>
+        <input type="number" class="form-input" id="f-psi" placeholder="110">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Last Pressure Check</label>
+        <input type="date" class="form-input" id="f-last-pressure">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Warranty Expiration</label>
+        <input type="date" class="form-input" id="f-warranty">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Notes</label>
+        <textarea class="form-input" id="f-notes" rows="3" placeholder="Any additional notes..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-tire')">Cancel</button>
+      <button class="btn btn-primary" id="modal-tire-save-btn" onclick="saveTire()">Save Tire</button>
     </div>
   </div>
-</div><nav class="mobile-nav">
-  <a href="fleet-command.html" class="mobile-nav-tab">DASH</a>
-  <a href="settlements.html" class="mobile-nav-tab">PAY</a>
-  <a href="documents.html" class="mobile-nav-tab">DOCS</a>
-  <a href="equipment.html" class="mobile-nav-tab">FLEET</a>
-  <a href="drivers.html" class="mobile-nav-tab">TEAM</a>
-</nav>
-<script src="nexus-lang.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="nexus-config.js?v=5"></script>
-<script src="nexus-db.js?v=3"></script>
+</div>
+
+<!-- ===== LOG EVENT MODAL ===== -->
+<div class="modal-overlay" id="modal-log" onclick="closeModalIf(event,'modal-log')">
+  <div class="modal-box" style="max-width:520px;" onclick="event.stopPropagation()">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title">LOG TIRE EVENT</div>
+      <button class="modal-close" onclick="closeModal('modal-log')">×</button>
+    </div>
+    <div class="modal-body single-col">
+      <div class="form-group">
+        <label class="form-label">Tire (Truck – Position) <span class="req">*</span></label>
+        <select class="form-input" id="log-tire-select">
+          <option value="">Select tire...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Event Type <span class="req">*</span></label>
+        <select class="form-input" id="log-event-type" onchange="updateLogValueLabel()">
+          <option value="">Select event...</option>
+          <option>Pressure Check</option>
+          <option>Tread Check</option>
+          <option>Repair</option>
+          <option>Rotation</option>
+          <option>Removal</option>
+          <option>Install</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date <span class="req">*</span></label>
+        <input type="date" class="form-input" id="log-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label" id="log-value-label">Value (PSI / Tread / Description)</label>
+        <input type="text" class="form-input" id="log-value" placeholder="e.g. 110 PSI">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Technician</label>
+        <input type="text" class="form-input" id="log-tech" placeholder="Name or initials">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="form-input" id="log-notes" rows="2" placeholder="Optional notes..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-log')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLogEvent()">Save Event</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TIRE DETAIL MODAL ===== -->
+<div class="modal-overlay" id="modal-detail" onclick="closeModalIf(event,'modal-detail')">
+  <div class="modal-box" style="max-width:600px;" onclick="event.stopPropagation()">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title" id="detail-title">TIRE DETAIL</div>
+      <button class="modal-close" onclick="closeModal('modal-detail')">×</button>
+    </div>
+    <div style="padding:20px;" id="detail-body">
+      <!-- rendered by JS -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-detail')">Close</button>
+      <button class="btn btn-blue" id="detail-edit-btn">Edit Tire</button>
+      <button class="btn btn-primary" id="detail-log-btn">Log Event</button>
+    </div>
+  </div>
+</div>
+
+<script src="nexus-config.js?v=6"></script>
+<script src="nexus-core.js?v=6"></script>
+<script src="nexus-search.js?v=6"></script>
+<script src="nexus-sidebar.js?v=6"></script>
+
 <script>
-(async()=>{
-  if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
-})();
+// ===========================
+// DATA & SEED
+// ===========================
+const WHEEL_POSITIONS = ['S1','S2','D1L-O','D1L-I','D1R-I','D1R-O','D2L-O','D2L-I','D2R-I','D2R-O','T1L-O','T1L-I','T1R-I','T1R-O','T2L-O','T2L-I','T2R-I','T2R-O','SPARE'];
+
+const SEED_TIRES = [
+  {id:'TIR-001',truck:'T-001',position:'S1',brand:'Michelin',model:'XZA3',size:'11R22.5',serial:'DOT MN2Y LLR2 1824',purchaseDate:'2025-03-10',cost:650,vendor:"TA Truck Service",installDate:'2025-03-15',installOdo:312400,treadInstall:32,treadCurrent:28,currentOdo:358200,psi:110,lastPressure:'2026-06-01',warranty:'2028-03-15',notes:'',status:'active',createdAt:'2025-03-15T10:00:00Z'},
+  {id:'TIR-002',truck:'T-001',position:'S2',brand:'Michelin',model:'XZA3',size:'11R22.5',serial:'DOT MN2Y LLR2 1925',purchaseDate:'2025-03-10',cost:650,vendor:"TA Truck Service",installDate:'2025-03-15',installOdo:312400,treadInstall:32,treadCurrent:26,currentOdo:358200,psi:108,lastPressure:'2026-06-01',warranty:'2028-03-15',notes:'',status:'active',createdAt:'2025-03-15T10:00:00Z'},
+  {id:'TIR-003',truck:'T-001',position:'D1L-O',brand:'Bridgestone',model:'M860',size:'11R22.5',serial:'DOT B2K2 HLH2 4524',purchaseDate:'2024-10-25',cost:580,vendor:"Love's Truck Stop",installDate:'2024-11-01',installOdo:290000,treadInstall:32,treadCurrent:14,currentOdo:358200,psi:95,lastPressure:'2026-05-28',warranty:'2026-10-25',notes:'Slight irregular wear on outer edge',status:'active',createdAt:'2024-11-01T08:00:00Z'},
+  {id:'TIR-004',truck:'T-001',position:'D1L-I',brand:'Bridgestone',model:'M860',size:'11R22.5',serial:'DOT B2K2 HLH2 4624',purchaseDate:'2024-10-25',cost:580,vendor:"Love's Truck Stop",installDate:'2024-11-01',installOdo:290000,treadInstall:32,treadCurrent:13,currentOdo:358200,psi:94,lastPressure:'2026-05-28',warranty:'2026-10-25',notes:'',status:'active',createdAt:'2024-11-01T08:00:00Z'},
+  {id:'TIR-005',truck:'T-001',position:'D1R-I',brand:'Goodyear',model:'G661 HSA',size:'11R22.5',serial:'DOT G1X9 WCW1 3824',purchaseDate:'2024-09-01',cost:545,vendor:"Pilot Flying J",installDate:'2024-09-10',installOdo:271000,treadInstall:32,treadCurrent:7,currentOdo:358200,psi:92,lastPressure:'2026-05-28',warranty:'2026-09-10',notes:'Schedule replacement ASAP',status:'active',createdAt:'2024-09-10T09:00:00Z'},
+  {id:'TIR-006',truck:'T-001',position:'D1R-O',brand:'Goodyear',model:'G661 HSA',size:'11R22.5',serial:'DOT G1X9 WCW1 3924',purchaseDate:'2024-09-01',cost:545,vendor:"Pilot Flying J",installDate:'2024-09-10',installOdo:271000,treadInstall:32,treadCurrent:6,currentOdo:358200,psi:90,lastPressure:'2026-05-28',warranty:'2026-09-10',notes:'Cracking on sidewall — replace immediately',status:'active',createdAt:'2024-09-10T09:00:00Z'},
+  {id:'TIR-007',truck:'T-002',position:'S1',brand:'Michelin',model:'XZA3',size:'11R22.5',serial:'DOT MN3A LLR2 2225',purchaseDate:'2025-05-25',cost:665,vendor:"TA Truck Service",installDate:'2025-06-01',installOdo:198000,treadInstall:32,treadCurrent:31,currentOdo:214500,psi:112,lastPressure:'2026-06-10',warranty:'2028-06-01',notes:'',status:'active',createdAt:'2025-06-01T11:00:00Z'},
+  {id:'TIR-008',truck:'T-002',position:'S2',brand:'Michelin',model:'XZA3',size:'11R22.5',serial:'DOT MN3A LLR2 2325',purchaseDate:'2025-05-25',cost:665,vendor:"TA Truck Service",installDate:'2025-06-01',installOdo:198000,treadInstall:32,treadCurrent:31,currentOdo:214500,psi:111,lastPressure:'2026-06-10',warranty:'2028-06-01',notes:'',status:'active',createdAt:'2025-06-01T11:00:00Z'},
+  {id:'TIR-009',truck:'T-002',position:'D1L-O',brand:'Bridgestone',model:'R192',size:'11R22.5',serial:'DOT B3R1 XRX1 0325',purchaseDate:'2025-01-15',cost:560,vendor:"Speedco",installDate:'2025-01-20',installOdo:175000,treadInstall:32,treadCurrent:20,currentOdo:214500,psi:96,lastPressure:'2026-06-05',warranty:'2027-01-20',notes:'',status:'active',createdAt:'2025-01-20T08:00:00Z'},
+  {id:'TIR-010',truck:'T-002',position:'D2R-O',brand:'Goodyear',model:'G661 HSA',size:'11R22.5',serial:'DOT G2Y1 WCW1 3124',purchaseDate:'2024-07-20',cost:545,vendor:"Pilot Flying J",installDate:'2024-08-05',installOdo:155000,treadInstall:32,treadCurrent:5,currentOdo:214500,psi:88,lastPressure:'2026-05-20',warranty:'2026-08-05',notes:'Vibration reported by driver — inspect immediately',status:'active',createdAt:'2024-08-05T09:00:00Z'},
+];
+
+const SEED_LOG = [
+  {id:'LOG-001',tireId:'TIR-001',truck:'T-001',position:'S1',eventType:'Pressure Check',value:'110 PSI',tech:'Jim B.',notes:'Pre-trip check',date:'2026-06-01'},
+  {id:'LOG-002',tireId:'TIR-003',truck:'T-001',position:'D1L-O',eventType:'Tread Check',value:'14/32',tech:'Amet A.',notes:'Monitor — approaching wear limit',date:'2026-05-28'},
+  {id:'LOG-003',tireId:'TIR-005',truck:'T-001',position:'D1R-I',eventType:'Pressure Check',value:'92 PSI',tech:'Amet A.',notes:'Slightly low — checked again',date:'2026-05-28'},
+  {id:'LOG-004',tireId:'TIR-006',truck:'T-001',position:'D1R-O',eventType:'Tread Check',value:'6/32',tech:'Amet A.',notes:'Cracking on sidewall — flagged for replacement',date:'2026-05-28'},
+  {id:'LOG-005',tireId:'TIR-009',truck:'T-002',position:'D1L-O',eventType:'Pressure Check',value:'96 PSI',tech:'David H.',notes:'All good',date:'2026-06-05'},
+  {id:'LOG-006',tireId:'TIR-010',truck:'T-002',position:'D2R-O',eventType:'Repair',value:'Slow leak patched',tech:'TA Service',notes:'Nail found — plugged. Replacement still needed soon.',date:'2026-05-20'},
+];
+
+function loadTires(){
+  let t = localStorage.getItem('nexus_tires');
+  if(!t){
+    localStorage.setItem('nexus_tires', JSON.stringify(SEED_TIRES));
+    return SEED_TIRES;
+  }
+  return JSON.parse(t);
+}
+function saveTiresData(arr){localStorage.setItem('nexus_tires',JSON.stringify(arr));}
+function loadLog(){
+  let l = localStorage.getItem('nexus_tire_log');
+  if(!l){
+    localStorage.setItem('nexus_tire_log', JSON.stringify(SEED_LOG));
+    return SEED_LOG;
+  }
+  return JSON.parse(l);
+}
+function saveLogData(arr){localStorage.setItem('nexus_tire_log',JSON.stringify(arr));}
+
+// ===========================
+// UTILITIES
+// ===========================
+function treadStatus(t){
+  if(t===null||t===undefined||isNaN(t)) return 'empty';
+  const pct = (t/32)*100;
+  if(pct>50) return 'good';
+  if(pct>=25) return 'monitor';
+  return 'replace';
+}
+function treadBadge(t){
+  const s = treadStatus(t);
+  const map = {good:'badge-green',monitor:'badge-yellow',replace:'badge-red',empty:'badge-gray'};
+  const label = {good:'Good',monitor:'Monitor',replace:'Replace',empty:'No Record'};
+  return `<span class="badge ${map[s]}">${label[s]}</span>`;
+}
+function treadGauge(t){
+  if(t===null||t===undefined||isNaN(t)) return '<span class="mono-dim">—</span>';
+  const pct = Math.min(100,Math.max(0,(t/32)*100));
+  const color = pct>50?'var(--green)':pct>=25?'var(--yellow)':'var(--red)';
+  return `<div class="tread-gauge"><div class="tread-track"><div class="tread-fill" style="width:${pct}%;background:${color};"></div></div><span class="tread-text" style="color:${color}">${t}/32</span></div>`;
+}
+function fmt$(n){return n?'$'+Number(n).toLocaleString():'—';}
+function fmtDate(d){if(!d)return '—';const p=d.split('-');return p[1]+'/'+p[2]+'/'+p[0];}
+function genId(prefix){return prefix+'-'+Date.now().toString(36).toUpperCase();}
+function eventTypeColor(e){
+  const m={'Pressure Check':'event-pressure','Tread Check':'event-tread','Repair':'event-repair','Rotation':'event-rotation','Removal':'event-removal','Install':'event-install'};
+  return m[e]||'';
+}
+
+// ===========================
+// SECTION TABS
+// ===========================
+function showSection(id, btn){
+  document.querySelectorAll('.section-content').forEach(s=>s.style.display='none');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('section-'+id).style.display='';
+  btn.classList.add('active');
+  if(id==='map') renderFleetMap();
+  if(id==='inventory') renderInventory();
+  if(id==='log') renderLog();
+  if(id==='analytics') renderAnalytics();
+}
+
+// ===========================
+// KPI BAR
+// ===========================
+function renderKPIs(){
+  const tires = loadTires();
+  const log = loadLog();
+  const active = tires.filter(t=>t.status!=='removed');
+  const total = active.length;
+  const treads = active.map(t=>parseFloat(t.treadCurrent)).filter(x=>!isNaN(x));
+  const avgTread = treads.length ? (treads.reduce((a,b)=>a+b,0)/treads.length).toFixed(1) : '—';
+  const needReplace = active.filter(t=>treadStatus(t.treadCurrent)==='replace').length;
+  const spend = tires.filter(t=>{
+    if(!t.purchaseDate) return false;
+    return t.purchaseDate.startsWith('2026');
+  }).reduce((a,t)=>a+(parseFloat(t.cost)||0),0);
+
+  document.getElementById('kpi-total').textContent = total;
+  document.getElementById('kpi-tread').textContent = avgTread!=='—'?avgTread+'/32':'—';
+  document.getElementById('kpi-replace').textContent = needReplace;
+  document.getElementById('kpi-replace-sub').textContent = needReplace===1?'tire needs replacement':'tires need replacement';
+  document.getElementById('kpi-spend').textContent = fmt$(spend);
+}
+
+// ===========================
+// FLEET MAP
+// ===========================
+const AXLE_DEFS = [
+  {label:'STEER',positions:['S1','S2'],single:true},
+  {label:'DRIVE 1',positions:['D1L-O','D1L-I','D1R-I','D1R-O'],dual:true},
+  {label:'DRIVE 2',positions:['D2L-O','D2L-I','D2R-I','D2R-O'],dual:true},
+  {label:'TRAIL 1',positions:['T1L-O','T1L-I','T1R-I','T1R-O'],dual:true},
+  {label:'TRAIL 2',positions:['T2L-O','T2L-I','T2R-I','T2R-O'],dual:true},
+];
+
+function renderFleetMap(){
+  const tires = loadTires();
+  const sel = document.getElementById('map-truck-select').value;
+  const trucks = sel==='ALL'?['T-001','T-002','T-003','T-004','T-005','T-006']:[sel];
+  const container = document.getElementById('fleet-map-container');
+  let html = '';
+  trucks.forEach(truck=>{
+    const truckTires = tires.filter(t=>t.truck===truck&&t.status!=='removed');
+    const posMap = {};
+    truckTires.forEach(t=>posMap[t.position]=t);
+    html += `<div class="truck-diagram">
+      <div class="truck-label">${truck} <span>${truckTires.length} tires recorded</span></div>
+      <div style="display:flex;gap:16px;align-items:flex-start;overflow-x:auto;padding-bottom:8px;">
+        <div style="display:flex;flex-direction:column;justify-content:space-between;height:280px;padding:8px 0;">
+          ${AXLE_DEFS.map(a=>`<div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:1px;text-align:right;">${a.label}</div>`).join('')}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;flex:1;min-width:260px;">`;
+    AXLE_DEFS.forEach(axle=>{
+      html += `<div style="display:flex;align-items:center;gap:6px;position:relative;padding:6px 0;">
+        <div style="position:absolute;left:0;right:0;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;top:50%;transform:translateY(-50%);z-index:0;"></div>`;
+      if(axle.single){
+        // steer axle: 2 tires centered
+        html += `<div style="flex:1;display:flex;justify-content:center;gap:20px;">`;
+        axle.positions.forEach(pos=>{
+          const t = posMap[pos];
+          const s = t?treadStatus(t.treadCurrent):'empty';
+          const tip = t?`${t.brand} ${t.model} — ${t.treadCurrent}/32 — ${t.psi}psi`:'No tire recorded';
+          html += `<div class="tire-pos ${s}" title="${tip}" onclick="openDetailByPos('${truck}','${pos}')">
+            <div class="tire-dot"></div>
+            <div class="tire-pos-label">${pos}</div>
+          </div>`;
+        });
+        html += `</div>`;
+      } else {
+        // dual tires: L-O, L-I | gap | R-I, R-O
+        const [lo,li,ri,ro] = axle.positions;
+        [[lo,li],[ri,ro]].forEach((pair,idx)=>{
+          if(idx===1) html += `<div style="flex:1;"></div>`;
+          html += `<div style="display:flex;gap:3px;z-index:1;">`;
+          pair.forEach(pos=>{
+            const t = posMap[pos];
+            const s = t?treadStatus(t.treadCurrent):'empty';
+            const tip = t?`${t.brand} ${t.model} — ${t.treadCurrent}/32 — ${t.psi}psi`:'No tire recorded';
+            html += `<div class="tire-pos ${s}" style="width:22px;" title="${tip}" onclick="openDetailByPos('${truck}','${pos}')">
+              <div class="tire-dot"></div>
+              <div class="tire-pos-label">${pos.replace(/D\dL-|D\dR-|T\dL-|T\dR-/,'')}</div>
+            </div>`;
+          });
+          html += `</div>`;
+        });
+      }
+      html += `</div>`;
+    });
+    html += `</div></div></div>`;
+  });
+  container.innerHTML = html;
+}
+
+function openDetailByPos(truck, pos){
+  const tires = loadTires();
+  const t = tires.find(x=>x.truck===truck&&x.position===pos&&x.status!=='removed');
+  if(!t){
+    // offer to add
+    if(confirm(`No tire recorded at ${truck} / ${pos}.\nAdd a new tire here?`)){
+      openAddTireModal();
+      setTimeout(()=>{
+        document.getElementById('f-truck').value=truck;
+        document.getElementById('f-position').value=pos;
+      },100);
+    }
+    return;
+  }
+  openDetailModal(t.id);
+}
+
+// ===========================
+// INVENTORY TABLE
+// ===========================
+function renderInventory(){
+  const tires = loadTires().filter(t=>t.status!=='removed');
+  const search = document.getElementById('inv-search').value.toLowerCase();
+  const truckF = document.getElementById('inv-truck-filter').value;
+  const statusF = document.getElementById('inv-status-filter').value;
+  let filtered = tires.filter(t=>{
+    if(truckF && t.truck!==truckF) return false;
+    if(statusF && treadStatus(t.treadCurrent)!==statusF) return false;
+    if(search && !`${t.truck} ${t.position} ${t.brand} ${t.model} ${t.size} ${t.serial}`.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  // sort: replace first
+  filtered.sort((a,b)=>{
+    const order={replace:0,monitor:1,good:2,empty:3};
+    return (order[treadStatus(a.treadCurrent)]||3)-(order[treadStatus(b.treadCurrent)]||3);
+  });
+  const tbody = document.getElementById('inventory-tbody');
+  if(!filtered.length){
+    tbody.innerHTML = `<tr><td colspan="12"><div class="empty-state"><p>No tires match filters.</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(t=>`
+    <tr>
+      <td><span class="mono">${t.position}</span></td>
+      <td><span class="badge badge-blue">${t.truck}</span></td>
+      <td><strong style="color:var(--text);">${t.brand}</strong><br><span style="font-size:11px;color:var(--muted);">${t.model}</span></td>
+      <td><span class="mono-dim">${t.size||'—'}</span></td>
+      <td>${fmtDate(t.installDate)}</td>
+      <td>${t.installOdo?Number(t.installOdo).toLocaleString()+'mi':'—'}</td>
+      <td>${t.currentOdo?Number(t.currentOdo).toLocaleString()+'mi':'—'}</td>
+      <td>${treadGauge(t.treadCurrent)}</td>
+      <td><span class="mono-dim">${t.psi||'—'} psi</span></td>
+      <td>${treadBadge(t.treadCurrent)}</td>
+      <td>${fmt$(t.cost)}</td>
+      <td>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;">
+          <button class="btn btn-sm" onclick="openDetailModal('${t.id}')" title="View details">👁</button>
+          <button class="btn btn-sm" onclick="openEditModal('${t.id}')" title="Edit">✏️</button>
+          <button class="btn btn-sm btn-blue" onclick="openLogEventModal('${t.id}')" title="Log event">📋</button>
+          <button class="btn btn-sm" style="color:var(--red);" onclick="removeTire('${t.id}')" title="Remove from fleet">✕</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ===========================
+// HISTORY LOG
+// ===========================
+function renderLog(){
+  const log = loadLog();
+  const typeF = document.getElementById('log-type-filter').value;
+  const truckF = document.getElementById('log-truck-filter').value;
+  let filtered = log.filter(l=>{
+    if(typeF && l.eventType!==typeF) return false;
+    if(truckF && l.truck!==truckF) return false;
+    return true;
+  });
+  filtered.sort((a,b)=>b.date.localeCompare(a.date));
+  const tbody = document.getElementById('log-tbody');
+  if(!filtered.length){
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><p>No log entries.</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(l=>`
+    <tr>
+      <td>${fmtDate(l.date)}</td>
+      <td><span class="mono">${l.tireId}</span></td>
+      <td><span class="badge badge-blue">${l.truck}</span></td>
+      <td><span class="mono-dim">${l.position}</span></td>
+      <td><span class="${eventTypeColor(l.eventType)}" style="font-weight:600;">${l.eventType}</span></td>
+      <td>${l.value||'—'}</td>
+      <td>${l.tech||'—'}</td>
+      <td style="max-width:200px;font-size:11px;color:var(--muted);">${l.notes||'—'}</td>
+    </tr>
+  `).join('');
+}
+
+// ===========================
+// ANALYTICS
+// ===========================
+function renderAnalytics(){
+  const tires = loadTires().filter(t=>t.status!=='removed');
+  const grid = document.getElementById('analytics-grid');
+
+  // miles per tire by brand
+  const brandMiles = {};
+  const brandCount = {};
+  tires.forEach(t=>{
+    if(!t.brand||!t.installOdo||!t.currentOdo) return;
+    const miles = parseFloat(t.currentOdo)-parseFloat(t.installOdo);
+    if(!brandMiles[t.brand]) {brandMiles[t.brand]=0;brandCount[t.brand]=0;}
+    brandMiles[t.brand]+=miles;
+    brandCount[t.brand]++;
+  });
+  const brandAvg = {};
+  Object.keys(brandMiles).forEach(b=>{if(brandCount[b]>0) brandAvg[b]=Math.round(brandMiles[b]/brandCount[b]);});
+  const maxAvg = Math.max(...Object.values(brandAvg),1);
+
+  // cost per mile by brand
+  const brandCostMiles = {};
+  const brandCostTot = {};
+  tires.forEach(t=>{
+    if(!t.brand||!t.installOdo||!t.currentOdo||!t.cost) return;
+    const miles = parseFloat(t.currentOdo)-parseFloat(t.installOdo);
+    if(miles<=0) return;
+    if(!brandCostMiles[t.brand]) {brandCostMiles[t.brand]=0;brandCostTot[t.brand]=0;}
+    brandCostMiles[t.brand]+=miles;
+    brandCostTot[t.brand]+=parseFloat(t.cost);
+  });
+  const brandCPM = {};
+  Object.keys(brandCostMiles).forEach(b=>{if(brandCostMiles[b]>0) brandCPM[b]=(brandCostTot[b]/brandCostMiles[b]).toFixed(4);});
+
+  // position wear (avg tread pct)
+  const posTreads = {};
+  const posCount = {};
+  tires.forEach(t=>{
+    if(t.treadCurrent===null||t.treadCurrent===undefined) return;
+    if(!posTreads[t.position]) {posTreads[t.position]=0;posCount[t.position]=0;}
+    posTreads[t.position]+=parseFloat(t.treadCurrent);
+    posCount[t.position]++;
+  });
+  const posAvg = {};
+  Object.keys(posTreads).forEach(p=>{if(posCount[p]>0) posAvg[p]=(posTreads[p]/posCount[p]).toFixed(1);});
+  const sortedPos = Object.keys(posAvg).sort((a,b)=>posAvg[a]-posAvg[b]); // worst first
+
+  // upcoming replacements (project from wear rate)
+  const upcoming = tires.filter(t=>{
+    if(!t.installDate||!t.treadCurrent||!t.treadInstall||!t.installOdo||!t.currentOdo) return false;
+    const milesDriven = parseFloat(t.currentOdo)-parseFloat(t.installOdo);
+    const treadUsed = parseFloat(t.treadInstall)-parseFloat(t.treadCurrent);
+    if(milesDriven<=0||treadUsed<=0) return false;
+    const wearPerMile = treadUsed/milesDriven;
+    const treadLeft = parseFloat(t.treadCurrent)-4; // replace at 4/32
+    const milesLeft = treadLeft/wearPerMile;
+    t._milesLeft = Math.round(milesLeft);
+    return true;
+  }).sort((a,b)=>a._milesLeft-b._milesLeft).slice(0,6);
+
+  const brandColors = {'Michelin':'#e91e8c','Bridgestone':'#60a5fa','Goodyear':'#22c55e'};
+  function brandColor(b){return brandColors[b]||'#a78bfa';}
+
+  grid.innerHTML = `
+    <div class="analytics-card">
+      <div class="analytics-title">Avg Miles Per Tire — By Brand</div>
+      <div class="bar-chart">
+        ${Object.keys(brandAvg).map(b=>`
+          <div class="bar-row">
+            <div class="bar-name">${b}</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${Math.round((brandAvg[b]/maxAvg)*100)}%;background:${brandColor(b)};">
+                <span>${Number(brandAvg[b]).toLocaleString()} mi</span>
+              </div>
+            </div>
+            <div class="bar-val">${brandCount[b]} tire${brandCount[b]!==1?'s':''}</div>
+          </div>
+        `).join('')||'<div style="color:var(--muted);font-size:13px;">Not enough data</div>'}
+      </div>
+    </div>
+    <div class="analytics-card">
+      <div class="analytics-title">Cost Per Mile — By Brand</div>
+      <div class="bar-chart">
+        ${Object.keys(brandCPM).length?Object.keys(brandCPM).map(b=>`
+          <div class="bar-row">
+            <div class="bar-name">${b}</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${Math.min(100,parseFloat(brandCPM[b])*5000)}%;background:${brandColor(b)};">
+                <span>$${brandCPM[b]}/mi</span>
+              </div>
+            </div>
+            <div class="bar-val">$${brandCPM[b]}</div>
+          </div>
+        `).join(''):'<div style="color:var(--muted);font-size:13px;">Not enough data</div>'}
+      </div>
+    </div>
+    <div class="analytics-card">
+      <div class="analytics-title">Position Wear Analysis (Lowest Tread First)</div>
+      <div class="bar-chart">
+        ${sortedPos.map(p=>{
+          const pct=Math.min(100,(posAvg[p]/32)*100);
+          const color=pct>50?'var(--green)':pct>=25?'var(--yellow)':'var(--red)';
+          return `<div class="bar-row">
+            <div class="bar-name" style="font-family:'JetBrains Mono',monospace;font-size:10px;">${p}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color};"><span>${posAvg[p]}/32</span></div></div>
+            <div class="bar-val">${posCount[p]} tire${posCount[p]!==1?'s':''}</div>
+          </div>`;
+        }).join('')||'<div style="color:var(--muted);font-size:13px;">No tread data</div>'}
+      </div>
+    </div>
+    <div class="analytics-card">
+      <div class="analytics-title">Upcoming Replacements (Projected)</div>
+      ${upcoming.length?`<table style="min-width:unset;">
+        <thead><tr>
+          <th>Tire</th><th>Position</th><th>Truck</th><th>Tread Left</th><th>Est. Miles Left</th>
+        </tr></thead>
+        <tbody>
+          ${upcoming.map(t=>{
+            const cls = t._milesLeft<10000?'upcoming-row-red':t._milesLeft<30000?'upcoming-row-yellow':'';
+            return `<tr class="${cls}">
+              <td><span class="mono">${t.id}</span></td>
+              <td><span class="mono-dim">${t.position}</span></td>
+              <td><span class="badge badge-blue">${t.truck}</span></td>
+              <td>${treadGauge(t.treadCurrent)}</td>
+              <td><strong style="color:${t._milesLeft<10000?'var(--red)':t._milesLeft<30000?'var(--yellow)':'var(--green)'}">${Number(t._milesLeft).toLocaleString()} mi</strong></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`:'<div style="color:var(--muted);font-size:13px;padding-top:8px;">Not enough mileage/tread data to project replacements.</div>'}
+    </div>
+  `;
+}
+
+// ===========================
+// ADD/EDIT TIRE MODAL
+// ===========================
+let editingTireId = null;
+
+function openAddTireModal(){
+  editingTireId = null;
+  document.getElementById('modal-tire-title').textContent = 'ADD TIRE';
+  document.getElementById('modal-tire-save-btn').textContent = 'Save Tire';
+  clearTireForm();
+  openModal('modal-tire');
+}
+function openEditModal(id){
+  const tires = loadTires();
+  const t = tires.find(x=>x.id===id);
+  if(!t) return;
+  editingTireId = id;
+  document.getElementById('modal-tire-title').textContent = 'EDIT TIRE — '+id;
+  document.getElementById('modal-tire-save-btn').textContent = 'Update Tire';
+  document.getElementById('f-truck').value = t.truck||'';
+  document.getElementById('f-position').value = t.position||'';
+  document.getElementById('f-brand').value = t.brand||'';
+  document.getElementById('f-model').value = t.model||'';
+  document.getElementById('f-size').value = t.size||'';
+  document.getElementById('f-serial').value = t.serial||'';
+  document.getElementById('f-purchase-date').value = t.purchaseDate||'';
+  document.getElementById('f-cost').value = t.cost||'';
+  document.getElementById('f-vendor').value = t.vendor||'';
+  document.getElementById('f-install-date').value = t.installDate||'';
+  document.getElementById('f-install-odo').value = t.installOdo||'';
+  document.getElementById('f-tread-install').value = t.treadInstall||'';
+  document.getElementById('f-tread-current').value = t.treadCurrent||'';
+  document.getElementById('f-current-odo').value = t.currentOdo||'';
+  document.getElementById('f-psi').value = t.psi||'';
+  document.getElementById('f-last-pressure').value = t.lastPressure||'';
+  document.getElementById('f-warranty').value = t.warranty||'';
+  document.getElementById('f-notes').value = t.notes||'';
+  openModal('modal-tire');
+}
+function clearTireForm(){
+  ['f-truck','f-position','f-brand','f-model','f-size','f-serial','f-purchase-date','f-cost','f-vendor','f-install-date','f-install-odo','f-tread-install','f-tread-current','f-current-odo','f-psi','f-last-pressure','f-warranty','f-notes'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.value='';
+  });
+}
+function saveTire(){
+  const truck = document.getElementById('f-truck').value;
+  const pos = document.getElementById('f-position').value;
+  if(!truck||!pos){alert('Truck and position are required.');return;}
+  const tires = loadTires();
+  const existing = tires.find(t=>t.truck===truck&&t.position===pos&&t.status!=='removed'&&(!editingTireId||t.id!==editingTireId));
+  if(existing&&!confirm(`There is already a tire at ${truck} / ${pos} (${existing.id}).\nReplace it?`)) return;
+
+  const tireObj = {
+    id: editingTireId||genId('TIR'),
+    truck,position:pos,
+    brand:document.getElementById('f-brand').value,
+    model:document.getElementById('f-model').value,
+    size:document.getElementById('f-size').value,
+    serial:document.getElementById('f-serial').value,
+    purchaseDate:document.getElementById('f-purchase-date').value,
+    cost:parseFloat(document.getElementById('f-cost').value)||null,
+    vendor:document.getElementById('f-vendor').value,
+    installDate:document.getElementById('f-install-date').value,
+    installOdo:parseFloat(document.getElementById('f-install-odo').value)||null,
+    treadInstall:parseFloat(document.getElementById('f-tread-install').value)||null,
+    treadCurrent:parseFloat(document.getElementById('f-tread-current').value)||null,
+    currentOdo:parseFloat(document.getElementById('f-current-odo').value)||null,
+    psi:parseFloat(document.getElementById('f-psi').value)||null,
+    lastPressure:document.getElementById('f-last-pressure').value,
+    warranty:document.getElementById('f-warranty').value,
+    notes:document.getElementById('f-notes').value,
+    status:'active',
+    createdAt: editingTireId?(tires.find(t=>t.id===editingTireId)||{}).createdAt:new Date().toISOString(),
+    updatedAt:new Date().toISOString(),
+  };
+
+  let arr;
+  if(editingTireId){
+    arr = tires.map(t=>t.id===editingTireId?tireObj:t);
+  } else {
+    // mark any existing tire at same position as removed
+    arr = tires.map(t=>(t.truck===truck&&t.position===pos&&t.status!=='removed')?{...t,status:'removed'}:t);
+    arr.push(tireObj);
+  }
+  saveTiresData(arr);
+  closeModal('modal-tire');
+  renderKPIs();
+  renderInventory();
+  renderFleetMap();
+}
+function removeTire(id){
+  if(!confirm('Mark this tire as removed from fleet?')) return;
+  const tires = loadTires();
+  const arr = tires.map(t=>t.id===id?{...t,status:'removed',removedAt:new Date().toISOString()}:t);
+  saveTiresData(arr);
+  renderKPIs();
+  renderInventory();
+  renderFleetMap();
+}
+
+// ===========================
+// LOG EVENT MODAL
+// ===========================
+function openLogEventModal(tireId){
+  const tires = loadTires().filter(t=>t.status!=='removed');
+  const sel = document.getElementById('log-tire-select');
+  sel.innerHTML = '<option value="">Select tire...</option>';
+  tires.forEach(t=>{
+    const opt = document.createElement('option');
+    opt.value = t.id;
+    opt.textContent = `${t.id} — ${t.truck} / ${t.position} (${t.brand} ${t.model})`;
+    sel.appendChild(opt);
+  });
+  if(tireId) sel.value = tireId;
+  document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('log-value').value='';
+  document.getElementById('log-tech').value='';
+  document.getElementById('log-notes').value='';
+  document.getElementById('log-event-type').value='';
+  openModal('modal-log');
+}
+function updateLogValueLabel(){
+  const type = document.getElementById('log-event-type').value;
+  const map = {'Pressure Check':'Pressure Reading (PSI)','Tread Check':'Tread Depth (/32)','Repair':'Repair Description','Rotation':'New Position','Removal':'Removal Reason','Install':'Install Odometer'};
+  document.getElementById('log-value-label').textContent = map[type]||'Value';
+}
+function saveLogEvent(){
+  const tireId = document.getElementById('log-tire-select').value;
+  const eventType = document.getElementById('log-event-type').value;
+  const date = document.getElementById('log-date').value;
+  if(!tireId||!eventType||!date){alert('Tire, event type, and date are required.');return;}
+  const tires = loadTires();
+  const tire = tires.find(t=>t.id===tireId);
+  const log = loadLog();
+  const entry = {
+    id:genId('LOG'),
+    tireId,
+    truck:tire?tire.truck:'',
+    position:tire?tire.position:'',
+    eventType,
+    value:document.getElementById('log-value').value,
+    tech:document.getElementById('log-tech').value,
+    notes:document.getElementById('log-notes').value,
+    date,
+    createdAt:new Date().toISOString(),
+  };
+  // update tire data if relevant
+  if(eventType==='Pressure Check'&&tire){
+    const psi = parseFloat(entry.value);
+    if(!isNaN(psi)){tire.psi=psi;tire.lastPressure=date;saveTiresData(tires.map(t=>t.id===tireId?tire:t));}
+  }
+  if(eventType==='Tread Check'&&tire){
+    const td = parseFloat(entry.value);
+    if(!isNaN(td)){tire.treadCurrent=td;saveTiresData(tires.map(t=>t.id===tireId?tire:t));}
+  }
+  log.push(entry);
+  saveLogData(log);
+  closeModal('modal-log');
+  renderKPIs();
+  renderInventory();
+  renderLog();
+  renderFleetMap();
+}
+
+// ===========================
+// DETAIL MODAL
+// ===========================
+function openDetailModal(id){
+  const tires = loadTires();
+  const t = tires.find(x=>x.id===id);
+  if(!t) return;
+  document.getElementById('detail-title').textContent = `${t.id} — ${t.truck} / ${t.position}`;
+  const s = treadStatus(t.treadCurrent);
+  const statusLabel = {good:'Good',monitor:'Monitor',replace:'Replace Now',empty:'No Record'}[s];
+  const statusColor = {good:'var(--green)',monitor:'var(--yellow)',replace:'var(--red)',empty:'var(--muted)'}[s];
+  const milesDriven = (t.currentOdo&&t.installOdo)?Number(parseFloat(t.currentOdo)-parseFloat(t.installOdo)).toLocaleString()+' mi':'—';
+  document.getElementById('detail-body').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border);">
+      <div style="width:56px;height:80px;border-radius:8px;border:3px solid ${statusColor};background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;">
+        <div style="width:16px;height:16px;border-radius:50%;background:${statusColor};"></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:${statusColor};text-align:center;">${t.position}</div>
+      </div>
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--text);">${t.brand} ${t.model}</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:2px;">${t.size||''} &nbsp;·&nbsp; ${t.truck}</div>
+        <div style="margin-top:6px;">${treadBadge(t.treadCurrent)} <span style="font-size:12px;color:${statusColor};margin-left:6px;font-weight:600;">${statusLabel}</span></div>
+      </div>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-item"><label>Tire ID</label><span class="mono">${t.id}</span></div>
+      <div class="detail-item"><label>Serial / DOT</label><span class="mono-dim">${t.serial||'—'}</span></div>
+      <div class="detail-item"><label>Current Tread</label><span>${treadGauge(t.treadCurrent)}</span></div>
+      <div class="detail-item"><label>Tire Pressure</label><span class="mono-dim">${t.psi||'—'} PSI</span></div>
+      <div class="detail-item"><label>Install Date</label><span>${fmtDate(t.installDate)}</span></div>
+      <div class="detail-item"><label>Install Odometer</label><span>${t.installOdo?Number(t.installOdo).toLocaleString()+' mi':'—'}</span></div>
+      <div class="detail-item"><label>Current Odometer</label><span>${t.currentOdo?Number(t.currentOdo).toLocaleString()+' mi':'—'}</span></div>
+      <div class="detail-item"><label>Miles Driven on Tire</label><span>${milesDriven}</span></div>
+      <div class="detail-item"><label>Purchase Cost</label><span>${fmt$(t.cost)}</span></div>
+      <div class="detail-item"><label>Vendor</label><span>${t.vendor||'—'}</span></div>
+      <div class="detail-item"><label>Purchase Date</label><span>${fmtDate(t.purchaseDate)}</span></div>
+      <div class="detail-item"><label>Warranty Exp.</label><span>${fmtDate(t.warranty)}</span></div>
+      <div class="detail-item"><label>Last Pressure Check</label><span>${fmtDate(t.lastPressure)}</span></div>
+      <div class="detail-item"><label>Tread at Install</label><span>${t.treadInstall?t.treadInstall+'/32':'—'}</span></div>
+      ${t.notes?`<div class="detail-item" style="grid-column:1/3;"><label>Notes</label><span style="font-size:12px;color:var(--muted);">${t.notes}</span></div>`:''}
+    </div>
+    ${renderTireHistory(t.id)}
+  `;
+  document.getElementById('detail-edit-btn').onclick = ()=>{closeModal('modal-detail');openEditModal(id);};
+  document.getElementById('detail-log-btn').onclick = ()=>{closeModal('modal-detail');openLogEventModal(id);};
+  openModal('modal-detail');
+}
+function renderTireHistory(tireId){
+  const log = loadLog().filter(l=>l.tireId===tireId).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+  if(!log.length) return `<div style="margin-top:12px;font-size:12px;color:var(--muted);">No event history recorded.</div>`;
+  return `<div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Recent Events</div>
+    ${log.map(l=>`<div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;">
+      <div style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px;width:80px;flex-shrink:0;padding-top:1px;">${fmtDate(l.date)}</div>
+      <div><span class="${eventTypeColor(l.eventType)}" style="font-weight:600;">${l.eventType}</span> ${l.value?'— '+l.value:''}</div>
+      ${l.notes?`<div style="color:var(--muted);font-size:11px;margin-top:2px;">${l.notes}</div>`:''}
+    </div>`).join('')}
+  </div>`;
+}
+
+// ===========================
+// MODAL HELPERS
+// ===========================
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function closeModalIf(e,id){if(e.target===document.getElementById(id)) closeModal(id);}
+
+// ===========================
+// INIT
+// ===========================
+document.addEventListener('DOMContentLoaded',()=>{
+  renderKPIs();
+  renderFleetMap();
+  // set today's date for log modal
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('log-date').value = today;
+});
 </script>
-</body></html>
+</body>
+</html>

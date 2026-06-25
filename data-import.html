@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Import Hub — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<style>
+:root {
+  --bg: #0a0a0a;
+  --surface: #111827;
+  --surface2: #161b22;
+  --surface3: #1c2331;
+  --border: #21262d;
+  --border2: #30363d;
+  --text: #c9d1d9;
+  --text-dim: #8b949e;
+  --text-bright: #e6edf3;
+  --pink: #e91e8c;
+  --pink-dim: rgba(233,30,140,0.18);
+  --pink-border: rgba(233,30,140,0.45);
+  --green: #22c55e;
+  --red: #ef4444;
+  --yellow: #fbbf24;
+  --blue: #3b82f6;
+  --orange: #f97316;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{padding:24px 28px 0;display:flex;align-items:flex-start;justify-content:space-between;}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;letter-spacing:0.03em;color:var(--text-bright);}
+.page-subtitle{font-size:13px;color:var(--text-dim);margin-top:3px;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
+.btn-pink{background:var(--pink);color:#fff;}
+.btn-pink:hover{background:#c2177a;}
+.btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border2);}
+.btn-ghost:hover{color:var(--text-bright);border-color:#6b7280;}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-danger{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
+.btn-danger:hover{background:rgba(239,68,68,0.25);}
+.btn-green{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
+.btn-green:hover{background:rgba(34,197,94,0.25);}
+
+/* CONTENT LAYOUT */
+.content-wrap{padding:20px 28px 40px;display:flex;gap:20px;align-items:flex-start;}
+.content-main{flex:1;min-width:0;}
+.sidebar-panel{width:260px;flex-shrink:0;}
+
+/* TABS */
+.tab-bar{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px;}
+.tab-btn{padding:10px 20px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:none;border:none;color:var(--text-dim);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.15s;}
+.tab-btn:hover{color:var(--text-bright);}
+.tab-btn.active{color:var(--pink);border-bottom-color:var(--pink);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* SUB-TABS */
+.sub-tab-bar{display:flex;gap:0;background:var(--surface2);border-radius:8px 8px 0 0;overflow:hidden;margin-bottom:0;border:1px solid var(--border);border-bottom:none;}
+.sub-tab-btn{padding:8px 18px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;cursor:pointer;background:none;border:none;color:var(--text-dim);transition:all 0.15s;}
+.sub-tab-btn:hover{color:var(--text-bright);}
+.sub-tab-btn.active{background:var(--surface3);color:var(--text-bright);}
+.sub-tab-panel{display:none;background:var(--surface2);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:20px;}
+.sub-tab-panel.active{display:block;}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text-bright);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.card-title svg{opacity:0.7;}
+
+/* DRIVE BROWSER */
+.drive-connect-area{text-align:center;padding:40px 20px;}
+.drive-connect-area p{color:var(--text-dim);margin-bottom:16px;font-size:14px;}
+.drive-file-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.filter-chip{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;background:var(--surface2);border:1px solid var(--border2);color:var(--text-dim);transition:all 0.15s;}
+.filter-chip:hover{color:var(--text-bright);}
+.filter-chip.active{background:var(--pink-dim);border-color:var(--pink-border);color:var(--pink);}
+.drive-files-list{border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.drive-file-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface2);transition:background 0.1s;}
+.drive-file-row:last-child{border-bottom:none;}
+.drive-file-row:hover{background:var(--surface3);}
+.drive-file-row input[type=checkbox]{accent-color:var(--pink);width:14px;height:14px;cursor:pointer;}
+.drive-file-icon{font-size:18px;flex-shrink:0;width:24px;text-align:center;}
+.drive-file-name{flex:1;font-size:13px;color:var(--text-bright);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.drive-file-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);white-space:nowrap;}
+.drive-bulk-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;margin-bottom:8px;}
+
+/* DROPZONE */
+.dropzone{border:2px dashed var(--border2);border-radius:10px;padding:48px 24px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--surface2);}
+.dropzone:hover, .dropzone.drag-over{border-color:var(--pink);background:var(--pink-dim);}
+.dropzone-icon{font-size:40px;margin-bottom:12px;opacity:0.5;}
+.dropzone p{color:var(--text-dim);font-size:14px;margin-bottom:8px;}
+.dropzone p strong{color:var(--text-bright);}
+.dropzone .file-types{font-size:12px;color:var(--text-dim);opacity:0.7;}
+#upload-file-input{display:none;}
+
+/* PREVIEW TABLE */
+.preview-wrap{margin-top:16px;overflow-x:auto;}
+.preview-table{width:100%;border-collapse:collapse;font-size:12px;}
+.preview-table th{background:var(--surface3);color:var(--text-dim);font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:7px 10px;border:1px solid var(--border);white-space:nowrap;}
+.preview-table td{padding:6px 10px;border:1px solid var(--border);color:var(--text);background:var(--surface2);}
+.preview-table tr:hover td{background:var(--surface3);}
+.preview-label{font-size:12px;color:var(--text-dim);margin-bottom:8px;font-family:'JetBrains Mono',monospace;}
+
+/* COLUMN MAPPER */
+.col-mapper{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-top:14px;}
+.col-mapper-title{font-size:12px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
+.mapper-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+.mapper-field{display:flex;flex-direction:column;gap:4px;}
+.mapper-field label{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;}
+.mapper-field select{background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:6px 10px;border-radius:5px;font-size:12px;font-family:'Barlow',sans-serif;}
+.mapper-field select:focus{outline:none;border-color:var(--pink);}
+.mapper-badge-required{color:var(--red);margin-left:2px;}
+
+/* FORM ELEMENTS */
+.form-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+.form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px;}
+.form-group label{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.08em;}
+.form-input, .form-select{background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:8px 12px;border-radius:6px;font-size:13px;font-family:'Barlow',sans-serif;}
+.form-input:focus, .form-select:focus{outline:none;border-color:var(--pink);}
+textarea.form-input{resize:vertical;min-height:120px;font-family:'JetBrains Mono',monospace;font-size:12px;}
+
+/* ALERTS / STATUS */
+.alert{padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.alert-success{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);color:var(--green);}
+.alert-error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red);}
+.alert-info{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--blue);}
+.alert-warn{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);color:var(--yellow);}
+
+/* RIGHT SIDEBAR PANEL */
+.stats-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;}
+.stats-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--text-bright);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.06em;}
+.stat-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+.stat-row:last-child{border-bottom:none;}
+.stat-label{font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;}
+.stat-value{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--text-bright);}
+.stat-row-actions{display:flex;align-items:center;gap:8px;margin-top:4px;}
+
+/* IMPORT LOG */
+.log-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-top:20px;}
+.log-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text-bright);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.04em;}
+.log-entry{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.log-entry:last-child{border-bottom:none;}
+.log-ts{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);white-space:nowrap;min-width:130px;}
+.log-detail{flex:1;}
+.log-filename{font-size:12px;color:var(--text-bright);font-weight:600;}
+.log-meta{font-size:11px;color:var(--text-dim);margin-top:2px;}
+.log-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:var(--pink-dim);color:var(--pink);border:1px solid var(--pink-border);}
+.log-empty{text-align:center;color:var(--text-dim);font-size:13px;padding:24px;}
+
+/* BADGE / STATUS */
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;letter-spacing:0.04em;}
+.badge-green{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
+.badge-yellow{background:rgba(251,191,36,0.15);color:var(--yellow);border:1px solid rgba(251,191,36,0.3);}
+.badge-red{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
+.badge-blue{background:rgba(59,130,246,0.15);color:var(--blue);border:1px solid rgba(59,130,246,0.3);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:1000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;width:100%;max-width:520px;padding:28px;position:relative;}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--text-bright);margin-bottom:16px;}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:20px;line-height:1;}
+.modal-close:hover{color:var(--text-bright);}
+
+/* DIVIDER */
+.section-divider{height:1px;background:var(--border);margin:20px 0;}
+
+/* LOADING SPINNER */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--pink);border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+<script src="nexus-config.js"></script>
+<script src="nexus-sidebar.js"></script>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="page-title">
+        <svg style="display:inline;vertical-align:middle;margin-right:8px;opacity:.8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="26" height="26"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4.03 3-9 3S3 13.66 3 12"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/></svg>
+        Data Import Hub
+      </div>
+      <div class="page-subtitle">Import data from Google Drive, file upload, or manual CSV paste → localStorage</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="btn btn-ghost btn-sm" onclick="refreshStats()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Refresh Stats
+      </button>
+    </div>
+  </div>
+
+  <div class="content-wrap">
+    <div class="content-main">
+
+      <!-- STATUS MESSAGE -->
+      <div id="global-status" class="hidden" style="margin-bottom:14px;"></div>
+
+      <!-- MAIN TABS -->
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('drive')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="vertical-align:middle;margin-right:4px;"><path d="M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2s10 4.48 10 10z"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Google Drive Import
+        </button>
+        <button class="tab-btn" onclick="switchTab('upload')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          File Upload
+        </button>
+        <button class="tab-btn" onclick="switchTab('manual')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="vertical-align:middle;margin-right:4px;"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Manual / Paste
+        </button>
+      </div>
+
+      <!-- TAB 1: GOOGLE DRIVE IMPORT -->
+      <div id="tab-drive" class="tab-panel active">
+        <div class="card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2s10 4.48 10 10z"/></svg>
+            Google Drive File Browser
+          </div>
+
+          <div id="drive-connect-area" class="drive-connect-area">
+            <div style="font-size:48px;margin-bottom:12px;opacity:0.4;">
+              <svg viewBox="0 0 87.3 78" width="56" height="56" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85 3.05 60.54a4.87 4.87 0 0 1-.63-1.92h.01L26.65 14.5 40.8 39.4l-20.27 34.87A4.55 4.55 0 0 1 16.98 74a5.06 5.06 0 0 1-10.38-7.15z" fill="#0066da"/><path d="m59.5 47.16 5.71-9.87L80.68 13.86a4.73 4.73 0 0 1 1.63 1.7l2.97 5.13a5.06 5.06 0 0 1 0 5.06l-21.64 37.46-.59-16.05z" fill="#ea4335"/><path d="M59.5 47.16 80.68 13.86 55.04 0l-28.39.19L40.8 39.4z" fill="#00ac47"/><path d="M59.5 47.16 40.8 39.4 26.65 14.5l12.86-14.31L55.04 0z" fill="#00832d"/><path d="M20.53 74.27 40.8 39.4 59.5 47.16 38.95 83.93a4.95 4.95 0 0 1-4.34 2.55H25.04a5.06 5.06 0 0 1-4.51-11.21z" fill="#2684fc"/><path d="M59.5 47.16 38.95 83.93a4.95 4.95 0 0 0 4.34 2.55h14.57a5.06 5.06 0 0 0 4.51-11.21L59.5 47.16z" fill="#0066da"/></svg>
+            </div>
+            <p>Connect to Google Drive to browse and import files from your Carrier Nexus vault.</p>
+            <button class="btn btn-pink" onclick="connectDrive()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2s10 4.48 10 10z"/></svg>
+              Connect Google Drive
+            </button>
+          </div>
+
+          <div id="drive-browser" class="hidden">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+              <div class="drive-file-filters" id="drive-filters">
+                <button class="filter-chip active" data-filter="all" onclick="filterDriveFiles('all',this)">All</button>
+                <button class="filter-chip" data-filter="expense" onclick="filterDriveFiles('expense',this)">Expenses</button>
+                <button class="filter-chip" data-filter="rate" onclick="filterDriveFiles('rate',this)">Rate Cons</button>
+                <button class="filter-chip" data-filter="settlement" onclick="filterDriveFiles('settlement',this)">Settlements</button>
+                <button class="filter-chip" data-filter="other" onclick="filterDriveFiles('other',this)">Documents</button>
+              </div>
+              <div id="drive-loading" class="hidden" style="display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:12px;">
+                <span class="spinner"></span> Loading files…
+              </div>
+            </div>
+
+            <div class="drive-bulk-bar">
+              <span id="drive-selected-count" style="font-size:12px;color:var(--text-dim);">0 files selected</span>
+              <button class="btn btn-pink btn-sm" onclick="importSelected()" id="btn-import-selected" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/></svg>
+                Import Selected
+              </button>
+            </div>
+
+            <div id="drive-files-list" class="drive-files-list">
+              <div style="text-align:center;padding:32px;color:var(--text-dim);font-size:13px;">No files loaded yet. Click a folder to browse.</div>
+            </div>
+
+            <div id="drive-folder-nav" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;"></div>
+          </div>
+        </div>
+
+        <!-- Drive Import Preview / Mapper -->
+        <div id="drive-import-section" class="hidden">
+          <div class="card">
+            <div class="card-title">Preview & Column Mapping</div>
+            <div id="drive-preview-status"></div>
+            <div id="drive-preview-wrap"></div>
+            <div id="drive-mapper-wrap"></div>
+            <div style="display:flex;gap:10px;margin-top:16px;align-items:center;">
+              <button class="btn btn-pink" onclick="confirmDriveImport()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M20 6L9 17l-5-5"/></svg>
+                Confirm Import
+              </button>
+              <button class="btn btn-ghost btn-sm" onclick="cancelDriveImport()">Cancel</button>
+              <div id="drive-import-loading" class="hidden" style="display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:12px;">
+                <span class="spinner"></span> Importing…
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: FILE UPLOAD -->
+      <div id="tab-upload" class="tab-panel">
+        <div class="card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Upload & Import File
+          </div>
+          <div class="dropzone" id="dropzone" onclick="document.getElementById('upload-file-input').click()"
+               ondragover="event.preventDefault();this.classList.add('drag-over')"
+               ondragleave="this.classList.remove('drag-over')"
+               ondrop="handleFileDrop(event)">
+            <div class="dropzone-icon">📂</div>
+            <p><strong>Drop files here</strong> or click to choose</p>
+            <p class="file-types">Supported: .xlsx, .xls, .csv, .json</p>
+          </div>
+          <input type="file" id="upload-file-input" accept=".xlsx,.xls,.csv,.json" onchange="handleFileSelect(this)">
+        </div>
+
+        <div id="upload-preview-section" class="hidden">
+          <div class="card">
+            <div class="card-title">File Preview & Mapping</div>
+            <div id="upload-detected-type" style="margin-bottom:12px;"></div>
+            <div class="form-row" style="align-items:flex-end;">
+              <div class="form-group" style="max-width:260px;">
+                <label>Target Dataset</label>
+                <select class="form-select" id="upload-target-key" onchange="renderUploadMapper()">
+                  <option value="nexus_expenses">Expenses (nexus_expenses)</option>
+                  <option value="nexus_loads_v2">Loads (nexus_loads_v2)</option>
+                  <option value="nexus_settlements">Settlements (nexus_settlements)</option>
+                  <option value="nexus_documents">Documents (nexus_documents)</option>
+                  <option value="custom">Custom Key…</option>
+                </select>
+              </div>
+              <div class="form-group" id="custom-key-wrap" style="max-width:200px;display:none;">
+                <label>Custom localStorage Key</label>
+                <input type="text" class="form-input" id="upload-custom-key" placeholder="my_custom_key">
+              </div>
+            </div>
+            <div id="upload-preview-wrap"></div>
+            <div id="upload-mapper-wrap"></div>
+            <div style="display:flex;gap:10px;margin-top:16px;align-items:center;">
+              <button class="btn btn-pink" onclick="confirmUploadImport()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M20 6L9 17l-5-5"/></svg>
+                Import to Nexus
+              </button>
+              <button class="btn btn-ghost btn-sm" onclick="cancelUpload()">Cancel</button>
+              <div id="upload-import-loading" class="hidden" style="display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:12px;">
+                <span class="spinner"></span> Importing…
+              </div>
+            </div>
+            <div id="upload-import-result" style="margin-top:12px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: MANUAL / PASTE -->
+      <div id="tab-manual" class="tab-panel">
+        <div class="sub-tab-bar">
+          <button class="sub-tab-btn active" onclick="switchSubTab('expenses')">Expenses</button>
+          <button class="sub-tab-btn" onclick="switchSubTab('loads')">Loads</button>
+          <button class="sub-tab-btn" onclick="switchSubTab('settlements')">Settlements</button>
+        </div>
+
+        <!-- EXPENSES SUB-TAB -->
+        <div id="sub-tab-expenses" class="sub-tab-panel active">
+          <div style="margin-bottom:20px;">
+            <div class="card-title" style="margin-bottom:12px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text-bright);">Bulk CSV Paste</div>
+            <textarea class="form-input" id="expense-csv-paste" rows="7" placeholder="Paste CSV here. Expected columns:
+date,driver,amount,category,description
+
+Example:
+2026-06-15,David,250.00,fuel,Pilot Flying J — Laredo TX
+2026-06-16,Guillermo,85.00,toll,I-10 E Texas toll
+2026-06-17,Avis,1200.00,repair,Front brake replacement"></textarea>
+            <div style="display:flex;gap:10px;margin-top:10px;align-items:center;">
+              <button class="btn btn-ghost btn-sm" onclick="parseCSVPaste('expenses')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                Parse Preview
+              </button>
+              <button class="btn btn-pink btn-sm" onclick="importCSVPaste('expenses')" id="btn-import-expense-csv" disabled>
+                Import to Nexus
+              </button>
+            </div>
+            <div id="expense-csv-preview" style="margin-top:12px;"></div>
+            <div id="expense-csv-result" style="margin-top:8px;"></div>
+          </div>
+          <div class="section-divider"></div>
+          <div>
+            <div class="card-title" style="margin-bottom:12px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text-bright);">Quick Add Single Expense</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Date <span class="mapper-badge-required">*</span></label>
+                <input type="date" class="form-input" id="exp-date" value="">
+              </div>
+              <div class="form-group">
+                <label>Driver <span class="mapper-badge-required">*</span></label>
+                <select class="form-select" id="exp-driver">
+                  <option value="">Select driver…</option>
+                  <option value="Avis">Avis</option>
+                  <option value="David">David</option>
+                  <option value="Miguel">Miguel</option>
+                  <option value="Nelson">Nelson</option>
+                  <option value="Yosviel">Yosviel</option>
+                  <option value="Guillermo">Guillermo</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Amount <span class="mapper-badge-required">*</span></label>
+                <input type="number" class="form-input" id="exp-amount" placeholder="0.00" step="0.01">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Category</label>
+                <select class="form-select" id="exp-category">
+                  <option value="fuel">Fuel</option>
+                  <option value="toll">Toll</option>
+                  <option value="repair">Repair</option>
+                  <option value="tire">Tire</option>
+                  <option value="lumper">Lumper</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex:2;">
+                <label>Description</label>
+                <input type="text" class="form-input" id="exp-description" placeholder="e.g. Pilot Flying J — Laredo TX">
+              </div>
+            </div>
+            <button class="btn btn-pink btn-sm" onclick="addSingleExpense()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Expense
+            </button>
+            <div id="exp-add-result" style="margin-top:8px;"></div>
+          </div>
+        </div>
+
+        <!-- LOADS SUB-TAB -->
+        <div id="sub-tab-loads" class="sub-tab-panel">
+          <div style="margin-bottom:20px;">
+            <div class="card-title" style="margin-bottom:12px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text-bright);">Bulk CSV Paste</div>
+            <textarea class="form-input" id="loads-csv-paste" rows="7" placeholder="Paste CSV here. Expected columns:
+pickup_date,origin,destination,rate,driver
+
+Example:
+2026-06-16,Chicago IL,Dallas TX,2800.00,David
+2026-06-17,Houston TX,Atlanta GA,3200.00,Guillermo
+2026-06-18,Los Angeles CA,Phoenix AZ,1400.00,Avis"></textarea>
+            <div style="display:flex;gap:10px;margin-top:10px;align-items:center;">
+              <button class="btn btn-ghost btn-sm" onclick="parseCSVPaste('loads')">Parse Preview</button>
+              <button class="btn btn-pink btn-sm" onclick="importCSVPaste('loads')" id="btn-import-loads-csv" disabled>Import to Nexus</button>
+            </div>
+            <div id="loads-csv-preview" style="margin-top:12px;"></div>
+            <div id="loads-csv-result" style="margin-top:8px;"></div>
+          </div>
+          <div class="section-divider"></div>
+          <div>
+            <div class="card-title" style="margin-bottom:12px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text-bright);">Quick Add Single Load</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Pickup Date <span class="mapper-badge-required">*</span></label>
+                <input type="date" class="form-input" id="load-date">
+              </div>
+              <div class="form-group">
+                <label>Origin <span class="mapper-badge-required">*</span></label>
+                <input type="text" class="form-input" id="load-origin" placeholder="Chicago IL">
+              </div>
+              <div class="form-group">
+                <label>Destination <span class="mapper-badge-required">*</span></label>
+                <input type="text" class="form-input" id="load-dest" placeholder="Dallas TX">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Rate ($) <span class="mapper-badge-required">*</span></label>
+                <input type="number" class="form-input" id="load-rate" placeholder="2800.00" step="0.01">
+              </div>
+              <div class="form-group">
+                <label>Driver <span class="mapper-badge-required">*</span></label>
+                <select class="form-select" id="load-driver">
+                  <option value="">Select driver…</option>
+                  <option value="Avis">Avis</option>
+                  <option value="David">David</option>
+                  <option value="Miguel">Miguel</option>
+                  <option value="Nelson">Nelson</option>
+                  <option value="Yosviel">Yosviel</option>
+                  <option value="Guillermo">Guillermo</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Status</label>
+                <select class="form-select" id="load-status">
+                  <option value="active">Active</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="pending">Pending</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn btn-pink btn-sm" onclick="addSingleLoad()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Load
+            </button>
+            <div id="load-add-result" style="margin-top:8px;"></div>
+          </div>
+        </div>
+
+        <!-- SETTLEMENTS SUB-TAB -->
+        <div id="sub-tab-settlements" class="sub-tab-panel">
+          <div style="margin-bottom:20px;">
+            <div class="card-title" style="margin-bottom:12px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text-bright);">Bulk CSV Paste</div>
+            <textarea class="form-input" id="settlements-csv-paste" rows="7" placeholder="Paste CSV here. Expected columns:
+week_start,driver,gross,deductions,net
+
+Example:
+2026-06-16,David,5200.00,728.00,4472.00
+2026-06-16,Guillermo,4800.00,624.00,4176.00
+2026-06-16,Avis,3900.00,507.00,3393.00"></textarea>
+            <div style="display:flex;gap:10px;margin-top:10px;align-items:center;">
+              <button class="btn btn-ghost btn-sm" onclick="parseCSVPaste('settlements')">Parse Preview</button>
+              <button class="btn btn-pink btn-sm" onclick="importCSVPaste('settlements')" id="btn-import-settlements-csv" disabled>Import to Nexus</button>
+            </div>
+            <div id="settlements-csv-preview" style="margin-top:12px;"></div>
+            <div id="settlements-csv-result" style="margin-top:8px;"></div>
+          </div>
+          <div class="section-divider"></div>
+          <div>
+            <div class="card-title" style="margin-bottom:12px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text-bright);">Quick Add Single Settlement</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Week Start (Monday) <span class="mapper-badge-required">*</span></label>
+                <input type="date" class="form-input" id="stl-week">
+              </div>
+              <div class="form-group">
+                <label>Driver <span class="mapper-badge-required">*</span></label>
+                <select class="form-select" id="stl-driver">
+                  <option value="">Select driver…</option>
+                  <option value="Avis">Avis</option>
+                  <option value="David">David</option>
+                  <option value="Miguel">Miguel</option>
+                  <option value="Nelson">Nelson</option>
+                  <option value="Yosviel">Yosviel</option>
+                  <option value="Guillermo">Guillermo</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Gross ($) <span class="mapper-badge-required">*</span></label>
+                <input type="number" class="form-input" id="stl-gross" placeholder="5200.00" step="0.01">
+              </div>
+              <div class="form-group">
+                <label>Deductions ($)</label>
+                <input type="number" class="form-input" id="stl-deductions" placeholder="728.00" step="0.01">
+              </div>
+              <div class="form-group">
+                <label>Net ($) <span class="mapper-badge-required">*</span></label>
+                <input type="number" class="form-input" id="stl-net" placeholder="4472.00" step="0.01">
+              </div>
+            </div>
+            <button class="btn btn-pink btn-sm" onclick="addSingleSettlement()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Settlement
+            </button>
+            <div id="stl-add-result" style="margin-top:8px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMPORT HISTORY LOG -->
+      <div class="log-card">
+        <div class="log-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="vertical-align:middle;margin-right:6px;opacity:0.7;"><path d="M12 2v10l4 4M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10z"/></svg>
+          Import History
+        </div>
+        <div id="import-log-list">
+          <div class="log-empty">No imports yet.</div>
+        </div>
+        <div style="margin-top:12px;text-align:right;">
+          <button class="btn btn-ghost btn-sm" onclick="clearImportLog()">Clear Log</button>
+        </div>
+      </div>
+
+    </div><!-- /content-main -->
+
+    <!-- RIGHT SIDEBAR PANEL: Live Stats -->
+    <div class="sidebar-panel">
+      <div class="stats-card">
+        <div class="stats-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="vertical-align:middle;margin-right:6px;opacity:0.7;"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4.03 3-9 3S3 13.66 3 12"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/></svg>
+          localStorage Records
+        </div>
+
+        <div class="stat-row">
+          <div>
+            <div class="stat-label">nexus_expenses</div>
+            <div class="stat-value" id="stat-expenses">—</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="clearDataset('nexus_expenses','Expenses')">Clear</button>
+        </div>
+
+        <div class="stat-row">
+          <div>
+            <div class="stat-label">nexus_loads_v2</div>
+            <div class="stat-value" id="stat-loads">—</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="clearDataset('nexus_loads_v2','Loads')">Clear</button>
+        </div>
+
+        <div class="stat-row">
+          <div>
+            <div class="stat-label">nexus_settlements</div>
+            <div class="stat-value" id="stat-settlements">—</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="clearDataset('nexus_settlements','Settlements')">Clear</button>
+        </div>
+
+        <div class="stat-row">
+          <div>
+            <div class="stat-label">nexus_documents</div>
+            <div class="stat-value" id="stat-documents">—</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="clearDataset('nexus_documents','Documents')">Clear</button>
+        </div>
+      </div>
+
+      <div class="stats-card">
+        <div class="stats-title">Quick Actions</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="btn btn-ghost btn-sm" style="justify-content:flex-start;" onclick="exportDataset('nexus_expenses','expenses')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export Expenses CSV
+          </button>
+          <button class="btn btn-ghost btn-sm" style="justify-content:flex-start;" onclick="exportDataset('nexus_loads_v2','loads')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export Loads CSV
+          </button>
+          <button class="btn btn-ghost btn-sm" style="justify-content:flex-start;" onclick="exportDataset('nexus_settlements','settlements')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export Settlements CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="stats-card">
+        <div class="stats-title">Target Key Reference</div>
+        <table style="width:100%;font-size:11px;border-collapse:collapse;">
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:5px 0;color:var(--text-dim);font-family:'JetBrains Mono',monospace;">nexus_expenses</td>
+            <td style="padding:5px 0 5px 8px;color:var(--text);">Expenses</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:5px 0;color:var(--text-dim);font-family:'JetBrains Mono',monospace;">nexus_loads_v2</td>
+            <td style="padding:5px 0 5px 8px;color:var(--text);">Active Loads</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:5px 0;color:var(--text-dim);font-family:'JetBrains Mono',monospace;">nexus_settlements</td>
+            <td style="padding:5px 0 5px 8px;color:var(--text);">Settlements</td>
+          </tr>
+          <tr>
+            <td style="padding:5px 0;color:var(--text-dim);font-family:'JetBrains Mono',monospace;">nexus_documents</td>
+            <td style="padding:5px 0 5px 8px;color:var(--text);">Documents</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div><!-- /content-wrap -->
+</div><!-- /main -->
+
+<!-- CONFIRM CLEAR MODAL -->
+<div class="modal-overlay" id="clear-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeClearModal()">×</button>
+    <div class="modal-title">Confirm Clear</div>
+    <p style="color:var(--text-dim);font-size:13px;margin-bottom:16px;">
+      This will permanently delete all <strong id="clear-dataset-label" style="color:var(--red);">—</strong> records from localStorage.
+      Type <code style="background:var(--surface3);padding:2px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;color:var(--yellow);">CONFIRM</code> to proceed.
+    </p>
+    <input type="text" class="form-input" id="clear-confirm-input" placeholder="Type CONFIRM here" oninput="validateClearConfirm()">
+    <div style="display:flex;gap:10px;margin-top:14px;">
+      <button class="btn btn-danger" id="btn-confirm-clear" disabled onclick="executeClearDataset()">
+        Delete All Records
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="closeClearModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="nexus-drive.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  DATA IMPORT HUB — Main Script
+// ═══════════════════════════════════════════════════════════════
+
+var _clearTarget = null;
+var _driveFiles = [];
+var _driveAllFiles = [];
+var _currentDriveFile = null;
+var _uploadParsedData = null;
+var _uploadHeaders = [];
+var _uploadFileName = '';
+var _driveParsedData = null;
+var _driveHeaders = [];
+var _csvParsedData = { expenses: null, loads: null, settlements: null };
+
+// ── DATASET SCHEMAS ──────────────────────────────────────────
+var SCHEMAS = {
+  nexus_expenses: {
+    requiredFields: ['date','driver','amount','category','description'],
+    dupeKey: function(r){ return [r.date,r.driver,r.amount,r.description].join('|'); }
+  },
+  nexus_loads_v2: {
+    requiredFields: ['pickup_date','origin','destination','rate','driver'],
+    dupeKey: function(r){ return [r.pickup_date,r.origin,r.destination,r.rate].join('|'); }
+  },
+  nexus_settlements: {
+    requiredFields: ['week_start','driver','gross','deductions','net'],
+    dupeKey: function(r){ return [r.week_start,r.driver,r.gross].join('|'); }
+  },
+  nexus_documents: {
+    requiredFields: ['name','type','driver','date'],
+    dupeKey: function(r){ return [r.name,r.driver,r.date].join('|'); }
+  }
+};
+
+// ── AUTO-DETECT FROM FILENAME ────────────────────────────────
+function autoDetectTarget(filename) {
+  var name = (filename || '').toLowerCase();
+  if (/expense|fuel|cost/.test(name))      return 'nexus_expenses';
+  if (/rate.*con|ratecon|load|dispatch/.test(name)) return 'nexus_loads_v2';
+  if (/settlement|settle|pay/.test(name))  return 'nexus_settlements';
+  return 'nexus_documents';
+}
+
+// ── TAB SWITCHING ────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.closest('.tab-btn').classList.add('active');
+}
+
+function switchSubTab(sub) {
+  document.querySelectorAll('.sub-tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.sub-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('sub-tab-' + sub).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── STATS PANEL ───────────────────────────────────────────────
+function refreshStats() {
+  var keys = {
+    'stat-expenses':    'nexus_expenses',
+    'stat-loads':       'nexus_loads_v2',
+    'stat-settlements': 'nexus_settlements',
+    'stat-documents':   'nexus_documents'
+  };
+  Object.keys(keys).forEach(function(elId) {
+    var el = document.getElementById(elId);
+    if (!el) return;
+    try {
+      var raw = localStorage.getItem(keys[elId]);
+      var arr = raw ? JSON.parse(raw) : [];
+      el.textContent = Array.isArray(arr) ? arr.length.toLocaleString() : '?';
+    } catch(e) { el.textContent = 'err'; }
+  });
+}
+
+// ── CLEAR DATASET ─────────────────────────────────────────────
+function clearDataset(key, label) {
+  _clearTarget = key;
+  document.getElementById('clear-dataset-label').textContent = label;
+  document.getElementById('clear-confirm-input').value = '';
+  document.getElementById('btn-confirm-clear').disabled = true;
+  document.getElementById('clear-modal').classList.add('open');
+}
+
+function closeClearModal() {
+  document.getElementById('clear-modal').classList.remove('open');
+  _clearTarget = null;
+}
+
+function validateClearConfirm() {
+  var val = document.getElementById('clear-confirm-input').value.trim();
+  document.getElementById('btn-confirm-clear').disabled = (val !== 'CONFIRM');
+}
+
+function executeClearDataset() {
+  if (!_clearTarget) return;
+  localStorage.removeItem(_clearTarget);
+  closeClearModal();
+  refreshStats();
+  showGlobalStatus('All ' + _clearTarget + ' records cleared.', 'warn');
+}
+
+// ── EXPORT DATASET ────────────────────────────────────────────
+function exportDataset(key, filename) {
+  try {
+    var raw = localStorage.getItem(key);
+    var arr = raw ? JSON.parse(raw) : [];
+    if (!arr.length) { showGlobalStatus('No records to export in ' + key + '.', 'warn'); return; }
+    var headers = Object.keys(arr[0]);
+    var csv = headers.join(',') + '\n' + arr.map(function(r){
+      return headers.map(function(h){ return JSON.stringify(r[h] !== undefined ? r[h] : ''); }).join(',');
+    }).join('\n');
+    var blob = new Blob([csv], {type:'text/csv'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url;
+    a.download = filename + '_' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click(); URL.revokeObjectURL(url);
+  } catch(e) { showGlobalStatus('Export failed: ' + e.message, 'error'); }
+}
+
+// ── IMPORT LOG ────────────────────────────────────────────────
+var LOG_KEY = 'nexus_import_log';
+var LOG_MAX = 10;
+
+function getCurrentUser() {
+  try {
+    var users = JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS') || '[]');
+    if (!users.length && window.NEXUS_SEED_USERS) users = window.NEXUS_SEED_USERS;
+    var session = localStorage.getItem('nexus_session');
+    if (session) {
+      var s = JSON.parse(session);
+      var u = users.find(function(u){ return u.id === s.userId || u.email === s.email; });
+      if (u) return u.name || u.email;
+    }
+  } catch(e) {}
+  return 'Admin';
+}
+
+function logImport(filename, count, targetKey) {
+  try {
+    var log = JSON.parse(localStorage.getItem(LOG_KEY) || '[]');
+    log.unshift({
+      ts: new Date().toISOString(),
+      filename: filename,
+      count: count,
+      target: targetKey,
+      user: getCurrentUser()
+    });
+    if (log.length > LOG_MAX) log = log.slice(0, LOG_MAX);
+    localStorage.setItem(LOG_KEY, JSON.stringify(log));
+    renderImportLog();
+  } catch(e) {}
+}
+
+function renderImportLog() {
+  var el = document.getElementById('import-log-list');
+  var log = [];
+  try { log = JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); } catch(e) {}
+  if (!log.length) { el.innerHTML = '<div class="log-empty">No imports yet.</div>'; return; }
+  el.innerHTML = log.map(function(e) {
+    var ts = new Date(e.ts);
+    var tsStr = ts.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) + ' ' +
+                ts.toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'});
+    return '<div class="log-entry">' +
+      '<div class="log-ts">' + tsStr + '</div>' +
+      '<div class="log-detail">' +
+        '<div class="log-filename">' + (e.filename || 'Manual Entry') + '</div>' +
+        '<div class="log-meta">' +
+          '<span class="log-badge">' + (e.count || 0) + ' records</span> ' +
+          '→ <span style="color:var(--text-dim);font-family:\'JetBrains Mono\',monospace;font-size:11px;">' + (e.target || '—') + '</span>' +
+          (e.user ? ' <span style="color:var(--text-dim);font-size:11px;">by ' + e.user + '</span>' : '') +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function clearImportLog() {
+  if (!confirm('Clear import history?')) return;
+  localStorage.removeItem(LOG_KEY);
+  renderImportLog();
+}
+
+// ── DEDUP ────────────────────────────────────────────────────
+function dedupeRecords(newRecords, targetKey) {
+  var schema = SCHEMAS[targetKey];
+  var existing = [];
+  try { existing = JSON.parse(localStorage.getItem(targetKey) || '[]'); } catch(e) {}
+  if (!schema) return { toAdd: newRecords, dupes: 0 };
+
+  var existingKeys = {};
+  existing.forEach(function(r){ existingKeys[schema.dupeKey(r)] = true; });
+  var toAdd = [], dupes = 0;
+  newRecords.forEach(function(r) {
+    var k = schema.dupeKey(r);
+    if (existingKeys[k]) { dupes++; }
+    else { toAdd.push(r); existingKeys[k] = true; }
+  });
+  return { toAdd: toAdd, dupes: dupes };
+}
+
+// ── WRITE TO LOCALSTORAGE ────────────────────────────────────
+function writeToStorage(targetKey, newRecords) {
+  var result = dedupeRecords(newRecords, targetKey);
+  var existing = [];
+  try { existing = JSON.parse(localStorage.getItem(targetKey) || '[]'); } catch(e) {}
+  var merged = existing.concat(result.toAdd);
+  localStorage.setItem(targetKey, JSON.stringify(merged));
+  refreshStats();
+  return result;
+}
+
+// ── GLOBAL STATUS ────────────────────────────────────────────
+function showGlobalStatus(msg, type) {
+  var el = document.getElementById('global-status');
+  var cls = { success:'alert-success', error:'alert-error', info:'alert-info', warn:'alert-warn' }[type] || 'alert-info';
+  el.innerHTML = '<div class="alert ' + cls + '">' + msg + '</div>';
+  el.classList.remove('hidden');
+  setTimeout(function(){ el.classList.add('hidden'); }, 5000);
+}
+
+// ── PREVIEW TABLE ────────────────────────────────────────────
+function buildPreviewTable(headers, rows, maxRows) {
+  maxRows = maxRows || 5;
+  var preview = rows.slice(0, maxRows);
+  return '<p class="preview-label">Preview (first ' + Math.min(rows.length, maxRows) + ' of ' + rows.length + ' rows):</p>' +
+    '<div class="preview-wrap"><table class="preview-table"><thead><tr>' +
+    headers.map(function(h){ return '<th>' + h + '</th>'; }).join('') +
+    '</tr></thead><tbody>' +
+    preview.map(function(r){ return '<tr>' + headers.map(function(h){ return '<td>' + (r[h] !== undefined ? r[h] : '') + '</td>'; }).join('') + '</tr>'; }).join('') +
+    '</tbody></table></div>';
+}
+
+// ── COLUMN MAPPER ────────────────────────────────────────────
+var FIELD_LABELS = {
+  nexus_expenses: [
+    {key:'date',label:'Date',req:true},
+    {key:'driver',label:'Driver',req:true},
+    {key:'amount',label:'Amount',req:true},
+    {key:'category',label:'Category',req:false},
+    {key:'description',label:'Description',req:false}
+  ],
+  nexus_loads_v2: [
+    {key:'pickup_date',label:'Pickup Date',req:true},
+    {key:'origin',label:'Origin',req:true},
+    {key:'destination',label:'Destination',req:true},
+    {key:'rate',label:'Rate ($)',req:true},
+    {key:'driver',label:'Driver',req:false}
+  ],
+  nexus_settlements: [
+    {key:'week_start',label:'Week Start',req:true},
+    {key:'driver',label:'Driver',req:true},
+    {key:'gross',label:'Gross ($)',req:true},
+    {key:'deductions',label:'Deductions ($)',req:false},
+    {key:'net',label:'Net ($)',req:true}
+  ],
+  nexus_documents: [
+    {key:'name',label:'File Name',req:true},
+    {key:'type',label:'Document Type',req:false},
+    {key:'driver',label:'Driver',req:false},
+    {key:'date',label:'Date',req:false}
+  ]
+};
+
+function buildColumnMapper(headers, targetKey, mapperElId) {
+  var fields = FIELD_LABELS[targetKey] || FIELD_LABELS['nexus_documents'];
+  var html = '<div class="col-mapper"><div class="col-mapper-title">Map Columns to Fields</div><div class="mapper-grid">';
+  fields.forEach(function(f) {
+    html += '<div class="mapper-field">' +
+      '<label>' + f.label + (f.req ? '<span class="mapper-badge-required">*</span>' : '') + '</label>' +
+      '<select id="map-' + mapperElId + '-' + f.key + '">' +
+        '<option value="">(skip)</option>' +
+        headers.map(function(h){
+          var selected = (h.toLowerCase() === f.key.toLowerCase() || h.toLowerCase().replace(/[^a-z]/g,'') === f.key.replace(/_/g,'')) ? ' selected' : '';
+          return '<option value="' + h + '"' + selected + '>' + h + '</option>';
+        }).join('') +
+      '</select>' +
+    '</div>';
+  });
+  html += '</div></div>';
+  document.getElementById(mapperElId).innerHTML = html;
+}
+
+function applyMapping(rows, targetKey, mapperElId) {
+  var fields = FIELD_LABELS[targetKey] || FIELD_LABELS['nexus_documents'];
+  return rows.map(function(r) {
+    var mapped = { _importedAt: new Date().toISOString() };
+    fields.forEach(function(f) {
+      var el = document.getElementById('map-' + mapperElId + '-' + f.key);
+      if (el && el.value) mapped[f.key] = r[el.value];
+      else mapped[f.key] = '';
+    });
+    return mapped;
+  });
+}
+
+// ── PARSE XLSX / CSV / JSON ──────────────────────────────────
+function parseFileData(file, callback) {
+  var ext = file.name.split('.').pop().toLowerCase();
+  var reader = new FileReader();
+  if (ext === 'json') {
+    reader.onload = function(e) {
+      try {
+        var data = JSON.parse(e.target.result);
+        if (Array.isArray(data) && data.length) {
+          callback(null, Object.keys(data[0]), data, file.name);
+        } else {
+          callback('JSON must be an array of objects.');
+        }
+      } catch(err) { callback('JSON parse error: ' + err.message); }
+    };
+    reader.readAsText(file);
+  } else if (ext === 'csv') {
+    reader.onload = function(e) {
+      try {
+        var result = parseCSV(e.target.result);
+        callback(null, result.headers, result.rows, file.name);
+      } catch(err) { callback('CSV parse error: ' + err.message); }
+    };
+    reader.readAsText(file);
+  } else {
+    reader.onload = function(e) {
+      try {
+        var wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
+        var ws = wb.Sheets[wb.SheetNames[0]];
+        var json = XLSX.utils.sheet_to_json(ws, {raw:false, defval:''});
+        if (!json.length) { callback('Spreadsheet is empty.'); return; }
+        callback(null, Object.keys(json[0]), json, file.name);
+      } catch(err) { callback('Spreadsheet parse error: ' + err.message); }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+}
+
+function parseCSV(text) {
+  var lines = text.trim().split(/\r?\n/);
+  if (!lines.length) return { headers: [], rows: [] };
+  var headers = lines[0].split(',').map(function(h){ return h.trim().replace(/^"|"$/g,''); });
+  var rows = lines.slice(1).filter(function(l){ return l.trim(); }).map(function(line) {
+    var vals = line.split(',').map(function(v){ return v.trim().replace(/^"|"$/g,''); });
+    var obj = {};
+    headers.forEach(function(h, i){ obj[h] = vals[i] || ''; });
+    return obj;
+  });
+  return { headers: headers, rows: rows };
+}
+
+// ── TAB 1: DRIVE IMPORT ──────────────────────────────────────
+function connectDrive() {
+  if (typeof NexusDrive === 'undefined') {
+    showGlobalStatus('NexusDrive not loaded. Make sure nexus-drive.js is included.', 'error');
+    return;
+  }
+  NexusDrive.requireAuth(function(token) {
+    if (!token) { showGlobalStatus('Google Drive auth failed.', 'error'); return; }
+    document.getElementById('drive-connect-area').classList.add('hidden');
+    document.getElementById('drive-browser').classList.remove('hidden');
+    loadVaultRoot(token);
+  });
+}
+
+function loadVaultRoot(token) {
+  var el = document.getElementById('drive-loading');
+  el.classList.remove('hidden');
+  el.style.display = 'flex';
+  NexusDrive.vault.listFolder(NexusDrive.vault.rootId).then(function(files) {
+    el.style.display = 'none';
+    _driveAllFiles = files.filter(function(f){ return !f.mimeType.includes('folder'); });
+    // Also load 1 level deep from folders
+    var folderFiles = files.filter(function(f){ return f.mimeType.includes('folder'); });
+    var promises = folderFiles.map(function(folder) {
+      return NexusDrive.vault.listFolder(folder.id).then(function(children) {
+        return children.filter(function(f){ return !f.mimeType.includes('folder'); });
+      });
+    });
+    Promise.all(promises).then(function(arrays) {
+      arrays.forEach(function(arr){ _driveAllFiles = _driveAllFiles.concat(arr); });
+      _driveFiles = _driveAllFiles.slice();
+      renderDriveFiles(_driveFiles);
+    });
+  }).catch(function(e) {
+    el.style.display = 'none';
+    showGlobalStatus('Failed to list Drive files: ' + e.message, 'error');
+  });
+}
+
+function filterDriveFiles(filter, btn) {
+  document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
+  btn.classList.add('active');
+  if (filter === 'all') { _driveFiles = _driveAllFiles.slice(); }
+  else {
+    _driveFiles = _driveAllFiles.filter(function(f){
+      return f.name.toLowerCase().includes(filter);
+    });
+  }
+  renderDriveFiles(_driveFiles);
+}
+
+function getFileIcon(mimeType, name) {
+  var ext = (name || '').split('.').pop().toLowerCase();
+  if (ext === 'pdf') return '📄';
+  if (ext === 'xlsx' || ext === 'xls') return '📊';
+  if (ext === 'csv') return '📋';
+  if (ext === 'json') return '🗂️';
+  return '📁';
+}
+
+function formatBytes(bytes) {
+  if (!bytes) return '—';
+  bytes = parseInt(bytes);
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1048576).toFixed(1) + ' MB';
+}
+
+function renderDriveFiles(files) {
+  var el = document.getElementById('drive-files-list');
+  if (!files.length) {
+    el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-dim);font-size:13px;">No files found.</div>';
+    return;
+  }
+  el.innerHTML = files.map(function(f, i) {
+    var ext = (f.name || '').split('.').pop().toLowerCase();
+    var canImport = ['xlsx','xls','csv','json'].includes(ext);
+    var mod = f.modifiedTime ? new Date(f.modifiedTime).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}) : '—';
+    return '<div class="drive-file-row" data-index="' + i + '">' +
+      '<input type="checkbox" onchange="updateDriveSelection()" class="drive-cb" data-index="' + i + '" ' + (canImport ? '' : 'disabled title="Only xlsx/csv/json can be imported"') + '>' +
+      '<div class="drive-file-icon">' + getFileIcon(f.mimeType, f.name) + '</div>' +
+      '<div class="drive-file-name" title="' + f.name + '">' + f.name + '</div>' +
+      '<div class="drive-file-meta">' + mod + '</div>' +
+      '<div class="drive-file-meta" style="min-width:56px;text-align:right;">' + formatBytes(f.size) + '</div>' +
+      (canImport ? '<button class="btn btn-pink btn-sm" onclick="importDriveFile(' + i + ')">Import</button>' : '<span style="font-size:11px;color:var(--text-dim);">PDF only</span>') +
+    '</div>';
+  }).join('');
+}
+
+function updateDriveSelection() {
+  var cbs = document.querySelectorAll('.drive-cb:checked');
+  var count = cbs.length;
+  document.getElementById('drive-selected-count').textContent = count + ' file' + (count !== 1 ? 's' : '') + ' selected';
+  document.getElementById('btn-import-selected').disabled = (count === 0);
+}
+
+function importSelected() {
+  var cbs = document.querySelectorAll('.drive-cb:checked');
+  if (!cbs.length) return;
+  var idx = parseInt(cbs[0].getAttribute('data-index'));
+  importDriveFile(idx);
+}
+
+function importDriveFile(idx) {
+  var file = _driveFiles[idx];
+  if (!file) return;
+  _currentDriveFile = file;
+
+  if (!NexusDrive.isAuthed) {
+    NexusDrive.requireAuth(function(token){ _doDownloadAndParse(file, token); });
+  } else {
+    NexusDrive.requireAuth(function(token){ _doDownloadAndParse(file, token); });
+  }
+}
+
+function _doDownloadAndParse(file, token) {
+  document.getElementById('drive-import-section').classList.remove('hidden');
+  document.getElementById('drive-preview-status').innerHTML = '<div class="alert alert-info"><span class="spinner"></span> Downloading ' + file.name + '…</div>';
+  document.getElementById('drive-preview-wrap').innerHTML = '';
+  document.getElementById('drive-mapper-wrap').innerHTML = '';
+
+  var ext = file.name.split('.').pop().toLowerCase();
+  var url;
+  if (ext === 'xlsx' || ext === 'xls') {
+    url = 'https://www.googleapis.com/drive/v3/files/' + file.id + '?alt=media';
+  } else {
+    url = 'https://www.googleapis.com/drive/v3/files/' + file.id + '?alt=media';
+  }
+
+  fetch(url, { headers: { 'Authorization': 'Bearer ' + token } })
+    .then(function(r) {
+      if (ext === 'json' || ext === 'csv') return r.text().then(function(t){ return {type:'text',data:t}; });
+      return r.arrayBuffer().then(function(b){ return {type:'buffer',data:b}; });
+    })
+    .then(function(result) {
+      try {
+        var headers, rows;
+        if (ext === 'json') {
+          var parsed = JSON.parse(result.data);
+          if (!Array.isArray(parsed) || !parsed.length) throw new Error('JSON must be a non-empty array.');
+          headers = Object.keys(parsed[0]);
+          rows = parsed;
+        } else if (ext === 'csv') {
+          var parsed = parseCSV(result.data);
+          headers = parsed.headers; rows = parsed.rows;
+        } else {
+          var wb = XLSX.read(new Uint8Array(result.data), {type:'array'});
+          var ws = wb.Sheets[wb.SheetNames[0]];
+          rows = XLSX.utils.sheet_to_json(ws, {raw:false,defval:''});
+          if (!rows.length) throw new Error('Spreadsheet is empty.');
+          headers = Object.keys(rows[0]);
+        }
+        _driveParsedData = rows;
+        _driveHeaders = headers;
+
+        var targetKey = autoDetectTarget(file.name);
+        document.getElementById('drive-preview-status').innerHTML =
+          '<div class="alert alert-success">✓ Parsed <strong>' + rows.length + ' rows</strong> — auto-detected: <strong>' + targetKey + '</strong></div>' +
+          '<div style="margin-bottom:10px;"><label style="font-size:12px;color:var(--text-dim);">Target Dataset: </label>' +
+          '<select id="drive-target-key" class="form-select" style="display:inline-block;width:auto;margin-left:8px;font-size:12px;" onchange="renderDriveMapper()">' +
+          Object.keys(SCHEMAS).map(function(k){ return '<option value="' + k + '"' + (k===targetKey?' selected':'') + '>' + k + '</option>'; }).join('') +
+          '</select></div>';
+        document.getElementById('drive-preview-wrap').innerHTML = buildPreviewTable(headers, rows, 5);
+        renderDriveMapper();
+      } catch(e) {
+        document.getElementById('drive-preview-status').innerHTML = '<div class="alert alert-error">Parse error: ' + e.message + '</div>';
+      }
+    })
+    .catch(function(e) {
+      document.getElementById('drive-preview-status').innerHTML = '<div class="alert alert-error">Download failed: ' + e.message + '</div>';
+    });
+}
+
+function renderDriveMapper() {
+  var sel = document.getElementById('drive-target-key');
+  if (!sel) return;
+  buildColumnMapper(_driveHeaders, sel.value, 'drive-mapper-wrap');
+}
+
+function confirmDriveImport() {
+  if (!_driveParsedData) return;
+  var sel = document.getElementById('drive-target-key');
+  if (!sel) return;
+  var targetKey = sel.value;
+  var mapped = applyMapping(_driveParsedData, targetKey, 'drive-mapper-wrap');
+  var result = writeToStorage(targetKey, mapped);
+  logImport(_currentDriveFile ? _currentDriveFile.name : 'Drive file', result.toAdd.length, targetKey);
+  document.getElementById('drive-import-section').classList.add('hidden');
+  showGlobalStatus(
+    '✓ Imported <strong>' + result.toAdd.length + '</strong> new records to <strong>' + targetKey + '</strong>. ' +
+    (result.dupes ? '<strong>' + result.dupes + '</strong> duplicates skipped.' : ''),
+    'success'
+  );
+  _driveParsedData = null;
+}
+
+function cancelDriveImport() {
+  document.getElementById('drive-import-section').classList.add('hidden');
+  _driveParsedData = null;
+}
+
+// ── TAB 2: FILE UPLOAD ───────────────────────────────────────
+function handleFileDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropzone').classList.remove('drag-over');
+  var files = e.dataTransfer.files;
+  if (files.length) processUploadFile(files[0]);
+}
+
+function handleFileSelect(input) {
+  if (input.files.length) processUploadFile(input.files[0]);
+}
+
+function processUploadFile(file) {
+  document.getElementById('upload-preview-section').classList.remove('hidden');
+  var targetKey = autoDetectTarget(file.name);
+  document.getElementById('upload-target-key').value = targetKey;
+  document.getElementById('upload-detected-type').innerHTML =
+    '<div class="alert alert-info">Detected: <strong>' + file.name + '</strong> → target: <strong>' + targetKey + '</strong></div>';
+  document.getElementById('upload-preview-wrap').innerHTML = '<div style="color:var(--text-dim);font-size:13px;padding:10px;">Parsing file…</div>';
+  document.getElementById('upload-mapper-wrap').innerHTML = '';
+  document.getElementById('upload-import-result').innerHTML = '';
+  _uploadFileName = file.name;
+
+  parseFileData(file, function(err, headers, rows, fname) {
+    if (err) {
+      document.getElementById('upload-preview-wrap').innerHTML = '<div class="alert alert-error">' + err + '</div>';
+      return;
+    }
+    _uploadParsedData = rows;
+    _uploadHeaders = headers;
+    document.getElementById('upload-preview-wrap').innerHTML = buildPreviewTable(headers, rows, 5);
+    renderUploadMapper();
+  });
+}
+
+function renderUploadMapper() {
+  var sel = document.getElementById('upload-target-key');
+  if (!sel || !_uploadHeaders.length) return;
+  var key = sel.value === 'custom' ? 'nexus_documents' : sel.value;
+  document.getElementById('custom-key-wrap').style.display = sel.value === 'custom' ? '' : 'none';
+  buildColumnMapper(_uploadHeaders, key, 'upload-mapper-wrap');
+}
+
+function confirmUploadImport() {
+  if (!_uploadParsedData) return;
+  var sel = document.getElementById('upload-target-key');
+  var targetKey = (sel.value === 'custom')
+    ? (document.getElementById('upload-custom-key').value.trim() || 'nexus_custom')
+    : sel.value;
+  var mapped = applyMapping(_uploadParsedData, sel.value === 'custom' ? 'nexus_documents' : sel.value, 'upload-mapper-wrap');
+  var result;
+  if (sel.value === 'custom' || !SCHEMAS[targetKey]) {
+    // No dedup for custom keys — just append
+    var existing = [];
+    try { existing = JSON.parse(localStorage.getItem(targetKey) || '[]'); } catch(e) {}
+    localStorage.setItem(targetKey, JSON.stringify(existing.concat(mapped)));
+    result = { toAdd: mapped, dupes: 0 };
+  } else {
+    result = writeToStorage(targetKey, mapped);
+  }
+  logImport(_uploadFileName, result.toAdd.length, targetKey);
+  refreshStats();
+  document.getElementById('upload-import-result').innerHTML =
+    '<div class="alert alert-success">✓ Imported <strong>' + result.toAdd.length + '</strong> records to <strong>' + targetKey + '</strong>. ' +
+    (result.dupes ? result.dupes + ' duplicates skipped.' : '') + '</div>';
+  _uploadParsedData = null;
+}
+
+function cancelUpload() {
+  document.getElementById('upload-preview-section').classList.add('hidden');
+  document.getElementById('upload-file-input').value = '';
+  _uploadParsedData = null;
+  _uploadHeaders = [];
+}
+
+// ── TAB 3: MANUAL CSV PASTE ──────────────────────────────────
+var PASTE_SCHEMAS = {
+  expenses: { key: 'nexus_expenses', fields: ['date','driver','amount','category','description'] },
+  loads:    { key: 'nexus_loads_v2', fields: ['pickup_date','origin','destination','rate','driver'] },
+  settlements: { key: 'nexus_settlements', fields: ['week_start','driver','gross','deductions','net'] }
+};
+
+function parseCSVPaste(type) {
+  var schema = PASTE_SCHEMAS[type];
+  var text = document.getElementById(type + '-csv-paste').value.trim();
+  var previewEl = document.getElementById(type + '-csv-preview');
+  var importBtn = document.getElementById('btn-import-' + type + '-csv');
+  if (!text) { previewEl.innerHTML = '<div class="alert alert-warn">Paste CSV data first.</div>'; return; }
+
+  try {
+    // Strip header if it matches expected fields
+    var lines = text.split(/\r?\n/);
+    var firstLine = lines[0].toLowerCase().replace(/\s/g,'');
+    var firstField = schema.fields[0].toLowerCase().replace(/_/g,'');
+    var hasHeader = firstLine.includes(firstField);
+    var dataLines = hasHeader ? lines.slice(1) : lines;
+    var rows = dataLines.filter(function(l){ return l.trim(); }).map(function(line) {
+      var vals = line.split(',').map(function(v){ return v.trim().replace(/^"|"$/g,''); });
+      var obj = {};
+      schema.fields.forEach(function(f, i){ obj[f] = vals[i] || ''; });
+      return obj;
+    });
+    _csvParsedData[type] = rows;
+    previewEl.innerHTML = buildPreviewTable(schema.fields, rows, 5);
+    importBtn.disabled = false;
+  } catch(e) {
+    previewEl.innerHTML = '<div class="alert alert-error">Parse error: ' + e.message + '</div>';
+  }
+}
+
+function importCSVPaste(type) {
+  var schema = PASTE_SCHEMAS[type];
+  var rows = _csvParsedData[type];
+  if (!rows || !rows.length) { showGlobalStatus('No data to import. Parse first.', 'warn'); return; }
+  var result = writeToStorage(schema.key, rows);
+  logImport('CSV paste (' + type + ')', result.toAdd.length, schema.key);
+  document.getElementById(type + '-csv-result').innerHTML =
+    '<div class="alert alert-success">✓ Imported <strong>' + result.toAdd.length + '</strong> records to <strong>' + schema.key + '</strong>. ' +
+    (result.dupes ? result.dupes + ' duplicates skipped.' : '') + '</div>';
+  document.getElementById('btn-import-' + type + '-csv').disabled = true;
+  _csvParsedData[type] = null;
+}
+
+// ── SINGLE RECORD ADD ────────────────────────────────────────
+function addSingleExpense() {
+  var date = document.getElementById('exp-date').value;
+  var driver = document.getElementById('exp-driver').value;
+  var amount = document.getElementById('exp-amount').value;
+  var category = document.getElementById('exp-category').value;
+  var description = document.getElementById('exp-description').value;
+  if (!date || !driver || !amount) {
+    document.getElementById('exp-add-result').innerHTML = '<div class="alert alert-error">Date, Driver, and Amount are required.</div>';
+    return;
+  }
+  var record = { date: date, driver: driver, amount: parseFloat(amount), category: category, description: description, _importedAt: new Date().toISOString() };
+  var result = writeToStorage('nexus_expenses', [record]);
+  logImport('Manual expense', result.toAdd.length, 'nexus_expenses');
+  document.getElementById('exp-add-result').innerHTML = result.dupes
+    ? '<div class="alert alert-warn">Duplicate record — skipped.</div>'
+    : '<div class="alert alert-success">✓ Expense added.</div>';
+  if (!result.dupes) {
+    document.getElementById('exp-amount').value = '';
+    document.getElementById('exp-description').value = '';
+  }
+}
+
+function addSingleLoad() {
+  var date = document.getElementById('load-date').value;
+  var origin = document.getElementById('load-origin').value;
+  var dest = document.getElementById('load-dest').value;
+  var rate = document.getElementById('load-rate').value;
+  var driver = document.getElementById('load-driver').value;
+  var status = document.getElementById('load-status').value;
+  if (!date || !origin || !dest || !rate) {
+    document.getElementById('load-add-result').innerHTML = '<div class="alert alert-error">Date, Origin, Destination, and Rate are required.</div>';
+    return;
+  }
+  var record = { pickup_date: date, origin: origin, destination: dest, rate: parseFloat(rate), driver: driver, status: status, _importedAt: new Date().toISOString() };
+  var result = writeToStorage('nexus_loads_v2', [record]);
+  logImport('Manual load', result.toAdd.length, 'nexus_loads_v2');
+  document.getElementById('load-add-result').innerHTML = result.dupes
+    ? '<div class="alert alert-warn">Duplicate record — skipped.</div>'
+    : '<div class="alert alert-success">✓ Load added.</div>';
+  if (!result.dupes) {
+    document.getElementById('load-origin').value = '';
+    document.getElementById('load-dest').value = '';
+    document.getElementById('load-rate').value = '';
+  }
+}
+
+function addSingleSettlement() {
+  var week = document.getElementById('stl-week').value;
+  var driver = document.getElementById('stl-driver').value;
+  var gross = document.getElementById('stl-gross').value;
+  var deductions = document.getElementById('stl-deductions').value;
+  var net = document.getElementById('stl-net').value;
+  if (!week || !driver || !gross || !net) {
+    document.getElementById('stl-add-result').innerHTML = '<div class="alert alert-error">Week Start, Driver, Gross, and Net are required.</div>';
+    return;
+  }
+  var record = { week_start: week, driver: driver, gross: parseFloat(gross), deductions: parseFloat(deductions||0), net: parseFloat(net), _importedAt: new Date().toISOString() };
+  var result = writeToStorage('nexus_settlements', [record]);
+  logImport('Manual settlement', result.toAdd.length, 'nexus_settlements');
+  document.getElementById('stl-add-result').innerHTML = result.dupes
+    ? '<div class="alert alert-warn">Duplicate record — skipped.</div>'
+    : '<div class="alert alert-success">✓ Settlement added.</div>';
+  if (!result.dupes) {
+    document.getElementById('stl-gross').value = '';
+    document.getElementById('stl-deductions').value = '';
+    document.getElementById('stl-net').value = '';
+  }
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+(function init() {
+  refreshStats();
+  renderImportLog();
+  // Set today as default date for quick-add forms
+  var today = new Date().toISOString().slice(0,10);
+  ['exp-date','load-date','stl-week'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.value = today;
+  });
+})();
+</script>
+</body>
+</html>

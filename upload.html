@@ -117,6 +117,18 @@ textarea:focus{border-color:var(--accent2)}
 
 .main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
 </style>
+
+<style id="touch-target-fix">
+/* Apple HIG / WCAG 2.5.5 — 44x44px minimum touch targets */
+@media(max-width:1024px){
+  button,.btn,a.btn,[role="button"]{min-height:44px!important;min-width:44px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;}
+  input[type="text"],input[type="number"],input[type="date"],input[type="time"],input[type="tel"],input[type="email"],select,textarea{min-height:44px!important;font-size:16px!important;padding:10px 12px!important;}
+  input[type="checkbox"],input[type="radio"]{min-width:24px!important;min-height:24px!important;cursor:pointer!important;}
+  label{font-size:14px!important;cursor:pointer!important;}
+  /* Fix sub-12px inline labels — bring up to 12px minimum */
+  .field-label,.form-label,.label-sm,.badge,.kpi-sub,.kpi-label,.stat-sub,.mid,.nav-badge{font-size:max(12px,1em)!important;}
+}
+</style>
 </head>
 <body>
 <div id="main">
