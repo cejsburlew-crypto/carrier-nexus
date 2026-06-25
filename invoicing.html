@@ -552,7 +552,7 @@ function renderTable() {
       <td style="color:#64748b;font-size:12px;">${acc ? fmt$(acc) : '—'}</td>
       <td style="text-align:right;font-weight:800;color:#0f172a;">${fmt$(i.total)}</td>
       <td class="mono" style="font-size:11px;${eff==='Overdue'?'color:#ef4444;font-weight:700;':''}">${fmtD(i.due)}</td>
-      <td class="days-out-cell" style="${eff==='Paid'?'color:#94a3b8':'daysOut>45?'color:#ef4444;font-weight:700;':''}">
+      <td class="days-out-cell" style="${eff==='Paid'?'color:#94a3b8':(daysOut>45?'color:#ef4444;font-weight:700;':'')}">
         ${eff==='Paid'?'—':daysOut+' day'+(daysOut===1?'':'s')}${overdueBadge}
       </td>
       <td><span class="badge ${STATUS_BADGE[eff]||'badge-gray'}">${eff}</span>${i.factored==='yes'?'<span class="badge badge-purple" style="margin-left:4px;">FAC</span>':''}</td>

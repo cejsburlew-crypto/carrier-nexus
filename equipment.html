@@ -569,7 +569,7 @@ body {
 .sidebar-logo .logo-hex { flex-shrink:0 !important; }
 .sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
 .sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
-.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
+.sidebar-logo .logo-text .brand { font-family:\'Barlow Condensed\',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
 .sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
 /* ── NAV LINKS ── */
 .sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
@@ -706,7 +706,7 @@ body {
 <div id="equip-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;">
   <div style="background:#fff;border-radius:10px;width:92%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
     <div style="background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:18px 24px;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between;">
-      <span id="equip-modal-title" style="color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:2px;">ADD UNIT</span>
+      <span id="equip-modal-title" style="color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-weight:800;font-size:18px;letter-spacing:2px;">ADD UNIT</span>
       <button onclick="closeEquipModal()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1;">✕</button>
     </div>
     <form id="equip-form" onsubmit="saveUnit(event)" style="padding:24px;">
@@ -987,7 +987,7 @@ async function openEditModal(id) {
 async function saveUnit(e) {
   e.preventDefault();
   const fleet = await loadFleet();
-  const editId = document.getElementById('equip-edit-id').value;
+  let editId = document.getElementById('equip-edit-id').value;
   const eqTypeKey = document.getElementById('eq-type').value || 'TRUCK';
   const group = EQUIP_GROUPS[eqTypeKey] || 'TRUCK';
   const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
@@ -1029,7 +1029,7 @@ async function saveUnit(e) {
     });
   }
   // Persist each changed unit
-  const editId = document.getElementById('equip-edit-id').value;
+  editId = document.getElementById('equip-edit-id').value;
   if (editId) { await NexusDB.Fleet.update(editId, fleet.find(u=>u.id===editId)); }
   else { await NexusDB.Fleet.create(fleet[fleet.length-1]); }
   _fleetCache = fleet;
@@ -1038,14 +1038,14 @@ async function saveUnit(e) {
 }
 
 // ── REMOVE ──
-function removeUnit(id, unit) {
+async function removeUnit(id, unit) {
   if (!confirm('Remove Unit ' + unit + ' from fleet? This cannot be undone.')) return;
   await NexusDB.Fleet.delete(id);
   await renderFleet();
 }
 
 // ── LOG PM ──
-function logPM(id) {
+async function logPM(id) {
   const today = new Date().toISOString().split('T')[0];
   const fleet = await loadFleet();
   const u = fleet.find(x=>x.id===id);
@@ -1059,7 +1059,7 @@ function logPM(id) {
 }
 
 // ── REPORT ISSUE ──
-function reportIssue(id, unit) {
+async function reportIssue(id, unit) {
   const issue = prompt('Describe the issue for Unit ' + unit + ':');
   if (issue) alert('Issue logged for Unit ' + unit + ':\n"' + issue + '"\n\nStatus updated to DOWN.');
   const fleet = await loadFleet();
@@ -1077,11 +1077,11 @@ document.getElementById('equip-modal-overlay').addEventListener('click', functio
 async function renderFleet() {
   const grid = document.getElementById('trucks-grid');
   if (!grid) return;
-  grid.innerHTML = '<div style="color:var(--text-muted);padding:40px;text-align:center;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">LOADING FLEET...</div>';
+  grid.innerHTML = '<div style="color:var(--text-muted);padding:40px;text-align:center;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;">LOADING FLEET...</div>';
   let fleet;
   try { fleet = await loadFleet(); } catch(e) { fleet = []; }
   if (!fleet.length) {
-    grid.innerHTML = '<div style="color:var(--text-muted);padding:40px;text-align:center;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">NO UNITS — CLICK + ADD UNIT TO BEGIN</div>';
+    grid.innerHTML = '<div style="color:var(--text-muted);padding:40px;text-align:center;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;">NO UNITS — CLICK + ADD UNIT TO BEGIN</div>';
     return;
   }
   const statusMap = {'ACTIVE':'badge-green','IN-TRANSIT':'badge-blue','DOWN':'badge-red','INACTIVE':'badge-yellow'};
@@ -1097,50 +1097,50 @@ async function renderFleet() {
     const nextPM = u.nextPM || '—';
     const notes = u.notes || '—';
     const typeLabel = u.equipType || u.type || 'UNIT';
-    return \`
+    return `
     <div class="truck-card">
       <div class="truck-card-header">
         <div class="unit-circle">
-          <span class="unit-label">\${u.type||'UNIT'}</span>
-          <span class="unit-number">\${unitNum}</span>
+          <span class="unit-label">${u.type||'UNIT'}</span>
+          <span class="unit-number">${unitNum}</span>
         </div>
         <div class="truck-header-info">
-          <div class="truck-ymm">\${ymm}</div>
-          <div class="truck-vin">\${vin}</div>
+          <div class="truck-ymm">${ymm}</div>
+          <div class="truck-vin">${vin}</div>
           <div class="truck-driver-badge">
             <span class="label">DRIVER</span>
-            <span class="value">\${driver}</span>
+            <span class="value">${driver}</span>
           </div>
         </div>
-        <span class="badge \${badgeCls}">\${status}</span>
+        <span class="badge ${badgeCls}">${status}</span>
       </div>
       <div class="truck-card-body">
         <div class="truck-stats-grid">
           <div class="truck-stat">
             <div class="truck-stat-label">TYPE</div>
-            <div class="truck-stat-value" style="font-size:12px;">\${typeLabel}</div>
+            <div class="truck-stat-value" style="font-size:12px;">${typeLabel}</div>
           </div>
           <div class="truck-stat">
             <div class="truck-stat-label">ODO</div>
-            <div class="truck-stat-value \${odo==='—'?'na':''}">\${odo}</div>
+            <div class="truck-stat-value ${odo==='—'?'na':''}">${odo}</div>
           </div>
           <div class="truck-stat">
             <div class="truck-stat-label">LAST PM</div>
-            <div class="truck-stat-value \${lastPM==='—'?'na':''}" style="font-size:11px;">\${lastPM}</div>
+            <div class="truck-stat-value ${lastPM==='—'?'na':''}" style="font-size:11px;">${lastPM}</div>
           </div>
           <div class="truck-stat">
             <div class="truck-stat-label">NEXT PM</div>
-            <div class="truck-stat-value \${nextPM==='—'?'na':''}" style="font-size:11px;">\${nextPM}</div>
+            <div class="truck-stat-value ${nextPM==='—'?'na':''}" style="font-size:11px;">${nextPM}</div>
           </div>
         </div>
-        \${notes !== '—' ? \`<div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:4px;border-left:2px solid var(--steel-blue);">\${notes}</div>\` : ''}
+        ${notes !== '—' ? `<div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:4px;border-left:2px solid var(--steel-blue);">${notes}</div>` : ''}
         <div class="truck-actions">
-          <button class="btn-action" onclick="openEditModal('\${u.id}')">EDIT</button>
-          <button class="btn-action" onclick="reportIssue('\${u.id}')">ISSUE</button>
-          <button class="btn-action" onclick="updatePM('\${u.id}')">LOG PM</button>
+          <button class="btn-action" onclick="openEditModal('${u.id}')">EDIT</button>
+          <button class="btn-action" onclick="reportIssue('${u.id}')">ISSUE</button>
+          <button class="btn-action" onclick="updatePM('${u.id}')">LOG PM</button>
         </div>
       </div>
-    </div>\`;
+    </div>`;
   }).join('');
 }
 

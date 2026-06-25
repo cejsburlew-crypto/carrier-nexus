@@ -533,22 +533,13 @@ function autoImportMiles() {
   });
 
   if (!count) {
-    alert('No loads found for ' + currentQuarter + ' with a pickup date and mileage.
-
-Make sure loads in Active Loads have their Pickup Date and Miles filled in.');
+    alert('No loads found for ' + currentQuarter + ' with a pickup date and mileage. Make sure loads in Active Loads have their Pickup Date and Miles filled in.');
     return;
   }
 
   var stateList = Object.keys(stateMap).sort();
-  var summary = stateList.map(function(s){ return s + ': ' + Math.round(stateMap[s]) + ' mi'; }).join('
-');
-  if (!confirm('Import miles from ' + count + ' loads for ' + currentQuarter + '?
-
-Miles will be ADDED to existing rows (or new rows created):
-
-' + summary + '
-
-Existing miles data will be merged — not replaced.')) return;
+  var summary = stateList.map(function(s){ return s + ': ' + Math.round(stateMap[s]) + ' mi'; }).join('\n');
+  if (!confirm('Import miles from ' + count + ' loads for ' + currentQuarter + '?\n\nMiles will be ADDED to existing rows (or new rows created):\n\n' + summary + '\n\nExisting miles data will be merged — not replaced.')) return;
 
   // Merge into IFTA rows
   var rows = getRows();
@@ -647,7 +638,7 @@ function renderFuelHistory() {
         '<span style="font-size:13px;font-weight:600;color:#e6edf3;">' + e.gallons + ' gal</span>' +
         (e.amount ? '<span style="font-size:11px;color:#8b949e;margin-left:8px;">$' + e.amount.toFixed(2) + '</span>' : '') +
         (pct ? '<span style="font-size:10px;color:#8b949e;margin-left:6px;">(' + pct + ')</span>' : '') +
-        '<button onclick="deleteFuelEntry('' + e.id + '')" style="background:none;border:none;color:rgba(255,80,80,.4);cursor:pointer;margin-left:10px;font-size:14px;">✕</button>' +
+        '<button onclick="deleteFuelEntry(\'' + e.id + '\')" style="background:none;border:none;color:rgba(255,80,80,.4);cursor:pointer;margin-left:10px;font-size:14px;">✕</button>' +
       '</div>' +
     '</div>';
   });

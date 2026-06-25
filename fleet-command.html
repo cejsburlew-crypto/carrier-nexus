@@ -1290,13 +1290,7 @@ function importBackup(input) {
       var data = JSON.parse(e.target.result);
       if (!data.keys || typeof data.keys !== 'object') throw new Error('Invalid backup format');
       var keyCount = Object.keys(data.keys).length;
-      if (!confirm('Restore ' + keyCount + ' data stores from backup?
-
-Created: ' + (data._meta && data._meta.exportedAt ? new Date(data._meta.exportedAt).toLocaleString() : 'unknown') + '
-
-⚠️ This will OVERWRITE existing data for all restored keys.
-
-Continue?')) return;
+      if (!confirm('Restore ' + keyCount + ' data stores from backup?\n\nCreated: ' + (data._meta && data._meta.exportedAt ? new Date(data._meta.exportedAt).toLocaleString() : 'unknown') + '\n\n⚠️ This will OVERWRITE existing data for all restored keys.\n\nContinue?')) return;
       Object.keys(data.keys).forEach(function(k) {
         try { localStorage.setItem(k, JSON.stringify(data.keys[k])); } catch(e) {}
       });
@@ -1304,9 +1298,7 @@ Continue?')) return;
       showBackupToast('✅ Restored ' + keyCount + ' data stores — reloading…');
       setTimeout(function() { location.reload(); }, 1800);
     } catch(err) {
-      alert('Restore failed: ' + err.message + '
-
-Make sure you selected a valid Carrier Nexus backup file.');
+      alert('Restore failed: ' + err.message + '\n\nMake sure you selected a valid Carrier Nexus backup file.');
     }
   };
   reader.readAsText(file);

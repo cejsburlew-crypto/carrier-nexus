@@ -210,7 +210,7 @@ function saveCOI(){
 function editCOI(id){
   const c = getCOIs().find(x=>x.id===id); if(!c) return;
   editId=id; document.getElementById('modal-title').textContent='Edit COI — '+id;
-  const fields={c-id:'id','c-company':'company','c-contact':'contact','c-email':'email','c-phone':'phone','c-address':'address','c-type':'policyType','c-insurer':'insurer','c-policy':'policyNum','c-start':'startDate','c-end':'expDate','c-coverage':'coverage','c-addinsured':'additionalInsured','c-notes':'notes'};
+  const fields={'c-id':'id','c-company':'company','c-contact':'contact','c-email':'email','c-phone':'phone','c-address':'address','c-type':'policyType','c-insurer':'insurer','c-policy':'policyNum','c-start':'startDate','c-end':'expDate','c-coverage':'coverage','c-addinsured':'additionalInsured','c-notes':'notes'};
   Object.entries(fields).forEach(([fid,key])=>{ const el=document.getElementById(fid); if(el) el.value=c[key]||''; });
   document.getElementById('coi-modal').classList.add('open');
 }
