@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>COI Management — Carrier Nexus</title>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--dim:#334155;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+.layout{display:flex;min-height:100vh;}.main{flex:1;overflow-x:hidden;}
+.topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:17px;font-weight:700;}.topbar-sub{font-size:11px;color:var(--mid);margin-top:2px;}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
+.btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:#2563eb;}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}.btn-outline:hover{background:var(--panel2);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-green{background:var(--green);color:#fff;}
+.content{padding:20px;max-width:1100px;margin:0 auto;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.kpi-label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.kpi-value{font-size:26px;font-weight:800;line-height:1;}
+.kpi-sub{font-size:11px;color:var(--mid);margin-top:3px;}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:14px;font-weight:700;}.panel-sub{font-size:12px;color:var(--mid);}
+table{width:100%;border-collapse:collapse;}
+th{padding:9px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;}
+.badge-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
+.badge-yellow{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25);}
+.badge-green{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);}
+.badge-gray{background:rgba(100,116,139,.12);color:#94a3b8;border:1px solid rgba(100,116,139,.25);}
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:10px;}
+.alert-red{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;}
+.alert-yellow{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;overflow-y:auto;padding:20px;align-items:flex-start;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--panel);border:1px solid var(--border);border-radius:16px;width:100%;max-width:640px;margin:auto;}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-body{padding:20px;}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+.field-group{margin-bottom:14px;}
+.field-label{font-size:12px;color:var(--mid);margin-bottom:5px;display:block;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--blue);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid var(--border);}
+@media(max-width:600px){.kpi-row{grid-template-columns:1fr 1fr;}.form-row{grid-template-columns:1fr;}}
+@media print{.no-print{display:none!important;}body,table,td,th{background:#fff!important;color:#000!important;}.panel{border:1px solid #ddd!important;}}
+</style>
+</head>
+<body>
+<div class="layout">
+<div class="main">
+<div class="topbar no-print">
+  <div><div class="topbar-title">📜 Certificate of Insurance (COI)</div><div class="topbar-sub">Issued COI registry · broker & shipper certificates · expiration tracking</div></div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-outline btn-sm" onclick="location.href='insurance-kpi.html'">← Insurance KPI</button>
+    <button class="btn btn-primary btn-sm" onclick="openModal()">+ Issue New COI</button>
+  </div>
+</div>
+<div class="content">
+  <div id="alert-section"></div>
+  <div class="kpi-row" id="kpi-row"></div>
+  <div class="panel">
+    <div class="panel-head">
+      <div><div class="panel-title">COI Registry</div><div class="panel-sub">All certificates issued to brokers, shippers, and third parties</div></div>
+      <button class="btn btn-outline btn-sm no-print" onclick="window.print()">🖨 Print Registry</button>
+    </div>
+    <div class="filter-row no-print">
+      <select class="form-select" style="width:auto;" id="f-status" onchange="renderTable()"><option value="">All Statuses</option><option value="active">Active</option><option value="expiring">Expiring Soon</option><option value="expired">Expired</option><option value="revoked">Revoked</option></select>
+      <select class="form-select" style="width:auto;" id="f-type" onchange="renderTable()"><option value="">All Policy Types</option><option>Primary Liability</option><option>Cargo</option><option>Physical Damage</option><option>General Liability</option><option>Non-Trucking Liability</option><option>Workers Comp</option><option>Umbrella/Excess</option></select>
+      <input class="form-input" style="width:200px;" placeholder="Search company..." id="f-search" oninput="renderTable()">
+    </div>
+    <div style="overflow-x:auto;"><table><thead><tr><th>COI #</th><th>Issued To</th><th>Policy Type</th><th>Coverage</th><th>Issued</th><th>Expires</th><th>Days Left</th><th>Status</th><th>Actions</th></tr></thead><tbody id="coi-tbody"></tbody></table></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div id="coi-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-head"><div style="font-size:15px;font-weight:700;" id="modal-title">Issue New COI</div><button class="btn btn-outline btn-sm" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">COI Number</label><input class="form-input" id="c-id" readonly></div>
+        <div class="field-group"><label class="field-label">Policy Type *</label>
+          <select class="form-select" id="c-type">
+            <option>Primary Liability</option><option>Cargo</option><option>Physical Damage</option>
+            <option>General Liability</option><option>Non-Trucking Liability</option>
+            <option>Workers Comp</option><option>Umbrella/Excess</option><option>All</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group"><label class="field-label">Issued To — Company Name *</label><input class="form-input" id="c-company" placeholder="e.g. Coyote Logistics, Amazon Freight..."></div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Contact Name</label><input class="form-input" id="c-contact"></div>
+        <div class="field-group"><label class="field-label">Contact Email</label><input class="form-input" type="email" id="c-email"></div>
+      </div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Contact Phone</label><input class="form-input" id="c-phone"></div>
+        <div class="field-group"><label class="field-label">Coverage Amount ($)</label><input class="form-input" type="number" id="c-coverage" placeholder="e.g. 1000000"></div>
+      </div>
+      <div class="field-group"><label class="field-label">Address</label><input class="form-input" id="c-address" placeholder="Street, City, State ZIP"></div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Our Insurance Company</label><input class="form-input" id="c-insurer" placeholder="e.g. Canal Insurance"></div>
+        <div class="field-group"><label class="field-label">Our Policy Number</label><input class="form-input" id="c-policy"></div>
+      </div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Effective Date *</label><input class="form-input" type="date" id="c-start"></div>
+        <div class="field-group"><label class="field-label">Expiration Date *</label><input class="form-input" type="date" id="c-end"></div>
+      </div>
+      <div class="field-group"><label class="field-label">Certificate Holder</label><input class="form-input" id="c-holder" value="Carrier Trucking US, LLC — US DOT 4326039 — MC 1688495-C" readonly style="color:var(--mid);font-size:12px;"></div>
+      <div class="field-group"><label class="field-label">Additional Insured (if any)</label><input class="form-input" id="c-addinsured" placeholder="Name or leave blank"></div>
+      <div class="field-group"><label class="field-label">Notes</label><textarea class="form-input" id="c-notes" rows="2" placeholder="Any special conditions, project name, load reference..."></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveCOI()">Save COI</button></div>
+  </div>
+</div>
+
+<script src="nexus-sidebar.js"></script>
+<script>
+let editId = null;
+function getCOIs(){ try{ return JSON.parse(localStorage.getItem('nexus_cois')||'[]'); }catch(e){ return []; } }
+function saveCOIs(a){ localStorage.setItem('nexus_cois', JSON.stringify(a)); }
+function genId(){ const d=new Date(); const n=getCOIs().length+1; return 'COI-'+d.getFullYear()+'-'+String(n).padStart(3,'0'); }
+function fmtDate(s){ if(!s) return '—'; try{ return new Date(s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }catch(e){ return s; } }
+function daysLeft(end){ if(!end) return null; const diff=Math.ceil((new Date(end+'T12:00:00')-new Date())/86400000); return diff; }
+function coiStatus(c){ const d=daysLeft(c.expDate); if(c.status==='revoked') return 'revoked'; if(d===null) return 'active'; if(d<0) return 'expired'; if(d<=30) return 'expiring'; return 'active'; }
+
+function renderKPI(){
+  const cois = getCOIs();
+  const statuses = cois.map(coiStatus);
+  const active = statuses.filter(s=>s==='active').length;
+  const expiring = statuses.filter(s=>s==='expiring').length;
+  const expired = statuses.filter(s=>s==='expired').length;
+  document.getElementById('kpi-row').innerHTML = `
+    <div class="kpi"><div class="kpi-label">Total COIs Issued</div><div class="kpi-value">${cois.length}</div><div class="kpi-sub">All time</div></div>
+    <div class="kpi"><div class="kpi-label">Active</div><div class="kpi-value" style="color:var(--green)">${active}</div><div class="kpi-sub">Valid certificates</div></div>
+    <div class="kpi"><div class="kpi-label">Expiring ≤30 Days</div><div class="kpi-value" style="color:${expiring>0?'var(--yellow)':'var(--green)'}">${expiring}</div><div class="kpi-sub">Renewal needed soon</div></div>
+    <div class="kpi"><div class="kpi-label">Expired</div><div class="kpi-value" style="color:${expired>0?'var(--red)':'var(--green)'}">${expired}</div><div class="kpi-sub">Must not be in circulation</div></div>`;
+  const alerts = [];
+  if(expired>0) alerts.push(`<div class="alert alert-red">🚨 ${expired} expired COI${expired>1?'s':''} — ensure expired certificates are recalled from brokers/shippers</div>`);
+  const expList = cois.filter(c=>coiStatus(c)==='expiring').map(c=>c.company).join(', ');
+  if(expList) alerts.push(`<div class="alert alert-yellow">⚠️ COIs expiring within 30 days: ${expList}</div>`);
+  document.getElementById('alert-section').innerHTML = alerts.join('');
+}
+
+function renderTable(){
+  const cois = getCOIs();
+  const fs = document.getElementById('f-status').value;
+  const ft = document.getElementById('f-type').value;
+  const fq = document.getElementById('f-search').value.toLowerCase();
+  const filtered = cois.filter(c=>{
+    const st = coiStatus(c);
+    return (!fs||st===fs) && (!ft||c.policyType===ft) && (!fq||c.company.toLowerCase().includes(fq)||c.id.toLowerCase().includes(fq));
+  }).sort((a,b)=>{
+    const da=daysLeft(a.expDate)||9999, db=daysLeft(b.expDate)||9999;
+    return da-db;
+  });
+  const tbody = document.getElementById('coi-tbody');
+  if(!filtered.length){ tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--mid);padding:24px;">No COIs found — issue your first certificate above</td></tr>'; return; }
+  tbody.innerHTML = filtered.map(c=>{
+    const st = coiStatus(c);
+    const dl = daysLeft(c.expDate);
+    const dlColor = dl===null?'var(--mid)':dl<0?'var(--red)':dl<=30?'var(--yellow)':'var(--green)';
+    const dlText = dl===null?'N/A':dl<0?'Expired '+Math.abs(dl)+'d ago':dl===0?'Today':dl+'d';
+    const stBadge = {active:'badge-green',expiring:'badge-yellow',expired:'badge-red',revoked:'badge-gray'}[st]||'badge-gray';
+    const stLabel = {active:'Active',expiring:'Expiring',expired:'Expired',revoked:'Revoked'}[st]||st;
+    const cov = c.coverage ? '$'+Number(c.coverage).toLocaleString() : '—';
+    return `<tr>
+      <td style="font-family:monospace;font-size:12px;">${c.id}</td>
+      <td><div style="font-weight:600;">${c.company}</div><div style="font-size:11px;color:var(--mid);">${c.contact||''}</div></td>
+      <td style="font-size:12px;">${c.policyType||'—'}</td>
+      <td style="font-size:12px;">${cov}</td>
+      <td style="font-size:12px;">${fmtDate(c.startDate)}</td>
+      <td style="font-size:12px;">${fmtDate(c.expDate)}</td>
+      <td style="color:${dlColor};font-weight:700;">${dlText}</td>
+      <td><span class="badge ${stBadge}">${stLabel}</span></td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-outline btn-sm" onclick="editCOI('${c.id}')">Edit</button>
+        <button class="btn btn-outline btn-sm" style="margin-left:4px;" onclick="renewCOI('${c.id}')">Renew</button>
+        <button class="btn btn-outline btn-sm" style="margin-left:4px;color:var(--red);" onclick="revokeCOI('${c.id}')">Revoke</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openModal(){ editId=null; document.getElementById('modal-title').textContent='Issue New COI'; document.getElementById('c-id').value=genId(); document.getElementById('c-start').value=new Date().toISOString().slice(0,10); const end=new Date(); end.setFullYear(end.getFullYear()+1); document.getElementById('c-end').value=end.toISOString().slice(0,10); ['c-company','c-contact','c-email','c-phone','c-coverage','c-address','c-insurer','c-policy','c-addinsured','c-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';}); document.getElementById('coi-modal').classList.add('open'); }
+function closeModal(){ document.getElementById('coi-modal').classList.remove('open'); editId=null; }
+function gv(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
+
+function saveCOI(){
+  if(!gv('c-company')){ alert('Company name required'); return; }
+  const cois = getCOIs();
+  const rec = { id:editId||gv('c-id'), company:gv('c-company'), contact:gv('c-contact'), email:gv('c-email'), phone:gv('c-phone'), address:gv('c-address'), policyType:gv('c-type'), insurer:gv('c-insurer'), policyNum:gv('c-policy'), startDate:gv('c-start'), expDate:gv('c-end'), coverage:gv('c-coverage'), additionalInsured:gv('c-addinsured'), notes:gv('c-notes'), status:'active', createdAt:new Date().toISOString() };
+  if(editId){ const idx=cois.findIndex(c=>c.id===editId); if(idx>=0) cois[idx]=rec; }
+  else cois.unshift(rec);
+  saveCOIs(cois); closeModal(); renderKPI(); renderTable();
+}
+
+function editCOI(id){
+  const c = getCOIs().find(x=>x.id===id); if(!c) return;
+  editId=id; document.getElementById('modal-title').textContent='Edit COI — '+id;
+  const fields={c-id:'id','c-company':'company','c-contact':'contact','c-email':'email','c-phone':'phone','c-address':'address','c-type':'policyType','c-insurer':'insurer','c-policy':'policyNum','c-start':'startDate','c-end':'expDate','c-coverage':'coverage','c-addinsured':'additionalInsured','c-notes':'notes'};
+  Object.entries(fields).forEach(([fid,key])=>{ const el=document.getElementById(fid); if(el) el.value=c[key]||''; });
+  document.getElementById('coi-modal').classList.add('open');
+}
+
+function renewCOI(id){
+  const cois=getCOIs(); const c=cois.find(x=>x.id===id); if(!c) return;
+  const newC={...c, id:genId(), startDate:c.expDate||new Date().toISOString().slice(0,10), status:'active', createdAt:new Date().toISOString()};
+  const end=new Date(newC.startDate+'T12:00:00'); end.setFullYear(end.getFullYear()+1);
+  newC.expDate=end.toISOString().slice(0,10);
+  c.status='revoked';
+  cois.unshift(newC); saveCOIs(cois); renderKPI(); renderTable();
+}
+
+function revokeCOI(id){
+  if(!confirm('Revoke this COI? The certificate will be marked inactive.')) return;
+  const cois=getCOIs(); const c=cois.find(x=>x.id===id); if(!c) return;
+  c.status='revoked'; saveCOIs(cois); renderKPI(); renderTable();
+}
+
+renderKPI(); renderTable();
+</script>
+</body>
+</html>

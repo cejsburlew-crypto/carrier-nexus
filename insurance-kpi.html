@@ -186,6 +186,30 @@ tr:hover td{background:var(--panel2);}
 <!-- KPI CARDS -->
 <div class="kpi-grid" id="kpi-grid"></div>
 
+<!-- INSURANCE MODULE QUICK LINKS -->
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;" class="no-print" id="module-links">
+  <a href="incident-report.html" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--orange)'" onmouseout="this.style.borderColor='var(--border)'">
+    <div style="font-size:20px;margin-bottom:4px;">🚨</div><div style="font-size:12px;font-weight:700;">Incidents</div>
+    <div style="font-size:11px;color:var(--mid);" id="ql-incidents">—</div>
+  </div></a>
+  <a href="claims.html" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--border)'">
+    <div style="font-size:20px;margin-bottom:4px;">⚖️</div><div style="font-size:12px;font-weight:700;">Claims</div>
+    <div style="font-size:11px;color:var(--mid);" id="ql-claims">—</div>
+  </div></a>
+  <a href="coi-management.html" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">
+    <div style="font-size:20px;margin-bottom:4px;">📜</div><div style="font-size:12px;font-weight:700;">COI Registry</div>
+    <div style="font-size:11px;color:var(--mid);" id="ql-cois">—</div>
+  </div></a>
+  <a href="coaching-log.html" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
+    <div style="font-size:20px;margin-bottom:4px;">📋</div><div style="font-size:12px;font-weight:700;">Coaching Log</div>
+    <div style="font-size:11px;color:var(--mid);" id="ql-coaching">—</div>
+  </div></a>
+  <a href="#" onclick="exportTelematicsJSON();return false;" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='rgba(16,185,129,.3)'">
+    <div style="font-size:20px;margin-bottom:4px;">⬇️</div><div style="font-size:12px;font-weight:700;color:var(--green);">Export Data</div>
+    <div style="font-size:11px;color:var(--mid);">JSON for insurer</div>
+  </div></a>
+</div>
+
 <!-- TABS -->
 <div class="tabs no-print">
   <button class="tab active" onclick="showTab('drivers')">Per-Driver Scores</button>
@@ -845,6 +869,7 @@ function renderCameraEvents(){
       <td style="font-family:monospace;font-size:12px;color:var(--blue);">${e.channel||'—'}</td>
       <td><span style="color:${sc};font-weight:700;text-transform:capitalize;">${e.severity}</span></td>
       <td style="font-size:12px;color:var(--mid);">${e.notes||'—'}</td>
+      <td><a href="coaching-log.html?trigger=camera_event&ref=${e.id}&driver=${encodeURIComponent(e.driver||e.unit||'')}" style="font-size:11px;color:var(--yellow);text-decoration:none;border:1px solid rgba(245,158,11,.4);padding:2px 7px;border-radius:4px;white-space:nowrap;" title="Open coaching session for this event">📋 Coach</a></td>
     </tr>`;
   }).join('');
 }
@@ -897,6 +922,52 @@ function showTab(id){
   if(id==='cameras'){ renderCameraConfig(); renderCameraEvents(); renderCameraEventStats(); }
 }
 
+// ─── TELEMATICS EXPORT ───────────────────────────────────────────────────────
+function exportTelematicsJSON(){
+  const fleet = fleetScore();
+  const cam   = cameraFleetReadiness();
+  const incs  = JSON.parse(localStorage.getItem('nexus_incidents')||'[]');
+  const claims= JSON.parse(localStorage.getItem('nexus_claims')||'[]');
+  const csa   = getCSA();
+  const report = {
+    generatedAt: new Date().toISOString(),
+    carrier: { name:'Carrier Trucking US, LLC', dot:'4326039', mc:'1688495-C' },
+    fleetSafetyScore: fleet.avg, fleetGrade: fleet.grade,
+    driverCount: fleet.drivers.length,
+    dvirCompletionRate30d: Math.round(getDVIRs().filter(r=>r.date>=daysAgo(30)).length / (fleet.drivers.length*20)*100),
+    roadsideCleanRate: (function(){ const rs=getRoadside(); return rs.length?Math.round(rs.filter(r=>r.result==='no_violation').length/rs.length*100):100; })(),
+    openIncidents: incs.filter(i=>i.status==='open').length,
+    openClaims: claims.filter(c=>c.status==='open'||c.status==='under_review').length,
+    cameraReadiness: { trucksWithMinimum: cam.ready, totalTrucks: cam.total, pct: cam.pct },
+    csaScores: csa,
+    perDriverScores: fleet.drivers.map(d=>({ name:d.name, score:d.score, grade:d.grade, dvirRate:d.dvirRate+'%', violations:d.violations }))
+  };
+  const blob = new Blob([JSON.stringify(report, null, 2)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'carrier-nexus-telematics-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+}
+
+// ─── QUICK LINK COUNTERS ──────────────────────────────────────────────────────
+function renderQuickLinks(){
+  try {
+    const incs  = JSON.parse(localStorage.getItem('nexus_incidents')||'[]');
+    const claims= JSON.parse(localStorage.getItem('nexus_claims')||'[]');
+    const cois  = JSON.parse(localStorage.getItem('nexus_cois')||'[]');
+    const coach = JSON.parse(localStorage.getItem('nexus_coaching')||'[]');
+    const openInc = incs.filter(i=>i.status==='open').length;
+    const openClaims = claims.filter(c=>c.status==='open'||c.status==='under_review').length;
+    const expCOIs = cois.filter(c=>{ const d=c.expDate?Math.ceil((new Date(c.expDate+'T12:00:00')-new Date())/86400000):999; return d<30&&d>=0; }).length;
+    const pendCoach = coach.filter(x=>x.status==='pending_acknowledgment').length;
+    const el=id=>document.getElementById(id);
+    if(el('ql-incidents')) el('ql-incidents').innerHTML = openInc>0 ? `<span style="color:var(--red);">${openInc} open</span>` : '<span style="color:var(--green);">All clear</span>';
+    if(el('ql-claims'))    el('ql-claims').innerHTML    = openClaims>0 ? `<span style="color:var(--red);">${openClaims} active</span>` : '<span style="color:var(--green);">All clear</span>';
+    if(el('ql-cois'))      el('ql-cois').innerHTML      = expCOIs>0 ? `<span style="color:var(--yellow);">${expCOIs} expiring</span>` : `<span style="color:var(--green);">${cois.filter(c=>{ const d=c.expDate?Math.ceil((new Date(c.expDate+'T12:00:00')-new Date())/86400000):999; return d>=0; }).length} active</span>`;
+    if(el('ql-coaching'))  el('ql-coaching').innerHTML  = pendCoach>0 ? `<span style="color:var(--yellow);">${pendCoach} pending sig</span>` : '<span style="color:var(--green);">All signed</span>';
+  } catch(e){}
+}
+
 // ─── INIT ────────────────────────────────────────────────────────────────────
 (function init(){
   const fleet = fleetScore();
@@ -907,6 +978,7 @@ function showTab(id){
   renderCSA();
   renderAlerts(fleet);
   // Patch KPI grid with camera card
+  renderQuickLinks();
   const cam = cameraFleetReadiness();
   const grid = document.getElementById('kpi-grid');
   if(grid){

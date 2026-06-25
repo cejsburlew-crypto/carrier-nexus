@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Driver Coaching Log — Carrier Nexus</title>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--dim:#334155;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+.layout{display:flex;min-height:100vh;}.main{flex:1;overflow-x:hidden;}
+.topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:17px;font-weight:700;}.topbar-sub{font-size:11px;color:var(--mid);margin-top:2px;}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
+.btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:#2563eb;}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}.btn-outline:hover{background:var(--panel2);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.content{padding:20px;max-width:1100px;margin:0 auto;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.kpi-label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.kpi-value{font-size:26px;font-weight:800;line-height:1;}.kpi-sub{font-size:11px;color:var(--mid);margin-top:3px;}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:14px;font-weight:700;}.panel-sub{font-size:12px;color:var(--mid);}
+table{width:100%;border-collapse:collapse;}
+th{padding:9px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);cursor:pointer;}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;}
+.badge-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
+.badge-yellow{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25);}
+.badge-green{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);}
+.badge-orange{background:rgba(249,115,22,.12);color:#f97316;border:1px solid rgba(249,115,22,.25);}
+.badge-gray{background:rgba(100,116,139,.12);color:#94a3b8;border:1px solid rgba(100,116,139,.25);}
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:10px;}
+.alert-red{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;}
+.alert-yellow{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;overflow-y:auto;padding:20px;align-items:flex-start;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--panel);border:1px solid var(--border);border-radius:16px;width:100%;max-width:680px;margin:auto;}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-body{padding:20px;max-height:75vh;overflow-y:auto;}.modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+.field-group{margin-bottom:14px;}
+.field-label{font-size:12px;color:var(--mid);margin-bottom:5px;display:block;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--blue);}
+.form-textarea{resize:vertical;min-height:72px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.section-divider{font-size:12px;font-weight:700;color:var(--blue);padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:12px;}
+.detail-row{display:flex;gap:8px;margin-bottom:8px;font-size:13px;}
+.detail-key{color:var(--mid);min-width:160px;flex-shrink:0;}
+.sig-box{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:14px;}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid var(--border);}
+@media(max-width:600px){.kpi-row{grid-template-columns:1fr 1fr;}.form-row{grid-template-columns:1fr;}}
+@media print{.no-print{display:none!important;}body,table,td,th{background:#fff!important;color:#000!important;}.panel{border:1px solid #ddd!important;}}
+</style>
+</head>
+<body>
+<div class="layout">
+<div class="main">
+<div class="topbar no-print">
+  <div><div class="topbar-title">📋 Driver Coaching Log</div><div class="topbar-sub">Safety coaching sessions · corrective action records · 49 CFR 390.3</div></div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-outline btn-sm" onclick="location.href='insurance-kpi.html'">← Insurance KPI</button>
+    <button class="btn btn-outline btn-sm" onclick="location.href='incident-report.html'">Incidents</button>
+    <button class="btn btn-primary btn-sm" onclick="openModal()">+ New Session</button>
+  </div>
+</div>
+<div class="content">
+  <div id="repeat-alerts"></div>
+  <div class="kpi-row" id="kpi-row"></div>
+  <div class="panel">
+    <div class="panel-head"><div><div class="panel-title">Coaching Sessions</div><div class="panel-sub">All recorded driver coaching and corrective action sessions</div></div></div>
+    <div class="filter-row no-print">
+      <select class="form-select" style="width:auto;" id="f-driver" onchange="renderTable()"><option value="">All Drivers</option><option>Avis Modesto</option><option>David Fonseca</option><option>Miguel Fonseca</option><option>Nelson Veliz</option><option>Yosviel Pinera</option><option>Guillermo Pinera</option><option>Jayler Labrada</option></select>
+      <select class="form-select" style="width:auto;" id="f-ack" onchange="renderTable()"><option value="">All</option><option value="acknowledged">Acknowledged</option><option value="pending_acknowledgment">Pending Signature</option></select>
+      <select class="form-select" style="width:auto;" id="f-sev" onchange="renderTable()"><option value="">All Severities</option><option value="verbal">Verbal Warning</option><option value="written">Written Warning</option><option value="final">Final Warning</option><option value="suspension">Suspension</option></select>
+    </div>
+    <div style="overflow-x:auto;"><table><thead><tr><th>Session ID</th><th>Date</th><th>Driver</th><th>Issue Type</th><th>Triggered By</th><th>Severity</th><th>Coach</th><th>Acknowledged</th><th>Actions</th></tr></thead><tbody id="coach-tbody"></tbody></table></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div id="detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;overflow-y:auto;padding:20px;">
+  <div class="modal-box" style="max-width:740px;">
+    <div class="modal-head"><div><div id="detail-title" style="font-size:16px;font-weight:700;"></div><div id="detail-sub" style="font-size:12px;color:var(--mid);"></div></div>
+    <div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm no-print" onclick="window.print()">🖨</button><button class="btn btn-outline btn-sm" onclick="closeDetail()">✕</button></div></div>
+    <div id="detail-body" style="padding:20px;"></div>
+  </div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div id="coach-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-head"><div style="font-size:15px;font-weight:700;" id="modal-title">New Coaching Session</div><button class="btn btn-outline btn-sm" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="section-divider">Session Information</div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Session ID</label><input class="form-input" id="cs-id" readonly></div>
+        <div class="field-group"><label class="field-label">Date *</label><input class="form-input" type="date" id="cs-date"></div>
+      </div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Time</label><input class="form-input" type="time" id="cs-time"></div>
+        <div class="field-group"><label class="field-label">Session Type</label>
+          <select class="form-select" id="cs-stype"><option>In-Person</option><option>Phone</option><option>Video Call</option><option>Written Notice</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Driver *</label>
+          <select class="form-select" id="cs-driver">
+            <option value="">Select driver...</option>
+            <option>Avis Modesto</option><option>David Fonseca</option><option>Miguel Fonseca</option>
+            <option>Nelson Veliz</option><option>Yosviel Pinera</option><option>Guillermo Pinera</option><option>Jayler Labrada</option>
+          </select>
+        </div>
+        <div class="field-group"><label class="field-label">Coach / Supervisor</label><input class="form-input" id="cs-coach" value="Jim Burlew"></div>
+      </div>
+
+      <div class="section-divider" style="margin-top:4px;">Issue Details</div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Triggered By</label>
+          <select class="form-select" id="cs-trigger" onchange="showTriggerRef()">
+            <option value="camera_event">Camera Event</option>
+            <option value="roadside">Roadside Inspection Violation</option>
+            <option value="complaint">Customer Complaint</option>
+            <option value="incident">Accident / Incident</option>
+            <option value="hos">HOS Violation</option>
+            <option value="dvir">DVIR Defect Pattern</option>
+            <option value="drug">Drug Test Result</option>
+            <option value="observation">Observation / Proactive</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field-group"><label class="field-label">Issue Type</label>
+          <select class="form-select" id="cs-issue">
+            <option value="hard_braking">Hard Braking / Acceleration</option>
+            <option value="speeding">Speeding</option>
+            <option value="distraction">Distracted Driving / Phone</option>
+            <option value="drowsiness">Drowsiness / Fatigue</option>
+            <option value="following">Following Distance</option>
+            <option value="lane">Lane Discipline</option>
+            <option value="backing">Backing Safety</option>
+            <option value="hos">Hours of Service</option>
+            <option value="dvir_comp">DVIR / Pre-Trip Compliance</option>
+            <option value="load">Load Securement</option>
+            <option value="dot">DOT Inspection Violation</option>
+            <option value="customer">Customer Interaction</option>
+            <option value="policy">Company Policy</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div id="trigger-ref-group" style="display:none;">
+        <div class="field-group"><label class="field-label" id="trigger-ref-label">Reference ID</label>
+          <select class="form-select" id="cs-trigger-ref"><option value="">Select...</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Severity / Action Level</label>
+          <select class="form-select" id="cs-sev">
+            <option value="verbal">Verbal Warning</option>
+            <option value="written">Written Warning</option>
+            <option value="final">Final Warning</option>
+            <option value="suspension">Suspension</option>
+            <option value="termination">Termination</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group"><label class="field-label">Description of Issue *</label><textarea class="form-textarea" id="cs-issue-desc" placeholder="Describe what was observed, reported, or triggered this coaching session..."></textarea></div>
+
+      <div class="section-divider">Coaching Discussion</div>
+      <div class="field-group"><label class="field-label">Discussion Summary *</label><textarea class="form-textarea" id="cs-discussion" placeholder="What was discussed during the session..."></textarea></div>
+      <div class="field-group"><label class="field-label">Corrective Action Plan</label><textarea class="form-textarea" id="cs-action" placeholder="Specific steps the driver agreed to take..."></textarea></div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Follow-Up Required?</label><select class="form-select" id="cs-followup" onchange="showFollowup()"><option value="no">No</option><option value="yes">Yes</option></select></div>
+        <div class="field-group" id="followup-date-group" style="display:none;"><label class="field-label">Follow-Up Date</label><input class="form-input" type="date" id="cs-followup-date"></div>
+      </div>
+
+      <div class="section-divider">Driver Response</div>
+      <div class="field-group"><label class="field-label">Driver's Response / Statement</label><textarea class="form-textarea" id="cs-driver-resp" placeholder="Driver's comments or explanation (optional)..."></textarea></div>
+      <div class="field-group"><label class="field-label">Driver Agrees with Assessment?</label>
+        <select class="form-select" id="cs-agrees"><option value="yes">Yes — agrees</option><option value="partial">Partially agrees</option><option value="no">No — disputes findings</option></select>
+      </div>
+      <div class="field-group" id="objection-group"><label class="field-label">Driver's Objection / Dispute</label><textarea class="form-textarea" id="cs-objection" rows="2" placeholder="Driver's specific objection if they dispute the findings..."></textarea></div>
+
+      <div class="section-divider">Acknowledgment & Signatures</div>
+      <div class="sig-box">
+        <div style="font-size:12px;color:var(--mid);margin-bottom:10px;font-style:italic;">By signing, the driver acknowledges this coaching session occurred. Signature does not necessarily indicate agreement with the assessment.</div>
+        <div class="form-row">
+          <div class="field-group"><label class="field-label">Driver Signature (type full name)</label><input class="form-input" id="cs-driver-sig" placeholder="Type full name" oninput="if(this.value)document.getElementById('cs-dsig-ts').textContent=new Date().toLocaleString()"></div>
+          <div class="field-group"><label class="field-label">Supervisor Signature</label><input class="form-input" id="cs-admin-sig" placeholder="e.g. Jim Burlew" oninput="if(this.value)document.getElementById('cs-asig-ts').textContent=new Date().toLocaleString()"></div>
+        </div>
+        <div style="font-size:11px;color:var(--mid);">Driver: <span id="cs-dsig-ts">—</span> &nbsp;·&nbsp; Supervisor: <span id="cs-asig-ts">—</span></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveSession()">Save Session</button></div>
+  </div>
+</div>
+
+<script src="nexus-sidebar.js"></script>
+<script>
+let editId=null;
+function getSessions(){ try{ return JSON.parse(localStorage.getItem('nexus_coaching')||'[]'); }catch(e){ return []; } }
+function saveSessions(a){ localStorage.setItem('nexus_coaching', JSON.stringify(a)); }
+function getEvents(){ try{ return JSON.parse(localStorage.getItem('nexus_camera_events')||'[]'); }catch(e){ return []; } }
+function getIncs(){ try{ return JSON.parse(localStorage.getItem('nexus_incidents')||'[]'); }catch(e){ return []; } }
+function genId(){ const d=new Date(); const n=getSessions().length+1; return 'CSH-'+d.getFullYear()+(d.getMonth()+1).toString().padStart(2,'0')+d.getDate().toString().padStart(2,'0')+'-'+String(n).padStart(3,'0'); }
+function fmtDate(s){ if(!s) return '—'; try{ return new Date(s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }catch(e){ return s; } }
+function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
+
+const SEV_META = {
+  verbal:{label:'Verbal Warning',badge:'badge-yellow'},
+  written:{label:'Written Warning',badge:'badge-orange'},
+  final:{label:'Final Warning',badge:'badge-red'},
+  suspension:{label:'Suspension',badge:'badge-red'},
+  termination:{label:'Termination',badge:'badge-red'}
+};
+const ISSUE_LABELS = {hard_braking:'Hard Braking',speeding:'Speeding',distraction:'Distracted Driving',drowsiness:'Drowsiness',following:'Following Distance',lane:'Lane Discipline',backing:'Backing Safety',hos:'HOS Violation',dvir_comp:'DVIR Compliance',load:'Load Securement',dot:'DOT Violation',customer:'Customer Interaction',policy:'Company Policy',other:'Other'};
+const TRIGGER_LABELS = {camera_event:'Camera Event',roadside:'Roadside Inspection',complaint:'Customer Complaint',incident:'Accident/Incident',hos:'HOS Violation',dvir:'DVIR Defect',drug:'Drug Test',observation:'Observation',other:'Other'};
+
+function renderKPI(){
+  const s=getSessions();
+  const d30=daysAgo(30);
+  const d90=daysAgo(90);
+  const thisMonth=s.filter(x=>x.date>=d30).length;
+  const coached=new Set(s.filter(x=>x.date>=d90).map(x=>x.driverName)).size;
+  const pending=s.filter(x=>x.status==='pending_acknowledgment').length;
+  // Repeat offenders: 2+ sessions same issue in 90d
+  const groups={};
+  s.filter(x=>x.date>=d90).forEach(x=>{ const k=x.driverName+'|'+x.issueType; groups[k]=(groups[k]||0)+1; });
+  const repeats=Object.values(groups).filter(v=>v>=2).length;
+  document.getElementById('kpi-row').innerHTML=`
+    <div class="kpi"><div class="kpi-label">Sessions This Month</div><div class="kpi-value">${thisMonth}</div><div class="kpi-sub">Last 30 days</div></div>
+    <div class="kpi"><div class="kpi-label">Drivers Coached</div><div class="kpi-value">${coached}</div><div class="kpi-sub">Distinct, last 90 days</div></div>
+    <div class="kpi"><div class="kpi-label">Pending Acknowledgment</div><div class="kpi-value" style="color:${pending>0?'var(--yellow)':'var(--green)'}">${pending}</div><div class="kpi-sub">Missing driver signature</div></div>
+    <div class="kpi"><div class="kpi-label">Repeat Patterns</div><div class="kpi-value" style="color:${repeats>0?'var(--red)':'var(--green)'}">${repeats}</div><div class="kpi-sub">Same issue 2+ times (90d)</div></div>`;
+  // Repeat offender alerts
+  const alerts=[];
+  const d90str=d90;
+  const recent=s.filter(x=>x.date>=d90str);
+  const issueMap={};
+  recent.forEach(x=>{ const k=x.driverName+'|'+x.issueType; if(!issueMap[k]) issueMap[k]={name:x.driverName,issue:ISSUE_LABELS[x.issueType]||x.issueType,count:0}; issueMap[k].count++; });
+  Object.values(issueMap).filter(v=>v.count>=2).forEach(v=>{
+    alerts.push(`<div class="alert alert-red">🔁 <strong>${v.name}</strong> has ${v.count} coaching sessions for <strong>${v.issue}</strong> in the last 90 days — escalation recommended</div>`);
+  });
+  document.getElementById('repeat-alerts').innerHTML=alerts.join('');
+}
+
+function renderTable(){
+  const sessions=getSessions();
+  const fd=document.getElementById('f-driver').value;
+  const fa=document.getElementById('f-ack').value;
+  const fs=document.getElementById('f-sev').value;
+  const filtered=sessions.filter(x=>(!fd||x.driverName===fd)&&(!fa||x.status===fa)&&(!fs||x.severity===fs)).sort((a,b)=>b.date.localeCompare(a.date));
+  const tbody=document.getElementById('coach-tbody');
+  if(!filtered.length){ tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--mid);padding:24px;">No coaching sessions on record</td></tr>'; return; }
+  tbody.innerHTML=filtered.map(x=>{
+    const sm=SEV_META[x.severity]||{label:x.severity,badge:'badge-gray'};
+    const ack=x.status==='acknowledged';
+    return `<tr onclick="viewSession('${x.id}')">
+      <td style="font-family:monospace;font-size:12px;">${x.id}</td>
+      <td>${fmtDate(x.date)}</td>
+      <td style="font-weight:600;">${x.driverName||'—'}</td>
+      <td>${ISSUE_LABELS[x.issueType]||x.issueType||'—'}</td>
+      <td style="font-size:12px;">${TRIGGER_LABELS[x.triggeredBy]||x.triggeredBy||'—'}${x.triggerRef?`<div style="font-size:11px;color:var(--blue);">${x.triggerRef}</div>`:''}</td>
+      <td><span class="badge ${sm.badge}">${sm.label}</span></td>
+      <td style="font-size:12px;">${x.coachName||'—'}</td>
+      <td>${ack?`<span style="color:var(--green);font-size:12px;">✅ ${fmtDate(x.driverSignedAt?.slice(0,10))}</span>`:'<span style="color:var(--yellow);font-size:12px;">⏳ Pending</span>'}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();editSession('${x.id}')">Edit</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function viewSession(id){
+  const x=getSessions().find(s=>s.id===id); if(!x) return;
+  document.getElementById('detail-title').textContent=x.id;
+  document.getElementById('detail-sub').textContent=fmtDate(x.date)+' · '+x.driverName+' · '+(SEV_META[x.severity]?.label||x.severity);
+  const ack=x.status==='acknowledged';
+  document.getElementById('detail-body').innerHTML=`
+    <div class="detail-row"><span class="detail-key">Date / Time</span><span>${fmtDate(x.date)} ${x.time||''}</span></div>
+    <div class="detail-row"><span class="detail-key">Session Type</span><span>${x.sessionType||'—'}</span></div>
+    <div class="detail-row"><span class="detail-key">Driver</span><span>${x.driverName}</span></div>
+    <div class="detail-row"><span class="detail-key">Coach</span><span>${x.coachName||'—'}</span></div>
+    <div class="detail-row"><span class="detail-key">Triggered By</span><span>${TRIGGER_LABELS[x.triggeredBy]||x.triggeredBy||'—'}${x.triggerRef?' ('+x.triggerRef+')':''}</span></div>
+    <div class="detail-row"><span class="detail-key">Issue Type</span><span>${ISSUE_LABELS[x.issueType]||x.issueType||'—'}</span></div>
+    <div class="detail-row"><span class="detail-key">Severity</span><span><span class="badge ${SEV_META[x.severity]?.badge||'badge-gray'}">${SEV_META[x.severity]?.label||x.severity}</span></span></div>
+    <div style="margin:12px 0;padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;">
+      <div style="font-size:11px;color:var(--mid);margin-bottom:4px;">ISSUE DESCRIPTION</div>
+      <div style="font-size:13px;white-space:pre-wrap;">${x.issueDesc||'—'}</div>
+    </div>
+    <div style="margin:12px 0;padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;">
+      <div style="font-size:11px;color:var(--mid);margin-bottom:4px;">DISCUSSION SUMMARY</div>
+      <div style="font-size:13px;white-space:pre-wrap;">${x.discussion||'—'}</div>
+    </div>
+    <div style="margin:12px 0;padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;">
+      <div style="font-size:11px;color:var(--mid);margin-bottom:4px;">CORRECTIVE ACTION PLAN</div>
+      <div style="font-size:13px;white-space:pre-wrap;">${x.correctiveAction||'—'}</div>
+    </div>
+    ${x.driverResponse?`<div style="margin:12px 0;padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;"><div style="font-size:11px;color:var(--mid);margin-bottom:4px;">DRIVER RESPONSE</div><div style="font-size:13px;white-space:pre-wrap;">${x.driverResponse}</div><div style="font-size:11px;color:var(--mid);margin-top:4px;">Agrees: ${x.driverAgrees}</div></div>`:''}
+    <div style="margin-top:14px;padding:14px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:10px;">
+      <div style="font-size:12px;font-weight:700;margin-bottom:8px;">Signatures & Acknowledgment</div>
+      <div class="detail-row"><span class="detail-key">Driver Signature</span><span>${x.driverSignature||'Not signed'}</span></div>
+      <div class="detail-row"><span class="detail-key">Driver Signed At</span><span>${x.driverSignedAt?new Date(x.driverSignedAt).toLocaleString():'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">Supervisor Signature</span><span>${x.adminSignature||'Not signed'}</span></div>
+      <div class="detail-row"><span class="detail-key">Status</span><span>${ack?'<span style="color:var(--green);">✅ Acknowledged</span>':'<span style="color:var(--yellow);">⏳ Pending driver acknowledgment</span>'}</span></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end;">
+      <button class="btn btn-outline btn-sm" onclick="editSession('${x.id}');closeDetail()">Edit</button>
+      ${!ack?`<button class="btn btn-primary btn-sm" onclick="markAcknowledged('${x.id}')">Mark Acknowledged</button>`:''}
+    </div>`;
+  document.getElementById('detail-modal').style.display='flex';
+}
+function closeDetail(){ document.getElementById('detail-modal').style.display='none'; }
+
+function markAcknowledged(id){
+  const sessions=getSessions(); const s=sessions.find(x=>x.id===id); if(!s) return;
+  s.status='acknowledged'; s.driverSignedAt=new Date().toISOString();
+  saveSessions(sessions); closeDetail(); renderKPI(); renderTable();
+}
+
+function openModal(){
+  editId=null; document.getElementById('modal-title').textContent='New Coaching Session';
+  document.getElementById('cs-id').value=genId();
+  document.getElementById('cs-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('cs-time').value=new Date().toTimeString().slice(0,5);
+  document.getElementById('cs-coach').value='Jim Burlew';
+  ['cs-driver','cs-driver-sig','cs-admin-sig','cs-issue-desc','cs-discussion','cs-action','cs-driver-resp','cs-objection'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['cs-dsig-ts','cs-asig-ts'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
+  document.getElementById('cs-sev').value='verbal';
+  document.getElementById('trigger-ref-group').style.display='none';
+  document.getElementById('followup-date-group').style.display='none';
+  document.getElementById('coach-modal').classList.add('open');
+}
+function closeModal(){ document.getElementById('coach-modal').classList.remove('open'); editId=null; }
+function showFollowup(){ document.getElementById('followup-date-group').style.display=document.getElementById('cs-followup').value==='yes'?'block':'none'; }
+
+function showTriggerRef(){
+  const trigger=document.getElementById('cs-trigger').value;
+  const group=document.getElementById('trigger-ref-group');
+  const label=document.getElementById('trigger-ref-label');
+  const sel=document.getElementById('cs-trigger-ref');
+  sel.innerHTML='<option value="">Select...</option>';
+  if(trigger==='camera_event'){
+    group.style.display='block'; label.textContent='Camera Event Reference';
+    getEvents().forEach(e=>{ sel.innerHTML+=`<option value="${e.id}">${e.id} — ${e.date} — ${e.type}</option>`; });
+  } else if(trigger==='incident'){
+    group.style.display='block'; label.textContent='Incident Report Reference';
+    getIncs().forEach(i=>{ sel.innerHTML+=`<option value="${i.id}">${i.id} — ${i.driverName} — ${i.date}</option>`; });
+  } else { group.style.display='none'; }
+}
+
+function gv(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
+
+function saveSession(){
+  if(!gv('cs-driver')){ alert('Driver required'); return; }
+  if(!gv('cs-issue-desc')){ alert('Issue description required'); return; }
+  const sessions=getSessions();
+  const driverSig=gv('cs-driver-sig');
+  const rec={
+    id:editId||gv('cs-id'), date:gv('cs-date'), time:gv('cs-time'),
+    driverName:gv('cs-driver'), coachName:gv('cs-coach'), sessionType:gv('cs-stype'),
+    triggeredBy:gv('cs-trigger'), triggerRef:gv('cs-trigger-ref'),
+    issueType:gv('cs-issue'), severity:gv('cs-sev'), issueDesc:gv('cs-issue-desc'),
+    discussion:gv('cs-discussion'), correctiveAction:gv('cs-action'),
+    followUpRequired:gv('cs-followup')==='yes', followUpDate:gv('cs-followup-date'),
+    driverResponse:gv('cs-driver-resp'), driverAgrees:gv('cs-agrees'), driverObjection:gv('cs-objection'),
+    driverSignature:driverSig, driverSignedAt:driverSig?new Date().toISOString():null,
+    adminSignature:gv('cs-admin-sig'), adminSignedAt:gv('cs-admin-sig')?new Date().toISOString():null,
+    status:driverSig?'acknowledged':'pending_acknowledgment', createdAt:new Date().toISOString()
+  };
+  if(editId){ const idx=sessions.findIndex(s=>s.id===editId); if(idx>=0) sessions[idx]=rec; }
+  else sessions.unshift(rec);
+  saveSessions(sessions); closeModal(); renderKPI(); renderTable();
+}
+
+function editSession(id){
+  const x=getSessions().find(s=>s.id===id); if(!x) return;
+  editId=id; openModal();
+  setTimeout(()=>{
+    const map={'cs-id':'id','cs-date':'date','cs-time':'time','cs-driver':'driverName','cs-coach':'coachName','cs-stype':'sessionType','cs-trigger':'triggeredBy','cs-trigger-ref':'triggerRef','cs-issue':'issueType','cs-sev':'severity','cs-issue-desc':'issueDesc','cs-discussion':'discussion','cs-action':'correctiveAction','cs-driver-resp':'driverResponse','cs-agrees':'driverAgrees','cs-objection':'driverObjection','cs-driver-sig':'driverSignature','cs-admin-sig':'adminSignature'};
+    Object.entries(map).forEach(([fid,key])=>{ const el=document.getElementById(fid); if(el&&x[key]) el.value=x[key]; });
+    if(x.driverSignedAt) document.getElementById('cs-dsig-ts').textContent=new Date(x.driverSignedAt).toLocaleString();
+    if(x.adminSignedAt) document.getElementById('cs-asig-ts').textContent=new Date(x.adminSignedAt).toLocaleString();
+    showTriggerRef(); showFollowup();
+  },50);
+}
+
+// Pre-fill from URL params: ?driver=X&trigger=camera_event&ref=camev123
+const urlParams=new URLSearchParams(location.search);
+if(urlParams.get('trigger')){ window.addEventListener('load',()=>{ openModal(); setTimeout(()=>{ if(urlParams.get('driver')) document.getElementById('cs-driver').value=urlParams.get('driver'); if(urlParams.get('trigger')){ document.getElementById('cs-trigger').value=urlParams.get('trigger'); showTriggerRef(); if(urlParams.get('ref')) document.getElementById('cs-trigger-ref').value=urlParams.get('ref'); } },200); }); }
+
+renderKPI(); renderTable();
+</script>
+</body>
+</html>

@@ -44,7 +44,7 @@
     { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','emails.html','doc-inbox.html'] },
     { key:'contacts',label:'Contacts',       pages:['contacts.html'] },
     { key:'taxhr',   label:'Tax & HR',       pages:['tax-forms.html','w9.html'] },
-    { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','insurance-kpi.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html'] },
+    { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','insurance-kpi.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html','incident-report.html','coi-management.html','claims.html','coaching-log.html'] },
     { key:'admin',   label:'Admin',          pages:['member-management.html','admin-users.html'] },
     { key:'intel',   label:'Intelligence',   pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html','search.html'] },
     { key:'comms',   label:'Communications', pages:['nexus-connect.html'] },
@@ -238,6 +238,10 @@
       lnk('dvir.html',                 I.dvir,    'DVIR History') +
       lnk('dot-compliance.html',       I.dot,     'DOT Compliance') +
       lnk('insurance-kpi.html',        I.dot,     'Insurance KPI') +
+      lnk('incident-report.html',      I.dot,     'Incident Reports') +
+      lnk('claims.html',               I.doc,     'Claims') +
+      lnk('coi-management.html',       I.doc,     'COI Registry') +
+      lnk('coaching-log.html',         I.dvir,    'Driver Coaching') +
       lnk('tires.html',                I.tire,    'Tires') +
       lnk('fuel.html',                 I.fuel,    'Fuel') +
       lnk('driver-services.html',      I.service, 'Driver Services') +
