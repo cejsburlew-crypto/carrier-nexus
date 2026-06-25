@@ -6,8 +6,8 @@
 <title>Email Import — Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-
+<script src="nexus-config.js?v=5"></script>
+<script src="nexus-sidebar.js" defer></script>
 <style>
 :root{--black:#0a0a0a;--gunmetal:#111827;--gl:#1c2535;--steel:#1e293b;--sb:#3b82f6;--white:#f1f5f9;--pink:#e91e8c;--muted:#6b7280;--mid:#9ca3af;--border:rgba(255,255,255,0.08);--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--orange:#f97316;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -137,10 +137,32 @@ select.asel option{background:#1c2535;}
 .er-form .ep-grid{grid-template-columns:1fr 1fr;}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 </style>
+
+<style id="nexus-responsive-fix">
+*{box-sizing:border-box;}
+body{overflow-x:hidden;}
+@media(max-width:768px){
+  .sidebar{display:none!important;}
+  .main,.content-area,.page-content,.content{margin-left:0!important;padding:12px!important;}
+  .topbar,.top-bar{padding:8px 12px!important;}
+  table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .kpi-row,.kpi-grid,.stat-row{grid-template-columns:1fr 1fr!important;gap:8px!important;}
+  .panels-row,.panel-grid{grid-template-columns:1fr!important;}
+  input,select,textarea{font-size:16px!important;min-height:44px!important;}
+  button,.btn{min-height:44px!important;font-size:14px!important;}
+  h1{font-size:20px!important;}
+  h2{font-size:16px!important;}
+  .modal-content,.modal-body{width:95vw!important;max-width:95vw!important;margin:10px auto!important;}
+  .form-grid,.field-row{grid-template-columns:1fr!important;}
+}
+@media(max-width:480px){
+  .kpi-row,.kpi-grid,.stat-row{grid-template-columns:1fr!important;}
+  .topbar-actions,.header-actions{gap:6px!important;}
+  .btn-sm{padding:6px 10px!important;font-size:13px!important;}
+}
+</style>
 </head>
 <body>
-<script src="nexus-config.js?v=6"></script>
-<script src="nexus-sidebar.js?v=6"></script>
 <div class="main-content">
   <div class="ph">
     <div><div class="pt">&#x1F4E5; EMAIL IMPORT</div><div class="ps">Gmail &#x2192; Review &amp; Assign &#x2192; Google Drive</div></div>

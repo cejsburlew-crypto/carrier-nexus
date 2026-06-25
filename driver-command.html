@@ -491,6 +491,43 @@ body{
 /* ── NAV BADGE ── */
 .nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
+
+<style id="touch-target-fix">
+/* Apple HIG / WCAG 2.5.5 — 44x44px minimum touch targets */
+@media(max-width:1024px){
+  button,.btn,a.btn,[role="button"]{min-height:44px!important;min-width:44px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;}
+  input[type="text"],input[type="number"],input[type="date"],input[type="time"],input[type="tel"],input[type="email"],select,textarea{min-height:44px!important;font-size:16px!important;padding:10px 12px!important;}
+  input[type="checkbox"],input[type="radio"]{min-width:24px!important;min-height:24px!important;cursor:pointer!important;}
+  label{font-size:14px!important;cursor:pointer!important;}
+  /* Fix sub-12px inline labels — bring up to 12px minimum */
+  .field-label,.form-label,.label-sm,.badge,.kpi-sub,.kpi-label,.stat-sub,.mid,.nav-badge{font-size:max(12px,1em)!important;}
+}
+</style>
+
+<style id="driver-sticky-nav">
+.driver-sticky-bar{display:none;}
+@media(max-width:768px){
+  .driver-sticky-bar{
+    display:flex;
+    position:fixed;bottom:0;left:0;right:0;
+    background:#0b0f1a;
+    border-top:1px solid #1e2d45;
+    z-index:9999;
+    padding:0 0 env(safe-area-inset-bottom) 0;
+  }
+  .driver-sticky-bar a{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:10px 4px;text-decoration:none;
+    font-size:10px;font-weight:700;letter-spacing:.05em;
+    color:#64748b;gap:4px;
+    transition:.12s;
+  }
+  .driver-sticky-bar a:hover,.driver-sticky-bar a.active{color:#e91e8c;}
+  .driver-sticky-bar a svg{width:22px;height:22px;}
+  /* push content above bar */
+  .action-section:last-child{padding-bottom:80px!important;}
+}
+</style>
 </head>
 <body>
 <script src="nexus-sidebar.js"></script>
@@ -592,6 +629,15 @@ body{
     <div style="flex:1;min-width:0;">
       <div class="action-label" style="color:#ef4444;">Report Incident</div>
       <div class="action-sub">Accident, breakdown, or near-miss</div>
+    </div>
+    <div class="action-arrow">›</div>
+  </div>
+
+  <div class="action-btn full" onclick="window.location.href='my-pay.html'" style="background:rgba(59,130,246,0.08);border-color:rgba(59,130,246,0.25);">
+    <div class="action-icon sm">💵</div>
+    <div style="flex:1;min-width:0;">
+      <div class="action-label" style="color:#3b82f6;">My Pay</div>
+      <div class="action-sub">Settlements, earnings &amp; deductions</div>
     </div>
     <div class="action-arrow">›</div>
   </div>
@@ -1053,5 +1099,30 @@ document.querySelectorAll('.nav-tab').forEach(tab=>{
   } catch(e){ console.warn('Safety widget error:', e); }
 })();
 </script>
+
+<!-- DRIVER STICKY BOTTOM NAV (mobile only) -->
+<div class="driver-sticky-bar" id="driver-sticky-nav">
+  <a href="driver-command.html" class="active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    HOME
+  </a>
+  <a href="pretrip.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+    INSPECT
+  </a>
+  <a href="upload.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+    UPLOAD
+  </a>
+  <a href="my-pay.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    MY PAY
+  </a>
+  <a href="incident-report.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    REPORT
+  </a>
+</div>
+
 </body>
 </html>
