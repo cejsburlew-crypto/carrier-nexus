@@ -552,6 +552,12 @@ body{
   </div>
 </div>
 
+<!-- SAFETY SCORE WIDGET -->
+<div class="section-head">My Safety Score</div>
+<div style="background:rgba(15,30,53,0.7);border:1px solid rgba(59,130,246,0.2);border-radius:14px;padding:16px;margin-bottom:16px;" id="driver-safety-widget">
+  <div style="font-size:12px;color:#64748b;">Loading safety score...</div>
+</div>
+
 <!-- QUICK ACTIONS -->
 <div class="section-head">Quick Actions</div>
 <div class="action-grid">
@@ -945,24 +951,97 @@ document.querySelectorAll('.nav-tab').forEach(tab=>{
 </script>
 <script src="nexus-lang.js"></script>
 <script>
-// Pre-Trip status badge
+// ─── DRIVER SAFETY WIDGET ────────────────────────────────────────────────────
 (function(){
   try {
-    var recs = JSON.parse(localStorage.getItem('nexus_pretrip_inspections')||'[]');
+    var dvirs   = JSON.parse(localStorage.getItem('nexus_pretrip_inspections')||'[]');
+    var rs      = JSON.parse(localStorage.getItem('nexus_rs_inspections')||'[]');
+    var drugs   = JSON.parse(localStorage.getItem('nexus_drug_tests')||'[]');
+    var today   = new Date().toISOString().slice(0,10);
+
+    // Identify current driver from session or fallback
+    var session = null;
+    try{ session = JSON.parse(sessionStorage.getItem('nexus_session')); }catch(e){}
+    var driverName = session ? (session.name||'') : '';
+    var driverShort = driverName.toUpperCase().split(' ')[0]; // e.g. AVIS
+
+    // Update pretrip button badge
     var badge = document.getElementById('pretrip-status-badge');
-    if(!badge) return;
-    if(!recs.length){ badge.textContent='No inspection on record — tap to start DVIR'; return; }
-    var today = new Date().toISOString().slice(0,10);
-    var todayRec = recs.find(function(r){ return r.date===today; });
-    if(todayRec){
-      badge.textContent='✅ Today's DVIR complete — '+todayRec.id+(todayRec.canDepart?' · Clear to operate':' · OOS defects present');
-      badge.style.color='#10b981';
-    } else {
-      var last = recs[0];
-      badge.textContent='⚠️ No DVIR today — last: '+last.date+' · Tap to inspect';
-      badge.style.color='#f59e0b';
+    if(badge){
+      var todayRec = dvirs.find(function(r){ return r.date===today && ((r.driverName||'').toUpperCase().includes(driverShort)||!driverShort); });
+      if(todayRec){
+        badge.textContent='✅ Today's DVIR complete — '+todayRec.id+(todayRec.canDepart?' · Clear to operate':' · OOS defects present');
+        badge.style.color='#10b981';
+      } else {
+        var last = dvirs.find(function(r){ return driverShort ? (r.driverName||'').toUpperCase().includes(driverShort) : true; });
+        if(last) badge.textContent='⚠️ No DVIR today — last: '+last.date+' · Tap to inspect';
+        else     badge.textContent='No inspection on record — tap to start DVIR';
+        badge.style.color='#f59e0b';
+      }
     }
-  } catch(e){}
+
+    // ─ Safety score calculation ─────────────────────────────────────────────
+    function daysAgo(n){ var d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
+    var d30  = daysAgo(30);
+    var d365 = daysAgo(365);
+
+    var myDvirs = dvirs.filter(function(r){
+      if(!driverShort) return true;
+      return (r.driverName||'').toUpperCase().includes(driverShort);
+    });
+    var recentDvirs = myDvirs.filter(function(r){ return r.date >= d30; });
+    var dvirScore   = Math.min(40, Math.round((recentDvirs.length / 20) * 40));
+    var dvirRate    = Math.min(100, Math.round((recentDvirs.length / 20) * 100));
+
+    var myRS = rs.filter(function(r){ return !driverShort || (r.driver||'').toUpperCase()===driverShort; });
+    var recentRS = myRS.filter(function(r){ return r.date >= d365; });
+    var rsScore = 40;
+    recentRS.forEach(function(r){
+      if(r.result==='oos') rsScore-=20;
+      else if(r.result==='violation') rsScore-=10;
+      else if(r.result==='warning') rsScore-=3;
+    });
+    rsScore = Math.max(0, rsScore);
+    var violations = recentRS.filter(function(r){ return r.result==='violation'||r.result==='oos'; }).length;
+
+    var myDrugs = drugs.filter(function(r){ return !driverShort || (r.driver||'').toUpperCase()===driverShort; });
+    var hasPositive = myDrugs.some(function(r){ return r.result==='positive'; });
+    var testedYTD   = myDrugs.filter(function(r){ return r.date >= today.slice(0,4)+'-01-01'; }).length;
+    var drugScore   = hasPositive ? 0 : (testedYTD>=1 ? 20 : 10);
+
+    var totalScore = dvirScore + rsScore + drugScore;
+    var grade = totalScore>=90?'A':totalScore>=80?'B':totalScore>=70?'C':totalScore>=60?'D':'F';
+    var gradeColor = {A:'#10b981',B:'#3b82f6',C:'#f59e0b',D:'#f97316',F:'#ef4444'}[grade];
+
+    // ─ Streak calculation ───────────────────────────────────────────────────
+    var streak = 0;
+    for(var i=0;i<60;i++){
+      var d = daysAgo(i);
+      var found = myDvirs.find(function(r){ return r.date===d; });
+      if(found) streak++;
+      else if(i>0) break;
+    }
+
+    // ─ Inject widget ────────────────────────────────────────────────────────
+    var widget = document.getElementById('driver-safety-widget');
+    if(!widget) return;
+    var gradeMsg = grade==='A'?'Outstanding — Keep it up!':grade==='B'?'Good standing':grade==='C'?'Room to improve':grade==='D'?'Action needed':'Critical — contact dispatch';
+    widget.innerHTML = '<div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;">'
+      +'<div style="width:64px;height:64px;border-radius:50%;border:3px solid '+gradeColor+';background:'+gradeColor+'18;display:flex;flex-direction:column;align-items:center;justify-content:center;">'
+      +'<span style="font-size:24px;font-weight:900;color:'+gradeColor+';">'+grade+'</span>'
+      +'<span style="font-size:9px;color:'+gradeColor+';font-weight:700;">'+totalScore+'/100</span>'
+      +'</div>'
+      +'<div>'
+      +'<div style="font-size:14px;font-weight:700;color:'+gradeColor+';">Safety Score: '+totalScore+'</div>'
+      +'<div style="font-size:12px;color:#94a3b8;margin-top:2px;">'+gradeMsg+'</div>'
+      +'<div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;">'
+      +'<div style="font-size:11px;color:#64748b;"><span style="color:'+(dvirRate>=80?'#10b981':dvirRate>=50?'#f59e0b':'#ef4444')+';font-weight:700;">'+dvirRate+'%</span> DVIR (30d)</div>'
+      +'<div style="font-size:11px;color:#64748b;"><span style="color:'+(violations===0?'#10b981':violations<=1?'#f59e0b':'#ef4444')+';font-weight:700;">'+violations+'</span> violations</div>'
+      +'<div style="font-size:11px;color:#64748b;"><span style="color:#10b981;font-weight:700;">🔥 '+streak+'d</span> streak</div>'
+      +'</div>'
+      +'</div>'
+      +'</div>';
+  } catch(e){ console.warn('Safety widget error:', e); }
 })();
 </script>
 </body>
