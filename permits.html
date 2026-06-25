@@ -281,6 +281,12 @@ tr:hover td{background:#f8fafc;}
       <div class="form-group full"><label class="form-label">Permit Doc URL (Google Drive / PDF link)</label><input type="url" id="perm-doc-url" class="form-input" placeholder="https://drive.google.com/file/d/..."></div>
       <div class="form-group full"><label class="form-label">Rate Con URL (Google Drive / PDF link)</label><input type="url" id="perm-rc-url" class="form-input" placeholder="https://drive.google.com/file/d/..."></div>
       <div class="form-group full"><label class="form-label">Notes</label><input type="text" id="perm-notes" class="form-input" placeholder="Commodity, axle config, special instructions…"></div>
+
+      <div class="form-group full" style="grid-column:1/-1;margin-top:4px;">
+        <div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:.1em;text-transform:uppercase;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:10px;">📋 Custom Restrictions (driver acknowledgment required)</div>
+        <div id="custom-restrictions-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;"></div>
+        <button type="button" onclick="addRestrictionRow()" style="background:rgba(59,130,246,.1);border:1px dashed rgba(59,130,246,.3);color:#93c5fd;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;width:100%;">+ Add Restriction</button>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closePermModal()">Cancel</button>
@@ -464,6 +470,7 @@ function openPermModal() {
   document.getElementById('perm-edit-id').value = '';
   document.getElementById('perm-date').value = new Date().toISOString().split('T')[0];
   ['perm-num','perm-cost','perm-expires','perm-load','perm-notes','perm-doc-url','perm-rc-url','perm-height','perm-width','perm-length','perm-weight','perm-route'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  clearRestrictionRows();
   document.getElementById('perm-modal').classList.add('open');
 }
 function closePermModal() { document.getElementById('perm-modal').classList.remove('open'); }
@@ -492,12 +499,57 @@ async function savePermit() {
     route: document.getElementById('perm-route').value || null,
     permit_doc_url: document.getElementById('perm-doc-url').value || null,
     rate_con_url: document.getElementById('perm-rc-url').value || null,
-    notes: document.getElementById('perm-notes').value
+    notes: document.getElementById('perm-notes').value,
+    restrictions: getCustomRestrictions()
   };
   if (editId) { await NexusDB.Permits.update(editId, rec); }
   else        { await NexusDB.Permits.create(rec); }
   closePermModal();
   await renderPermits();
+}
+
+// ── CUSTOM RESTRICTIONS BUILDER ─────────────────────────────────────────
+var _restrictionIdCounter = 0;
+
+function addRestrictionRow(type, text) {
+  var id = 'res_' + (++_restrictionIdCounter);
+  var row = document.createElement('div');
+  row.id = 'row_' + id;
+  row.style.cssText = 'display:flex;gap:6px;align-items:flex-start;background:rgba(30,45,69,.4);border:1px solid #1e2d45;border-radius:8px;padding:8px;';
+  row.innerHTML =
+    '<select id="rtype_'+id+'" style="background:#0b0f1a;border:1px solid #1e2d45;color:#e2e8f0;border-radius:6px;padding:5px 8px;font-size:11px;flex-shrink:0;">' +
+      '<option value="time">⏰ Time</option>' +
+      '<option value="route">🗺️ Route</option>' +
+      '<option value="escort">🚔 Escort</option>' +
+      '<option value="speed">⚡ Speed</option>' +
+      '<option value="size">📐 Size</option>' +
+      '<option value="weight">⚖️ Weight</option>' +
+      '<option value="other">⚠️ Other</option>' +
+    '</select>' +
+    '<input id="rtxt_'+id+'" type="text" placeholder="Restriction description…" style="flex:1;background:#0b0f1a;border:1px solid #1e2d45;color:#e2e8f0;border-radius:6px;padding:5px 8px;font-size:12px;" value="">' +
+    '<button type="button" onclick="document.getElementById('row_'+id+'').remove()" style="background:none;border:none;color:#64748b;cursor:pointer;font-size:16px;padding:2px 6px;flex-shrink:0;">✕</button>';
+  if (type) { var sel = row.querySelector('select'); if(sel) sel.value = type; }
+  if (text) { var inp = row.querySelector('input'); if(inp) inp.value = text; }
+  document.getElementById('custom-restrictions-list').appendChild(row);
+}
+
+function getCustomRestrictions() {
+  var rows = document.querySelectorAll('#custom-restrictions-list > div[id^="row_"]');
+  var list = [];
+  rows.forEach(function(row) {
+    var id    = row.id.replace('row_','');
+    var tEl   = document.getElementById('rtype_'+id);
+    var txtEl = document.getElementById('rtxt_'+id);
+    var t     = tEl ? tEl.value : 'other';
+    var txt   = txtEl ? txtEl.value.trim() : '';
+    if (txt) list.push({ id: 'cr_'+Date.now()+'_'+Math.random().toString(36).slice(2), type: t, text: txt });
+  });
+  return list;
+}
+
+function clearRestrictionRows() {
+  document.getElementById('custom-restrictions-list').innerHTML = '';
+  _restrictionIdCounter = 0;
 }
 
 function editPerm(id) {
@@ -525,6 +577,11 @@ function editPerm(id) {
   setOpt('perm-escort',  p.escort);
   setOpt('perm-travel',  p.travel_window);
   document.getElementById('perm-route').value  = p.route  || '';
+  // Load custom restrictions
+  clearRestrictionRows();
+  if (p.restrictions && p.restrictions.length) {
+    p.restrictions.forEach(function(r) { addRestrictionRow(r.type, r.text); });
+  }
   document.getElementById('perm-modal').classList.add('open');
 }
 
@@ -819,7 +876,7 @@ document.getElementById('detail-overlay').addEventListener('click', function(e){
 </script>
 
 <nav class="mobile-nav">
-  <a href="index.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>DASH</a>
+  <a href="fleet-command.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>DASH</a>
   <a href="settlements.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>PAY</a>
   <a href="documents.html" class="mn-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>DOCS</a>
   <a href="permits.html" class="mn-tab active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v12a2 2 0 01-2 2z"/></svg>PERMITS</a>

@@ -177,6 +177,7 @@
     market:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1-6h16l1 6"/><path d="M3 9h18v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9z"/><path d="M9 9v6m6-6v6"/></svg>',
     people:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
     signal:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>',
+    star:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
     wallet:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 12h.01M2 10h20"/><path d="M14 12a2 2 0 0 1 4 0v2a2 2 0 0 1-4 0v-2z"/></svg>',
   };
 
@@ -194,7 +195,7 @@
     ) +
     sec('dispatch', 'Dispatch',
       lnk('dispatch-board.html', I.truck, 'Dispatch Board') +
-      lnk('dispatcher-hub.html',       I.monitor, 'Dispatch Board') +
+      lnk('dispatcher-hub.html',       I.monitor, 'Dispatcher Hub') +
       lnk('load-board.html',           I.map,     'Load Board') +
       lnk('commissions.html',          I.comm,    'Commissions') +
       lnk('available-dispatchers.html',I.team,    'Dispatcher Roster') +
@@ -207,7 +208,9 @@
       lnk('driver-profile.html',         I.person,  'My Profile') +
       lnk('driver-availability.html',  I.signal,  'Availability Network') +
       lnk('equipment-marketplace.html', I.market,  'Equipment Marketplace') +
-      lnk('social-recruiting.html',     I.people,  'Community &amp; Jobs')
+      lnk('social-recruiting.html',     I.people,  'Community &amp; Jobs') +
+      lnk('nexus-feed.html',            I.signal,  'The Road Book') +
+      lnk('driver-trophies.html',       I.star,    'Hall of Bragging')
     ) +
     sec('finance', 'Finance',
       lnk('invoicing.html',            I.invoice, 'Invoicing') +

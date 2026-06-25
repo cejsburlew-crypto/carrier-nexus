@@ -1238,10 +1238,10 @@ body {
     var html='';
     if(critical.length){
       var names = critical.slice(0,3).map(function(a){ return (a.driverName||a.driver||'')+(a.type?' '+a.type:''); }).join(', ');
-      html += '<div class="exp-strip critical"><div class="exp-strip-left"><div class="exp-strip-icon">🚨</div><div class="exp-strip-text"><span class="exp-strip-count">'+critical.length+' expiring in ≤14 days:</span> '+names+(critical.length>3?' +more':'')+'</div></div><a href="expiration-alerts.html" class="exp-strip-link">View All →</a></div>';
+      html += '<div class="exp-strip critical"><div class="exp-strip-left"><div class="exp-strip-icon">🚨</div><div class="exp-strip-text"><span class="exp-strip-count">'+critical.length+' expiring in ≤14 days:</span> '+names+(critical.length>3?' +more':'')+'</div></div><a href="fleet-command.html" class="exp-strip-link">View All →</a></div>';
     }
     if(warning.length){
-      html += '<div class="exp-strip warning"><div class="exp-strip-left"><div class="exp-strip-icon">⚠️</div><div class="exp-strip-text"><span class="exp-strip-count">'+warning.length+' expiring in 15–30 days</span> — renew soon</div></div><a href="expiration-alerts.html" class="exp-strip-link">View All →</a></div>';
+      html += '<div class="exp-strip warning"><div class="exp-strip-left"><div class="exp-strip-icon">⚠️</div><div class="exp-strip-text"><span class="exp-strip-count">'+warning.length+' expiring in 15–30 days</span> — renew soon</div></div><a href="fleet-command.html" class="exp-strip-link">View All →</a></div>';
     }
     strip.innerHTML = html;
   }catch(e){}

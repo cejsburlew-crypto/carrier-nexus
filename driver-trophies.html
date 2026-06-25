@@ -3,73 +3,96 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Driver Trophies — Carrier Nexus</title>
+<title>Driver Hall of Bragging — Carrier Nexus</title>
 <style>
 :root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7;--pink:#ec4899;--gold:#f59e0b;--silver:#94a3b8;--bronze:#b45309;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
-/* ── HEADER ── */
+/* HEADER */
 .hdr{background:linear-gradient(135deg,#0b0f1a 0%,#1a1035 50%,#2d1b69 100%);border-bottom:1px solid rgba(168,85,247,.3);padding:20px 24px 18px;position:relative;overflow:hidden;}
 .hdr::before{content:'🏆';position:absolute;right:24px;top:50%;transform:translateY(-50%);font-size:80px;opacity:.07;pointer-events:none;}
-.hdr-top{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
-.hdr-back{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:var(--text);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
-.hdr-title{font-size:24px;font-weight:900;letter-spacing:-.02em;}
-.hdr-sub{font-size:12px;color:var(--mid);}
+.hdr-back{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:var(--text);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+.hdr-title{font-size:22px;font-weight:900;letter-spacing:-.02em;}
+.hdr-sub{font-size:12px;color:var(--mid);margin-top:2px;}
 .bureau-stamp{display:inline-flex;align-items:center;gap:6px;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.3);border-radius:99px;padding:4px 12px;font-size:10px;font-weight:800;color:#c084fc;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;}
-
-/* ── CONTENT ── */
-.content{padding:20px 20px 60px;max-width:900px;margin:0 auto;}
-
-/* ── TABS ── */
-.tabs{display:flex;gap:0;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:20px;overflow-x:auto;}
-.tab{flex:1;min-width:100px;text-align:center;padding:9px 12px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;color:var(--mid);transition:.15s;white-space:nowrap;}
+/* CONTENT */
+.content{padding:20px 20px 80px;max-width:960px;margin:0 auto;}
+/* TABS */
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:20px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tab{flex:1;min-width:80px;text-align:center;padding:9px 10px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;color:var(--mid);transition:.15s;white-space:nowrap;}
 .tab.active{background:var(--purple);color:#fff;}
-
-/* ── LEADERBOARD ── */
-.lb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:24px;}
+/* LEADERBOARD */
+.lb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-bottom:24px;}
 .lb-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;overflow:hidden;}
 .lb-card::before{content:'';position:absolute;inset:0;opacity:.04;pointer-events:none;}
 .lb-card.gold::before{background:var(--gold);}
-.lb-card.silver::before{background:var(--silver);}
 .lb-card.blue::before{background:var(--blue);}
 .lb-card.green::before{background:var(--green);}
 .lb-card.purple::before{background:var(--purple);}
-.lb-crown{font-size:28px;margin-bottom:6px;}
-.lb-cat{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:4px;}
-.lb-leader{font-size:17px;font-weight:800;margin-bottom:2px;}
-.lb-val{font-size:13px;color:var(--mid);}
-.lb-medal{position:absolute;top:12px;right:12px;font-size:22px;opacity:.8;}
+.lb-crown{font-size:26px;margin-bottom:4px;}
+.lb-cat{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:3px;}
+.lb-leader{font-size:16px;font-weight:800;margin-bottom:2px;}
+.lb-val{font-size:12px;color:var(--mid);}
+.lb-medal{position:absolute;top:12px;right:12px;font-size:20px;opacity:.8;}
 .lb-runners{margin-top:10px;border-top:1px solid var(--border);padding-top:8px;display:flex;flex-direction:column;gap:4px;}
 .lb-runner{display:flex;justify-content:space-between;align-items:center;font-size:11px;}
-.lb-runner-name{color:var(--text);}
-.lb-runner-val{color:var(--mid);font-variant-numeric:tabular-nums;}
-
-/* ── DRIVER PROFILE CARD ── */
-.driver-cards{display:flex;flex-direction:column;gap:16px;}
-.driver-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
-.driver-card-head{padding:16px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border);}
-.driver-avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;flex-shrink:0;}
-.driver-info{flex:1;}
-.driver-name{font-size:16px;font-weight:800;}
-.driver-unit{font-size:11px;color:var(--mid);}
-.driver-stats{display:flex;gap:16px;margin-top:2px;}
-.driver-stat{font-size:11px;color:var(--mid);}
-.driver-stat strong{color:var(--text);}
-.trophy-count{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:var(--gold);border-radius:99px;padding:4px 12px;font-size:11px;font-weight:800;flex-shrink:0;}
-
-/* ── BADGE GRID ── */
-.badge-grid{padding:16px 20px;display:flex;flex-wrap:wrap;gap:8px;}
-.badge{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;min-width:160px;flex:1;max-width:220px;position:relative;transition:.15s;cursor:default;}
+/* RANK STYLES */
+.rank-insignia{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:800;letter-spacing:.04em;}
+.rank-e1{background:rgba(100,116,139,.15);border:1px solid rgba(100,116,139,.3);color:#94a3b8;}
+.rank-e2{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);color:#93c5fd;}
+.rank-e3{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#6ee7b7;}
+.rank-e4{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:#fcd34d;}
+.rank-e5{background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);color:#fdba74;}
+.rank-e6{background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.4);color:#d8b4fe;}
+/* DRIVER SERVICE CARD */
+.service-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px;}
+.service-head{padding:16px 20px;display:flex;align-items:flex-start;gap:14px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,var(--panel) 0%,rgba(30,45,69,.5) 100%);}
+.service-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;flex-shrink:0;}
+.service-identity{flex:1;}
+.service-name{font-size:16px;font-weight:800;}
+.service-unit{font-size:11px;color:var(--mid);margin-bottom:6px;}
+.service-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.tis-badge{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);border-radius:8px;padding:4px 10px;font-size:11px;color:#93c5fd;font-weight:700;}
+.enlist-badge{background:rgba(100,116,139,.1);border:1px solid rgba(100,116,139,.2);border-radius:8px;padding:4px 10px;font-size:11px;color:#94a3b8;font-weight:600;}
+.service-rank-block{text-align:right;flex-shrink:0;}
+.rank-title{font-size:13px;font-weight:900;margin-bottom:4px;}
+.chevrons{display:flex;gap:2px;justify-content:flex-end;margin-bottom:3px;}
+.chev{width:8px;height:10px;background:var(--mid);clip-path:polygon(50% 0%,100% 100%,0% 100%);opacity:.7;}
+.chev.active{opacity:1;background:#fcd34d;}
+.rocker{width:12px;height:4px;background:var(--mid);border-radius:1px;}
+.rocker.active{background:#fcd34d;}
+/* RIBBON RACK */
+.ribbon-rack{padding:14px 20px;border-bottom:1px solid var(--border);}
+.ribbon-rack-title{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;}
+.ribbon-row{display:flex;flex-wrap:wrap;gap:6px;}
+.ribbon{display:flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;position:relative;}
+.ribbon-color{width:5px;height:32px;border-radius:3px;flex-shrink:0;}
+.ribbon-info{flex:1;}
+.ribbon-type{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;}
+.ribbon-loads{font-size:10px;color:var(--mid);margin-top:1px;}
+.ribbon-stars{display:flex;gap:2px;margin-top:3px;}
+.r-star{font-size:10px;}
+.r-star.bronze{color:#b45309;}
+.r-star.silver{color:#94a3b8;}
+.r-star.gold{color:#f59e0b;}
+.r-star.diamond{color:#a855f7;}
+.ribbon.locked{opacity:.3;filter:grayscale(.8);}
+.ribbon-none{font-size:11px;color:var(--mid);font-style:italic;}
+/* BADGE GRID */
+.badge-section{padding:14px 20px;}
+.badge-section-title{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;}
+.badge-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.badge{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;min-width:150px;flex:1;max-width:210px;position:relative;cursor:default;}
 .badge.earned{border-color:rgba(168,85,247,.4);background:rgba(168,85,247,.06);}
 .badge.earned.gold-badge{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.06);}
 .badge.earned.green-badge{border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.06);}
 .badge.earned.blue-badge{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.06);}
 .badge.earned.red-badge{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.06);}
-.badge.locked{opacity:.35;filter:grayscale(1);}
-.badge-icon{font-size:22px;flex-shrink:0;}
+.badge.locked{opacity:.3;filter:grayscale(1);}
+.badge-icon{font-size:20px;flex-shrink:0;}
 .badge-info{flex:1;min-width:0;}
 .badge-name{font-size:11px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.badge-desc{font-size:10px;color:var(--mid);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.badge-desc{font-size:10px;color:var(--mid);margin-top:1px;}
 .badge-val{font-size:10px;font-weight:700;margin-top:2px;}
 .badge-val.gold-val{color:var(--gold);}
 .badge-val.green-val{color:var(--green);}
@@ -78,350 +101,480 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .badge-val.purple-val{color:var(--purple);}
 .verified-pip{position:absolute;top:-3px;right:-3px;width:14px;height:14px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;border:2px solid var(--panel);}
 .badge.locked .verified-pip{display:none;}
-
-/* ── CN VERIFIED DISCLAIMER ── */
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);}
+.stat-cell{background:var(--panel);padding:10px 14px;text-align:center;}
+.stat-num{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;}
+.stat-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);margin-top:2px;}
+/* DISCLAIMER */
 .disclaimer{background:rgba(168,85,247,.05);border:1px dashed rgba(168,85,247,.2);border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:11px;color:var(--mid);line-height:1.6;}
 .disclaimer strong{color:var(--purple);}
-
-/* ── EMPTY ── */
+/* FLEET FUN FACTS */
+.funfacts{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px;}
+.ff-title{font-size:12px;font-weight:800;color:var(--text);margin-bottom:12px;}
+.ff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;}
+.ff-item{background:var(--panel2);border-radius:8px;padding:10px 12px;}
+.ff-val{font-size:16px;font-weight:800;color:var(--blue);}
+.ff-lbl{font-size:10px;color:var(--mid);margin-top:2px;}
 .empty{text-align:center;padding:40px;color:var(--mid);font-size:13px;}
-
-/* ── RESPONSIVE ── */
 @media(max-width:600px){
+  .stats-row{grid-template-columns:repeat(2,1fr);}
   .lb-grid{grid-template-columns:1fr 1fr;}
-  .badge{min-width:140px;}
   .hdr-title{font-size:18px;}
+  .service-head{flex-wrap:wrap;}
 }
 </style>
 </head>
 <body>
 
 <div class="hdr">
-  <div class="hdr-top">
-    <a href="fleet-command.html" class="hdr-back">← Back</a>
-  </div>
+  <a href="fleet-command.html" class="hdr-back">← Back</a>
   <div class="hdr-title">🏆 Driver Hall of Bragging</div>
-  <div class="hdr-sub">Achievements, records, and completely official honors</div>
+  <div class="hdr-sub">Service records, haul ribbons, and completely official honors</div>
   <div class="bureau-stamp">🔏 CN Bureau of Official Bragging™ · Est. 2026 · Probably Legitimate</div>
 </div>
 
 <div class="content">
-
   <div class="disclaimer">
-    <strong>CN Bureau of Official Bragging™ — Official Disclaimer:</strong> All badges are computed from actual Carrier Nexus dispatch data and are therefore <em>indisputably real</em>. Disputes may be filed with the Bureau (there is no Bureau). Badges displayed on your profile are <strong>CN-Confirmed™</strong>, meaning we ran the numbers, the numbers checked out, and frankly we're a little impressed. Rival drivers may contest results in the break room. Results will not change.
+    <strong>CN Bureau of Official Bragging™ — Official Disclaimer:</strong> All ranks, ribbons, and badges are computed from actual Carrier Nexus dispatch data and are therefore <em>indisputably real</em>. Disputes may be filed with the Bureau (there is no Bureau). Your <strong>CN-Confirmed™</strong> rank and haul ribbons reflect genuine time in service, miles driven, and loads delivered. Rival drivers may contest results in the break room. Results will not change.
   </div>
 
   <div class="tabs">
-    <div class="tab active" onclick="showTab('leaderboard',this)">🏅 Leaderboard</div>
-    <div class="tab" onclick="showTab('badges',this)">🎖 All Badges</div>
-    <div class="tab" onclick="showTab('profile',this)">👤 My Profile</div>
+    <div class="tab active"     onclick="showTab('leaderboard',this)">🏅 Leaderboard</div>
+    <div class="tab"            onclick="showTab('ribbons',this)">🎀 Haul Ribbons</div>
+    <div class="tab"            onclick="showTab('badges',this)">🎖 Badges</div>
+    <div class="tab"            onclick="showTab('service',this)">📋 Service Records</div>
   </div>
 
   <div id="tab-leaderboard"></div>
-  <div id="tab-badges" style="display:none;"></div>
-  <div id="tab-profile" style="display:none;"></div>
-
+  <div id="tab-ribbons"     style="display:none;"></div>
+  <div id="tab-badges"      style="display:none;"></div>
+  <div id="tab-service"     style="display:none;"></div>
 </div>
 
 <script src="nexus-config.js"></script>
 <script>
-// ── DATA LAYER ─────────────────────────────────────────────────────────────
+// ── DRIVERS ────────────────────────────────────────────────────────────────
 var DRIVERS = (typeof NEXUS_FLEET !== 'undefined' ? NEXUS_FLEET : [
-  {id:'AVIS',   name:'Avis Modesto',     unit:'01'},
-  {id:'DAVID',  name:'David Fonseca',    unit:'09'},
-  {id:'MIGUEL', name:'Miguel Fonseca',   unit:'05'},
-  {id:'NELSON', name:'Nelson Veliz',     unit:'06'},
-  {id:'YOSVIEL',name:'Yosviel Pinera',   unit:'03'},
-  {id:'GUILLERMO',name:'Guillermo Pinera',unit:'02'},
-  {id:'JAYLER', name:'Jayler Labrada',   unit:'11'},
+  {id:'AVIS',    name:'Avis Modesto',      unit:'01'},
+  {id:'DAVID',   name:'David Fonseca',     unit:'09'},
+  {id:'MIGUEL',  name:'Miguel Fonseca',    unit:'05'},
+  {id:'NELSON',  name:'Nelson Veliz',      unit:'06'},
+  {id:'YOSVIEL', name:'Yosviel Pinera',    unit:'03'},
+  {id:'GUILLERMO',name:'Guillermo Pinera', unit:'02'},
+  {id:'JAYLER',  name:'Jayler Labrada',    unit:'11'},
 ]).filter(function(d){ return d.id && d.id !== 'AMET' && d.id !== 'BETTY'; });
 
-function getLoads() {
-  try { return JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]'); } catch(e) { return []; }
-}
-function getSettlements() {
-  try { return JSON.parse(localStorage.getItem('nexus_settlements') || '[]'); } catch(e) { return []; }
-}
-function getPretrips() {
-  try { return JSON.parse(localStorage.getItem('nexus_pretrip_inspections') || '[]'); } catch(e) { return []; }
-}
-function getExpenses() {
-  try { return JSON.parse(localStorage.getItem('nexus_expenses') || '[]'); } catch(e) { return []; }
-}
-function getIncidents() {
-  try { return JSON.parse(localStorage.getItem('nexus_incidents') || '[]'); } catch(e) { return []; }
+// ── RANK SYSTEM ────────────────────────────────────────────────────────────
+// Each rank: { id, title, emoji, minLoads, minMiles, minStates, minClean, chevrons, rockers, cls }
+var RANKS = [
+  {id:'e1',title:'Greenhorn',    emoji:'🟢', minLoads:0,   minMiles:0,      minStates:0,  minClean:0,  chevrons:0, rockers:0, cls:'rank-e1'},
+  {id:'e2',title:'Wrench Turner',emoji:'🔧', minLoads:5,   minMiles:3750,   minStates:0,  minClean:0,  chevrons:1, rockers:0, cls:'rank-e2'},
+  {id:'e3',title:'Road Dog',     emoji:'🐕', minLoads:20,  minMiles:15000,  minStates:3,  minClean:0,  chevrons:2, rockers:0, cls:'rank-e3'},
+  {id:'e4',title:'Gear Jammer',  emoji:'⚙️', minLoads:50,  minMiles:37500,  minStates:8,  minClean:5,  chevrons:3, rockers:0, cls:'rank-e4'},
+  {id:'e5',title:'Road Captain', emoji:'⭐', minLoads:100, minMiles:75000,  minStates:15, minClean:10, chevrons:3, rockers:1, cls:'rank-e5'},
+  {id:'e6',title:'Pavement Ghost',emoji:'👻',minLoads:300, minMiles:225000, minStates:25, minClean:20, chevrons:3, rockers:2, cls:'rank-e6'},
+];
+
+// ── HAUL TYPE RIBBONS ──────────────────────────────────────────────────────
+// key = equipment field value in nexus_loads_v2
+// color = CSS color for the ribbon stripe
+var HAUL_TYPES = [
+  {key:'dry_van',    label:'Dry Van',     color:'#64748b', emoji:'📦'},
+  {key:'reefer',     label:'Reefer',      color:'#3b82f6', emoji:'❄️'},
+  {key:'flatbed',    label:'Flatbed',     color:'#b45309', emoji:'🔩'},
+  {key:'step_deck',  label:'Step Deck',   color:'#059669', emoji:'⬇️'},
+  {key:'rgn',        label:'RGN / Heavy', color:'#dc2626', emoji:'🏋️'},
+  {key:'car_hauler', label:'Car Hauler',  color:'#0891b2', emoji:'🚗'},
+  {key:'tanker',     label:'Tanker',      color:'#7c3aed', emoji:'🛢️'},
+  {key:'lowboy',     label:'Lowboy',      color:'#c2410c', emoji:'🦺'},
+  {key:'box_truck',  label:'Box Truck',   color:'#ca8a04', emoji:'📫'},
+  {key:'power_only', label:'Power Only',  color:'#6b7280', emoji:'⚡'},
+  {key:'oversized',  label:'Oversized',   color:'#9d174d', emoji:'📏'},
+];
+
+// Ribbon tiers: loads needed for each star level
+// 1=bronze, 5=silver, 15=gold, 30=diamond, 50=crown
+var RIBBON_TIERS = [
+  {loads:1,  star:'🟤', cls:'bronze', title:'Rookie'},
+  {loads:5,  star:'⚪', cls:'silver', title:'Journeyman'},
+  {loads:15, star:'🟡', cls:'gold',   title:'Veteran'},
+  {loads:30, star:'🟣', cls:'diamond',title:'Master'},
+  {loads:50, star:'👑', cls:'crown',  title:'Specialist'},
+];
+
+// ── STORAGE HELPERS ────────────────────────────────────────────────────────
+function getLoads()    { try{return JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]');}catch(e){return[];} }
+function getPretrips() { try{return JSON.parse(localStorage.getItem('nexus_pretrip_inspections')||'[]');}catch(e){return[];} }
+function getIncidents(){ try{return JSON.parse(localStorage.getItem('nexus_incidents')||'[]');}catch(e){return[];} }
+function getCareers()  { try{return JSON.parse(localStorage.getItem('nexus_driver_careers')||'{}');}catch(e){return{};} }
+
+// ── TIS (TIME IN SERVICE) ──────────────────────────────────────────────────
+function calcTIS(startDate) {
+  if (!startDate) return null;
+  var start = new Date(startDate);
+  var now   = new Date();
+  if (isNaN(start)) return null;
+  var months = (now.getFullYear()-start.getFullYear())*12 + (now.getMonth()-start.getMonth());
+  if (months < 0) months = 0;
+  var yrs = Math.floor(months/12);
+  var mo  = months % 12;
+  if (yrs === 0 && mo === 0) return 'Less than 1 month';
+  if (yrs === 0) return mo+'mo';
+  if (mo  === 0) return yrs+(yrs===1?' yr':' yrs');
+  return yrs+(yrs===1?' yr':' yrs')+' '+mo+'mo';
 }
 
-// ── COMPUTE PER-DRIVER STATS ───────────────────────────────────────────────
+// ── COMPUTE STATS ──────────────────────────────────────────────────────────
 function computeStats(driverId) {
-  var loads     = getLoads();
-  var settles   = getSettlements();
-  var pretrips  = getPretrips();
-  var expenses  = getExpenses();
-  var incidents = getIncidents();
-  var dId       = driverId.toUpperCase();
+  var loads    = getLoads();
+  var pretrips = getPretrips();
+  var careers  = getCareers();
+  var dId      = driverId.toUpperCase();
+  var career   = careers[dId] || {};
 
-  var myLoads = loads.filter(function(l){ return (l.driver||'').toUpperCase() === dId; });
-  var mySettles = settles.filter(function(s){ return (s.driverId||s.driver||'').toUpperCase() === dId; });
-  var myPretrips = pretrips.filter(function(p){ return (p.driverId||p.driverName||'').toUpperCase().includes(dId); });
-  var myExpenses = expenses.filter(function(e){ return (e.driver||'').toUpperCase() === dId && !e.deleted; });
-  var myIncidents = incidents.filter(function(i){ return (i.driver||'').toUpperCase() === dId; });
+  var myLoads    = loads.filter(function(l){return (l.driver||'').toUpperCase()===dId;});
+  var myPretrips = pretrips.filter(function(p){return (p.driverId||p.driverName||'').toUpperCase().includes(dId);});
 
-  // Miles
-  var totalMiles = myLoads.reduce(function(s,l){ return s + (parseFloat(l.miles)||0); }, 0);
+  // Miles + Revenue
+  var cnMiles   = myLoads.reduce(function(s,l){return s+(parseFloat(l.miles)||0);},0);
+  var cnRevenue = myLoads.reduce(function(s,l){return s+(parseFloat(l.rate)||0);},0);
+  var preMiles  = parseFloat(career.preCnMiles)  || 0;
+  var preLoads  = parseFloat(career.preCnLoads)  || 0;
+  var totalMiles   = Math.round(cnMiles + preMiles);
+  var totalRevenue = Math.round(cnRevenue);
+  var totalLoads   = myLoads.length + preLoads;
 
-  // Revenue
-  var totalRevenue = myLoads.reduce(function(s,l){ return s + (parseFloat(l.rate)||0); }, 0);
-
-  // States visited (unique)
+  // States
   var states = {};
   myLoads.forEach(function(l){
-    if(l.originState) states[l.originState.toUpperCase()] = 1;
-    if(l.destState)   states[l.destState.toUpperCase()] = 1;
+    if(l.originState) states[l.originState.toUpperCase()]=1;
+    if(l.destState)   states[l.destState.toUpperCase()]=1;
   });
   var uniqueStates = Object.keys(states).length;
 
-  // Loads delivered
-  var deliveredLoads = myLoads.filter(function(l){ return l.status === 'delivered'; }).length;
-  var totalLoads = myLoads.length;
-
-  // Pre-trips clean streak (consecutive with no defects)
-  var cleanStreak = 0;
-  var longestClean = 0;
-  var totalPretrips = myPretrips.length;
+  // Clean streak
+  var cleanStreak=0, longestClean=0;
   myPretrips.forEach(function(p){
-    if(p.defectCount === 0){
-      cleanStreak++; longestClean = Math.max(longestClean, cleanStreak);
-    } else { cleanStreak = 0; }
+    if(p.defectCount===0){cleanStreak++;longestClean=Math.max(longestClean,cleanStreak);}
+    else{cleanStreak=0;}
   });
 
-  // Night owl: loads with pickup time after 10pm or before 5am
+  // Longest single haul
+  var longestHaul = myLoads.reduce(function(mx,l){return Math.max(mx,parseFloat(l.miles)||0);},0);
+
+  // Night loads
   var nightLoads = myLoads.filter(function(l){
-    if(!l.pickupDate) return false;
-    var d = new Date(l.pickupDate);
-    var h = d.getHours();
-    return h >= 22 || h < 5;
+    if(!l.pickupDate)return false;
+    var h=new Date(l.pickupDate).getHours();return h>=22||h<5;
   }).length;
 
-  // Incidents (none = clean)
-  var hasIncidents = myIncidents.length;
-
-  // Longest single haul
-  var longestHaul = myLoads.reduce(function(max,l){ return Math.max(max, parseFloat(l.miles)||0); }, 0);
-
-  // RPM
-  var rpm = totalMiles > 0 ? (totalRevenue / totalMiles) : 0;
+  // Haul type breakdown (CN loads only)
+  var haulCounts = {};
+  myLoads.forEach(function(l){
+    var eq = (l.equipment||'other').toLowerCase().trim().replace(/[^a-z_]/g,'');
+    haulCounts[eq] = (haulCounts[eq]||0) + 1;
+  });
 
   return {
-    totalMiles:Math.round(totalMiles), totalRevenue:Math.round(totalRevenue),
-    uniqueStates:uniqueStates, totalLoads:totalLoads, deliveredLoads:deliveredLoads,
-    longestClean:longestClean, totalPretrips:totalPretrips, nightLoads:nightLoads,
-    hasIncidents:hasIncidents, longestHaul:Math.round(longestHaul), rpm:rpm,
-    fuelExpenses: myExpenses.filter(function(e){ return e.category==='Fuel'; }).length
+    totalMiles:totalMiles, cnMiles:Math.round(cnMiles), preMiles:preMiles,
+    totalRevenue:totalRevenue, totalLoads:totalLoads, cnLoads:myLoads.length,
+    uniqueStates:uniqueStates, longestClean:longestClean, longestHaul:Math.round(longestHaul),
+    nightLoads:nightLoads, haulCounts:haulCounts,
+    startDate: career.startDate || null,
+    tis: calcTIS(career.startDate),
   };
+}
+
+// ── GET RANK ───────────────────────────────────────────────────────────────
+function getRank(stats) {
+  var best = RANKS[0];
+  RANKS.forEach(function(r){
+    if(stats.totalLoads>=r.minLoads && stats.totalMiles>=r.minMiles &&
+       stats.uniqueStates>=r.minStates && stats.longestClean>=r.minClean) best=r;
+  });
+  return best;
+}
+
+// ── GET HAUL RIBBONS ───────────────────────────────────────────────────────
+function getHaulRibbons(stats) {
+  return HAUL_TYPES.map(function(ht){
+    var count = stats.haulCounts[ht.key] || 0;
+    var tier  = null;
+    for(var i=RIBBON_TIERS.length-1; i>=0; i--){
+      if(count >= RIBBON_TIERS[i].loads){ tier = RIBBON_TIERS[i]; break; }
+    }
+    return {type:ht, count:count, tier:tier, earned:count>0};
+  });
+}
+
+// ── RENDER CHEVRONS ────────────────────────────────────────────────────────
+function renderChevrons(rank) {
+  var html = '<div class="chevrons">';
+  for(var i=0;i<3;i++) html += '<div class="chev'+(i<rank.chevrons?' active':'')+'"></div>';
+  html += '</div><div style="display:flex;gap:2px;justify-content:flex-end;margin-top:2px;">';
+  for(var j=0;j<2;j++) html += '<div class="rocker'+(j<rank.rockers?' active':'')+'"></div>';
+  html += '</div>';
+  return html;
+}
+
+// ── RENDER RIBBON RACK ─────────────────────────────────────────────────────
+function renderRibbonRack(ribbons) {
+  var earned = ribbons.filter(function(r){return r.earned;});
+  if(!earned.length) return '<div class="ribbon-none">No haul type ribbons yet — get dispatched!</div>';
+  var html = '';
+  earned.forEach(function(r){
+    var starsHtml = '';
+    RIBBON_TIERS.forEach(function(t){
+      if(r.count >= t.loads) starsHtml += '<span class="r-star '+t.cls+'" title="'+t.title+'">★</span>';
+    });
+    html += '<div class="ribbon">'+
+      '<div class="ribbon-color" style="background:'+r.type.color+';"></div>'+
+      '<div class="ribbon-info">'+
+        '<div class="ribbon-type">'+r.type.emoji+' '+r.type.label+'</div>'+
+        '<div class="ribbon-loads">'+r.count+(r.count===1?' load':' loads')+'</div>'+
+        '<div class="ribbon-stars">'+starsHtml+'</div>'+
+      '</div>'+
+    '</div>';
+  });
+  return html;
 }
 
 // ── BADGE DEFINITIONS ──────────────────────────────────────────────────────
 var ALL_BADGES = [
-  // Miles
-  {id:'miles_1',   icon:'🛣️', name:'Road Opener',       color:'blue',  stat:'totalMiles',   threshold:5000,   desc:'5,000 miles driven',         flex:function(v){ return v.toLocaleString()+' total mi'; }},
-  {id:'miles_2',   icon:'🚛', name:'Asphalt Addict',     color:'blue',  stat:'totalMiles',   threshold:20000,  desc:'20,000 miles logged',         flex:function(v){ return v.toLocaleString()+' mi'; }},
-  {id:'miles_3',   icon:'🌍', name:'Earth Disrespecter', color:'gold',  stat:'totalMiles',   threshold:75000,  desc:'75,000 mi — three laps around the Earth. Calm down.',flex:function(v){ return v.toLocaleString()+' mi'; }},
-  {id:'miles_4',   icon:'🚀', name:'Galaxy Brain',       color:'gold',  stat:'totalMiles',   threshold:250000, desc:'250,000 miles. That\'s the Moon and change. Are you okay?',flex:function(v){ return v.toLocaleString()+' mi'; }},
-  // Loads
-  {id:'loads_1',   icon:'📦', name:'Starter Pack',       color:'green', stat:'totalLoads',   threshold:5,      desc:'5 loads dispatched',         flex:function(v){ return v+' loads'; }},
-  {id:'loads_2',   icon:'💪', name:'Load Bro',           color:'green', stat:'totalLoads',   threshold:25,     desc:'25 loads — officially a Thing now', flex:function(v){ return v+' loads'; }},
-  {id:'loads_3',   icon:'👑', name:'Load Royalty',       color:'gold',  stat:'totalLoads',   threshold:100,    desc:'100 loads — the triple digits club', flex:function(v){ return v+' loads'; }},
-  {id:'loads_4',   icon:'🏛️', name:'Load Legend',        color:'gold',  stat:'totalLoads',   threshold:500,    desc:'500 loads. Seek help.',      flex:function(v){ return v+' loads'; }},
-  // Revenue
-  {id:'rev_1',     icon:'💵', name:'Getting Paid',       color:'green', stat:'totalRevenue', threshold:10000,  desc:'$10k in loads hauled',       flex:function(v){ return '$'+v.toLocaleString(); }},
-  {id:'rev_2',     icon:'💰', name:'Money Truck',        color:'gold',  stat:'totalRevenue', threshold:50000,  desc:'$50,000 revenue — yes that\'s your work', flex:function(v){ return '$'+v.toLocaleString(); }},
-  {id:'rev_3',     icon:'🤑', name:'Bag Secured™',       color:'gold',  stat:'totalRevenue', threshold:100000, desc:'$100k hauled. The bag is secured. It\'s official.',flex:function(v){ return '$'+v.toLocaleString(); }},
-  // States
-  {id:'states_1',  icon:'🗺️', name:'State Hopper',       color:'blue',  stat:'uniqueStates', threshold:3,      desc:'Driven through 3+ states',   flex:function(v){ return v+' states'; }},
-  {id:'states_2',  icon:'🏴', name:'Regional Menace',    color:'blue',  stat:'uniqueStates', threshold:8,      desc:'8 states — you\'ve become a geographical problem', flex:function(v){ return v+' states'; }},
-  {id:'states_3',  icon:'🌎', name:'Map Destroyer',      color:'gold',  stat:'uniqueStates', threshold:20,     desc:'20 states — consider a map',  flex:function(v){ return v+' states'; }},
-  // Safety
-  {id:'safe_1',    icon:'🛡️', name:'Zero Drama',         color:'green', stat:'longestClean', threshold:5,      desc:'5 pre-trips with zero defects in a row', flex:function(v){ return v+'-trip streak'; }},
-  {id:'safe_2',    icon:'✨', name:'Inspection Whisperer',color:'green', stat:'longestClean', threshold:20,     desc:'20 clean inspections straight — DOT is confused', flex:function(v){ return v+'-trip streak'; }},
-  {id:'safe_3',    icon:'🧿', name:'Untouchable',        color:'gold',  stat:'longestClean', threshold:50,     desc:'50 clean pre-trips — you might be a robot', flex:function(v){ return v+'-trip streak'; }},
-  // Specialty / silly
-  {id:'haul_1',    icon:'🔥', name:'Big Rig Energy',     color:'red',   stat:'longestHaul',  threshold:1000,   desc:'Single haul over 1,000 miles',  flex:function(v){ return v+' mi single run'; }},
-  {id:'haul_2',    icon:'🏔️', name:'Transcontinental',   color:'gold',  stat:'longestHaul',  threshold:2500,   desc:'2,500+ mi — coast to coast and keep going. Were you okay?', flex:function(v){ return v+' mi single run'; }},
-  {id:'night_1',   icon:'🦉', name:'Night Owl',          color:'blue',  stat:'nightLoads',   threshold:3,      desc:'3+ loads picked up at night or before dawn', flex:function(v){ return v+' night runs'; }},
-  {id:'clean_1',   icon:'📋', name:'Pre-Trip Faithful',  color:'green', stat:'totalPretrips',threshold:10,     desc:'10 completed pre-trip inspections', flex:function(v){ return v+' inspections'; }},
+  {id:'miles_1', icon:'🛣️', name:'Road Opener',         color:'blue',  stat:'totalMiles',   threshold:5000,   desc:'5,000 miles',              fmt:function(v){return v.toLocaleString()+' mi';}},
+  {id:'miles_2', icon:'🚛', name:'Asphalt Addict',       color:'blue',  stat:'totalMiles',   threshold:20000,  desc:'20,000 miles logged',      fmt:function(v){return v.toLocaleString()+' mi';}},
+  {id:'miles_3', icon:'🌍', name:'Earth Disrespecter',   color:'gold',  stat:'totalMiles',   threshold:75000,  desc:'75,000 mi — three Earth laps', fmt:function(v){return v.toLocaleString()+' mi';}},
+  {id:'miles_4', icon:'🚀', name:'Galaxy Brain',          color:'gold',  stat:'totalMiles',   threshold:250000, desc:'250,000 mi. The Moon and change.', fmt:function(v){return v.toLocaleString()+' mi';}},
+  {id:'loads_1', icon:'📦', name:'Starter Pack',          color:'green', stat:'cnLoads',      threshold:5,      desc:'5 CN loads',               fmt:function(v){return v+' loads';}},
+  {id:'loads_2', icon:'💪', name:'Load Bro',              color:'green', stat:'cnLoads',      threshold:25,     desc:'25 loads',                 fmt:function(v){return v+' loads';}},
+  {id:'loads_3', icon:'👑', name:'Load Royalty',          color:'gold',  stat:'cnLoads',      threshold:100,    desc:'100 loads',                fmt:function(v){return v+' loads';}},
+  {id:'loads_4', icon:'🏛️', name:'Load Legend',           color:'gold',  stat:'cnLoads',      threshold:500,    desc:'500 loads. Seek help.',    fmt:function(v){return v+' loads';}},
+  {id:'rev_1',   icon:'💵', name:'Getting Paid',          color:'green', stat:'totalRevenue', threshold:10000,  desc:'$10k in loads',            fmt:function(v){return '$'+v.toLocaleString();}},
+  {id:'rev_2',   icon:'💰', name:'Money Truck',           color:'gold',  stat:'totalRevenue', threshold:50000,  desc:'$50k revenue',             fmt:function(v){return '$'+v.toLocaleString();}},
+  {id:'rev_3',   icon:'🤑', name:'Bag Secured™',          color:'gold',  stat:'totalRevenue', threshold:100000, desc:'$100k hauled',             fmt:function(v){return '$'+v.toLocaleString();}},
+  {id:'states_1',icon:'🗺️', name:'State Hopper',          color:'blue',  stat:'uniqueStates', threshold:3,      desc:'3+ states',                fmt:function(v){return v+' states';}},
+  {id:'states_2',icon:'🏴', name:'Regional Menace',       color:'blue',  stat:'uniqueStates', threshold:8,      desc:'8 states',                 fmt:function(v){return v+' states';}},
+  {id:'states_3',icon:'🌎', name:'Map Destroyer',         color:'gold',  stat:'uniqueStates', threshold:20,     desc:'20 states',                fmt:function(v){return v+' states';}},
+  {id:'safe_1',  icon:'🛡️', name:'Zero Drama',            color:'green', stat:'longestClean', threshold:5,      desc:'5 clean pre-trips in a row',fmt:function(v){return v+'-trip streak';}},
+  {id:'safe_2',  icon:'✨', name:'Inspection Whisperer',  color:'green', stat:'longestClean', threshold:20,     desc:'20 clean inspections',     fmt:function(v){return v+'-trip streak';}},
+  {id:'safe_3',  icon:'🧿', name:'Untouchable',           color:'gold',  stat:'longestClean', threshold:50,     desc:'50 clean pre-trips',       fmt:function(v){return v+'-trip streak';}},
+  {id:'haul_1',  icon:'🔥', name:'Big Rig Energy',        color:'red',   stat:'longestHaul',  threshold:1000,   desc:'Single haul 1,000+ mi',    fmt:function(v){return v+' mi single run';}},
+  {id:'haul_2',  icon:'🏔️', name:'Transcontinental',      color:'gold',  stat:'longestHaul',  threshold:2500,   desc:'2,500+ mi — coast to coast',fmt:function(v){return v+' mi single run';}},
+  {id:'night_1', icon:'🦉', name:'Night Owl',              color:'purple',stat:'nightLoads',   threshold:3,      desc:'3 overnight dispatches',   fmt:function(v){return v+' night loads';}},
+  {id:'pretrip', icon:'📋', name:'Inspection Junkie',      color:'blue',  stat:'totalPretrips',threshold:10,     desc:'10+ pre-trip inspections', fmt:function(v){return v+' pre-trips';}},
 ];
 
-function getBadges(stats) {
-  return ALL_BADGES.map(function(b) {
-    var val = stats[b.stat] || 0;
-    return Object.assign({}, b, { earned: val >= b.threshold, currentVal: val });
-  });
+// ── RENDER BADGE ───────────────────────────────────────────────────────────
+function renderBadge(b, stats) {
+  var val    = stats[b.stat] || 0;
+  var earned = val >= b.threshold;
+  var cls    = earned ? 'badge earned '+(b.color+'-badge') : 'badge locked';
+  var pip    = earned ? '<div class="verified-pip">✓</div>' : '';
+  var valStr = b.fmt(val);
+  var valCls = b.color+'-val';
+  return '<div class="'+cls+'">'+pip+'<div class="badge-icon">'+b.icon+'</div>'+
+    '<div class="badge-info"><div class="badge-name">'+b.name+'</div>'+
+    '<div class="badge-desc">'+b.desc+'</div>'+
+    '<div class="badge-val '+valCls+'">'+valStr+'</div></div></div>';
 }
 
-function countBadges(stats) {
-  return getBadges(stats).filter(function(b){ return b.earned; }).length;
-}
-
-// ── LEADERBOARD TAB ────────────────────────────────────────────────────────
-function renderLeaderboard() {
-  var allStats = DRIVERS.map(function(d){
-    return Object.assign({ id:d.id, name:d.name, unit:d.unit }, computeStats(d.id));
-  });
+// ── BUILD LEADERBOARD TAB ──────────────────────────────────────────────────
+function buildLeaderboard() {
+  var allStats = {};
+  DRIVERS.forEach(function(d){ allStats[d.id] = computeStats(d.id); });
 
   var categories = [
-    { key:'totalMiles',    label:'Most Miles Driven',     icon:'🛣️',  unit:'mi',  color:'blue',  crown:'🥇',
-      flex:function(v){ return v.toLocaleString()+' mi'; } },
-    { key:'totalLoads',    label:'Most Loads Hauled',     icon:'📦',  unit:'loads',color:'green', crown:'👑',
-      flex:function(v){ return v+' loads'; } },
-    { key:'totalRevenue',  label:'Top Revenue',           icon:'💰',  unit:'',    color:'gold',  crown:'💵',
-      flex:function(v){ return '$'+v.toLocaleString(); } },
-    { key:'uniqueStates',  label:'Most States Visited',   icon:'🗺️',  unit:'states',color:'purple',crown:'🌎',
-      flex:function(v){ return v+' states'; } },
-    { key:'longestClean',  label:'Longest Clean Streak',  icon:'🛡️',  unit:'trips',color:'green', crown:'✨',
-      flex:function(v){ return v+' clean trips'; } },
-    { key:'longestHaul',   label:'Biggest Single Haul',   icon:'🔥',  unit:'mi',  color:'red',   crown:'🏔️',
-      flex:function(v){ return v.toLocaleString()+' mi'; } },
+    {title:'⭐ Highest Rank',     key:'rank',          icon:'⭐', color:'purple', fmt:function(d){ return getRank(allStats[d.id]).title; }},
+    {title:'🛣️ Most Miles',       key:'totalMiles',    icon:'🛣️', color:'blue',   fmt:function(d){ return (allStats[d.id].totalMiles||0).toLocaleString()+' mi'; }},
+    {title:'📦 Most Loads',       key:'cnLoads',       icon:'📦', color:'green',  fmt:function(d){ return (allStats[d.id].cnLoads||0)+' loads'; }},
+    {title:'💰 Most Revenue',     key:'totalRevenue',  icon:'💰', color:'gold',   fmt:function(d){ return '$'+(allStats[d.id].totalRevenue||0).toLocaleString(); }},
+    {title:'🗺️ Most States',      key:'uniqueStates',  icon:'🗺️', color:'blue',   fmt:function(d){ return (allStats[d.id].uniqueStates||0)+' states'; }},
+    {title:'🛡️ Safety Streak',    key:'longestClean',  icon:'🛡️', color:'green',  fmt:function(d){ return (allStats[d.id].longestClean||0)+' clean'; }},
   ];
+
+  // Rank numeric sort helper
+  function rankNum(dId){ return RANKS.indexOf(getRank(allStats[dId])); }
 
   var html = '<div class="lb-grid">';
   categories.forEach(function(cat){
-    var sorted = allStats.slice().sort(function(a,b){ return b[cat.key] - a[cat.key]; }).filter(function(d){ return d[cat.key] > 0; });
-    if(!sorted.length){ html += ''; return; }
-    var leader = sorted[0];
-    var runners = sorted.slice(1,3);
-    html += '<div class="lb-card '+cat.color+'">';
-    html += '<div class="lb-crown">'+cat.icon+'</div>';
-    html += '<div class="lb-cat">'+cat.label+'</div>';
-    html += '<div class="lb-leader">'+leader.name+'</div>';
-    html += '<div class="lb-val">'+cat.flex(leader[cat.key])+'</div>';
-    html += '<div class="lb-medal">'+cat.crown+'</div>';
-    if(runners.length){
-      html += '<div class="lb-runners">';
-      runners.forEach(function(r,i){
-        html += '<div class="lb-runner"><span class="lb-runner-name">'+(i===0?'🥈 ':'🥉 ')+r.name+'</span><span class="lb-runner-val">'+cat.flex(r[cat.key])+'</span></div>';
-      });
-      html += '</div>';
-    }
-    html += '</div>';
+    var sorted = DRIVERS.slice().sort(function(a,b){
+      var va = cat.key==='rank' ? rankNum(a.id) : (allStats[a.id][cat.key]||0);
+      var vb = cat.key==='rank' ? rankNum(b.id) : (allStats[b.id][cat.key]||0);
+      return vb - va;
+    });
+    var top = sorted[0];
+    html += '<div class="lb-card '+cat.color+'">'+
+      '<div class="lb-crown">'+cat.icon+'</div>'+
+      '<div class="lb-cat">'+cat.title+'</div>'+
+      '<div class="lb-leader">'+top.name+'</div>'+
+      '<div class="lb-val">'+cat.fmt(top)+'</div>'+
+      '<div class="lb-runners">';
+    sorted.slice(1,4).forEach(function(d,i){
+      html += '<div class="lb-runner"><span>'+(i===0?'🥈':i===1?'🥉':'  ')+' '+d.name+'</span><span style="color:var(--mid)">'+cat.fmt(d)+'</span></div>';
+    });
+    html += '</div></div>';
   });
   html += '</div>';
 
-  // Fun fact row
-  var totalMilesAll = allStats.reduce(function(s,d){ return s+d.totalMiles; }, 0);
-  var totalLoadsAll = allStats.reduce(function(s,d){ return s+d.totalLoads; }, 0);
-  var totalRevAll   = allStats.reduce(function(s,d){ return s+d.totalRevenue; }, 0);
+  // Fleet fun facts
+  var totalFleetMiles = DRIVERS.reduce(function(s,d){return s+(allStats[d.id].totalMiles||0);},0);
+  var totalFleetLoads = DRIVERS.reduce(function(s,d){return s+(allStats[d.id].cnLoads||0);},0);
+  var totalRevenue    = DRIVERS.reduce(function(s,d){return s+(allStats[d.id].totalRevenue||0);},0);
   var moonDist = 239000;
-  var moonPct  = totalMilesAll > 0 ? (totalMilesAll/moonDist*100).toFixed(1) : 0;
-
-  html += '<div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:20px;">';
-  html += '<div style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:12px;">🌙 Fleet Fun Facts — CN Bureau of Slightly Unnecessary Statistics</div>';
-  html += '<div style="display:flex;flex-wrap:wrap;gap:16px;">';
-  html += '<div><div style="font-size:22px;font-weight:900;color:var(--yellow);">'+totalMilesAll.toLocaleString()+'</div><div style="font-size:11px;color:var(--mid);">Total fleet miles</div><div style="font-size:10px;color:var(--purple);">'+moonPct+'% of the way to the Moon</div></div>';
-  html += '<div><div style="font-size:22px;font-weight:900;color:var(--green);">'+totalLoadsAll+'</div><div style="font-size:11px;color:var(--mid);">Total loads dispatched</div></div>';
-  html += '<div><div style="font-size:22px;font-weight:900;color:var(--blue);">$'+totalRevAll.toLocaleString()+'</div><div style="font-size:11px;color:var(--mid);">Total revenue hauled</div></div>';
-  html += '</div></div>';
+  var moonPct  = (totalFleetMiles / moonDist * 100).toFixed(1);
+  html += '<div class="funfacts"><div class="ff-title">🚀 Fleet Fun Facts (Bureau-Certified™)</div>'+
+    '<div class="ff-grid">'+
+    '<div class="ff-item"><div class="ff-val">'+totalFleetMiles.toLocaleString()+'</div><div class="ff-lbl">Total fleet miles</div></div>'+
+    '<div class="ff-item"><div class="ff-val">'+moonPct+'%</div><div class="ff-lbl">Of the way to the Moon ('+moonDist.toLocaleString()+' mi)</div></div>'+
+    '<div class="ff-item"><div class="ff-val">'+totalFleetLoads+'</div><div class="ff-lbl">Total loads moved on CN</div></div>'+
+    '<div class="ff-item"><div class="ff-val">$'+totalRevenue.toLocaleString()+'</div><div class="ff-lbl">Total revenue tracked</div></div>'+
+    '</div></div>';
 
   document.getElementById('tab-leaderboard').innerHTML = html;
 }
 
-// ── ALL BADGES TAB ─────────────────────────────────────────────────────────
-function renderAllBadges() {
-  var html = '<div style="margin-bottom:16px;font-size:12px;color:var(--mid);">All <strong style="color:var(--text);">'+ALL_BADGES.length+'</strong> official CN Bureau of Bragging™ achievements. Hover to see requirements.</div>';
-  html += '<div style="display:flex;flex-wrap:wrap;gap:8px;">';
-  ALL_BADGES.forEach(function(b){
-    html += '<div class="badge" style="opacity:.6;cursor:help;" title="Earn: '+b.desc+'">';
-    html += '<div class="badge-icon">'+b.icon+'</div>';
-    html += '<div class="badge-info"><div class="badge-name">'+b.name+'</div><div class="badge-desc">'+b.desc+'</div></div>';
-    html += '</div>';
+// ── BUILD RIBBONS TAB ──────────────────────────────────────────────────────
+function buildRibbons() {
+  var allStats = {};
+  DRIVERS.forEach(function(d){ allStats[d.id] = computeStats(d.id); });
+
+  var html = '<div style="margin-bottom:16px;">';
+  HAUL_TYPES.forEach(function(ht){
+    // Sort drivers by loads in this type
+    var ranked = DRIVERS.map(function(d){
+      return {name:d.name, count:allStats[d.id].haulCounts[ht.key]||0};
+    }).filter(function(x){return x.count>0;}).sort(function(a,b){return b.count-a.count;});
+
+    if(!ranked.length) return;
+    html += '<div class="service-card" style="margin-bottom:12px;">'+
+      '<div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">'+
+        '<div style="width:6px;height:32px;border-radius:3px;background:'+ht.color+';flex-shrink:0;"></div>'+
+        '<div><div style="font-size:13px;font-weight:800;">'+ht.emoji+' '+ht.label+' Ribbon Rack</div>'+
+        '<div style="font-size:10px;color:var(--mid);">'+ranked.length+' driver'+(ranked.length===1?'':' s')+' qualified</div></div>'+
+      '</div>'+
+      '<div style="padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px;">';
+    ranked.forEach(function(r,i){
+      var tier = null;
+      for(var t=RIBBON_TIERS.length-1;t>=0;t--){if(r.count>=RIBBON_TIERS[t].loads){tier=RIBBON_TIERS[t];break;}}
+      var stars = '';
+      RIBBON_TIERS.forEach(function(t){if(r.count>=t.loads)stars+='<span style="color:#f59e0b;font-size:10px;">★</span>';});
+      html += '<div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;display:flex;gap:8px;align-items:center;">'+
+        '<span style="font-size:11px;font-weight:800;color:var(--mid);">#'+(i+1)+'</span>'+
+        '<div><div style="font-size:12px;font-weight:700;">'+r.name+'</div>'+
+        '<div style="font-size:10px;color:var(--mid);">'+r.count+' loads · '+(tier?tier.title:'Rookie')+'</div>'+
+        '<div>'+stars+'</div></div>'+
+      '</div>';
+    });
+    html += '</div></div>';
   });
   html += '</div>';
+
+  if(html === '<div style="margin-bottom:16px;"></div>') {
+    html = '<div class="empty">No haul type data yet.<br>Add equipment type to loads in Active Loads to earn ribbons.</div>';
+  }
+  document.getElementById('tab-ribbons').innerHTML = html;
+}
+
+// ── BUILD BADGES TAB ───────────────────────────────────────────────────────
+function buildBadges() {
+  var allStats = {};
+  DRIVERS.forEach(function(d){ allStats[d.id] = computeStats(d.id); });
+
+  var html = '';
+  DRIVERS.forEach(function(d){
+    var stats = allStats[d.id];
+    var earned = ALL_BADGES.filter(function(b){return (stats[b.stat]||0)>=b.threshold;}).length;
+    html += '<div style="margin-bottom:16px;">'+
+      '<div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:8px;">'+d.name+
+      ' <span style="color:var(--mid);font-weight:400;font-size:11px;">— '+earned+'/'+ALL_BADGES.length+' earned</span></div>'+
+      '<div class="badge-grid">';
+    ALL_BADGES.forEach(function(b){ html += renderBadge(b, stats); });
+    html += '</div></div>';
+  });
   document.getElementById('tab-badges').innerHTML = html;
 }
 
-// ── DRIVER PROFILE TAB ─────────────────────────────────────────────────────
-function renderProfiles() {
-  var html = '<div class="driver-cards">';
+// ── BUILD SERVICE RECORDS TAB ──────────────────────────────────────────────
+function buildServiceRecords() {
+  var html = '';
   DRIVERS.forEach(function(d){
-    var stats  = computeStats(d.id);
-    var badges = getBadges(stats);
-    var earned = badges.filter(function(b){ return b.earned; });
-    var initials = d.name.split(' ').map(function(n){ return n[0]; }).join('').slice(0,2);
+    var stats   = computeStats(d.id);
+    var rank    = getRank(stats);
+    var ribbons = getHaulRibbons(stats);
+    var earned  = ALL_BADGES.filter(function(b){return (stats[b.stat]||0)>=b.threshold;}).length;
+    var initial = d.name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
+    var tis     = stats.tis || 'TIS Unknown';
+    var enlist  = stats.startDate ? new Date(stats.startDate).toLocaleDateString('en-US',{month:'short',year:'numeric'}) : 'Enlisted: Unknown';
 
-    html += '<div class="driver-card">';
-    html += '<div class="driver-card-head">';
-    html += '<div class="driver-avatar">'+initials+'</div>';
-    html += '<div class="driver-info">';
-    html += '<div class="driver-name">'+d.name+'</div>';
-    html += '<div class="driver-unit">Unit '+d.unit+' · '+d.id+'</div>';
-    html += '<div class="driver-stats">';
-    html += '<div class="driver-stat"><strong>'+stats.totalMiles.toLocaleString()+'</strong> mi</div>';
-    html += '<div class="driver-stat"><strong>'+stats.totalLoads+'</strong> loads</div>';
-    html += '<div class="driver-stat"><strong>$'+stats.totalRevenue.toLocaleString()+'</strong> revenue</div>';
-    html += '<div class="driver-stat"><strong>'+stats.uniqueStates+'</strong> states</div>';
-    html += '</div></div>';
-    html += '<div class="trophy-count">🏆 '+earned.length+' / '+ALL_BADGES.length+'</div>';
-    html += '</div>';
-
-    html += '<div class="badge-grid">';
-    if(!earned.length){
-      html += '<div style="font-size:12px;color:var(--mid);padding:4px 0;">No badges earned yet — get out there and haul something.</div>';
-    } else {
-      badges.forEach(function(b){
-        var colorClass = b.earned ? b.color+'-badge' : '';
-        html += '<div class="badge '+(b.earned ? 'earned '+colorClass : 'locked')+'" title="'+b.desc+'">';
-        html += '<div class="badge-icon">'+b.icon+'</div>';
-        html += '<div class="badge-info">';
-        html += '<div class="badge-name">'+b.name+'</div>';
-        html += '<div class="badge-desc">'+b.desc+'</div>';
-        if(b.earned) html += '<div class="badge-val '+b.color+'-val">'+b.flex(b.currentVal)+'</div>';
-        html += '</div>';
-        if(b.earned) html += '<div class="verified-pip">✓</div>';
-        html += '</div>';
-      });
-    }
-    html += '</div>'; // badge-grid
-
-    // CN Verified footer
-    if(earned.length > 0){
-      html += '<div style="padding:8px 20px 12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;">';
-      html += '<span style="font-size:16px;">🔏</span>';
-      html += '<span style="font-size:10px;color:var(--purple);font-weight:700;letter-spacing:.06em;">CN BUREAU OF OFFICIAL BRAGGING™ CERTIFIED &nbsp;·&nbsp; '+earned.length+' achievement'+( earned.length===1?'':'s')+' confirmed &nbsp;·&nbsp; Data verified by the algorithm (the algorithm has no opinion on your attitude)</span>';
-      html += '</div>';
-    }
-    html += '</div>'; // driver-card
+    html += '<div class="service-card">'+
+      // HEAD: identity + rank
+      '<div class="service-head">'+
+        '<div class="service-avatar">'+initial+'</div>'+
+        '<div class="service-identity">'+
+          '<div class="service-name">'+d.name+'</div>'+
+          '<div class="service-unit">Unit '+d.unit+'</div>'+
+          '<div class="service-meta">'+
+            '<span class="tis-badge">⏱ TIS: '+tis+'</span>'+
+            '<span class="enlist-badge">📅 '+enlist+'</span>'+
+          '</div>'+
+        '</div>'+
+        '<div class="service-rank-block">'+
+          renderChevrons(rank)+
+          '<div class="rank-title"><span class="rank-insignia '+rank.cls+'">'+rank.emoji+' '+rank.title+'</span></div>'+
+        '</div>'+
+      '</div>'+
+      // STATS ROW
+      '<div class="stats-row">'+
+        '<div class="stat-cell"><div class="stat-num">'+stats.totalMiles.toLocaleString()+'</div><div class="stat-lbl">Total Mi</div></div>'+
+        '<div class="stat-cell"><div class="stat-num">'+stats.cnLoads+'</div><div class="stat-lbl">CN Loads</div></div>'+
+        '<div class="stat-cell"><div class="stat-num">'+stats.uniqueStates+'</div><div class="stat-lbl">States</div></div>'+
+        '<div class="stat-cell"><div class="stat-num">'+earned+'</div><div class="stat-lbl">Badges</div></div>'+
+      '</div>'+
+      // RIBBON RACK
+      '<div class="ribbon-rack">'+
+        '<div class="ribbon-rack-title">🎀 Haul Type Ribbons</div>'+
+        '<div class="ribbon-row">'+renderRibbonRack(ribbons)+'</div>'+
+      '</div>'+
+      // BADGE SECTION
+      '<div class="badge-section">'+
+        '<div class="badge-section-title">🎖 Commendation Badges</div>'+
+        '<div class="badge-grid">';
+    ALL_BADGES.forEach(function(b){ html += renderBadge(b, stats); });
+    html += '</div></div></div>';
   });
-  html += '</div>';
-  document.getElementById('tab-profile').innerHTML = html;
+  document.getElementById('tab-service').innerHTML = html;
 }
 
-// ── MY PROFILE TAB (driver-facing) ─────────────────────────────────────────
-function renderMyProfile() {
-  // If a driver is logged in, show only their profile
-  try {
-    var sess = JSON.parse(sessionStorage.getItem('nexus_session') || '{}');
-    var myId = (sess.id || sess.driverId || '').toUpperCase();
-    var myDriver = DRIVERS.find(function(d){ return d.id.toUpperCase() === myId; });
-    if(myDriver){
-      // Re-render with just this driver highlighted
-      return; // handled in renderProfiles for now
-    }
-  } catch(e) {}
-}
-
-// ── TABS ─────────────────────────────────────────────────────────────────
-function showTab(name, el){
-  ['leaderboard','badges','profile'].forEach(function(t){
-    document.getElementById('tab-'+t).style.display = (t===name?'block':'none');
+// ── TAB SWITCHER ───────────────────────────────────────────────────────────
+function showTab(name, el) {
+  ['leaderboard','ribbons','badges','service'].forEach(function(t){
+    document.getElementById('tab-'+t).style.display = t===name?'':'none';
   });
   document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
   el.classList.add('active');
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────
-renderLeaderboard();
-renderAllBadges();
-renderProfiles();
+// ── INIT ───────────────────────────────────────────────────────────────────
+buildLeaderboard();
+buildRibbons();
+buildBadges();
+buildServiceRecords();
+
 </script>
+<script>
+/* Detect current user — if driver, also add "My Record" button */
+(function(){
+  try{
+    var sess = JSON.parse(sessionStorage.getItem('nexus_session')||'{}');
+    if(sess.role==='driver'){
+      var dId = (sess.id||'').toUpperCase();
+      var back = document.querySelector('.hdr-back');
+      if(back){ back.href='driver-command.html'; back.textContent='← Dashboard'; }
+    }
+  }catch(e){}
+})();
+</script>
+<script src="nexus-sidebar.js"></script>
 </body>
 </html>

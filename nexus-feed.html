@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Road Book — Carrier Nexus</title>
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7;--gold:#f59e0b;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+.hdr{background:linear-gradient(135deg,#0b0f1a 0%,#12102a 50%,#1a1035 100%);border-bottom:1px solid rgba(168,85,247,.25);padding:16px 20px 14px;}
+.hdr-row{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.back-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--text);border-radius:7px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;}
+.hdr-title{font-size:20px;font-weight:900;flex:1;}
+.hdr-sub{font-size:11px;color:var(--mid);}
+.content{padding:16px 20px 60px;max-width:680px;margin:0 auto;}
+/* rank banner */
+.rank-strip{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;margin-bottom:18px;scrollbar-width:none;}
+.rank-strip::-webkit-scrollbar{display:none;}
+.rank-pill{flex-shrink:0;background:var(--panel);border:1px solid var(--border);border-radius:99px;padding:8px 14px;display:flex;align-items:center;gap:8px;font-size:12px;white-space:nowrap;cursor:pointer;text-decoration:none;transition:.15s;}
+.rank-pill:hover{border-color:rgba(168,85,247,.4);}
+.rank-pill .rp-icon{font-size:16px;}
+.rank-pill .rp-name{font-weight:700;}
+.rank-pill .rp-val{color:var(--mid);font-size:10px;}
+/* feed */
+.feed-list{display:flex;flex-direction:column;gap:10px;}
+.feed-item{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;}
+.feed-item.rank-up{border-color:rgba(168,85,247,.35);background:rgba(168,85,247,.04);}
+.feed-item.badge{border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.03);}
+.feed-item.milestone{border-color:rgba(16,185,129,.25);background:rgba(16,185,129,.03);}
+.feed-item.shoutout{border-color:rgba(59,130,246,.25);background:rgba(59,130,246,.03);}
+.fi-icon{font-size:26px;flex-shrink:0;margin-top:2px;}
+.fi-body{flex:1;min-width:0;}
+.fi-name{font-size:13px;font-weight:800;margin-bottom:2px;}
+.fi-text{font-size:12px;color:var(--mid);line-height:1.5;}
+.fi-badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:800;margin-top:5px;}
+.fi-ts{font-size:10px;color:var(--mid);margin-top:4px;}
+.fi-type-rank{background:rgba(168,85,247,.15);color:#c084fc;}
+.fi-type-badge{background:rgba(245,158,11,.15);color:var(--gold);}
+.fi-type-mile{background:rgba(16,185,129,.15);color:var(--green);}
+.fi-type-shout{background:rgba(59,130,246,.15);color:var(--blue);}
+/* post box */
+.post-box{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:20px;}
+.post-box textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px;resize:none;min-height:60px;font-family:inherit;}
+.post-box textarea:focus{outline:none;border-color:rgba(168,85,247,.5);}
+.post-box-footer{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:8px;}
+.btn{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;}
+.btn-purple{background:var(--purple);border-color:var(--purple);color:#fff;}
+.empty{text-align:center;padding:40px 20px;color:var(--mid);font-size:13px;}
+.sect-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-row">
+    <a href="fleet-command.html" class="back-btn">← Back</a>
+    <div class="hdr-title">📖 The Road Book</div>
+  </div>
+  <div class="hdr-sub">Driver milestones, rank-ups, and dispatched glory — CN confirmed, disputations ignored</div>
+</div>
+
+<div class="content">
+  <!-- Rank strip -->
+  <div class="sect-label">Fleet Ranks</div>
+  <div class="rank-strip" id="rank-strip"></div>
+
+  <!-- Post box -->
+  <div class="post-box">
+    <textarea id="post-text" placeholder="Post a shoutout, trash talk, or motivational threat… (keep it professional-ish)"></textarea>
+    <div class="post-box-footer">
+      <button class="btn" onclick="document.getElementById('post-text').value=''">Clear</button>
+      <button class="btn btn-purple" onclick="postShoutout()">📣 Post to Road Book</button>
+    </div>
+  </div>
+
+  <!-- Feed -->
+  <div class="sect-label">Activity Feed</div>
+  <div class="feed-list" id="feed-list"></div>
+</div>
+
+<script src="nexus-config.js"></script>
+<script>
+var FEED_KEY   = 'nexus_team_feed';
+var CAREER_KEY = 'nexus_driver_careers';
+var LOADS_KEY  = 'nexus_loads_v2';
+
+var RANKS = [
+  {id:'greenhorn',  icon:'🌱', name:'Greenhorn',      minLoads:0,   minMiles:0,      minStates:0,  minClean:0,  color:'#64748b'},
+  {id:'wrench',     icon:'🔧', name:'Wrench Turner',  minLoads:5,   minMiles:3750,   minStates:0,  minClean:0,  color:'#94a3b8'},
+  {id:'roaddog',    icon:'🛣️', name:'Road Dog',        minLoads:20,  minMiles:15000,  minStates:3,  minClean:0,  color:'#3b82f6'},
+  {id:'gearjammer', icon:'⚙️', name:'Gear Jammer',    minLoads:50,  minMiles:37500,  minStates:8,  minClean:5,  color:'#f59e0b'},
+  {id:'captain',    icon:'🏴', name:'Road Captain',   minLoads:100, minMiles:75000,  minStates:15, minClean:10, color:'#a855f7'},
+  {id:'ghost',      icon:'💀', name:'Pavement Ghost', minLoads:300, minMiles:225000, minStates:25, minClean:20, color:'#ef4444'},
+];
+
+var DRIVERS = (typeof NEXUS_FLEET !== 'undefined' ? NEXUS_FLEET : [
+  {id:'AVIS',name:'Avis Modesto',unit:'01'},{id:'DAVID',name:'David Fonseca',unit:'09'},
+  {id:'MIGUEL',name:'Miguel Fonseca',unit:'05'},{id:'NELSON',name:'Nelson Veliz',unit:'06'},
+  {id:'YOSVIEL',name:'Yosviel Pinera',unit:'03'},{id:'GUILLERMO',name:'Guillermo Pinera',unit:'02'},
+  {id:'JAYLER',name:'Jayler Labrada',unit:'11'},
+]).filter(function(d){ return d.role!=='dispatcher'&&d.role!=='admin'&&d.id!=='AMET'&&d.id!=='BETTY'; });
+
+function getCareer(dId) {
+  try { var c=JSON.parse(localStorage.getItem(CAREER_KEY)||'{}'); return c[dId.toUpperCase()]||{preCnMiles:0,preCnLoads:0}; } catch(e){ return {preCnMiles:0,preCnLoads:0}; }
+}
+function getDriverStats(dId) {
+  var loads=[]; try{loads=JSON.parse(localStorage.getItem(LOADS_KEY)||'[]');}catch(e){}
+  var pts=[]; try{pts=JSON.parse(localStorage.getItem('nexus_pretrip_inspections')||'[]');}catch(e){}
+  var career=getCareer(dId);
+  var myLoads=loads.filter(function(l){return(l.driver||'').toUpperCase()===dId.toUpperCase();});
+  var cnMiles=myLoads.reduce(function(s,l){return s+(parseFloat(l.miles)||0);},0);
+  var states={}; myLoads.forEach(function(l){if(l.originState)states[l.originState.toUpperCase()]=1;if(l.destState)states[l.destState.toUpperCase()]=1;});
+  var myPts=pts.filter(function(p){return(p.driverId||p.driverName||'').toUpperCase().includes(dId.toUpperCase());});
+  var streak=0,longestClean=0; myPts.forEach(function(p){if(!p.defectCount){streak++;longestClean=Math.max(longestClean,streak);}else streak=0;});
+  return {
+    totalMiles: Math.round((career.preCnMiles||0)+cnMiles),
+    totalLoads: (career.preCnLoads||0)+myLoads.length,
+    uniqueStates: Object.keys(states).length,
+    longestClean: longestClean,
+    careerStart: career.startDate||null
+  };
+}
+function getRank(stats) {
+  var r=RANKS[0];
+  for(var i=RANKS.length-1;i>=0;i--){
+    var rk=RANKS[i];
+    if(stats.totalLoads>=rk.minLoads&&stats.totalMiles>=rk.minMiles&&stats.uniqueStates>=rk.minStates&&stats.longestClean>=rk.minClean){r=rk;break;}
+  }
+  return r;
+}
+function getNextRank(stats) {
+  var cur=getRank(stats);
+  var idx=RANKS.findIndex(function(r){return r.id===cur.id;});
+  return idx<RANKS.length-1?RANKS[idx+1]:null;
+}
+
+function renderRankStrip() {
+  var html='';
+  DRIVERS.forEach(function(d){
+    var stats=getDriverStats(d.id);
+    var rank=getRank(stats);
+    html+='<a href="driver-trophies.html" class="rank-pill">';
+    html+='<span class="rp-icon">'+rank.icon+'</span>';
+    html+='<span><div class="rp-name">'+d.name.split(' ')[0]+'</div><div class="rp-val">'+rank.name+'</div></span>';
+    html+='</a>';
+  });
+  document.getElementById('rank-strip').innerHTML=html;
+}
+
+function getFeed() {
+  try{return JSON.parse(localStorage.getItem(FEED_KEY)||'[]');}catch(e){return[];}
+}
+function renderFeed() {
+  var feed=getFeed();
+  // Inject auto-milestone entries from live data
+  var autoEntries=[];
+  DRIVERS.forEach(function(d){
+    var stats=getDriverStats(d.id);
+    var rank=getRank(stats);
+    // Check if rank changed since last stored rank
+    var lastRankKey='nexus_last_rank_'+d.id;
+    var lastRank=localStorage.getItem(lastRankKey)||'greenhorn';
+    if(rank.id!==lastRank&&rank.id!=='greenhorn'){
+      localStorage.setItem(lastRankKey,rank.id);
+      // Add rank-up to feed if not already there
+      var exists=feed.find(function(f){return f.type==='rank_up'&&f.driverId===d.id&&f.rankId===rank.id;});
+      if(!exists){
+        var entry={id:'auto_'+Date.now()+'_'+d.id,type:'rank_up',driverId:d.id,driverName:d.name,rankIcon:rank.icon,rankName:rank.name,rankId:rank.id,text:d.name+' just leveled up to '+rank.name+'.',ts:new Date().toISOString()};
+        feed.unshift(entry);
+        try{localStorage.setItem(FEED_KEY,JSON.stringify(feed.slice(0,200)));}catch(e){}
+      }
+    } else if(rank.id!==lastRank) {
+      localStorage.setItem(lastRankKey,rank.id);
+    }
+  });
+
+  if(!feed.length){
+    document.getElementById('feed-list').innerHTML='<div class="empty">📭 Nothing posted yet.<br>Be the first to talk some trash.</div>';
+    return;
+  }
+  var typeLabels={rank_up:'RANK UP',badge:'BADGE',milestone:'MILESTONE',shoutout:'SHOUTOUT'};
+  var typeCls={rank_up:'fi-type-rank',badge:'fi-type-badge',milestone:'fi-type-mile',shoutout:'fi-type-shout'};
+  var html='';
+  feed.slice(0,50).forEach(function(f){
+    var ago=timeAgo(f.ts);
+    html+='<div class="feed-item '+( f.type||'shoutout')+'">';
+    html+='<div class="fi-icon">'+(f.rankIcon||f.badgeIcon||'📣')+'</div>';
+    html+='<div class="fi-body">';
+    html+='<div class="fi-name">'+esc(f.driverName||'Fleet')+'</div>';
+    html+='<div class="fi-text">'+esc(f.text)+'</div>';
+    html+='<span class="fi-badge '+(typeCls[f.type]||'fi-type-shout')+'">'+(typeLabels[f.type]||'SHOUTOUT')+'</span>';
+    html+='<div class="fi-ts">'+ago+'</div>';
+    html+='</div></div>';
+  });
+  document.getElementById('feed-list').innerHTML=html;
+}
+
+function postShoutout() {
+  var text=document.getElementById('post-text').value.trim();
+  if(!text)return;
+  var sess={};try{sess=JSON.parse(sessionStorage.getItem('nexus_session')||'{}');}catch(e){}
+  var name=sess.name||'Fleet';
+  var feed=getFeed();
+  feed.unshift({id:'s_'+Date.now(),type:'shoutout',driverId:sess.id||'',driverName:name,text:text,ts:new Date().toISOString()});
+  try{localStorage.setItem(FEED_KEY,JSON.stringify(feed.slice(0,200)));}catch(e){}
+  document.getElementById('post-text').value='';
+  renderFeed();
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function timeAgo(ts){
+  if(!ts)return'';
+  var d=Math.floor((Date.now()-new Date(ts).getTime())/1000);
+  if(d<60)return'just now';if(d<3600)return Math.floor(d/60)+'m ago';
+  if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago';
+}
+
+renderRankStrip();
+renderFeed();
+</script>
+<script src="nexus-sidebar.js"></script>
+</body>
+</html>
