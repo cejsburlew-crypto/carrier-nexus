@@ -190,6 +190,7 @@ tr:hover td{background:var(--panel2);}
 <div class="tabs no-print">
   <button class="tab active" onclick="showTab('drivers')">Per-Driver Scores</button>
   <button class="tab" onclick="showTab('csa')">CSA BASIC Scores</button>
+  <button class="tab" onclick="showTab('cameras')">📷 Cameras</button>
   <button class="tab" onclick="showTab('trend')">Inspection Trend</button>
   <button class="tab" onclick="showTab('dvir')">DVIR Log</button>
 </div>
@@ -237,6 +238,136 @@ tr:hover td{background:var(--panel2);}
     <div style="padding:12px 16px;font-size:12px;color:var(--mid);border-top:1px solid var(--border);">
       ⚠️ Alert threshold = % of carriers with worse scores. Scores above threshold flag a BASIC for intervention.
       Last updated: <span id="csa-last-updated">never</span>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: CAMERAS -->
+<div class="tab-panel" id="tab-cameras">
+  <div class="panel" style="margin-bottom:16px;">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">📷 Dash Camera Coverage — Fleet Configuration</div>
+        <div class="panel-sub">Mark installed cameras per unit · CH1+CH2 minimum required for insurance discount eligibility</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="saveCameraConfig()">Save Configuration</button>
+    </div>
+    <div style="overflow-x:auto;">
+      <table id="camera-config-table">
+        <thead>
+          <tr>
+            <th>Unit / Driver</th>
+            <th title="Forward road view">CH1 Forward Road</th>
+            <th title="Driver face/body">CH2 Driver Cab</th>
+            <th title="Left blind spot">CH3 Driver Side</th>
+            <th title="Right blind spot">CH4 Passenger Side</th>
+            <th title="Rear of trailer">CH5 Rear Trailer</th>
+            <th title="Inside trailer">CH6 Cargo Interior</th>
+            <th>Insurance Ready</th>
+          </tr>
+        </thead>
+        <tbody id="camera-config-body"></tbody>
+      </table>
+    </div>
+    <div style="padding:12px 16px;font-size:12px;color:var(--mid);border-top:1px solid var(--border);">
+      <strong style="color:var(--text);">Status codes:</strong>
+      <span style="margin-left:8px;">🟢 Active &nbsp;|&nbsp; 🟡 Offline/Fault &nbsp;|&nbsp; ⚫ Not Installed</span>
+      &nbsp;&nbsp;·&nbsp;&nbsp;Insurance minimum: <strong style="color:var(--green);">CH1 + CH2 both Active</strong>
+    </div>
+  </div>
+
+  <!-- CAMERA EVENTS -->
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">Camera Events Log</div>
+        <div class="panel-sub">Hard braking · Distraction · Speeding · All safety-relevant events</div>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="openEventModal()">+ Log Event</button>
+    </div>
+    <!-- EVENT STATS -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid var(--border);" id="event-stat-strip"></div>
+    <!-- EVENT TABLE -->
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Unit</th><th>Driver</th><th>Event Type</th><th>Channel</th><th>Severity</th><th>Notes</th></tr>
+        </thead>
+        <tbody id="camera-events-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ADD EVENT MODAL -->
+<div id="cam-event-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:24px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;">
+    <div style="font-size:16px;font-weight:700;margin-bottom:16px;">Log Camera Event</div>
+    <div style="display:grid;gap:12px;">
+      <div>
+        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Date</label>
+        <input type="date" id="ev-date" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Unit / Driver</label>
+        <select id="ev-unit" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
+          <option value="">Select driver/unit...</option>
+          <option value="Unit 01 — Avis Modesto">Unit 01 — Avis Modesto</option>
+          <option value="Unit 02 — Guillermo Pinera">Unit 02 — Guillermo Pinera</option>
+          <option value="Unit 03 — Yosviel Pinera">Unit 03 — Yosviel Pinera</option>
+          <option value="Unit 05 — Miguel Fonseca">Unit 05 — Miguel Fonseca</option>
+          <option value="Unit 06 — Nelson Veliz">Unit 06 — Nelson Veliz</option>
+          <option value="Unit 09 — David Fonseca">Unit 09 — David Fonseca</option>
+          <option value="Unit 11 — Jayler Labrada">Unit 11 — Jayler Labrada</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Event Type</label>
+        <select id="ev-type" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
+          <option value="hard_braking">Hard Braking</option>
+          <option value="hard_acceleration">Hard Acceleration</option>
+          <option value="sharp_turn">Sharp Turn / Swerve</option>
+          <option value="speeding">Speeding</option>
+          <option value="distraction">Driver Distraction</option>
+          <option value="phone_use">Phone Use While Driving</option>
+          <option value="drowsiness">Drowsiness / Fatigue Alert</option>
+          <option value="seatbelt">Seatbelt Violation</option>
+          <option value="tailgating">Following Too Close</option>
+          <option value="lane_departure">Lane Departure</option>
+          <option value="near_collision">Near Collision</option>
+          <option value="collision">Collision / Accident</option>
+          <option value="forward_obstruct">Forward Obstruction</option>
+          <option value="camera_blocked">Camera Blocked / Tampered</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Camera Channel</label>
+        <select id="ev-channel" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
+          <option value="CH1">CH1 — Forward Road</option>
+          <option value="CH2">CH2 — Driver Cab</option>
+          <option value="CH3">CH3 — Driver Side</option>
+          <option value="CH4">CH4 — Passenger Side</option>
+          <option value="CH5">CH5 — Rear Trailer</option>
+          <option value="CH6">CH6 — Cargo Interior</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Severity</label>
+        <select id="ev-severity" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
+          <option value="low">Low — Minor / Logged only</option>
+          <option value="medium">Medium — Coaching recommended</option>
+          <option value="high">High — Review + action required</option>
+          <option value="critical">Critical — Insurance / DOT reportable</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Notes</label>
+        <textarea id="ev-notes" rows="2" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;resize:vertical;" placeholder="Location, circumstances, follow-up action..."></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">
+      <button class="btn btn-outline" onclick="closeCamModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEvent()">Save Event</button>
     </div>
   </div>
 </div>
@@ -592,15 +723,211 @@ function generateReport(){
   }, 300);
 }
 
+// ─── CAMERA CONFIG ───────────────────────────────────────────────────────────
+const UNITS = [
+  {id:'u01', label:'Unit 01', driver:'Avis Modesto'},
+  {id:'u02', label:'Unit 02', driver:'Guillermo Pinera'},
+  {id:'u03', label:'Unit 03', driver:'Yosviel Pinera'},
+  {id:'u05', label:'Unit 05', driver:'Miguel Fonseca'},
+  {id:'u06', label:'Unit 06', driver:'Nelson Veliz'},
+  {id:'u09', label:'Unit 09', driver:'David Fonseca'},
+  {id:'u11', label:'Unit 11', driver:'Jayler Labrada'}
+];
+const CHANNELS = [
+  {id:'ch1', label:'CH1 Forward Road',    desc:'Road ahead',        insMin:true},
+  {id:'ch2', label:'CH2 Driver Cab',      desc:'Driver face/body',  insMin:true},
+  {id:'ch3', label:'CH3 Driver Side',     desc:'Left blind spot',   insMin:false},
+  {id:'ch4', label:'CH4 Passenger Side',  desc:'Right blind spot',  insMin:false},
+  {id:'ch5', label:'CH5 Rear Trailer',    desc:'Behind trailer',    insMin:false},
+  {id:'ch6', label:'CH6 Cargo Interior',  desc:'Inside trailer',    insMin:false}
+];
+const STATUS_OPTS = [
+  {v:'active',  label:'🟢 Active',         color:'#10b981'},
+  {v:'offline', label:'🟡 Offline/Fault',  color:'#f59e0b'},
+  {v:'none',    label:'⚫ Not Installed',   color:'#475569'}
+];
+
+function getCameraConfig(){
+  try{ return JSON.parse(localStorage.getItem('nexus_camera_config')||'{}'); }catch(e){ return {}; }
+}
+function getCameraEvents(){
+  try{ return JSON.parse(localStorage.getItem('nexus_camera_events')||'[]'); }catch(e){ return []; }
+}
+
+function renderCameraConfig(){
+  const cfg = getCameraConfig();
+  const tbody = document.getElementById('camera-config-body');
+  if(!tbody) return;
+  tbody.innerHTML = UNITS.map(u=>{
+    const ucfg = cfg[u.id]||{};
+    const cells = CHANNELS.map(ch=>{
+      const val = ucfg[ch.id]||'none';
+      const opts = STATUS_OPTS.map(s=>`<option value="${s.v}"${s.v===val?' selected':''}>${s.label}</option>`).join('');
+      const bdr = ch.insMin ? 'border:1px solid rgba(59,130,246,.3);' : '';
+      return `<td><select id="cam_${u.id}_${ch.id}" style="background:var(--panel2);border:1px solid var(--border);${bdr}border-radius:6px;padding:4px 8px;color:var(--text);font-size:12px;width:100%;">${opts}</select></td>`;
+    }).join('');
+    const ready = (ucfg.ch1==='active') && (ucfg.ch2==='active');
+    const readyBadge = ready
+      ? '<span style="background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;">✅ Eligible</span>'
+      : '<span style="background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;">⚠️ Needs CH1+CH2</span>';
+    return `<tr>
+      <td style="font-weight:700;">${u.label}<div style="font-size:11px;color:var(--mid);">${u.driver}</div></td>
+      ${cells}
+      <td>${readyBadge}</td>
+    </tr>`;
+  }).join('');
+}
+
+function saveCameraConfig(){
+  const data = {};
+  UNITS.forEach(u=>{
+    data[u.id] = {};
+    CHANNELS.forEach(ch=>{
+      const el = document.getElementById('cam_'+u.id+'_'+ch.id);
+      if(el) data[u.id][ch.id] = el.value;
+    });
+  });
+  localStorage.setItem('nexus_camera_config', JSON.stringify(data));
+  // Re-render to update insurance ready badges
+  renderCameraConfig();
+  renderCameraEventStats();
+  const btn = event.target;
+  btn.textContent='✅ Saved'; btn.style.background='var(--green)';
+  setTimeout(()=>{ btn.textContent='Save Configuration'; btn.style.background=''; },2000);
+}
+
+// ─── CAMERA EVENTS ────────────────────────────────────────────────────────────
+const EV_TYPES = {
+  hard_braking:'Hard Braking', hard_acceleration:'Hard Acceleration',
+  sharp_turn:'Sharp Turn/Swerve', speeding:'Speeding',
+  distraction:'Driver Distraction', phone_use:'Phone Use',
+  drowsiness:'Drowsiness/Fatigue', seatbelt:'Seatbelt Violation',
+  tailgating:'Tailgating', lane_departure:'Lane Departure',
+  near_collision:'Near Collision', collision:'Collision/Accident',
+  forward_obstruct:'Forward Obstruction', camera_blocked:'Camera Blocked'
+};
+const SEV_COLOR = {low:'#10b981',medium:'#f59e0b',high:'#f97316',critical:'#ef4444'};
+
+function renderCameraEventStats(){
+  const evs = getCameraEvents();
+  const d30 = daysAgo(30);
+  const recent = evs.filter(e=>e.date>=d30);
+  const counts = {low:0,medium:0,high:0,critical:0};
+  recent.forEach(e=>{ if(counts[e.severity]!==undefined) counts[e.severity]++; });
+  const strip = document.getElementById('event-stat-strip');
+  if(!strip) return;
+  strip.innerHTML = [
+    {label:'Total Events (30d)',  val:recent.length,       color:'var(--text)'},
+    {label:'Critical / High',    val:counts.critical+counts.high,  color:counts.critical+counts.high>0?'var(--red)':'var(--green)'},
+    {label:'Medium',             val:counts.medium,       color:counts.medium>0?'var(--yellow)':'var(--green)'},
+    {label:'Low',                val:counts.low,          color:'var(--mid)'}
+  ].map(s=>`<div style="padding:14px 16px;border-right:1px solid var(--border);">
+    <div style="font-size:11px;color:var(--mid);text-transform:uppercase;margin-bottom:4px;">${s.label}</div>
+    <div style="font-size:22px;font-weight:800;color:${s.color};">${s.val}</div>
+  </div>`).join('');
+}
+
+function renderCameraEvents(){
+  const evs = getCameraEvents().slice(0,100);
+  const tbody = document.getElementById('camera-events-body');
+  if(!tbody) return;
+  if(!evs.length){
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--mid);padding:24px;">No camera events logged yet — events will appear here as cameras go live</td></tr>';
+    return;
+  }
+  tbody.innerHTML = evs.map(e=>{
+    const sc = SEV_COLOR[e.severity]||'var(--mid)';
+    return `<tr>
+      <td>${new Date(e.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+      <td style="font-size:12px;">${e.unit||'—'}</td>
+      <td style="font-weight:600;">${e.driver||'—'}</td>
+      <td>${EV_TYPES[e.type]||e.type}</td>
+      <td style="font-family:monospace;font-size:12px;color:var(--blue);">${e.channel||'—'}</td>
+      <td><span style="color:${sc};font-weight:700;text-transform:capitalize;">${e.severity}</span></td>
+      <td style="font-size:12px;color:var(--mid);">${e.notes||'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function openEventModal(){
+  const m = document.getElementById('cam-event-modal');
+  m.style.display='flex';
+  document.getElementById('ev-date').value = today();
+}
+function closeCamModal(){
+  document.getElementById('cam-event-modal').style.display='none';
+}
+function saveEvent(){
+  const unit  = document.getElementById('ev-unit').value;
+  const parts = unit.split(' — ');
+  const evs   = getCameraEvents();
+  evs.unshift({
+    id: 'camev'+Date.now(),
+    date:     document.getElementById('ev-date').value,
+    unit:     parts[0]||unit,
+    driver:   parts[1]||'',
+    type:     document.getElementById('ev-type').value,
+    channel:  document.getElementById('ev-channel').value,
+    severity: document.getElementById('ev-severity').value,
+    notes:    document.getElementById('ev-notes').value.trim()
+  });
+  localStorage.setItem('nexus_camera_events', JSON.stringify(evs));
+  closeCamModal();
+  renderCameraEvents();
+  renderCameraEventStats();
+}
+
+// ─── CAMERA COVERAGE KPI ──────────────────────────────────────────────────────
+function cameraFleetReadiness(){
+  const cfg = getCameraConfig();
+  let ready=0, total=UNITS.length;
+  UNITS.forEach(u=>{ const uc=cfg[u.id]||{}; if(uc.ch1==='active'&&uc.ch2==='active') ready++; });
+  return { ready, total, pct: Math.round(ready/total*100) };
+}
+
+// ─── OVERRIDE showTab to init camera tab ─────────────────────────────────────
+const _origShowTab = showTab;
+function showTab(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+  if(id==='trend')   renderTrend();
+  if(id==='dvir')    renderDVIRLog();
+  if(id==='cameras'){ renderCameraConfig(); renderCameraEvents(); renderCameraEventStats(); }
+}
+
 // ─── INIT ────────────────────────────────────────────────────────────────────
 (function init(){
   const fleet = fleetScore();
   renderHero(fleet);
+  // Update KPI grid to include camera readiness
   renderKPI(fleet);
   renderDriverTable(fleet);
   renderCSA();
   renderAlerts(fleet);
+  // Patch KPI grid with camera card
+  const cam = cameraFleetReadiness();
+  const grid = document.getElementById('kpi-grid');
+  if(grid){
+    const camColor = cam.pct>=100?'var(--green)':cam.pct>=50?'var(--yellow)':'var(--red)';
+    grid.innerHTML += `<div class="kpi-card">
+      <div class="kpi-label">Camera Coverage</div>
+      <div class="kpi-value" style="color:${camColor}">${cam.ready}/${cam.total}</div>
+      <div class="kpi-sub">${cam.ready} trucks with CH1+CH2 active · <a href="#" onclick="showTabDirect('cameras');return false;" style="color:var(--blue);">Configure ↗</a></div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${cam.pct}%;background:${camColor};"></div></div>
+    </div>`;
+  }
 })();
+
+function showTabDirect(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(t=>{ if(t.textContent.includes('Camera')) t.classList.add('active'); });
+  renderCameraConfig(); renderCameraEvents(); renderCameraEventStats();
+}
 </script>
 </body>
 </html>
