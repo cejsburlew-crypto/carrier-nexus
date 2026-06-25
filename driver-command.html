@@ -642,6 +642,16 @@ body{
     <div class="action-arrow">›</div>
   </div>
 
+
+  <div class="action-btn full" onclick="window.location.href='driver-trophies.html'" style="background:rgba(168,85,247,0.08);border-color:rgba(168,85,247,0.25);">
+    <div class="action-icon sm">🏆</div>
+    <div style="flex:1;min-width:0;">
+      <div class="action-label" style="color:#a855f7;">My Trophies</div>
+      <div class="action-sub" id="trophy-sub">CN Bureau of Official Bragging™</div>
+    </div>
+    <div class="action-arrow">›</div>
+  </div>
+
   <div class="action-btn full" onclick="openModal('signModal')">
     <div class="action-icon sm">✍️</div>
     <div style="flex:1;min-width:0;">
@@ -1098,6 +1108,34 @@ document.querySelectorAll('.nav-tab').forEach(tab=>{
       +'</div>';
   } catch(e){ console.warn('Safety widget error:', e); }
 })();
+
+// Trophy count widget
+(function() {
+  try {
+    var loads = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]');
+    var pretrips = JSON.parse(localStorage.getItem('nexus_pretrip_inspections') || '[]');
+    var sess = JSON.parse(sessionStorage.getItem('nexus_session') || '{}');
+    var dId = (sess.id || sess.driverId || '').toUpperCase();
+    if (!dId) return;
+    var myLoads = loads.filter(function(l){ return (l.driver||'').toUpperCase() === dId; });
+    var totalMiles = myLoads.reduce(function(s,l){ return s+(parseFloat(l.miles)||0); }, 0);
+    var totalLoads = myLoads.length;
+    var states = {};
+    myLoads.forEach(function(l){ if(l.originState) states[l.originState.toUpperCase()]=1; if(l.destState) states[l.destState.toUpperCase()]=1; });
+    var myPretrips = pretrips.filter(function(p){ return (p.driverId||p.driverName||'').toUpperCase().includes(dId); });
+    var longestClean = 0; var streak = 0;
+    myPretrips.forEach(function(p){ if(!p.defectCount){ streak++; longestClean=Math.max(longestClean,streak); } else streak=0; });
+    var totalRevenue = myLoads.reduce(function(s,l){ return s+(parseFloat(l.rate)||0); }, 0);
+    var longestHaul = myLoads.reduce(function(max,l){ return Math.max(max,parseFloat(l.miles)||0); }, 0);
+    var stats = { totalMiles:Math.round(totalMiles), totalLoads:totalLoads, totalRevenue:Math.round(totalRevenue), uniqueStates:Object.keys(states).length, longestClean:longestClean, longestHaul:Math.round(longestHaul), totalPretrips:myPretrips.length, nightLoads:0 };
+    var thresholds = [1000,5000,25000,100000,5,25,100,500,10000,50000,100000,3,8,20,5,20,50,500,2000,3,10];
+    var statKeys   = ['totalMiles','totalMiles','totalMiles','totalMiles','totalLoads','totalLoads','totalLoads','totalLoads','totalRevenue','totalRevenue','totalRevenue','uniqueStates','uniqueStates','uniqueStates','longestClean','longestClean','longestClean','longestHaul','longestHaul','nightLoads','totalPretrips'];
+    var earned = statKeys.filter(function(k,i){ return (stats[k]||0) >= thresholds[i]; }).length;
+    var el = document.getElementById('trophy-sub');
+    if (el) el.textContent = earned > 0 ? '🏆 ' + earned + ' badge' + (earned===1?'':'s') + ' earned · CN Verified™' : 'CN Bureau of Official Bragging™ — earn your first badge';
+  } catch(e) {}
+})();
+
 </script>
 
 <!-- DRIVER STICKY BOTTOM NAV (mobile only) -->
