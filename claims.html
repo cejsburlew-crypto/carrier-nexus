@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Insurance Claims — Carrier Nexus</title>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--dim:#334155;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+.layout{display:flex;min-height:100vh;}.main{flex:1;overflow-x:hidden;}
+.topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:17px;font-weight:700;}.topbar-sub{font-size:11px;color:var(--mid);margin-top:2px;}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
+.btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:#2563eb;}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}.btn-outline:hover{background:var(--panel2);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.content{padding:20px;max-width:1100px;margin:0 auto;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.kpi-label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.kpi-value{font-size:26px;font-weight:800;line-height:1;}.kpi-sub{font-size:11px;color:var(--mid);margin-top:3px;}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:14px;font-weight:700;}.panel-sub{font-size:12px;color:var(--mid);}
+table{width:100%;border-collapse:collapse;}
+th{padding:9px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;}
+.badge-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
+.badge-yellow{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25);}
+.badge-green{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);}
+.badge-blue{background:rgba(59,130,246,.12);color:#3b82f6;border:1px solid rgba(59,130,246,.25);}
+.badge-orange{background:rgba(249,115,22,.12);color:#f97316;border:1px solid rgba(249,115,22,.25);}
+.badge-gray{background:rgba(100,116,139,.12);color:#94a3b8;border:1px solid rgba(100,116,139,.25);}
+/* STATUS TABS */
+.status-tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:16px;overflow-x:auto;}
+.stab{padding:7px 14px;border-radius:7px;border:none;background:transparent;color:var(--mid);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.stab.active{background:var(--blue);color:#fff;}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;overflow-y:auto;padding:20px;align-items:flex-start;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--panel);border:1px solid var(--border);border-radius:16px;width:100%;max-width:680px;margin:auto;}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-body{padding:20px;}.modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+.field-group{margin-bottom:14px;}
+.field-label{font-size:12px;color:var(--mid);margin-bottom:5px;display:block;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--blue);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+/* TIMELINE */
+.timeline{display:flex;align-items:center;gap:0;margin:16px 0;overflow-x:auto;}
+.tl-step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:80px;}
+.tl-circle{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid;}
+.tl-line{flex:1;height:2px;background:var(--dim);}
+.tl-label{font-size:10px;color:var(--mid);margin-top:4px;text-align:center;}
+/* DETAIL */
+.detail-row{display:flex;gap:8px;margin-bottom:8px;font-size:13px;}
+.detail-key{color:var(--mid);min-width:160px;flex-shrink:0;}
+@media(max-width:600px){.kpi-row{grid-template-columns:1fr 1fr;}.form-row{grid-template-columns:1fr;}}
+@media print{.no-print{display:none!important;}body,table,td,th{background:#fff!important;color:#000!important;}}
+</style>
+</head>
+<body>
+<div class="layout">
+<div class="main">
+<div class="topbar no-print">
+  <div><div class="topbar-title">⚖️ Insurance Claims</div><div class="topbar-sub">Claims tracking · FNOL through settlement · 49 CFR 390.15</div></div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-outline btn-sm" onclick="location.href='incident-report.html'">← Incidents</button>
+    <button class="btn btn-outline btn-sm" onclick="location.href='insurance-kpi.html'">Insurance KPI</button>
+    <button class="btn btn-primary btn-sm" onclick="openModal()">+ New Claim</button>
+  </div>
+</div>
+<div class="content">
+  <div class="kpi-row" id="kpi-row"></div>
+  <div class="status-tabs no-print" id="status-tabs"></div>
+  <div class="panel">
+    <div class="panel-head">
+      <div><div class="panel-title" id="table-title">All Claims</div><div class="panel-sub">Click any row to view full claim detail</div></div>
+    </div>
+    <div style="overflow-x:auto;"><table><thead><tr><th>Claim #</th><th>Incident</th><th>Driver</th><th>Date of Loss</th><th>Type</th><th>Insurer</th><th>Claimed</th><th>Settled</th><th>Status</th><th>Days Open</th><th>Actions</th></tr></thead><tbody id="claims-tbody"></tbody></table></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div id="detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;overflow-y:auto;padding:20px;">
+  <div class="modal-box" style="max-width:740px;">
+    <div class="modal-head"><div><div id="detail-title" style="font-size:16px;font-weight:700;"></div><div id="detail-sub" style="font-size:12px;color:var(--mid);"></div></div>
+    <div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm no-print" onclick="window.print()">🖨</button><button class="btn btn-outline btn-sm" onclick="closeDetail()">✕</button></div></div>
+    <div id="detail-body" style="padding:20px;"></div>
+  </div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div id="claim-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-head"><div style="font-size:15px;font-weight:700;" id="modal-title">New Claim</div><button class="btn btn-outline btn-sm" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Claim Number</label><input class="form-input" id="cl-id" readonly></div>
+        <div class="field-group"><label class="field-label">Claim Type *</label>
+          <select class="form-select" id="cl-type">
+            <option>Liability</option><option>Cargo</option><option>Physical Damage</option>
+            <option>Bodily Injury</option><option>Uninsured Motorist</option><option>Workers Comp</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Linked Incident Report</label>
+          <select class="form-select" id="cl-incident">
+            <option value="">None / Manual entry</option>
+          </select>
+        </div>
+        <div class="field-group"><label class="field-label">Date of Loss *</label><input class="form-input" type="date" id="cl-dol"></div>
+      </div>
+      <div class="field-group"><label class="field-label">Driver</label>
+        <select class="form-select" id="cl-driver">
+          <option value="">Select driver...</option>
+          <option>Avis Modesto</option><option>David Fonseca</option><option>Miguel Fonseca</option>
+          <option>Nelson Veliz</option><option>Yosviel Pinera</option><option>Guillermo Pinera</option><option>Jayler Labrada</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Our Insurance Company</label><input class="form-input" id="cl-insurer" placeholder="e.g. Canal Insurance"></div>
+        <div class="field-group"><label class="field-label">Our Policy Number</label><input class="form-input" id="cl-policy"></div>
+      </div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Claim Filed Date</label><input class="form-input" type="date" id="cl-filed"></div>
+        <div class="field-group"><label class="field-label">Amount Claimed ($)</label><input class="form-input" type="number" id="cl-claimed" placeholder="0"></div>
+      </div>
+      <div style="padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;margin-bottom:14px;">
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--mid);">Adjuster Information</div>
+        <div class="form-row">
+          <div class="field-group" style="margin-bottom:0;"><label class="field-label">Adjuster Name</label><input class="form-input" id="cl-adj-name"></div>
+          <div class="field-group" style="margin-bottom:0;"><label class="field-label">Adjuster Phone</label><input class="form-input" id="cl-adj-phone"></div>
+        </div>
+        <div class="field-group" style="margin-top:10px;margin-bottom:0;"><label class="field-label">Adjuster Email</label><input class="form-input" id="cl-adj-email" type="email"></div>
+      </div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Status</label>
+          <select class="form-select" id="cl-status" onchange="showSettleFields()">
+            <option value="open">Open</option><option value="under_review">Under Review</option>
+            <option value="negotiating">Negotiating</option><option value="settled">Settled</option>
+            <option value="closed">Closed</option><option value="denied">Denied</option>
+          </select>
+        </div>
+        <div class="field-group" id="settle-amt-group" style="display:none;"><label class="field-label">Settlement Amount ($)</label><input class="form-input" type="number" id="cl-settled" placeholder="0"></div>
+      </div>
+      <div class="field-group" id="settle-date-group" style="display:none;"><label class="field-label">Settlement Date</label><input class="form-input" type="date" id="cl-settle-date"></div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Attorney Involved?</label><select class="form-select" id="cl-atty"><option value="no">No</option><option value="yes">Yes</option></select></div>
+        <div class="field-group"><label class="field-label">Subrogation Opportunity?</label><select class="form-select" id="cl-subrog"><option value="no">No</option><option value="yes">Yes — pursuing</option><option value="evaluating">Evaluating</option></select></div>
+      </div>
+      <div id="atty-fields" style="display:none;">
+        <div class="form-row">
+          <div class="field-group"><label class="field-label">Attorney Name</label><input class="form-input" id="cl-atty-name"></div>
+          <div class="field-group"><label class="field-label">Attorney Phone</label><input class="form-input" id="cl-atty-phone"></div>
+        </div>
+      </div>
+      <div class="field-group"><label class="field-label">Notes / Activity Log</label><textarea class="form-input" id="cl-notes" rows="3" placeholder="Running log: adjuster calls, inspections, offers, counter-offers..."></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveClaim()">Save Claim</button></div>
+  </div>
+</div>
+
+<script src="nexus-sidebar.js"></script>
+<script>
+let editId=null, activeFilter='all';
+function getClaims(){ try{ return JSON.parse(localStorage.getItem('nexus_claims')||'[]'); }catch(e){ return []; } }
+function saveClaims(a){ localStorage.setItem('nexus_claims', JSON.stringify(a)); }
+function getIncs(){ try{ return JSON.parse(localStorage.getItem('nexus_incidents')||'[]'); }catch(e){ return []; } }
+function genId(){ const d=new Date(); const n=getClaims().length+1; return 'CLM-'+d.getFullYear()+(d.getMonth()+1).toString().padStart(2,'0')+d.getDate().toString().padStart(2,'0')+'-'+String(n).padStart(3,'0'); }
+function fmtDate(s){ if(!s) return '—'; try{ return new Date(s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }catch(e){ return s; } }
+function fmtMoney(v){ return v?'$'+Number(v).toLocaleString():'—'; }
+function daysOpen(c){ if(!c.filedDate) return 0; const end=c.closedAt?new Date(c.closedAt):new Date(); return Math.ceil((end-new Date(c.filedDate+'T12:00:00'))/86400000); }
+
+const STATUS_META = {
+  open:{label:'Open',badge:'badge-red',color:'#ef4444'},
+  under_review:{label:'Under Review',badge:'badge-yellow',color:'#f59e0b'},
+  negotiating:{label:'Negotiating',badge:'badge-orange',color:'#f97316'},
+  settled:{label:'Settled',badge:'badge-green',color:'#10b981'},
+  closed:{label:'Closed',badge:'badge-blue',color:'#3b82f6'},
+  denied:{label:'Denied',badge:'badge-gray',color:'#94a3b8'}
+};
+const STATUS_ORDER = ['open','under_review','negotiating','settled','closed','denied'];
+
+function renderKPI(){
+  const claims = getClaims();
+  const open = claims.filter(c=>c.status==='open'||c.status==='under_review'||c.status==='negotiating').length;
+  const totClaimed = claims.reduce((s,c)=>s+Number(c.amountClaimed||0),0);
+  const totSettled = claims.filter(c=>c.settlementAmt).reduce((s,c)=>s+Number(c.settlementAmt||0),0);
+  const closed = claims.filter(c=>c.status==='settled'||c.status==='closed');
+  const avgDays = closed.length ? Math.round(closed.reduce((s,c)=>s+daysOpen(c),0)/closed.length) : 0;
+  document.getElementById('kpi-row').innerHTML = `
+    <div class="kpi"><div class="kpi-label">Open Claims</div><div class="kpi-value" style="color:${open>0?'var(--red)':'var(--green)'}">${open}</div><div class="kpi-sub">Active / in progress</div></div>
+    <div class="kpi"><div class="kpi-label">Total Claimed</div><div class="kpi-value">${totClaimed?'$'+Math.round(totClaimed/1000)+'K':'$0'}</div><div class="kpi-sub">All claims combined</div></div>
+    <div class="kpi"><div class="kpi-label">Total Settled</div><div class="kpi-value" style="color:var(--green)">${totSettled?'$'+Math.round(totSettled/1000)+'K':'$0'}</div><div class="kpi-sub">Paid out</div></div>
+    <div class="kpi"><div class="kpi-label">Avg Days to Close</div><div class="kpi-value">${avgDays||'—'}</div><div class="kpi-sub">${closed.length} closed claims</div></div>`;
+}
+
+function renderTabs(){
+  const claims = getClaims();
+  const counts = {all:claims.length};
+  STATUS_ORDER.forEach(s=>{ counts[s]=claims.filter(c=>c.status===s).length; });
+  const tabs = [['all','All'],['open','Open'],['under_review','Under Review'],['negotiating','Negotiating'],['settled','Settled'],['closed','Closed'],['denied','Denied']];
+  document.getElementById('status-tabs').innerHTML = tabs.map(([v,l])=>`<button class="stab ${activeFilter===v?'active':''}" onclick="filterStatus('${v}')">${l}${counts[v]?' ('+counts[v]+')':''}</button>`).join('');
+}
+
+function filterStatus(s){ activeFilter=s; renderTabs(); renderTable(); }
+
+function renderTable(){
+  const claims = getClaims();
+  const filtered = activeFilter==='all' ? claims : claims.filter(c=>c.status===activeFilter);
+  const tbody = document.getElementById('claims-tbody');
+  document.getElementById('table-title').textContent = (activeFilter==='all'?'All':STATUS_META[activeFilter]?.label||activeFilter)+' Claims ('+filtered.length+')';
+  if(!filtered.length){ tbody.innerHTML='<tr><td colspan="11" style="text-align:center;color:var(--mid);padding:24px;">No claims found — <span style="color:var(--green);">✅ Great news</span></td></tr>'; return; }
+  tbody.innerHTML = filtered.map(c=>{
+    const sm = STATUS_META[c.status]||STATUS_META.open;
+    const do_= daysOpen(c);
+    const doColor = do_>90?'var(--red)':do_>30?'var(--yellow)':'var(--text)';
+    const variance = c.settlementAmt&&c.amountClaimed ? Number(c.settlementAmt)-Number(c.amountClaimed) : null;
+    return `<tr style="cursor:pointer;" onclick="viewClaim('${c.id}')">
+      <td style="font-family:monospace;font-size:12px;">${c.id}</td>
+      <td style="font-size:12px;">${c.incidentId?`<a href="incident-report.html" style="color:var(--blue);" onclick="event.stopPropagation();">${c.incidentId}</a>`:'—'}</td>
+      <td style="font-weight:600;">${c.driverName||'—'}</td>
+      <td>${fmtDate(c.dateOfLoss)}</td>
+      <td style="font-size:12px;">${c.claimType||'—'}</td>
+      <td style="font-size:12px;">${c.insurer||'—'}</td>
+      <td>${fmtMoney(c.amountClaimed)}</td>
+      <td style="color:${c.settlementAmt?'var(--green)':'var(--mid)'}">${fmtMoney(c.settlementAmt)}${variance!==null?`<span style="font-size:10px;color:${variance<=0?'var(--green)':'var(--red)'};">${variance<=0?' ▼':' ▲'}$${Math.abs(variance).toLocaleString()}</span>`:''}</td>
+      <td><span class="badge ${sm.badge}">${sm.label}</span></td>
+      <td style="color:${doColor};">${do_}d</td>
+      <td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();editClaim('${c.id}')">Edit</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function viewClaim(id){
+  const c=getClaims().find(x=>x.id===id); if(!c) return;
+  const sm=STATUS_META[c.status]||STATUS_META.open;
+  document.getElementById('detail-title').textContent=c.id;
+  document.getElementById('detail-sub').textContent=fmtDate(c.dateOfLoss)+' · '+(c.driverName||'')+(c.insurer?' · '+c.insurer:'');
+  const steps=['open','under_review','negotiating','settled','closed'];
+  const curIdx=steps.indexOf(c.status);
+  const tl=steps.map((s,i)=>{
+    const sm2=STATUS_META[s]; const done=i<=curIdx;
+    return `<div class="tl-step">${i>0?`<div class="tl-line" style="background:${done?sm2.color:'var(--dim)'}"></div>`:''}
+      <div class="tl-circle" style="color:${done?sm2.color:'var(--dim)'};border-color:${done?sm2.color:'var(--dim)'};background:${done?sm2.color+'18':'transparent'}">${done?'✓':i+1}</div>
+      <div class="tl-label">${sm2?.label||s}</div></div>`;
+  }).join('');
+  document.getElementById('detail-body').innerHTML = `
+    <div style="margin-bottom:16px;">${tl}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px;">
+        <div style="font-size:11px;color:var(--mid);margin-bottom:4px;">AMOUNT CLAIMED</div>
+        <div style="font-size:22px;font-weight:800;">${fmtMoney(c.amountClaimed)}</div>
+      </div>
+      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px;">
+        <div style="font-size:11px;color:var(--mid);margin-bottom:4px;">SETTLED AMOUNT</div>
+        <div style="font-size:22px;font-weight:800;color:${c.settlementAmt?'var(--green)':'var(--mid)'}">${fmtMoney(c.settlementAmt)||'Pending'}</div>
+      </div>
+    </div>
+    <div class="detail-row"><span class="detail-key">Claim Type</span><span>${c.claimType||'—'}</span></div>
+    <div class="detail-row"><span class="detail-key">Linked Incident</span><span>${c.incidentId?`<a href="incident-report.html" style="color:var(--blue);">${c.incidentId} ↗</a>`:'None'}</span></div>
+    <div class="detail-row"><span class="detail-key">Driver</span><span>${c.driverName||'—'}</span></div>
+    <div class="detail-row"><span class="detail-key">Insurance Company</span><span>${c.insurer||'—'}</span></div>
+    <div class="detail-row"><span class="detail-key">Policy Number</span><span>${c.policyNum||'—'}</span></div>
+    <div class="detail-row"><span class="detail-key">Filed Date</span><span>${fmtDate(c.filedDate)}</span></div>
+    <div class="detail-row"><span class="detail-key">Adjuster</span><span>${c.adjName||'—'}${c.adjPhone?' · '+c.adjPhone:''}${c.adjEmail?' · '+c.adjEmail:''}</span></div>
+    <div class="detail-row"><span class="detail-key">Settlement Date</span><span>${fmtDate(c.settleDate)}</span></div>
+    <div class="detail-row"><span class="detail-key">Attorney</span><span>${c.atty==='yes'?'Yes — '+(c.attyName||'')+(c.attyPhone?' · '+c.attyPhone:''):'No'}</span></div>
+    <div class="detail-row"><span class="detail-key">Subrogation</span><span>${c.subrogation||'No'}</span></div>
+    <div class="detail-row"><span class="detail-key">Days Open</span><span>${daysOpen(c)}d</span></div>
+    <div style="margin-top:12px;padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;">
+      <div style="font-size:12px;color:var(--mid);margin-bottom:6px;">Notes / Activity Log</div>
+      <div style="font-size:13px;white-space:pre-wrap;">${c.notes||'No notes recorded'}</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end;">
+      <button class="btn btn-outline btn-sm" onclick="editClaim('${c.id}');closeDetail()">Edit Claim</button>
+      <button class="btn btn-outline btn-sm" onclick="advanceStatus('${c.id}')">Advance Status →</button>
+    </div>`;
+  document.getElementById('detail-modal').style.display='flex';
+}
+function closeDetail(){ document.getElementById('detail-modal').style.display='none'; }
+
+function advanceStatus(id){
+  const claims=getClaims(); const c=claims.find(x=>x.id===id); if(!c) return;
+  const order=['open','under_review','negotiating','settled','closed'];
+  const idx=order.indexOf(c.status);
+  if(idx<order.length-1){ c.status=order[idx+1]; if(c.status==='closed'||c.status==='settled') c.closedAt=new Date().toISOString(); }
+  saveClaims(claims); closeDetail(); renderKPI(); renderTabs(); renderTable();
+}
+
+function openModal(){
+  editId=null;
+  document.getElementById('modal-title').textContent='New Claim';
+  document.getElementById('cl-id').value=genId();
+  document.getElementById('cl-dol').value=new Date().toISOString().slice(0,10);
+  document.getElementById('cl-filed').value=new Date().toISOString().slice(0,10);
+  document.getElementById('cl-status').value='open';
+  ['cl-insurer','cl-policy','cl-adj-name','cl-adj-phone','cl-adj-email','cl-claimed','cl-settled','cl-settle-date','cl-notes','cl-atty-name','cl-atty-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('cl-atty').value='no';
+  document.getElementById('atty-fields').style.display='none';
+  document.getElementById('settle-amt-group').style.display='none';
+  document.getElementById('settle-date-group').style.display='none';
+  // Populate incident dropdown
+  const incs=getIncs();
+  const sel=document.getElementById('cl-incident');
+  sel.innerHTML='<option value="">None / Manual entry</option>'+incs.map(i=>`<option value="${i.id}">${i.id} — ${i.driverName||''} — ${fmtDate(i.date)}</option>`).join('');
+  document.getElementById('claim-modal').classList.add('open');
+}
+
+function closeModal(){ document.getElementById('claim-modal').classList.remove('open'); editId=null; }
+function showSettleFields(){ const v=document.getElementById('cl-status').value; const show=v==='settled'||v==='closed'; document.getElementById('settle-amt-group').style.display=show?'block':'none'; document.getElementById('settle-date-group').style.display=show?'block':'none'; document.getElementById('cl-atty').addEventListener('change',()=>{ document.getElementById('atty-fields').style.display=document.getElementById('cl-atty').value==='yes'?'block':'none'; }); }
+function gv(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
+
+function saveClaim(){
+  if(!gv('cl-dol')){ alert('Date of loss required'); return; }
+  const claims=getClaims();
+  const incSel=gv('cl-incident');
+  let driverName=gv('cl-driver');
+  if(incSel && !driverName){ const inc=getIncs().find(i=>i.id===incSel); if(inc) driverName=inc.driverName||''; }
+  const rec={ id:editId||gv('cl-id'), incidentId:incSel||null, dateOfLoss:gv('cl-dol'), driverName, claimType:gv('cl-type'), insurer:gv('cl-insurer'), policyNum:gv('cl-policy'), filedDate:gv('cl-filed'), amountClaimed:gv('cl-claimed'), adjName:gv('cl-adj-name'), adjPhone:gv('cl-adj-phone'), adjEmail:gv('cl-adj-email'), status:gv('cl-status'), settlementAmt:gv('cl-settled'), settleDate:gv('cl-settle-date'), atty:gv('cl-atty'), attyName:gv('cl-atty-name'), attyPhone:gv('cl-atty-phone'), subrogation:gv('cl-subrog'), notes:gv('cl-notes'), createdAt:new Date().toISOString(), closedAt:(gv('cl-status')==='closed'||gv('cl-status')==='settled')?new Date().toISOString():null };
+  if(editId){ const idx=claims.findIndex(c=>c.id===editId); if(idx>=0) claims[idx]=rec; }
+  else claims.unshift(rec);
+  // Update linked incident as claimFiled=true
+  if(incSel){ const incs=getIncs(); const inc=incs.find(i=>i.id===incSel); if(inc){ inc.claimFiled=true; inc.claimId=rec.id; localStorage.setItem('nexus_incidents',JSON.stringify(incs)); } }
+  saveClaims(claims); closeModal(); renderKPI(); renderTabs(); renderTable();
+}
+
+function editClaim(id){
+  const c=getClaims().find(x=>x.id===id); if(!c) return;
+  editId=id; document.getElementById('modal-title').textContent='Edit Claim — '+id;
+  openModal();
+  setTimeout(()=>{
+    const map={'cl-id':'id','cl-type':'claimType','cl-dol':'dateOfLoss','cl-driver':'driverName','cl-insurer':'insurer','cl-policy':'policyNum','cl-filed':'filedDate','cl-claimed':'amountClaimed','cl-adj-name':'adjName','cl-adj-phone':'adjPhone','cl-adj-email':'adjEmail','cl-status':'status','cl-settled':'settlementAmt','cl-settle-date':'settleDate','cl-atty':'atty','cl-atty-name':'attyName','cl-atty-phone':'attyPhone','cl-subrog':'subrogation','cl-notes':'notes'};
+    Object.entries(map).forEach(([fid,key])=>{ const el=document.getElementById(fid); if(el&&c[key]!==undefined) el.value=c[key]||''; });
+    const incSel=document.getElementById('cl-incident'); if(incSel&&c.incidentId) incSel.value=c.incidentId;
+    showSettleFields();
+    if(c.atty==='yes') document.getElementById('atty-fields').style.display='block';
+  },50);
+}
+
+// Auto-prefill from incident if URL has ?incident=
+const urlInc = new URLSearchParams(location.search).get('incident');
+if(urlInc){ window.addEventListener('load',()=>{ openModal(); setTimeout(()=>{ const sel=document.getElementById('cl-incident'); if(sel) sel.value=urlInc; const inc=getIncs().find(i=>i.id===urlInc); if(inc){ const drEl=document.getElementById('cl-driver'); if(drEl) drEl.value=inc.driverName||''; const dolEl=document.getElementById('cl-dol'); if(dolEl) dolEl.value=inc.date||''; } },200); }); }
+
+document.getElementById('cl-atty').addEventListener('change',function(){ document.getElementById('atty-fields').style.display=this.value==='yes'?'block':'none'; });
+renderKPI(); renderTabs(); renderTable();
+</script>
+</body>
+</html>

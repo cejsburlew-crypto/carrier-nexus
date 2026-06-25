@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Incident Reports — Carrier Nexus</title>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--dim:#334155;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+.layout{display:flex;min-height:100vh;}
+.main{flex:1;overflow-x:hidden;}
+.topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:17px;font-weight:700;}
+.topbar-sub{font-size:11px;color:var(--mid);margin-top:2px;}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
+.btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:#2563eb;}
+.btn-red{background:var(--red);color:#fff;}.btn-red:hover{background:#dc2626;}
+.btn-green{background:var(--green);color:#fff;}.btn-green:hover{background:#059669;}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}.btn-outline:hover{background:var(--panel2);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.content{padding:20px;max-width:1100px;margin:0 auto;}
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.kpi-label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.kpi-value{font-size:26px;font-weight:800;line-height:1;}
+.kpi-sub{font-size:11px;color:var(--mid);margin-top:3px;}
+/* PANEL */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.panel-title{font-size:14px;font-weight:700;}
+.panel-sub{font-size:12px;color:var(--mid);}
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+th{padding:9px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;}
+.badge-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
+.badge-yellow{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25);}
+.badge-green{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);}
+.badge-blue{background:rgba(59,130,246,.12);color:#3b82f6;border:1px solid rgba(59,130,246,.25);}
+.badge-gray{background:rgba(100,116,139,.12);color:#94a3b8;border:1px solid rgba(100,116,139,.25);}
+/* ALERT */
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.alert-red{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;}
+.alert-yellow{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;}
+/* WIZARD */
+.wizard{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;overflow-y:auto;padding:20px;}
+.wizard.open{display:flex;align-items:flex-start;justify-content:center;}
+.wizard-box{background:var(--panel);border:1px solid var(--border);border-radius:16px;width:100%;max-width:700px;margin:auto;}
+.wizard-head{padding:18px 22px;border-bottom:1px solid var(--border);}
+.wizard-title{font-size:16px;font-weight:700;}
+.progress-bar{height:4px;background:var(--dim);border-radius:2px;margin-top:12px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .3s;}
+.step-labels{display:flex;justify-content:space-between;margin-top:6px;}
+.step-label{font-size:10px;color:var(--mid);}
+.step-label.active{color:var(--blue);font-weight:700;}
+.wizard-body{padding:22px;}
+.step{display:none;}.step.active{display:block;}
+.field-group{margin-bottom:16px;}
+.field-label{font-size:12px;color:var(--mid);margin-bottom:5px;display:block;}
+.field-label span{color:var(--red);}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--blue);}
+.form-textarea{resize:vertical;min-height:80px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+/* SEVERITY RADIO */
+.sev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.sev-opt{border:2px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer;transition:.15s;}
+.sev-opt input{display:none;}
+.sev-opt.selected-minor{border-color:#10b981;background:rgba(16,185,129,.08);}
+.sev-opt.selected-moderate{border-color:#f59e0b;background:rgba(245,158,11,.08);}
+.sev-opt.selected-major{border-color:#f97316;background:rgba(249,115,22,.08);}
+.sev-opt.selected-critical{border-color:#ef4444;background:rgba(239,68,68,.08);}
+.sev-title{font-size:13px;font-weight:700;}
+.sev-sub{font-size:11px;color:var(--mid);margin-top:2px;}
+/* CHECKBOXES */
+.check-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}
+.check-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:7px;cursor:pointer;font-size:12px;}
+.check-item input{width:14px;height:14px;cursor:pointer;}
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;}
+.toggle-label{font-size:13px;}
+.toggle{width:42px;height:22px;background:var(--dim);border-radius:11px;position:relative;cursor:pointer;transition:.2s;}
+.toggle.on{background:var(--green);}
+.toggle::after{content:'';width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:.2s;}
+.toggle.on::after{left:22px;}
+/* PHOTO GRID */
+.photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.photo-slot{background:var(--panel2);border:1px dashed var(--border);border-radius:8px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;}
+.photo-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.photo-slot-label{font-size:10px;color:var(--mid);text-align:center;margin-top:4px;}
+.photo-slot input{display:none;}
+/* PARTY ROWS */
+.party-row{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;position:relative;}
+.party-row .remove-btn{position:absolute;top:8px;right:8px;background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:5px;padding:2px 8px;font-size:11px;cursor:pointer;}
+/* FMCSA BANNER */
+.fmcsa-banner{background:rgba(239,68,68,.1);border:2px solid var(--red);border-radius:10px;padding:14px;margin-bottom:12px;display:none;}
+.fmcsa-banner.show{display:block;}
+/* WIZARD FOOTER */
+.wizard-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+/* DETAIL VIEW */
+.detail-section{margin-bottom:20px;}
+.detail-section-title{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.detail-row{display:flex;gap:8px;margin-bottom:8px;font-size:13px;}
+.detail-key{color:var(--mid);min-width:180px;flex-shrink:0;}
+.detail-val{color:var(--text);}
+/* FILTER ROW */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid var(--border);}
+/* RESPONSIVE */
+@media(max-width:600px){.kpi-row{grid-template-columns:1fr 1fr;}.form-row{grid-template-columns:1fr;}.form-row-3{grid-template-columns:1fr;}.photo-grid{grid-template-columns:repeat(2,1fr);}.check-grid{grid-template-columns:1fr;}.sev-grid{grid-template-columns:1fr;}}
+/* PRINT */
+@media print{.no-print{display:none!important;}body{background:#fff!important;color:#000!important;}.panel{background:#fff!important;border:1px solid #ddd!important;}.detail-key{color:#555!important;}.detail-val{color:#000!important;}}
+</style>
+
+<style id="touch-target-fix">
+/* Apple HIG / WCAG 2.5.5 — 44x44px minimum touch targets */
+@media(max-width:1024px){
+  button,.btn,a.btn,[role="button"]{min-height:44px!important;min-width:44px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;}
+  input[type="text"],input[type="number"],input[type="date"],input[type="time"],input[type="tel"],input[type="email"],select,textarea{min-height:44px!important;font-size:16px!important;padding:10px 12px!important;}
+  input[type="checkbox"],input[type="radio"]{min-width:24px!important;min-height:24px!important;cursor:pointer!important;}
+  label{font-size:14px!important;cursor:pointer!important;}
+  /* Fix sub-12px inline labels — bring up to 12px minimum */
+  .field-label,.form-label,.label-sm,.badge,.kpi-sub,.kpi-label,.stat-sub,.mid,.nav-badge{font-size:max(12px,1em)!important;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<div class="main">
+<div class="topbar no-print">
+  <div><div class="topbar-title">🚨 Incident Reports</div><div class="topbar-sub">49 CFR 390.15 — Accident Register · FMCSA Reportable Crash Tracking</div></div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-outline btn-sm" onclick="location.href='dot-compliance.html'">← DOT Compliance</button>
+    <button class="btn btn-outline btn-sm" onclick="location.href='claims.html'">Claims ↗</button>
+    <button class="btn btn-red btn-sm" onclick="openWizard()">+ New Incident Report</button>
+  </div>
+</div>
+
+<div class="content">
+  <div id="alerts-section"></div>
+  <div class="kpi-row" id="kpi-row"></div>
+  <div class="panel">
+    <div class="panel-head">
+      <div><div class="panel-title">Incident Register</div><div class="panel-sub">All incidents — 49 CFR 390.15 accident register</div></div>
+    </div>
+    <div class="filter-row">
+      <select class="form-select" style="width:auto;" id="f-driver" onchange="renderTable()"><option value="">All Drivers</option><option>Avis Modesto</option><option>David Fonseca</option><option>Miguel Fonseca</option><option>Nelson Veliz</option><option>Yosviel Pinera</option><option>Guillermo Pinera</option><option>Jayler Labrada</option></select>
+      <select class="form-select" style="width:auto;" id="f-status" onchange="renderTable()"><option value="">All Statuses</option><option>open</option><option>under_review</option><option>closed</option></select>
+      <select class="form-select" style="width:auto;" id="f-severity" onchange="renderTable()"><option value="">All Severities</option><option>minor</option><option>moderate</option><option>major</option><option>critical</option></select>
+    </div>
+    <div style="overflow-x:auto;"><table><thead><tr><th>ID</th><th>Date</th><th>Driver</th><th>Location</th><th>Type</th><th>Severity</th><th>FMCSA</th><th>Status</th><th>Actions</th></tr></thead><tbody id="inc-tbody"></tbody></table></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div id="detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;overflow-y:auto;padding:20px;">
+  <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;width:100%;max-width:780px;margin:auto;">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+      <div><div id="detail-title" style="font-size:16px;font-weight:700;"></div><div id="detail-subtitle" style="font-size:12px;color:var(--mid);"></div></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline btn-sm no-print" onclick="printDetail()">🖨 Print</button>
+        <button class="btn btn-outline btn-sm no-print" onclick="closeDetail()">✕ Close</button>
+      </div>
+    </div>
+    <div id="detail-body" style="padding:20px;"></div>
+  </div>
+</div>
+
+<!-- NEW INCIDENT WIZARD -->
+<div id="incident-wizard" class="wizard">
+  <div class="wizard-box">
+    <div class="wizard-head">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="wizard-title">📋 New Incident Report</div>
+        <button class="btn btn-outline btn-sm" onclick="closeWizard()">✕ Cancel</button>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--mid);" id="step-counter">Step 1 of 6</div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:16.6%;"></div></div>
+      <div class="step-labels">
+        <span class="step-label active" id="sl0">Basics</span>
+        <span class="step-label" id="sl1">Type</span>
+        <span class="step-label" id="sl2">Parties</span>
+        <span class="step-label" id="sl3">Damage</span>
+        <span class="step-label" id="sl4">Docs</span>
+        <span class="step-label" id="sl5">Sign</span>
+      </div>
+    </div>
+    <div class="wizard-body">
+      <!-- STEP 1 -->
+      <div class="step active" id="step-0">
+        <div class="fmcsa-banner" id="fmcsa-banner">🚨 <strong>FMCSA Reportable Crash</strong> — This incident meets the federal definition of a reportable accident (49 CFR 390.15). Must be recorded in the Accident Register and retained for 3 years.</div>
+        <div class="form-row">
+          <div class="field-group"><label class="field-label">Incident ID</label><input class="form-input" id="i-id" readonly></div>
+          <div class="field-group"><label class="field-label">Date <span>*</span></label><input class="form-input" type="date" id="i-date"></div>
+        </div>
+        <div class="form-row">
+          <div class="field-group"><label class="field-label">Time</label><input class="form-input" type="time" id="i-time"></div>
+          <div class="field-group"><label class="field-label">Driver <span>*</span></label>
+            <select class="form-select" id="i-driver">
+              <option value="">Select driver...</option>
+              <option>Avis Modesto</option><option>David Fonseca</option><option>Miguel Fonseca</option>
+              <option>Nelson Veliz</option><option>Yosviel Pinera</option><option>Guillermo Pinera</option>
+              <option>Jayler Labrada</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field-group"><label class="field-label">Unit / Truck #</label>
+            <select class="form-select" id="i-unit">
+              <option value="">Select unit...</option>
+              <option value="Unit 01">Unit 01 — Avis</option><option value="Unit 02">Unit 02 — Guillermo</option>
+              <option value="Unit 03">Unit 03 — Yosviel</option><option value="Unit 05">Unit 05 — Miguel</option>
+              <option value="Unit 06">Unit 06 — Nelson</option><option value="Unit 09">Unit 09 — David</option>
+              <option value="Unit 11">Unit 11 — Jayler</option>
+            </select>
+          </div>
+          <div class="field-group"><label class="field-label">Trailer # (optional)</label><input class="form-input" id="i-trailer" placeholder="e.g. TR-445"></div>
+        </div>
+        <div class="field-group"><label class="field-label">Location / Highway <span>*</span></label><input class="form-input" id="i-location" placeholder="e.g. I-95 NB MM 142, Miami FL"></div>
+        <div class="form-row">
+          <div class="field-group"><label class="field-label">State</label>
+            <select class="form-select" id="i-state">
+              <option value="">Select state...</option>
+              <option>AL</option><option>AR</option><option>AZ</option><option>CA</option><option>CO</option>
+              <option>CT</option><option>FL</option><option>GA</option><option>ID</option><option>IL</option>
+              <option>IN</option><option>KY</option><option>LA</option><option>MA</option><option>MD</option>
+              <option>MI</option><option>MN</option><option>MO</option><option>MS</option><option>MT</option>
+              <option>NC</option><option>NE</option><option>NJ</option><option>NM</option><option>NV</option>
+              <option>NY</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option>
+              <option>SC</option><option>TN</option><option>TX</option><option>UT</option><option>VA</option>
+              <option>WA</option><option>WI</option><option>WV</option>
+            </select>
+          </div>
+          <div class="field-group"><label class="field-label">GPS Coordinates (optional)</label><input class="form-input" id="i-gps" placeholder="e.g. 25.7617, -80.1918"></div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step" id="step-1">
+        <div class="field-group">
+          <label class="field-label">Incident Type(s) — select all that apply</label>
+          <div class="check-grid" id="type-checks">
+            <label class="check-item"><input type="checkbox" value="Collision — Rear End"> Collision — Rear End</label>
+            <label class="check-item"><input type="checkbox" value="Collision — Side Swipe"> Collision — Side Swipe</label>
+            <label class="check-item"><input type="checkbox" value="Collision — Head On"> Collision — Head On</label>
+            <label class="check-item"><input type="checkbox" value="Collision — Backing"> Collision — Backing</label>
+            <label class="check-item"><input type="checkbox" value="Rollover"> Rollover</label>
+            <label class="check-item"><input type="checkbox" value="Jackknife"> Jackknife</label>
+            <label class="check-item"><input type="checkbox" value="Load Spill/Shift"> Load Spill / Shift</label>
+            <label class="check-item"><input type="checkbox" value="Fire"> Fire</label>
+            <label class="check-item"><input type="checkbox" value="Hit and Run"> Hit and Run</label>
+            <label class="check-item"><input type="checkbox" value="Property Damage Only"> Property Damage Only</label>
+            <label class="check-item"><input type="checkbox" value="Pedestrian Involved"> Pedestrian Involved</label>
+            <label class="check-item"><input type="checkbox" value="Animal Strike"> Animal Strike</label>
+            <label class="check-item"><input type="checkbox" value="Weather Related"> Weather Related</label>
+            <label class="check-item"><input type="checkbox" value="Mechanical Failure"> Mechanical Failure</label>
+            <label class="check-item"><input type="checkbox" value="Near Miss"> Near Miss (no contact)</label>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Severity <span>*</span></label>
+          <div class="sev-grid" id="sev-grid">
+            <div class="sev-opt" onclick="setSev('minor',this)"><input type="radio" name="sev" value="minor"><div class="sev-title" style="color:#10b981;">Minor</div><div class="sev-sub">No injury · &lt;$500 damage · No tow</div></div>
+            <div class="sev-opt" onclick="setSev('moderate',this)"><input type="radio" name="sev" value="moderate"><div class="sev-title" style="color:#f59e0b;">Moderate</div><div class="sev-sub">$500–$5,000 damage or minor injury</div></div>
+            <div class="sev-opt" onclick="setSev('major',this)"><input type="radio" name="sev" value="major"><div class="sev-title" style="color:#f97316;">Major</div><div class="sev-title" style="font-weight:400;font-size:11px;color:var(--mid);">&gt;$5,000 damage or injury requiring treatment</div></div>
+            <div class="sev-opt" onclick="setSev('critical',this)"><input type="radio" name="sev" value="critical"><div class="sev-title" style="color:#ef4444;">Critical</div><div class="sev-sub">Fatality or serious injury</div></div>
+          </div>
+        </div>
+        <div id="fmcsa-auto-note" style="display:none;" class="alert alert-red">⚠️ FMCSA Reportable: fatality, injury, or tow-away — this crash must be recorded in the accident register per 49 CFR 390.15 and retained 3 years.</div>
+        <div class="field-group">
+          <label class="field-label">Was tow-away required?</label>
+          <div class="toggle-row"><span class="toggle-label">Vehicle towed from scene</span><div class="toggle" id="tog-tow" onclick="togToggle('tog-tow')"></div></div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step" id="step-2">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:700;">Other Parties Involved</div>
+          <button class="btn btn-outline btn-sm" onclick="addParty()">+ Add Party</button>
+        </div>
+        <div id="parties-container"></div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+          <div style="font-size:13px;font-weight:700;margin-bottom:10px;">Police / Law Enforcement</div>
+          <div class="toggle-row"><span class="toggle-label">Police were called to scene</span><div class="toggle" id="tog-police" onclick="togToggle('tog-police');showPoliceFields()"></div></div>
+          <div id="police-fields" style="display:none;margin-top:10px;">
+            <div class="form-row">
+              <div class="field-group"><label class="field-label">Report Number</label><input class="form-input" id="p-report" placeholder="e.g. 2026-FL-00442"></div>
+              <div class="field-group"><label class="field-label">Officer Name / Badge</label><input class="form-input" id="p-officer" placeholder="e.g. Ofc. Martinez #4421"></div>
+            </div>
+            <div class="form-row">
+              <div class="field-group"><label class="field-label">Department / Agency</label><input class="form-input" id="p-dept" placeholder="e.g. Miami-Dade PD"></div>
+              <div class="field-group"><label class="field-label">Report Obtained?</label>
+                <select class="form-select" id="p-obtained"><option value="no">Not yet</option><option value="yes">Yes — on file</option><option value="pending">Requested — pending</option></select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="font-size:13px;font-weight:700;">Witnesses</div>
+            <button class="btn btn-outline btn-sm" onclick="addWitness()">+ Add Witness</button>
+          </div>
+          <div id="witnesses-container"></div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step" id="step-3">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;">Our Vehicle Damage</div>
+        <div class="field-group"><label class="field-label">Damage Description</label><textarea class="form-textarea" id="d-ourdmg" placeholder="Describe damage to our vehicle/trailer..."></textarea></div>
+        <div class="field-group"><label class="field-label">Estimated Damage ($)</label><input class="form-input" type="number" id="d-ourest" placeholder="0"></div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:13px;font-weight:700;margin-bottom:12px;">Other Party Damage</div>
+        <div class="field-group"><label class="field-label">Other Party Damage Description</label><textarea class="form-textarea" id="d-theirdmg" placeholder="Describe damage to other vehicles/property..."></textarea></div>
+        <div class="field-group"><label class="field-label">Estimated Other Damage ($)</label><input class="form-input" type="number" id="d-theirest" placeholder="0"></div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:13px;font-weight:700;margin-bottom:10px;">Injuries</div>
+        <div class="toggle-row"><span class="toggle-label">Our driver was injured</span><div class="toggle" id="tog-ourinjury" onclick="togToggle('tog-ourinjury');showOurInjury()"></div></div>
+        <div id="our-injury-fields" style="display:none;margin-top:10px;">
+          <div class="form-row">
+            <div class="field-group"><label class="field-label">Nature of Injury</label><input class="form-input" id="inj-nature" placeholder="e.g. Whiplash, lacerations..."></div>
+            <div class="field-group"><label class="field-label">Medical Treatment</label>
+              <select class="form-select" id="inj-medical">
+                <option value="none">None / Refused</option>
+                <option value="self">Self-treated</option>
+                <option value="urgent_care">Urgent Care</option>
+                <option value="er">Emergency Room</option>
+                <option value="hospitalized">Hospitalized</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="toggle-row" style="margin-top:8px;"><span class="toggle-label">Other party(ies) injured</span><div class="toggle" id="tog-theirinjury" onclick="togToggle('tog-theirinjury');showTheirInjury()"></div></div>
+        <div id="their-injury-fields" style="display:none;margin-top:8px;">
+          <div class="field-group"><textarea class="form-textarea" id="inj-theirdesc" placeholder="Describe other party injuries..."></textarea></div>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step" id="step-4">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;">Photos — capture up to 8</div>
+        <div class="photo-grid" id="photo-grid"></div>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
+          <div class="toggle-row"><span class="toggle-label">Camera footage available (dash cam)</span><div class="toggle" id="tog-cam" onclick="togToggle('tog-cam');showCamFields()"></div></div>
+          <div id="cam-channel-fields" style="display:none;margin-top:8px;">
+            <label class="field-label">Available channels:</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <label class="check-item" style="width:auto;"><input type="checkbox" value="CH1"> CH1 Forward</label>
+              <label class="check-item" style="width:auto;"><input type="checkbox" value="CH2"> CH2 Driver</label>
+              <label class="check-item" style="width:auto;"><input type="checkbox" value="CH3"> CH3 Driver Side</label>
+              <label class="check-item" style="width:auto;"><input type="checkbox" value="CH4"> CH4 Pass Side</label>
+              <label class="check-item" style="width:auto;"><input type="checkbox" value="CH5"> CH5 Rear</label>
+              <label class="check-item" style="width:auto;"><input type="checkbox" value="CH6"> CH6 Cargo</label>
+            </div>
+          </div>
+          <div class="toggle-row" style="margin-top:8px;"><span class="toggle-label">Police report obtained / on file</span><div class="toggle" id="tog-polrep" onclick="togToggle('tog-polrep')"></div></div>
+        </div>
+        <div class="field-group" style="margin-top:12px;"><label class="field-label">Narrative / Additional Notes</label><textarea class="form-textarea" id="d-notes" rows="4" placeholder="Describe exactly what happened in chronological order..."></textarea></div>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="step" id="step-5">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;">Insurance & Notifications</div>
+        <div class="toggle-row"><span class="toggle-label">Insurance company notified</span><div class="toggle" id="tog-insnotify" onclick="togToggle('tog-insnotify');showInsFields()"></div></div>
+        <div id="ins-fields" style="display:none;margin-top:8px;margin-bottom:8px;">
+          <div class="form-row">
+            <div class="field-group"><label class="field-label">Notification Date</label><input class="form-input" type="date" id="ins-date"></div>
+            <div class="field-group"><label class="field-label">Contact Name / Claim #</label><input class="form-input" id="ins-contact" placeholder="Adjuster name or reference"></div>
+          </div>
+        </div>
+        <div class="toggle-row"><span class="toggle-label">Claim filed (go to Claims page)</span><div class="toggle" id="tog-claim" onclick="togToggle('tog-claim')"></div></div>
+        <div class="toggle-row" style="margin-top:4px;"><span class="toggle-label">Attorney involved</span><div class="toggle" id="tog-atty" onclick="togToggle('tog-atty');showAttyField()"></div></div>
+        <div id="atty-field" style="display:none;margin-top:8px;margin-bottom:8px;">
+          <div class="field-group"><label class="field-label">Attorney Name / Firm</label><input class="form-input" id="atty-name"></div>
+        </div>
+        <div class="toggle-row"><span class="toggle-label">Driver statement obtained</span><div class="toggle" id="tog-drvstmt" onclick="togToggle('tog-drvstmt')"></div></div>
+        <div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:14px;margin-top:14px;margin-bottom:14px;">
+          <div style="font-size:12px;color:var(--mid);margin-bottom:10px;">By signing below, I certify that the information in this report is accurate and complete to the best of my knowledge.</div>
+          <div class="form-row">
+            <div class="field-group"><label class="field-label">Driver Signature (type full name)</label><input class="form-input" id="sig-driver" placeholder="Type full name to certify" oninput="stampSig('sig-ts-driver')"></div>
+            <div class="field-group"><label class="field-label">Supervisor Signature</label><input class="form-input" id="sig-admin" placeholder="Jim Burlew" oninput="stampSig('sig-ts-admin')"></div>
+          </div>
+          <div style="font-size:11px;color:var(--mid);">Driver signed: <span id="sig-ts-driver">—</span> &nbsp;·&nbsp; Supervisor: <span id="sig-ts-admin">—</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="wizard-footer">
+      <button class="btn btn-outline" id="btn-back" onclick="stepNav(-1)" style="visibility:hidden;">← Back</button>
+      <span id="step-indicator" style="font-size:12px;color:var(--mid);">Step 1 of 6</span>
+      <button class="btn btn-primary" id="btn-next" onclick="stepNav(1)">Next →</button>
+    </div>
+  </div>
+</div>
+
+<script src="nexus-sidebar.js"></script>
+<script>
+const PHOTOS_LABELS = ['Scene Wide','Our Vehicle Front','Our Vehicle Rear','Our Vehicle Side','Other Vehicle','Damage Close-up','Road Conditions','Other'];
+let currentStep = 0;
+let photoData = {};
+let partyCount = 0;
+let witnessCount = 0;
+
+function getIncs(){ try{ return JSON.parse(localStorage.getItem('nexus_incidents')||'[]'); }catch(e){ return []; } }
+function saveIncs(a){ localStorage.setItem('nexus_incidents', JSON.stringify(a)); }
+function genId(){ const d=new Date(); const n=getIncs().length+1; return 'INC-'+d.getFullYear()+(d.getMonth()+1).toString().padStart(2,'0')+d.getDate().toString().padStart(2,'0')+'-'+String(n).padStart(3,'0'); }
+function fmtDate(s){ if(!s) return '—'; try{ return new Date(s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }catch(e){ return s; } }
+
+function renderKPI(){
+  const incs = getIncs();
+  const open = incs.filter(i=>i.status==='open').length;
+  const fmcsa = incs.filter(i=>i.fmcsaReportable).length;
+  const critical = incs.filter(i=>i.severity==='critical'||i.severity==='major').length;
+  document.getElementById('kpi-row').innerHTML = `
+    <div class="kpi"><div class="kpi-label">Total Incidents</div><div class="kpi-value">${incs.length}</div><div class="kpi-sub">All time</div></div>
+    <div class="kpi"><div class="kpi-label">Open / Unresolved</div><div class="kpi-value" style="color:${open>0?'var(--red)':'var(--green)'}">${open}</div><div class="kpi-sub">Requires action</div></div>
+    <div class="kpi"><div class="kpi-label">FMCSA Reportable</div><div class="kpi-value" style="color:${fmcsa>0?'var(--orange)':'var(--green)'}">${fmcsa}</div><div class="kpi-sub">49 CFR 390.15 register</div></div>
+    <div class="kpi"><div class="kpi-label">Critical / Major</div><div class="kpi-value" style="color:${critical>0?'var(--red)':'var(--green)'}">${critical}</div><div class="kpi-sub">High severity events</div></div>
+  `;
+  const alerts = [];
+  if(open>0) alerts.push(`<div class="alert alert-red">🚨 ${open} open incident${open>1?'s':''} require resolution — review and close or escalate</div>`);
+  const fmcsaOpen = incs.filter(i=>i.fmcsaReportable&&i.status!=='closed');
+  if(fmcsaOpen.length) alerts.push(`<div class="alert alert-yellow">⚠️ ${fmcsaOpen.length} FMCSA-reportable incident${fmcsaOpen.length>1?'s':''} not yet closed — ensure accident register entries are complete per 49 CFR 390.15</div>`);
+  document.getElementById('alerts-section').innerHTML = alerts.join('');
+}
+
+const SEV_BADGE = { minor:'badge-green', moderate:'badge-yellow', major:'badge-yellow', critical:'badge-red' };
+const STATUS_LABEL = { open:'Open', under_review:'Under Review', closed:'Closed' };
+const STATUS_BADGE = { open:'badge-red', under_review:'badge-yellow', closed:'badge-green' };
+
+function renderTable(){
+  const incs = getIncs();
+  const fd = document.getElementById('f-driver').value;
+  const fs = document.getElementById('f-status').value;
+  const fv = document.getElementById('f-severity').value;
+  const filtered = incs.filter(i=>
+    (!fd || i.driverName===fd) &&
+    (!fs || i.status===fs) &&
+    (!fv || i.severity===fv)
+  ).sort((a,b)=>b.date.localeCompare(a.date));
+  const tbody = document.getElementById('inc-tbody');
+  if(!filtered.length){ tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--mid);padding:24px;">No incidents on record — <span style="color:var(--green);">✅ Keep it that way</span></td></tr>'; return; }
+  tbody.innerHTML = filtered.map(i=>`<tr>
+    <td style="font-family:monospace;font-size:12px;">${i.id}</td>
+    <td>${fmtDate(i.date)}</td>
+    <td style="font-weight:600;">${i.driverName||'—'}</td>
+    <td style="font-size:12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.location||'—'}</td>
+    <td style="font-size:12px;">${(i.types||[]).slice(0,1).join(', ')||'—'}${i.types&&i.types.length>1?' +'+( i.types.length-1):''}</td>
+    <td><span class="badge ${SEV_BADGE[i.severity]||'badge-gray'}">${(i.severity||'—').toUpperCase()}</span></td>
+    <td>${i.fmcsaReportable?'<span class="badge badge-red">FMCSA</span>':'<span style="color:var(--mid);font-size:12px;">No</span>'}</td>
+    <td><span class="badge ${STATUS_BADGE[i.status]||'badge-gray'}">${STATUS_LABEL[i.status]||i.status}</span></td>
+    <td><button class="btn btn-outline btn-sm" onclick="viewInc('${i.id}')">View</button> <button class="btn btn-outline btn-sm" onclick="changeStatus('${i.id}')" style="margin-left:4px;">Status</button> <a href="claims.html?incident=${encodeURIComponent(i.id)}" class="btn btn-outline btn-sm" style="margin-left:4px;text-decoration:none;">⚖️ Claim</a></td>
+  </tr>`).join('');
+}
+
+function viewInc(id){
+  const inc = getIncs().find(i=>i.id===id);
+  if(!inc) return;
+  document.getElementById('detail-title').textContent = inc.id;
+  document.getElementById('detail-subtitle').textContent = fmtDate(inc.date) + ' · ' + (inc.driverName||'') + ' · ' + (inc.location||'');
+  const fmcsaBanner = inc.fmcsaReportable ? `<div class="alert alert-red" style="margin-bottom:16px;">🚨 FMCSA REPORTABLE CRASH — 49 CFR 390.15 — Retain in accident register for 3 years</div>` : '';
+  document.getElementById('detail-body').innerHTML = fmcsaBanner + `
+    <div class="detail-section">
+      <div class="detail-section-title">Basic Information</div>
+      <div class="detail-row"><span class="detail-key">Incident ID</span><span class="detail-val">${inc.id}</span></div>
+      <div class="detail-row"><span class="detail-key">Date / Time</span><span class="detail-val">${fmtDate(inc.date)} ${inc.time||''}</span></div>
+      <div class="detail-row"><span class="detail-key">Driver</span><span class="detail-val">${inc.driverName||'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">Unit</span><span class="detail-val">${inc.unit||'—'}${inc.trailer?' / Trailer: '+inc.trailer:''}</span></div>
+      <div class="detail-row"><span class="detail-key">Location</span><span class="detail-val">${inc.location||'—'}, ${inc.state||''}</span></div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Incident Type & Severity</div>
+      <div class="detail-row"><span class="detail-key">Type(s)</span><span class="detail-val">${(inc.types||[]).join(', ')||'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">Severity</span><span class="detail-val"><span class="badge ${SEV_BADGE[inc.severity]||'badge-gray'}">${(inc.severity||'—').toUpperCase()}</span></span></div>
+      <div class="detail-row"><span class="detail-key">FMCSA Reportable</span><span class="detail-val">${inc.fmcsaReportable?'YES — 49 CFR 390.15':'No'}</span></div>
+      <div class="detail-row"><span class="detail-key">Tow Required</span><span class="detail-val">${inc.towRequired?'Yes':'No'}</span></div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Other Parties (${(inc.parties||[]).length})</div>
+      ${(inc.parties||[]).map((p,i)=>`<div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;">
+        <div style="font-weight:700;margin-bottom:4px;">Party ${i+1}: ${p.name||'—'}</div>
+        <div style="font-size:12px;color:var(--mid);">Phone: ${p.phone||'—'} · Plate: ${p.plate||'—'} ${p.plateState||''} · Insurance: ${p.insuranceCo||'—'} · Policy: ${p.policyNum||'—'}</div>
+      </div>`).join('')||'<div style="color:var(--mid);font-size:13px;">No other parties recorded</div>'}
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Police Report</div>
+      <div class="detail-row"><span class="detail-key">Police Called</span><span class="detail-val">${(inc.police&&inc.police.called)?'Yes':'No'}</span></div>
+      ${inc.police&&inc.police.called?`<div class="detail-row"><span class="detail-key">Report #</span><span class="detail-val">${inc.police.reportNum||'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">Officer</span><span class="detail-val">${inc.police.officer||'—'} · ${inc.police.dept||'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">Report Obtained</span><span class="detail-val">${inc.police.obtained||'—'}</span></div>`:''}
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Damage & Injuries</div>
+      <div class="detail-row"><span class="detail-key">Our Vehicle Damage</span><span class="detail-val">${inc.ourDamage||'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">Estimated Our Damage</span><span class="detail-val">${inc.ourDamageEst?'$'+Number(inc.ourDamageEst).toLocaleString():'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">Other Party Damage</span><span class="detail-val">${inc.otherDamage||'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">Our Driver Injured</span><span class="detail-val">${inc.ourInjury?'Yes — '+inc.ourInjuryNature+' ('+inc.ourMedical+')':'No'}</span></div>
+      <div class="detail-row"><span class="detail-key">Other Injuries</span><span class="detail-val">${inc.otherInjury?inc.otherInjuryDesc:'No'}</span></div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Documentation & Narrative</div>
+      <div class="detail-row"><span class="detail-key">Camera Footage</span><span class="detail-val">${inc.cameraAvailable?'Available — channels: '+(inc.cameraChannels||[]).join(', '):'Not available'}</span></div>
+      <div class="detail-row"><span class="detail-key">Photos</span><span class="detail-val">${(inc.photos||[]).length} photo${(inc.photos||[]).length!==1?'s':''} attached</span></div>
+      ${(inc.photos||[]).length?`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px;">${(inc.photos||[]).map(p=>`<div style="border-radius:6px;overflow:hidden;aspect-ratio:1;background:var(--panel2);"><img src="${p.dataUrl}" style="width:100%;height:100%;object-fit:cover;" title="${p.label}"></div>`).join('')}</div>`:''}
+      <div class="detail-row" style="margin-top:8px;"><span class="detail-key">Narrative</span><span class="detail-val" style="white-space:pre-wrap;">${inc.notes||'—'}</span></div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Insurance & Certifications</div>
+      <div class="detail-row"><span class="detail-key">Insurance Notified</span><span class="detail-val">${inc.insuranceNotified?'Yes — '+fmtDate(inc.insuranceDate)+' · '+inc.insuranceContact:'Not yet'}</span></div>
+      <div class="detail-row"><span class="detail-key">Attorney Involved</span><span class="detail-val">${inc.attorneyInvolved?'Yes — '+inc.attorneyName:'No'}</span></div>
+      <div class="detail-row"><span class="detail-key">Driver Signature</span><span class="detail-val">${inc.driverSignature||'—'} · ${inc.driverSignedAt?new Date(inc.driverSignedAt).toLocaleString():'unsigned'}</span></div>
+      <div class="detail-row"><span class="detail-key">Supervisor Signature</span><span class="detail-val">${inc.adminSignature||'—'} · ${inc.adminSignedAt?new Date(inc.adminSignedAt).toLocaleString():'unsigned'}</span></div>
+      <div class="detail-row"><span class="detail-key">Status</span><span class="detail-val"><span class="badge ${STATUS_BADGE[inc.status]||'badge-gray'}">${STATUS_LABEL[inc.status]||inc.status}</span></span></div>
+    </div>
+  `;
+  document.getElementById('detail-modal').style.display='flex';
+}
+
+function closeDetail(){ document.getElementById('detail-modal').style.display='none'; }
+function printDetail(){ window.print(); }
+
+function changeStatus(id){
+  const incs = getIncs();
+  const inc = incs.find(i=>i.id===id);
+  if(!inc) return;
+  const next = { open:'under_review', under_review:'closed', closed:'open' };
+  inc.status = next[inc.status]||'open';
+  inc.updatedAt = new Date().toISOString();
+  saveIncs(incs);
+  renderKPI(); renderTable();
+}
+
+// WIZARD
+function openWizard(){
+  currentStep=0; partyCount=0; witnessCount=0; photoData={};
+  document.getElementById('i-id').value = genId();
+  document.getElementById('i-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('i-time').value = new Date().toTimeString().slice(0,5);
+  document.getElementById('parties-container').innerHTML='';
+  document.getElementById('witnesses-container').innerHTML='';
+  buildPhotoGrid();
+  document.querySelectorAll('.sev-opt').forEach(o=>o.classList.remove('selected-minor','selected-moderate','selected-major','selected-critical'));
+  document.querySelectorAll('#type-checks input').forEach(c=>c.checked=false);
+  document.querySelectorAll('.toggle').forEach(t=>t.classList.remove('on'));
+  goStep(0);
+  document.getElementById('incident-wizard').classList.add('open');
+}
+
+function closeWizard(){ document.getElementById('incident-wizard').classList.remove('open'); }
+
+function stepNav(dir){
+  const next = currentStep + dir;
+  if(next < 0) return;
+  if(next > 5){ submitReport(); return; }
+  goStep(next);
+}
+
+function goStep(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step-'+n).classList.add('active');
+  for(let i=0;i<6;i++){ const l=document.getElementById('sl'+i); l.classList.toggle('active',i===n); }
+  document.getElementById('prog-fill').style.width = ((n+1)/6*100)+'%';
+  document.getElementById('step-counter').textContent = 'Step '+(n+1)+' of 6';
+  document.getElementById('step-indicator').textContent = 'Step '+(n+1)+' of 6';
+  document.getElementById('btn-back').style.visibility = n>0?'visible':'hidden';
+  document.getElementById('btn-next').textContent = n===5?'Submit Report':'Next →';
+  currentStep = n;
+}
+
+function setSev(val, el){
+  document.querySelectorAll('.sev-opt').forEach(o=>o.classList.remove('selected-minor','selected-moderate','selected-major','selected-critical'));
+  el.classList.add('selected-'+val);
+  const auto = document.getElementById('fmcsa-auto-note');
+  auto.style.display = (val==='critical'||val==='major') ? 'flex' : 'none';
+}
+
+function togToggle(id){ document.getElementById(id).classList.toggle('on'); }
+function showPoliceFields(){ document.getElementById('police-fields').style.display = document.getElementById('tog-police').classList.contains('on')?'block':'none'; }
+function showOurInjury(){ document.getElementById('our-injury-fields').style.display = document.getElementById('tog-ourinjury').classList.contains('on')?'block':'none'; }
+function showTheirInjury(){ document.getElementById('their-injury-fields').style.display = document.getElementById('tog-theirinjury').classList.contains('on')?'block':'none'; }
+function showInsFields(){ document.getElementById('ins-fields').style.display = document.getElementById('tog-insnotify').classList.contains('on')?'block':'none'; }
+function showAttyField(){ document.getElementById('atty-field').style.display = document.getElementById('tog-atty').classList.contains('on')?'block':'none'; }
+function showCamFields(){ document.getElementById('cam-channel-fields').style.display = document.getElementById('tog-cam').classList.contains('on')?'block':'none'; }
+
+function addParty(){
+  const c = partyCount++;
+  const d = document.createElement('div'); d.className='party-row'; d.id='party-'+c;
+  d.innerHTML = `<button class="remove-btn" onclick="document.getElementById('party-${c}').remove()">✕</button>
+    <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--blue);">Party ${c+1}</div>
+    <div class="form-row"><div class="field-group"><label class="field-label">Name</label><input class="form-input" id="pr-name-${c}"></div><div class="field-group"><label class="field-label">Phone</label><input class="form-input" id="pr-phone-${c}"></div></div>
+    <div class="form-row"><div class="field-group"><label class="field-label">License Plate</label><input class="form-input" id="pr-plate-${c}"></div><div class="field-group"><label class="field-label">State</label><input class="form-input" id="pr-state-${c}" maxlength="2" placeholder="FL"></div></div>
+    <div class="form-row"><div class="field-group"><label class="field-label">Insurance Company</label><input class="form-input" id="pr-ins-${c}"></div><div class="field-group"><label class="field-label">Policy Number</label><input class="form-input" id="pr-pol-${c}"></div></div>
+    <div class="field-group"><label class="field-label">Driver License #</label><input class="form-input" id="pr-dl-${c}"></div>`;
+  document.getElementById('parties-container').appendChild(d);
+}
+
+function addWitness(){
+  const c = witnessCount++;
+  const d = document.createElement('div'); d.className='party-row'; d.id='witness-'+c;
+  d.innerHTML = `<button class="remove-btn" onclick="document.getElementById('witness-${c}').remove()">✕</button>
+    <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--mid);">Witness ${c+1}</div>
+    <div class="form-row"><div class="field-group"><label class="field-label">Name</label><input class="form-input" id="wi-name-${c}"></div><div class="field-group"><label class="field-label">Phone</label><input class="form-input" id="wi-phone-${c}"></div></div>
+    <div class="field-group"><label class="field-label">Statement Summary</label><textarea class="form-textarea" id="wi-stmt-${c}" rows="2"></textarea></div>`;
+  document.getElementById('witnesses-container').appendChild(d);
+}
+
+function buildPhotoGrid(){
+  const grid = document.getElementById('photo-grid');
+  grid.innerHTML = PHOTOS_LABELS.map((label,i)=>`
+    <div>
+      <div class="photo-slot" onclick="document.getElementById('photo-input-${i}').click()">
+        <input type="file" accept="image/*" capture="environment" id="photo-input-${i}" onchange="capturePhoto(${i})">
+        <span id="photo-icon-${i}" style="font-size:22px;">📷</span>
+        <img id="photo-img-${i}" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+      </div>
+      <div class="photo-slot-label">${label}</div>
+    </div>`).join('');
+}
+
+function capturePhoto(i){
+  const file = document.getElementById('photo-input-'+i).files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    photoData[i] = { label: PHOTOS_LABELS[i], dataUrl: e.target.result };
+    document.getElementById('photo-img-'+i).src = e.target.result;
+    document.getElementById('photo-img-'+i).style.display='block';
+    document.getElementById('photo-icon-'+i).style.display='none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function stampSig(spanId){ document.getElementById(spanId).textContent = new Date().toLocaleString(); }
+
+function gv(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
+function gt(id){ const el=document.getElementById(id); return el?el.classList.contains('on'):false; }
+
+function collectParties(){
+  const parties=[]; let i=0;
+  while(document.getElementById('party-'+i)){
+    parties.push({name:gv('pr-name-'+i),phone:gv('pr-phone-'+i),plate:gv('pr-plate-'+i),plateState:gv('pr-state-'+i),insuranceCo:gv('pr-ins-'+i),policyNum:gv('pr-pol-'+i),dlNum:gv('pr-dl-'+i)});
+    i++;
+  }
+  return parties.filter(p=>p.name||p.plate);
+}
+function collectWitnesses(){
+  const w=[]; let i=0;
+  while(document.getElementById('witness-'+i)){
+    w.push({name:gv('wi-name-'+i),phone:gv('wi-phone-'+i),statement:gv('wi-stmt-'+i)});
+    i++;
+  }
+  return w.filter(x=>x.name);
+}
+
+function submitReport(){
+  const driverName = gv('i-driver');
+  if(!driverName){ alert('Driver is required'); goStep(0); return; }
+  const types = [...document.querySelectorAll('#type-checks input:checked')].map(c=>c.value);
+  const sevEl = document.querySelector('.sev-opt.selected-minor,.sev-opt.selected-moderate,.sev-opt.selected-major,.sev-opt.selected-critical');
+  const severity = sevEl ? sevEl.querySelector('input').value : 'minor';
+  const tow = gt('tog-tow');
+  const ourInjury = gt('tog-ourinjury');
+  const otherInjury = gt('tog-theirinjury');
+  const fmcsaReportable = severity==='critical' || otherInjury || tow;
+  const camChannels = [...document.querySelectorAll('#cam-channel-fields input:checked')].map(c=>c.value);
+
+  const inc = {
+    id: gv('i-id'), date: gv('i-date'), time: gv('i-time'),
+    driverName, unit: gv('i-unit'), trailer: gv('i-trailer'),
+    location: gv('i-location'), state: gv('i-state'), gps: gv('i-gps'),
+    types, severity, towRequired: tow,
+    fmcsaReportable, dotRegister: fmcsaReportable,
+    parties: collectParties(),
+    police: { called: gt('tog-police'), reportNum: gv('p-report'), officer: gv('p-officer'), dept: gv('p-dept'), obtained: gv('p-obtained') },
+    witnesses: collectWitnesses(),
+    ourDamage: gv('d-ourdmg'), ourDamageEst: gv('d-ourest'),
+    otherDamage: gv('d-theirdmg'), otherDamageEst: gv('d-theirest'),
+    ourInjury, ourInjuryNature: gv('inj-nature'), ourMedical: gv('inj-medical'),
+    otherInjury, otherInjuryDesc: gv('inj-theirdesc'),
+    photos: Object.values(photoData),
+    policeReportUploaded: gt('tog-polrep'), cameraAvailable: gt('tog-cam'), cameraChannels: camChannels,
+    notes: gv('d-notes'),
+    insuranceNotified: gt('tog-insnotify'), insuranceDate: gv('ins-date'), insuranceContact: gv('ins-contact'),
+    claimFiled: gt('tog-claim'), attorneyInvolved: gt('tog-atty'), attorneyName: gv('atty-name'),
+    driverStatement: gt('tog-drvstmt'),
+    driverSignature: gv('sig-driver'), driverSignedAt: gv('sig-driver')?new Date().toISOString():null,
+    adminSignature: gv('sig-admin'), adminSignedAt: gv('sig-admin')?new Date().toISOString():null,
+    status: 'open', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
+  };
+  const incs = getIncs();
+  incs.unshift(inc);
+  saveIncs(incs);
+  closeWizard();
+  renderKPI(); renderTable();
+  if(fmcsaReportable) alert('⚠️ This incident has been flagged as FMCSA reportable. Ensure it is entered into the accident register per 49 CFR 390.15.');
+  if(inc.claimFiled){
+    const go = confirm('Claim filed is checked. Open Claims Manager now to file claim for ' + inc.id + '?');
+    if(go) window.location.href = 'claims.html?incident=' + encodeURIComponent(inc.id);
+  }
+}
+
+renderKPI(); renderTable();
+</script>
+</body>
+</html>

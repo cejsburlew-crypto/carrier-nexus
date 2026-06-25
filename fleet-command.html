@@ -617,6 +617,36 @@ body {
 /* ── NAV BADGE ── */
 .nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
+<style id="week-close-styles">
+/* ── WEEK CLOSE PANEL ── */
+.week-close-panel { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:18px 20px; margin-bottom:16px; }
+.week-close-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.week-close-title { font-size:13px; font-weight:700; color:var(--text); letter-spacing:.05em; }
+.week-close-label { font-size:10px; color:var(--mid); font-family:'JetBrains Mono',monospace; }
+.close-items { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+@media(max-width:768px){ .close-items { grid-template-columns:1fr 1fr; } }
+.close-item { background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:12px 10px; display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; transition:.15s; text-decoration:none; }
+.close-item:hover { border-color:var(--blue); }
+.close-item.done { border-color:var(--green); background:rgba(16,185,129,.06); }
+.close-item.warn { border-color:var(--yellow); background:rgba(245,158,11,.06); }
+.close-item.alert { border-color:var(--red); background:rgba(239,68,68,.06); }
+.close-icon { font-size:18px; }
+.close-name { font-size:11px; font-weight:600; color:var(--text); text-align:center; }
+.close-stat { font-size:10px; color:var(--mid); text-align:center; }
+.close-check { width:18px; height:18px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; }
+.close-item.done .close-check { background:var(--green); border-color:var(--green); }
+.close-check svg { display:none; }
+.close-item.done .close-check svg { display:block; }
+/* ── EXPIRATION ALERT STRIP ── */
+.exp-strip { border-radius:8px; padding:10px 14px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.exp-strip.critical { background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.3); }
+.exp-strip.warning { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.3); }
+.exp-strip-left { display:flex; align-items:center; gap:10px; }
+.exp-strip-icon { font-size:16px; }
+.exp-strip-text { font-size:12px; color:var(--text); }
+.exp-strip-count { font-weight:700; }
+.exp-strip-link { font-size:11px; color:var(--blue); text-decoration:none; white-space:nowrap; border:1px solid rgba(59,130,246,.3); padding:3px 10px; border-radius:99px; }
+</style>
 </head>
 <body>
 
@@ -635,7 +665,52 @@ body {
   <!-- CONTENT -->
   <div class="content">
 
+
+    <!-- EXPIRATION ALERT STRIP (dynamic) -->
+    <div id="exp-alert-strip"></div>
+
+    <!-- WEEK CLOSE CHECKLIST -->
+    <div class="week-close-panel">
+      <div class="week-close-header">
+        <div class="week-close-title">📋 Weekly Close Checklist</div>
+        <div class="week-close-label" id="wc-week-label">Loading week…</div>
+      </div>
+      <div class="close-items">
+        <a href="expenses.html" class="close-item" id="wc-expenses">
+          <div class="close-icon">💳</div>
+          <div class="close-name">Expenses</div>
+          <div class="close-stat" id="wc-exp-stat">—</div>
+          <div class="close-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </a>
+        <a href="weekly-settlements.html" class="close-item" id="wc-settlements">
+          <div class="close-icon">📄</div>
+          <div class="close-name">Settlements</div>
+          <div class="close-stat" id="wc-settle-stat">—</div>
+          <div class="close-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </a>
+        <a href="invoicing.html" class="close-item" id="wc-invoices">
+          <div class="close-icon">🧾</div>
+          <div class="close-name">Invoices</div>
+          <div class="close-stat" id="wc-inv-stat">—</div>
+          <div class="close-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </a>
+        <a href="ifta.html" class="close-item" id="wc-ifta">
+          <div class="close-icon">⛽</div>
+          <div class="close-name">IFTA Fuel</div>
+          <div class="close-stat" id="wc-ifta-stat">—</div>
+          <div class="close-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </a>
+        <a href="inbox-sync.html" class="close-item" id="wc-drive">
+          <div class="close-icon">☁️</div>
+          <div class="close-name">Drive Sync</div>
+          <div class="close-stat" id="wc-drive-stat">—</div>
+          <div class="close-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </a>
+      </div>
+    </div>
+
     <!-- KPI ROW -->
+
     <div class="kpi-row">
       <div class="kpi-card kpi-blue">
         <div class="kpi-label">Active Trucks</div>
@@ -1048,6 +1123,107 @@ body {
     if (docsSub) docsSub.textContent = missingPods + ' missing POD' + (missingPods !== 1 ? 's' : '') + ' · Action required';
 
   } catch(e) { console.warn('KPI load error:', e); }
+})();
+</script>
+
+
+<script>
+// ── WEEK CLOSE CHECKLIST + EXPIRATION ALERTS ──────────────────────────────
+(function(){
+  // Week bounds (Mon–Sun)
+  function getWeekStart(d){
+    var day = d.getDay(); // 0=Sun
+    var diff = (day===0)?-6:1-day;
+    var m = new Date(d); m.setDate(d.getDate()+diff); m.setHours(0,0,0,0); return m;
+  }
+  function getWeekEnd(d){ var e=new Date(getWeekStart(d)); e.setDate(e.getDate()+6); e.setHours(23,59,59,999); return e; }
+  function fmtDate(d){ return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+
+  var now   = new Date();
+  var wkStart = getWeekStart(now);
+  var wkEnd   = getWeekEnd(now);
+
+  // Week label
+  var lbl = document.getElementById('wc-week-label');
+  if(lbl) lbl.textContent = 'Week of ' + fmtDate(wkStart) + ' – ' + fmtDate(wkEnd);
+
+  function cls(id, state, stat){
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.className = 'close-item ' + state;
+    var st = document.getElementById(id.replace('wc-','wc-').replace('wc-expenses','wc-exp-stat').replace('wc-settlements','wc-settle-stat').replace('wc-invoices','wc-inv-stat').replace('wc-ifta','wc-ifta-stat').replace('wc-drive','wc-drive-stat'));
+    // map to correct stat id
+    var statMap = {'wc-expenses':'wc-exp-stat','wc-settlements':'wc-settle-stat','wc-invoices':'wc-inv-stat','wc-ifta':'wc-ifta-stat','wc-drive':'wc-drive-stat'};
+    var statEl = document.getElementById(statMap[id]);
+    if(statEl) statEl.textContent = stat;
+  }
+
+  // ── EXPENSES: any expense entered this week?
+  try{
+    var exps = JSON.parse(localStorage.getItem('nexus_expenses')||'[]');
+    var wkExps = exps.filter(function(e){ var d=new Date(e.date+'T12:00:00'); return d>=wkStart&&d<=wkEnd&&!e.deleted; });
+    cls('wc-expenses', wkExps.length>0?'done':'warn', wkExps.length>0?wkExps.length+' logged':'None yet');
+  }catch(e){ cls('wc-expenses','warn','Check'); }
+
+  // ── SETTLEMENTS: any settlement PDF generated this week?
+  try{
+    var sets = JSON.parse(localStorage.getItem('nexus_settlements')||'[]');
+    var wkSets = sets.filter(function(s){ var d=new Date((s.date||s.weekStart||s.createdAt||'')+'T12:00:00'); return d>=wkStart&&d<=wkEnd; });
+    var allDrvs = ['AVIS','DAVID','MIGUEL','NELSON','YOSVIEL','GUILLERMO','JAYLER'];
+    cls('wc-settlements', wkSets.length>=5?'done':wkSets.length>0?'warn':'alert', wkSets.length+'/7 sent');
+  }catch(e){ cls('wc-settlements','warn','Check'); }
+
+  // ── INVOICES: any invoice marked sent this week?
+  try{
+    var invs = JSON.parse(localStorage.getItem('nexus_invoices')||'[]');
+    var wkInvs = invs.filter(function(i){ var d=new Date((i.sentDate||i.date||i.createdAt||'')+'T12:00:00'); return d>=wkStart&&d<=wkEnd; });
+    var unsentLoads = JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]').filter(function(l){ return (l.status==='delivered'||l.status==='complete')&&!l.invoiced; });
+    cls('wc-invoices', wkInvs.length>0&&unsentLoads.length===0?'done':unsentLoads.length>0?'alert':'warn',
+        unsentLoads.length>0?(unsentLoads.length+' uninvoiced'):wkInvs.length+' sent');
+  }catch(e){ cls('wc-invoices','warn','Check'); }
+
+  // ── IFTA: any fuel entry this week?
+  try{
+    var fuel = JSON.parse(localStorage.getItem('nexus_fuel_log')||'[]');
+    var wkFuel = fuel.filter(function(f){ var d=new Date((f.date||'')+'T12:00:00'); return d>=wkStart&&d<=wkEnd; });
+    cls('wc-ifta', wkFuel.length>0?'done':'warn', wkFuel.length>0?wkFuel.length+' entries':'No entries');
+  }catch(e){ cls('wc-ifta','warn','Check'); }
+
+  // ── DRIVE SYNC: any doc synced this week?
+  try{
+    var docs = JSON.parse(localStorage.getItem('nexus_documents')||'[]');
+    var wkDocs = docs.filter(function(d){ var dt=new Date((d.uploadedAt||d.date||d.createdAt||'')+'T12:00:00'); return dt>=wkStart&&dt<=wkEnd; });
+    var inbox  = JSON.parse(localStorage.getItem('nexus_review_queue')||'[]');
+    cls('wc-drive', wkDocs.length>0&&inbox.length===0?'done':inbox.length>0?'warn':'alert',
+        inbox.length>0?(inbox.length+' in review'):wkDocs.length+' synced');
+  }catch(e){ cls('wc-drive','warn','Check'); }
+
+  // ── EXPIRATION ALERTS ────────────────────────────────────────────────────
+  try{
+    var alerts = JSON.parse(localStorage.getItem('nexus_expiration_alerts')||'[]');
+    var today  = new Date(); today.setHours(0,0,0,0);
+    var critical = alerts.filter(function(a){
+      if(!a.expirationDate||a.dismissed) return false;
+      var diff = Math.ceil((new Date(a.expirationDate+'T12:00:00')-today)/86400000);
+      return diff>=0&&diff<=14;
+    });
+    var warning = alerts.filter(function(a){
+      if(!a.expirationDate||a.dismissed) return false;
+      var diff = Math.ceil((new Date(a.expirationDate+'T12:00:00')-today)/86400000);
+      return diff>14&&diff<=30;
+    });
+    var strip = document.getElementById('exp-alert-strip');
+    if(!strip) return;
+    var html='';
+    if(critical.length){
+      var names = critical.slice(0,3).map(function(a){ return (a.driverName||a.driver||'')+(a.type?' '+a.type:''); }).join(', ');
+      html += '<div class="exp-strip critical"><div class="exp-strip-left"><div class="exp-strip-icon">🚨</div><div class="exp-strip-text"><span class="exp-strip-count">'+critical.length+' expiring in ≤14 days:</span> '+names+(critical.length>3?' +more':'')+'</div></div><a href="expiration-alerts.html" class="exp-strip-link">View All →</a></div>';
+    }
+    if(warning.length){
+      html += '<div class="exp-strip warning"><div class="exp-strip-left"><div class="exp-strip-icon">⚠️</div><div class="exp-strip-text"><span class="exp-strip-count">'+warning.length+' expiring in 15–30 days</span> — renew soon</div></div><a href="expiration-alerts.html" class="exp-strip-link">View All →</a></div>';
+    }
+    strip.innerHTML = html;
+  }catch(e){}
 })();
 </script>
 

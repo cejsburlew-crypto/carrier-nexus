@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dispatch Board — Carrier Nexus</title>
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#8b5cf6;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;}
+/* ── LAYOUT ── */
+.page-wrap{display:flex;min-height:100vh;}
+.main{flex:1;min-width:0;padding:16px;}
+/* ── TOPBAR ── */
+.topbar{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:10px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.topbar-title{font-weight:800;font-size:16px;letter-spacing:.08em;color:#fff;}
+.topbar-sub{font-size:11px;color:rgba(255,255,255,.6);font-family:'JetBrains Mono',monospace;}
+.topbar-actions{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+/* ── BOARD LAYOUT ── */
+.board{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+@media(max-width:900px){.board{grid-template-columns:1fr;}}
+/* ── PANEL ── */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.panel-head{background:var(--panel2);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.panel-title{font-size:13px;font-weight:700;letter-spacing:.05em;}
+.panel-count{font-size:11px;color:var(--mid);font-family:'JetBrains Mono',monospace;}
+.panel-body{padding:0;}
+/* ── DRIVER ROWS ── */
+.driver-row{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);transition:.12s;}
+.driver-row:last-child{border-bottom:none;}
+.driver-row:hover{background:rgba(255,255,255,.02);}
+.driver-avatar{width:36px;height:36px;border-radius:50%;background:var(--panel2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--mid);flex-shrink:0;}
+.driver-avatar.avail{border-color:var(--green);}
+.driver-avatar.active{border-color:var(--blue);}
+.driver-avatar.off{border-color:var(--border);}
+.driver-info{}
+.driver-name{font-size:13px;font-weight:600;}
+.driver-sub{font-size:11px;color:var(--mid);margin-top:2px;}
+.unit-tag{font-size:11px;background:rgba(59,130,246,.15);color:var(--blue);border:1px solid rgba(59,130,246,.2);border-radius:4px;padding:2px 6px;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dot-green{background:var(--green);}
+.dot-blue{background:var(--blue);}
+.dot-gray{background:var(--mid);}
+.dot-yellow{background:var(--yellow);}
+/* ── LOAD ROWS ── */
+.load-row{padding:12px 16px;border-bottom:1px solid var(--border);transition:.12s;cursor:pointer;}
+.load-row:last-child{border-bottom:none;}
+.load-row:hover{background:rgba(255,255,255,.02);}
+.load-row.selected{background:rgba(59,130,246,.08);border-left:3px solid var(--blue);}
+.load-top{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;}
+.load-id{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue);}
+.load-broker{font-size:12px;color:var(--mid);}
+.load-rate{font-size:13px;font-weight:700;color:var(--green);margin-left:auto;}
+.load-bottom{display:flex;gap:12px;font-size:11px;color:var(--mid);flex-wrap:wrap;}
+.load-bottom span{display:flex;align-items:center;gap:3px;}
+/* ── ASSIGN PANEL ── */
+.assign-panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px;margin-top:16px;}
+.assign-title{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.assign-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;}
+@media(max-width:600px){.assign-grid{grid-template-columns:1fr;}}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-label{font-size:11px;color:var(--mid);font-weight:600;letter-spacing:.05em;}
+.form-select{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-size:13px;width:100%;min-height:44px;}
+.form-select:focus{outline:none;border-color:var(--blue);}
+/* ── BUTTONS ── */
+.btn{padding:9px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:6px;transition:.12s;min-height:44px;text-decoration:none;}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-primary:hover{background:#2563eb;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:#059669;}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);}
+.btn-outline:hover{border-color:var(--mid);}
+.btn-sm{padding:5px 10px;font-size:11px;min-height:32px;}
+/* ── BADGES ── */
+.badge{display:inline-block;padding:2px 7px;border-radius:99px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
+.badge-green{background:rgba(16,185,129,.15);color:var(--green);}
+.badge-blue{background:rgba(59,130,246,.15);color:var(--blue);}
+.badge-yellow{background:rgba(245,158,11,.15);color:var(--yellow);}
+.badge-red{background:rgba(239,68,68,.15);color:var(--red);}
+.badge-gray{background:rgba(100,116,139,.15);color:var(--mid);}
+/* ── STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+@media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr;}}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+.stat-val{font-size:24px;font-weight:800;line-height:1;}
+.stat-label{font-size:11px;color:var(--mid);margin-top:4px;font-weight:600;}
+/* ── ASSIGN LOG ── */
+.assign-log{margin-top:16px;}
+.log-title{font-size:12px;font-weight:700;color:var(--mid);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;}
+.log-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--panel);border:1px solid var(--border);border-radius:6px;margin-bottom:6px;font-size:12px;}
+.log-time{color:var(--mid);font-family:'JetBrains Mono',monospace;font-size:10px;flex-shrink:0;}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:.3s;pointer-events:none;}
+.toast.show{opacity:1;}
+/* ── EMPTY ── */
+.empty{text-align:center;padding:32px 16px;color:var(--mid);font-size:13px;}
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px;}
+.filter-chip{padding:5px 12px;border-radius:99px;border:1px solid var(--border);font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--mid);transition:.12s;min-height:36px;}
+.filter-chip.active{background:rgba(59,130,246,.12);border-color:var(--blue);color:var(--blue);}
+.search-input{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:7px 12px;color:var(--text);font-size:13px;min-height:36px;flex:1;min-width:160px;}
+.search-input:focus{outline:none;border-color:var(--blue);}
+</style>
+</head>
+<body>
+<script src="nexus-sidebar.js"></script>
+
+<div class="topbar">
+  <div>
+    <div class="topbar-title">DISPATCH BOARD</div>
+    <div class="topbar-sub" id="board-sub">Loading…</div>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-outline btn-sm" onclick="location.href='dispatcher-hub.html'">Dispatcher Hub</button>
+    <button class="btn btn-outline btn-sm" onclick="location.href='active-loads.html'">+ New Load</button>
+    <button class="btn btn-primary btn-sm" onclick="refreshBoard()">⟳ Refresh</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-val" id="stat-available" style="color:var(--green);">—</div>
+      <div class="stat-label">Available Drivers</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-active" style="color:var(--blue);">—</div>
+      <div class="stat-label">On a Load</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-unassigned" style="color:var(--yellow);">—</div>
+      <div class="stat-label">Unassigned Loads</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-revenue" style="color:var(--text);">—</div>
+      <div class="stat-label">Week Revenue</div>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <button class="filter-chip active" onclick="setFilter('all',this)">All Dispatchers</button>
+    <button class="filter-chip" onclick="setFilter('AMET',this)">Amet</button>
+    <button class="filter-chip" onclick="setFilter('BETTY',this)">Betty</button>
+    <input class="search-input" id="search-input" placeholder="Search driver or broker…" oninput="renderBoard()">
+  </div>
+
+  <!-- MAIN BOARD -->
+  <div class="board">
+    <!-- DRIVERS -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">🚛 Drivers</div>
+        <div class="panel-count" id="driver-count">—</div>
+      </div>
+      <div class="panel-body" id="driver-list"></div>
+    </div>
+
+    <!-- LOADS -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">📦 Open Loads</div>
+        <div class="panel-count" id="load-count">—</div>
+      </div>
+      <div class="panel-body" id="load-list"></div>
+    </div>
+  </div>
+
+  <!-- QUICK ASSIGN -->
+  <div class="assign-panel">
+    <div class="assign-title">
+      <span>⚡ Quick Assign</span>
+      <span style="font-size:12px;font-weight:400;color:var(--mid);">Select a load above or choose from dropdowns</span>
+    </div>
+    <div class="assign-grid">
+      <div class="form-group">
+        <div class="form-label">Driver</div>
+        <select class="form-select" id="assign-driver">
+          <option value="">— Select Driver —</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Load</div>
+        <select class="form-select" id="assign-load">
+          <option value="">— Select Load —</option>
+        </select>
+      </div>
+      <button class="btn btn-green" onclick="doAssign()">✓ Assign</button>
+    </div>
+  </div>
+
+  <!-- ASSIGN LOG -->
+  <div class="assign-log">
+    <div class="log-title">Recent Assignments</div>
+    <div id="assign-log-list"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="nexus-config.js"></script>
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+var DRIVER_MAP = {
+  'AVIS':      { name:'Avis Modesto',    unit:'01', dispatcher:'AMET' },
+  'DAVID':     { name:'David Fonseca',   unit:'09', dispatcher:'AMET' },
+  'MIGUEL':    { name:'Miguel Fonseca',  unit:'05', dispatcher:'AMET' },
+  'NELSON':    { name:'Nelson Veliz',    unit:'06', dispatcher:'AMET' },
+  'YOSVIEL':   { name:'Yosviel Pinera',  unit:'03', dispatcher:'AMET' },
+  'GUILLERMO': { name:'Guillermo Pinera',unit:'02', dispatcher:'BETTY' },
+  'JAYLER':    { name:'Jayler Labrada',  unit:'11', dispatcher:'AMET' },
+};
+
+var currentFilter = 'all';
+
+function getLoads(){ try{ return JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]'); }catch(e){ return []; } }
+function getAssignLog(){ try{ return JSON.parse(localStorage.getItem('nexus_assign_log')||'[]'); }catch(e){ return []; } }
+function saveAssignLog(a){ localStorage.setItem('nexus_assign_log', JSON.stringify(a)); }
+
+function getDriverStatus(short, loads){
+  var active = loads.filter(function(l){
+    return (l.status==='active'||l.status==='transit'||l.status==='in_transit')
+      && (l.driver||'').toUpperCase().includes(short);
+  });
+  if(active.length) return { status:'active', load: active[0] };
+  return { status:'available', load: null };
+}
+
+function fmtMoney(v){ var n=Number(v)||0; return n>=1000?'$'+(n/1000).toFixed(1)+'K':'$'+n.toLocaleString(); }
+function fmtDate(s){ if(!s) return '—'; try{ return new Date(s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}); }catch(e){ return s; } }
+
+function setFilter(f, el){
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+  renderBoard();
+}
+
+function selectLoad(id){
+  document.querySelectorAll('.load-row').forEach(function(r){ r.classList.toggle('selected', r.dataset.loadId===id); });
+  var sel = document.getElementById('assign-load');
+  if(sel) sel.value = id;
+}
+
+function renderBoard(){
+  var loads = getLoads();
+  var search = (document.getElementById('search-input').value||'').toLowerCase();
+
+  // Stats
+  var allDriverKeys = Object.keys(DRIVER_MAP);
+  var available = allDriverKeys.filter(function(k){
+    return getDriverStatus(k, loads).status==='available';
+  });
+  var active = allDriverKeys.filter(function(k){
+    return getDriverStatus(k, loads).status==='active';
+  });
+  var unassigned = loads.filter(function(l){
+    return !l.driver && (l.status==='pending'||l.status==='open'||!l.status);
+  });
+  var weekRev = loads.reduce(function(s,l){ return s+(Number(l.rate)||0); }, 0);
+
+  document.getElementById('stat-available').textContent = available.length;
+  document.getElementById('stat-active').textContent = active.length;
+  document.getElementById('stat-unassigned').textContent = unassigned.length;
+  document.getElementById('stat-revenue').textContent = fmtMoney(weekRev);
+
+  var now = new Date();
+  document.getElementById('board-sub').textContent =
+    now.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'}) +
+    ' · ' + now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+
+  // Filter drivers
+  var drvKeys = allDriverKeys.filter(function(k){
+    if(currentFilter !== 'all' && DRIVER_MAP[k].dispatcher !== currentFilter) return false;
+    if(search && !DRIVER_MAP[k].name.toLowerCase().includes(search) && !k.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  document.getElementById('driver-count').textContent = drvKeys.length + ' drivers';
+
+  var drvHTML = '';
+  drvKeys.forEach(function(k){
+    var d = DRIVER_MAP[k];
+    var st = getDriverStatus(k, loads);
+    var dotCls = st.status==='active' ? 'dot-blue' : 'dot-green';
+    var avCls  = st.status==='active' ? 'active' : 'avail';
+    var badge  = st.status==='active'
+      ? '<span class="badge badge-blue">ON LOAD</span>'
+      : '<span class="badge badge-green">AVAILABLE</span>';
+    var sub = st.status==='active' && st.load
+      ? (st.load.broker||st.load.id||'Active load')
+      : 'Ready to assign';
+    drvHTML += '<div class="driver-row">' +
+      '<div class="driver-avatar '+avCls+'">' + k.slice(0,2) + '</div>' +
+      '<div class="driver-info">' +
+        '<div class="driver-name">' + d.name + '</div>' +
+        '<div class="driver-sub">' + sub + ' · Disp: ' + d.dispatcher + '</div>' +
+      '</div>' +
+      '<div class="unit-tag">Unit ' + d.unit + '</div>' +
+      '<div class="status-dot '+dotCls+'" title="'+st.status+'"></div>' +
+    '</div>';
+  });
+  document.getElementById('driver-list').innerHTML = drvHTML || '<div class="empty">No drivers match filter</div>';
+
+  // Filter loads
+  var filteredLoads = loads.filter(function(l){
+    if(currentFilter !== 'all'){
+      var drv = (l.driver||'').toUpperCase();
+      var dispMatch = false;
+      Object.keys(DRIVER_MAP).forEach(function(k){
+        if(drv.includes(k) && DRIVER_MAP[k].dispatcher===currentFilter) dispMatch=true;
+      });
+      if(!dispMatch && l.dispatcher !== currentFilter) return false;
+    }
+    if(search){
+      var hay = ((l.broker||'')+(l.id||'')+(l.driver||'')+(l.origin||'')+(l.dest||'')).toLowerCase();
+      if(!hay.includes(search)) return false;
+    }
+    return true;
+  }).sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); }).slice(0,40);
+
+  document.getElementById('load-count').textContent = filteredLoads.length + ' loads';
+
+  var loadHTML = '';
+  filteredLoads.forEach(function(l){
+    var statusCls = {active:'badge-blue',transit:'badge-blue',in_transit:'badge-blue',delivered:'badge-green',pending:'badge-yellow',open:'badge-yellow',complete:'badge-gray'}[l.status]||'badge-gray';
+    var driver = l.driver ? '<span>👤 '+(l.driver)+'</span>' : '<span style="color:var(--yellow);">⚠ Unassigned</span>';
+    loadHTML += '<div class="load-row" data-load-id="'+l.id+'" onclick="selectLoad(\''+l.id+'\')">' +
+      '<div class="load-top">' +
+        '<span class="load-id">'+(l.id||'—')+'</span>' +
+        '<span class="load-broker">'+(l.broker||l.shipper||'—')+'</span>' +
+        '<span class="badge '+statusCls+'">'+(l.status||'open').toUpperCase()+'</span>' +
+        '<span class="load-rate">'+fmtMoney(l.rate)+'</span>' +
+      '</div>' +
+      '<div class="load-bottom">' +
+        driver +
+        '<span>📍 '+(l.origin||'—')+' → '+(l.dest||l.destination||'—')+'</span>' +
+        '<span>📅 '+(fmtDate(l.date||l.pickupDate))+'</span>' +
+      '</div>' +
+    '</div>';
+  });
+  if(!filteredLoads.length) loadHTML = '<div class="empty">No loads found — <a href="active-loads.html" style="color:var(--blue);">add a load</a></div>';
+  document.getElementById('load-list').innerHTML = loadHTML;
+
+  // Populate assign dropdowns
+  var dSel = document.getElementById('assign-driver');
+  var lSel = document.getElementById('assign-load');
+  var dVal = dSel.value, lVal = lSel.value;
+  dSel.innerHTML = '<option value="">— Select Driver —</option>';
+  drvKeys.forEach(function(k){
+    var st = getDriverStatus(k, loads);
+    var opt = document.createElement('option');
+    opt.value = k;
+    opt.textContent = DRIVER_MAP[k].name + (st.status==='active'?' (on load)':' ✓');
+    dSel.appendChild(opt);
+  });
+  lSel.innerHTML = '<option value="">— Select Load —</option>';
+  filteredLoads.forEach(function(l){
+    var opt = document.createElement('option');
+    opt.value = l.id;
+    opt.textContent = (l.id||'?') + ' — ' + (l.broker||'') + ' ' + fmtMoney(l.rate);
+    lSel.appendChild(opt);
+  });
+  if(dVal) dSel.value = dVal;
+  if(lVal) lSel.value = lVal;
+
+  // Assign log
+  renderLog();
+}
+
+function renderLog(){
+  var log = getAssignLog().slice(0,8);
+  if(!log.length){ document.getElementById('assign-log-list').innerHTML = '<div style="font-size:12px;color:var(--mid);padding:8px 0;">No assignments logged yet this session</div>'; return; }
+  document.getElementById('assign-log-list').innerHTML = log.map(function(e){
+    return '<div class="log-row">' +
+      '<div class="log-time">'+e.time+'</div>' +
+      '<div style="flex:1;">'+e.driverName+' → '+e.loadId+'</div>' +
+      '<div style="color:var(--mid);font-size:11px;">'+e.dispatcher+'</div>' +
+    '</div>';
+  }).join('');
+}
+
+function doAssign(){
+  var drvKey = document.getElementById('assign-driver').value;
+  var loadId = document.getElementById('assign-load').value;
+  if(!drvKey || !loadId){ showToast('Select both a driver and a load'); return; }
+
+  var loads = getLoads();
+  var load  = loads.find(function(l){ return l.id===loadId; });
+  if(!load){ showToast('Load not found'); return; }
+
+  var d = DRIVER_MAP[drvKey];
+  var prevDriver = load.driver;
+  load.driver = d.name;
+  load.dispatcher = d.dispatcher;
+  load.assignedAt = new Date().toISOString();
+  if(!load.status || load.status==='open' || load.status==='pending') load.status = 'active';
+  localStorage.setItem('nexus_loads_v2', JSON.stringify(loads));
+
+  // Log it
+  var log = getAssignLog();
+  log.unshift({ time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}), driverName: d.name, loadId: loadId, dispatcher: d.dispatcher, prev: prevDriver||'unassigned' });
+  saveAssignLog(log);
+
+  showToast('✓ ' + d.name + ' assigned to ' + loadId);
+  renderBoard();
+}
+
+function showToast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+
+function refreshBoard(){ renderBoard(); showToast('Board refreshed'); }
+
+renderBoard();
+setInterval(renderBoard, 30000);
+</script>
+</body>
+</html>

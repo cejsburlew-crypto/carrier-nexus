@@ -491,6 +491,43 @@ body{
 /* ── NAV BADGE ── */
 .nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
+
+<style id="touch-target-fix">
+/* Apple HIG / WCAG 2.5.5 — 44x44px minimum touch targets */
+@media(max-width:1024px){
+  button,.btn,a.btn,[role="button"]{min-height:44px!important;min-width:44px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;}
+  input[type="text"],input[type="number"],input[type="date"],input[type="time"],input[type="tel"],input[type="email"],select,textarea{min-height:44px!important;font-size:16px!important;padding:10px 12px!important;}
+  input[type="checkbox"],input[type="radio"]{min-width:24px!important;min-height:24px!important;cursor:pointer!important;}
+  label{font-size:14px!important;cursor:pointer!important;}
+  /* Fix sub-12px inline labels — bring up to 12px minimum */
+  .field-label,.form-label,.label-sm,.badge,.kpi-sub,.kpi-label,.stat-sub,.mid,.nav-badge{font-size:max(12px,1em)!important;}
+}
+</style>
+
+<style id="driver-sticky-nav">
+.driver-sticky-bar{display:none;}
+@media(max-width:768px){
+  .driver-sticky-bar{
+    display:flex;
+    position:fixed;bottom:0;left:0;right:0;
+    background:#0b0f1a;
+    border-top:1px solid #1e2d45;
+    z-index:9999;
+    padding:0 0 env(safe-area-inset-bottom) 0;
+  }
+  .driver-sticky-bar a{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:10px 4px;text-decoration:none;
+    font-size:10px;font-weight:700;letter-spacing:.05em;
+    color:#64748b;gap:4px;
+    transition:.12s;
+  }
+  .driver-sticky-bar a:hover,.driver-sticky-bar a.active{color:#e91e8c;}
+  .driver-sticky-bar a svg{width:22px;height:22px;}
+  /* push content above bar */
+  .action-section:last-child{padding-bottom:80px!important;}
+}
+</style>
 </head>
 <body>
 <script src="nexus-sidebar.js"></script>
@@ -552,6 +589,12 @@ body{
   </div>
 </div>
 
+<!-- SAFETY SCORE WIDGET -->
+<div class="section-head">My Safety Score</div>
+<div style="background:rgba(15,30,53,0.7);border:1px solid rgba(59,130,246,0.2);border-radius:14px;padding:16px;margin-bottom:16px;" id="driver-safety-widget">
+  <div style="font-size:12px;color:#64748b;">Loading safety score...</div>
+</div>
+
 <!-- QUICK ACTIONS -->
 <div class="section-head">Quick Actions</div>
 <div class="action-grid">
@@ -570,6 +613,33 @@ body{
       <div class="action-label blue">Enter Mileage</div>
       <div class="action-sub">Loaded + deadhead</div>
     </div>
+  </div>
+
+  <div class="action-btn full" onclick="window.location.href='pretrip.html'" style="background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.25);">
+    <div class="action-icon sm">🔍</div>
+    <div style="flex:1;min-width:0;">
+      <div class="action-label" style="color:#10b981;">Pre-Trip Inspection</div>
+      <div class="action-sub" id="pretrip-status-badge">Tap to start daily DVIR · 49 CFR 396.11</div>
+    </div>
+    <div class="action-arrow">›</div>
+  </div>
+
+  <div class="action-btn full" onclick="window.location.href='incident-report.html'" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);">
+    <div class="action-icon sm">🚨</div>
+    <div style="flex:1;min-width:0;">
+      <div class="action-label" style="color:#ef4444;">Report Incident</div>
+      <div class="action-sub">Accident, breakdown, or near-miss</div>
+    </div>
+    <div class="action-arrow">›</div>
+  </div>
+
+  <div class="action-btn full" onclick="window.location.href='my-pay.html'" style="background:rgba(59,130,246,0.08);border-color:rgba(59,130,246,0.25);">
+    <div class="action-icon sm">💵</div>
+    <div style="flex:1;min-width:0;">
+      <div class="action-label" style="color:#3b82f6;">My Pay</div>
+      <div class="action-sub">Settlements, earnings &amp; deductions</div>
+    </div>
+    <div class="action-arrow">›</div>
   </div>
 
   <div class="action-btn full" onclick="openModal('signModal')">
@@ -935,5 +1005,124 @@ document.querySelectorAll('.nav-tab').forEach(tab=>{
 });
 </script>
 <script src="nexus-lang.js"></script>
+<script>
+// ─── DRIVER SAFETY WIDGET ────────────────────────────────────────────────────
+(function(){
+  try {
+    var dvirs   = JSON.parse(localStorage.getItem('nexus_pretrip_inspections')||'[]');
+    var rs      = JSON.parse(localStorage.getItem('nexus_rs_inspections')||'[]');
+    var drugs   = JSON.parse(localStorage.getItem('nexus_drug_tests')||'[]');
+    var today   = new Date().toISOString().slice(0,10);
+
+    // Identify current driver from session or fallback
+    var session = null;
+    try{ session = JSON.parse(sessionStorage.getItem('nexus_session')); }catch(e){}
+    var driverName = session ? (session.name||'') : '';
+    var driverShort = driverName.toUpperCase().split(' ')[0]; // e.g. AVIS
+
+    // Update pretrip button badge
+    var badge = document.getElementById('pretrip-status-badge');
+    if(badge){
+      var todayRec = dvirs.find(function(r){ return r.date===today && ((r.driverName||'').toUpperCase().includes(driverShort)||!driverShort); });
+      if(todayRec){
+        badge.textContent='✅ Today's DVIR complete — '+todayRec.id+(todayRec.canDepart?' · Clear to operate':' · OOS defects present');
+        badge.style.color='#10b981';
+      } else {
+        var last = dvirs.find(function(r){ return driverShort ? (r.driverName||'').toUpperCase().includes(driverShort) : true; });
+        if(last) badge.textContent='⚠️ No DVIR today — last: '+last.date+' · Tap to inspect';
+        else     badge.textContent='No inspection on record — tap to start DVIR';
+        badge.style.color='#f59e0b';
+      }
+    }
+
+    // ─ Safety score calculation ─────────────────────────────────────────────
+    function daysAgo(n){ var d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
+    var d30  = daysAgo(30);
+    var d365 = daysAgo(365);
+
+    var myDvirs = dvirs.filter(function(r){
+      if(!driverShort) return true;
+      return (r.driverName||'').toUpperCase().includes(driverShort);
+    });
+    var recentDvirs = myDvirs.filter(function(r){ return r.date >= d30; });
+    var dvirScore   = Math.min(40, Math.round((recentDvirs.length / 20) * 40));
+    var dvirRate    = Math.min(100, Math.round((recentDvirs.length / 20) * 100));
+
+    var myRS = rs.filter(function(r){ return !driverShort || (r.driver||'').toUpperCase()===driverShort; });
+    var recentRS = myRS.filter(function(r){ return r.date >= d365; });
+    var rsScore = 40;
+    recentRS.forEach(function(r){
+      if(r.result==='oos') rsScore-=20;
+      else if(r.result==='violation') rsScore-=10;
+      else if(r.result==='warning') rsScore-=3;
+    });
+    rsScore = Math.max(0, rsScore);
+    var violations = recentRS.filter(function(r){ return r.result==='violation'||r.result==='oos'; }).length;
+
+    var myDrugs = drugs.filter(function(r){ return !driverShort || (r.driver||'').toUpperCase()===driverShort; });
+    var hasPositive = myDrugs.some(function(r){ return r.result==='positive'; });
+    var testedYTD   = myDrugs.filter(function(r){ return r.date >= today.slice(0,4)+'-01-01'; }).length;
+    var drugScore   = hasPositive ? 0 : (testedYTD>=1 ? 20 : 10);
+
+    var totalScore = dvirScore + rsScore + drugScore;
+    var grade = totalScore>=90?'A':totalScore>=80?'B':totalScore>=70?'C':totalScore>=60?'D':'F';
+    var gradeColor = {A:'#10b981',B:'#3b82f6',C:'#f59e0b',D:'#f97316',F:'#ef4444'}[grade];
+
+    // ─ Streak calculation ───────────────────────────────────────────────────
+    var streak = 0;
+    for(var i=0;i<60;i++){
+      var d = daysAgo(i);
+      var found = myDvirs.find(function(r){ return r.date===d; });
+      if(found) streak++;
+      else if(i>0) break;
+    }
+
+    // ─ Inject widget ────────────────────────────────────────────────────────
+    var widget = document.getElementById('driver-safety-widget');
+    if(!widget) return;
+    var gradeMsg = grade==='A'?'Outstanding — Keep it up!':grade==='B'?'Good standing':grade==='C'?'Room to improve':grade==='D'?'Action needed':'Critical — contact dispatch';
+    widget.innerHTML = '<div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;">'
+      +'<div style="width:64px;height:64px;border-radius:50%;border:3px solid '+gradeColor+';background:'+gradeColor+'18;display:flex;flex-direction:column;align-items:center;justify-content:center;">'
+      +'<span style="font-size:24px;font-weight:900;color:'+gradeColor+';">'+grade+'</span>'
+      +'<span style="font-size:9px;color:'+gradeColor+';font-weight:700;">'+totalScore+'/100</span>'
+      +'</div>'
+      +'<div>'
+      +'<div style="font-size:14px;font-weight:700;color:'+gradeColor+';">Safety Score: '+totalScore+'</div>'
+      +'<div style="font-size:12px;color:#94a3b8;margin-top:2px;">'+gradeMsg+'</div>'
+      +'<div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;">'
+      +'<div style="font-size:11px;color:#64748b;"><span style="color:'+(dvirRate>=80?'#10b981':dvirRate>=50?'#f59e0b':'#ef4444')+';font-weight:700;">'+dvirRate+'%</span> DVIR (30d)</div>'
+      +'<div style="font-size:11px;color:#64748b;"><span style="color:'+(violations===0?'#10b981':violations<=1?'#f59e0b':'#ef4444')+';font-weight:700;">'+violations+'</span> violations</div>'
+      +'<div style="font-size:11px;color:#64748b;"><span style="color:#10b981;font-weight:700;">🔥 '+streak+'d</span> streak</div>'
+      +'</div>'
+      +'</div>'
+      +'</div>';
+  } catch(e){ console.warn('Safety widget error:', e); }
+})();
+</script>
+
+<!-- DRIVER STICKY BOTTOM NAV (mobile only) -->
+<div class="driver-sticky-bar" id="driver-sticky-nav">
+  <a href="driver-command.html" class="active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    HOME
+  </a>
+  <a href="pretrip.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+    INSPECT
+  </a>
+  <a href="upload.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+    UPLOAD
+  </a>
+  <a href="my-pay.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    MY PAY
+  </a>
+  <a href="incident-report.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    REPORT
+  </a>
+</div>
+
 </body>
 </html>

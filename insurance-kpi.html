@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insurance KPI Dashboard — Carrier Nexus</title>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<style>
+:root{
+  --bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;
+  --text:#e2e8f0;--mid:#64748b;--dim:#334155;
+  --blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;
+  --grade-a:#10b981;--grade-b:#3b82f6;--grade-c:#f59e0b;--grade-d:#f97316;--grade-f:#ef4444;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+/* SIDEBAR */
+.layout{display:flex;min-height:100vh;}
+.main{flex:1;overflow-x:hidden;}
+/* TOP BAR */
+.topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:18px;font-weight:700;color:var(--text);}
+.topbar-sub{font-size:12px;color:var(--mid);margin-top:2px;}
+.topbar-actions{display:flex;gap:8px;align-items:center;}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-primary:hover{background:#2563eb;}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}
+.btn-outline:hover{background:var(--panel2);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:#059669;}
+.btn-sm{padding:6px 12px;font-size:12px;}
+/* CONTENT */
+.content{padding:24px;max-width:1200px;margin:0 auto;}
+/* SCORE HERO */
+.score-hero{background:linear-gradient(135deg,#0f1e35 0%,#1a2f50 100%);border:1px solid #1e3a5f;border-radius:16px;padding:28px;display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;margin-bottom:24px;}
+.fleet-score-ring{width:110px;height:110px;position:relative;flex-shrink:0;}
+.fleet-score-ring svg{width:110px;height:110px;}
+.fleet-score-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-size:28px;font-weight:800;line-height:1;}
+.fleet-score-label{font-size:11px;color:var(--mid);margin-top:3px;}
+.fleet-info h2{font-size:20px;font-weight:700;margin-bottom:4px;}
+.fleet-info p{font-size:13px;color:var(--mid);margin-bottom:10px;}
+.fleet-meta{display:flex;gap:20px;flex-wrap:wrap;}
+.fleet-meta-item{font-size:12px;color:var(--mid);}
+.fleet-meta-item strong{color:var(--text);display:block;font-size:13px;}
+.score-grade-badge{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;border:3px solid;}
+/* KPI CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.kpi-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.kpi-label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+.kpi-value{font-size:28px;font-weight:800;line-height:1;margin-bottom:4px;}
+.kpi-sub{font-size:12px;color:var(--mid);}
+.kpi-bar{height:4px;background:var(--dim);border-radius:2px;margin-top:10px;overflow:hidden;}
+.kpi-bar-fill{height:100%;border-radius:2px;transition:width .6s;}
+/* TABS */
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:20px;width:fit-content;}
+.tab{padding:8px 18px;border-radius:7px;border:none;background:transparent;color:var(--mid);font-size:13px;font-weight:600;cursor:pointer;transition:.15s;}
+.tab.active{background:var(--blue);color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+/* DRIVER TABLE */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:20px;overflow:hidden;}
+.panel-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:14px;font-weight:700;}
+.panel-sub{font-size:12px;color:var(--mid);}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 16px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--panel2);}
+.grade-chip{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;font-size:15px;font-weight:800;border:2px solid;}
+.grade-A{color:var(--grade-a);border-color:var(--grade-a);background:rgba(16,185,129,.1);}
+.grade-B{color:var(--grade-b);border-color:var(--grade-b);background:rgba(59,130,246,.1);}
+.grade-C{color:var(--grade-c);border-color:var(--grade-c);background:rgba(245,158,11,.1);}
+.grade-D{color:var(--grade-d);border-color:var(--grade-d);background:rgba(249,115,22,.1);}
+.grade-F{color:var(--grade-f);border-color:var(--grade-f);background:rgba(239,68,68,.1);}
+.score-bar-wrap{display:flex;align-items:center;gap:8px;}
+.score-bar-bg{flex:1;height:6px;background:var(--dim);border-radius:3px;overflow:hidden;min-width:60px;}
+.score-bar-fg{height:100%;border-radius:3px;}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;}
+/* CSA PANEL */
+.csa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px;}
+.csa-card{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.csa-name{font-size:11px;color:var(--mid);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em;}
+.csa-score-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.csa-score-input{width:60px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-size:16px;font-weight:700;text-align:center;}
+.csa-score-input:focus{outline:none;border-color:var(--blue);}
+.csa-threshold{font-size:11px;color:var(--mid);}
+.csa-meter{height:6px;background:var(--dim);border-radius:3px;overflow:hidden;margin-top:6px;}
+.csa-meter-fill{height:100%;border-radius:3px;transition:width .5s;}
+.csa-alert{font-size:11px;margin-top:6px;padding:4px 8px;border-radius:5px;}
+.csa-alert-ok{background:rgba(16,185,129,.1);color:var(--green);}
+.csa-alert-warn{background:rgba(245,158,11,.1);color:var(--yellow);}
+.csa-alert-crit{background:rgba(239,68,68,.1);color:var(--red);}
+/* TREND */
+.trend-wrap{padding:20px;}
+.trend-chart{height:120px;position:relative;margin-top:8px;}
+.trend-bars{display:flex;align-items:flex-end;height:100%;gap:3px;}
+.trend-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.trend-bar{width:100%;border-radius:3px 3px 0 0;min-height:3px;transition:height .4s;}
+.trend-bar-label{font-size:9px;color:var(--mid);}
+/* UNDERWRITER REPORT */
+@media print {
+  .no-print{display:none!important;}
+  .topbar{display:none!important;}
+  body{background:#fff!important;color:#000!important;}
+  .panel,.kpi-card,.csa-card,.score-hero{background:#fff!important;border:1px solid #ddd!important;color:#000!important;}
+  th{background:#f5f5f5!important;color:#333!important;}
+  td{color:#000!important;border-color:#ddd!important;}
+  .print-only{display:block!important;}
+  .content{max-width:100%;padding:0;}
+}
+.print-only{display:none;}
+/* ALERT STRIP */
+.alert-strip{padding:8px 16px;border-radius:8px;font-size:13px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.alert-strip.warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:var(--yellow);}
+.alert-strip.ok{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:var(--green);}
+.alert-strip.crit{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--red);}
+/* RESPONSIVE */
+@media(max-width:768px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .csa-grid{grid-template-columns:repeat(2,1fr);}
+  .score-hero{grid-template-columns:1fr;text-align:center;}
+  .fleet-meta{justify-content:center;}
+  .score-grade-badge{margin:0 auto;}
+}
+@media(max-width:480px){
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .csa-grid{grid-template-columns:1fr 1fr;}
+  .topbar-title{font-size:15px;}
+}
+.sidebar-override .sidebar-link[href="insurance-kpi.html"]{background:rgba(59,130,246,.18)!important;border-left:3px solid var(--blue)!important;color:#fff!important;}
+</style>
+</head>
+<body>
+<div class="layout">
+<div class="main">
+
+<!-- TOP BAR -->
+<div class="topbar no-print">
+  <div>
+    <div class="topbar-title">📊 Insurance Safety KPI Dashboard</div>
+    <div class="topbar-sub">Fleet underwriting data · 49 CFR 396 compliance metrics</div>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-outline btn-sm" onclick="location.href='dot-compliance.html'">← DOT Compliance</button>
+    <button class="btn btn-green btn-sm" onclick="generateReport()">⬇ Generate Underwriter Report</button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- PRINT HEADER -->
+<div class="print-only" style="text-align:center;padding:16px 0 24px;border-bottom:2px solid #333;margin-bottom:20px;">
+  <div style="font-size:22px;font-weight:800;">Carrier Trucking US, LLC</div>
+  <div style="font-size:14px;color:#555;margin-top:4px;">US DOT 4326039 · MC 1688495-C · Fleet Safety & Compliance Report</div>
+  <div style="font-size:12px;color:#777;margin-top:4px;" id="print-date"></div>
+</div>
+
+<!-- ALERT STRIP -->
+<div id="alert-strip"></div>
+
+<!-- FLEET SCORE HERO -->
+<div class="score-hero" id="hero-section">
+  <div class="fleet-score-ring" id="score-ring-wrap">
+    <svg viewBox="0 0 110 110">
+      <circle cx="55" cy="55" r="48" fill="none" stroke="#1e3a5f" stroke-width="8"/>
+      <circle cx="55" cy="55" r="48" fill="none" stroke-width="8" stroke-linecap="round"
+        id="ring-arc" stroke-dasharray="301.6" stroke-dashoffset="301.6"
+        transform="rotate(-90 55 55)" style="transition:stroke-dashoffset 1s ease;"/>
+    </svg>
+    <div class="fleet-score-num">
+      <div id="ring-score">—</div>
+      <div class="fleet-score-label">Fleet Score</div>
+    </div>
+  </div>
+  <div class="fleet-info">
+    <h2>Carrier Trucking US, LLC</h2>
+    <p>US DOT 4326039 · MC 1688495-C · Fleet safety metrics for insurance underwriting</p>
+    <div class="fleet-meta" id="fleet-meta"></div>
+  </div>
+  <div class="score-grade-badge" id="grade-badge"></div>
+</div>
+
+<!-- KPI CARDS -->
+<div class="kpi-grid" id="kpi-grid"></div>
+
+<!-- INSURANCE MODULE QUICK LINKS -->
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;" class="no-print" id="module-links">
+  <a href="incident-report.html" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--orange)'" onmouseout="this.style.borderColor='var(--border)'">
+    <div style="font-size:20px;margin-bottom:4px;">🚨</div><div style="font-size:12px;font-weight:700;">Incidents</div>
+    <div style="font-size:11px;color:var(--mid);" id="ql-incidents">—</div>
+  </div></a>
+  <a href="claims.html" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--border)'">
+    <div style="font-size:20px;margin-bottom:4px;">⚖️</div><div style="font-size:12px;font-weight:700;">Claims</div>
+    <div style="font-size:11px;color:var(--mid);" id="ql-claims">—</div>
+  </div></a>
+  <a href="coi-management.html" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">
+    <div style="font-size:20px;margin-bottom:4px;">📜</div><div style="font-size:12px;font-weight:700;">COI Registry</div>
+    <div style="font-size:11px;color:var(--mid);" id="ql-cois">—</div>
+  </div></a>
+  <a href="coaching-log.html" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
+    <div style="font-size:20px;margin-bottom:4px;">📋</div><div style="font-size:12px;font-weight:700;">Coaching Log</div>
+    <div style="font-size:11px;color:var(--mid);" id="ql-coaching">—</div>
+  </div></a>
+  <a href="#" onclick="exportTelematicsJSON();return false;" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='rgba(16,185,129,.3)'">
+    <div style="font-size:20px;margin-bottom:4px;">⬇️</div><div style="font-size:12px;font-weight:700;color:var(--green);">Export Data</div>
+    <div style="font-size:11px;color:var(--mid);">JSON for insurer</div>
+  </div></a>
+</div>
+
+<!-- TABS -->
+<div class="tabs no-print">
+  <button class="tab active" onclick="showTab('drivers')">Per-Driver Scores</button>
+  <button class="tab" onclick="showTab('csa')">CSA BASIC Scores</button>
+  <button class="tab" onclick="showTab('cameras')">📷 Cameras</button>
+  <button class="tab" onclick="showTab('trend')">Inspection Trend</button>
+  <button class="tab" onclick="showTab('dvir')">DVIR Log</button>
+</div>
+
+<!-- TAB: DRIVERS -->
+<div class="tab-panel active" id="tab-drivers">
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">Per-Driver Safety Scores</div>
+        <div class="panel-sub">Composite score: DVIR compliance (40%) · Roadside record (40%) · Drug tests (20%)</div>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Driver</th>
+            <th>Grade</th>
+            <th>Score</th>
+            <th>DVIR (30d)</th>
+            <th>Roadside Inspections</th>
+            <th>Violations</th>
+            <th>Drug Tests</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="driver-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: CSA -->
+<div class="tab-panel" id="tab-csa">
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">FMCSA CSA BASIC Scores</div>
+        <div class="panel-sub">Manual entry — <a href="https://ai.fmcsa.dot.gov/SMS/Carrier/4326039/Overview.aspx" target="_blank" style="color:var(--blue);">Pull from FMCSA SMS ↗</a></div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="saveCSA()">Save Scores</button>
+    </div>
+    <div class="csa-grid" id="csa-grid"></div>
+    <div style="padding:12px 16px;font-size:12px;color:var(--mid);border-top:1px solid var(--border);">
+      ⚠️ Alert threshold = % of carriers with worse scores. Scores above threshold flag a BASIC for intervention.
+      Last updated: <span id="csa-last-updated">never</span>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: CAMERAS -->
+<div class="tab-panel" id="tab-cameras">
+  <div class="panel" style="margin-bottom:16px;">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">📷 Dash Camera Coverage — Fleet Configuration</div>
+        <div class="panel-sub">Mark installed cameras per unit · CH1+CH2 minimum required for insurance discount eligibility</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="saveCameraConfig()">Save Configuration</button>
+    </div>
+    <div style="overflow-x:auto;">
+      <table id="camera-config-table">
+        <thead>
+          <tr>
+            <th>Unit / Driver</th>
+            <th title="Forward road view">CH1 Forward Road</th>
+            <th title="Driver face/body">CH2 Driver Cab</th>
+            <th title="Left blind spot">CH3 Driver Side</th>
+            <th title="Right blind spot">CH4 Passenger Side</th>
+            <th title="Rear of trailer">CH5 Rear Trailer</th>
+            <th title="Inside trailer">CH6 Cargo Interior</th>
+            <th>Insurance Ready</th>
+          </tr>
+        </thead>
+        <tbody id="camera-config-body"></tbody>
+      </table>
+    </div>
+    <div style="padding:12px 16px;font-size:12px;color:var(--mid);border-top:1px solid var(--border);">
+      <strong style="color:var(--text);">Status codes:</strong>
+      <span style="margin-left:8px;">🟢 Active &nbsp;|&nbsp; 🟡 Offline/Fault &nbsp;|&nbsp; ⚫ Not Installed</span>
+      &nbsp;&nbsp;·&nbsp;&nbsp;Insurance minimum: <strong style="color:var(--green);">CH1 + CH2 both Active</strong>
+    </div>
+  </div>
+
+  <!-- CAMERA EVENTS -->
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">Camera Events Log</div>
+        <div class="panel-sub">Hard braking · Distraction · Speeding · All safety-relevant events</div>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="openEventModal()">+ Log Event</button>
+    </div>
+    <!-- EVENT STATS -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid var(--border);" id="event-stat-strip"></div>
+    <!-- EVENT TABLE -->
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Unit</th><th>Driver</th><th>Event Type</th><th>Channel</th><th>Severity</th><th>Notes</th></tr>
+        </thead>
+        <tbody id="camera-events-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ADD EVENT MODAL -->
+<div id="cam-event-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:24px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;">
+    <div style="font-size:16px;font-weight:700;margin-bottom:16px;">Log Camera Event</div>
+    <div style="display:grid;gap:12px;">
+      <div>
+        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Date</label>
+        <input type="date" id="ev-date" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Unit / Driver</label>
+        <select id="ev-unit" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
+          <option value="">Select driver/unit...</option>
+          <option value="Unit 01 — Avis Modesto">Unit 01 — Avis Modesto</option>
+          <option value="Unit 02 — Guillermo Pinera">Unit 02 — Guillermo Pinera</option>
+          <option value="Unit 03 — Yosviel Pinera">Unit 03 — Yosviel Pinera</option>
+          <option value="Unit 05 — Miguel Fonseca">Unit 05 — Miguel Fonseca</option>
+          <option value="Unit 06 — Nelson Veliz">Unit 06 — Nelson Veliz</option>
+          <option value="Unit 09 — David Fonseca">Unit 09 — David Fonseca</option>
+          <option value="Unit 11 — Jayler Labrada">Unit 11 — Jayler Labrada</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Event Type</label>
+        <select id="ev-type" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
+          <option value="hard_braking">Hard Braking</option>
+          <option value="hard_acceleration">Hard Acceleration</option>
+          <option value="sharp_turn">Sharp Turn / Swerve</option>
+          <option value="speeding">Speeding</option>
+          <option value="distraction">Driver Distraction</option>
+          <option value="phone_use">Phone Use While Driving</option>
+          <option value="drowsiness">Drowsiness / Fatigue Alert</option>
+          <option value="seatbelt">Seatbelt Violation</option>
+          <option value="tailgating">Following Too Close</option>
+          <option value="lane_departure">Lane Departure</option>
+          <option value="near_collision">Near Collision</option>
+          <option value="collision">Collision / Accident</option>
+          <option value="forward_obstruct">Forward Obstruction</option>
+          <option value="camera_blocked">Camera Blocked / Tampered</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Camera Channel</label>
+        <select id="ev-channel" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
+          <option value="CH1">CH1 — Forward Road</option>
+          <option value="CH2">CH2 — Driver Cab</option>
+          <option value="CH3">CH3 — Driver Side</option>
+          <option value="CH4">CH4 — Passenger Side</option>
+          <option value="CH5">CH5 — Rear Trailer</option>
+          <option value="CH6">CH6 — Cargo Interior</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Severity</label>
+        <select id="ev-severity" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
+          <option value="low">Low — Minor / Logged only</option>
+          <option value="medium">Medium — Coaching recommended</option>
+          <option value="high">High — Review + action required</option>
+          <option value="critical">Critical — Insurance / DOT reportable</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Notes</label>
+        <textarea id="ev-notes" rows="2" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;resize:vertical;" placeholder="Location, circumstances, follow-up action..."></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">
+      <button class="btn btn-outline" onclick="closeCamModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEvent()">Save Event</button>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: TREND -->
+<div class="tab-panel" id="tab-trend">
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">DVIR Completion — Last 30 Days</div>
+      <div class="panel-sub">Daily inspection count fleet-wide</div>
+    </div>
+    <div class="trend-wrap">
+      <div class="trend-chart">
+        <div class="trend-bars" id="trend-bars"></div>
+      </div>
+      <div style="display:flex;gap:16px;margin-top:8px;font-size:11px;color:var(--mid);">
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--green);border-radius:2px;margin-right:4px;"></span>Inspection completed</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--red);border-radius:2px;margin-right:4px;"></span>No inspection</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: DVIR LOG -->
+<div class="tab-panel" id="tab-dvir">
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">Recent DVIR Records</div>
+      <div class="panel-sub">Last 50 inspections · <a href="pretrip.html" style="color:var(--blue);">+ New Inspection ↗</a></div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr><th>DVIR ID</th><th>Date</th><th>Driver</th><th>Vehicle</th><th>Type</th><th>Items</th><th>Defects</th><th>OOS</th><th>Status</th></tr>
+        </thead>
+        <tbody id="dvir-log-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<script src="nexus-sidebar.js"></script>
+<script>
+// ─── CONSTANTS ──────────────────────────────────────────────────────────────
+const DRIVERS = [
+  {name:'Avis Modesto',    short:'AVIS'},
+  {name:'David Fonseca',   short:'DAVID'},
+  {name:'Miguel Fonseca',  short:'MIGUEL'},
+  {name:'Nelson Veliz',    short:'NELSON'},
+  {name:'Yosviel Pinera',  short:'YOSVIEL'},
+  {name:'Guillermo Pinera',short:'GUILLERMO'},
+  {name:'Jayler Labrada',  short:'JAYLER'}
+];
+const CSA_BASICS = [
+  {key:'unsafe_driving',   label:'Unsafe Driving',           threshold:65},
+  {key:'hos_compliance',   label:'HOS Compliance',           threshold:65},
+  {key:'driver_fitness',   label:'Driver Fitness',           threshold:80},
+  {key:'controlled_sub',   label:'Controlled Substances',    threshold:80},
+  {key:'vehicle_maint',    label:'Vehicle Maintenance',      threshold:80},
+  {key:'hm_compliance',    label:'Hazardous Materials',      threshold:80},
+  {key:'crash_indicator',  label:'Crash Indicator',          threshold:65},
+];
+
+// ─── DATA HELPERS ────────────────────────────────────────────────────────────
+function getDVIRs(){ try{ return JSON.parse(localStorage.getItem('nexus_pretrip_inspections')||'[]'); }catch(e){ return []; } }
+function getRoadside(){ try{ return JSON.parse(localStorage.getItem('nexus_rs_inspections')||'[]'); }catch(e){ return []; } }
+function getDrugs(){ try{ return JSON.parse(localStorage.getItem('nexus_drug_tests')||'[]'); }catch(e){ return []; } }
+function getCSA(){ try{ return JSON.parse(localStorage.getItem('nexus_csa_scores')||'{}'); }catch(e){ return {}; } }
+
+function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
+function today(){ return new Date().toISOString().slice(0,10); }
+
+// ─── SCORING ─────────────────────────────────────────────────────────────────
+function scoreDriver(d){
+  const dvirs = getDVIRs();
+  const rs    = getRoadside();
+  const drugs = getDrugs();
+  const d30   = daysAgo(30);
+  const d365  = daysAgo(365);
+  const dName = d.name.toUpperCase().split(' ')[0]; // AVIS, DAVID etc
+  const dShort = d.short;
+
+  // DVIR score (40 pts) — inspections in last 30 days / 20 expected working days
+  const myDvirs = dvirs.filter(r => {
+    const n = (r.driverName||'').toUpperCase();
+    return n.includes(dShort) || n.includes(dName) || r.driverId === d.short;
+  });
+  const recent = myDvirs.filter(r => r.date >= d30);
+  const dvirScore = Math.min(40, Math.round((recent.length / 20) * 40));
+  const dvirRate  = Math.round((recent.length / 20) * 100);
+
+  // Roadside score (40 pts)
+  const myRS = rs.filter(r => (r.driver||'').toUpperCase() === dShort);
+  const recentRS = myRS.filter(r => r.date >= d365);
+  let rsScore = 40;
+  recentRS.forEach(r => {
+    if(r.result === 'oos')       rsScore -= 20;
+    else if(r.result === 'violation') rsScore -= 10;
+    else if(r.result === 'warning')   rsScore -= 3;
+  });
+  rsScore = Math.max(0, rsScore);
+  const violations = recentRS.filter(r => r.result==='violation'||r.result==='oos').length;
+  const oos        = recentRS.filter(r => r.result==='oos').length;
+
+  // Drug test score (20 pts)
+  const myDrugs = drugs.filter(r => (r.driver||'').toUpperCase() === dShort);
+  const hasPositive = myDrugs.some(r => r.result==='positive');
+  const testedThisYear = myDrugs.filter(r => r.date >= today().slice(0,4)+'-01-01').length;
+  const drugScore = hasPositive ? 0 : (testedThisYear >= 1 ? 20 : 10);
+
+  const total = dvirScore + rsScore + drugScore;
+  const grade = total>=90?'A':total>=80?'B':total>=70?'C':total>=60?'D':'F';
+
+  return { name:d.name, short:dShort, score:total, grade, dvirScore, rsScore, drugScore,
+           dvirCount:recent.length, dvirRate, violations, oos, tested:testedThisYear, hasPositive,
+           totalRS:recentRS.length };
+}
+
+function fleetScore(){
+  const scores = DRIVERS.map(scoreDriver);
+  const avg = Math.round(scores.reduce((s,d)=>s+d.score,0)/scores.length);
+  return { drivers:scores, avg, grade:avg>=90?'A':avg>=80?'B':avg>=70?'C':avg>=60?'D':'F' };
+}
+
+// ─── GRADE COLORS ────────────────────────────────────────────────────────────
+const GC = {A:'#10b981',B:'#3b82f6',C:'#f59e0b',D:'#f97316',F:'#ef4444'};
+
+// ─── RENDER HERO ─────────────────────────────────────────────────────────────
+function renderHero(fleet){
+  const s = fleet.avg;
+  const g = fleet.grade;
+  const c = GC[g];
+  // Ring
+  const arc = document.getElementById('ring-arc');
+  const offset = 301.6 * (1 - s/100);
+  arc.style.stroke = c;
+  setTimeout(()=>{ arc.style.strokeDashoffset = offset; },100);
+  document.getElementById('ring-score').textContent = s;
+  document.getElementById('ring-score').style.color = c;
+  // Badge
+  const badge = document.getElementById('grade-badge');
+  badge.textContent = g;
+  badge.style.color = c;
+  badge.style.borderColor = c;
+  badge.style.background = c+'18';
+  // Meta
+  const dvirs = getDVIRs();
+  const todayRecs = dvirs.filter(r=>r.date===today());
+  const d30 = daysAgo(30);
+  document.getElementById('fleet-meta').innerHTML = `
+    <div class="fleet-meta-item"><strong>${DRIVERS.length}</strong>Active Drivers</div>
+    <div class="fleet-meta-item"><strong>${todayRecs.length > 0 ? '✅ '+todayRecs.length : '⚠️ 0'}</strong>Today's DVIRs</div>
+    <div class="fleet-meta-item"><strong>${dvirs.filter(r=>r.date>=d30).length}</strong>Inspections (30d)</div>
+    <div class="fleet-meta-item"><strong>US DOT 4326039</strong>DOT Number</div>
+    <div class="fleet-meta-item"><strong>MC 1688495-C</strong>MC Number</div>
+    <div class="fleet-meta-item"><strong>${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</strong>Report Date</div>
+  `;
+}
+
+// ─── KPI CARDS ───────────────────────────────────────────────────────────────
+function renderKPI(fleet){
+  const dvirs   = getDVIRs();
+  const rs      = getRoadside();
+  const drugs   = getDrugs();
+  const d30     = daysAgo(30);
+  const dvirAll = dvirs.filter(r=>r.date>=d30).length;
+  const expected = DRIVERS.length * 20;
+  const dvirRate = Math.min(100,Math.round(dvirAll/expected*100));
+
+  const rsAll = rs.length;
+  const rsClean = rs.filter(r=>r.result==='no_violation').length;
+  const rsRate = rsAll ? Math.round(rsClean/rsAll*100) : 100;
+
+  const drugPos = drugs.filter(r=>r.result==='positive').length;
+  const drugRate = drugs.length ? Math.round((drugs.length-drugPos)/drugs.length*100) : 100;
+
+  const oos = fleet.drivers.reduce((s,d)=>s+d.oos,0);
+
+  const cards = [
+    { label:'DVIR Completion Rate', value:dvirRate+'%', sub:`${dvirAll} of ${expected} expected (30d)`,
+      color: dvirRate>=90?'var(--green)':dvirRate>=70?'var(--yellow)':'var(--red)', pct:dvirRate },
+    { label:'Roadside — Clean Rate', value:rsRate+'%', sub:`${rsClean} of ${rsAll} inspections clean`,
+      color: rsRate>=90?'var(--green)':rsRate>=70?'var(--yellow)':'var(--red)', pct:rsRate },
+    { label:'Drug Test Compliance', value:drugRate+'%', sub:`${drugs.length-drugPos} negative of ${drugs.length} tested`,
+      color: drugRate===100?'var(--green)':drugRate>=90?'var(--yellow)':'var(--red)', pct:drugRate },
+    { label:'OOS Events (12mo)', value:oos, sub:'Out-of-service orders issued',
+      color: oos===0?'var(--green)':oos<=2?'var(--yellow)':'var(--red)', pct:Math.max(0,100-oos*20) }
+  ];
+
+  document.getElementById('kpi-grid').innerHTML = cards.map(c=>`
+    <div class="kpi-card">
+      <div class="kpi-label">${c.label}</div>
+      <div class="kpi-value" style="color:${c.color}">${c.value}</div>
+      <div class="kpi-sub">${c.sub}</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${c.pct}%;background:${c.color};"></div></div>
+    </div>`).join('');
+}
+
+// ─── DRIVER TABLE ─────────────────────────────────────────────────────────────
+function renderDriverTable(fleet){
+  const tbody = document.getElementById('driver-table-body');
+  tbody.innerHTML = fleet.drivers.map(d=>{
+    const gc = GC[d.grade];
+    const statusDot = d.score>=80?'#10b981':d.score>=60?'#f59e0b':'#ef4444';
+    const statusLabel = d.score>=80?'Good Standing':d.score>=60?'Needs Attention':'Action Required';
+    return `<tr>
+      <td style="font-weight:700;">${d.name}</td>
+      <td><span class="grade-chip grade-${d.grade}">${d.grade}</span></td>
+      <td>
+        <div class="score-bar-wrap">
+          <span style="font-weight:700;color:${gc};width:32px;">${d.score}</span>
+          <div class="score-bar-bg"><div class="score-bar-fg" style="width:${d.score}%;background:${gc};"></div></div>
+        </div>
+      </td>
+      <td>
+        <span style="color:${d.dvirRate>=80?'var(--green)':d.dvirRate>=50?'var(--yellow)':'var(--red)'};">${d.dvirCount} insp</span>
+        <div style="font-size:11px;color:var(--mid);">${d.dvirRate}% rate (30d)</div>
+      </td>
+      <td><span style="color:var(--text);">${d.totalRS} insp</span></td>
+      <td><span style="color:${d.violations===0?'var(--green)':d.violations<=1?'var(--yellow)':'var(--red)'}">${d.violations} violation${d.violations!==1?'s':''}</span>${d.oos?`<span style="color:var(--red);font-size:11px;margin-left:4px;">${d.oos} OOS</span>`:''}</td>
+      <td><span style="color:${d.hasPositive?'var(--red)':'var(--green)'}">${d.hasPositive?'⚠️ Positive':'✅ Clean'}</span><div style="font-size:11px;color:var(--mid);">${d.tested} test${d.tested!==1?'s':''} YTD</div></td>
+      <td><span class="status-dot" style="background:${statusDot};"></span>${statusLabel}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── CSA GRID ────────────────────────────────────────────────────────────────
+function renderCSA(){
+  const csa = getCSA();
+  const ts = csa._updated ? new Date(csa._updated).toLocaleString() : 'never';
+  document.getElementById('csa-last-updated').textContent = ts;
+  document.getElementById('csa-grid').innerHTML = CSA_BASICS.map(b=>{
+    const val = csa[b.key] !== undefined ? csa[b.key] : '';
+    const num = parseInt(val)||0;
+    const pct = Math.min(100,num);
+    const over = num >= b.threshold;
+    const warn = num >= b.threshold*0.85 && !over;
+    const barColor = over?'#ef4444':warn?'#f59e0b':'#10b981';
+    const alertClass = over?'csa-alert-crit':warn?'csa-alert-warn':'csa-alert-ok';
+    const alertMsg = over?`⛔ Above ${b.threshold}% threshold — intervention alert`:warn?`⚠️ Approaching threshold (${b.threshold}%)`:`✅ Below threshold — within compliance`;
+    return `<div class="csa-card">
+      <div class="csa-name">${b.label}</div>
+      <div class="csa-score-row">
+        <input class="csa-score-input" id="csa_${b.key}" type="number" min="0" max="100" value="${val}" placeholder="—" oninput="updateCSAMeter('${b.key}',${b.threshold})">
+        <span class="csa-threshold">Threshold: ${b.threshold}%</span>
+      </div>
+      <div class="csa-meter"><div class="csa-meter-fill" id="csam_${b.key}" style="width:${pct}%;background:${barColor};"></div></div>
+      ${val!==''?`<div class="csa-alert ${alertClass}">${alertMsg}</div>`:'<div style="font-size:11px;color:var(--mid);margin-top:6px;">Enter score from FMCSA SMS</div>'}
+    </div>`;
+  }).join('');
+}
+
+function updateCSAMeter(key, threshold){
+  const val = parseInt(document.getElementById('csa_'+key).value)||0;
+  const bar = document.getElementById('csam_'+key);
+  const over = val>=threshold; const warn = val>=threshold*0.85&&!over;
+  bar.style.width = Math.min(100,val)+'%';
+  bar.style.background = over?'#ef4444':warn?'#f59e0b':'#10b981';
+}
+
+function saveCSA(){
+  const data = {_updated: Date.now()};
+  CSA_BASICS.forEach(b=>{ const v=document.getElementById('csa_'+b.key).value; if(v!=='') data[b.key]=parseInt(v); });
+  localStorage.setItem('nexus_csa_scores', JSON.stringify(data));
+  renderCSA();
+  const btn = event.target;
+  btn.textContent='✅ Saved'; btn.style.background='var(--green)';
+  setTimeout(()=>{ btn.textContent='Save Scores'; btn.style.background=''; },2000);
+}
+
+// ─── TREND ────────────────────────────────────────────────────────────────────
+function renderTrend(){
+  const dvirs = getDVIRs();
+  const bars = document.getElementById('trend-bars');
+  const days = 30;
+  let html = '';
+  const maxCount = DRIVERS.length;
+  for(let i=days-1;i>=0;i--){
+    const d = daysAgo(i);
+    const count = dvirs.filter(r=>r.date===d).length;
+    const pct = maxCount>0 ? (count/maxCount)*100 : 0;
+    const color = count>0 ? (pct>=50?'var(--green)':'var(--yellow)') : 'var(--red)';
+    const label = i===0?'Today':i===1?'Yst':i%7===0?'-'+i+'d':'';
+    const h = Math.max(4, pct);
+    html += `<div class="trend-bar-wrap">
+      <div class="trend-bar" style="height:${h}%;background:${color};" title="${d}: ${count} inspection${count!==1?'s':''}"></div>
+      <div class="trend-bar-label">${label}</div>
+    </div>`;
+  }
+  bars.innerHTML = html;
+}
+
+// ─── DVIR LOG ────────────────────────────────────────────────────────────────
+function renderDVIRLog(){
+  const dvirs = getDVIRs().slice(0,50);
+  const tbody = document.getElementById('dvir-log-body');
+  if(!dvirs.length){ tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--mid);padding:24px;">No DVIR records found — <a href="pretrip.html" style="color:var(--blue);">Start first inspection ↗</a></td></tr>'; return; }
+  tbody.innerHTML = dvirs.map(r=>{
+    const defColor = r.defectCount>0?(r.majorDefectCount>0?'var(--red)':'var(--yellow)'):'var(--green)';
+    const oosBadge = !r.canDepart ? '<span style="background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3);border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700;">OOS</span>' : '';
+    const statusColor = r.status==='certified'?'var(--green)':'var(--yellow)';
+    return `<tr>
+      <td style="font-family:monospace;font-size:12px;">${r.id}</td>
+      <td>${new Date(r.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+      <td style="font-weight:600;">${r.driverName||'—'}</td>
+      <td>${r.vehicleId||'—'}${r.trailerId?' + '+r.trailerId:''}</td>
+      <td style="text-transform:capitalize;">${r.type||'—'}</td>
+      <td>${r.totalItems||'—'}</td>
+      <td style="color:${defColor};">${r.defectCount||0}${r.majorDefectCount>0?' ('+r.majorDefectCount+' major)':''}</td>
+      <td>${oosBadge||'<span style="color:var(--green);font-size:12px;">Clear</span>'}</td>
+      <td style="color:${statusColor};text-transform:capitalize;">${r.status||'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── ALERT STRIP ─────────────────────────────────────────────────────────────
+function renderAlerts(fleet){
+  const dvirs = getDVIRs();
+  const todayDvirs = dvirs.filter(r=>r.date===today());
+  const alerts = [];
+  if(todayDvirs.length===0) alerts.push({cls:'crit',msg:`⛔ No DVIR filed today — ${DRIVERS.length} drivers must inspect before operating (49 CFR 396.11)`});
+  else if(todayDvirs.length < DRIVERS.length) alerts.push({cls:'warn',msg:`⚠️ Only ${todayDvirs.length} of ${DRIVERS.length} drivers have filed today's DVIR`});
+  else alerts.push({cls:'ok',msg:`✅ All ${todayDvirs.length} drivers have completed today's pre-trip inspection`});
+  const oosDrivers = fleet.drivers.filter(d=>d.grade==='F').map(d=>d.name.split(' ')[0]);
+  if(oosDrivers.length) alerts.push({cls:'crit',msg:`⛔ ${oosDrivers.join(', ')} — safety score below 60 — insurance exposure risk`});
+  document.getElementById('alert-strip').innerHTML = alerts.map(a=>`<div class="alert-strip ${a.cls}">${a.msg}</div>`).join('');
+}
+
+// ─── TABS ────────────────────────────────────────────────────────────────────
+function showTab(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+  if(id==='trend') renderTrend();
+  if(id==='dvir')  renderDVIRLog();
+}
+
+// ─── GENERATE REPORT ─────────────────────────────────────────────────────────
+function generateReport(){
+  document.getElementById('print-date').textContent = 'Generated: '+new Date().toLocaleString('en-US',{dateStyle:'full',timeStyle:'short'});
+  // Force all panels visible
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.add('active'));
+  renderTrend(); renderDVIRLog();
+  setTimeout(()=>{
+    window.print();
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('tab-drivers').classList.add('active');
+  }, 300);
+}
+
+// ─── CAMERA CONFIG ───────────────────────────────────────────────────────────
+const UNITS = [
+  {id:'u01', label:'Unit 01', driver:'Avis Modesto'},
+  {id:'u02', label:'Unit 02', driver:'Guillermo Pinera'},
+  {id:'u03', label:'Unit 03', driver:'Yosviel Pinera'},
+  {id:'u05', label:'Unit 05', driver:'Miguel Fonseca'},
+  {id:'u06', label:'Unit 06', driver:'Nelson Veliz'},
+  {id:'u09', label:'Unit 09', driver:'David Fonseca'},
+  {id:'u11', label:'Unit 11', driver:'Jayler Labrada'}
+];
+const CHANNELS = [
+  {id:'ch1', label:'CH1 Forward Road',    desc:'Road ahead',        insMin:true},
+  {id:'ch2', label:'CH2 Driver Cab',      desc:'Driver face/body',  insMin:true},
+  {id:'ch3', label:'CH3 Driver Side',     desc:'Left blind spot',   insMin:false},
+  {id:'ch4', label:'CH4 Passenger Side',  desc:'Right blind spot',  insMin:false},
+  {id:'ch5', label:'CH5 Rear Trailer',    desc:'Behind trailer',    insMin:false},
+  {id:'ch6', label:'CH6 Cargo Interior',  desc:'Inside trailer',    insMin:false}
+];
+const STATUS_OPTS = [
+  {v:'active',  label:'🟢 Active',         color:'#10b981'},
+  {v:'offline', label:'🟡 Offline/Fault',  color:'#f59e0b'},
+  {v:'none',    label:'⚫ Not Installed',   color:'#475569'}
+];
+
+function getCameraConfig(){
+  try{ return JSON.parse(localStorage.getItem('nexus_camera_config')||'{}'); }catch(e){ return {}; }
+}
+function getCameraEvents(){
+  try{ return JSON.parse(localStorage.getItem('nexus_camera_events')||'[]'); }catch(e){ return []; }
+}
+
+function renderCameraConfig(){
+  const cfg = getCameraConfig();
+  const tbody = document.getElementById('camera-config-body');
+  if(!tbody) return;
+  tbody.innerHTML = UNITS.map(u=>{
+    const ucfg = cfg[u.id]||{};
+    const cells = CHANNELS.map(ch=>{
+      const val = ucfg[ch.id]||'none';
+      const opts = STATUS_OPTS.map(s=>`<option value="${s.v}"${s.v===val?' selected':''}>${s.label}</option>`).join('');
+      const bdr = ch.insMin ? 'border:1px solid rgba(59,130,246,.3);' : '';
+      return `<td><select id="cam_${u.id}_${ch.id}" style="background:var(--panel2);border:1px solid var(--border);${bdr}border-radius:6px;padding:4px 8px;color:var(--text);font-size:12px;width:100%;">${opts}</select></td>`;
+    }).join('');
+    const ready = (ucfg.ch1==='active') && (ucfg.ch2==='active');
+    const readyBadge = ready
+      ? '<span style="background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;">✅ Eligible</span>'
+      : '<span style="background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;">⚠️ Needs CH1+CH2</span>';
+    return `<tr>
+      <td style="font-weight:700;">${u.label}<div style="font-size:11px;color:var(--mid);">${u.driver}</div></td>
+      ${cells}
+      <td>${readyBadge}</td>
+    </tr>`;
+  }).join('');
+}
+
+function saveCameraConfig(){
+  const data = {};
+  UNITS.forEach(u=>{
+    data[u.id] = {};
+    CHANNELS.forEach(ch=>{
+      const el = document.getElementById('cam_'+u.id+'_'+ch.id);
+      if(el) data[u.id][ch.id] = el.value;
+    });
+  });
+  localStorage.setItem('nexus_camera_config', JSON.stringify(data));
+  // Re-render to update insurance ready badges
+  renderCameraConfig();
+  renderCameraEventStats();
+  const btn = event.target;
+  btn.textContent='✅ Saved'; btn.style.background='var(--green)';
+  setTimeout(()=>{ btn.textContent='Save Configuration'; btn.style.background=''; },2000);
+}
+
+// ─── CAMERA EVENTS ────────────────────────────────────────────────────────────
+const EV_TYPES = {
+  hard_braking:'Hard Braking', hard_acceleration:'Hard Acceleration',
+  sharp_turn:'Sharp Turn/Swerve', speeding:'Speeding',
+  distraction:'Driver Distraction', phone_use:'Phone Use',
+  drowsiness:'Drowsiness/Fatigue', seatbelt:'Seatbelt Violation',
+  tailgating:'Tailgating', lane_departure:'Lane Departure',
+  near_collision:'Near Collision', collision:'Collision/Accident',
+  forward_obstruct:'Forward Obstruction', camera_blocked:'Camera Blocked'
+};
+const SEV_COLOR = {low:'#10b981',medium:'#f59e0b',high:'#f97316',critical:'#ef4444'};
+
+function renderCameraEventStats(){
+  const evs = getCameraEvents();
+  const d30 = daysAgo(30);
+  const recent = evs.filter(e=>e.date>=d30);
+  const counts = {low:0,medium:0,high:0,critical:0};
+  recent.forEach(e=>{ if(counts[e.severity]!==undefined) counts[e.severity]++; });
+  const strip = document.getElementById('event-stat-strip');
+  if(!strip) return;
+  strip.innerHTML = [
+    {label:'Total Events (30d)',  val:recent.length,       color:'var(--text)'},
+    {label:'Critical / High',    val:counts.critical+counts.high,  color:counts.critical+counts.high>0?'var(--red)':'var(--green)'},
+    {label:'Medium',             val:counts.medium,       color:counts.medium>0?'var(--yellow)':'var(--green)'},
+    {label:'Low',                val:counts.low,          color:'var(--mid)'}
+  ].map(s=>`<div style="padding:14px 16px;border-right:1px solid var(--border);">
+    <div style="font-size:11px;color:var(--mid);text-transform:uppercase;margin-bottom:4px;">${s.label}</div>
+    <div style="font-size:22px;font-weight:800;color:${s.color};">${s.val}</div>
+  </div>`).join('');
+}
+
+function renderCameraEvents(){
+  const evs = getCameraEvents().slice(0,100);
+  const tbody = document.getElementById('camera-events-body');
+  if(!tbody) return;
+  if(!evs.length){
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--mid);padding:24px;">No camera events logged yet — events will appear here as cameras go live</td></tr>';
+    return;
+  }
+  tbody.innerHTML = evs.map(e=>{
+    const sc = SEV_COLOR[e.severity]||'var(--mid)';
+    return `<tr>
+      <td>${new Date(e.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+      <td style="font-size:12px;">${e.unit||'—'}</td>
+      <td style="font-weight:600;">${e.driver||'—'}</td>
+      <td>${EV_TYPES[e.type]||e.type}</td>
+      <td style="font-family:monospace;font-size:12px;color:var(--blue);">${e.channel||'—'}</td>
+      <td><span style="color:${sc};font-weight:700;text-transform:capitalize;">${e.severity}</span></td>
+      <td style="font-size:12px;color:var(--mid);">${e.notes||'—'}</td>
+      <td><a href="coaching-log.html?trigger=camera_event&ref=${e.id}&driver=${encodeURIComponent(e.driver||e.unit||'')}" style="font-size:11px;color:var(--yellow);text-decoration:none;border:1px solid rgba(245,158,11,.4);padding:2px 7px;border-radius:4px;white-space:nowrap;" title="Open coaching session for this event">📋 Coach</a></td>
+    </tr>`;
+  }).join('');
+}
+
+function openEventModal(){
+  const m = document.getElementById('cam-event-modal');
+  m.style.display='flex';
+  document.getElementById('ev-date').value = today();
+}
+function closeCamModal(){
+  document.getElementById('cam-event-modal').style.display='none';
+}
+function saveEvent(){
+  const unit  = document.getElementById('ev-unit').value;
+  const parts = unit.split(' — ');
+  const evs   = getCameraEvents();
+  evs.unshift({
+    id: 'camev'+Date.now(),
+    date:     document.getElementById('ev-date').value,
+    unit:     parts[0]||unit,
+    driver:   parts[1]||'',
+    type:     document.getElementById('ev-type').value,
+    channel:  document.getElementById('ev-channel').value,
+    severity: document.getElementById('ev-severity').value,
+    notes:    document.getElementById('ev-notes').value.trim()
+  });
+  localStorage.setItem('nexus_camera_events', JSON.stringify(evs));
+  closeCamModal();
+  renderCameraEvents();
+  renderCameraEventStats();
+}
+
+// ─── CAMERA COVERAGE KPI ──────────────────────────────────────────────────────
+function cameraFleetReadiness(){
+  const cfg = getCameraConfig();
+  let ready=0, total=UNITS.length;
+  UNITS.forEach(u=>{ const uc=cfg[u.id]||{}; if(uc.ch1==='active'&&uc.ch2==='active') ready++; });
+  return { ready, total, pct: Math.round(ready/total*100) };
+}
+
+// ─── OVERRIDE showTab to init camera tab ─────────────────────────────────────
+const _origShowTab = showTab;
+function showTab(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+  if(id==='trend')   renderTrend();
+  if(id==='dvir')    renderDVIRLog();
+  if(id==='cameras'){ renderCameraConfig(); renderCameraEvents(); renderCameraEventStats(); }
+}
+
+// ─── TELEMATICS EXPORT ───────────────────────────────────────────────────────
+function exportTelematicsJSON(){
+  const fleet = fleetScore();
+  const cam   = cameraFleetReadiness();
+  const incs  = JSON.parse(localStorage.getItem('nexus_incidents')||'[]');
+  const claims= JSON.parse(localStorage.getItem('nexus_claims')||'[]');
+  const csa   = getCSA();
+  const report = {
+    generatedAt: new Date().toISOString(),
+    carrier: { name:'Carrier Trucking US, LLC', dot:'4326039', mc:'1688495-C' },
+    fleetSafetyScore: fleet.avg, fleetGrade: fleet.grade,
+    driverCount: fleet.drivers.length,
+    dvirCompletionRate30d: Math.round(getDVIRs().filter(r=>r.date>=daysAgo(30)).length / (fleet.drivers.length*20)*100),
+    roadsideCleanRate: (function(){ const rs=getRoadside(); return rs.length?Math.round(rs.filter(r=>r.result==='no_violation').length/rs.length*100):100; })(),
+    openIncidents: incs.filter(i=>i.status==='open').length,
+    openClaims: claims.filter(c=>c.status==='open'||c.status==='under_review').length,
+    cameraReadiness: { trucksWithMinimum: cam.ready, totalTrucks: cam.total, pct: cam.pct },
+    csaScores: csa,
+    perDriverScores: fleet.drivers.map(d=>({ name:d.name, score:d.score, grade:d.grade, dvirRate:d.dvirRate+'%', violations:d.violations }))
+  };
+  const blob = new Blob([JSON.stringify(report, null, 2)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'carrier-nexus-telematics-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+}
+
+// ─── QUICK LINK COUNTERS ──────────────────────────────────────────────────────
+function renderQuickLinks(){
+  try {
+    const incs  = JSON.parse(localStorage.getItem('nexus_incidents')||'[]');
+    const claims= JSON.parse(localStorage.getItem('nexus_claims')||'[]');
+    const cois  = JSON.parse(localStorage.getItem('nexus_cois')||'[]');
+    const coach = JSON.parse(localStorage.getItem('nexus_coaching')||'[]');
+    const openInc = incs.filter(i=>i.status==='open').length;
+    const openClaims = claims.filter(c=>c.status==='open'||c.status==='under_review').length;
+    const expCOIs = cois.filter(c=>{ const d=c.expDate?Math.ceil((new Date(c.expDate+'T12:00:00')-new Date())/86400000):999; return d<30&&d>=0; }).length;
+    const pendCoach = coach.filter(x=>x.status==='pending_acknowledgment').length;
+    const el=id=>document.getElementById(id);
+    if(el('ql-incidents')) el('ql-incidents').innerHTML = openInc>0 ? `<span style="color:var(--red);">${openInc} open</span>` : '<span style="color:var(--green);">All clear</span>';
+    if(el('ql-claims'))    el('ql-claims').innerHTML    = openClaims>0 ? `<span style="color:var(--red);">${openClaims} active</span>` : '<span style="color:var(--green);">All clear</span>';
+    if(el('ql-cois'))      el('ql-cois').innerHTML      = expCOIs>0 ? `<span style="color:var(--yellow);">${expCOIs} expiring</span>` : `<span style="color:var(--green);">${cois.filter(c=>{ const d=c.expDate?Math.ceil((new Date(c.expDate+'T12:00:00')-new Date())/86400000):999; return d>=0; }).length} active</span>`;
+    if(el('ql-coaching'))  el('ql-coaching').innerHTML  = pendCoach>0 ? `<span style="color:var(--yellow);">${pendCoach} pending sig</span>` : '<span style="color:var(--green);">All signed</span>';
+  } catch(e){}
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+(function init(){
+  const fleet = fleetScore();
+  renderHero(fleet);
+  // Update KPI grid to include camera readiness
+  renderKPI(fleet);
+  renderDriverTable(fleet);
+  renderCSA();
+  renderAlerts(fleet);
+  // Patch KPI grid with camera card
+  renderQuickLinks();
+  const cam = cameraFleetReadiness();
+  const grid = document.getElementById('kpi-grid');
+  if(grid){
+    const camColor = cam.pct>=100?'var(--green)':cam.pct>=50?'var(--yellow)':'var(--red)';
+    grid.innerHTML += `<div class="kpi-card">
+      <div class="kpi-label">Camera Coverage</div>
+      <div class="kpi-value" style="color:${camColor}">${cam.ready}/${cam.total}</div>
+      <div class="kpi-sub">${cam.ready} trucks with CH1+CH2 active · <a href="#" onclick="showTabDirect('cameras');return false;" style="color:var(--blue);">Configure ↗</a></div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${cam.pct}%;background:${camColor};"></div></div>
+    </div>`;
+  }
+})();
+
+function showTabDirect(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(t=>{ if(t.textContent.includes('Camera')) t.classList.add('active'); });
+  renderCameraConfig(); renderCameraEvents(); renderCameraEventStats();
+}
+</script>
+</body>
+</html>
