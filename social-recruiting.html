@@ -1308,7 +1308,7 @@ function openJobDetail(jobId) {
       + '<div style="color:var(--mid);margin-bottom:12px">' + (job.company||'Carrier Trucking US') + ' &bull; ' + (job.location||'Tampa, FL') + '</div>'
       + '<p style="white-space:pre-wrap">' + (job.description||job.body||'No details provided.') + '</p>'
       + '<div style="margin-top:16px;display:flex;gap:8px">'
-      + '<button onclick="toggleSaveJob(''+jobId+'');closeJobModal();" class="post-cta secondary">'+isSaved+'Save Job</button>'
+      + '<button onclick="toggleSaveJob(\'' + jobId + '\');closeJobModal();" class="post-cta secondary">' + isSaved + 'Save Job</button>'
       + '<button onclick="closeJobModal()" class="post-cta primary">Close</button></div></div>';
   }
   m.style.display = 'flex';
@@ -1402,7 +1402,7 @@ function showAllComments(postId) {
   var allHtml = (post.comments || []).map(function(c){
     return '<div class="comment-row"><span class="comment-author">' + c.author + '</span><span class="comment-text">' + c.text + '</span></div>';
   }).join('');
-  container.innerHTML = allHtml + '<div style="margin-top:8px;display:flex;gap:8px"><input id="comment-input-' + postId + '" class="comment-input" placeholder="Write a comment…" /><button class="comment-submit" onclick="submitComment('' + postId + '')">Post</button></div>';
+  container.innerHTML = allHtml + '<div style="margin-top:8px;display:flex;gap:8px"><input id="comment-input-' + postId + '" class="comment-input" placeholder="Write a comment…" /><button class="comment-submit" onclick="submitComment(\'' + postId + '\')">Post</button></div>';
 }
 
 function sharePost(postId) {
