@@ -127,23 +127,6 @@ tr:hover td{background:#f8fafc;}
 .sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
 .nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
-
-  <style>
-  /* ── RESPONSIVE LAYOUT ── */
-  @media (max-width: 900px) {
-    .main, body { margin-left: 0 !important; padding-top: 56px !important; }
-  }
-  @media (max-width: 768px) {
-    .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
-    .table-wrap, .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    table { min-max-width: min(90vw, 640px); }
-  }
-  @media (max-width: 480px) {
-    body { font-size: 14px; }
-    .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: 1fr !important; }
-    .small-text, .meta { font-size: 12px !important; }
-  }
-  </style>
 </head>
 <body>
 <script src="nexus-sidebar.js"></script>
@@ -160,7 +143,7 @@ tr:hover td{background:#f8fafc;}
       <div class="kpi-card"><div class="kpi-label">Active Loads</div><div class="kpi-val" id="kpi-active">—</div><div class="kpi-sub">In transit now</div></div>
       <div class="kpi-card"><div class="kpi-label">Pending Pickup</div><div class="kpi-val" id="kpi-pending">—</div><div class="kpi-sub">Scheduled</div></div>
       <div class="kpi-card"><div class="kpi-label">Delivered</div><div class="kpi-val" id="kpi-delivered">—</div><div class="kpi-sub">This period</div></div>
-      <div class="kpi-card"><div class="kpi-label">Gross Revenue</div><div class="kpi-val" id="kpi-revenue">—</div><div class="kpi-sub">All loads</div></div>
+      <div class="kpi-card"><div class="kpi-label">Total Revenue</div><div class="kpi-val" id="kpi-revenue">—</div><div class="kpi-sub">All loads</div></div>
     </div>
     <div class="panel">
       <div class="panel-head">
@@ -244,6 +227,10 @@ tr:hover td{background:#f8fafc;}
               <option value="flatbed">Flatbed</option>
               <option value="step_deck">Step Deck</option>
               <option value="rgn">RGN</option>
+              <option value="lowboy">Lowboy</option>
+              <option value="car_hauler">Car Hauler</option>
+              <option value="tanker">Tanker</option>
+              <option value="oversized">Oversized / Superload</option>
               <option value="box_truck">Box Truck</option>
               <option value="power_only">Power Only</option>
               <option value="other">Other</option>
@@ -286,7 +273,7 @@ tr:hover td{background:#f8fafc;}
           <!-- ── SECTION: FINANCIALS ── -->
           <div class="form-section-head">💰 Financials</div>
           <div class="form-group">
-            <label class="form-label">Gross Revenue ($)</label>
+            <label class="form-label">Rate Con ($)</label>
             <input class="form-input" id="fRate" placeholder="e.g. 2850" type="number" step="0.01" oninput="calcRPM()">
           </div>
           <div class="form-group">
@@ -364,8 +351,8 @@ tr:hover td{background:#f8fafc;}
           <div class="form-group">
             <label class="form-label">Load Status</label>
             <select class="form-select" id="fStatus">
-              <option value="available">Available</option>
-              <option value="assigned">Assigned</option>
+              <option value="covered">Covered</option>
+              <option value="dispatched">Dispatched</option>
               <option value="transit">In Transit</option>
               <option value="at_delivery">At Delivery</option>
               <option value="delivered">Delivered</option>
@@ -424,7 +411,7 @@ tr:hover td{background:#f8fafc;}
 </div>
 
 <nav class="mobile-nav">
-  <a href="index.html" class="mobile-nav-tab">DASH</a>
+  <a href="fleet-command.html" class="mobile-nav-tab">DASH</a>
   <a href="settlements.html" class="mobile-nav-tab">PAY</a>
   <a href="documents.html" class="mobile-nav-tab">DOCS</a>
   <a href="equipment.html" class="mobile-nav-tab">FLEET</a>
@@ -838,6 +825,8 @@ function fillFromText(text, filename) {
   const equipMap = [
     [/dry\s*van/i,'dry_van'],[/reefer|refrigerat/i,'reefer'],
     [/flatbed/i,'flatbed'],[/step\s*deck/i,'step_deck'],
+    [/lowboy/i,'lowboy'],[/car\s*haul/i,'car_hauler'],[/tanker/i,'tanker'],
+    [/oversize|superload|rgn/i,'rgn'],
     [/\brgn\b|removable\s*gooseneck/i,'rgn'],[/box\s*truck/i,'box_truck'],
     [/power\s*only/i,'power_only']
   ];

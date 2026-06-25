@@ -1271,6 +1271,158 @@ initUserCard();
 renderFeed();
 renderJobBoard();
 renderAvailableDrivers();
+
+// ── Modal controls ──────────────────────────────────────────────────────────
+function openPostModal(type) {
+  var m = document.getElementById('post-modal');
+  if (m) m.style.display = 'flex';
+  var typeInp = document.getElementById('post-type-input');
+  if (typeInp) typeInp.value = type || 'general';
+  var titleEl = document.getElementById('post-modal-title');
+  if (titleEl) titleEl.textContent = type === 'job' ? 'Post a Job Opening' : type === 'help' ? 'Request Help' : 'Post to Feed';
+}
+
+function closePostModal() {
+  var m = document.getElementById('post-modal');
+  if (m) m.style.display = 'none';
+  var form = document.getElementById('post-form');
+  if (form) form.reset();
+}
+
+function closeJobModal() {
+  var m = document.getElementById('job-detail-modal');
+  if (m) m.style.display = 'none';
+}
+
+function openJobDetail(jobId) {
+  var jobs = getJobs();
+  var job = jobs.find(function(j){ return j.id === jobId; });
+  if (!job) return;
+  var m = document.getElementById('job-detail-modal');
+  if (!m) return;
+  var body = document.getElementById('job-detail-body');
+  if (body) {
+    var saved = getSaved();
+    var isSaved = saved.includes(jobId);
+    body.innerHTML = '<div style="padding:8px 0"><h3 style="margin:0 0 8px">' + job.title + '</h3>'
+      + '<div style="color:var(--mid);margin-bottom:12px">' + (job.company||'Carrier Trucking US') + ' &bull; ' + (job.location||'Tampa, FL') + '</div>'
+      + '<p style="white-space:pre-wrap">' + (job.description||job.body||'No details provided.') + '</p>'
+      + '<div style="margin-top:16px;display:flex;gap:8px">'
+      + '<button onclick="toggleSaveJob(''+jobId+'');closeJobModal();" class="post-cta secondary">'+isSaved+'Save Job</button>'
+      + '<button onclick="closeJobModal()" class="post-cta primary">Close</button></div></div>';
+  }
+  m.style.display = 'flex';
+}
+
+// ── Feed controls ────────────────────────────────────────────────────────────
+function switchTab(tabName, el) {
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  var feed = document.getElementById('feed-tab');
+  var jobs = document.getElementById('jobs-tab');
+  if (feed) feed.style.display = tabName === 'feed' ? '' : 'none';
+  if (jobs) jobs.style.display = tabName === 'jobs' ? '' : 'none';
+}
+
+function filterFeed(cat) {
+  document.querySelectorAll('.chip').forEach(function(c){
+    c.classList.toggle('active', c.dataset.cat === cat);
+  });
+  var posts = getPosts();
+  var filtered = cat === 'all' ? posts : posts.filter(function(p){ return p.type === cat; });
+  var container = document.getElementById('feed-container');
+  if (container) container.innerHTML = filtered.length ? filtered.map(function(p){ return renderPostCard(p); }).join('') : '<p style="color:var(--mid);text-align:center;padding:32px">No posts in this category.</p>';
+}
+
+function submitPost() {
+  var user = getCurrentUser();
+  var body = document.getElementById('post-body');
+  var typeInp = document.getElementById('post-type-input');
+  if (!body || !body.value.trim()) { alert('Please write something first.'); return; }
+  var post = {
+    id: 'post_' + Date.now(),
+    type: (typeInp && typeInp.value) || 'general',
+    author: user ? user.name : 'Anonymous',
+    authorId: user ? user.id : 'anon',
+    body: body.value.trim(),
+    ts: new Date().toISOString(),
+    likes: [],
+    comments: []
+  };
+  var posts = getPosts();
+  posts.unshift(post);
+  savePosts(posts);
+  closePostModal();
+  renderFeed();
+}
+
+function toggleLike(postId) {
+  var user = getCurrentUser();
+  var uid = user ? user.id : 'anon';
+  var posts = getPosts();
+  var post = posts.find(function(p){ return p.id === postId; });
+  if (!post) return;
+  post.likes = post.likes || [];
+  var idx = post.likes.indexOf(uid);
+  if (idx >= 0) post.likes.splice(idx, 1);
+  else post.likes.push(uid);
+  savePosts(posts);
+  renderFeed();
+}
+
+function submitComment(postId) {
+  var user = getCurrentUser();
+  var inp = document.getElementById('comment-input-' + postId);
+  if (!inp || !inp.value.trim()) return;
+  var posts = getPosts();
+  var post = posts.find(function(p){ return p.id === postId; });
+  if (!post) return;
+  post.comments = post.comments || [];
+  post.comments.push({
+    id: 'c_' + Date.now(),
+    author: user ? user.name : 'Anonymous',
+    text: inp.value.trim(),
+    ts: new Date().toISOString()
+  });
+  savePosts(posts);
+  renderFeed();
+}
+
+function focusComment(postId) {
+  var inp = document.getElementById('comment-input-' + postId);
+  if (inp) { inp.focus(); inp.scrollIntoView({behavior:'smooth', block:'center'}); }
+}
+
+function showAllComments(postId) {
+  var posts = getPosts();
+  var post = posts.find(function(p){ return p.id === postId; });
+  if (!post) return;
+  var container = document.getElementById('comments-' + postId);
+  if (!container) return;
+  var allHtml = (post.comments || []).map(function(c){
+    return '<div class="comment-row"><span class="comment-author">' + c.author + '</span><span class="comment-text">' + c.text + '</span></div>';
+  }).join('');
+  container.innerHTML = allHtml + '<div style="margin-top:8px;display:flex;gap:8px"><input id="comment-input-' + postId + '" class="comment-input" placeholder="Write a comment…" /><button class="comment-submit" onclick="submitComment('' + postId + '')">Post</button></div>';
+}
+
+function sharePost(postId) {
+  var url = window.location.href.split('?')[0] + '?post=' + postId;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(function(){ alert('Link copied to clipboard!'); });
+  } else {
+    prompt('Copy this link:', url);
+  }
+}
+
+function toggleSaveJob(jobId) {
+  var saved = getSaved();
+  var idx = saved.indexOf(jobId);
+  if (idx >= 0) saved.splice(idx, 1);
+  else saved.push(jobId);
+  saveSaved(saved);
+  renderJobBoard();
+}
+
 </script>
 </body>
 </html>

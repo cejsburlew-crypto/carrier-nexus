@@ -552,11 +552,15 @@ body{
   <div class="app-bar-row">
     <div>
       <div class="app-bar-logo">CARRIER <span>NEXUS</span></div>
-      <div class="app-bar-greeting">Driver Command · <strong>Marcus Rodriguez</strong></div>
+      <div class="app-bar-greeting">Driver Command · <strong id="dc-driver-name">Driver</strong></div>
+      <div id="dc-rank-strip" style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;"></div>
     </div>
-    <div class="notif-btn" onclick="openModal('alertModal')">
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button onclick="openCareerModal()" title="Set career baseline" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#94a3b8;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;">⏱ TIS</button>
+      <div class="notif-btn" onclick="openModal('alertModal')">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a5 5 0 00-5 5v3H2v1h12v-1h-1V7a5 5 0 00-5-5zM6 13a2 2 0 004 0H6z" fill="currentColor" opacity="0.7"/></svg>
       <div class="notif-dot"></div>
+    </div>
     </div>
   </div>
 </div>
@@ -586,6 +590,18 @@ body{
       <div class="load-meta-label">Delivery</div>
       <div class="load-meta-value">Today 2PM</div>
     </div>
+  </div>
+</div>
+
+<!-- PERMIT ACK ALERT BANNER -->
+<div id="permit-ack-banner" style="display:none;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.35);border-radius:12px;padding:14px 16px;margin-bottom:12px;cursor:pointer;" onclick="goPermitAck()">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span style="font-size:20px;">🚨</span>
+    <div>
+      <div style="font-size:13px;font-weight:800;color:#f97316;">Permit Acknowledgment Required</div>
+      <div id="permit-ack-banner-sub" style="font-size:11px;color:#94a3b8;margin-top:2px;">Your active load has permit restrictions — tap to review &amp; acknowledge</div>
+    </div>
+    <span style="color:#f97316;font-size:18px;margin-left:auto;">›</span>
   </div>
 </div>
 
@@ -652,11 +668,20 @@ body{
     <div class="action-arrow">›</div>
   </div>
 
+  <div class="action-btn full" onclick="window.location.href='nexus-feed.html'" style="background:rgba(59,130,246,0.08);border-color:rgba(59,130,246,0.25);">
+    <div class="action-icon sm">📖</div>
+    <div style="flex:1;min-width:0;">
+      <div class="action-label" style="color:#3b82f6;">The Road Book</div>
+      <div class="action-sub">Team feed · rank-ups · shoutouts</div>
+    </div>
+    <div class="action-arrow">›</div>
+  </div>
+
   <div class="action-btn full" onclick="openModal('signModal')">
     <div class="action-icon sm">✍️</div>
     <div style="flex:1;min-width:0;">
       <div class="action-label">Sign Rate Con</div>
-      <div class="action-sub">LDX-2841 · Coyote Logistics · $3,400</div>
+      <div class="action-sub" id="sign-load-sub">Load your active load to sign</div>
     </div>
     <div class="action-arrow">›</div>
   </div>
@@ -1136,10 +1161,177 @@ document.querySelectorAll('.nav-tab').forEach(tab=>{
   } catch(e) {}
 })();
 
+// ── CAREER BASELINE ──────────────────────────────────────────────────────────
+function openCareerModal() {
+  var sess = {};
+  try { sess = JSON.parse(sessionStorage.getItem('nexus_session') || '{}'); } catch(e) {}
+  var dId = (sess.id || sess.driverId || '').toUpperCase();
+  if (!dId) { alert('Log in first.'); return; }
+  var careers = {};
+  try { careers = JSON.parse(localStorage.getItem('nexus_driver_careers') || '{}'); } catch(e) {}
+  var career = careers[dId] || {};
+  document.getElementById('career-start-date').value = career.startDate || '';
+  document.getElementById('career-pre-miles').value  = career.preCnMiles || '';
+  document.getElementById('career-pre-loads').value  = career.preCnLoads || '';
+  document.getElementById('career-modal').style.display = 'flex';
+}
+function closeCareerModal() {
+  document.getElementById('career-modal').style.display = 'none';
+}
+function saveCareerBaseline() {
+  var sess = {};
+  try { sess = JSON.parse(sessionStorage.getItem('nexus_session') || '{}'); } catch(e) {}
+  var dId = (sess.id || sess.driverId || '').toUpperCase();
+  if (!dId) return;
+  var careers = {};
+  try { careers = JSON.parse(localStorage.getItem('nexus_driver_careers') || '{}'); } catch(e) {}
+  careers[dId] = {
+    startDate:  document.getElementById('career-start-date').value || null,
+    preCnMiles: parseFloat(document.getElementById('career-pre-miles').value) || 0,
+    preCnLoads: parseFloat(document.getElementById('career-pre-loads').value) || 0,
+    updatedAt:  new Date().toISOString()
+  };
+  localStorage.setItem('nexus_driver_careers', JSON.stringify(careers));
+  closeCareerModal();
+  initRankStrip();
+}
+
+// ── RANK STRIP ────────────────────────────────────────────────────────────────
+var RANKS_DC = [
+  {id:'e1',title:'Greenhorn',    emoji:'🟢', color:'#94a3b8', minLoads:0,   minMiles:0,      minClean:0},
+  {id:'e2',title:'Wrench Turner',emoji:'🔧', color:'#93c5fd', minLoads:5,   minMiles:3750,   minClean:0},
+  {id:'e3',title:'Road Dog',     emoji:'🐕', color:'#6ee7b7', minLoads:20,  minMiles:15000,  minClean:0},
+  {id:'e4',title:'Gear Jammer',  emoji:'⚙️', color:'#fcd34d', minLoads:50,  minMiles:37500,  minClean:5},
+  {id:'e5',title:'Road Captain', emoji:'⭐', color:'#fdba74', minLoads:100, minMiles:75000,  minClean:10},
+  {id:'e6',title:'Pavement Ghost',emoji:'👻',color:'#d8b4fe', minLoads:300, minMiles:225000, minClean:20},
+];
+function calcTIS_DC(startDate) {
+  if (!startDate) return null;
+  var start = new Date(startDate), now = new Date();
+  if (isNaN(start)) return null;
+  var mo = (now.getFullYear()-start.getFullYear())*12 + (now.getMonth()-start.getMonth());
+  if (mo < 0) mo = 0;
+  var yrs = Math.floor(mo/12), m = mo%12;
+  if (yrs===0&&m===0) return '<1mo';
+  if (yrs===0) return m+'mo';
+  if (m===0) return yrs+(yrs===1?' yr':' yrs');
+  return yrs+(yrs===1?' yr':' yrs')+' '+m+'mo';
+}
+function initRankStrip() {
+  var strip = document.getElementById('dc-rank-strip');
+  var nameEl = document.getElementById('dc-driver-name');
+  if (!strip) return;
+  try {
+    var sess    = JSON.parse(sessionStorage.getItem('nexus_session') || '{}');
+    var dId     = (sess.id || sess.driverId || '').toUpperCase();
+    if (nameEl && sess.name) nameEl.textContent = sess.name;
+    var loads    = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]');
+    var pretrips = JSON.parse(localStorage.getItem('nexus_pretrip_inspections') || '[]');
+    var careers  = JSON.parse(localStorage.getItem('nexus_driver_careers') || '{}');
+    var career   = careers[dId] || {};
+    var myLoads  = dId ? loads.filter(function(l){return (l.driver||'').toUpperCase()===dId;}) : [];
+    var totalLoads = myLoads.length + (parseFloat(career.preCnLoads)||0);
+    var totalMiles = myLoads.reduce(function(s,l){return s+(parseFloat(l.miles)||0);},0) + (parseFloat(career.preCnMiles)||0);
+    var myPre = dId ? pretrips.filter(function(p){return (p.driverId||p.driverName||'').toUpperCase().includes(dId);}) : [];
+    var streak=0, longestClean=0;
+    myPre.forEach(function(p){if(!p.defectCount){streak++;longestClean=Math.max(longestClean,streak);}else streak=0;});
+    var rank = RANKS_DC[0];
+    RANKS_DC.forEach(function(r){
+      if(totalLoads>=r.minLoads && totalMiles>=r.minMiles && longestClean>=r.minClean) rank=r;
+    });
+    var tis = calcTIS_DC(career.startDate);
+    strip.innerHTML =
+      '<span style="font-size:11px;font-weight:800;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:99px;padding:2px 10px;color:'+rank.color+';">'+rank.emoji+' '+rank.title+'</span>' +
+      (tis ? '<span style="font-size:10px;color:#6b7a99;font-weight:600;margin-left:4px;">⏱ '+tis+'</span>' : '');
+  } catch(e) { console.warn('rank strip:', e); }
+}
+
+// ── PERMIT ACK CHECK ──────────────────────────────────────────────────────────
+(function checkPermitAck() {
+  try {
+    var sess    = JSON.parse(sessionStorage.getItem('nexus_session') || '{}');
+    var dId     = (sess.id || sess.driverId || '').toUpperCase();
+    if (!dId) return;
+    var loads   = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]');
+    var permits = JSON.parse(localStorage.getItem('nexus_permits') || '[]');
+    var acks    = JSON.parse(localStorage.getItem('nexus_permit_acks') || '[]');
+    var myActive    = loads.filter(function(l){return (l.driver||'').toUpperCase()===dId && ['active','transit','pending'].includes(l.status);});
+    var myActiveIds = myActive.map(function(l){return l.id;});
+    var pending = permits.filter(function(p){
+      var forMe  = (p.driver||'').toUpperCase()===dId || myActiveIds.includes(p.load_ref);
+      if (!forMe) return false;
+      var expired = p.expiry_date && new Date(p.expiry_date) < new Date();
+      if (expired) return false;
+      var hasRestr = (p.restrictions&&p.restrictions.length) || (p.travel_window&&p.travel_window!=='anytime') || (p.escort&&p.escort!=='none') || !!p.route;
+      if (!hasRestr) return false;
+      return !acks.some(function(a){return a.permitId===p.id && a.allAcked;});
+    });
+    if (pending.length) {
+      var banner = document.getElementById('permit-ack-banner');
+      var sub    = document.getElementById('permit-ack-banner-sub');
+      if (banner) banner.style.display = 'block';
+      if (sub)    sub.textContent = pending.length+' permit'+(pending.length===1?'':' s')+' with unacknowledged restrictions — tap to review';
+      window._pendingPermit = pending[0];
+    }
+  } catch(e) {}
+})();
+
+function goPermitAck() {
+  var p = window._pendingPermit;
+  if (!p) { window.location.href = 'permits.html'; return; }
+  var sess = {}; try { sess = JSON.parse(sessionStorage.getItem('nexus_session') || '{}'); } catch(e) {}
+  var dId = sess.id || sess.driverId || '';
+  var loads = []; try { loads = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]'); } catch(e) {}
+  var myLoad = loads.find(function(l){return (l.driver||'').toUpperCase()===(dId||'').toUpperCase() && ['active','transit','pending'].includes(l.status);});
+  var url = 'permit-ack.html?permitId='+encodeURIComponent(p.id)+'&driverId='+encodeURIComponent(dId)+'&return=driver-command.html';
+  if (myLoad) url += '&loadId='+encodeURIComponent(myLoad.id);
+  window.location.href = url;
+}
+
+// ── INIT RANK STRIP ───────────────────────────────────────────────────────────
+initRankStrip();
+
+// ── LOAD GEO-ALERT ENGINE ─────────────────────────────────────────────────────
+(function() {
+  var script = document.createElement('script');
+  script.src = 'permit-geo.js';
+  script.onload = function() {
+    if (window.NexusPermitGeo) window.NexusPermitGeo.start();
+  };
+  document.body.appendChild(script);
+})();
+
 </script>
 
+<!-- CAREER BASELINE MODAL -->
+<div id="career-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:8000;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)closeCareerModal()">
+  <div style="background:#131820;border:1px solid rgba(46,109,164,.3);border-radius:16px 16px 0 0;padding:24px 20px 40px;width:100%;max-width:430px;">
+    <div style="font-size:16px;font-weight:900;color:#f0f4f8;margin-bottom:4px;">⏱ Career Baseline</div>
+    <div style="font-size:12px;color:#6b7a99;margin-bottom:20px;">Tell CN when you started driving and your total miles &amp; loads before joining. CN picks up the count from here.</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Driving Start Date</label>
+        <input id="career-start-date" type="date" style="width:100%;background:#0d1017;border:1px solid rgba(46,109,164,.3);color:#f0f4f8;border-radius:8px;padding:10px 12px;font-size:14px;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Est. Miles Before CN</label>
+        <input id="career-pre-miles" type="number" placeholder="e.g. 150000" style="width:100%;background:#0d1017;border:1px solid rgba(46,109,164,.3);color:#f0f4f8;border-radius:8px;padding:10px 12px;font-size:14px;">
+        <div style="font-size:10px;color:#6b7a99;margin-top:3px;">Your best estimate is fine — this adds to your career total</div>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Est. Loads Before CN</label>
+        <input id="career-pre-loads" type="number" placeholder="e.g. 400" style="width:100%;background:#0d1017;border:1px solid rgba(46,109,164,.3);color:#f0f4f8;border-radius:8px;padding:10px 12px;font-size:14px;">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button onclick="closeCareerModal()" style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#94a3b8;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;">Cancel</button>
+      <button onclick="saveCareerBaseline()" style="flex:2;background:#2e6da4;border:none;color:#fff;border-radius:10px;padding:13px;font-size:14px;font-weight:900;cursor:pointer;">Save My Baseline</button>
+    </div>
+  </div>
+</div>
+
 <!-- DRIVER STICKY BOTTOM NAV (mobile only) -->
-<div class="driver-sticky-bar" id="driver-sticky-nav">
+<div class="driver-sticky-bar" id="driver-sticky-nav-inner">
   <a href="driver-command.html" class="active">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
     HOME

@@ -984,6 +984,26 @@ function getHeader(hs,n){if(!hs)return'';var h=hs.find(function(x){return x.name
 function setProgress(c,t){var p=t>0?Math.round(c/t*100):0;document.getElementById('pbarFill').style.width=p+'%';document.getElementById('progCnt').textContent=c+' / '+t;}
 function addLog(msg,cls){var log=document.getElementById('logArea');var d=document.createElement('div');d.className='ll'+(cls?' '+cls:'');d.textContent=new Date().toLocaleTimeString()+'  '+msg;log.appendChild(d);log.scrollTop=log.scrollHeight;}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function sendUncertainToQueue() {
+  var staged = [];
+  try { staged = JSON.parse(localStorage.getItem('nexus_staged_files') || '[]'); } catch(e) {}
+  var uncertain = staged.filter(function(f){ return f.status === 'uncertain' || (f.userConf !== undefined && f.userConf < 75) || (f.typeConf !== undefined && f.typeConf < 75); });
+  if (!uncertain.length) { alert('No uncertain items to queue.'); return; }
+  var queue = [];
+  try { queue = JSON.parse(localStorage.getItem('nexus_review_queue') || '[]'); } catch(e) {}
+  var added = 0;
+  uncertain.forEach(function(f) {
+    if (!queue.find(function(q){ return q.id === f.id; })) {
+      queue.push(Object.assign({}, f, { queuedAt: new Date().toISOString(), status: 'pending_review' }));
+      added++;
+    }
+  });
+  localStorage.setItem('nexus_review_queue', JSON.stringify(queue));
+  var btn = document.getElementById('queueBtn');
+  if (btn) { btn.style.background = 'rgba(16,185,129,.15)'; btn.style.borderColor = 'rgba(16,185,129,.5)'; btn.style.color = '#10b981'; }
+  setTimeout(function(){ window.location.href = 'doc-inbox.html'; }, 900);
+}
+
 </script>
 </body>
 </html>

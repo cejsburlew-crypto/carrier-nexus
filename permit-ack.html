@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Permit Acknowledgment — Carrier Nexus</title>
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+.hdr{background:linear-gradient(135deg,#0b0f1a,#1a0a0a,#3b0a0a);border-bottom:2px solid var(--orange);padding:16px 20px;}
+.hdr-top{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.warning-icon{font-size:28px;}
+.hdr-title{font-size:18px;font-weight:900;color:var(--orange);}
+.hdr-sub{font-size:12px;color:var(--mid);}
+.content{padding:16px 20px 100px;max-width:600px;margin:0 auto;}
+/* permit meta */
+.permit-meta{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px;}
+.permit-meta-title{font-size:13px;font-weight:800;color:var(--orange);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.meta-item{font-size:11px;}
+.meta-label{color:var(--mid);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;}
+.meta-val{color:var(--text);font-weight:600;}
+/* intro */
+.intro-bar{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:10px;padding:12px 16px;font-size:12px;color:#fcd34d;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start;}
+/* restriction cards */
+.restriction-list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.r-card{background:var(--panel);border:2px solid var(--border);border-radius:12px;padding:16px;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;transition:.2s;cursor:pointer;}
+.r-card.checked{border-color:var(--green);background:rgba(16,185,129,.05);}
+.r-checkbox{width:28px;height:28px;border:2px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;margin-top:2px;transition:.2s;background:var(--panel2);}
+.r-card.checked .r-checkbox{border-color:var(--green);background:var(--green);color:#fff;}
+.r-type-badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.type-time{background:rgba(245,158,11,.15);color:var(--yellow);}
+.type-route{background:rgba(59,130,246,.15);color:var(--blue);}
+.type-escort{background:rgba(239,68,68,.15);color:var(--red);}
+.type-speed{background:rgba(168,85,247,.15);color:#c084fc;}
+.type-size{background:rgba(16,185,129,.15);color:var(--green);}
+.type-weight{background:rgba(249,115,22,.15);color:var(--orange);}
+.type-other{background:rgba(100,116,139,.15);color:var(--mid);}
+.r-text{font-size:14px;font-weight:700;color:var(--text);line-height:1.4;margin-bottom:4px;}
+.r-detail{font-size:11px;color:var(--mid);line-height:1.5;}
+/* progress */
+.progress-bar-wrap{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:20px;}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin-bottom:8px;}
+.progress-label span:first-child{color:var(--mid);}
+.progress-label span:last-child{color:var(--green);}
+.progress-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .3s ease;}
+/* footer */
+.footer{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border);padding:14px 20px;padding-bottom:max(14px,env(safe-area-inset-bottom));}
+.certify-text{font-size:11px;color:var(--mid);text-align:center;margin-bottom:10px;line-height:1.5;}
+.btn-ack{width:100%;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:800;padding:16px;cursor:pointer;min-height:56px;letter-spacing:.02em;transition:.2s;}
+.btn-ack:disabled{background:var(--panel);color:var(--mid);cursor:not-allowed;}
+.btn-ack:not(:disabled):active{transform:scale(.97);}
+/* complete screen */
+.complete-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:100;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;}
+.complete-screen.show{display:flex;}
+.complete-icon{font-size:64px;margin-bottom:16px;}
+.complete-title{font-size:24px;font-weight:900;color:var(--green);margin-bottom:8px;}
+.complete-sub{font-size:13px;color:var(--mid);margin-bottom:24px;line-height:1.6;}
+.btn-continue{background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:800;padding:16px 32px;cursor:pointer;min-height:52px;}
+/* no-permit */
+.no-permit{text-align:center;padding:60px 20px;color:var(--mid);}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="warning-icon">🚨</div>
+    <div>
+      <div class="hdr-title">PERMIT RESTRICTIONS</div>
+      <div class="hdr-sub">Read and acknowledge each restriction before departure</div>
+    </div>
+  </div>
+</div>
+
+<div class="content" id="main-content">
+  <div class="no-permit">Loading permit…</div>
+</div>
+
+<div class="footer" id="footer-bar" style="display:none;">
+  <div class="certify-text" id="certify-text">Check all restrictions above to continue</div>
+  <button class="btn-ack" id="btn-ack" disabled onclick="submitAck()">
+    ✓ I Have Read and Understand All Restrictions
+  </button>
+</div>
+
+<div class="complete-screen" id="complete-screen">
+  <div class="complete-icon">✅</div>
+  <div class="complete-title">All Restrictions Acknowledged</div>
+  <div class="complete-sub" id="complete-sub">Your acknowledgment has been logged with a timestamp. Drive safe.</div>
+  <button class="btn-continue" onclick="goBack()">← Return to Dashboard</button>
+</div>
+
+<script src="nexus-config.js"></script>
+<script>
+var ACK_KEY    = 'nexus_permit_acks';
+var PERMITS_KEY= 'nexus_permits';
+var LOADS_KEY  = 'nexus_loads_v2';
+
+var params   = new URLSearchParams(location.search);
+var permitId = params.get('permitId') || '';
+var loadId   = params.get('loadId')   || '';
+var driverId = params.get('driverId') || '';
+var returnTo = params.get('return')   || 'driver-command.html';
+
+var currentPermit = null;
+var checkedCount  = 0;
+var totalCount    = 0;
+
+// Escape HTML
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── RESTRICTION TYPES ─────────────────────────────────────────────────────
+var TYPE_META = {
+  time:   {label:'Time Window',    cls:'type-time',   icon:'⏰'},
+  route:  {label:'Route',          cls:'type-route',  icon:'🗺️'},
+  escort: {label:'Escort',         cls:'type-escort', icon:'🚔'},
+  speed:  {label:'Speed Limit',    cls:'type-speed',  icon:'⚡'},
+  size:   {label:'Size Limit',     cls:'type-size',   icon:'📐'},
+  weight: {label:'Weight Limit',   cls:'type-weight', icon:'⚖️'},
+  other:  {label:'Special',        cls:'type-other',  icon:'⚠️'},
+};
+
+// ── AUTO-BUILD RESTRICTIONS FROM PERMIT FIELDS ────────────────────────────
+function buildRestrictionsFromPermit(p) {
+  var list = [];
+  // Use stored restrictions array first
+  if (p.restrictions && p.restrictions.length) return p.restrictions;
+  // Otherwise auto-generate from structured fields
+  var tw = p.travel_window || 'anytime';
+  if (tw !== 'anytime') {
+    var twLabels = {daylight:'Daylight travel only — no driving before sunrise or after sunset',sunrise_sunset:'Travel permitted from 30 minutes after sunrise to 30 minutes before sunset',no_weekend:'No weekend travel — permitted Monday through Friday only',no_holiday:'No holiday travel — check state holiday calendar before departing',specific:'Specific travel hours apply — see permit notes for exact window'};
+    list.push({id:'r_time', type:'time', text:'Travel Window Restriction', detail: twLabels[tw] || tw});
+  }
+  var escort = p.escort || 'none';
+  if (escort !== 'none') {
+    var escLabels = {front:'Front pilot car required at all times',rear:'Rear escort vehicle required at all times',front_rear:'Both front AND rear escort vehicles required — do not depart without both in position',police:'Law enforcement escort required — coordinate with state police before departure',pilot_only:'Pilot car required — must maintain visual contact throughout haul'};
+    list.push({id:'r_escort', type:'escort', text:'Escort Vehicle Required', detail: escLabels[escort] || escort});
+  }
+  var route = p.route || '';
+  if (route) list.push({id:'r_route', type:'route', text:'Route Restriction', detail: route});
+  var h = p.height, w = p.width, l = p.length;
+  if (h || w || l) {
+    var dims = [h?('Height: '+h):'', w?('Width: '+w):'', l?('Length: '+l):''].filter(Boolean).join(' · ');
+    list.push({id:'r_size', type:'size', text:'Oversize Dimensions — Do Not Exceed', detail: dims + ' — verify clearances at all bridges, overpasses, and underpasses along route'});
+  }
+  var wt = p.weight;
+  if (wt) list.push({id:'r_weight', type:'weight', text:'Gross Weight Limit: ' + Number(wt).toLocaleString() + ' lbs', detail: 'Do not exceed permitted gross vehicle weight. Weigh in at first available certified scale.'});
+  var notes = p.notes || '';
+  if (notes) list.push({id:'r_notes', type:'other', text:'Special Instructions', detail: notes});
+  return list;
+}
+
+// ── LOAD PERMIT ────────────────────────────────────────────────────────────
+function loadPermit() {
+  var permits = [];
+  try { permits = JSON.parse(localStorage.getItem(PERMITS_KEY) || '[]'); } catch(e){}
+
+  var p = null;
+  if (permitId) p = permits.find(function(x){ return x.id === permitId; });
+  if (!p && loadId) {
+    // Try to find permit linked to this load
+    p = permits.find(function(x){ return (x.load_ref||x.loadId||'') === loadId; });
+  }
+  if (!p && !permitId) {
+    // Try to find any permit for this driver's active load
+    var loads = [];
+    try { loads = JSON.parse(localStorage.getItem(LOADS_KEY) || '[]'); } catch(e){}
+    var myLoad = loads.find(function(l){ return (l.driver||'').toUpperCase() === driverId.toUpperCase() && ['active','transit'].includes(l.status) && (l.permits || l.permitId); });
+    if (myLoad) {
+      var pRef = myLoad.permits || myLoad.permitId;
+      p = permits.find(function(x){ return x.id === pRef || (x.permit_number||x.permitNo||'') === pRef; });
+      if (myLoad.id) loadId = myLoad.id;
+    }
+  }
+
+  if (!p) {
+    document.getElementById('main-content').innerHTML = '<div class="no-permit"><div style="font-size:48px;margin-bottom:12px;">📋</div><div style="font-size:15px;font-weight:700;margin-bottom:8px;">No Permit Found</div><div style="font-size:12px;">No permit is linked to this load, or the permit has no restrictions to acknowledge.<br><br>Return to your dashboard and contact dispatch if you believe this is an error.</div><div style="margin-top:20px;"><a href="'+returnTo+'" style="background:var(--blue);color:#fff;border-radius:8px;padding:10px 20px;text-decoration:none;font-weight:700;font-size:13px;">← Back to Dashboard</a></div></div>';
+    return;
+  }
+
+  currentPermit = p;
+  var restrictions = buildRestrictionsFromPermit(p);
+  totalCount = restrictions.length;
+  checkedCount = 0;
+
+  if (!totalCount) {
+    document.getElementById('main-content').innerHTML = '<div class="no-permit"><div style="font-size:48px;margin-bottom:12px;">✅</div><div style="font-size:15px;font-weight:700;margin-bottom:8px;">No Restrictions Found</div><div style="font-size:12px;">This permit has no specific restrictions entered. Contact dispatch to confirm.</div><div style="margin-top:20px;"><a href="'+returnTo+'" style="background:var(--blue);color:#fff;border-radius:8px;padding:10px 20px;text-decoration:none;font-weight:700;font-size:13px;">← Back to Dashboard</a></div></div>';
+    return;
+  }
+
+  renderPage(p, restrictions);
+}
+
+function renderPage(p, restrictions) {
+  var pNum    = esc(p.permit_number || p.permitNo || 'N/A');
+  var pState  = esc(p.state || '—');
+  var pDriver = esc(p.driver || p.driverName || driverId || '—');
+  var pLoad   = esc(p.load_ref || p.loadId || loadId || '—');
+  var pType   = esc(p.permit_type || p.type || '—');
+  var pExp    = esc(p.expiry_date || p.expires || '—');
+
+  var html = '';
+
+  html += '<div class="permit-meta">';
+  html += '<div class="permit-meta-title">🪪 Permit Details</div>';
+  html += '<div class="meta-grid">';
+  html += '<div class="meta-item"><div class="meta-label">Permit #</div><div class="meta-val">'+pNum+'</div></div>';
+  html += '<div class="meta-item"><div class="meta-label">State</div><div class="meta-val">'+pState+'</div></div>';
+  html += '<div class="meta-item"><div class="meta-label">Driver</div><div class="meta-val">'+pDriver+'</div></div>';
+  html += '<div class="meta-item"><div class="meta-label">Load Ref</div><div class="meta-val">'+pLoad+'</div></div>';
+  html += '<div class="meta-item"><div class="meta-label">Type</div><div class="meta-val">'+pType+'</div></div>';
+  html += '<div class="meta-item"><div class="meta-label">Expires</div><div class="meta-val">'+pExp+'</div></div>';
+  html += '</div></div>';
+
+  html += '<div class="intro-bar"><span style="font-size:18px;flex-shrink:0;">⚠️</span><span>This permit has <strong>'+totalCount+' restriction'+(totalCount===1?'':'s')+'</strong>. You must read and individually acknowledge each one before you may depart. Violations may result in fines, permit revocation, or out-of-service orders.</span></div>';
+
+  html += '<div class="progress-bar-wrap"><div class="progress-label"><span>Restrictions Acknowledged</span><span id="prog-label">0 / '+totalCount+'</span></div><div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div></div>';
+
+  html += '<div class="restriction-list">';
+  restrictions.forEach(function(r, i) {
+    var tm = TYPE_META[r.type] || TYPE_META.other;
+    html += '<div class="r-card" id="rc-'+i+'" onclick="toggleRestriction('+i+')">';
+    html += '<div class="r-checkbox" id="cb-'+i+'"></div>';
+    html += '<div>';
+    html += '<span class="r-type-badge '+tm.cls+'">'+tm.icon+' '+tm.label+'</span>';
+    html += '<div class="r-text">'+esc(r.text)+'</div>';
+    if (r.detail) html += '<div class="r-detail">'+esc(r.detail)+'</div>';
+    html += '</div></div>';
+  });
+  html += '</div>';
+
+  document.getElementById('main-content').innerHTML = html;
+  document.getElementById('footer-bar').style.display = 'block';
+}
+
+var checkedState = {};
+function toggleRestriction(idx) {
+  checkedState[idx] = !checkedState[idx];
+  var card = document.getElementById('rc-'+idx);
+  var cb   = document.getElementById('cb-'+idx);
+  if (checkedState[idx]) {
+    card.classList.add('checked');
+    cb.textContent = '✓';
+  } else {
+    card.classList.remove('checked');
+    cb.textContent = '';
+  }
+  checkedCount = Object.values(checkedState).filter(Boolean).length;
+  var pct = totalCount ? Math.round(checkedCount/totalCount*100) : 0;
+  var fillEl = document.getElementById('prog-fill');
+  var labEl  = document.getElementById('prog-label');
+  if (fillEl) fillEl.style.width = pct+'%';
+  if (labEl)  labEl.textContent  = checkedCount+' / '+totalCount;
+
+  var btn = document.getElementById('btn-ack');
+  var txt = document.getElementById('certify-text');
+  if (checkedCount === totalCount) {
+    btn.disabled = false;
+    if (txt) txt.textContent = 'All restrictions read — tap below to certify and depart';
+  } else {
+    btn.disabled = true;
+    if (txt) txt.textContent = (totalCount - checkedCount)+' restriction'+(totalCount-checkedCount===1?'':' still')+ ' remaining';
+  }
+}
+
+function submitAck() {
+  if (checkedCount < totalCount) return;
+  var now = new Date().toISOString();
+  var restrictions = buildRestrictionsFromPermit(currentPermit);
+  var ackRecord = {
+    id: 'ACK-'+Date.now(),
+    permitId: currentPermit.id || permitId,
+    permitNumber: currentPermit.permit_number || currentPermit.permitNo || '',
+    loadId: loadId,
+    driverId: driverId,
+    driverName: currentPermit.driver || currentPermit.driverName || driverId,
+    restrictions: restrictions.map(function(r, i){ return { id:r.id, text:r.text, type:r.type, ackedAt:now }; }),
+    totalRestrictions: totalCount,
+    allAcked: true,
+    ackedAt: now,
+    returnTo: returnTo
+  };
+  try {
+    var acks = JSON.parse(localStorage.getItem(ACK_KEY) || '[]');
+    acks.unshift(ackRecord);
+    localStorage.setItem(ACK_KEY, JSON.stringify(acks));
+  } catch(e){}
+
+  // Show complete screen
+  var pNum = currentPermit.permit_number || currentPermit.permitNo || '';
+  document.getElementById('complete-sub').textContent = 'Permit '+pNum+' · '+totalCount+' restriction'+(totalCount===1?'':' acknowledged') +' · Logged at '+ new Date(now).toLocaleString();
+  document.getElementById('complete-screen').classList.add('show');
+}
+
+function goBack() { window.location.href = returnTo; }
+
+// Init
+(function(){
+  // Try to get driverId from session if not in URL
+  if (!driverId) {
+    try { var s=JSON.parse(sessionStorage.getItem('nexus_session')||'{}'); driverId=s.id||s.driverId||''; } catch(e){}
+  }
+  loadPermit();
+})();
+</script>
+</body>
+</html>
