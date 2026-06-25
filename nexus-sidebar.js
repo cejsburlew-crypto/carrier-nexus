@@ -47,7 +47,7 @@
     { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','insurance-kpi.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html','incident-report.html','coi-management.html','claims.html','coaching-log.html'] },
     { key:'admin',   label:'Admin',          pages:['member-management.html','admin-users.html'] },
     { key:'intel',   label:'Intelligence',   pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html','search.html'] },
-    { key:'comms',   label:'Communications', pages:['nexus-connect.html'] },
+    { key:'comms',   label:'Communications', pages:['comms.html','nexus-connect.html'] },
   ];
 
   // Determine which section the current page lives in
@@ -261,6 +261,7 @@
       lnk('search.html',               I.search,  'Search Everything')
     ) +
     sec('comms', 'Communications',
+      lnk('comms.html',               I.email,   'Unified Comms') +
       lnk('nexus-connect.html',        I.connect, 'Nexus Connect')
     );
 

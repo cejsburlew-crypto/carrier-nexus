@@ -11,7 +11,7 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
 .layout{display:flex;min-height:100vh;}
-.main{flex:1;overflow-x:hidden;}
+.main{flex:1;overflow-x:hidden;margin-left:220px;}
 .topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
 .topbar-title{font-size:17px;font-weight:700;}
 .topbar-sub{font-size:11px;color:var(--mid);margin-top:2px;}
@@ -118,7 +118,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
 @media(max-width:600px){.kpi-row{grid-template-columns:1fr 1fr;}.form-row{grid-template-columns:1fr;}.form-row-3{grid-template-columns:1fr;}.photo-grid{grid-template-columns:repeat(2,1fr);}.check-grid{grid-template-columns:1fr;}.sev-grid{grid-template-columns:1fr;}}
 /* PRINT */
 @media print{.no-print{display:none!important;}body{background:#fff!important;color:#000!important;}.panel{background:#fff!important;border:1px solid #ddd!important;}.detail-key{color:#555!important;}.detail-val{color:#000!important;}}
-</style>
+@media(max-width:768px){.main{margin-left:0!important}}</style>
 
 <style id="touch-target-fix">
 /* Apple HIG / WCAG 2.5.5 — 44x44px minimum touch targets */

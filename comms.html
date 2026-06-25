@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Unified Comms — Carrier Nexus</title>
+<script src="nexus-config.js"></script>
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--dim:#334155;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+#nexus-app{margin-left:220px;height:100vh;display:flex;flex-direction:column;}
+@media(max-width:768px){#nexus-app{margin-left:0;}}
+.topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.topbar-title{font-size:16px;font-weight:700;flex:1;}
+.topbar-sub{font-size:11px;color:var(--mid);}
+.btn{padding:7px 14px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;transition:.15s;}
+.btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:#2563eb;}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}.btn-outline:hover{background:var(--panel2);}
+.comms-layout{display:flex;flex:1;overflow:hidden;}
+.src-panel{width:185px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+.src-header{padding:12px 14px 6px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);}
+.src-item{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;transition:.15s;border-left:3px solid transparent;font-size:13px;}
+.src-item:hover{background:var(--panel2);}
+.src-item.active{background:rgba(59,130,246,.12);border-left-color:var(--blue);}
+.src-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.src-count{margin-left:auto;background:var(--blue);color:#fff;border-radius:10px;font-size:10px;font-weight:700;padding:1px 6px;min-width:18px;text-align:center;}
+.src-count.zero{background:var(--dim);color:var(--mid);}
+.src-connect{margin:2px 10px 6px;padding:6px 10px;background:transparent;border:1px dashed var(--border);border-radius:7px;color:var(--mid);font-size:11px;cursor:pointer;text-align:center;transition:.15s;}
+.src-connect:hover{border-color:var(--blue);color:var(--blue);}
+.src-divider{height:1px;background:var(--border);margin:6px 0;}
+.src-status{display:flex;align-items:center;gap:6px;padding:4px 14px 8px;font-size:11px;color:var(--mid);}
+.src-status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+.src-status-dot.off{background:var(--dim);}
+.msg-list-panel{width:330px;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+.msg-search{padding:10px;border-bottom:1px solid var(--border);}
+.msg-search input{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;}
+.msg-search input:focus{border-color:var(--blue);}
+.msg-list{flex:1;overflow-y:auto;}
+.msg-item{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s;position:relative;}
+.msg-item:hover{background:var(--panel2);}
+.msg-item.active{background:rgba(59,130,246,.1);border-left:3px solid var(--blue);}
+.msg-item.unread .msg-from{font-weight:700;}
+.msg-item.unread::after{content:'';position:absolute;top:14px;right:12px;width:7px;height:7px;border-radius:50%;background:var(--blue);}
+.msg-from{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:16px;}
+.msg-subject{font-size:12px;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:2px 0;}
+.msg-preview{font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.msg-meta{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+.msg-src-badge{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.msg-time{font-size:10px;color:var(--mid);margin-left:auto;}
+.msg-tag{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:rgba(59,130,246,.15);color:var(--blue);}
+.msg-empty{padding:40px 20px;text-align:center;color:var(--mid);font-size:13px;}
+.detail-pane{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.detail-header{padding:16px 20px;border-bottom:1px solid var(--border);background:var(--panel);}
+.detail-subject{font-size:16px;font-weight:700;margin-bottom:6px;}
+.detail-from{font-size:12px;color:var(--mid);}
+.detail-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.detail-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(59,130,246,.15);color:var(--blue);text-transform:uppercase;}
+.detail-tag.rc,.detail-tag.ratecon{background:rgba(16,185,129,.15);color:var(--green);}
+.detail-tag.fuel{background:rgba(245,158,11,.15);color:var(--yellow);}
+.detail-tag.bol{background:rgba(168,85,247,.15);color:var(--purple);}
+.detail-body{flex:1;overflow-y:auto;padding:20px;}
+.detail-body-text{font-size:13px;line-height:1.7;white-space:pre-wrap;}
+.detail-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--mid);}
+.detail-placeholder-icon{font-size:40px;opacity:.3;}
+.reply-bar{border-top:1px solid var(--border);padding:12px 16px;background:var(--panel);display:flex;gap:10px;align-items:flex-end;}
+.reply-input{flex:1;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;resize:none;outline:none;min-height:60px;max-height:120px;font-family:inherit;}
+.reply-input:focus{border-color:var(--blue);}
+.loading-dots{display:inline-flex;gap:4px;align-items:center;}
+.loading-dots span{width:6px;height:6px;border-radius:50%;background:var(--mid);animation:dot 1.2s infinite;}
+.loading-dots span:nth-child(2){animation-delay:.2s;}
+.loading-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes dot{0%,80%,100%{opacity:.2}40%{opacity:1}}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:center;justify-content:center;}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px;width:420px;max-width:95vw;}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:16px;}
+.modal-field{margin-bottom:14px;}
+.modal-field label{display:block;font-size:12px;color:var(--mid);margin-bottom:5px;}
+.modal-field input{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;}
+.modal-field input:focus{border-color:var(--blue);}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+.modal-info{font-size:12px;color:var(--mid);line-height:1.6;margin-bottom:12px;background:var(--panel2);border-radius:8px;padding:10px 12px;}
+.modal-info a{color:var(--blue);}
+#auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:600;display:flex;align-items:center;justify-content:center;}
+.auth-card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:32px;width:440px;max-width:95vw;text-align:center;}
+.auth-icon{font-size:48px;margin-bottom:16px;}
+.auth-title{font-size:20px;font-weight:800;margin-bottom:8px;}
+.auth-sub{font-size:13px;color:var(--mid);margin-bottom:24px;line-height:1.6;}
+.auth-card .modal-field{text-align:left;}
+.auth-skip{font-size:12px;color:var(--mid);cursor:pointer;margin-top:14px;text-decoration:underline;}
+.auth-skip:hover{color:var(--text);}
+</style>
+<script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
+</head>
+<body>
+<div id="auth-overlay" style="display:none;">
+  <div class="auth-card">
+    <div class="auth-icon">📬</div>
+    <div class="auth-title">Connect Gmail</div>
+    <div class="auth-sub">Enter your Google OAuth Client ID to load live email. You can skip and use demo mode with stub messages.</div>
+    <div class="modal-field">
+      <label>Google OAuth Client ID</label>
+      <input id="auth-client-id" type="text" placeholder="xxxx.apps.googleusercontent.com">
+    </div>
+    <div class="modal-info">Create at <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console</a> → OAuth 2.0 → Web Application. Add this page's origin to Authorized JavaScript Origins.</div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px;" onclick="saveGmailAuth()">Connect Gmail</button>
+    <div class="auth-skip" onclick="skipAuth()">Skip — use demo mode</div>
+  </div>
+</div>
+
+<div id="nexus-app">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">📬 Unified Comms</div>
+      <div class="topbar-sub">All messages in one timeline</div>
+    </div>
+    <button class="btn btn-outline" onclick="refreshAll()">↻ Refresh</button>
+    <button class="btn btn-primary" onclick="composeNew()">+ Compose</button>
+  </div>
+  <div class="comms-layout">
+    <!-- SOURCE PANEL -->
+    <div class="src-panel">
+      <div class="src-header">Sources</div>
+      <div class="src-item active" id="src-all" onclick="filterSource('all')">
+        <div class="src-dot" style="background:var(--text)"></div>
+        <span>All Messages</span>
+        <span class="src-count zero" id="cnt-all">0</span>
+      </div>
+      <div class="src-divider"></div>
+      <div class="src-header">Email</div>
+      <div class="src-item" id="src-gmail" onclick="filterSource('gmail')">
+        <div class="src-dot" style="background:#EA4335"></div>
+        <span>Gmail</span>
+        <span class="src-count zero" id="cnt-gmail">0</span>
+      </div>
+      <div id="gmail-connect-btn" class="src-connect" onclick="connectGmail()">+ Connect Gmail</div>
+      <div id="gmail-status" class="src-status" style="display:none;">
+        <div class="src-status-dot" id="gmail-status-dot"></div>
+        <span id="gmail-status-text">Connected</span>
+      </div>
+      <div class="src-item" id="src-outlook" onclick="filterSource('outlook')">
+        <div class="src-dot" style="background:#0078D4"></div>
+        <span>Outlook</span>
+        <span class="src-count zero" id="cnt-outlook">0</span>
+      </div>
+      <div id="outlook-connect-btn" class="src-connect" onclick="connectOutlook()">+ Connect Outlook</div>
+      <div id="outlook-status" class="src-status" style="display:none;">
+        <div class="src-status-dot" id="outlook-status-dot"></div>
+        <span id="outlook-status-text">Connected</span>
+      </div>
+      <div class="src-divider"></div>
+      <div class="src-header">Messaging</div>
+      <div class="src-item" id="src-whatsapp" onclick="filterSource('whatsapp')">
+        <div class="src-dot" style="background:#25D366"></div>
+        <span>WhatsApp</span>
+        <span class="src-count zero" id="cnt-whatsapp">0</span>
+      </div>
+      <div class="src-item" id="src-sms" onclick="filterSource('sms')">
+        <div class="src-dot" style="background:#6B7280"></div>
+        <span>SMS</span>
+        <span class="src-count zero" id="cnt-sms">0</span>
+      </div>
+      <div id="sms-connect-btn" class="src-connect" onclick="showConnectModal('sms')">+ Connect Twilio</div>
+      <div class="src-divider"></div>
+      <div class="src-header">Social</div>
+      <div class="src-item" id="src-facebook" onclick="filterSource('facebook')">
+        <div class="src-dot" style="background:#1877F2"></div>
+        <span>Facebook</span>
+        <span class="src-count zero" id="cnt-facebook">0</span>
+      </div>
+      <div id="fb-connect-btn" class="src-connect" onclick="showConnectModal('facebook')">+ Connect FB</div>
+      <div class="src-item" id="src-instagram" onclick="filterSource('instagram')">
+        <div class="src-dot" style="background:#E1306C"></div>
+        <span>Instagram</span>
+        <span class="src-count zero" id="cnt-instagram">0</span>
+      </div>
+      <div id="ig-connect-btn" class="src-connect" onclick="showConnectModal('instagram')">+ Connect IG</div>
+      <div class="src-item" id="src-linkedin" onclick="filterSource('linkedin')">
+        <div class="src-dot" style="background:#0A66C2"></div>
+        <span>LinkedIn</span>
+        <span class="src-count zero" id="cnt-linkedin">0</span>
+      </div>
+      <div id="li-connect-btn" class="src-connect" onclick="showConnectModal('linkedin')">+ Connect LinkedIn</div>
+    </div>
+    <!-- MESSAGE LIST -->
+    <div class="msg-list-panel">
+      <div class="msg-search">
+        <input type="text" id="msg-search-input" placeholder="Search messages…" oninput="searchMessages()">
+      </div>
+      <div class="msg-list" id="msg-list">
+        <div class="msg-empty">
+          <div class="loading-dots"><span></span><span></span><span></span></div>
+          <div style="margin-top:8px;font-size:12px;">Loading messages…</div>
+        </div>
+      </div>
+    </div>
+    <!-- DETAIL PANE -->
+    <div class="detail-pane">
+      <div id="detail-content" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+        <div class="detail-placeholder" style="height:calc(100vh - 60px);">
+          <div class="detail-placeholder-icon">📨</div>
+          <div>Select a message to read</div>
+        </div>
+      </div>
+      <div class="reply-bar" id="reply-bar" style="display:none;">
+        <textarea class="reply-input" id="reply-text" placeholder="Write a reply…" rows="3"></textarea>
+        <button class="btn btn-primary" onclick="sendReply()">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONNECT MODAL -->
+<div class="modal-overlay" id="connect-modal" style="display:none;" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h3 id="connect-modal-title">Connect Platform</h3>
+    <div id="connect-modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveConnectModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var allMessages = [];
+var currentSource = 'all';
+var activeMsg = null;
+var gmailToken = localStorage.getItem('nexus_gmail_token');
+var gmailClientId = localStorage.getItem('nexus_gmail_client_id');
+var outlookToken = localStorage.getItem('nexus_outlook_token');
+var msClientId = localStorage.getItem('nexus_ms_client_id');
+var msalInstance = null;
+var COLORS = {
+  gmail:'#EA4335', outlook:'#0078D4', whatsapp:'#25D366',
+  facebook:'#1877F2', instagram:'#E1306C', sms:'#6B7280', linkedin:'#0A66C2'
+};
+
+window.addEventListener('DOMContentLoaded', function(){
+  loadStubData();
+  loadWhatsApp();
+  if(gmailToken){ loadGmail(); }
+  else if(!gmailClientId && !localStorage.getItem('nexus_comms_skip_auth')){
+    document.getElementById('auth-overlay').style.display = 'flex';
+  }
+  if(outlookToken) loadOutlook();
+  updateConnectButtons();
+});
+
+function saveGmailAuth(){
+  var cid = document.getElementById('auth-client-id').value.trim();
+  if(!cid){ alert('Enter a Client ID'); return; }
+  localStorage.setItem('nexus_gmail_client_id', cid);
+  gmailClientId = cid;
+  document.getElementById('auth-overlay').style.display = 'none';
+  initGmailAuth();
+}
+
+function skipAuth(){
+  localStorage.setItem('nexus_comms_skip_auth','1');
+  document.getElementById('auth-overlay').style.display = 'none';
+  renderMessageList();
+}
+
+// ── STUB DATA ──
+function loadStubData(){
+  var now = Date.now();
+  var stubs = [
+    {id:'fb_001',source:'facebook',fromName:'Carlos M.',from:'carlos.m',subject:'Load question',preview:'Do you have loads going to Dallas next week?',body:'Hey, do you have any loads going to Dallas next week?\n\nI have a driver available Monday through Wednesday.',ts:now-3600000*2,read:false,tags:['load']},
+    {id:'fb_002',source:'facebook',fromName:'Trucker Nation Group',from:'group',subject:'Fuel prices alert',preview:'Diesel down 8 cents in TX — best at Pilot Exit 304',body:'Diesel down 8 cents in TX — best at Pilot Exit 304 off I-10. Love\'s Exit 298 is 3 cents higher.',ts:now-3600000*5,read:true,tags:['fuel']},
+    {id:'ig_001',source:'instagram',fromName:'@freighthunter99',from:'freighthunter99',subject:'DM: Your trucks available?',preview:'Hi! Saw your profile — do you haul oversized loads?',body:'Hi! Saw your profile — do you haul oversized loads?\n\nWe have a big project in July from Houston, TX to Memphis, TN.',ts:now-3600000*8,read:false,tags:[]},
+    {id:'sms_001',source:'sms',fromName:'+1 (713) 555-0142',from:'+17135550142',subject:'SMS from +1 (713) 555-0142',preview:'Rate con coming for the TX → TN load',body:'Rate con coming your way for the TX → TN load. Gross: $3,200. Pickup Mon 6am. Reply YES to confirm.',ts:now-3600000*1,read:false,tags:['ratecon']},
+    {id:'sms_002',source:'sms',fromName:'+1 (832) 555-0177',from:'+18325550177',subject:'SMS from +1 (832) 555-0177',preview:'Guillermo says he\'ll be at shipper by 7am',body:'Hey Jim, Guillermo says he\'ll be at shipper by 7am. Eta confirmed.',ts:now-3600000*3,read:true,tags:[]},
+    {id:'sms_003',source:'sms',fromName:'Pilot Flying J',from:'PILOT',subject:'Fuel rewards balance update',preview:'Your ProDriver rewards: 28,450 pts',body:'Your ProDriver rewards: 28,450 pts. Redeem for fuel discounts at any Pilot Flying J. Balance expires Dec 31, 2026.',ts:now-3600000*12,read:true,tags:['fuel']},
+    {id:'li_001',source:'linkedin',fromName:'Mark Delgado',from:'mark.delgado',subject:'Partnership opportunity',preview:'I run a freight brokerage — looking for reliable TX carriers',body:'Hi Jim,\n\nI run a small but growing freight brokerage based in Houston. We\'ve been looking for reliable owner-operators in the TX/LA corridor.\n\nWould love to connect and discuss load volume. We typically move 15-20 dry van loads/week at 10-15% above spot.\n\nBest,\nMark',ts:now-3600000*24,read:false,tags:[]}
+  ];
+  stubs.forEach(function(m){ pushMsg(m); });
+}
+
+// ── WHATSAPP ──
+function loadWhatsApp(){
+  var msgs = JSON.parse(localStorage.getItem('nexus_whatsapp_messages')||'[]');
+  var lines = JSON.parse(localStorage.getItem('nexus_whatsapp_lines')||'[]');
+  var src = msgs.length ? msgs : lines;
+  src.slice(0,20).forEach(function(m,i){
+    var text = m.text||m.message||'';
+    pushMsg({id:'wa_'+i,source:'whatsapp',fromName:m.contact||m.from||'WhatsApp',from:m.from||'',subject:text.substring(0,50)||'WhatsApp message',preview:text,body:text,ts:m.ts?new Date(m.ts).getTime():Date.now()-i*60000,read:true,tags:classifyMsg(text)});
+  });
+}
+
+// ── GMAIL ──
+function connectGmail(){
+  if(gmailClientId){ initGmailAuth(); return; }
+  document.getElementById('auth-overlay').style.display = 'flex';
+}
+
+function initGmailAuth(){
+  if(!gmailClientId){ alert('No Gmail Client ID.'); return; }
+  if(!window.google || !window.google.accounts){
+    var s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.onload = doGmailAuth;
+    document.head.appendChild(s);
+  } else { doGmailAuth(); }
+}
+
+function doGmailAuth(){
+  google.accounts.oauth2.initTokenClient({
+    client_id: gmailClientId,
+    scope:'https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.send',
+    callback: function(resp){
+      if(resp.error){ console.error('Gmail auth error',resp.error); return; }
+      gmailToken = resp.access_token;
+      localStorage.setItem('nexus_gmail_token', gmailToken);
+      loadGmail();
+      updateConnectButtons();
+    }
+  }).requestAccessToken();
+}
+
+function loadGmail(){
+  if(!gmailToken){ connectGmail(); return; }
+  setSourceStatus('gmail','loading');
+  fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=20&q=in:inbox',{
+    headers:{Authorization:'Bearer '+gmailToken}
+  }).then(function(r){
+    if(r.status===401){ gmailToken=null; localStorage.removeItem('nexus_gmail_token'); setSourceStatus('gmail','disconnected'); return null; }
+    return r.json();
+  }).then(function(data){
+    if(!data||!data.messages){ setSourceStatus('gmail','connected',0); return; }
+    setSourceStatus('gmail','connected',data.messages.length);
+    data.messages.slice(0,12).forEach(function(m){ fetchGmailMsg(m.id); });
+  }).catch(function(e){ console.error('Gmail load error',e); setSourceStatus('gmail','error'); });
+}
+
+function fetchGmailMsg(id){
+  fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/'+id+'?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date',{
+    headers:{Authorization:'Bearer '+gmailToken}
+  }).then(function(r){ return r.json(); }).then(function(m){
+    var hdrs = {};
+    (m.payload&&m.payload.headers||[]).forEach(function(h){ hdrs[h.name.toLowerCase()]=h.value; });
+    var fromRaw = hdrs['from']||'';
+    var fromName = fromRaw.replace(/<[^>]+>/g,'').replace(/"/g,'').trim()||fromRaw;
+    var isUnread = (m.labelIds||[]).indexOf('UNREAD')!==-1;
+    pushMsg({id:'gm_'+id,_gmailId:id,source:'gmail',fromName:fromName,from:fromRaw,subject:hdrs['subject']||'(no subject)',preview:m.snippet||'',body:null,ts:parseInt(m.internalDate)||Date.now(),read:!isUnread,tags:classifyMsg((hdrs['subject']||'')+' '+(m.snippet||''))});
+  }).catch(function(e){ console.error('fetchGmailMsg error',e); });
+}
+
+function loadGmailFull(msgId, gmailId){
+  fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/'+gmailId+'?format=full',{
+    headers:{Authorization:'Bearer '+gmailToken}
+  }).then(function(r){ return r.json(); }).then(function(m){
+    var body = extractGmailBody(m.payload);
+    allMessages.forEach(function(msg){ if(msg.id===msgId) msg.body=body; });
+    var found = allMessages.find(function(mm){ return mm.id===msgId; });
+    if(found && activeMsg && activeMsg.id===msgId) renderDetailPane(found);
+  }).catch(function(e){ console.error('loadGmailFull error',e); });
+}
+
+function extractGmailBody(payload){
+  if(!payload) return '';
+  if(payload.body&&payload.body.data){
+    try{ return atob(payload.body.data.replace(/-/g,'+').replace(/_/g,'/')); }catch(e){ return ''; }
+  }
+  if(payload.parts){
+    for(var i=0;i<payload.parts.length;i++){
+      var p=payload.parts[i];
+      if(p.mimeType==='text/plain'&&p.body&&p.body.data){
+        try{ return atob(p.body.data.replace(/-/g,'+').replace(/_/g,'/')); }catch(e){ return ''; }
+      }
+    }
+    for(var j=0;j<payload.parts.length;j++){
+      var q=payload.parts[j];
+      if(q.mimeType==='text/html'&&q.body&&q.body.data){
+        try{ var h=atob(q.body.data.replace(/-/g,'+').replace(/_/g,'/')); return h.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(); }catch(e){ return ''; }
+      }
+    }
+  }
+  return payload.snippet||'';
+}
+
+// ── OUTLOOK ──
+function connectOutlook(){
+  if(outlookToken){ loadOutlook(); return; }
+  var mid = prompt('Enter your Microsoft App Client ID (Azure App Registration):');
+  if(!mid) return;
+  localStorage.setItem('nexus_ms_client_id',mid);
+  msClientId = mid;
+  initMsal();
+}
+
+function initMsal(){
+  if(!msClientId) return;
+  try{
+    msalInstance = new msal.PublicClientApplication({
+      auth:{clientId:msClientId,authority:'https://login.microsoftonline.com/common',redirectUri:window.location.origin}
+    });
+    loginOutlook();
+  }catch(e){ console.error('MSAL init error',e); }
+}
+
+function loginOutlook(){
+  if(!msalInstance){ initMsal(); return; }
+  msalInstance.loginPopup({scopes:['Mail.Read','Mail.Send']}).then(function(res){
+    return msalInstance.acquireTokenSilent({scopes:['Mail.Read','Mail.Send'],account:res.account});
+  }).then(function(res){
+    outlookToken = res.accessToken;
+    localStorage.setItem('nexus_outlook_token',outlookToken);
+    loadOutlook();
+    updateConnectButtons();
+  }).catch(function(e){ console.error('Outlook auth error',e); });
+}
+
+function loadOutlook(){
+  if(!outlookToken){ connectOutlook(); return; }
+  setSourceStatus('outlook','loading');
+  fetch('https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages?$top=20&$select=id,subject,from,receivedDateTime,bodyPreview,isRead',{
+    headers:{Authorization:'Bearer '+outlookToken}
+  }).then(function(r){
+    if(r.status===401){ outlookToken=null; localStorage.removeItem('nexus_outlook_token'); setSourceStatus('outlook','disconnected'); return null; }
+    return r.json();
+  }).then(function(data){
+    if(!data||!data.value){ setSourceStatus('outlook','connected',0); return; }
+    data.value.forEach(function(m){
+      pushMsg({id:'ot_'+m.id,_outlookId:m.id,source:'outlook',fromName:m.from&&m.from.emailAddress?m.from.emailAddress.name:'',from:m.from&&m.from.emailAddress?m.from.emailAddress.address:'',subject:m.subject||'(no subject)',preview:m.bodyPreview||'',body:m.bodyPreview||'',ts:new Date(m.receivedDateTime).getTime(),read:m.isRead,tags:classifyMsg(m.subject+' '+m.bodyPreview)});
+    });
+    setSourceStatus('outlook','connected',data.value.length);
+  }).catch(function(e){ console.error('Outlook load error',e); setSourceStatus('outlook','error'); });
+}
+
+// ── MESSAGE MANAGEMENT ──
+function pushMsg(msg){
+  for(var i=0;i<allMessages.length;i++){
+    if(allMessages[i].id===msg.id){ allMessages[i]=msg; renderMessageList(); return; }
+  }
+  allMessages.push(msg);
+  allMessages.sort(function(a,b){ return b.ts-a.ts; });
+  renderMessageList();
+  updateCounts();
+}
+
+function classifyMsg(text){
+  if(!text) return [];
+  var t = text.toLowerCase(), tags = [];
+  if(/rate\s*con|ratecon|load confirmation/.test(t)) tags.push('ratecon');
+  if(/settlement|pay\s*stub|weekly pay/.test(t)) tags.push('settlement');
+  if(/bill of lading|bol/.test(t)) tags.push('bol');
+  if(/fuel|diesel|flying j|pilot|loves/.test(t)) tags.push('fuel');
+  if(/breakdown|mechanical|repair|tow/.test(t)) tags.push('breakdown');
+  if(/invoice|factoring|payment|remittance/.test(t)) tags.push('invoice');
+  return tags;
+}
+
+function filterSource(src){
+  currentSource = src;
+  document.querySelectorAll('.src-item').forEach(function(el){
+    el.classList.toggle('active', el.id==='src-'+src||(src==='all'&&el.id==='src-all'));
+  });
+  renderMessageList();
+}
+
+function searchMessages(){ renderMessageList(); }
+
+function renderMessageList(){
+  var q = (document.getElementById('msg-search-input').value||'').toLowerCase();
+  var filtered = allMessages.filter(function(m){
+    if(currentSource!=='all'&&m.source!==currentSource) return false;
+    if(q&&!(m.fromName.toLowerCase().includes(q)||m.subject.toLowerCase().includes(q)||(m.preview||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  var list = document.getElementById('msg-list');
+  if(!filtered.length){ list.innerHTML='<div class="msg-empty">No messages</div>'; return; }
+  list.innerHTML = filtered.map(function(m){
+    var color = COLORS[m.source]||'#888';
+    var tagHtml = (m.tags||[]).map(function(t){ return '<span class="msg-tag">'+t+'</span>'; }).join('');
+    return '<div class="msg-item'+(m.read?'':' unread')+(activeMsg&&activeMsg.id===m.id?' active':'')+'" onclick="openMsg(\''+m.id+'\')">'+
+      '<div class="msg-meta"><div class="msg-src-badge" style="background:'+color+'"></div>'+tagHtml+'<span class="msg-time">'+formatTime(m.ts)+'</span></div>'+
+      '<div class="msg-from">'+escHtml(m.fromName)+'</div>'+
+      '<div class="msg-subject">'+escHtml(m.subject)+'</div>'+
+      '<div class="msg-preview">'+escHtml(m.preview||'')+'</div>'+
+    '</div>';
+  }).join('');
+  updateCounts();
+}
+
+function openMsg(id){
+  activeMsg = allMessages.find(function(m){ return m.id===id; });
+  if(!activeMsg) return;
+  activeMsg.read = true;
+  renderMessageList();
+  if(activeMsg.source==='gmail'&&activeMsg._gmailId&&!activeMsg.body){
+    renderDetailPane(activeMsg,true);
+    loadGmailFull(activeMsg.id, activeMsg._gmailId);
+    return;
+  }
+  renderDetailPane(activeMsg);
+}
+
+function renderDetailPane(msg, loading){
+  if(!msg) return;
+  var color = COLORS[msg.source]||'#888';
+  var tagsHtml = (msg.tags||[]).map(function(t){ return '<span class="detail-tag '+t+'">'+t+'</span>'; }).join('');
+  var bodyHtml = loading
+    ? '<div style="color:var(--mid);font-size:13px;">Loading… <span class="loading-dots"><span></span><span></span><span></span></span></div>'
+    : '<div class="detail-body-text">'+escHtml(msg.body||msg.preview||'(no content)')+'</div>';
+  document.getElementById('detail-content').innerHTML =
+    '<div class="detail-header">'+
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">'+
+        '<div style="width:10px;height:10px;border-radius:2px;background:'+color+';flex-shrink:0;"></div>'+
+        '<span style="font-size:11px;color:var(--mid);text-transform:capitalize;">'+msg.source+'</span>'+
+      '</div>'+
+      '<div class="detail-subject">'+escHtml(msg.subject)+'</div>'+
+      '<div class="detail-from">From: '+escHtml(msg.fromName+(msg.from?' &lt;'+msg.from+'&gt;':''))+'</div>'+
+      '<div class="detail-from" style="margin-top:2px;">'+formatTime(msg.ts,true)+'</div>'+
+      (tagsHtml?'<div class="detail-tags">'+tagsHtml+'</div>':'')+
+    '</div>'+
+    '<div class="detail-body" style="flex:1;overflow-y:auto;padding:20px;">'+bodyHtml+'</div>';
+  document.getElementById('reply-bar').style.display = (['gmail','outlook'].indexOf(msg.source)!==-1)?'flex':'none';
+  document.getElementById('reply-text').value = '';
+}
+
+// ── SEND ──
+function sendReply(){
+  if(!activeMsg){ alert('Select a message first'); return; }
+  var text = document.getElementById('reply-text').value.trim();
+  if(!text){ alert('Write something first'); return; }
+  if(activeMsg.source==='gmail'&&gmailToken) sendGmailReply(text);
+  else if(activeMsg.source==='outlook'&&outlookToken) sendOutlookReply(text);
+  else alert('Connect '+activeMsg.source+' to send replies.');
+}
+
+function sendGmailReply(text){
+  var to = activeMsg.from, subject = activeMsg.subject.match(/^Re:/i)?activeMsg.subject:'Re: '+activeMsg.subject;
+  var raw = 'To: '+to+'\r\nSubject: '+subject+'\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n'+text;
+  var encoded = btoa(unescape(encodeURIComponent(raw))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send',{
+    method:'POST',headers:{Authorization:'Bearer '+gmailToken,'Content-Type':'application/json'},
+    body:JSON.stringify({raw:encoded,threadId:activeMsg._gmailId})
+  }).then(function(r){
+    if(r.ok){ document.getElementById('reply-text').value=''; alert('Sent!'); }
+    else alert('Send failed');
+  }).catch(function(e){ alert('Error: '+e.message); });
+}
+
+function sendOutlookReply(text){
+  if(!activeMsg._outlookId){ alert('No Outlook message ID'); return; }
+  fetch('https://graph.microsoft.com/v1.0/me/messages/'+activeMsg._outlookId+'/reply',{
+    method:'POST',headers:{Authorization:'Bearer '+outlookToken,'Content-Type':'application/json'},
+    body:JSON.stringify({comment:text})
+  }).then(function(r){
+    if(r.ok){ document.getElementById('reply-text').value=''; alert('Sent!'); }
+    else alert('Send failed');
+  }).catch(function(e){ alert('Error: '+e.message); });
+}
+
+function composeNew(){
+  if(!gmailToken&&!outlookToken){ alert('Connect Gmail or Outlook to compose.'); return; }
+  var to=prompt('To:'); if(!to) return;
+  var subject=prompt('Subject:'); if(!subject) return;
+  var body=prompt('Message:'); if(!body) return;
+  var raw='To: '+to+'\r\nSubject: '+subject+'\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n'+body;
+  var encoded=btoa(unescape(encodeURIComponent(raw))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send',{
+    method:'POST',headers:{Authorization:'Bearer '+gmailToken,'Content-Type':'application/json'},
+    body:JSON.stringify({raw:encoded})
+  }).then(function(r){ if(r.ok) alert('Sent!'); else alert('Send failed'); });
+}
+
+function refreshAll(){
+  if(gmailToken) loadGmail();
+  if(outlookToken) loadOutlook();
+  loadWhatsApp();
+  renderMessageList();
+}
+
+// ── CONNECT MODALS ──
+var _connectPlatform = '';
+function showConnectModal(p){
+  _connectPlatform = p;
+  var titles = {sms:'Connect SMS via Twilio',facebook:'Connect Facebook Messenger',instagram:'Connect Instagram DMs',linkedin:'Connect LinkedIn Messages'};
+  var bodies = {
+    sms:'<div class="modal-info">SMS requires a Twilio account. Live integration is a stub — contact your admin to enable SMS webhooks.</div><div class="modal-field"><label>Twilio Account SID</label><input id="conn-field1" placeholder="ACxxxxxx"></div><div class="modal-field"><label>Auth Token</label><input id="conn-field2" type="password" placeholder="••••••••"></div>',
+    facebook:'<div class="modal-info">Facebook Messenger requires a Meta App with messaging permissions. This is a stub — Meta App Review required for live access.</div>',
+    instagram:'<div class="modal-info">Instagram DMs require a Meta App with instagram_manage_messages permission. This is a stub — Meta App Review required.</div>',
+    linkedin:'<div class="modal-info">LinkedIn messaging API requires Partner Program approval. This is a stub — contact LinkedIn for API access.</div>'
+  };
+  document.getElementById('connect-modal-title').textContent = titles[p]||'Connect '+p;
+  document.getElementById('connect-modal-body').innerHTML = bodies[p]||'';
+  document.getElementById('connect-modal').style.display = 'flex';
+}
+
+function saveConnectModal(){
+  closeModal();
+  alert((_connectPlatform.charAt(0).toUpperCase()+_connectPlatform.slice(1))+' configuration saved (stub — live integration requires additional setup).');
+}
+
+function closeModal(){
+  document.getElementById('connect-modal').style.display = 'none';
+}
+
+// ── UI HELPERS ──
+function updateConnectButtons(){
+  var g=!!gmailToken, o=!!outlookToken;
+  document.getElementById('gmail-connect-btn').style.display = g?'none':'block';
+  document.getElementById('gmail-status').style.display = g?'flex':'none';
+  document.getElementById('outlook-connect-btn').style.display = o?'none':'block';
+  document.getElementById('outlook-status').style.display = o?'flex':'none';
+}
+
+function setSourceStatus(src,state,count){
+  var dot=document.getElementById(src+'-status-dot'), txt=document.getElementById(src+'-status-text');
+  if(!dot) return;
+  if(state==='loading'){ dot.className='src-status-dot'; txt.textContent='Loading…'; }
+  else if(state==='connected'){ dot.className='src-status-dot'; txt.textContent='Connected ('+(count||0)+')'; }
+  else if(state==='error'){ dot.className='src-status-dot off'; txt.textContent='Error — retry'; }
+  else{ dot.className='src-status-dot off'; txt.textContent='Disconnected'; }
+}
+
+function updateCounts(){
+  var total=0;
+  ['gmail','outlook','whatsapp','sms','facebook','instagram','linkedin'].forEach(function(s){
+    var n=allMessages.filter(function(m){ return m.source===s; }).length;
+    var el=document.getElementById('cnt-'+s);
+    if(el){ el.textContent=n; el.className='src-count'+(n===0?' zero':''); }
+    total+=n;
+  });
+  var allEl=document.getElementById('cnt-all');
+  if(allEl){ allEl.textContent=total; allEl.className='src-count'+(total===0?' zero':''); }
+}
+
+function formatTime(ts,full){
+  if(!ts) return '';
+  var d=new Date(ts), now=new Date(), diff=now-d;
+  if(full) return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+  if(diff<3600000) return Math.floor(diff/60000)+'m ago';
+  if(diff<86400000) return Math.floor(diff/3600000)+'h ago';
+  if(diff<604800000) return Math.floor(diff/86400000)+'d ago';
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+function escHtml(s){
+  if(!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+<script src="nexus-sidebar.js"></script>
+</body>
+</html>
