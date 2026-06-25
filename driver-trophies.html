@@ -224,10 +224,10 @@ function computeStats(driverId) {
 // ── BADGE DEFINITIONS ──────────────────────────────────────────────────────
 var ALL_BADGES = [
   // Miles
-  {id:'miles_1',   icon:'🛣️', name:'Road Opener',       color:'blue',  stat:'totalMiles',   threshold:1000,   desc:'1,000 miles driven',         flex:function(v){ return v.toLocaleString()+' total mi'; }},
-  {id:'miles_2',   icon:'🚛', name:'Asphalt Addict',     color:'blue',  stat:'totalMiles',   threshold:5000,   desc:'5,000 miles logged',         flex:function(v){ return v.toLocaleString()+' mi'; }},
-  {id:'miles_3',   icon:'🌍', name:'Earth Disrespecter', color:'gold',  stat:'totalMiles',   threshold:25000,  desc:'25,000 mi — that\'s the Earth\'s circumference. Almost.',flex:function(v){ return v.toLocaleString()+' mi'; }},
-  {id:'miles_4',   icon:'🚀', name:'Galaxy Brain',       color:'gold',  stat:'totalMiles',   threshold:100000, desc:'100,000 miles. Moon is 239k. Keep going.',flex:function(v){ return v.toLocaleString()+' mi'; }},
+  {id:'miles_1',   icon:'🛣️', name:'Road Opener',       color:'blue',  stat:'totalMiles',   threshold:5000,   desc:'5,000 miles driven',         flex:function(v){ return v.toLocaleString()+' total mi'; }},
+  {id:'miles_2',   icon:'🚛', name:'Asphalt Addict',     color:'blue',  stat:'totalMiles',   threshold:20000,  desc:'20,000 miles logged',         flex:function(v){ return v.toLocaleString()+' mi'; }},
+  {id:'miles_3',   icon:'🌍', name:'Earth Disrespecter', color:'gold',  stat:'totalMiles',   threshold:75000,  desc:'75,000 mi — three laps around the Earth. Calm down.',flex:function(v){ return v.toLocaleString()+' mi'; }},
+  {id:'miles_4',   icon:'🚀', name:'Galaxy Brain',       color:'gold',  stat:'totalMiles',   threshold:250000, desc:'250,000 miles. That\'s the Moon and change. Are you okay?',flex:function(v){ return v.toLocaleString()+' mi'; }},
   // Loads
   {id:'loads_1',   icon:'📦', name:'Starter Pack',       color:'green', stat:'totalLoads',   threshold:5,      desc:'5 loads dispatched',         flex:function(v){ return v+' loads'; }},
   {id:'loads_2',   icon:'💪', name:'Load Bro',           color:'green', stat:'totalLoads',   threshold:25,     desc:'25 loads — officially a Thing now', flex:function(v){ return v+' loads'; }},
@@ -246,8 +246,8 @@ var ALL_BADGES = [
   {id:'safe_2',    icon:'✨', name:'Inspection Whisperer',color:'green', stat:'longestClean', threshold:20,     desc:'20 clean inspections straight — DOT is confused', flex:function(v){ return v+'-trip streak'; }},
   {id:'safe_3',    icon:'🧿', name:'Untouchable',        color:'gold',  stat:'longestClean', threshold:50,     desc:'50 clean pre-trips — you might be a robot', flex:function(v){ return v+'-trip streak'; }},
   // Specialty / silly
-  {id:'haul_1',    icon:'🔥', name:'Big Rig Energy',     color:'red',   stat:'longestHaul',  threshold:500,    desc:'Single haul over 500 miles',  flex:function(v){ return v+' mi single run'; }},
-  {id:'haul_2',    icon:'🏔️', name:'Transcontinental',   color:'gold',  stat:'longestHaul',  threshold:2000,   desc:'2,000+ miles in one shot — were you okay?', flex:function(v){ return v+' mi single run'; }},
+  {id:'haul_1',    icon:'🔥', name:'Big Rig Energy',     color:'red',   stat:'longestHaul',  threshold:1000,   desc:'Single haul over 1,000 miles',  flex:function(v){ return v+' mi single run'; }},
+  {id:'haul_2',    icon:'🏔️', name:'Transcontinental',   color:'gold',  stat:'longestHaul',  threshold:2500,   desc:'2,500+ mi — coast to coast and keep going. Were you okay?', flex:function(v){ return v+' mi single run'; }},
   {id:'night_1',   icon:'🦉', name:'Night Owl',          color:'blue',  stat:'nightLoads',   threshold:3,      desc:'3+ loads picked up at night or before dawn', flex:function(v){ return v+' night runs'; }},
   {id:'clean_1',   icon:'📋', name:'Pre-Trip Faithful',  color:'green', stat:'totalPretrips',threshold:10,     desc:'10 completed pre-trip inspections', flex:function(v){ return v+' inspections'; }},
 ];
