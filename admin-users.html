@@ -898,3 +898,8 @@ function removeAssignment(id) {
 
 // Wire up modal backdrop click
 document.getElementById('assign-modal').addEventListener('click', function(e){
+  if (e.target === this) this.classList.remove('open');
+});
+</script>
+</body>
+</html>
