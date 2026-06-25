@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Comms — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;height:100vh;display:flex;overflow:hidden}
+#nexus-app{display:flex;flex:1;min-width:0}
+#comms-wrap{display:flex;flex:1;min-width:0;height:100vh}
+#source-panel{width:185px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
+.src-header{padding:14px 14px 8px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--mid);text-transform:uppercase}
+.src-btn{display:flex;align-items:center;gap:8px;padding:8px 13px;cursor:pointer;border:none;background:none;color:var(--text);width:100%;text-align:left;font-family:'Barlow',sans-serif;font-size:13px;transition:background .12s}
+.src-btn:hover{background:var(--panel2)}
+.src-btn.active{background:rgba(59,130,246,.12);color:var(--blue)}
+.src-icon{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.src-label{flex:1;font-weight:500}
+.src-count{background:var(--panel2);color:var(--mid);font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;min-width:20px;text-align:center}
+.src-btn.active .src-count{background:rgba(59,130,246,.2);color:var(--blue)}
+.src-divider{height:1px;background:var(--border);margin:8px 12px}
+.src-stub-badge{font-size:9px;color:var(--mid);background:var(--border);padding:1px 5px;border-radius:3px;letter-spacing:.04em}
+.compose-btn{margin:12px 12px 4px;padding:9px 14px;background:var(--blue);color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.07em;display:flex;align-items:center;gap:6px;transition:background .15s;justify-content:center}
+.compose-btn:hover{background:#2563eb}
+#msg-list-panel{width:330px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+#msg-search-bar{padding:10px 12px;border-bottom:1px solid var(--border)}
+#msg-search{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border-color .15s}
+#msg-search:focus{border-color:var(--blue)}
+.msg-list-header{padding:8px 13px 5px;display:flex;align-items:center;justify-content:space-between}
+.msg-list-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--mid);text-transform:uppercase}
+.msg-count-badge{font-size:11px;color:var(--mid)}
+#msg-list{flex:1;overflow-y:auto}
+.msg-item{padding:10px 13px 10px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;display:flex;gap:10px;align-items:flex-start;position:relative}
+.msg-item:hover{background:var(--panel2)}
+.msg-item.active{background:rgba(59,130,246,.08);border-left:3px solid var(--blue);padding-left:13px}
+.unread-dot{position:absolute;left:5px;top:16px;width:5px;height:5px;background:var(--blue);border-radius:50%}
+.msg-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;color:#fff}
+.msg-item-body{flex:1;min-width:0}
+.msg-item-top{display:flex;align-items:center;gap:5px;margin-bottom:2px}
+.msg-item-name{font-size:13px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.msg-item.unread .msg-item-name{font-weight:700}
+.msg-item-time{font-size:11px;color:var(--mid);flex-shrink:0}
+.msg-item-subject{font-size:12px;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.msg-item.unread .msg-item-subject{color:var(--text)}
+.msg-item-preview{font-size:11px;color:#4a5568;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.src-pill{font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700;letter-spacing:.04em;flex-shrink:0;text-transform:uppercase}
+.tag-pill{font-size:10px;padding:2px 7px;border-radius:8px;border:1px solid var(--border);color:var(--mid);background:var(--panel2)}
+.msg-loading,.empty-state{padding:40px 20px;text-align:center;color:var(--mid)}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#msg-detail-panel{flex:1;min-width:0;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+#detail-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--mid);gap:10px}
+#detail-empty .big-icon{font-size:44px;opacity:.35}
+#msg-detail-view{flex:1;display:none;flex-direction:column;overflow:hidden}
+.detail-header{padding:16px 20px 14px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start}
+.detail-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#fff;flex-shrink:0}
+.detail-meta{flex:1;min-width:0}
+.detail-subject{font-size:16px;font-weight:600;margin-bottom:3px;line-height:1.3}
+.detail-from{font-size:12px;color:var(--mid)}
+.detail-time{font-size:11px;color:var(--mid);margin-top:2px}
+.detail-actions{display:flex;gap:8px;flex-shrink:0}
+.detail-btn{padding:6px 12px;border-radius:5px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-family:'Barlow',sans-serif;font-size:12px;transition:background .15s}
+.detail-btn:hover{background:var(--panel2)}
+.detail-btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.detail-btn.primary:hover{background:#2563eb}
+.detail-tags{display:flex;gap:6px;flex-wrap:wrap;padding:10px 20px 6px}
+.detail-body{flex:1;overflow-y:auto;padding:12px 20px 20px}
+.detail-body-text{line-height:1.7;color:var(--text);white-space:pre-wrap;font-size:13px}
+.detail-reply{border-top:1px solid var(--border);padding:14px 20px;display:flex;flex-direction:column;gap:10px}
+.detail-reply-label{font-size:11px;color:var(--mid);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.reply-box{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;resize:none;outline:none;min-height:70px;transition:border-color .15s;width:100%}
+.reply-box:focus{border-color:var(--blue)}
+.reply-actions{display:flex;gap:8px;justify-content:flex-end}
+.stub-banner{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:14px 16px;margin:12px 20px;display:flex;gap:12px;align-items:flex-start}
+.stub-banner-icon{font-size:20px;flex-shrink:0}
+.stub-banner-text{flex:1}
+.stub-banner-title{font-weight:600;margin-bottom:4px;font-size:13px}
+.stub-banner-desc{color:var(--mid);font-size:12px;line-height:1.5}
+.stub-connect-btn{margin-top:8px;padding:6px 14px;background:var(--yellow);color:#000;border:none;border-radius:5px;cursor:pointer;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600}
+#connect-modal{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);align-items:center;justify-content:center}
+#connect-modal.open{display:flex}
+.connect-box{background:var(--panel);border:1px solid var(--border);border-radius:10px;width:470px;max-width:96vw;max-height:86vh;overflow-y:auto}
+.connect-box-header{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.connect-box-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.connect-box-title{font-size:16px;font-weight:600}
+.connect-box-sub{font-size:12px;color:var(--mid);margin-top:2px}
+.connect-close{margin-left:auto;background:none;border:none;color:var(--mid);cursor:pointer;font-size:22px;line-height:1;padding:2px 4px}
+.connect-box-body{padding:18px 20px}
+.connect-section{margin-bottom:18px}
+.connect-section-title{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);margin-bottom:10px}
+.connect-step{display:flex;gap:10px;margin-bottom:9px;align-items:flex-start}
+.step-num{width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-text{font-size:13px;color:var(--text);line-height:1.55}
+.step-text a{color:var(--blue);text-decoration:none}
+.connect-input{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;outline:none;margin-bottom:8px}
+.connect-input:focus{border-color:var(--blue)}
+.connect-save-btn{padding:9px 20px;background:var(--blue);color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em}
+.connect-save-btn:hover{background:#2563eb}
+#compose-modal{display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.55);align-items:flex-end;justify-content:flex-end;padding:20px}
+#compose-modal.open{display:flex}
+.compose-box{background:var(--panel);border:1px solid var(--border);border-radius:10px;width:500px;max-width:98vw;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+.compose-hdr{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.compose-title{font-weight:600;font-size:14px}
+.compose-close{background:none;border:none;color:var(--mid);cursor:pointer;font-size:20px}
+.compose-body{padding:14px 16px;display:flex;flex-direction:column;gap:0}
+.compose-field{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--border);padding:7px 0}
+.compose-field label{font-size:12px;color:var(--mid);width:44px;flex-shrink:0}
+.compose-field input,.compose-field select{flex:1;background:none;border:none;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;outline:none;cursor:text}
+.compose-field select{cursor:pointer}
+.compose-textarea{background:none;border:none;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;resize:none;outline:none;min-height:120px;width:100%;line-height:1.6;margin-top:8px}
+.compose-footer{padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.compose-send-btn{padding:8px 18px;background:var(--blue);color:#fff;border:none;border-radius:5px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em}
+.compose-send-btn:hover{background:#2563eb}
+#auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:none;align-items:center;justify-content:center}
+#auth-overlay.open{display:flex}
+.auth-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:28px;width:420px;max-width:96vw;text-align:center}
+.auth-icon{font-size:40px;margin-bottom:12px}
+.auth-title{font-size:18px;font-weight:600;margin-bottom:6px}
+.auth-desc{color:var(--mid);font-size:13px;margin-bottom:20px;line-height:1.6}
+.auth-input{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;outline:none;margin-bottom:10px;text-align:left}
+.auth-input:focus{border-color:var(--blue)}
+.auth-btn{width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.07em}
+.auth-btn:hover{background:#2563eb}
+.auth-skip{margin-top:12px;color:var(--mid);font-size:12px;cursor:pointer;text-decoration:underline}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@media(max-width:1000px){#msg-detail-panel{display:none}}
+@media(max-width:750px){#source-panel{width:46px}.src-label,.src-count,.src-header,.src-stub-badge{display:none}.compose-btn span:last-child{display:none}#msg-list-panel{flex:1;border-right:none}}
+</style>
+</head>
+<body>
+<div id="nexus-app">
+<div id="comms-wrap">
+
+<!-- SOURCE PANEL -->
+<div id="source-panel">
+  <button class="compose-btn" onclick="openCompose()">
+    <span>✏</span><span>Compose</span>
+  </button>
+  <div class="src-header">Inbox</div>
+  <button class="src-btn active" data-src="all" onclick="setSource('all',this)">
+    <div class="src-icon" style="background:#1e2d45">📥</div>
+    <span class="src-label">All Messages</span>
+    <span class="src-count" id="cnt-all">0</span>
+  </button>
+  <button class="src-btn" data-src="gmail" onclick="setSource('gmail',this)">
+    <div class="src-icon" style="background:rgba(234,67,53,.15)">
+      <svg width="14" height="11" viewBox="0 0 24 18"><path d="M0 0v18h24V0L12 10z" fill="none"/><path d="M24 0H0l12 10L24 0z" fill="#EA4335"/><path d="M0 0v18h4V6L0 0z" fill="#C5221F"/><path d="M24 0v18h-4V6L24 0z" fill="#C5221F"/><path d="M4 18V6l8 6.7L20 6v12H4z" fill="#EA4335" opacity=".7"/><path d="M0 0l4 6 8 6.7L20 6l4-6H0z" fill="#EA4335"/></svg>
+    </div>
+    <span class="src-label">Gmail</span>
+    <span class="src-count" id="cnt-gmail">–</span>
+  </button>
+  <button class="src-btn" data-src="outlook" onclick="setSource('outlook',this)">
+    <div class="src-icon" style="background:rgba(0,120,212,.15)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="#0078D4"><path d="M2 4h9v7H2zm11 0h9v7h-9zM2 13h9v7H2zm11 0h9v7h-9z" opacity=".7"/></svg>
+    </div>
+    <span class="src-label">Outlook</span>
+    <span class="src-count" id="cnt-outlook">–</span>
+  </button>
+  <button class="src-btn" data-src="whatsapp" onclick="setSource('whatsapp',this)">
+    <div class="src-icon" style="background:rgba(37,211,102,.15)">
+      <svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#25D366"/><path d="M17 14.8c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.2-.7.1s-.8 1-.9 1.1c-.2.2-.3.2-.6 0-.3-.1-1.2-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.6-.1-.2-.7-1.6-1-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1 3 1.2 3.2c.2.2 2.3 3.5 5.7 4.8 3.3 1.3 3.3.9 3.9.8s1.7-.7 1.9-1.3c.2-.6.2-1.2.1-1.3z" fill="#fff"/></svg>
+    </div>
+    <span class="src-label">WhatsApp</span>
+    <span class="src-count" id="cnt-whatsapp">0</span>
+  </button>
+  <div class="src-divider"></div>
+  <div class="src-header">Other</div>
+  <button class="src-btn" data-src="facebook" onclick="setSource('facebook',this)">
+    <div class="src-icon" style="background:rgba(24,119,242,.15)">
+      <svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1877F2"/><path d="M13 21v-8h2.5l.5-3H13V8.5c0-.9.2-1.5 1.5-1.5H16V4a20 20 0 00-2.3-.2c-2.3 0-3.7 1.4-3.7 3.9V10H7.5v3H10v8h3z" fill="#fff"/></svg>
+    </div>
+    <span class="src-label">Facebook</span>
+    <span class="src-stub-badge">stub</span>
+  </button>
+  <button class="src-btn" data-src="instagram" onclick="setSource('instagram',this)">
+    <div class="src-icon" style="background:rgba(225,48,108,.15)">
+      <svg width="14" height="14" viewBox="0 0 24 24"><rect width="22" height="22" x="1" y="1" rx="6" fill="#E1306C"/><circle cx="12" cy="12" r="4" stroke="#fff" stroke-width="1.5" fill="none"/><circle cx="17.5" cy="6.5" r="1.2" fill="#fff"/></svg>
+    </div>
+    <span class="src-label">Instagram</span>
+    <span class="src-stub-badge">stub</span>
+  </button>
+  <button class="src-btn" data-src="sms" onclick="setSource('sms',this)">
+    <div class="src-icon" style="background:rgba(107,114,128,.15)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="#6B7280"><path d="M2 4h20v14H2zM2 18l3-3"/><path d="M20 4c0 0-9 9-18 14" opacity="0"/><path d="M7 13h10M7 9h10M7 11h7" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+    <span class="src-label">SMS / Text</span>
+    <span class="src-stub-badge">stub</span>
+  </button>
+  <button class="src-btn" data-src="linkedin" onclick="setSource('linkedin',this)">
+    <div class="src-icon" style="background:rgba(10,102,194,.15)">
+      <svg width="14" height="14" viewBox="0 0 24 24"><rect width="22" height="22" x="1" y="1" rx="4" fill="#0A66C2"/><path d="M7 10h2v8H7zM8 8a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM11 10h2v1.5c.5-1 1.5-1.7 2.8-1.7 2 0 3.2 1.5 3.2 3.5V18h-2v-4.5c0-1.2-.5-2-1.7-2-1.3 0-2.3.9-2.3 2.3V18h-2v-8z" fill="#fff"/></svg>
+    </div>
+    <span class="src-label">LinkedIn</span>
+    <span class="src-stub-badge">stub</span>
+  </button>
+</div>
+
+<!-- MESSAGE LIST -->
+<div id="msg-list-panel">
+  <div id="msg-search-bar">
+    <input id="msg-search" type="text" placeholder="🔍  Search all messages…" oninput="searchMessages(this.value)">
+  </div>
+  <div class="msg-list-header">
+    <span class="msg-list-title" id="msg-list-title">All Messages</span>
+    <span class="msg-count-badge" id="msg-list-count"></span>
+  </div>
+  <div id="msg-list"><div class="msg-loading"><div class="spinner"></div><br><br>Loading…</div></div>
+</div>
+
+<!-- DETAIL PANE -->
+<div id="msg-detail-panel">
+  <div id="detail-empty">
+    <div class="big-icon">💬</div>
+    <div style="font-weight:500">Select a message</div>
+    <div style="font-size:12px;margin-top:4px">Gmail · Outlook · WhatsApp · and more</div>
+  </div>
+  <div id="msg-detail-view">
+    <div class="detail-header">
+      <div class="detail-avatar" id="d-avatar"></div>
+      <div class="detail-meta">
+        <div class="detail-subject" id="d-subject"></div>
+        <div class="detail-from">From: <span id="d-from"></span></div>
+        <div class="detail-time" id="d-time"></div>
+      </div>
+      <div class="detail-actions">
+        <button class="detail-btn" onclick="archiveMsg()">Archive</button>
+        <button class="detail-btn primary" id="reply-toggle-btn" onclick="toggleReply()">↩ Reply</button>
+      </div>
+    </div>
+    <div class="detail-tags" id="d-tags"></div>
+    <div class="detail-body"><div class="detail-body-text" id="d-body"></div></div>
+    <div class="detail-reply" id="reply-area" style="display:none">
+      <div class="detail-reply-label">Reply</div>
+      <textarea class="reply-box" id="reply-text" placeholder="Write your reply…" rows="3"></textarea>
+      <div class="reply-actions">
+        <button class="detail-btn" onclick="toggleReply()">Cancel</button>
+        <button class="detail-btn primary" onclick="sendReply()">Send Reply</button>
+      </div>
+    </div>
+    <div class="stub-banner" id="stub-banner" style="display:none">
+      <div class="stub-banner-icon" id="stub-banner-icon">🔌</div>
+      <div class="stub-banner-text">
+        <div class="stub-banner-title" id="stub-banner-title">Connect this channel to reply</div>
+        <div class="stub-banner-desc" id="stub-banner-desc">Set up this integration to send and receive real messages.</div>
+        <button class="stub-connect-btn" onclick="openConnectFromBanner()">Connect Now →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div></div>
+
+<!-- AUTH OVERLAY -->
+<div id="auth-overlay">
+  <div class="auth-card">
+    <div class="auth-icon">📧</div>
+    <div class="auth-title">Connect Gmail</div>
+    <div class="auth-desc">Paste your Google OAuth Client ID to load your real inbox. Find it at Google Cloud Console → APIs & Services → Credentials.</div>
+    <input type="text" class="auth-input" id="gmail-client-id-input" placeholder="xxxx.apps.googleusercontent.com" value="">
+    <button class="auth-btn" onclick="connectGmail()">Connect Gmail →</button>
+    <div class="auth-skip" onclick="document.getElementById('auth-overlay').classList.remove('open')">Skip — browse demo data</div>
+  </div>
+</div>
+
+<!-- CONNECT MODAL -->
+<div id="connect-modal" onclick="if(event.target===this)closeConnectModal()">
+  <div class="connect-box">
+    <div class="connect-box-header">
+      <div class="connect-box-icon" id="cm-icon"></div>
+      <div><div class="connect-box-title" id="cm-title"></div><div class="connect-box-sub" id="cm-sub"></div></div>
+      <button class="connect-close" onclick="closeConnectModal()">×</button>
+    </div>
+    <div class="connect-box-body" id="cm-body"></div>
+  </div>
+</div>
+
+<!-- COMPOSE MODAL -->
+<div id="compose-modal" onclick="if(event.target===this)closeCompose()">
+  <div class="compose-box">
+    <div class="compose-hdr">
+      <span class="compose-title">New Message</span>
+      <button class="compose-close" onclick="closeCompose()">×</button>
+    </div>
+    <div class="compose-body">
+      <div class="compose-field">
+        <label>Via</label>
+        <select id="compose-source" style="background:none;border:none;color:var(--text);font-family:Barlow,sans-serif;font-size:13px;outline:none">
+          <option value="gmail">Gmail</option>
+          <option value="outlook">Outlook</option>
+          <option value="whatsapp">WhatsApp (copy/paste)</option>
+        </select>
+      </div>
+      <div class="compose-field">
+        <label>To</label><input id="compose-to" type="text" placeholder="Email address or phone…">
+      </div>
+      <div class="compose-field">
+        <label>Subj</label><input id="compose-subject" type="text" placeholder="Subject…">
+      </div>
+      <textarea class="compose-textarea" id="compose-body" placeholder="Write your message…"></textarea>
+    </div>
+    <div class="compose-footer">
+      <button class="detail-btn" onclick="closeCompose()">Discard</button>
+      <button class="compose-send-btn" onclick="sendCompose()">Send →</button>
+    </div>
+  </div>
+</div>
+
+<script src="nexus-config.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  CARRIER NEXUS  —  UNIFIED COMMS  (comms.html)
+//  Gmail live · Outlook live · WhatsApp localStorage · stubs
+// ═══════════════════════════════════════════════════════════════════
+const GMAIL_API = 'https://gmail.googleapis.com/gmail/v1/users/me';
+const GRAPH_API = 'https://graph.microsoft.com/v1.0';
+
+let gmailToken   = localStorage.getItem('nexus_gmail_token')   || null;
+let outlookToken = localStorage.getItem('nexus_outlook_token') || null;
+let msalApp = null;
+let allMessages = [], activeSource = 'all', activeMsg = null, activeConnectSrc = null;
+
+const SRC = {
+  gmail:     { label:'Gmail',     color:'#EA4335', emoji:'📧', live:false },
+  outlook:   { label:'Outlook',   color:'#0078D4', emoji:'📬', live:false },
+  whatsapp:  { label:'WhatsApp',  color:'#25D366', emoji:'💬', live:true  },
+  facebook:  { label:'Facebook',  color:'#1877F2', emoji:'👍', live:false },
+  instagram: { label:'Instagram', color:'#E1306C', emoji:'📸', live:false },
+  sms:       { label:'SMS',       color:'#6B7280', emoji:'📱', live:false },
+  linkedin:  { label:'LinkedIn',  color:'#0A66C2', emoji:'💼', live:false },
+};
+
+// ── DEMO DATA (stubs) ────────────────────────────────────────────────
+var DEMO_MSGS = [
+  { id:'fb_1', source:'facebook', fromName:'QuickFreight Brokers', from:'@QuickFreight', subject:'Load Available — Tampa to Atlanta', preview:'We have a 44k flatbed load ready today out of Tampa heading to Atlanta...', body:'We have a 44k flatbed load ready today out of Tampa heading to Atlanta.\n\nRate: $2.10/mi all-in. Pickup by 1pm today. Truck and driver available?\n\nRespond ASAP.', ts:new Date(Date.now()-7200000).toISOString(), read:false, tags:['load'] },
+  { id:'fb_2', source:'facebook', fromName:'SunState Logistics', from:'@SunStateLogistics', subject:'Following up on last week\'s rate con', preview:'Hey Jim, just checking on that rate con from last Tuesday...', body:'Hey Jim, just checking on that rate con from last Tuesday. Did you get paid out? We show it as delivered but settlement hasn\'t cleared our system yet.', ts:new Date(Date.now()-93600000).toISOString(), read:true, tags:['settlement'] },
+  { id:'ig_1', source:'instagram', fromName:'david_drives_hard', from:'@david_drives_hard', subject:'Available next week', preview:'Hey boss I\'m clear Mon–Wed next week. Any loads lined up for me?', body:'Hey boss I\'m clear Mon–Wed next week. Any loads lined up for me?\n\nGot my pre-trip done, truck\'s good to go.', ts:new Date(Date.now()-18000000).toISOString(), read:false, tags:[] },
+  { id:'sms_1', source:'sms', fromName:'Guillermo (+1 786-555-0142)', from:'+17865550142', subject:'Fuel stop', preview:'At the Pilot on I-75 MM 229. Fueled $312. Sending receipt.', body:'At the Pilot on I-75 MM 229. Fueled up $312. Sending receipt now.\n\n[Attachment: fuel_receipt_062426.jpg]', ts:new Date(Date.now()-3600000).toISOString(), read:false, tags:['fuel'] },
+  { id:'sms_2', source:'sms', fromName:'Avis (+1 813-555-0188)', from:'+18135550188', subject:'Load delivered', preview:'Load delivered. BOL signed. Back to Tampa by 4pm.', body:'Load delivered. Got the BOL signed. Back to Tampa by 4pm.\n\nShipper was great, no issues. Ready for the next one.', ts:new Date(Date.now()-10800000).toISOString(), read:true, tags:['BOL'] },
+  { id:'sms_3', source:'sms', fromName:'Nelson (+1 305-555-0177)', from:'+13055550177', subject:'Breakdown on I-10', preview:'Truck threw a code near Tallahassee. Pulled off safe. Calling road service.', body:'Truck threw a code near Tallahassee. Pulled off safe. Calling road service now.\n\nLoad is secure. Will update ETA when I have a fix time.\n\nUnit: 2019 Peterbilt 579', ts:new Date(Date.now()-25200000).toISOString(), read:false, tags:['breakdown'] },
+  { id:'li_1', source:'linkedin', fromName:'Marcus Webb', from:'Marcus Webb · TrueNorth Logistics', subject:'Partnership Opportunity — Owner Ops', preview:'Hi Jim, came across Carrier Trucking US and would love to discuss adding your fleet...', body:'Hi Jim,\n\nCame across Carrier Trucking US and would love to discuss adding your fleet to our preferred carrier list. We move 40–60 flatbed/step-deck loads weekly out of Florida.\n\nWould you be open to a 15-min call this week?\n\nBest,\nMarcus Webb\nSenior Broker · TrueNorth Logistics', ts:new Date(Date.now()-172800000).toISOString(), read:false, tags:[] },
+];
+
+function classifyMsg(subject, preview) {
+  var text = (subject+' '+preview).toLowerCase(), tags = [];
+  if (/rate conf|rate con|rateconfirm/.test(text)) tags.push('RC');
+  if (/settlement|remit|payment/.test(text)) tags.push('settlement');
+  if (/insurance|coi|certificate/.test(text)) tags.push('insurance');
+  if (/bol|bill of lading|proof of delivery/.test(text)) tags.push('BOL');
+  if (/permit|oversize/.test(text)) tags.push('permit');
+  if (/fuel|fueled/.test(text)) tags.push('fuel');
+  if (/breakdown|broke down/.test(text)) tags.push('breakdown');
+  if (/invoice|billing/.test(text)) tags.push('invoice');
+  return tags;
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────
+window.addEventListener('load', function() {
+  DEMO_MSGS.forEach(function(m){ allMessages.push(m); });
+  loadWhatsApp();
+  initGmailIfToken();
+  initOutlookIfToken();
+  renderList();
+  updateCounts();
+});
+
+// ── WHATSAPP ─────────────────────────────────────────────────────────
+function loadWhatsApp() {
+  var raw = [];
+  try { raw = JSON.parse(localStorage.getItem('nexus_whatsapp_messages')||'[]'); } catch(e){}
+  try {
+    var lines = JSON.parse(localStorage.getItem('nexus_whatsapp_lines')||'[]');
+    lines.forEach(function(l,i){ raw.push({id:'wal_'+i,sender:l.sender,text:l.text||l.message,ts:l.ts||l.timestamp}); });
+  } catch(e){}
+  raw.forEach(function(m,i){
+    var id = 'wa_'+(m.id||i);
+    if (allMessages.find(function(x){return x.id===id;})) return;
+    allMessages.push({ id:id, source:'whatsapp', fromName:m.sender||m.fromName||'WhatsApp Contact', from:m.phone||'', subject:(m.text||m.body||'').slice(0,60), preview:(m.text||m.body||'').slice(0,100), body:m.text||m.body||'', ts:m.ts||m.timestamp||new Date().toISOString(), read:true, tags:classifyMsg(m.text||'','') });
+  });
+}
+
+// ── GMAIL ────────────────────────────────────────────────────────────
+function initGmailIfToken() {
+  if (gmailToken && localStorage.getItem('nexus_gmail_client_id')) {
+    SRC.gmail.live=true; loadGmail();
+  } else if (!localStorage.getItem('nexus_gmail_client_id')) {
+    setTimeout(function(){ document.getElementById('auth-overlay').classList.add('open'); },700);
+  }
+}
+function connectGmail() {
+  var cid = document.getElementById('gmail-client-id-input').value.trim();
+  if (!cid){alert('Please paste your Client ID.');return;}
+  localStorage.setItem('nexus_gmail_client_id',cid);
+  document.getElementById('auth-overlay').classList.remove('open');
+  requestGmailToken(cid);
+}
+function requestGmailToken(clientId) {
+  if (typeof google==='undefined'){setTimeout(function(){requestGmailToken(clientId);},500);return;}
+  google.accounts.oauth2.initTokenClient({
+    client_id:clientId, login_hint:'crtruckus@gmail.com',
+    scope:'https://www.googleapis.com/auth/gmail.modify',
+    callback:function(resp){
+      if(resp.error){console.error(resp);return;}
+      gmailToken=resp.access_token;
+      localStorage.setItem('nexus_gmail_token',gmailToken);
+      localStorage.setItem('nexus_gmail_expiry',Date.now()+resp.expires_in*1000);
+      SRC.gmail.live=true; loadGmail();
+    }
+  }).requestAccessToken();
+}
+async function loadGmail() {
+  updateCntBadge('gmail','…');
+  try {
+    var r=await fetch(GMAIL_API+'/messages?maxResults=40&labelIds=INBOX',{headers:{'Authorization':'Bearer '+gmailToken}});
+    if(r.status===401){gmailToken=null;localStorage.removeItem('nexus_gmail_token');return;}
+    var data=await r.json();
+    allMessages=allMessages.filter(function(m){return m.source!=='gmail';});
+    await Promise.all((data.messages||[]).slice(0,30).map(fetchGmailMsg));
+    renderList(); updateCounts();
+  } catch(e){console.error('Gmail',e);}
+}
+async function fetchGmailMsg(m) {
+  try {
+    var r=await fetch(GMAIL_API+'/messages/'+m.id+'?format=metadata&metadataHeaders=From,Subject,Date',{headers:{'Authorization':'Bearer '+gmailToken}});
+    if(!r.ok) return;
+    var d=await r.json();
+    var h={};(d.payload&&d.payload.headers||[]).forEach(function(x){h[x.name.toLowerCase()]=x.value;});
+    var fn=(h['from']||'').replace(/<[^>]+>/,'').trim().replace(/^"|"$/g,'').trim()||(h['from']||'').split('@')[0];
+    var fa=((h['from']||'').match(/<([^>]+)>/)||[])[1]||h['from']||'';
+    allMessages.push({ id:'gmail_'+d.id, source:'gmail', fromName:fn||'Unknown', from:fa, subject:h['subject']||'(no subject)', preview:d.snippet||'', body:d.snippet||'', ts:h['date']?new Date(h['date']).toISOString():new Date(parseInt(d.internalDate)).toISOString(), read:!(d.labelIds||[]).includes('UNREAD'), threadId:d.threadId, tags:classifyMsg(h['subject']||'',d.snippet||''), _gmailId:d.id, _fullLoaded:false });
+  } catch(e){}
+}
+async function loadGmailFull(gmailId) {
+  try {
+    var r=await fetch(GMAIL_API+'/messages/'+gmailId+'?format=full',{headers:{'Authorization':'Bearer '+gmailToken}});
+    if(!r.ok) return null;
+    return extractBody((await r.json()).payload);
+  } catch(e){return null;}
+}
+function extractBody(payload) {
+  if(!payload) return '';
+  if(payload.body&&payload.body.data) return atob(payload.body.data.replace(/-/g,'+').replace(/_/g,'/'));
+  if(payload.parts) for(var p of payload.parts){if(p.mimeType==='text/plain'&&p.body&&p.body.data)return atob(p.body.data.replace(/-/g,'+').replace(/_/g,'/'));}
+  if(payload.parts) for(var p of payload.parts){var s=extractBody(p);if(s)return s;}
+  return '';
+}
+
+// ── OUTLOOK ──────────────────────────────────────────────────────────
+function initOutlookIfToken() {
+  if(outlookToken&&localStorage.getItem('nexus_ms_client_id')){SRC.outlook.live=true;loadOutlook();}
+}
+async function connectOutlook() {
+  var cid=document.getElementById('ci_nexus_ms_client_id');
+  var clientId=cid?cid.value.trim():'';
+  if(!clientId){alert('Enter your Microsoft App (Client) ID.');return;}
+  localStorage.setItem('nexus_ms_client_id',clientId);
+  try {
+    var cfg={auth:{clientId:clientId,authority:'https://login.microsoftonline.com/common',redirectUri:window.location.origin+'/comms.html'},cache:{cacheLocation:'localStorage',storeAuthStateInCookie:false}};
+    msalApp=new msal.PublicClientApplication(cfg);
+    await msalApp.initialize();
+    var resp=await msalApp.loginPopup({scopes:['Mail.ReadWrite','Mail.Send','User.Read']});
+    outlookToken=resp.accessToken;
+    localStorage.setItem('nexus_outlook_token',outlookToken);
+    SRC.outlook.live=true; closeConnectModal(); loadOutlook();
+  } catch(e){alert('Outlook auth failed: '+e.message);}
+}
+async function loadOutlook() {
+  updateCntBadge('outlook','…');
+  try {
+    var r=await fetch(GRAPH_API+'/me/mailFolders/inbox/messages?$top=30&$orderby=receivedDateTime desc&$select=id,subject,from,receivedDateTime,bodyPreview,isRead,conversationId',{headers:{'Authorization':'Bearer '+outlookToken}});
+    if(r.status===401){outlookToken=null;localStorage.removeItem('nexus_outlook_token');return;}
+    var data=await r.json();
+    allMessages=allMessages.filter(function(m){return m.source!=='outlook';});
+    (data.value||[]).forEach(function(m){
+      var fn=(m.from&&m.from.emailAddress&&m.from.emailAddress.name)||'Unknown';
+      var fa=(m.from&&m.from.emailAddress&&m.from.emailAddress.address)||'';
+      allMessages.push({ id:'outlook_'+m.id, source:'outlook', fromName:fn, from:fa, subject:m.subject||'(no subject)', preview:m.bodyPreview||'', body:m.bodyPreview||'', ts:m.receivedDateTime||new Date().toISOString(), read:m.isRead, threadId:m.conversationId||m.id, tags:classifyMsg(m.subject||'',m.bodyPreview||''), _outlookId:m.id });
+    });
+    renderList(); updateCounts();
+  } catch(e){console.error('Outlook',e);}
+}
+
+// ── RENDER ───────────────────────────────────────────────────────────
+function getFiltered(q) {
+  var msgs=allMessages.slice();
+  if(activeSource!=='all') msgs=msgs.filter(function(m){return m.source===activeSource;});
+  if(q){var ql=q.toLowerCase();msgs=msgs.filter(function(m){return(m.fromName+m.subject+m.preview).toLowerCase().includes(ql);});}
+  return msgs.sort(function(a,b){return new Date(b.ts)-new Date(a.ts);});
+}
+function renderList(q) {
+  var msgs=getFiltered(q||'');
+  document.getElementById('msg-list-count').textContent=msgs.length+' msg'+(msgs.length!==1?'s':'');
+  var el=document.getElementById('msg-list');
+  if(!msgs.length){el.innerHTML='<div class="empty-state">📭<br><br>No messages</div>';return;}
+  el.innerHTML=msgs.map(function(m){
+    var src=SRC[m.source]||{color:'#64748b',label:m.source};
+    var init=(m.fromName||'?').split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+    var isActive=activeMsg&&activeMsg.id===m.id;
+    return '<div class="msg-item'+(isActive?' active':'')+(m.read?'':' unread')+'" onclick="openMsg(\''+esc(m.id)+'\')">'
+      +(m.read?'':'<div class="unread-dot"></div>')
+      +'<div class="msg-avatar" style="background:'+src.color+'22;color:'+src.color+'">'+init+'</div>'
+      +'<div class="msg-item-body">'
+      +'<div class="msg-item-top"><span class="msg-item-name">'+esc(m.fromName)+'</span>'
+      +'<span class="src-pill" style="background:'+src.color+'1a;color:'+src.color+'">'+src.label+'</span>'
+      +'<span class="msg-item-time">'+relTime(m.ts)+'</span></div>'
+      +'<div class="msg-item-subject">'+esc(m.subject)+'</div>'
+      +'<div class="msg-item-preview">'+esc(m.preview)+'</div>'
+      +'</div></div>';
+  }).join('');
+}
+function relTime(iso){var d=new Date(iso),now=Date.now(),diff=now-d,min=Math.floor(diff/60000),hr=Math.floor(diff/3600000),day=Math.floor(diff/86400000);if(min<1)return'now';if(min<60)return min+'m';if(hr<24)return hr+'h';if(day<7)return day+'d';return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── OPEN MESSAGE ─────────────────────────────────────────────────────
+async function openMsg(id) {
+  var m=allMessages.find(function(x){return x.id===id;});
+  if(!m) return;
+  activeMsg=m; m.read=true;
+  renderList(document.getElementById('msg-search').value); updateCounts();
+  var src=SRC[m.source]||{color:'#64748b'};
+  var init=(m.fromName||'?').split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+  document.getElementById('d-avatar').style.cssText='background:'+src.color+'33;color:'+src.color;
+  document.getElementById('d-avatar').textContent=init;
+  document.getElementById('d-subject').textContent=m.subject;
+  document.getElementById('d-from').textContent=m.fromName+(m.from?' <'+m.from+'>':'');
+  document.getElementById('d-time').textContent=new Date(m.ts).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  document.getElementById('d-tags').innerHTML=m.tags&&m.tags.length?m.tags.map(function(t){return'<span class="tag-pill">'+esc(t)+'</span>';}).join(''):'';
+  var body=m.body;
+  if(m.source==='gmail'&&m._gmailId&&!m._fullLoaded){
+    document.getElementById('d-body').textContent='Loading…';
+    var full=await loadGmailFull(m._gmailId);
+    if(full){m.body=full;m._fullLoaded=true;body=full;}
+  }
+  document.getElementById('d-body').textContent=body||m.preview||'(no content)';
+  var live=(m.source==='gmail'&&gmailToken)||(m.source==='outlook'&&outlookToken)||m.source==='whatsapp';
+  var sb=document.getElementById('stub-banner');
+  var ra=document.getElementById('reply-area');
+  var rb=document.getElementById('reply-toggle-btn');
+  if(!live){
+    sb.style.display='flex'; sb.dataset.src=m.source;
+    document.getElementById('stub-banner-icon').textContent=src.emoji||'🔌';
+    document.getElementById('stub-banner-title').textContent='Connect '+src.label+' to reply';
+    document.getElementById('stub-banner-desc').textContent='This is demo data. Connect '+src.label+' to see real messages and send replies.';
+    rb.style.display='none'; ra.style.display='none';
+  } else {
+    sb.style.display='none'; rb.style.display='inline-flex';
+  }
+  document.getElementById('detail-empty').style.display='none';
+  var dv=document.getElementById('msg-detail-view');
+  dv.style.display='flex'; dv.style.flexDirection='column';
+}
+function toggleReply(){var ra=document.getElementById('reply-area');ra.style.display=ra.style.display==='none'?'block':'none';if(ra.style.display!=='none')document.getElementById('reply-text').focus();}
+async function sendReply() {
+  if(!activeMsg) return;
+  var text=document.getElementById('reply-text').value.trim();
+  if(!text){alert('Write a reply first.');return;}
+  if(activeMsg.source==='gmail'&&gmailToken){
+    var sub=activeMsg.subject.startsWith('Re:')?activeMsg.subject:'Re: '+activeMsg.subject;
+    var raw='To: '+activeMsg.from+'\r\nSubject: '+sub+'\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n'+text;
+    var enc=btoa(unescape(encodeURIComponent(raw))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    await fetch(GMAIL_API+'/messages/send',{method:'POST',headers:{'Authorization':'Bearer '+gmailToken,'Content-Type':'application/json'},body:JSON.stringify({raw:enc,threadId:activeMsg.threadId})});
+    alert('Reply sent via Gmail!');
+  } else if(activeMsg.source==='outlook'&&outlookToken&&activeMsg._outlookId){
+    await fetch(GRAPH_API+'/me/messages/'+activeMsg._outlookId+'/reply',{method:'POST',headers:{'Authorization':'Bearer '+outlookToken,'Content-Type':'application/json'},body:JSON.stringify({message:{},comment:text})});
+    alert('Reply sent via Outlook!');
+  }
+  document.getElementById('reply-text').value='';
+  document.getElementById('reply-area').style.display='none';
+}
+function archiveMsg(){
+  if(!activeMsg) return;
+  allMessages=allMessages.filter(function(m){return m.id!==activeMsg.id;});
+  activeMsg=null;
+  document.getElementById('detail-empty').style.display='flex';
+  document.getElementById('msg-detail-view').style.display='none';
+  renderList(document.getElementById('msg-search').value); updateCounts();
+}
+
+// ── COMPOSE ──────────────────────────────────────────────────────────
+function openCompose(){document.getElementById('compose-modal').classList.add('open');document.getElementById('compose-to').focus();}
+function closeCompose(){document.getElementById('compose-modal').classList.remove('open');}
+async function sendCompose() {
+  var src=document.getElementById('compose-source').value;
+  var to=document.getElementById('compose-to').value.trim();
+  var subject=document.getElementById('compose-subject').value.trim();
+  var body=document.getElementById('compose-body').value.trim();
+  if(!to||!body){alert('Fill in To and message body.');return;}
+  if(src==='gmail'&&gmailToken){
+    var raw='To: '+to+'\r\nSubject: '+(subject||'(no subject)')+'\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n'+body;
+    var enc=btoa(unescape(encodeURIComponent(raw))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    var r=await fetch(GMAIL_API+'/messages/send',{method:'POST',headers:{'Authorization':'Bearer '+gmailToken,'Content-Type':'application/json'},body:JSON.stringify({raw:enc})});
+    if(r.ok){closeCompose();alert('Sent via Gmail!');}else alert('Gmail send failed.');
+  } else if(src==='outlook'&&outlookToken){
+    var r=await fetch(GRAPH_API+'/me/sendMail',{method:'POST',headers:{'Authorization':'Bearer '+outlookToken,'Content-Type':'application/json'},body:JSON.stringify({message:{subject:subject||'(no subject)',body:{contentType:'Text',content:body},toRecipients:[{emailAddress:{address:to}}]}})});
+    if(r.ok){closeCompose();alert('Sent via Outlook!');}else alert('Outlook send failed.');
+  } else {
+    alert('Connect '+((SRC[src]||{label:src}).label)+' first, or use Gmail / Outlook.');
+  }
+}
+
+// ── SOURCE FILTER ────────────────────────────────────────────────────
+function setSource(src,btn){
+  activeSource=src;
+  document.querySelectorAll('.src-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  document.getElementById('msg-list-title').textContent=src==='all'?'All Messages':(SRC[src]||{label:src}).label;
+  renderList(document.getElementById('msg-search').value);
+}
+function searchMessages(q){renderList(q);}
+
+// ── COUNTS ───────────────────────────────────────────────────────────
+function updateCounts(){
+  var total=0;
+  ['gmail','outlook','whatsapp','facebook','instagram','sms','linkedin'].forEach(function(s){
+    var c=allMessages.filter(function(m){return m.source===s;}).length;
+    updateCntBadge(s,c); total+=c;
+  });
+  document.getElementById('cnt-all').textContent=total;
+}
+function updateCntBadge(s,v){var el=document.getElementById('cnt-'+s);if(el)el.textContent=v;}
+
+// ── CONNECT MODAL ────────────────────────────────────────────────────
+var CONNECT_INFO = {
+  facebook:  { icon:'👍', color:'#1877F2', title:'Facebook Messenger', sub:'Requires a Facebook Business Page', steps:[{n:1,text:'Create a <a href="https://business.facebook.com/" target="_blank">Facebook Business Page</a> for Carrier Trucking US.'},{n:2,text:'Go to <a href="https://developers.facebook.com/" target="_blank">developers.facebook.com</a>, create a Business-type App, and add the Messenger product.'},{n:3,text:'Under Messenger → Settings, generate a Page Access Token.'},{n:4,text:'Paste your Page Access Token below:'}], inputLabel:'Page Access Token', inputKey:'nexus_fb_token' },
+  instagram: { icon:'📸', color:'#E1306C', title:'Instagram Direct Messages', sub:'Requires Instagram Business + Facebook App', steps:[{n:1,text:'Convert your Instagram to a Business account in Instagram settings.'},{n:2,text:'Connect it to your Facebook Business Page.'},{n:3,text:'In your Facebook Developer App, add the Instagram product and enable Messaging.'},{n:4,text:'Paste your Instagram Page Access Token:'}], inputLabel:'Instagram Page Access Token', inputKey:'nexus_ig_token' },
+  sms:       { icon:'📱', color:'#6B7280', title:'SMS / Text Messages via Twilio', sub:'Powered by Twilio — requires account setup', steps:[{n:1,text:'Sign up at <a href="https://www.twilio.com/" target="_blank">twilio.com</a> and get a phone number.'},{n:2,text:'In Console → Account → API Keys, create a new API Key.'},{n:3,text:'Set the Messaging webhook on your number to receive incoming SMS.'},{n:4,text:'Enter your credentials below:'}], inputs:[{label:'Account SID',key:'nexus_twilio_sid'},{label:'Auth Token',key:'nexus_twilio_token'},{label:'Phone Number',key:'nexus_twilio_phone'}] },
+  linkedin:  { icon:'💼', color:'#0A66C2', title:'LinkedIn Messages', sub:'Restricted API — limited partner access only', steps:[{n:1,text:'LinkedIn\'s Messaging API requires <a href="https://business.linkedin.com/marketing-solutions/contact-us" target="_blank">LinkedIn Partner Program</a> access, not available to individual businesses without enterprise licensing.'},{n:2,text:'Alternatively, copy LinkedIn messages manually and paste them into the Nexus Feed or document notes.'},{n:3,text:'LinkedIn DM integration is available through LinkedIn Sales Navigator Enterprise plans.'}], noInput:true },
+  outlook:   { icon:'📬', color:'#0078D4', title:'Outlook / Microsoft 365', sub:'Connect via Azure App Registration', steps:[{n:1,text:'Go to <a href="https://portal.azure.com/" target="_blank">Azure Portal</a> → App Registrations → New Registration.'},{n:2,text:'Set redirect URI to: <code style="background:#1e2d45;padding:2px 6px;border-radius:3px;font-size:11px">'+window.location.origin+'/comms.html</code>'},{n:3,text:'Add API Permissions: <b>Mail.ReadWrite</b>, <b>Mail.Send</b>, <b>User.Read</b>'},{n:4,text:'Paste your Application (Client) ID below:'}], inputLabel:'Application (Client) ID', inputKey:'nexus_ms_client_id', connectBtn:'connectOutlook()' },
+};
+function openConnectModal(src){
+  activeConnectSrc=src;
+  var info=CONNECT_INFO[src]; if(!info) return;
+  document.getElementById('cm-icon').innerHTML='<span style="font-size:22px">'+info.icon+'</span>';
+  document.getElementById('cm-icon').style.background=info.color+'22';
+  document.getElementById('cm-title').textContent=info.title;
+  document.getElementById('cm-sub').textContent=info.sub;
+  var html='<div class="connect-section"><div class="connect-section-title">Setup Steps</div>';
+  info.steps.forEach(function(s){html+='<div class="connect-step"><div class="step-num">'+s.n+'</div><div class="step-text">'+s.text+'</div></div>';});
+  html+='</div>';
+  if(!info.noInput){
+    html+='<div class="connect-section">';
+    if(info.inputs){
+      info.inputs.forEach(function(inp){html+='<div style="margin-bottom:5px;font-size:12px;color:var(--mid)">'+inp.label+'</div><input class="connect-input" id="ci_'+inp.key+'" type="text" placeholder="'+inp.label+'" value="'+(localStorage.getItem(inp.key)||'')+'"><br>';});
+    } else if(info.inputLabel){
+      html+='<div style="margin-bottom:5px;font-size:12px;color:var(--mid)">'+info.inputLabel+'</div><input class="connect-input" id="ci_'+info.inputKey+'" type="text" placeholder="'+info.inputLabel+'" value="'+(localStorage.getItem(info.inputKey)||'')+'">';
+    }
+    html+='<button class="connect-save-btn" onclick="'+(info.connectBtn||'saveConnectCreds(\''+src+'\')')+'">'+( info.connectBtn?'Connect →':'Save Credentials')+'</button></div>';
+  }
+  document.getElementById('cm-body').innerHTML=html;
+  document.getElementById('connect-modal').classList.add('open');
+}
+function openConnectFromBanner(){var src=document.getElementById('stub-banner').dataset.src;if(src)openConnectModal(src);}
+function closeConnectModal(){document.getElementById('connect-modal').classList.remove('open');activeConnectSrc=null;}
+function saveConnectCreds(src){
+  var info=CONNECT_INFO[src]; if(!info) return;
+  if(info.inputs){info.inputs.forEach(function(inp){var el=document.getElementById('ci_'+inp.key);if(el&&el.value.trim())localStorage.setItem(inp.key,el.value.trim());});}
+  else if(info.inputKey){var el=document.getElementById('ci_'+info.inputKey);if(el&&el.value.trim())localStorage.setItem(info.inputKey,el.value.trim());}
+  closeConnectModal();
+  alert('Credentials saved. Full '+info.title+' integration requires server-side setup for CORS.\nContact your developer to complete the backend proxy.');
+}
+</script>
+<script src="nexus-sidebar.js"></script>
+</body>
+</html>
