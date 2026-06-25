@@ -37,14 +37,17 @@
 
   // Section definitions — key, label, pages in section (for auto-expand)
   var SECTIONS = [
-    { key:'ops',     label:'Operations',     pages:['index.html','active-loads.html','dispatcher-hub.html','load-board.html'] },
-    { key:'driver',  label:'Driver',         pages:['driver-command.html','driver-intake.html','my-pay.html','driver-availability.html','driver-profile.html','social-recruiting.html','equipment-marketplace.html'] },
-    { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','doc-inbox.html'] },
-    { key:'finance', label:'Finance',        pages:['financials.html','settlements.html','weekly-settlements.html','invoicing.html','expenses.html','ifta.html','tax-forms.html'] },
-    { key:'maint',   label:'Maintenance',    pages:['equipment.html','tires.html','pm-schedule.html','dvir.html','fuel.html','scale-tickets.html','weight-calculator.html','driver-services.html'] },
-    { key:'compliance', label:'Compliance',  pages:['dot-compliance.html','permits.html','alerts.html'] },
-    { key:'comms',   label:'Communications', pages:['nexus-connect.html','whatsapp-import.html'] },
-    { key:'admin',   label:'Admin',          pages:['admin-users.html','member-management.html','nexus-ai.html','data-import.html'] },
+    { key:'ops',     label:'Operations',     pages:['fleet-command.html','active-loads.html','settlements.html','weekly-settlements.html','settlement-review.html','drivers.html','permits.html','pods.html','issues.html'] },
+    { key:'dispatch',label:'Dispatch',       pages:['dispatcher-hub.html','load-board.html','commissions.html','available-dispatchers.html','available-drivers.html'] },
+    { key:'driver',  label:'Driver',         pages:['driver-command.html','driver-availability.html','equipment-marketplace.html','my-pay.html','social-recruiting.html','driver-intake.html','driver-profile.html'] },
+    { key:'finance', label:'Finance',        pages:['invoicing.html','whatsapp-import.html','expenses.html','financials.html','ifta.html'] },
+    { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','emails.html','doc-inbox.html'] },
+    { key:'contacts',label:'Contacts',       pages:['contacts.html'] },
+    { key:'taxhr',   label:'Tax & HR',       pages:['tax-forms.html','w9.html'] },
+    { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html'] },
+    { key:'admin',   label:'Admin',          pages:['member-management.html','admin-users.html'] },
+    { key:'intel',   label:'Intelligence',   pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html','search.html'] },
+    { key:'comms',   label:'Communications', pages:['nexus-connect.html'] },
   ];
 
   // Determine which section the current page lives in
@@ -175,64 +178,84 @@
     people:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
     signal:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>',
     wallet:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 12h.01M2 10h20"/><path d="M14 12a2 2 0 0 1 4 0v2a2 2 0 0 1-4 0v-2z"/></svg>',
-    dbimport:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4.03 3-9 3S3 13.66 3 12"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/></svg>',
   };
 
   var navHtml =
     sec('ops', 'Operations',
-      lnk('index.html',               I.grid,    'Dashboard') +
-      lnk('active-loads.html',        I.loads,   'Active Loads') +
-      lnk('dispatcher-hub.html',      I.monitor, 'Dispatch Board') +
-      lnk('load-board.html',          I.map,     'Load Board')
+      lnk('fleet-command.html',        I.grid,    'Operations Dashboard') +
+      lnk('active-loads.html',         I.loads,   'Active Loads') +
+      lnk('settlements.html',          I.settle,  'Settlements') +
+      lnk('weekly-settlements.html',   I.builder, 'Settlement Builder') +
+      lnk('settlement-review.html',    I.review,  'Approval Queue') +
+      lnk('drivers.html',              I.driver,  'Drivers') +
+      lnk('permits.html',              I.permit,  'Permits') +
+      lnk('pods.html',                 I.clock,   'Missing PODs') +
+      lnk('issues.html',               I.issue,   'Issues')
+    ) +
+    sec('dispatch', 'Dispatch',
+      lnk('dispatcher-hub.html',       I.monitor, 'Dispatch Board') +
+      lnk('load-board.html',           I.map,     'Load Board') +
+      lnk('commissions.html',          I.comm,    'Commissions') +
+      lnk('available-dispatchers.html',I.team,    'Dispatcher Roster') +
+      lnk('available-drivers.html',    I.person,  'Driver Pool')
     ) +
     sec('driver', 'Driver',
-      lnk('driver-command.html',      I.signal,  'Driver Command') +
-      lnk('driver-intake.html',       I.upload,  'Driver Intake') +
-      lnk('my-pay.html',              I.wallet,  'My Pay') +
-      lnk('driver-availability.html', I.signal,  'Availability') +
-      lnk('driver-profile.html',      I.person,  'Driver Profile') +
-      lnk('social-recruiting.html',   I.people,  'Driver Recruiting') +
-      lnk('equipment-marketplace.html', I.market, 'Equipment Marketplace')
-    ) +
-    sec('docs', 'Documents',
-      lnk('documents.html',           I.vault,   'Document Vault') +
-      lnk('upload.html',              I.upload,  'Upload Docs') +
-      lnk('inbox-sync.html',          I.sync,    'Email Import') +
-      lnk('doc-inbox.html',           I.inbox,   'Review Queue')
+      lnk('my-pay.html',               I.wallet,  'My Pay') +
+      lnk('driver-command.html',       I.signal,  'Driver Command') +
+      lnk('driver-intake.html',         I.upload,  'Driver Intake') +
+      lnk('driver-profile.html',         I.person,  'My Profile') +
+      lnk('driver-availability.html',  I.signal,  'Availability Network') +
+      lnk('equipment-marketplace.html', I.market,  'Equipment Marketplace') +
+      lnk('social-recruiting.html',     I.people,  'Community &amp; Jobs')
     ) +
     sec('finance', 'Finance',
-      lnk('financials.html',          I.bar,     'Financials') +
-      lnk('settlements.html',         I.settle,  'Settlements') +
-      lnk('weekly-settlements.html',  I.builder, 'Settlement Builder') +
-      lnk('invoicing.html',           I.invoice, 'Invoicing') +
-      lnk('expenses.html',            I.expense, 'Expenses') +
-      lnk('ifta.html',                I.ifta,    'IFTA Reporting') +
-      lnk('tax-forms.html',           I.tax,     '1099-NEC / W-9')
+      lnk('invoicing.html',            I.invoice, 'Invoicing') +
+      lnk('whatsapp-import.html',      I.chat,    'WhatsApp Import') +
+      lnk('expenses.html',             I.expense, 'Expenses') +
+      lnk('financials.html',           I.bar,     'Financials') +
+      lnk('ifta.html',                 I.ifta,    'IFTA Reporting')
+    ) +
+    sec('docs', 'Documents',
+      lnk('documents.html',            I.vault,   'Document Vault') +
+      lnk('upload.html',               I.upload,  'Upload Docs') +
+      lnk('inbox-sync.html',           I.sync,    'Email Import') +
+      lnk('doc-inbox.html',            I.inbox,   'Review Queue') +
+      lnk('emails.html',               I.email,   'Emails')
+    ) +
+    sec('contacts', 'Contacts',
+      lnk('contacts.html',             I.contact, 'Directory') +
+      '<a href="contacts.html?tab=broker" class="sidebar-link">' + I.team + 'Brokers</a>'
+    ) +
+    sec('taxhr', 'Tax & HR',
+      lnk('tax-forms.html',            I.tax,     '1099-NEC') +
+      lnk('w9.html',                   I.tax,     'W-9 Forms')
     ) +
     sec('maint', 'Maintenance',
-      lnk('equipment.html',           I.truck,   'Fleet & Equipment') +
-      lnk('tires.html',               I.tire,    'Tires') +
-      lnk('pm-schedule.html',         I.cal,     'PM Schedule') +
-      lnk('dvir.html',                I.dvir,    'Inspection Reports') +
-      lnk('fuel.html',                I.fuel,    'Fuel') +
-      lnk('scale-tickets.html',       I.scale,   'Scale Tickets') +
-      lnk('weight-calculator.html',   I.scale,   'Weight Calculator') +
-      lnk('driver-services.html',     I.service, 'Driver Services')
-    ) +
-    sec('compliance', 'Compliance',
-      lnk('dot-compliance.html',      I.dot,     'DOT Compliance') +
-      lnk('permits.html',             I.permit,  'Permits') +
-      lnk('alerts.html',              I.clock,   'Expiration Alerts')
-    ) +
-    sec('comms', 'Communications',
-      lnk('nexus-connect.html',       I.connect, 'Nexus Connect') +
-      lnk('whatsapp-import.html',     I.chat,    'WhatsApp Import')
+      lnk('equipment.html',            I.truck,   'Fleet & Equipment') +
+      lnk('maintenance.html',          I.wrench,  'Maintenance Log') +
+      lnk('pm-schedule.html',          I.cal,     'PM Schedule') +
+      lnk('pretrip.html',               I.dvir,    'Pre-Trip Inspection') +
+      lnk('dvir.html',                 I.dvir,    'DVIR History') +
+      lnk('dot-compliance.html',       I.dot,     'DOT Compliance') +
+      lnk('tires.html',                I.tire,    'Tires') +
+      lnk('fuel.html',                 I.fuel,    'Fuel') +
+      lnk('driver-services.html',      I.service, 'Driver Services') +
+      lnk('scale-tickets.html',        I.scale,   'Scale Tickets') +
+      lnk('weight-calculator.html',   I.scale,   'Weight Calculator')
     ) +
     sec('admin', 'Admin',
-      lnk('admin-users.html',         I.admin,   'User Accounts') +
-      lnk('member-management.html',   I.members, 'Members') +
-      lnk('nexus-ai.html',            I.ai,      'AI Assistant') +
-      lnk('data-import.html',         I.dbimport,'Data Import')
+      lnk('member-management.html',    I.members, 'Members') +
+      lnk('admin-users.html',          I.admin,   'User Accounts')
+    ) +
+    sec('intel', 'Intelligence',
+      lnk('nexus-ai.html',             I.ai,      'AI Assistant') +
+      lnk('analysis.html',             I.bar,     'Analytics') +
+      lnk('drive-settings.html',       I.file,    'Integrations') +
+      lnk('eld-settings.html',         I.eld,     'ELD Integration') +
+      lnk('search.html',               I.search,  'Search Everything')
+    ) +
+    sec('comms', 'Communications',
+      lnk('nexus-connect.html',        I.connect, 'Nexus Connect')
     );
 
   const html = `
@@ -291,42 +314,6 @@
     document.body.insertAdjacentHTML('afterbegin', html);
   }
 
-
-  // ── Hamburger + Overlay for mobile ──
-  var hamburger = document.createElement('button');
-  hamburger.className = 'nexus-hamburger';
-  hamburger.setAttribute('aria-label', 'Open navigation menu');
-  hamburger.innerHTML = '<span></span><span></span><span></span>';
-  document.body.appendChild(hamburger);
-
-  var overlay = document.createElement('div');
-  overlay.className = 'nexus-overlay';
-  document.body.appendChild(overlay);
-
-  var sidebarEl = document.getElementById('nexus-sidebar');
-
-  function openSidebar() {
-    sidebarEl.classList.add('sidebar-open');
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeSidebar() {
-    sidebarEl.classList.remove('sidebar-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  hamburger.addEventListener('click', function() {
-    sidebarEl.classList.contains('sidebar-open') ? closeSidebar() : openSidebar();
-  });
-  overlay.addEventListener('click', closeSidebar);
-
-  sidebarEl.querySelectorAll('.sidebar-link').forEach(function(link) {
-    link.addEventListener('click', function() {
-      if (window.innerWidth <= 900) closeSidebar();
-    });
-  });
-
   // ── Sidebar CSS ──
   if (!document.getElementById('nexus-sidebar-styles')) {
     const style = document.createElement('style');
@@ -349,81 +336,6 @@
       .sidebar-link svg{width:14px!important;height:14px!important;flex-shrink:0!important;opacity:.7!important;}
       .sidebar-link.active svg{opacity:1!important;}
       #nexus-sidebar .sidebar-nav{overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;}
-      /* ── HAMBURGER BUTTON (mobile/tablet only) ── */
-      .nexus-hamburger {
-        display: none;
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        z-index: 1001;
-        background: #0f172a;
-        border: 1px solid rgba(255,255,255,0.15);
-        border-radius: 8px;
-        padding: 8px 10px;
-        cursor: pointer;
-        flex-direction: column;
-        gap: 5px;
-        align-items: center;
-        justify-content: center;
-      }
-      .nexus-hamburger span {
-        display: block;
-        width: 20px;
-        height: 2px;
-        background: #fff;
-        border-radius: 2px;
-        transition: all 0.2s;
-      }
-      .nexus-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.55);
-        z-index: 999;
-        backdrop-filter: blur(2px);
-      }
-      @media (max-width: 900px) {
-        .nexus-hamburger { display: flex !important; }
-        .nexus-overlay.active { display: block !important; }
-        nav.sidebar {
-          transform: translateX(-240px) !important;
-          transition: transform 0.28s cubic-bezier(0.4,0,0.2,1) !important;
-          z-index: 1000 !important;
-          top: 0 !important;
-        }
-        nav.sidebar.sidebar-open {
-          transform: translateX(0) !important;
-        }
-        body { padding-left: 0 !important; margin-left: 0 !important; }
-        .main, .content, .page-content, .content-area,
-        .content-wrapper, .page-wrapper, .main-content,
-        [class*="main-"], [class*="-main"] {
-          margin-left: 0 !important;
-          padding-left: 12px !important;
-          padding-right: 12px !important;
-        }
-        body > .main, body > .content, body > div:not(nav):first-of-type {
-          padding-top: 56px !important;
-        }
-        table { display: block !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
-        .sidebar-footer .user-email { display: none !important; }
-      }
-      @media (max-width: 480px) {
-        .sidebar-link { padding: 10px 16px !important; font-size: 14px !important; }
-        button, .btn, [class*="btn-"], a[class*="btn"] {
-          min-height: 44px !important;
-          font-size: 14px !important;
-        }
-        .kpi-grid, .stats-grid, .metrics-grid,
-        [class*="kpi-"], [class*="stat-card"],
-        .grid-2, .grid-3, .grid-4 {
-          grid-template-columns: 1fr !important;
-        }
-        .card, .panel, [class*="card-"], [class*="-card"] {
-          padding: 12px !important;
-        }
-      }
-
     `;
     document.head.appendChild(style);
   }
@@ -545,136 +457,5 @@
     var btn = document.getElementById('nexus-co-selector');
     if (dd && btn && !btn.contains(e.target)) dd.style.display = 'none';
   });
-
-
-
-// ══════════════════════════════════════════════════════════════════
-//  NexusAlerts — Global Expiration Banner (injected on every page)
-// ══════════════════════════════════════════════════════════════════
-window.NexusAlerts = (function() {
-  var CUSTOM_KEY = 'nexus_custom_alerts';
-  var BANNER_ID  = 'nexus-alert-banner';
-  var SESSION_KEY= 'nexus_banner_dismissed';
-
-  function daysDiff(dateStr) {
-    if (!dateStr) return null;
-    var today = new Date(); today.setHours(0,0,0,0);
-    var d = new Date(dateStr + 'T12:00:00');
-    if (isNaN(d)) return null;
-    return Math.round((d - today) / 86400000);
-  }
-
-  function collectUrgent() {
-    var items = [];
-
-    // Custom alerts
-    try {
-      var customs = JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]');
-      customs.forEach(function(a) {
-        if (!a.active && a.active !== undefined) return;
-        var days = daysDiff(a.expiry);
-        if (days === null) return;
-        if (days <= (a.threshold || 30)) {
-          items.push({ label: a.name + (a.assignedTo ? ' (' + a.assignedTo + ')' : ''), days: days });
-        }
-      });
-    } catch(e) {}
-
-    // System: driver profiles CDL + medical
-    try {
-      var profiles = JSON.parse(localStorage.getItem('nexus_driver_profiles') || '[]');
-      profiles.forEach(function(p) {
-        var name = p.name || (p.firstName + ' ' + p.lastName) || 'Driver';
-        if (p.credentials) {
-          var cdlDays = daysDiff(p.credentials.cdl && p.credentials.cdl.expiry);
-          if (cdlDays !== null && cdlDays <= 30) items.push({ label: name + ' CDL', days: cdlDays });
-          var medDays = daysDiff(p.credentials.medical && p.credentials.medical.expiry);
-          if (medDays !== null && medDays <= 30) items.push({ label: name + ' Medical', days: medDays });
-        }
-      });
-    } catch(e) {}
-
-    // System: equipment registrations
-    try {
-      var equip = JSON.parse(localStorage.getItem('nexus_equipment') || '[]');
-      equip.forEach(function(v) {
-        var unit = v.unit || v.unitNumber || v.id || 'Vehicle';
-        var days = daysDiff(v.registration_expiry || v.regExpiry);
-        if (days !== null && days <= 30) items.push({ label: unit + ' Registration', days: days });
-      });
-    } catch(e) {}
-
-    // Sort most urgent first
-    items.sort(function(a, b) { return a.days - b.days; });
-    return items;
-  }
-
-  function checkAndShowBanner() {
-    // Don't show if already dismissed this session
-    if (sessionStorage.getItem(SESSION_KEY)) return;
-
-    // Don't show on alerts.html itself
-    var page = location.pathname.split('/').pop() || '';
-    if (page === 'alerts.html') return;
-
-    var items = collectUrgent();
-    if (!items.length) return;
-
-    var existing = document.getElementById(BANNER_ID);
-    if (existing) existing.remove();
-
-    // Build label string — up to 2 items
-    var parts = items.slice(0, 2).map(function(it) {
-      if (it.days < 0) return it.label + ' (EXPIRED)';
-      if (it.days === 0) return it.label + ' (TODAY)';
-      return it.label + ' (' + it.days + 'd)';
-    });
-    var extra = items.length > 2 ? ' and ' + (items.length - 2) + ' more' : '';
-    var msg = parts.join(' · ') + extra;
-
-    var banner = document.createElement('div');
-    banner.id = BANNER_ID;
-    banner.style.cssText = [
-      'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:9999',
-      'background:#f59e0b', 'color:#1c1917',
-      'height:36px', 'display:flex', 'align-items:center',
-      'padding:0 16px', 'gap:10px',
-      'font-family:\'Barlow\',sans-serif', 'font-size:13px', 'font-weight:600',
-      'box-shadow:0 2px 8px rgba(0,0,0,.35)'
-    ].join(';');
-
-    banner.innerHTML =
-      '<span style="flex-shrink:0;">⚠️</span>' +
-      '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' +
-        items.length + ' item' + (items.length !== 1 ? 's' : '') + ' expiring soon: ' + msg +
-      '</span>' +
-      '<a href="alerts.html" style="color:#1c1917;font-weight:700;white-space:nowrap;text-decoration:underline;flex-shrink:0;">View Alerts →</a>' +
-      '<button id="nexus-banner-dismiss" style="background:none;border:none;cursor:pointer;font-size:16px;line-height:1;color:#1c1917;flex-shrink:0;padding:0 4px;" title="Dismiss for this session">×</button>';
-
-    document.body.insertBefore(banner, document.body.firstChild);
-
-    // Shift page content down to avoid overlap
-    var style = document.createElement('style');
-    style.id = 'nexus-banner-shift';
-    style.textContent = 'body { padding-top: 36px !important; } nav.sidebar { top: 36px !important; } .topbar { top: 36px !important; }';
-    document.head.appendChild(style);
-
-    document.getElementById('nexus-banner-dismiss').addEventListener('click', function() {
-      sessionStorage.setItem(SESSION_KEY, '1');
-      banner.remove();
-      var s = document.getElementById('nexus-banner-shift');
-      if (s) s.remove();
-    });
-  }
-
-  // Auto-run after DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', checkAndShowBanner);
-  } else {
-    setTimeout(checkAndShowBanner, 0);
-  }
-
-  return { checkAndShowBanner: checkAndShowBanner };
-})();
 
 })();

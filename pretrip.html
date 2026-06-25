@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Pre-Trip Inspection — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f172a;--surface:#1e293b;--surface2:#253148;--surface3:#334155;--border:rgba(148,163,184,.12);--text:#f8fafc;--muted:#94a3b8;--orange:#f97316;--odim:rgba(249,115,22,.15);--green:#10b981;--gdim:rgba(16,185,129,.12);--red:#ef4444;--rdim:rgba(239,68,68,.12);--yellow:#f59e0b;--ydim:rgba(245,158,11,.12);--blue:#3b82f6;--bdim:rgba(59,130,246,.12);--r:10px;--f:'Barlow',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--f);font-size:15px;min-height:100vh;}
+#mc{margin-left:220px;min-height:100vh;padding:24px;}
+@media(max-width:900px){#mc{margin-left:0;padding:16px;}}
+.screen{display:none;}.screen.active{display:block;}
+.pt{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;}
+.ps{color:var(--muted);font-size:13px;margin-top:2px;}
+.hr{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:20px;}
+.bg{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:7px;font-size:13px;cursor:pointer;font-family:var(--f);font-weight:500;}
+.bg:hover{background:var(--surface2);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:14px;}
+.ct{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;}
+.fl{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px;display:block;}
+.fi,.fs{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-family:var(--f);font-size:15px;outline:none;appearance:none;-webkit-appearance:none;}
+.fi:focus,.fs:focus{border-color:var(--orange);}
+.fr{margin-bottom:14px;}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:600px){.fg{grid-template-columns:1fr;}}
+.ttabs{display:flex;gap:8px;}
+.ttab{flex:1;padding:10px 8px;border-radius:8px;background:var(--surface2);border:2px solid transparent;text-align:center;cursor:pointer;font-size:14px;font-weight:600;color:var(--muted);transition:all .15s;}
+.ttab.active{background:var(--odim);border-color:var(--orange);color:var(--orange);}
+.ttic{font-size:18px;display:block;margin-bottom:3px;}
+.pcard{background:var(--surface2);border-radius:9px;padding:14px;margin-bottom:14px;}
+.pm{display:flex;justify-content:space-between;align-items:flex-start;}
+.pd{font-weight:600;font-size:14px;}
+.pb{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+.pb.ok{background:var(--gdim);color:var(--green);}
+.pb.warn{background:var(--ydim);color:var(--yellow);}
+.pdet{color:var(--muted);font-size:12px;margin-top:4px;}
+.pdi{font-size:12px;color:var(--yellow);padding:4px 0;border-top:1px solid var(--border);}
+.crow{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface2);border-radius:8px;cursor:pointer;}
+.crow input[type=checkbox]{width:20px;height:20px;accent-color:var(--orange);flex-shrink:0;margin-top:1px;cursor:pointer;}
+.ct2{font-size:14px;line-height:1.4;}
+.cta{width:100%;padding:14px;border-radius:10px;background:var(--orange);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;border:none;cursor:pointer;transition:opacity .15s;}
+.cta:hover{opacity:.9;}.cta:disabled{opacity:.4;cursor:not-allowed;}
+.cta.green{background:var(--green);}.cta.red{background:var(--red);}
+.pcon{margin-bottom:18px;}
+.pm2{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.pl{font-size:13px;font-weight:600;}
+.pp{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--orange);}
+.pbar{height:6px;background:var(--surface3);border-radius:99px;overflow:hidden;}
+.pfil{height:100%;background:var(--orange);border-radius:99px;transition:width .3s;}
+.sh{background:var(--surface);border-radius:10px;padding:14px 16px;margin-bottom:12px;border-left:4px solid var(--orange);}
+.sn{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;}
+.sc{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;}
+.stags{display:flex;gap:8px;margin-top:6px;}
+.stag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;}
+.stag.tractor{background:var(--bdim);color:var(--blue);}
+.stag.trailer{background:var(--odim);color:var(--orange);}
+.ir{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:13px 14px;margin-bottom:8px;transition:border-color .15s;}
+.ir.ok{border-color:rgba(16,185,129,.35);}
+.ir.def{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.04);}
+.ir.na{opacity:.55;}
+.il{font-size:15px;font-weight:600;margin-bottom:3px;}
+.it{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.ibs{display:flex;gap:8px;}
+.ib{flex:1;padding:10px 4px;border-radius:7px;font-size:13px;font-weight:700;border:2px solid transparent;cursor:pointer;font-family:var(--f);text-align:center;transition:all .12s;background:var(--surface2);color:var(--muted);}
+.ib.ok{color:var(--green);border-color:rgba(16,185,129,.3);}
+.ib.ok.sel{background:var(--green);color:#fff;border-color:var(--green);}
+.ib.def{color:var(--red);border-color:rgba(239,68,68,.3);}
+.ib.def.sel{background:var(--red);color:#fff;border-color:var(--red);}
+.ib.na{color:var(--muted);border-color:rgba(148,163,184,.2);}
+.ib.na.sel{background:var(--surface3);color:var(--text);border-color:var(--surface3);}
+.idn{margin-top:8px;padding:8px 10px;background:var(--rdim);border-radius:6px;font-size:12px;color:var(--red);display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
+.snb{display:flex;overflow-x:auto;gap:6px;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none;}
+.snb::-webkit-scrollbar{display:none;}
+.snbtn{flex-shrink:0;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);transition:all .15s;white-space:nowrap;}
+.snbtn.act{border-color:var(--orange);color:var(--orange);background:var(--odim);}
+.snbtn.done{border-color:rgba(16,185,129,.35);color:var(--green);}
+.snbtn.hdef{border-color:rgba(239,68,68,.5);color:var(--red);}
+.inav{display:flex;gap:10px;margin-top:18px;}
+.bnav{flex:1;padding:13px;border-radius:9px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;cursor:pointer;border:none;transition:opacity .15s;}
+.bnav:hover{opacity:.85;}
+.bnav.back{background:var(--surface2);color:var(--text);}
+.bnav.next{background:var(--orange);color:#fff;}
+.bnav.fin{background:var(--green);color:#fff;}
+.oos{background:var(--rdim);border:1px solid rgba(239,68,68,.5);border-radius:9px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.sst{display:flex;gap:10px;margin-bottom:16px;}
+.sb{flex:1;background:var(--surface);border-radius:9px;padding:12px;text-align:center;border:1px solid var(--border);}
+.sbn{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;}
+.sbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.sbn.g{color:var(--green);}.sbn.r{color:var(--red);}.sbn.gr{color:var(--muted);}
+.dc{background:var(--surface);border-radius:9px;padding:13px 14px;margin-bottom:10px;border-left:4px solid var(--yellow);}
+.dc.major{border-left-color:var(--red);}
+.dch{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.dcs{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.dsev{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.dsev.minor{background:var(--ydim);color:var(--yellow);}
+.dsev.major{background:var(--rdim);color:var(--red);}
+.dl{font-weight:600;font-size:14px;margin-bottom:3px;}
+.dd{font-size:13px;color:var(--muted);}
+.dp{width:72px;height:56px;object-fit:cover;border-radius:6px;margin-top:8px;cursor:pointer;border:2px solid var(--border);}
+.cb{background:var(--surface);border-radius:10px;padding:18px;border:1px solid var(--border);margin-bottom:16px;}
+.ctit{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--orange);margin-bottom:10px;}
+.ctxt{font-size:13px;color:var(--muted);line-height:1.55;}
+.ctxt strong{color:var(--text);}
+.sig{width:100%;background:var(--surface2);border:2px solid var(--border);border-radius:9px;padding:14px;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text);text-align:center;letter-spacing:1px;margin-top:8px;outline:none;}
+.sig:focus{border-color:var(--orange);}
+.dh{text-align:center;padding:32px 20px;}
+.di{font-size:64px;display:block;margin-bottom:14px;}
+.dt{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;color:var(--green);}
+.did{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-top:4px;}
+.dsub{color:var(--muted);font-size:14px;margin-top:8px;}
+.dacts{display:flex;flex-direction:column;gap:10px;margin-top:24px;}
+.dact{padding:13px;border-radius:9px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);display:flex;align-items:center;justify-content:center;gap:8px;}
+.dact:hover{background:var(--surface2);}
+.hrow{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:13px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.hdate{font-weight:600;font-size:14px;}
+.hmeta{font-size:12px;color:var(--muted);margin-top:2px;}
+.hst{font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+.hst.ok{background:var(--gdim);color:var(--green);}
+.hst.warn{background:var(--ydim);color:var(--yellow);}
+.hst.oos{background:var(--rdim);color:var(--red);}
+.hbts{display:flex;gap:6px;margin-top:6px;justify-content:flex-end;}
+.hbt{padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);}
+.hbt:hover{background:var(--surface2);color:var(--text);}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1000;display:none;align-items:flex-end;justify-content:center;}
+.mo.open{display:flex;}
+.ms{background:var(--surface);border-radius:18px 18px 0 0;padding:24px 20px 36px;width:100%;max-width:600px;animation:sUp .25s ease;max-height:90vh;overflow-y:auto;}
+@keyframes sUp{from{transform:translateY(60px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.mtit{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;margin-bottom:4px;}
+.msub{font-size:13px;color:var(--muted);margin-bottom:18px;}
+.sops{display:flex;gap:10px;margin-bottom:16px;}
+.sop{flex:1;padding:12px;border-radius:9px;border:2px solid var(--border);cursor:pointer;text-align:center;font-size:13px;font-weight:600;color:var(--muted);background:var(--surface2);}
+.sop.sm{border-color:var(--yellow);color:var(--yellow);background:var(--ydim);}
+.sop.smaj{border-color:var(--red);color:var(--red);background:var(--rdim);}
+.sic{font-size:22px;display:block;margin-bottom:4px;}
+.pbrow{display:flex;gap:10px;margin-bottom:12px;}
+.pbb{flex:1;padding:10px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;font-family:var(--f);display:flex;align-items:center;justify-content:center;gap:6px;}
+.pprev{width:100%;max-height:160px;object-fit:cover;border-radius:8px;display:none;margin-bottom:10px;}
+.mbs{display:flex;gap:10px;margin-top:8px;}
+.mcanc{flex:1;padding:12px;border-radius:9px;background:var(--surface2);border:none;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;cursor:pointer;}
+.msave{flex:2;padding:12px;border-radius:9px;background:var(--red);border:none;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;cursor:pointer;}
+.msave:disabled{opacity:.4;cursor:not-allowed;}
+@media print{#mc{margin-left:0!important;padding:0!important;}.cta,.bnav,.bg,.inav,.snb,.dacts{display:none!important;}body{background:#fff!important;color:#000!important;}}
+</style>
+</head>
+<body>
+<script src="nexus-sidebar.js"></script>
+<div id="mc">
+
+<!-- SCREEN: SETUP -->
+<div id="ss" class="screen active">
+  <div class="hr">
+    <div><div class="pt">🔍 Pre-Trip Inspection</div><div class="ps">FMCSA DVIR — 49 CFR 396.11 / 396.13</div></div>
+    <button class="bg" onclick="showHist()">📋 History</button>
+  </div>
+  <div class="card">
+    <div class="ct">Inspection Type</div>
+    <div class="ttabs">
+      <div class="ttab active" id="tab-pre" onclick="setType('pre-trip',this)"><span class="ttic">🌅</span>Pre-Trip</div>
+      <div class="ttab" id="tab-post" onclick="setType('post-trip',this)"><span class="ttic">🌙</span>Post-Trip</div>
+      <div class="ttab" id="tab-en" onclick="setType('en-route',this)"><span class="ttic">🔄</span>En-Route</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Vehicle Information</div>
+    <div class="fg">
+      <div class="fr"><label class="fl">Tractor</label>
+        <select class="fs" id="sv">
+          <option value="T-001">T-001 — Freightliner Cascadia</option>
+          <option value="T-002">T-002 — Peterbilt 579</option>
+        </select>
+      </div>
+      <div class="fr"><label class="fl">Odometer (miles)</label><input type="number" class="fi" id="io" placeholder="e.g. 148500"></div>
+    </div>
+    <div class="fr"><label class="fl">Trailer (blank = bobtail)</label>
+      <select class="fs" id="str">
+        <option value="">— None / Bobtail —</option>
+        <option value="TR-001">TR-001 — Great Dane 53' Reefer</option>
+        <option value="TR-002">TR-002 — Wabash 53' Dry Van</option>
+      </select>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Driver</div>
+    <div class="fr"><label class="fl">Driver Name</label>
+      <select class="fs" id="sd">
+        <option value="usr_005|Avis Rodriguez">Avis Rodriguez</option>
+        <option value="usr_006|David Hernandez">David Hernandez</option>
+        <option value="usr_007|Miguel Sanchez">Miguel Sanchez</option>
+        <option value="usr_008|Nelson Perez">Nelson Perez</option>
+        <option value="usr_009|Yosviel Martinez">Yosviel Martinez</option>
+        <option value="usr_010|Guillermo Pinera">Guillermo Pinera</option>
+        <option value="usr_001|Jim Burlew">Jim Burlew (Admin)</option>
+      </select>
+    </div>
+  </div>
+  <div class="card" id="prior-sec">
+    <div class="ct">⚠️ Prior Inspection Review — Required (49 CFR 396.13)</div>
+    <div id="pc"></div>
+    <label class="crow" id="pcrow" style="display:none;margin-top:12px;">
+      <input type="checkbox" id="pchk" onchange="updStart()">
+      <div class="ct2">I have reviewed the previous inspection report and acknowledge any reported defects or conditions.</div>
+    </label>
+    <div id="nopa" style="display:none;margin-top:10px;">
+      <div class="crow" style="cursor:default;background:var(--gdim);border:1px solid rgba(16,185,129,.3);">
+        <span style="font-size:18px;">✅</span>
+        <div class="ct2" style="color:var(--green);">No prior inspection on record — this is the first entry.</div>
+      </div>
+    </div>
+  </div>
+  <button class="cta" id="bstart" onclick="beginInsp()" disabled>BEGIN INSPECTION →</button>
+</div>
+
+<!-- SCREEN: INSPECT -->
+<div id="si" class="screen">
+  <div class="hr">
+    <div><div class="pt" id="itit">Inspection</div><div class="ps" id="isub"></div></div>
+    <button class="bg" onclick="goSum()">Summary ›</button>
+  </div>
+  <div class="pcon">
+    <div class="pm2"><span class="pl" id="plbl">Section 1 of 14</span><span class="pp" id="ppct">0%</span></div>
+    <div class="pbar"><div class="pfil" id="pfil" style="width:0%"></div></div>
+  </div>
+  <div class="snb" id="secnav"></div>
+  <div class="sh" id="shead">
+    <div class="sn" id="secnam"></div>
+    <div class="sc" id="seccfr"></div>
+    <div class="stags" id="sectags"></div>
+  </div>
+  <div id="ilist"></div>
+  <div class="inav">
+    <button class="bnav back" id="bback" onclick="prevSec()" style="display:none;">← Back</button>
+    <button class="bnav next" id="bnext" onclick="nextSec()">Next Section →</button>
+  </div>
+</div>
+
+<!-- SCREEN: SUMMARY -->
+<div id="ssum" class="screen">
+  <div class="hr">
+    <div><div class="pt">📋 Summary</div><div class="ps" id="smeta"></div></div>
+    <button class="bg" onclick="showS('si')">← Edit</button>
+  </div>
+  <div id="oosb" class="oos" style="display:none;">
+    <div style="font-size:28px;flex-shrink:0;">🚫</div>
+    <div><div style="font-weight:700;color:var(--red);font-size:15px;">OUT OF SERVICE — CANNOT DEPART</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:2px;">Major defects found. Repairs required before operating on public roads.</div></div>
+  </div>
+  <div class="sst">
+    <div class="sb"><div class="sbn" id="stot">0</div><div class="sbl">Total</div></div>
+    <div class="sb"><div class="sbn g" id="sok">0</div><div class="sbl">OK</div></div>
+    <div class="sb"><div class="sbn r" id="sdef">0</div><div class="sbl">Defects</div></div>
+    <div class="sb"><div class="sbn gr" id="sna">0</div><div class="sbl">N/A</div></div>
+  </div>
+  <div class="card"><div class="ct">Sections</div><div id="ssecs" style="display:flex;flex-wrap:wrap;gap:6px;"></div></div>
+  <div id="sdwrap" style="display:none;">
+    <div style="font-size:13px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">⚠️ Defects Found</div>
+    <div id="sdlist"></div>
+  </div>
+  <div id="sclr" class="card" style="display:none;background:var(--gdim);border-color:rgba(16,185,129,.3);">
+    <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:24px;">✅</span>
+    <div><div style="font-weight:700;color:var(--green);">No Defects — Clear to Operate</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:2px;">Vehicle in safe operating condition per 49 CFR 396.</div></div></div>
+  </div>
+  <div id="sinc" class="card" style="display:none;background:var(--ydim);border-color:rgba(245,158,11,.3);margin-bottom:14px;">
+    <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:22px;">⚠️</span>
+    <div><div style="font-weight:700;color:var(--yellow);">Some items not yet reviewed</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="incdet"></div></div></div>
+  </div>
+  <div style="height:14px;"></div>
+  <button class="cta" id="bcer" onclick="showS('scer')">CERTIFY & SIGN →</button>
+</div>
+
+<!-- SCREEN: CERTIFY -->
+<div id="scer" class="screen">
+  <div class="hr">
+    <div><div class="pt">✍️ Driver Certification</div><div class="ps">49 CFR 396.13</div></div>
+    <button class="bg" onclick="showS('ssum')">← Back</button>
+  </div>
+  <div class="cb">
+    <div class="ctit">DRIVER'S CERTIFICATION — 49 CFR 396.13</div>
+    <div class="ctxt">I certify that this Driver Vehicle Inspection Report has been completed in accordance with 49 CFR 396.11, and that to the best of my knowledge the vehicle(s) are in <strong>safe operating condition</strong><span id="cdefnote"></span>. I have reviewed the previous inspection report and am satisfied that any defects were corrected or are not required to be corrected before operation.</div>
+  </div>
+  <div class="card">
+    <div class="ct">Inspection Details</div>
+    <div id="cdet" style="font-size:13px;color:var(--muted);line-height:2.1;"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Digital Signature</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:6px;">Type your full legal name to sign and certify this DVIR.</div>
+    <input type="text" class="sig" id="sigf" placeholder="Type Full Name to Sign" oninput="updCer()">
+    <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;font-family:'JetBrains Mono',monospace;" id="cts"></div>
+  </div>
+  <button class="cta green" id="bsub" onclick="submitInsp()" disabled>✅ CERTIFY & SUBMIT</button>
+</div>
+
+<!-- SCREEN: DONE -->
+<div id="sdone" class="screen">
+  <div class="dh">
+    <span class="di" id="di">✅</span>
+    <div class="dt" id="dtit">Pre-Trip Complete</div>
+    <div class="did" id="did">DVIR #—</div>
+    <div class="dsub" id="dsub"></div>
+  </div>
+  <div class="dacts">
+    <button class="dact" onclick="printDVIR()">🖨️ Print DVIR</button>
+    <button class="dact" onclick="showHist()">📋 Inspection History</button>
+    <button class="dact" onclick="window.location.href='dot-compliance.html'">🚔 DOT Compliance Package</button>
+    <button class="dact" onclick="window.location.href='driver-command.html'">🏠 Driver Command</button>
+  </div>
+</div>
+
+<!-- SCREEN: HISTORY -->
+<div id="shist" class="screen">
+  <div class="hr">
+    <div><div class="pt">📋 Inspection History</div><div class="ps">All DVIR records on this device</div></div>
+    <button class="bg" onclick="showS('ss');loadSetup()">+ New</button>
+  </div>
+  <div id="hlist"></div>
+  <div id="hemp" style="display:none;text-align:center;padding:48px 20px;color:var(--muted);">
+    <div style="font-size:36px;margin-bottom:12px;">📋</div>
+    <div style="font-weight:600;">No inspections on record yet</div>
+    <div style="font-size:13px;margin-top:4px;">Completed DVIRs appear here automatically.</div>
+  </div>
+</div>
+</div>
+
+<!-- MODAL: DEFECT -->
+<div class="mo" id="dm" onclick="if(event.target===this)closeDM()">
+  <div class="ms">
+    <div class="mtit">⚠️ Mark Defect</div>
+    <div class="msub" id="dmitem">Item</div>
+    <div style="margin-bottom:14px;">
+      <label class="fl">Severity</label>
+      <div class="sops">
+        <div class="sop sm" id="smin" onclick="selSev('minor')"><span class="sic">⚠️</span>Minor<br><span style="font-size:10px;font-weight:400;opacity:.75;">Drive with caution</span></div>
+        <div class="sop" id="smaj" onclick="selSev('major')"><span class="sic">🚫</span>Major<br><span style="font-size:10px;font-weight:400;opacity:.75;">Out of Service</span></div>
+      </div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label class="fl">Description <span style="color:var(--red);">*</span></label>
+      <input type="text" class="fi" id="dmdesc" placeholder="e.g. Low coolant — 1 quart below min" oninput="updSave()">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label class="fl">Photo (optional)</label>
+      <div class="pbrow">
+        <button class="pbb" onclick="document.getElementById('phcam').click()">📸 Camera</button>
+        <button class="pbb" onclick="document.getElementById('phfile').click()">🖼️ Gallery</button>
+      </div>
+      <input type="file" id="phcam" accept="image/*" capture="environment" style="display:none;" onchange="handlePh(this)">
+      <input type="file" id="phfile" accept="image/*" style="display:none;" onchange="handlePh(this)">
+      <div style="position:relative;">
+        <img id="phprev" class="pprev" alt="Defect photo">
+        <button id="phclr" onclick="clearPh()" style="display:none;position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;font-size:14px;">✕</button>
+      </div>
+    </div>
+    <div class="mbs">
+      <button class="mcanc" onclick="closeDM()">Cancel</button>
+      <button class="msave" id="bsaved" onclick="saveDef()" disabled>Save Defect</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: VIEW REPORT -->
+<div class="mo" id="vm" onclick="if(event.target===this)closeVM()">
+  <div class="ms">
+    <div class="mtit" id="vmtit">Inspection Report</div>
+    <div id="vmcon" style="max-height:55vh;overflow-y:auto;"></div>
+    <div style="margin-top:18px;"><button class="cta" onclick="closeVM()">Close</button></div>
+  </div>
+</div>
+
+<script>
+const SECS=[
+  {id:'engine',n:'Engine Compartment',ic:'🔧',cfr:'49 CFR 396.11(a)(1)',v:'tractor',items:[
+    {id:'e1',l:'Engine oil level',t:'Dipstick between min/max marks'},
+    {id:'e2',l:'Coolant level',t:'Check overflow reservoir (cold engine only)'},
+    {id:'e3',l:'Power steering fluid',t:'Reservoir in normal operating range'},
+    {id:'e4',l:'Belts & hoses condition',t:'No cracks, fraying, or glazing'},
+    {id:'e5',l:'Battery connections secure',t:'Cables tight, no corrosion buildup'},
+    {id:'e6',l:'Air filter indicator OK',t:'Yellow or red = replace before operating'},
+    {id:'e7',l:'No fluid leaks under hood',t:'Check ground under engine compartment'},
+  ]},
+  {id:'cab',n:'Cab Interior',ic:'🪑',cfr:'49 CFR 396.11(a)(2)',v:'tractor',items:[
+    {id:'c1',l:'Seat belt latches & retracts',t:'Test buckle and retraction mechanism'},
+    {id:'c2',l:'Horn works',t:'Audible signal required by 49 CFR 393.81'},
+    {id:'c3',l:'Wipers & washer fluid',t:'Blades streak-free, washer fluid present'},
+    {id:'c4',l:'Defroster / heater works',t:'Adequate airflow to windshield'},
+    {id:'c5',l:'Mirrors properly adjusted',t:'Both sides, full rear visibility confirmed'},
+    {id:'c6',l:'Steering free play < 2"',t:'Excess play = immediate FMCSA defect'},
+    {id:'c7',l:'No active warning lights',t:'Check after engine fully warmed up'},
+    {id:'c8',l:'Fire extinguisher charged',t:'Accessible, pin intact, not expired'},
+    {id:'c9',l:'Emergency triangles (3)',t:'3 triangles required — 49 CFR 393.95(f)'},
+    {id:'c10',l:'First aid kit present',t:'Stocked basic kit accessible in cab'},
+  ]},
+  {id:'brakes',n:'Brake System',ic:'🛑',cfr:'49 CFR 393.40–393.55',v:'tractor',items:[
+    {id:'b1',l:'Air pressure 85–100 psi',t:'Allow 3 min build-up after engine start'},
+    {id:'b2',l:'Low-pressure warning works',t:'Warning activates below 60 psi'},
+    {id:'b3',l:'Air leakage ≤ 3 psi/min',t:'Time with brakes applied, engine off'},
+    {id:'b4',l:'Drums/rotors — no cracks',t:'Visual inspection at each wheel position'},
+    {id:'b5',l:'Brake lines — no kinks/leaks',t:'Check all air lines and slack adjusters'},
+    {id:'b6',l:'Parking brake holds vehicle',t:'Apply — truck must not roll on level ground'},
+  ]},
+  {id:'lights',n:'Lights & Signals',ic:'💡',cfr:'49 CFR 393.9–393.23',v:'tractor',items:[
+    {id:'l1',l:'Headlights — low beam',t:'Both sides operational'},
+    {id:'l2',l:'Headlights — high beam',t:'Both sides operational'},
+    {id:'l3',l:'Tail lights',t:'Both sides operational'},
+    {id:'l4',l:'Brake lights',t:'All positions illuminate with pedal'},
+    {id:'l5',l:'Left turn signal (F+R)',t:'Front and rear flash simultaneously'},
+    {id:'l6',l:'Right turn signal (F+R)',t:'Front and rear flash simultaneously'},
+    {id:'l7',l:'Hazard lights',t:'All four corners flash simultaneously'},
+    {id:'l8',l:'Clearance & marker lights',t:'All roof and side markers lit'},
+    {id:'l9',l:'Reverse lights',t:'Both illuminate when gear in reverse'},
+  ]},
+  {id:'tires',n:'Tires & Wheels',ic:'⚙️',cfr:'49 CFR 393.75',v:'tractor',items:[
+    {id:'t1',l:'Steer axle tires OK',t:'Tread ≥ 4/32", no bulges/cuts, inflated'},
+    {id:'t2',l:'Drive axle tires (all)',t:'Tread ≥ 2/32", no bulges/cuts, inflated'},
+    {id:'t3',l:'Lug nuts secure — all positions',t:'Rust streaks = rust tracking = loose nut'},
+    {id:'t4',l:'Hub seals — no oil leaks',t:'No oil on wheel rims or ground'},
+    {id:'t5',l:'Rims — no cracks or bends',t:'Visual inspection at all wheel positions'},
+  ]},
+  {id:'coupling',n:'Fifth Wheel / Coupling',ic:'🔗',cfr:'49 CFR 393.70',v:'tractor',items:[
+    {id:'f1',l:'Fifth wheel mount secure',t:'No movement; all mounting hardware present'},
+    {id:'f2',l:'Jaws locked on kingpin',t:'Two-finger test — jaws must be fully closed'},
+    {id:'f3',l:'Safety latch engaged',t:'Handle cannot be manually pulled to release'},
+    {id:'f4',l:'Apron/skid plate condition',t:'No cracks or excessive wear grooves'},
+    {id:'f5',l:'Release handle stowed',t:'Handle retracted and secured for travel'},
+  ]},
+  {id:'fuel',n:'Fuel & Exhaust',ic:'⛽',cfr:'49 CFR 393.65–393.83',v:'tractor',items:[
+    {id:'u1',l:'Fuel level adequate',t:'Sufficient for trip plus buffer'},
+    {id:'u2',l:'Fuel tank caps secure',t:'Both tanks if dual-tank setup'},
+    {id:'u3',l:'No fuel leaks',t:'Check tanks, lines, and connections'},
+    {id:'u4',l:'Exhaust system secure',t:'No loose pipes, clamps, or hangers'},
+    {id:'u5',l:'No exhaust leaks',t:'No blue or white smoke on startup'},
+  ]},
+  {id:'frame',n:'Frame & Suspension',ic:'🏗️',cfr:'49 CFR 393.207',v:'tractor',items:[
+    {id:'r1',l:'Frame rails — no cracks',t:'Walk-around visual inspection both rails'},
+    {id:'r2',l:'Spring hangers / U-bolts tight',t:'All hardware present and torqued'},
+    {id:'r3',l:'Air bags / suspension even',t:'Equal height both sides; no audible leaks'},
+  ]},
+  {id:'tcpl',n:'Trailer Coupling',ic:'🔗',cfr:'49 CFR 393.70',v:'trailer',items:[
+    {id:'tc1',l:'Kingpin / bolster plate OK',t:'No cracks; kingpin engagement verified'},
+    {id:'tc2',l:'Landing gear fully raised',t:'No ground contact; crank handle secured'},
+    {id:'tc3',l:'Safety chains / cables secure',t:'Crossed under tongue; proper rating'},
+    {id:'tc4',l:'Electrical connector plugged',t:'7-pin fully seated; no damaged pins'},
+  ]},
+  {id:'tlit',n:'Trailer Lights',ic:'💡',cfr:'49 CFR 393.9',v:'trailer',items:[
+    {id:'tl1',l:'Clearance & marker lights',t:'Amber front/side, red rear — all lit'},
+    {id:'tl2',l:'Trailer tail lights',t:'Both sides operational'},
+    {id:'tl3',l:'Trailer brake lights',t:'Illuminate with brake pedal application'},
+    {id:'tl4',l:'Turn signals both sides',t:'Left and right, front and rear'},
+    {id:'tl5',l:'Reflectors & conspicuity tape',t:'Retro-reflective strips present and clean'},
+  ]},
+  {id:'tbrk',n:'Trailer Brakes',ic:'🛑',cfr:'49 CFR 393.40',v:'trailer',items:[
+    {id:'tb1',l:'Glad hands connected & sealed',t:'Service + Emergency; dummy caps removed'},
+    {id:'tb2',l:'Brake chambers — no damage',t:'No cracks; push rod stroke ≤ 1.5 inches'},
+    {id:'tb3',l:'Trailer brakes apply/release',t:'Test using dash trailer brake valve'},
+    {id:'tb4',l:'Trailer ABS light clears',t:'Yellow ABS lamp extinguishes after startup'},
+  ]},
+  {id:'ttir',n:'Trailer Tires & Wheels',ic:'⚙️',cfr:'49 CFR 393.75',v:'trailer',items:[
+    {id:'tt1',l:'All trailer tires condition',t:'Tread ≥ 2/32", no bulges, properly inflated'},
+    {id:'tt2',l:'Lug nuts — all positions',t:'Check rust tracking at all trailer wheels'},
+    {id:'tt3',l:'Hub seals — no oil leaks',t:'No oil on rims or ground under trailer'},
+    {id:'tt4',l:'Rims — no cracks or damage',t:'No cracks, bends, or missing valve stems'},
+  ]},
+  {id:'tbody',n:'Trailer Body & Doors',ic:'📦',cfr:'49 CFR 393.203',v:'trailer',items:[
+    {id:'bd1',l:'Trailer body structure OK',t:'No damage affecting structural integrity'},
+    {id:'bd2',l:'Rear doors open/close/latch',t:'Both doors; all latches and seals'},
+    {id:'bd3',l:'Door seals condition',t:'No major tears — prevents moisture damage'},
+    {id:'bd4',l:'Placards correct (if HazMat)',t:'Mark N/A if no hazardous materials'},
+  ]},
+  {id:'tload',n:'Load Securement',ic:'⛓️',cfr:'49 CFR 393.100–393.136',v:'trailer',items:[
+    {id:'ls1',l:'Load secured front/sides/rear',t:'Meets 49 CFR 393 securement rules'},
+    {id:'ls2',l:'Straps/chains in good condition',t:'No cuts or fraying; hooks properly seated'},
+    {id:'ls3',l:'Edge protectors where needed',t:'Prevent strap damage on sharp corners'},
+    {id:'ls4',l:'Rear overhang within limits',t:'Max 4 ft — flag/light if exceeded'},
+    {id:'ls5',l:'HazMat paperwork correct (if appl.)',t:'Mark N/A if no hazardous cargo'},
+  ]},
+];
+
+const LSK='nexus_pretrip_inspections';
+let ST={type:'pre-trip',vid:'T-001',trid:'',odo:'',did:'',dn:'',pr:false,prId:null,cur:0,items:{},defs:[]};
+let pItemId=null,pSev='minor',pPh=null,aS=[];
+
+function setType(t,el){ST.type=t;document.querySelectorAll('.ttab').forEach(x=>x.classList.remove('active'));el.classList.add('active');}
+
+function loadSetup(){
+  const all=getAll();
+  const pr=all.length?all.sort((a,b)=>new Date(b.certifiedAt||0)-new Date(a.certifiedAt||0))[0]:null;
+  const pc=document.getElementById('pc'),crow=document.getElementById('pcrow'),nopa=document.getElementById('nopa');
+  if(pr){
+    const d=new Date(pr.certifiedAt||pr.date);
+    const ds=d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    const ts=pr.time||d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    const defs=pr.defs||pr.defects||[];
+    const badge=defs.length>0?`<span class="pb warn">⚠️ ${defs.length} Defect${defs.length>1?'s':''}</span>`:`<span class="pb ok">✅ Clear</span>`;
+    const dh=defs.length>0?'<div style="margin-top:8px;">'+defs.map(d=>`<div class="pdi">⚠️ ${d.itemLabel||d.l} — ${d.description||d.desc}</div>`).join('')+'</div>':'';
+    const tl=(pr.type||'pre-trip').split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
+    pc.innerHTML=`<div class="pcard"><div class="pm"><div><div class="pd">${ds} · ${ts}</div><div class="pdet">${tl} · ${pr.vehicleId||pr.vid||''} ${(pr.trailerId||pr.trid)?'+ '+(pr.trailerId||pr.trid):''} · ${pr.driverName||pr.dn||''}</div></div>${badge}</div>${dh}<div style="margin-top:10px;"><button class="bg" style="font-size:12px;padding:5px 10px;" onclick="viewRep('${pr.id}')">View Full Report</button></div></div>`;
+    ST.prId=pr.id;crow.style.display='flex';nopa.style.display='none';
+    document.getElementById('pchk').checked=false;ST.pr=false;
+  }else{
+    pc.innerHTML='';crow.style.display='none';nopa.style.display='block';ST.pr=true;
+  }
+  updStart();
+}
+
+function updStart(){
+  const c=document.getElementById('pchk');
+  const rh=document.getElementById('pcrow').style.display==='none';
+  ST.pr=rh||(c&&c.checked);
+  document.getElementById('bstart').disabled=!ST.pr;
+}
+
+function beginInsp(){
+  ST.vid=document.getElementById('sv').value;
+  ST.trid=document.getElementById('str').value;
+  ST.odo=document.getElementById('io').value;
+  const dv=document.getElementById('sd').value.split('|');
+  ST.did=dv[0];ST.dn=dv[1];
+  ST.items={};ST.defs=[];ST.cur=0;
+  aS=ST.trid?SECS:SECS.filter(s=>s.v==='tractor');
+  renderI();showS('si');
+}
+
+function renderI(){updP();buildNav();renderSec(ST.cur);}
+
+function updP(){
+  const tot=aS.reduce((s,x)=>s+x.items.length,0);
+  const done=Object.keys(ST.items).length;
+  const pct=tot?Math.round(done/tot*100):0;
+  document.getElementById('plbl').textContent=`Section ${ST.cur+1} of ${aS.length}`;
+  document.getElementById('ppct').textContent=pct+'%';
+  document.getElementById('pfil').style.width=pct+'%';
+  const tl=(ST.type||'pre-trip').split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join('-');
+  document.getElementById('itit').textContent=tl+' Inspection';
+  document.getElementById('isub').textContent=ST.vid+(ST.trid?' + '+ST.trid:' (Bobtail)')+' · '+ST.dn;
+}
+
+function buildNav(){
+  const nav=document.getElementById('secnav');
+  nav.innerHTML=aS.map((s,i)=>{
+    const vals=s.items.map(it=>ST.items[it.id]);
+    const done=vals.every(v=>v!==undefined);
+    const hasDef=s.items.some(it=>ST.items[it.id]==='defect');
+    let cls='snbtn';
+    if(i===ST.cur)cls+=' act';
+    else if(done&&hasDef)cls+=' done hdef';
+    else if(done)cls+=' done';
+    return `<div class="${cls}" onclick="jmpSec(${i})">${s.ic} ${s.n}</div>`;
+  }).join('');
+  setTimeout(()=>{const a=nav.querySelector('.snbtn.act');if(a)a.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});},50);
+}
+
+function renderSec(idx){
+  const sec=aS[idx];
+  document.getElementById('secnam').textContent=sec.ic+' '+sec.n;
+  document.getElementById('seccfr').textContent=sec.cfr;
+  document.getElementById('sectags').innerHTML=sec.v==='trailer'?'<span class="stag trailer">🚛 Trailer</span>':'<span class="stag tractor">🚚 Tractor</span>';
+  const list=document.getElementById('ilist');
+  list.innerHTML=sec.items.map(item=>{
+    const st=ST.items[item.id];
+    const def=ST.defs.find(d=>d.itemId===item.id);
+    let rc='ir'+(st==='ok'?' ok':st==='defect'?' def':st==='na'?' na':'');
+    const dn=def?`<div class="idn" onclick="editDef('${item.id}')"><span>⚠️ ${def.severity.toUpperCase()}: ${def.description}</span><span style="flex-shrink:0;margin-left:8px;opacity:.7;font-weight:700;">Edit ›</span></div>`:'';
+    return `<div class="${rc}" id="row-${item.id}">
+      <div class="il">${item.l}</div>
+      <div class="it">${item.t}</div>
+      <div class="ibs">
+        <button class="ib ok${st==='ok'?' sel':''}" onclick="setItem('${item.id}','ok','${sec.id}')">✅ OK</button>
+        <button class="ib def${st==='defect'?' sel':''}" onclick="setItem('${item.id}','defect','${sec.id}')">⚠️ DEFECT</button>
+        <button class="ib na${st==='na'?' sel':''}" onclick="setItem('${item.id}','na','${sec.id}')">— N/A</button>
+      </div>${dn}
+    </div>`;
+  }).join('');
+  const bb=document.getElementById('bback'),nb=document.getElementById('bnext');
+  bb.style.display=idx===0?'none':'block';
+  if(idx===aS.length-1){nb.textContent='Review Summary →';nb.className='bnav fin';nb.onclick=goSum;}
+  else{nb.textContent='Next Section →';nb.className='bnav next';nb.onclick=nextSec;}
+}
+
+function setItem(id,status,sid){
+  if(status==='defect'){openDM(id,sid);return;}
+  ST.defs=ST.defs.filter(d=>d.itemId!==id);
+  ST.items[id]=status;updP();buildNav();
+  const row=document.getElementById('row-'+id);
+  if(row){
+    row.className='ir'+(status==='ok'?' ok':status==='na'?' na':'');
+    row.querySelectorAll('.ib').forEach(b=>b.classList.remove('sel'));
+    const sel=row.querySelector('.ib.'+status);if(sel)sel.classList.add('sel');
+    const note=row.querySelector('.idn');if(note)note.remove();
+  }
+}
+
+function openDM(itemId,sid){
+  pItemId=itemId;
+  const sec=aS.find(s=>s.id===sid)||aS.find(s=>s.items.some(it=>it.id===itemId));
+  const item=sec?sec.items.find(it=>it.id===itemId):null;
+  document.getElementById('dmitem').textContent=item?item.l:itemId;
+  const ex=ST.defs.find(d=>d.itemId===itemId);
+  document.getElementById('dmdesc').value=ex?ex.description:'';
+  selSev(ex?ex.severity:'minor');
+  if(ex&&ex.photoData){showPhPrev(ex.photoData);}else{clearPh();}
+  updSave();
+  document.getElementById('dm').classList.add('open');
+  setTimeout(()=>document.getElementById('dmdesc').focus(),300);
+}
+
+function editDef(id){const sec=aS.find(s=>s.items.some(it=>it.id===id));if(sec)openDM(id,sec.id);}
+
+function selSev(s){
+  pSev=s;
+  document.getElementById('smin').className='sop'+(s==='minor'?' sm':'');
+  document.getElementById('smaj').className='sop'+(s==='major'?' smaj':'');
+}
+function updSave(){document.getElementById('bsaved').disabled=document.getElementById('dmdesc').value.trim().length<3;}
+
+function saveDef(){
+  const sec=aS.find(s=>s.items.some(it=>it.id===pItemId));
+  const item=sec?sec.items.find(it=>it.id===pItemId):null;
+  const desc=document.getElementById('dmdesc').value.trim();
+  ST.defs=ST.defs.filter(d=>d.itemId!==pItemId);
+  ST.defs.push({itemId:pItemId,itemLabel:item?item.l:pItemId,section:sec?sec.n:'',sectionId:sec?sec.id:'',severity:pSev,description:desc,photoData:pPh});
+  ST.items[pItemId]='defect';
+  closeDM();updP();buildNav();renderSec(ST.cur);
+}
+function closeDM(){document.getElementById('dm').classList.remove('open');}
+
+function handlePh(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();r.onload=e=>{pPh=e.target.result;showPhPrev(pPh);};r.readAsDataURL(f);
+}
+function showPhPrev(src){const img=document.getElementById('phprev');img.src=src;img.style.display='block';document.getElementById('phclr').style.display='block';}
+function clearPh(){pPh=null;const img=document.getElementById('phprev');img.src='';img.style.display='none';document.getElementById('phclr').style.display='none';['phcam','phfile'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});}
+
+function prevSec(){if(ST.cur>0){ST.cur--;renderSec(ST.cur);buildNav();window.scrollTo(0,0);}}
+function nextSec(){if(ST.cur<aS.length-1){ST.cur++;renderSec(ST.cur);buildNav();window.scrollTo(0,0);}}
+function jmpSec(i){ST.cur=i;renderSec(i);buildNav();window.scrollTo(0,0);}
+
+function goSum(){buildSum();showS('ssum');}
+
+function buildSum(){
+  const tot=aS.reduce((s,x)=>s+x.items.length,0);
+  const ok=Object.values(ST.items).filter(v=>v==='ok').length;
+  const def=Object.values(ST.items).filter(v=>v==='defect').length;
+  const na=Object.values(ST.items).filter(v=>v==='na').length;
+  const maj=ST.defs.filter(d=>d.severity==='major');
+  document.getElementById('stot').textContent=tot;document.getElementById('sok').textContent=ok;
+  document.getElementById('sdef').textContent=def;document.getElementById('sna').textContent=na;
+  const d=new Date();
+  document.getElementById('smeta').textContent=ST.vid+(ST.trid?' + '+ST.trid:'')+' · '+ST.dn+' · '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  document.getElementById('oosb').style.display=maj.length?'flex':'none';
+  document.getElementById('ssecs').innerHTML=aS.map(s=>{
+    const vals=s.items.map(it=>ST.items[it.id]);
+    const done=vals.every(v=>v!==undefined);
+    const hasDef=s.items.some(it=>ST.items[it.id]==='defect');
+    const ic=!done?'⬜':hasDef?'⚠️':'✅';
+    return `<div style="font-size:12px;background:var(--surface2);border-radius:6px;padding:5px 8px;display:flex;align-items:center;gap:4px;">${ic} <span style="font-weight:600;">${s.ic} ${s.n}</span></div>`;
+  }).join('');
+  const dw=document.getElementById('sdwrap'),dl=document.getElementById('sdlist');
+  if(ST.defs.length>0){
+    dw.style.display='block';
+    dl.innerHTML=ST.defs.map(d=>{
+      const ph=d.photoData?`<img src="${d.photoData}" class="dp" alt="Defect photo">`:'';
+      return `<div class="dc ${d.severity}"><div class="dch"><div class="dcs">${d.section}</div><div class="dsev ${d.severity}">${d.severity==='major'?'🚫 MAJOR':'⚠️ MINOR'}</div></div><div class="dl">${d.itemLabel}</div><div class="dd">${d.description}</div>${ph}</div>`;
+    }).join('');
+  }else{dw.style.display='none';}
+  const done2=ok+def+na;
+  document.getElementById('sclr').style.display=(done2===tot&&def===0)?'block':'none';
+  const rem=tot-done2;
+  const inc=document.getElementById('sinc');
+  if(rem>0){inc.style.display='block';document.getElementById('incdet').textContent=`${rem} item${rem>1?'s':''} still pending. You may certify now or return to complete them.`;}
+  else{inc.style.display='none';}
+  if(maj.length>0){document.getElementById('bcer').textContent='⚠️ CERTIFY WITH MAJOR DEFECTS';document.getElementById('bcer').className='cta red';}
+  else{document.getElementById('bcer').textContent='CERTIFY & SIGN →';document.getElementById('bcer').className='cta';}
+}
+
+function showCert(){
+  const maj=ST.defs.filter(d=>d.severity==='major').length;
+  const note=ST.defs.length>0?`, except for <strong>${ST.defs.length} noted defect${ST.defs.length>1?'s':''}</strong> (${maj} major / ${ST.defs.length-maj} minor)`:'';
+  document.getElementById('cdefnote').innerHTML=note;
+  const now=new Date();
+  document.getElementById('cts').textContent='Date: '+now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})+' at '+now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',second:'2-digit'});
+  const tl=(ST.type||'pre-trip').split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
+  document.getElementById('cdet').innerHTML=`<div><strong>Inspection Type:</strong> ${tl}</div><div><strong>Tractor:</strong> ${ST.vid}</div><div><strong>Trailer:</strong> ${ST.trid||'None (Bobtail)'}</div><div><strong>Odometer:</strong> ${ST.odo?ST.odo+' mi':'Not recorded'}</div><div><strong>Driver:</strong> ${ST.dn}</div><div><strong>Defects Found:</strong> ${ST.defs.length} (${maj} major / ${ST.defs.length-maj} minor)</div>`;
+  document.getElementById('sigf').value=ST.dn||'';
+  updCer();
+}
+function updCer(){document.getElementById('bsub').disabled=document.getElementById('sigf').value.trim().length<2;}
+
+function submitInsp(){
+  const sig=document.getElementById('sigf').value.trim();
+  const now=new Date();
+  const tot=aS.reduce((s,x)=>s+x.items.length,0);
+  const maj=ST.defs.filter(d=>d.severity==='major');
+  const id='PT-'+now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+String(Math.floor(Math.random()*900)+100);
+  const rec={id,type:ST.type,date:now.toISOString().split('T')[0],time:now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),
+    driverId:ST.did,driverName:ST.dn,vehicleId:ST.vid,trailerId:ST.trid,odometer:ST.odo,
+    priorReviewed:ST.pr,priorInspId:ST.prId,items:{...ST.items},defects:ST.defs,
+    totalItems:tot,okCount:Object.values(ST.items).filter(v=>v==='ok').length,
+    defectCount:ST.defs.length,majorDefectCount:maj.length,canDepart:maj.length===0,
+    status:'complete',signature:sig,certifiedAt:now.toISOString()};
+  const ex=getAll();ex.unshift(rec);localStorage.setItem(LSK,JSON.stringify(ex));
+  const tl=(ST.type||'pre-trip').split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join('-');
+  document.getElementById('di').textContent=maj.length>0?'⚠️':'✅';
+  document.getElementById('dtit').textContent=maj.length>0?'DVIR — OUT OF SERVICE':tl+' Complete';
+  document.getElementById('did').textContent='DVIR #'+id;
+  document.getElementById('dsub').textContent=ST.defs.length>0?`${ST.defs.length} defect${ST.defs.length>1?'s':''} noted · Signed: ${sig}`:`No defects · Certified by ${sig}`;
+  showS('sdone');
+}
+
+function showHist(){
+  const all=getAll(),list=document.getElementById('hlist'),emp=document.getElementById('hemp');
+  if(!all.length){list.innerHTML='';emp.style.display='block';}
+  else{
+    emp.style.display='none';
+    list.innerHTML=all.map(r=>{
+      const d=new Date(r.certifiedAt||r.date);
+      const ds=d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+      const ts=r.time||d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+      const badge=r.majorDefectCount>0?`<span class="hst oos">🚫 OOS</span>`:r.defectCount>0?`<span class="hst warn">⚠️ ${r.defectCount} Defect${r.defectCount>1?'s':''}</span>`:`<span class="hst ok">✅ Clear</span>`;
+      const tl=(r.type||'pre-trip').split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join('-');
+      return `<div class="hrow"><div><div class="hdate">${ds} · ${ts}</div><div class="hmeta">${tl} · ${r.vehicleId||''}${r.trailerId?' + '+r.trailerId:''} · ${r.driverName||''}</div><div class="hbts"><button class="hbt" onclick="viewRep('${r.id}')">View</button><button class="hbt" onclick="printRep('${r.id}')">Print</button></div></div><div>${badge}</div></div>`;
+    }).join('');
+  }
+  showS('shist');
+}
+
+function viewRep(id){
+  const rec=getAll().find(r=>r.id===id);if(!rec)return;
+  const d=new Date(rec.certifiedAt||rec.date);
+  const tl=(rec.type||'pre-trip').split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
+  const defs=rec.defects||rec.defs||[];
+  let dh='';
+  if(defs.length>0){
+    dh='<div style="margin-top:14px;"><div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Defects</div>'+
+      defs.map(df=>`<div class="dc ${df.severity}" style="margin-bottom:8px;"><div class="dch"><div class="dcs">${df.section}</div><div class="dsev ${df.severity}">${df.severity==='major'?'🚫 MAJOR':'⚠️ MINOR'}</div></div><div class="dl">${df.itemLabel}</div><div class="dd">${df.description}</div>${df.photoData?`<img src="${df.photoData}" style="width:100%;max-height:140px;object-fit:cover;border-radius:6px;margin-top:6px;">`:''}</div>`).join('')+'</div>';
+  }else{dh='<div style="background:var(--gdim);border-radius:8px;padding:10px 12px;margin-top:12px;color:var(--green);font-weight:600;font-size:13px;">✅ No defects found</div>';}
+  document.getElementById('vmtit').textContent='DVIR #'+rec.id;
+  document.getElementById('vmcon').innerHTML=`<div style="font-size:13px;color:var(--muted);line-height:2.1;"><strong style="color:var(--text);">${tl}</strong><br>Vehicle: ${rec.vehicleId||'—'}${rec.trailerId?' + '+rec.trailerId:''}<br>Driver: ${rec.driverName||'—'}<br>Date: ${d.toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'})} at ${rec.time||d.toLocaleTimeString()}<br>Odometer: ${rec.odometer?rec.odometer+' mi':'Not recorded'}<br>Items: ${rec.totalItems||'—'} total · OK: ${rec.okCount||0} · Defects: ${rec.defectCount||0}<br>Can Depart: ${rec.canDepart?'✅ Yes':'🚫 No — OOS'}<br>Signed: ${rec.signature||'—'}</div>${dh}`;
+  document.getElementById('vm').classList.add('open');
+}
+function closeVM(){document.getElementById('vm').classList.remove('open');}
+
+function printRep(id){
+  const rec=getAll().find(r=>r.id===id);if(!rec)return;
+  const d=new Date(rec.certifiedAt||rec.date);
+  const tl=(rec.type||'pre-trip').split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
+  const defs=rec.defects||rec.defs||[];
+  const dr=defs.map(df=>`<tr><td>${df.section}</td><td>${df.itemLabel}</td><td style="color:${df.severity==='major'?'#dc2626':'#d97706'};font-weight:700;">${df.severity.toUpperCase()}</td><td>${df.description}</td></tr>`).join('');
+  const sh=SECS.filter(s=>rec.trailerId||s.v==='tractor').map(sec=>{
+    const rows=sec.items.map(it=>{const st=rec.items?rec.items[it.id]:undefined;const ic=st==='ok'?'✅':st==='defect'?'⚠️':st==='na'?'—':'□';return `<tr><td style="padding:3px 8px;text-align:center;">${ic}</td><td style="padding:3px 8px;">${it.l}</td></tr>`;}).join('');
+    return `<tr><td colspan="2" style="background:#f5f5f5;font-weight:700;padding:6px 8px;">${sec.ic} ${sec.n} <span style="font-size:10px;color:#666;">(${sec.cfr})</span></td></tr>${rows}`;
+  }).join('');
+  const w=window.open('','_blank','width=820,height=700');
+  w.document.write(`<!DOCTYPE html><html><head><title>DVIR ${rec.id}</title><style>body{font-family:Arial,sans-serif;font-size:12px;padding:20px;color:#111;}h1{font-size:18px;margin-bottom:4px;}h2{font-size:13px;margin:16px 0 6px;border-bottom:2px solid #333;padding-bottom:3px;}table{width:100%;border-collapse:collapse;margin-top:6px;}td,th{border:1px solid #ddd;padding:4px 8px;vertical-align:top;}th{background:#f0f0f0;font-weight:700;font-size:11px;}.clear{color:green;font-weight:700;padding:8px;background:#f0fdf4;border:1px solid #86efac;}@media print{button{display:none;}}</style></head><body>
+  <h1>Driver Vehicle Inspection Report (DVIR) — Carrier Trucking US, LLC</h1>
+  <p><strong>DVIR #:</strong> ${rec.id} &nbsp;|&nbsp; <strong>Type:</strong> ${tl} &nbsp;|&nbsp; <strong>Date:</strong> ${d.toLocaleDateString()} &nbsp;|&nbsp; <strong>Time:</strong> ${rec.time||''}</p>
+  <p><strong>Vehicle:</strong> ${rec.vehicleId||'—'} &nbsp;|&nbsp; <strong>Trailer:</strong> ${rec.trailerId||'None'} &nbsp;|&nbsp; <strong>Odometer:</strong> ${rec.odometer||'N/R'} mi</p>
+  <p><strong>Driver:</strong> ${rec.driverName||'—'} &nbsp;|&nbsp; <strong>Total Items:</strong> ${rec.totalItems||'—'} &nbsp;|&nbsp; <strong>Defects:</strong> ${rec.defectCount||0} &nbsp;|&nbsp; <strong>Can Depart:</strong> ${rec.canDepart?'Yes':'NO — OOS'}</p>
+  <h2>Defects Found</h2>
+  ${defs.length>0?`<table><tr><th>Section</th><th>Item</th><th>Severity</th><th>Description</th></tr>${dr}</table>`:'<p class="clear">✅ No defects found — vehicle in safe operating condition per 49 CFR 396.11</p>'}
+  <h2>Inspection Items by Section</h2><table>${sh}</table>
+  <h2>Driver Certification — 49 CFR 396.13</h2>
+  <p>I certify that this vehicle has been inspected per 49 CFR 396.11 and is in safe operating condition.</p>
+  <table><tr><td><strong>Driver Signature:</strong> ${rec.signature||'—'}</td><td><strong>Date:</strong> ${d.toLocaleDateString()}</td><td><strong>Time:</strong> ${rec.time||''}</td></tr></table>
+  <p style="margin-top:12px;font-size:10px;color:#666;">Retained per 49 CFR 396.11(c): Driver copy 24 hrs | Carrier copy 3 months</p>
+  <button onclick="window.print()" style="margin-top:12px;padding:8px 20px;cursor:pointer;">🖨️ Print DVIR</button>
+  </body></html>`);
+  w.document.close();setTimeout(()=>w.print(),500);
+}
+
+function printDVIR(){const all=getAll();if(all.length)printRep(all[0].id);}
+function getAll(){try{return JSON.parse(localStorage.getItem(LSK)||'[]');}catch(e){return[];}}
+
+function showS(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='scer')showCert();
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const ad=localStorage.getItem('nexus_command_active_driver');
+  if(ad){try{const p=JSON.parse(ad);const sel=document.getElementById('sd');for(let i=0;i<sel.options.length;i++){if(sel.options[i].value.startsWith(p.id+'|')){sel.selectedIndex=i;break;}}}catch(e){}}
+  loadSetup();
+  setInterval(()=>{const el=document.getElementById('cts');if(el&&document.getElementById('scer').classList.contains('active')){const n=new Date();el.textContent='Date: '+n.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})+' at '+n.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',second:'2-digit'});}},1000);
+});
+</script>
+</body>
+</html>

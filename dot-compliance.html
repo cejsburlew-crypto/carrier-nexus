@@ -1,868 +1,823 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta name="theme-color" content="#ffffff">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DOT Compliance — Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+:root{--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--orange:#e8640a;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --navy:#1a2744;--white:#ffffff;--black:#0a0a0a;
-  --green:#15803d;--green-bg:#dcfce7;--green-border:#16a34a;
-  --yellow:#92400e;--yellow-bg:#fef9c3;--yellow-border:#ca8a04;
-  --red:#991b1b;--red-bg:#fee2e2;--red-border:#dc2626;
-  --gray:#f8fafc;--gray-border:#e2e8f0;--muted:#64748b;--text:#0f172a;
-}
-html,body{background:#fff;color:var(--text);font-family:'Barlow',sans-serif;font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%;}
-@media print{
-  .no-print{display:none!important;}
-  .doc-section{page-break-inside:avoid;break-inside:avoid;}
-  body{font-size:14px;}
-  .fixed-top,.fixed-bottom{position:relative;}
-  #printHeader{display:block!important;}
-  .page-content{padding:0;max-width:100%;}
-  .doc-section{border:1px solid #ccc;margin-bottom:12px;}
-  .section-header{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  .legal-note{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-}
-.fixed-top{position:sticky;top:0;z-index:100;background:#fff;border-bottom:2px solid var(--navy);box-shadow:0 2px 8px rgba(0,0,0,.12);}
-.header-main{background:var(--navy);color:#fff;padding:12px 16px 10px;}
-.header-carrier{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.75;margin-bottom:2px;}
-.header-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;line-height:1.1;}
-.header-meta{font-size:13px;font-weight:500;margin-top:6px;opacity:.9;display:flex;flex-wrap:wrap;gap:6px 14px;}
-.header-meta span{white-space:nowrap;}
-.inspection-banner{background:#b91c1c;color:#fff;text-align:center;padding:8px 16px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;}
-.selector-bar{background:#f1f5f9;padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-bottom:1px solid var(--gray-border);}
-.selector-bar label{font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.04em;}
-.selector-bar select{font-size:15px;font-weight:600;padding:6px 10px;border:2px solid var(--navy);border-radius:6px;background:#fff;color:var(--text);flex:1;min-width:130px;}
-.status-bar{background:#fff;padding:10px 16px;border-bottom:2px solid var(--gray-border);overflow-x:auto;-webkit-overflow-scrolling:touch;}
-.status-pills{display:flex;gap:8px;min-width:max-content;}
-.pill{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:none;text-decoration:none;white-space:nowrap;transition:opacity .15s;}
-.pill:active{opacity:.75;}
-.pill-green{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-border);}
-.pill-yellow{background:var(--yellow-bg);color:var(--yellow);border:1.5px solid var(--yellow-border);}
-.pill-red{background:var(--red-bg);color:var(--red);border:1.5px solid var(--red-border);}
-.pill-gray{background:#f1f5f9;color:var(--muted);border:1.5px solid #cbd5e1;}
-.page-content{padding:16px;padding-bottom:80px;max-width:900px;margin:0 auto;}
-.doc-section{background:#fff;border:2px solid var(--gray-border);border-radius:10px;margin-bottom:16px;overflow:hidden;scroll-margin-top:220px;}
-.doc-section.s-valid{border-left:6px solid var(--green-border);}
-.doc-section.s-expiring{border-left:6px solid var(--yellow-border);}
-.doc-section.s-expired{border-left:6px solid var(--red-border);}
-.doc-section.s-missing{border-left:6px solid var(--red-border);}
-.doc-section.s-na{border-left:6px solid #94a3b8;}
-.section-header{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.section-num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;opacity:.55;min-width:28px;}
-.section-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;flex:1;}
-.section-badge{font-size:12px;font-weight:800;padding:4px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
-.badge-valid{background:var(--green-bg);color:var(--green);}
-.badge-expiring{background:var(--yellow-bg);color:var(--yellow);}
-.badge-expired,.badge-missing{background:var(--red-bg);color:var(--red);}
-.badge-na{background:#f1f5f9;color:var(--muted);}
-.section-body{padding:14px 16px;}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin-bottom:12px;}
-@media(min-width:600px){.info-grid{grid-template-columns:1fr 1fr 1fr;}}
-.info-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px;}
-.info-val{font-size:17px;font-weight:700;color:var(--text);}
-.info-val.big{font-size:22px;font-family:'Barlow Condensed',sans-serif;font-weight:800;}
-.field-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
-.field-group{display:flex;flex-direction:column;flex:1;min-width:130px;}
-.field-group label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px;}
-.field-group input,.field-group select{font-size:16px;font-weight:600;padding:8px 10px;border:2px solid var(--gray-border);border-radius:6px;background:#fff;color:var(--text);width:100%;}
-.field-group input:focus,.field-group select:focus{border-color:var(--navy);outline:none;}
-.check-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.check-row input[type=checkbox]{width:20px;height:20px;cursor:pointer;}
-.check-row label{font-size:16px;font-weight:600;}
-.hos-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.hos-label{font-size:14px;font-weight:700;min-width:150px;color:var(--text);}
-.hos-bar-wrap{flex:1;background:#e2e8f0;border-radius:6px;height:18px;overflow:hidden;}
-.hos-bar{height:100%;background:var(--green-border);border-radius:6px;transition:width .3s;}
-.hos-bar.warn{background:#ca8a04;}
-.hos-bar.over{background:#dc2626;}
-.hos-val{font-size:14px;font-weight:700;min-width:60px;text-align:right;}
-.legal-note{background:#f8fafc;border-top:2px solid var(--gray-border);padding:10px 16px;font-size:13px;color:var(--muted);line-height:1.5;}
-.legal-note strong{color:var(--text);font-weight:700;}
-.doc-link{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--navy);color:#fff;border-radius:6px;font-size:14px;font-weight:700;text-decoration:none;margin-top:6px;}
-.doc-link:active{opacity:.8;}
-.warn-box{background:var(--yellow-bg);border:2px solid var(--yellow-border);border-radius:6px;padding:10px 14px;font-size:15px;font-weight:600;color:var(--yellow);margin-top:8px;}
-.alert-box{background:var(--red-bg);border:2px solid var(--red-border);border-radius:6px;padding:10px 14px;font-size:15px;font-weight:600;color:var(--red);margin-top:8px;}
-.fixed-bottom{position:fixed;bottom:0;left:0;right:0;z-index:100;background:#fff;border-top:2px solid var(--navy);padding:10px 16px;display:flex;gap:10px;justify-content:center;}
-.btn-print{display:flex;align-items:center;gap:8px;padding:12px 28px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:17px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;flex:1;max-width:360px;justify-content:center;}
-.btn-print:active{opacity:.85;}
-.btn-refresh{padding:12px 16px;background:#f1f5f9;color:var(--navy);border:2px solid var(--navy);border-radius:8px;font-size:17px;cursor:pointer;}
-.section-divider{height:1px;background:var(--gray-border);margin:10px 0;}
+body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
+.topbar{height:56px;background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#fff;flex:1;}
+.content{padding:24px 28px 48px;}
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;}
+.kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 18px;}
+.kpi-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;}
+.kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:#0f172a;line-height:1.1;}
+.kpi-sub{font-size:11px;color:var(--blue);margin-top:3px;}
+/* PANELS */
+.panel{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.panel-head{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:#0f172a;letter-spacing:.06em;text-transform:uppercase;}
+.panel-sub{font-size:11px;color:var(--muted);}
+/* DQ GRID */
+.dq-grid{display:grid;grid-template-columns:180px repeat(10,1fr);font-size:11px;}
+.dq-header{background:#f8fafc;border-bottom:2px solid #e2e8f0;display:contents;}
+.dq-header-cell{padding:8px 6px;font-size:9px;font-weight:700;color:#64748b;letter-spacing:.08em;text-transform:uppercase;text-align:center;border-right:1px solid #f1f5f9;}
+.dq-header-cell:first-child{text-align:left;padding-left:16px;}
+.dq-row{display:contents;}
+.dq-row:hover .dq-cell{background:#fafcff;}
+.dq-cell{padding:10px 6px;border-bottom:1px solid #f8fafc;border-right:1px solid #f8fafc;text-align:center;display:flex;align-items:center;justify-content:center;vertical-align:middle;}
+.dq-cell:first-child{text-align:left;justify-content:flex-start;padding-left:16px;font-weight:600;font-size:13px;gap:8px;}
+/* STATUS DOTS */
+.dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.dot-green{background:#dcfce7;color:#15803d;}
+.dot-yellow{background:#fef9c3;color:#a16207;}
+.dot-red{background:#fee2e2;color:#b91c1c;}
+.dot-gray{background:#f1f5f9;color:#94a3b8;}
+/* BADGES */
+.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;display:inline-block;}
+.badge-green{background:#dcfce7;color:#15803d;}
+.badge-red{background:#fee2e2;color:#b91c1c;}
+.badge-yellow{background:#fef9c3;color:#a16207;}
+.badge-blue{background:#dbeafe;color:#1d4ed8;}
+.badge-gray{background:#f1f5f9;color:#64748b;}
+.badge-orange{background:#ffedd5;color:#c2410c;}
+/* EXPIRY TABLE */
+table{width:100%;border-collapse:collapse;}
+th{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:9px 14px;text-align:left;background:#f8fafc;border-bottom:1px solid var(--border);}
+td{padding:10px 14px;font-size:13px;color:#0f172a;border-bottom:1px solid #f8fafc;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fafcff;}
+.mono{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue);}
+/* DRUG POOL */
+.pool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding:16px 20px;}
+.pool-card{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+.pool-name{font-weight:700;font-size:13px;margin-bottom:4px;}
+.pool-stat{font-size:11px;color:var(--muted);}
+.pool-stat strong{color:#0f172a;}
+/* BTNS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.6px;cursor:pointer;border:1px solid var(--border);background:#fff;color:#334155;transition:all .15s;}
+.btn:hover{background:#f1f5f9;}
+.btn-primary{background:var(--pink);color:#fff;border-color:var(--pink);}
+.btn-sm{padding:4px 10px;font-size:11px;}
+/* ROADSIDE */
+.rs-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;}
+.rs-level1{background:#dcfce7;color:#15803d;}
+.rs-level2{background:#fef9c3;color:#a16207;}
+.rs-level3{background:#dbeafe;color:#1d4ed8;}
+.rs-oos{background:#fee2e2;color:#b91c1c;}
+/* ALERT BANNER */
+.alert-banner{border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;}
+.alert-critical{background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;}
+.alert-warn{background:#fef9c3;color:#92400e;border:1px solid #fcd34d;}
+/* 2-col layout */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#fff;border-radius:12px;width:92%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.3);}
+.modal-hdr{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:16px 22px;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:space-between;}
+.modal-hdr-title{color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;letter-spacing:2px;}
+.modal-close{background:none;border:none;color:rgba(255,255,255,0.7);font-size:20px;cursor:pointer;}
+.modal-body{padding:20px 22px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-full{grid-column:1/-1;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-label{font-size:10px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.08em;}
+.form-input,.form-select{width:100%;padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:6px;font-size:13px;color:#0f172a;font-family:'Barlow',sans-serif;transition:border .15s;}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--pink);}
+.modal-footer{padding:12px 22px 18px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid #f1f5f9;}
+/* mobile */
+.mobile-nav{display:none;}
+@media(max-width:768px){.main{margin-left:0!important;}.content{padding:14px 12px 80px!important;}.kpi-row{grid-template-columns:1fr 1fr!important;}.two-col{grid-template-columns:1fr!important;}.mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;height:56px;background:#000;border-top:1px solid rgba(233,30,140,0.2);z-index:200;}.mobile-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;font-size:9px;font-weight:700;color:#64748b;}.mobile-nav a.active{color:#e91e8c;}}
 </style>
-
-  <style>
-  body { max-width: 100%; overflow-x: hidden; }
-  @media (max-width: 480px) {
-    .doc-grid, .spec-grid, .grid-2col { grid-template-columns: 1fr !important; }
-  }
-  </style>
+<style id="nexus-unified">
+.sidebar,nav.sidebar{background:#000!important;border-right:1px solid #1a1a1a!important;}
+.sidebar-logo{padding:16px!important;display:flex!important;align-items:center!important;gap:10px!important;text-decoration:none!important;border-bottom:1px solid rgba(255,255,255,0.07)!important;flex-direction:row!important;}
+.sidebar-logo .logo-hex{flex-shrink:0!important;}.sidebar-logo .logo-hex svg{width:36px!important;height:36px!important;display:block!important;}
+.sidebar-logo .logo-text{display:flex!important;flex-direction:column!important;gap:2px!important;}
+.sidebar-logo .logo-text .brand{font-family:'Barlow Condensed',sans-serif!important;font-weight:800!important;font-size:15px!important;letter-spacing:2px!important;color:#fff!important;display:block!important;}
+.sidebar-logo .logo-text .sub{font-family:'JetBrains Mono',monospace!important;font-size:9px!important;color:rgba(255,255,255,0.55)!important;letter-spacing:1px!important;display:block!important;}
+.sidebar-link{display:flex!important;align-items:center!important;gap:10px!important;padding:8px 16px!important;color:#a0aec0!important;border-left:3px solid transparent!important;text-decoration:none!important;font-size:13px!important;}
+.sidebar-link:hover{background:rgba(194,24,91,0.18)!important;border-left-color:#c2185b!important;color:#fff!important;}
+.sidebar-link.active{background:rgba(233,30,140,0.22)!important;border-left:3px solid #e91e8c!important;color:#fff!important;}
+.sidebar-link svg{width:14px!important;height:14px!important;flex-shrink:0!important;opacity:.7!important;}
+.sidebar-link.active svg{opacity:1!important;}
+.sidebar-section{padding:12px 0 4px!important;}
+.sidebar-section-label{color:rgba(255,255,255,0.3)!important;font-family:'JetBrains Mono',monospace!important;font-size:9px!important;font-weight:700!important;letter-spacing:1.5px!important;padding:16px 16px 6px!important;text-transform:uppercase!important;display:block!important;}
+.topbar,.top-bar{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%)!important;}
+.topbar *,.top-bar *{color:#fff!important;}
+.mobile-nav{background:#000!important;}
+</style>
 </head>
 <body>
-
-<div class="fixed-top no-print" id="fixedTop">
-  <div class="header-main">
-    <div class="header-carrier">Carrier Trucking US, LLC &middot; USDOT #<span id="hdrDOT">&mdash;</span> &middot; MC-<span id="hdrMC">&mdash;</span></div>
-    <div class="header-title">DOT Compliance</div>
-    <div class="header-meta">
-      <span>Driver: <strong id="hdrDriver">Select below</strong></span>
-      <span>Vehicle: <strong id="hdrVehicle">Select below</strong></span>
-      <span id="hdrDateTime"></span>
+<script src="nexus-sidebar.js"></script>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">DOT COMPLIANCE</div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn" style="color:#fff;border-color:rgba(255,255,255,0.3);" onclick="exportCompliance()">⬇ Export Report</button>
+      <button class="btn btn-primary" onclick="openInspModal()">＋ Log Roadside Inspection</button>
     </div>
   </div>
-  <div class="inspection-banner">For Roadside Inspection Use Only &mdash; Show This Screen to the Officer</div>
-  <div class="selector-bar">
-    <label>Driver:</label>
-    <select id="driverSelect" onchange="onSelectionChange()">
-      <option value="">&#x2014; Select Driver &#x2014;</option>
-    </select>
-    <label>Vehicle:</label>
-    <select id="vehicleSelect" onchange="onSelectionChange()">
-      <option value="">&#x2014; Select &#x2014;</option>
-      <option value="T-001">T-001</option>
-      <option value="T-002">T-002</option>
-    </select>
-  </div>
-  <div class="status-bar">
-    <div class="status-pills" id="statusPills"></div>
-  </div>
-</div>
+  <div class="content">
 
-<div id="printHeader" style="display:none;padding:16px 0 8px;">
-  <h1 style="font-size:24px;font-weight:900;margin-bottom:4px;">DOT Compliance</h1>
-  <p style="font-size:16px;font-weight:700;">CARRIER TRUCKING US, LLC</p>
-  <p id="printMeta" style="font-size:14px;margin-bottom:16px;"></p>
-  <hr style="border:2px solid #000;margin-bottom:16px;">
-</div>
+    <!-- Alert banners -->
+    <div id="alertBanners"></div>
 
-<div class="page-content">
-
-<!-- 1. CDL -->
-<div class="doc-section" id="sec-cdl">
-  <div class="section-header">
-    <span class="section-num">1</span>
-    <span class="section-title">Commercial Driver's License</span>
-    <span class="section-badge" id="badge-cdl">&mdash;</span>
-  </div>
-  <div class="section-body">
-    <div class="info-grid">
-      <div><div class="info-label">Driver Name</div><div class="info-val" id="cdl-name">&mdash;</div></div>
-      <div><div class="info-label">CDL Class</div><div class="info-val big" id="cdl-class">&mdash;</div></div>
-      <div><div class="info-label">License # (masked)</div><div class="info-val" id="cdl-num">&mdash;</div></div>
-      <div><div class="info-label">State</div><div class="info-val" id="cdl-state">&mdash;</div></div>
-      <div><div class="info-label">Expiry Date</div><div class="info-val" id="cdl-expiry">&mdash;</div></div>
+    <!-- KPIs -->
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">Fully Compliant</div><div class="kpi-val" id="kpi-ok" style="color:#22c55e;">—</div><div class="kpi-sub">All DQ docs current</div></div>
+      <div class="kpi-card"><div class="kpi-label">Expiring ≤ 60 Days</div><div class="kpi-val" id="kpi-warn" style="color:#f59e0b;">—</div><div class="kpi-sub">Action required</div></div>
+      <div class="kpi-card"><div class="kpi-label">Expired / Missing</div><div class="kpi-val" id="kpi-fail" style="color:#ef4444;">—</div><div class="kpi-sub">Immediate attention</div></div>
+      <div class="kpi-card"><div class="kpi-label">Roadside Inspections</div><div class="kpi-val" id="kpi-rs">—</div><div class="kpi-sub" id="kpi-rs-sub">YTD</div></div>
+      <div class="kpi-card"><div class="kpi-label">OOS Events</div><div class="kpi-val" id="kpi-oos" style="color:#ef4444;">—</div><div class="kpi-sub">Out-of-service orders</div></div>
     </div>
-    <div class="field-row">
-      <div class="field-group"><label>CDL Class</label>
-        <select id="cdl-class-in" onchange="saveCDL()">
-          <option value="">Select...</option>
-          <option value="A">Class A</option><option value="B">Class B</option><option value="C">Class C</option>
-        </select>
+
+    <!-- DQ File Status Grid -->
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Driver Qualification (DQ) File Tracker</div>
+          <div class="panel-sub">49 CFR §391 — Required documents per driver</div>
+        </div>
+        <span style="font-size:11px;color:#64748b;">🟢 Current &nbsp; 🟡 Expiring ≤60d &nbsp; 🔴 Expired / Missing &nbsp; ⚪ N/A</span>
       </div>
-      <div class="field-group"><label>License Number</label><input type="text" id="cdl-num-in" placeholder="Full license #" oninput="saveCDL()"></div>
-      <div class="field-group"><label>State</label><input type="text" id="cdl-state-in" placeholder="FL" maxlength="2" oninput="saveCDL()"></div>
-      <div class="field-group"><label>Expiry Date</label><input type="date" id="cdl-expiry-in" onchange="saveCDL()"></div>
-    </div>
-    <div id="cdl-doc-link"></div>
-  </div>
-  <div class="legal-note"><strong>COMMERCIAL DRIVER'S LICENSE &mdash;</strong> Required under 49 CFR 383. Operator must hold a valid CDL of the appropriate class for this vehicle.</div>
-</div>
-
-<!-- 2. MEDICAL -->
-<div class="doc-section" id="sec-med">
-  <div class="section-header">
-    <span class="section-num">2</span>
-    <span class="section-title">Medical Examiner's Certificate</span>
-    <span class="section-badge" id="badge-med">&mdash;</span>
-  </div>
-  <div class="section-body">
-    <div class="info-grid">
-      <div><div class="info-label">Expiry Date</div><div class="info-val" id="med-expiry-disp">&mdash;</div></div>
-      <div><div class="info-label">Issuing Examiner</div><div class="info-val" id="med-examiner-disp">&mdash;</div></div>
-    </div>
-    <div class="field-row">
-      <div class="field-group"><label>Expiry Date</label><input type="date" id="med-expiry-in" onchange="saveMed()"></div>
-      <div class="field-group"><label>Issuing Examiner</label><input type="text" id="med-examiner-in" placeholder="Doctor / Clinic name" oninput="saveMed()"></div>
-    </div>
-    <div id="med-doc-link"></div>
-  </div>
-  <div class="legal-note"><strong>MEDICAL EXAMINER'S CERTIFICATE &mdash;</strong> Required under 49 CFR 391.45. Driver must maintain a valid DOT physical examination.</div>
-</div>
-
-<!-- 3. HOS / ELD -->
-<div class="doc-section s-na" id="sec-hos">
-  <div class="section-header">
-    <span class="section-num">3</span>
-    <span class="section-title">Hours of Service / ELD Record</span>
-    <span class="section-badge badge-na" id="badge-hos">MANUAL</span>
-  </div>
-  <div class="section-body">
-    <div class="field-row">
-      <div class="field-group"><label>Log Type</label>
-        <select id="hos-type" onchange="saveHOS()">
-          <option value="">Select...</option>
-          <option value="ELD - Motive">ELD &mdash; Motive</option>
-          <option value="ELD - KeepTruckin">ELD &mdash; KeepTruckin</option>
-          <option value="ELD - Samsara">ELD &mdash; Samsara</option>
-          <option value="Paper Logs">Paper Logs</option>
-          <option value="Other">Other ELD</option>
-        </select>
-      </div>
-      <div class="field-group"><label>ELD Device ID</label><input type="text" id="hos-device-id" placeholder="Device serial / ID" oninput="saveHOS()"></div>
-    </div>
-    <div class="section-divider"></div>
-    <p style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Current HOS Status</p>
-    <div class="hos-row">
-      <span class="hos-label">Drive Hours Today</span>
-      <div class="hos-bar-wrap"><div class="hos-bar" id="bar-drive" style="width:0%"></div></div>
-      <span class="hos-val"><input type="number" id="hos-drive" min="0" max="11" step=".5" style="width:52px;font-size:15px;font-weight:700;border:2px solid var(--gray-border);border-radius:4px;padding:2px 4px;" oninput="saveHOS();updateBars()" placeholder="0"> /11h</span>
-    </div>
-    <div class="hos-row">
-      <span class="hos-label">On-Duty Hours Today</span>
-      <div class="hos-bar-wrap"><div class="hos-bar" id="bar-duty" style="width:0%"></div></div>
-      <span class="hos-val"><input type="number" id="hos-duty" min="0" max="14" step=".5" style="width:52px;font-size:15px;font-weight:700;border:2px solid var(--gray-border);border-radius:4px;padding:2px 4px;" oninput="saveHOS();updateBars()" placeholder="0"> /14h</span>
-    </div>
-    <div class="hos-row">
-      <span class="hos-label">Cycle Hours (8-day)</span>
-      <div class="hos-bar-wrap"><div class="hos-bar" id="bar-cycle" style="width:0%"></div></div>
-      <span class="hos-val"><input type="number" id="hos-cycle" min="0" max="70" step=".5" style="width:52px;font-size:15px;font-weight:700;border:2px solid var(--gray-border);border-radius:4px;padding:2px 4px;" oninput="saveHOS();updateBars()" placeholder="0"> /70h</span>
-    </div>
-  </div>
-  <div class="legal-note"><strong>HOURS OF SERVICE RECORD &mdash;</strong> Required under 49 CFR 395. Officer may request last 8 days of duty status records. Limits: 11 hrs driving / 14 hrs on-duty / 70 hrs in 8 days.</div>
-</div>
-
-<!-- 4. VEHICLE REGISTRATION -->
-<div class="doc-section" id="sec-reg">
-  <div class="section-header">
-    <span class="section-num">4</span>
-    <span class="section-title">Vehicle Registration</span>
-    <span class="section-badge" id="badge-reg">&mdash;</span>
-  </div>
-  <div class="section-body">
-    <div class="info-grid">
-      <div><div class="info-label">Unit #</div><div class="info-val big" id="reg-unit">&mdash;</div></div>
-      <div><div class="info-label">Year / Make / Model</div><div class="info-val" id="reg-ymm">&mdash;</div></div>
-      <div><div class="info-label">License Plate</div><div class="info-val" id="reg-plate">&mdash;</div></div>
-      <div><div class="info-label">State</div><div class="info-val" id="reg-state">&mdash;</div></div>
-      <div><div class="info-label">Registration Expiry</div><div class="info-val" id="reg-expiry">&mdash;</div></div>
-    </div>
-    <div id="reg-doc-link"></div>
-  </div>
-  <div class="legal-note"><strong>VEHICLE REGISTRATION &mdash;</strong> Required under state law. Registration must match the vehicle being operated.</div>
-</div>
-
-<!-- 5. INSURANCE -->
-<div class="doc-section" id="sec-ins">
-  <div class="section-header">
-    <span class="section-num">5</span>
-    <span class="section-title">Proof of Insurance (MCS-90)</span>
-    <span class="section-badge" id="badge-ins">&mdash;</span>
-  </div>
-  <div class="section-body">
-    <div class="field-row">
-      <div class="field-group"><label>Insurance Carrier</label><input type="text" id="ins-carrier" placeholder="e.g. Progressive Commercial" oninput="saveIns()"></div>
-      <div class="field-group"><label>Policy Number</label><input type="text" id="ins-policy" placeholder="Policy #" oninput="saveIns()"></div>
-    </div>
-    <div class="field-row">
-      <div class="field-group"><label>Coverage Amount</label><input type="text" id="ins-coverage" placeholder="$1,000,000" oninput="saveIns()"></div>
-      <div class="field-group"><label>Effective Date</label><input type="date" id="ins-effective" onchange="saveIns()"></div>
-      <div class="field-group"><label>Expiry Date</label><input type="date" id="ins-expiry" onchange="saveIns()"></div>
-    </div>
-    <div class="check-row">
-      <input type="checkbox" id="ins-mcs90" onchange="saveIns()">
-      <label for="ins-mcs90">MCS-90 Endorsement on File</label>
-    </div>
-    <div id="ins-doc-link"></div>
-  </div>
-  <div class="legal-note"><strong>PROOF OF INSURANCE &mdash;</strong> Required under 49 CFR 387. Minimum liability coverage: $750,000 general freight | $1,000,000 hazmat/oil | $5,000,000 certain hazmat classes.</div>
-</div>
-
-<!-- 6. ANNUAL DOT INSPECTION -->
-<div class="doc-section" id="sec-annual">
-  <div class="section-header">
-    <span class="section-num">6</span>
-    <span class="section-title">Annual DOT Vehicle Inspection</span>
-    <span class="section-badge" id="badge-annual">&mdash;</span>
-  </div>
-  <div class="section-body">
-    <div class="info-grid">
-      <div><div class="info-label">Last Inspection Date</div><div class="info-val" id="annual-date">&mdash;</div></div>
-      <div><div class="info-label">Inspector / Company</div><div class="info-val" id="annual-inspector">&mdash;</div></div>
-      <div><div class="info-label">Next Due</div><div class="info-val" id="annual-nextdue">&mdash;</div></div>
-    </div>
-    <div id="annual-alert"></div>
-    <div class="field-row">
-      <div class="field-group"><label>Inspection Date</label><input type="date" id="annual-date-in" onchange="saveAnnual()"></div>
-      <div class="field-group"><label>Inspector / Company</label><input type="text" id="annual-inspector-in" placeholder="Inspector name or company" oninput="saveAnnual()"></div>
-    </div>
-  </div>
-  <div class="legal-note"><strong>ANNUAL VEHICLE INSPECTION &mdash;</strong> Required under 49 CFR 396.17. Commercial vehicles must pass an annual inspection. Report must be carried in the vehicle or accessible electronically.</div>
-</div>
-
-<!-- 7. DVIR -->
-<div class="doc-section" id="sec-dvir">
-  <div class="section-header">
-    <span class="section-num">7</span>
-    <span class="section-title">Driver Vehicle Inspection Report (Pre-Trip)</span>
-    <span class="section-badge" id="badge-dvir">&mdash;</span>
-  </div>
-  <div class="section-body">
-    <div class="info-grid">
-      <div><div class="info-label">Report Date</div><div class="info-val" id="dvir-date">&mdash;</div></div>
-      <div><div class="info-label">Vehicle</div><div class="info-val" id="dvir-vehicle">&mdash;</div></div>
-      <div><div class="info-label">Defects Found</div><div class="info-val" id="dvir-defects">&mdash;</div></div>
-      <div><div class="info-label">Certified</div><div class="info-val" id="dvir-certified">&mdash;</div></div>
-    </div>
-    <div id="dvir-alert"></div>
-    <a href="dvir.html" class="doc-link" style="background:#15803d;">&#x270F;&#xFE0F; Complete Today's DVIR</a>
-  </div>
-  <div class="legal-note"><strong>DRIVER VEHICLE INSPECTION REPORT &mdash;</strong> Required under 49 CFR 396.11&ndash;396.13. Driver must complete a pre-trip inspection and document any defects.</div>
-</div>
-
-<!-- 8. IFTA -->
-<div class="doc-section" id="sec-ifta">
-  <div class="section-header">
-    <span class="section-num">8</span>
-    <span class="section-title">IFTA License &amp; Decals</span>
-    <span class="section-badge" id="badge-ifta">&mdash;</span>
-  </div>
-  <div class="section-body">
-    <div class="field-row">
-      <div class="field-group"><label>IFTA License #</label><input type="text" id="ifta-license" placeholder="IFTA license number" oninput="saveIFTA()"></div>
-      <div class="field-group"><label>Base State</label><input type="text" id="ifta-state" placeholder="FL" maxlength="2" oninput="saveIFTA()"></div>
-    </div>
-    <div class="field-row">
-      <div class="field-group"><label>Decal # Left Cab</label><input type="text" id="ifta-decal-left" placeholder="Decal #" oninput="saveIFTA()"></div>
-      <div class="field-group"><label>Decal # Right Cab</label><input type="text" id="ifta-decal-right" placeholder="Decal #" oninput="saveIFTA()"></div>
-      <div class="field-group"><label>Expiry Date</label><input type="date" id="ifta-expiry" onchange="saveIFTA()"></div>
-    </div>
-  </div>
-  <div class="legal-note"><strong>IFTA LICENSE &mdash;</strong> Required if operating in 2 or more IFTA member jurisdictions with a vehicle over 26,000 lbs. License and decals must be current. Carrier's base state: Florida.</div>
-</div>
-
-<!-- 9. BILL OF LADING -->
-<div class="doc-section s-na" id="sec-bol">
-  <div class="section-header">
-    <span class="section-num">9</span>
-    <span class="section-title">Bill of Lading / Shipping Papers</span>
-    <span class="section-badge badge-na" id="badge-bol">CURRENT LOAD</span>
-  </div>
-  <div class="section-body">
-    <div class="info-grid">
-      <div><div class="info-label">Load ID</div><div class="info-val" id="bol-loadid">&mdash;</div></div>
-      <div><div class="info-label">Origin</div><div class="info-val" id="bol-origin">&mdash;</div></div>
-      <div><div class="info-label">Destination</div><div class="info-val" id="bol-dest">&mdash;</div></div>
-      <div><div class="info-label">Shipper</div><div class="info-val" id="bol-shipper">&mdash;</div></div>
-      <div><div class="info-label">Consignee</div><div class="info-val" id="bol-consignee">&mdash;</div></div>
-    </div>
-    <div class="field-row">
-      <div class="field-group" style="flex:2;"><label>Commodity Description</label><input type="text" id="bol-commodity" placeholder="Describe cargo" oninput="saveBOL()"></div>
-      <div class="field-group"><label>Hazmat?</label>
-        <select id="bol-hazmat" onchange="saveBOL()">
-          <option value="no">No</option>
-          <option value="yes">Yes &mdash; See Placard</option>
-        </select>
+      <div style="overflow-x:auto;">
+        <div class="dq-grid" id="dqGrid">
+          <!-- Header -->
+          <div class="dq-header-cell" style="text-align:left;padding-left:16px;background:#f8fafc;padding:10px 16px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;letter-spacing:.08em;text-transform:uppercase;">Driver</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">CDL</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">DOT Physical</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">Drug Test</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">MVR Annual</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">Annual Review</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">Emp. App</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">Road Test</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">Prev Emp</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">Clearinghouse</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">DQ Score</div>
+          <!-- Rows rendered by JS -->
+        </div>
       </div>
     </div>
-    <div id="bol-doc-link"></div>
-  </div>
-  <div class="legal-note"><strong>BILL OF LADING / SHIPPING PAPERS &mdash;</strong> Required under 49 CFR 375 and state law. Must describe cargo. Hazardous materials require additional documentation under 49 CFR 172.</div>
-</div>
 
-<!-- 10. OVERSIZE PERMITS -->
-<div class="doc-section s-na" id="sec-permits">
-  <div class="section-header">
-    <span class="section-num">10</span>
-    <span class="section-title">Oversize / Overweight Permits</span>
-    <span class="section-badge badge-na" id="badge-permits">CONDITIONAL</span>
-  </div>
-  <div class="section-body">
-    <div class="check-row">
-      <input type="checkbox" id="permits-standard" onchange="savePermits()">
-      <label for="permits-standard" style="font-size:17px;font-weight:700;">&#x2705; Standard Load &mdash; No Oversize/Overweight Permits Required</label>
-    </div>
-    <div id="permits-list"></div>
-    <div id="permits-none-msg" style="display:none;">
-      <div class="warn-box">&#x26A0;&#xFE0F; No oversize/overweight permits found. If this load requires permits, add them in <a href="permits.html" style="color:inherit;font-weight:800;">permits.html</a>.</div>
-    </div>
-  </div>
-  <div class="legal-note"><strong>OVERSIZE / OVERWEIGHT PERMITS &mdash;</strong> Required when exceeding: 8'6" width, 13'6" height, 14'0" length overhang, or 80,000 lbs gross weight. Each state requires separate permits.</div>
-</div>
+    <!-- Two-column: Expirations + Drug Pool -->
+    <div class="two-col">
 
-<!-- 11. USDOT / MC -->
-<div class="doc-section" id="sec-dot">
-  <div class="section-header">
-    <span class="section-num">11</span>
-    <span class="section-title">USDOT / MC Number Verification</span>
-    <span class="section-badge" id="badge-dot">&mdash;</span>
-  </div>
-  <div class="section-body">
-    <div class="info-grid">
-      <div><div class="info-label">Carrier Name</div><div class="info-val">Carrier Trucking US, LLC</div></div>
-      <div><div class="info-label">USDOT #</div><div class="info-val big" id="dot-usdot-disp">&mdash;</div></div>
-      <div><div class="info-label">MC #</div><div class="info-val big" id="dot-mc-disp">&mdash;</div></div>
-    </div>
-    <div class="field-row">
-      <div class="field-group"><label>USDOT Number</label><input type="text" id="dot-usdot-in" placeholder="USDOT #" oninput="saveDOT()"></div>
-      <div class="field-group"><label>MC Number</label><input type="text" id="dot-mc-in" placeholder="MC-#" oninput="saveDOT()"></div>
-      <div class="field-group"><label>Authority Type</label>
-        <select id="dot-auth" onchange="saveDOT()">
-          <option value="">Select...</option>
-          <option value="Common">Common Carrier</option>
-          <option value="Contract">Contract Carrier</option>
-          <option value="Exempt">Exempt Carrier</option>
-        </select>
+      <!-- Upcoming Expirations -->
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">⏰ Upcoming Expirations</div>
+            <div class="panel-sub">Next 90 days</div>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Driver</th><th>Document</th><th>Expires</th><th>Days Left</th></tr></thead>
+          <tbody id="expiry-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- Random Drug Test Pool -->
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">🧪 Random Drug Test Pool</div>
+            <div class="panel-sub">FMCSA §382.305 — 50% drug / 10% alcohol annually</div>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="openDrugModal()">＋ Log Test</button>
+        </div>
+        <div class="pool-grid" id="poolGrid"></div>
+        <div style="padding:12px 20px;border-top:1px solid #f1f5f9;font-size:11px;color:#64748b;">
+          <strong style="color:#0f172a;" id="poolProgress">0 / 0</strong> drivers tested this year &nbsp;·&nbsp; 
+          <span id="poolRate" style="font-weight:700;">0%</span> rate
+          &nbsp;(<span style="color:#22c55e;">50% required</span>)
+        </div>
       </div>
     </div>
+
+    <!-- Pre-Trip / DVIR Status -->
+    <div class="panel" id="pretrip-panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">🔍 Driver Vehicle Inspection Report (DVIR)</div>
+          <div class="panel-sub">49 CFR 396.11 / 396.13 — Daily pre-trip and post-trip inspections</div>
+        </div>
+        <a href="pretrip.html" class="btn btn-primary" style="text-decoration:none;">+ New Inspection</a>
+      </div>
+      <div id="dvir-status-content" style="padding:16px 20px;">
+        <div style="color:#94a3b8;font-size:13px;">Loading inspection status…</div>
+      </div>
+    </div>
+
+        <!-- Roadside Inspections Log -->
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">🚔 Roadside Inspection Log</div>
+          <div class="panel-sub">FMCSA DataQ — all inspections &amp; outcomes</div>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Date</th><th>Driver</th><th>Unit</th><th>State</th><th>Level</th><th>Violations</th><th>OOS?</th><th>Result</th><th>Notes</th><th></th></tr></thead>
+          <tbody id="rs-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CSA / Regulatory Legend -->
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title">📋 CFR Reference — DQ File Requirements (49 CFR §391)</div></div>
+      <div style="padding:16px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;">
+        <div style="font-size:12px;padding:10px 12px;background:#f8fafc;border-radius:6px;border-left:3px solid #2e6da4;">
+          <strong>§391.21 — Application</strong><br>Signed employment application, 10-year work history
+        </div>
+        <div style="font-size:12px;padding:10px 12px;background:#f8fafc;border-radius:6px;border-left:3px solid #2e6da4;">
+          <strong>§391.23 — MVR</strong><br>Pull within 30 days of hire; annually thereafter
+        </div>
+        <div style="font-size:12px;padding:10px 12px;background:#f8fafc;border-radius:6px;border-left:3px solid #2e6da4;">
+          <strong>§391.25 — Annual Review</strong><br>Driving record reviewed every 12 months
+        </div>
+        <div style="font-size:12px;padding:10px 12px;background:#f8fafc;border-radius:6px;border-left:3px solid #e8640a;">
+          <strong>§391.31 — Road Test</strong><br>Certificate or CDL skills test waiver at hire
+        </div>
+        <div style="font-size:12px;padding:10px 12px;background:#f8fafc;border-radius:6px;border-left:3px solid #e8640a;">
+          <strong>§391.43-45 — Medical Cert</strong><br>DOT physical every 24 months (12 for some conditions)
+        </div>
+        <div style="font-size:12px;padding:10px 12px;background:#f8fafc;border-radius:6px;border-left:3px solid #22c55e;">
+          <strong>§382.301 — Pre-Employment Test</strong><br>Drug screen before first safety-sensitive duty
+        </div>
+        <div style="font-size:12px;padding:10px 12px;background:#f8fafc;border-radius:6px;border-left:3px solid #22c55e;">
+          <strong>§382.701 — Clearinghouse</strong><br>Pre-employment query + annual limited query
+        </div>
+        <div style="font-size:12px;padding:10px 12px;background:#f8fafc;border-radius:6px;border-left:3px solid #ef4444;">
+          <strong>§391.23(e) — Prev Employer</strong><br>3-year verification of DOT-regulated employers
+        </div>
+        <div style="font-size:12px;padding:10px 12px;background:#f8fafc;border-radius:6px;border-left:3px solid #ef4444;">
+          <strong>§383.37 — CDL</strong><br>Valid CDL on file; check for disqualifications
+        </div>
+        <div style="font-size:12px;padding:10px 12px;background:#f8fafc;border-radius:6px;border-left:3px solid #6d28d9;">
+          <strong>§382.305 — Random Testing</strong><br>≥50% pool for drugs, ≥10% for alcohol annually
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- Roadside Inspection Modal -->
+<div class="modal-overlay" id="rsModal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span class="modal-hdr-title" id="rsModalTitle">LOG ROADSIDE INSPECTION</span>
+      <button class="modal-close" onclick="closeRsModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="rs-edit-id">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Date *</label><input class="form-input" id="rs-date" type="date" required></div>
+        <div class="form-group"><label class="form-label">State</label><input class="form-input" id="rs-state" placeholder="TX" maxlength="2" style="text-transform:uppercase"></div>
+        <div class="form-group"><label class="form-label">Driver</label>
+          <select class="form-select" id="rs-driver">
+            <option value="">— Select —</option>
+            <option>AVIS</option><option>DAVID</option><option>GUILLERMO</option>
+            <option>JAYLER</option><option>MIGUEL</option><option>NELSON</option><option>YOSVIEL</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Unit #</label>
+          <select class="form-select" id="rs-unit">
+            <option value="">— Select —</option>
+            <option>01</option><option>02</option><option>03</option><option>04</option>
+            <option>05</option><option>06</option><option>07</option><option>08</option><option>09</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Inspection Level</label>
+          <select class="form-select" id="rs-level">
+            <option value="1">Level I — Full</option>
+            <option value="2">Level II — Walk-Around</option>
+            <option value="3">Level III — Driver Only</option>
+            <option value="5">Level V — Vehicle Only</option>
+            <option value="6">Level VI — Enhanced NAS (HazMat)</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Result</label>
+          <select class="form-select" id="rs-result">
+            <option value="no_violation">No Violation</option>
+            <option value="warning">Warning Issued</option>
+            <option value="violation">Violation — No OOS</option>
+            <option value="oos">Out of Service Issued</option>
+          </select>
+        </div>
+        <div class="form-group form-full"><label class="form-label">Violations (brief description)</label>
+          <input class="form-input" id="rs-violations" placeholder="e.g. Brake adjustment, logbook entry, equipment fault">
+        </div>
+        <div class="form-group form-full"><label class="form-label">Notes / DataQ Reference</label>
+          <input class="form-input" id="rs-notes" placeholder="DataQ report #, officer name, location…">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeRsModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveInspection()">Save Inspection</button>
+    </div>
   </div>
-  <div class="legal-note"><strong>USDOT / MC NUMBER &mdash;</strong> Required under 49 CFR 390.21. Must be displayed on both sides of the vehicle. Officers verify operating authority via FMCSA SAFER database.</div>
 </div>
 
-</div><!-- end .page-content -->
-
-<div class="fixed-bottom no-print">
-  <button class="btn-refresh" onclick="loadAll()" title="Refresh data">&#x1F504;</button>
-  <button class="btn-print" onclick="window.print()">&#x1F5A8;&#xFE0F; Print / Save PDF</button>
+<!-- Drug Test Log Modal -->
+<div class="modal-overlay" id="drugModal">
+  <div class="modal-box" style="max-width:480px;">
+    <div class="modal-hdr">
+      <span class="modal-hdr-title">LOG RANDOM DRUG TEST</span>
+      <button class="modal-close" onclick="closeDrugModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Driver</label>
+          <select class="form-select" id="dt-driver">
+            <option value="">— Select —</option>
+            <option>AVIS</option><option>DAVID</option><option>GUILLERMO</option>
+            <option>JAYLER</option><option>MIGUEL</option><option>NELSON</option><option>YOSVIEL</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Test Date</label><input class="form-input" id="dt-date" type="date"></div>
+        <div class="form-group"><label class="form-label">Test Type</label>
+          <select class="form-select" id="dt-type">
+            <option value="random">Random</option>
+            <option value="post_accident">Post-Accident</option>
+            <option value="reasonable_suspicion">Reasonable Suspicion</option>
+            <option value="return_to_duty">Return to Duty</option>
+            <option value="follow_up">Follow-Up</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Result</label>
+          <select class="form-select" id="dt-result">
+            <option value="negative">Negative</option>
+            <option value="positive">Positive</option>
+            <option value="refusal">Refusal</option>
+            <option value="cancelled">Cancelled/Dilute</option>
+          </select>
+        </div>
+        <div class="form-group form-full"><label class="form-label">Notes</label>
+          <input class="form-input" id="dt-notes" placeholder="MRO name, lab, reference #…">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeDrugModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveDrugTest()">Save Test</button>
+    </div>
+  </div>
 </div>
 
+<nav class="mobile-nav">
+  <a href="fleet-command.html">DASH</a>
+  <a href="drivers.html">TEAM</a>
+  <a href="dot-compliance.html" class="active">DOT</a>
+  <a href="pm-schedule.html">PM</a>
+</nav>
+
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
 <script>
-// ── UTILITIES ──────────────────────────────────────────────────────────────
-var LS={
-  get:function(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}},
-  set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
-};
-function fmt(d){if(!d)return'—';var dt=new Date(d+'T00:00:00');return isNaN(dt)?d:dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
-function daysDiff(s){if(!s)return null;var d=new Date(s+'T00:00:00'),n=new Date();n.setHours(0,0,0,0);return Math.round((d-n)/86400000);}
-function expiryStatus(s){
-  if(!s)return{cls:'s-missing',bc:'badge-missing',lbl:'MISSING'};
-  var d=daysDiff(s);
-  if(d<0)return{cls:'s-expired',bc:'badge-expired',lbl:'EXPIRED'};
-  if(d<60)return{cls:'s-expiring',bc:'badge-expiring',lbl:'EXPIRING SOON'};
-  return{cls:'s-valid',bc:'badge-valid',lbl:'VALID'};
-}
-function maskLic(n){if(!n||n.length<7)return n||'—';return n.slice(0,3)+'•••••'+n.slice(-4);}
-function setBadge(id,st){
-  var sec=document.getElementById('sec-'+id);
-  var badge=document.getElementById('badge-'+id);
-  if(!sec||!badge)return;
-  ['s-valid','s-expiring','s-expired','s-missing','s-na'].forEach(function(c){sec.classList.remove(c);});
-  sec.classList.add(st.cls);
-  badge.className='section-badge '+st.bc;
-  badge.textContent=st.lbl;
-}
+// ─── STORAGE ──────────────────────────────────────────────────────────────────
+const RS_KEY  = 'nexus_rs_inspections';
+const DT_KEY  = 'nexus_drug_tests';
+const LS_COMP = 'nexus_comp_';
 
-// ── CLOCK ──────────────────────────────────────────────────────────────────
-function updateClock(){
-  var now=new Date();
-  var el=document.getElementById('hdrDateTime');
-  if(el)el.textContent=now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})+' '+now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-  var pm=document.getElementById('printMeta');
-  if(pm)pm.textContent='Driver: '+(document.getElementById('hdrDriver').textContent||'—')+' | Vehicle: '+(document.getElementById('hdrVehicle').textContent||'—')+' | '+now.toLocaleString();
-}
-setInterval(updateClock,30000);
-updateClock();
+const DRIVERS = ['AVIS','DAVID','GUILLERMO','JAYLER','MIGUEL','NELSON','YOSVIEL'];
 
-// ── DRIVER SELECTOR ────────────────────────────────────────────────────────
-var DEFAULT_DRIVERS=[
-  {id:'usr_005',name:'Avis'},{id:'usr_006',name:'David'},
-  {id:'usr_007',name:'Miguel'},{id:'usr_008',name:'Nelson'},
-  {id:'usr_009',name:'Yosviel'},{id:'usr_010',name:'Guillermo Pinera'}
+// Seed roadside inspections
+const RS_SEED = [
+  {id:'rs1',date:'2026-01-08',state:'FL',driver:'DAVID',unit:'09',level:'2',result:'no_violation',violations:'',notes:'I-95 checkpoint'},
+  {id:'rs2',date:'2026-02-14',state:'TX',driver:'AVIS',unit:'01',level:'1',result:'violation',violations:'Brake adjustment out of spec (396.7)',notes:'DataQ filed'},
+  {id:'rs3',date:'2026-03-22',state:'GA',driver:'MIGUEL',unit:'05',level:'3',result:'no_violation',violations:'',notes:'Atlanta weigh station'},
+  {id:'rs4',date:'2026-04-10',state:'TN',driver:'NELSON',unit:'06',level:'2',result:'warning',violations:'Hours of Service logbook entry (395.8)',notes:'Warning only, no OOS'},
+  {id:'rs5',date:'2026-05-05',state:'CA',driver:'YOSVIEL',unit:'03',level:'1',result:'no_violation',violations:'',notes:'Checkpoint I-10'},
+  {id:'rs6',date:'2026-06-01',state:'AL',driver:'GUILLERMO',unit:'02',level:'2',result:'no_violation',violations:'',notes:''},
 ];
-function populateDrivers(){
-  var sel=document.getElementById('driverSelect');
-  var stored=LS.get('NEXUS_LOCAL_USERS')||[];
-  var drvs=stored.filter(function(u){return u.role==='driver'&&u.name;});
-  var list=drvs.length?drvs:DEFAULT_DRIVERS;
-  list.forEach(function(d){
-    var o=document.createElement('option');
-    o.value=d.id||d.name;
-    o.textContent=d.name;
-    sel.appendChild(o);
-  });
-}
-function onSelectionChange(){
-  var dSel=document.getElementById('driverSelect');
-  var vSel=document.getElementById('vehicleSelect');
-  var dName=dSel.options[dSel.selectedIndex]?dSel.options[dSel.selectedIndex].text:'—';
-  var vName=vSel.value||'—';
-  document.getElementById('hdrDriver').textContent=dName;
-  document.getElementById('hdrVehicle').textContent=vName;
-  LS.set('nexus_dot_last_selection',{driver:dSel.value,driverName:dName,vehicle:vName});
-  loadAll();
-}
-function restoreSelection(){
-  var last=LS.get('nexus_dot_last_selection');
-  if(!last)return;
-  var dSel=document.getElementById('driverSelect');
-  var vSel=document.getElementById('vehicleSelect');
-  if(last.driver)dSel.value=last.driver;
-  if(last.vehicle)vSel.value=last.vehicle;
-  if(last.driverName)document.getElementById('hdrDriver').textContent=last.driverName;
-  if(last.vehicle)document.getElementById('hdrVehicle').textContent=last.vehicle;
+
+// Seed drug tests
+const DT_SEED = [
+  {id:'dt1',driver:'AVIS',date:'2026-01-15',type:'random',result:'negative',notes:'Q1 random draw'},
+  {id:'dt2',driver:'DAVID',date:'2026-01-15',type:'random',result:'negative',notes:'Q1 random draw'},
+  {id:'dt3',driver:'GUILLERMO',date:'2026-01-15',type:'random',result:'negative',notes:'Q1 random draw'},
+  {id:'dt4',driver:'MIGUEL',date:'2026-03-20',type:'random',result:'negative',notes:'Q2 random draw'},
+  {id:'dt5',driver:'YOSVIEL',date:'2026-04-10',type:'post_accident',result:'negative',notes:'Minor fender bender'},
+  {id:'dt6',driver:'NELSON',date:'2026-05-12',type:'random',result:'negative',notes:'Q2 random draw'},
+  {id:'dt7',driver:'JAYLER',date:'2026-06-05',type:'random',result:'negative',notes:'Q2 random draw'},
+];
+
+function getRS()  { try{ const r=localStorage.getItem(RS_KEY); if(r) return JSON.parse(r); }catch(e){} localStorage.setItem(RS_KEY,JSON.stringify(RS_SEED)); return [...RS_SEED]; }
+function getDT()  { try{ const r=localStorage.getItem(DT_KEY); if(r) return JSON.parse(r); }catch(e){} localStorage.setItem(DT_KEY,JSON.stringify(DT_SEED)); return [...DT_SEED]; }
+function saveRS(a){ localStorage.setItem(RS_KEY,JSON.stringify(a)); }
+function saveDT(a){ localStorage.setItem(DT_KEY,JSON.stringify(a)); }
+
+function loadComp(driver) {
+  // Try by driver name match (stored by nexus_comp_ + id)
+  const driverIds = {AVIS:'d001',DAVID:'d002',MIGUEL:'d004',NELSON:'d005',YOSVIEL:'d006',GUILLERMO:'d007',JAYLER:'d011'};
+  const id = driverIds[driver.toUpperCase()];
+  if (!id) return {};
+  try { return JSON.parse(localStorage.getItem(LS_COMP+id)) || {}; } catch(e){ return {}; }
 }
 
-// ── LOAD ALL ───────────────────────────────────────────────────────────────
-function loadAll(){
-  var dSel=document.getElementById('driverSelect');
-  var vSel=document.getElementById('vehicleSelect');
-  var dId=dSel.value;
-  var dName=dSel.options[dSel.selectedIndex]?dSel.options[dSel.selectedIndex].text:'';
-  var veh=vSel.value;
-  loadCDL(dId,dName);
-  loadMed(dId);
-  loadHOS(dId);
-  loadReg(veh);
-  loadIns();
-  loadAnnual(veh);
-  loadDVIR(dId,dName,veh);
-  loadIFTA();
-  loadBOL(dId,dName);
-  loadPermits();
-  loadDOT();
-  setTimeout(buildStatusPills,300);
+// ─── DATE HELPERS ─────────────────────────────────────────────────────────────
+const today = new Date().toISOString().split('T')[0];
+const todayMs = Date.now();
+
+function daysUntil(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr+'T12:00:00');
+  return Math.round((d - new Date()) / 86400000);
 }
 
-// ── 1. CDL ─────────────────────────────────────────────────────────────────
-function saveCDL(){
-  var dId=document.getElementById('driverSelect').value;
-  LS.set('nexus_dot_cdl_'+dId,{
-    cls:document.getElementById('cdl-class-in').value,
-    num:document.getElementById('cdl-num-in').value,
-    state:document.getElementById('cdl-state-in').value,
-    expiry:document.getElementById('cdl-expiry-in').value
-  });
-  var dName=document.getElementById('driverSelect').options[document.getElementById('driverSelect').selectedIndex].text;
-  loadCDL(dId,dName);
-}
-function loadCDL(dId,dName){
-  var d=LS.get('nexus_dot_cdl_'+dId)||{};
-  document.getElementById('cdl-name').textContent=dName||'—';
-  document.getElementById('cdl-class').textContent=d.cls?'Class '+d.cls:'—';
-  document.getElementById('cdl-num').textContent=maskLic(d.num);
-  document.getElementById('cdl-state').textContent=d.state||'—';
-  document.getElementById('cdl-expiry').textContent=fmt(d.expiry);
-  document.getElementById('cdl-class-in').value=d.cls||'';
-  document.getElementById('cdl-num-in').value=d.num||'';
-  document.getElementById('cdl-state-in').value=d.state||'';
-  document.getElementById('cdl-expiry-in').value=d.expiry||'';
-  setBadge('cdl',expiryStatus(d.expiry));
-  var docs=LS.get('nexus_documents')||[];
-  var cdlDocs=docs.filter(function(x){return ((x.type||x.docType||'').toLowerCase()==='cdl');});
-  document.getElementById('cdl-doc-link').innerHTML=cdlDocs.length?'<a class="doc-link" href="documents.html" target="_blank">&#x1F4C4; CDL Document on File &mdash; View in Documents</a>':'';
+function fmtD(d) {
+  if (!d) return '—';
+  try { return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){ return d; }
 }
 
-// ── 2. MEDICAL ─────────────────────────────────────────────────────────────
-function saveMed(){
-  var dId=document.getElementById('driverSelect').value;
-  LS.set('nexus_dot_med_'+dId,{
-    expiry:document.getElementById('med-expiry-in').value,
-    examiner:document.getElementById('med-examiner-in').value
-  });
-  loadMed(dId);
-}
-function loadMed(dId){
-  var d=LS.get('nexus_dot_med_'+dId)||{};
-  document.getElementById('med-expiry-disp').textContent=fmt(d.expiry);
-  document.getElementById('med-examiner-disp').textContent=d.examiner||'—';
-  document.getElementById('med-expiry-in').value=d.expiry||'';
-  document.getElementById('med-examiner-in').value=d.examiner||'';
-  setBadge('med',expiryStatus(d.expiry));
+function statusDot(dateStr, isDate=true, onFile=true) {
+  if (!onFile || !dateStr) return `<div class="dot dot-gray" title="Missing">—</div>`;
+  const days = daysUntil(dateStr);
+  if (days === null) return `<div class="dot dot-gray" title="Not set">?</div>`;
+  if (!isDate) return `<div class="dot dot-green" title="On file">✓</div>`;
+  if (days < 0)    return `<div class="dot dot-red" title="Expired ${Math.abs(days)}d ago">✗</div>`;
+  if (days <= 60)  return `<div class="dot dot-yellow" title="${days}d left">${days}d</div>`;
+  return `<div class="dot dot-green" title="${fmtD(dateStr)}">✓</div>`;
 }
 
-// ── 3. HOS ─────────────────────────────────────────────────────────────────
-function saveHOS(){
-  var dId=document.getElementById('driverSelect').value;
-  LS.set('nexus_dot_hos_'+dId,{
-    type:document.getElementById('hos-type').value,
-    deviceId:document.getElementById('hos-device-id').value,
-    drive:document.getElementById('hos-drive').value,
-    duty:document.getElementById('hos-duty').value,
-    cycle:document.getElementById('hos-cycle').value
-  });
-}
-function loadHOS(dId){
-  var d=LS.get('nexus_dot_hos_'+dId)||{};
-  document.getElementById('hos-type').value=d.type||'';
-  document.getElementById('hos-device-id').value=d.deviceId||'';
-  document.getElementById('hos-drive').value=d.drive||'';
-  document.getElementById('hos-duty').value=d.duty||'';
-  document.getElementById('hos-cycle').value=d.cycle||'';
-  updateBars();
-}
-function updateBars(){
-  var drive=parseFloat(document.getElementById('hos-drive').value)||0;
-  var duty=parseFloat(document.getElementById('hos-duty').value)||0;
-  var cycle=parseFloat(document.getElementById('hos-cycle').value)||0;
-  function setBar(id,val,max){
-    var b=document.getElementById(id);
-    var pct=Math.min(100,Math.round(val/max*100));
-    b.style.width=pct+'%';
-    b.className='hos-bar'+(val>=max?' over':val>=max*0.75?' warn':'');
-  }
-  setBar('bar-drive',drive,11);
-  setBar('bar-duty',duty,14);
-  setBar('bar-cycle',cycle,70);
+// ─── DQ GRID RENDER ───────────────────────────────────────────────────────────
+function dqScore(comp, driver) {
+  const docs = [
+    !!comp.cdl_expires,
+    !!comp.med_cert_expires,
+    !!comp.drug_test_date,
+    !!comp.mvr_date,
+    !!comp.annual_review,
+    !!comp.app_date || comp.app_status==='on_file',
+    !!comp.road_test_date,
+    !!comp.prev_emp_status,
+    !!comp.clrhs_pre_date || !!comp.clrhs_annual_date,
+  ];
+  // Also check drug tests
+  const yearDrugs = getDT().filter(t => t.driver===driver && t.date >= today.slice(0,4)+'-01-01');
+  if (yearDrugs.length) docs.push(true);
+  const complete = docs.filter(Boolean).length;
+  return { pct: Math.round(complete/docs.length*100), complete, total: docs.length };
 }
 
-// ── 4. VEHICLE REGISTRATION ────────────────────────────────────────────────
-function loadReg(vId){
-  var equip=LS.get('nexus_equipment')||[];
-  var v=equip.find(function(e){return e.unit===vId||e.unitNum===vId||e.id===vId;})||{};
-  document.getElementById('reg-unit').textContent=v.unit||v.unitNum||vId||'—';
-  document.getElementById('reg-ymm').textContent=[v.year,v.make,v.model].filter(Boolean).join(' ')||'—';
-  document.getElementById('reg-plate').textContent=v.plate||v.licensePlate||'—';
-  document.getElementById('reg-state').textContent=v.plateState||v.state||'—';
-  var exp=v.regExpiry||v.registrationExpiry||'';
-  document.getElementById('reg-expiry').textContent=fmt(exp);
-  setBadge('reg',expiryStatus(exp));
-  var docs=LS.get('nexus_documents')||[];
-  var rd=docs.filter(function(d){return (d.type||'').toLowerCase().includes('reg');});
-  document.getElementById('reg-doc-link').innerHTML=rd.length?'<a class="doc-link" href="documents.html" target="_blank">&#x1F4C4; Registration on File &mdash; View in Documents</a>':'';
+function renderDQ() {
+  const grid = document.getElementById('dqGrid');
+  // Remove old rows (keep 11 header cells)
+  while (grid.children.length > 11) grid.removeChild(grid.lastChild);
+
+  let okCt=0, warnCt=0, failCt=0;
+
+  DRIVERS.forEach(name => {
+    const comp = loadComp(name);
+    const score = dqScore(comp, name);
+
+    const cdlDays  = daysUntil(comp.cdl_expires);
+    const medDays  = daysUntil(comp.med_cert_expires);
+    const mvrDays  = daysUntil(comp.mvr_date) !== null ? (365 - (new Date() - new Date(comp.mvr_date+'T12:00:00'))/86400000) : null;
+    const arvDays  = comp.annual_review ? (365 - (new Date() - new Date(comp.annual_review+'T12:00:00'))/86400000) : null;
+
+    // Worst status for KPI
+    const allDays = [cdlDays, medDays].filter(d=>d!==null);
+    const hasMissing = !comp.cdl_expires || !comp.med_cert_expires || !comp.drug_test_date;
+    const hasExpiring = allDays.some(d=>d<=60 && d>=0);
+    const hasExpired  = allDays.some(d=>d<0) || hasMissing;
+    if (hasExpired) failCt++; else if (hasExpiring) warnCt++; else okCt++;
+
+    const scoreBadge = score.pct===100 ? `<span class="badge badge-green">${score.pct}%</span>`
+      : score.pct >= 70 ? `<span class="badge badge-yellow">${score.pct}%</span>`
+      : `<span class="badge badge-red">${score.pct}%</span>`;
+
+    // Drug test: last test date
+    const dt = getDT().filter(t=>t.driver===name).sort((a,b)=>b.date.localeCompare(a.date))[0];
+
+    // MVR — due annually, calculate from last pull
+    const mvrStatus = comp.mvr_date ? (mvrDays !== null && mvrDays < 30 ? `<div class="dot dot-yellow" title="Due soon">${Math.round(mvrDays)}d</div>` : mvrDays !== null && mvrDays < 0 ? '<div class="dot dot-red">!</div>' : '<div class="dot dot-green">✓</div>') : '<div class="dot dot-gray">—</div>';
+
+    // Annual review
+    const arvStatus = comp.annual_review ? (arvDays !== null && arvDays < 30 ? `<div class="dot dot-yellow">${Math.round(arvDays)}d</div>` : arvDays !== null && arvDays < 0 ? '<div class="dot dot-red">!</div>' : '<div class="dot dot-green">✓</div>') : '<div class="dot dot-gray">—</div>';
+
+    const cells = [
+      `<div class="dq-cell" style="padding-left:16px;font-weight:700;font-size:13px;">${name}</div>`,
+      `<div class="dq-cell">${statusDot(comp.cdl_expires)}</div>`,
+      `<div class="dq-cell">${statusDot(comp.med_cert_expires)}</div>`,
+      `<div class="dq-cell">${dt ? (dt.result==='negative'?'<div class="dot dot-green">✓</div>':'<div class="dot dot-red">!</div>') : '<div class="dot dot-gray">—</div>'}</div>`,
+      `<div class="dq-cell">${mvrStatus}</div>`,
+      `<div class="dq-cell">${arvStatus}</div>`,
+      `<div class="dq-cell">${statusDot(comp.app_date || null, false, comp.app_status==='on_file')}</div>`,
+      `<div class="dq-cell">${comp.road_test_date ? '<div class="dot dot-green">✓</div>' : '<div class="dot dot-gray">—</div>'}</div>`,
+      `<div class="dq-cell">${comp.prev_emp_status ? '<div class="dot dot-green">✓</div>' : '<div class="dot dot-gray">—</div>'}</div>`,
+      `<div class="dq-cell">${comp.clrhs_pre_date || comp.clrhs_annual_date ? '<div class="dot dot-green">✓</div>' : '<div class="dot dot-gray">—</div>'}</div>`,
+      `<div class="dq-cell">${scoreBadge}</div>`,
+    ];
+    cells.forEach(c => { const el = document.createElement('div'); el.innerHTML = c; grid.appendChild(el.firstChild); });
+  });
+
+  document.getElementById('kpi-ok').textContent   = okCt;
+  document.getElementById('kpi-warn').textContent  = warnCt;
+  document.getElementById('kpi-fail').textContent  = failCt;
+
+  renderAlerts(failCt, warnCt);
+  renderExpirations();
 }
 
-// ── 5. INSURANCE ───────────────────────────────────────────────────────────
-function saveIns(){
-  LS.set('nexus_dot_insurance',{
-    carrier:document.getElementById('ins-carrier').value,
-    policy:document.getElementById('ins-policy').value,
-    coverage:document.getElementById('ins-coverage').value,
-    effective:document.getElementById('ins-effective').value,
-    expiry:document.getElementById('ins-expiry').value,
-    mcs90:document.getElementById('ins-mcs90').checked
-  });
-  loadIns();
-}
-function loadIns(){
-  var d=LS.get('nexus_dot_insurance')||{};
-  document.getElementById('ins-carrier').value=d.carrier||'';
-  document.getElementById('ins-policy').value=d.policy||'';
-  document.getElementById('ins-coverage').value=d.coverage||'';
-  document.getElementById('ins-effective').value=d.effective||'';
-  document.getElementById('ins-expiry').value=d.expiry||'';
-  document.getElementById('ins-mcs90').checked=!!d.mcs90;
-  setBadge('ins',expiryStatus(d.expiry));
-  var docs=LS.get('nexus_documents')||[];
-  var id2=docs.filter(function(x){return (x.type||'').toLowerCase().includes('insur');});
-  document.getElementById('ins-doc-link').innerHTML=id2.length?'<a class="doc-link" href="documents.html" target="_blank">&#x1F4C4; Insurance Certificate on File &mdash; View in Documents</a>':'';
+// ─── ALERTS ───────────────────────────────────────────────────────────────────
+function renderAlerts(failCt, warnCt) {
+  const el = document.getElementById('alertBanners');
+  let html = '';
+  if (failCt > 0) html += `<div class="alert-banner alert-critical">⛔ ${failCt} driver${failCt>1?'s':''} have expired or missing DQ documents. Driving with an incomplete DQ file violates 49 CFR §391 — review immediately.</div>`;
+  if (warnCt > 0) html += `<div class="alert-banner alert-warn">⚠️ ${warnCt} driver${warnCt>1?'s':''} have documents expiring within 60 days. Renew before expiration to avoid compliance gaps.</div>`;
+  el.innerHTML = html;
 }
 
-// ── 6. ANNUAL INSPECTION ───────────────────────────────────────────────────
-function saveAnnual(){
-  var vId=document.getElementById('vehicleSelect').value;
-  LS.set('nexus_dot_annual_'+vId,{
-    date:document.getElementById('annual-date-in').value,
-    inspector:document.getElementById('annual-inspector-in').value
+// ─── EXPIRATIONS ──────────────────────────────────────────────────────────────
+function renderExpirations() {
+  const rows = [];
+  const horizon = 90;
+  DRIVERS.forEach(name => {
+    const comp = loadComp(name);
+    const checks = [
+      {doc:'CDL License', date: comp.cdl_expires},
+      {doc:'DOT Physical', date: comp.med_cert_expires},
+      {doc:'Hazmat Endorsement', date: comp.hazmat_expires},
+    ];
+    checks.forEach(c => {
+      if (!c.date) return;
+      const days = daysUntil(c.date);
+      if (days !== null && days <= horizon) rows.push({driver:name, doc:c.doc, date:c.date, days});
+    });
   });
-  loadAnnual(vId);
-}
-function loadAnnual(vId){
-  var maint=LS.get('nexus_maintenance')||[];
-  var annuals=maint.filter(function(m){
-    var t=(m.type||m.serviceType||'').toLowerCase();
-    return (t.includes('annual')||t.includes('dot inspection'))&&
-      (!vId||m.unit===vId||m.vehicle===vId);
-  });
-  annuals.sort(function(a,b){return new Date(b.date||b.serviceDate)-new Date(a.date||a.serviceDate);});
-  var latest=annuals[0]||null;
-  var stored=LS.get('nexus_dot_annual_'+vId)||{};
-  var iDate=latest&&(latest.date||latest.serviceDate)||stored.date||'';
-  var iName=latest&&(latest.inspector||latest.technician)||stored.inspector||'';
-  document.getElementById('annual-date').textContent=fmt(iDate);
-  document.getElementById('annual-inspector').textContent=iName||'—';
-  document.getElementById('annual-date-in').value=iDate;
-  document.getElementById('annual-inspector-in').value=iName;
-  var nextRaw='';
-  if(iDate){var nd=new Date(iDate+'T00:00:00');nd.setFullYear(nd.getFullYear()+1);nextRaw=nd.toISOString().slice(0,10);}
-  document.getElementById('annual-nextdue').textContent=fmt(nextRaw);
-  var st=nextRaw?expiryStatus(nextRaw):{cls:'s-missing',bc:'badge-missing',lbl:'NO RECORD'};
-  setBadge('annual',st);
-  document.getElementById('annual-alert').innerHTML=!iDate?'<div class="alert-box">&#x26A0;&#xFE0F; No Annual Inspection on File &mdash; Enter date above or add record in <a href="pm-schedule.html" style="color:inherit;font-weight:800;">pm-schedule.html</a></div>':'';
-}
-
-// ── 7. DVIR ────────────────────────────────────────────────────────────────
-function loadDVIR(dId,dName,vId){
-  var dvirs=LS.get('nexus_dvir')||[];
-  var today=new Date().toISOString().slice(0,10);
-  var first=dName?dName.toLowerCase().split(' ')[0]:'';
-  var todayDvirs=dvirs.filter(function(d){
-    var dd=(d.date||d.createdAt||'').slice(0,10);
-    var md=!dId||(d.driverId===dId)||(first&&(d.driver||'').toLowerCase().includes(first));
-    var mv=!vId||d.vehicle===vId||d.unit===vId;
-    return dd===today&&md&&mv;
-  });
-  var dvir=todayDvirs[0];
-  if(!dvir){
-    var sorted=dvirs.slice().sort(function(a,b){return new Date(b.date||b.createdAt)-new Date(a.date||a.createdAt);});
-    dvir=sorted[0]||null;
-  }
-  var alertEl=document.getElementById('dvir-alert');
-  if(!dvir){
-    ['dvir-date','dvir-vehicle','dvir-defects','dvir-certified'].forEach(function(i){document.getElementById(i).textContent='—';});
-    setBadge('dvir',{cls:'s-missing',bc:'badge-missing',lbl:'DVIR MISSING'});
-    alertEl.innerHTML='<div class="alert-box">&#x1F534; No DVIR on file for today. Tap the button below to complete your pre-trip inspection.</div>';
+  rows.sort((a,b)=>a.days-b.days);
+  const tbody = document.getElementById('expiry-tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:#94a3b8;">No expirations in next 90 days.</td></tr>';
     return;
   }
-  var dDate=(dvir.date||dvir.createdAt||'').slice(0,10);
-  document.getElementById('dvir-date').textContent=fmt(dDate);
-  document.getElementById('dvir-vehicle').textContent=dvir.vehicle||dvir.unit||'—';
-  var def=dvir.defects||dvir.defectsFound||'none';
-  document.getElementById('dvir-defects').textContent=(def==='none'||def===false||!def)?'None':def;
-  document.getElementById('dvir-certified').textContent=(dvir.certified||dvir.driverSignature)?'✅ Yes':'⚠️ Pending';
-  if(dDate!==today){
-    setBadge('dvir',{cls:'s-expiring',bc:'badge-expiring',lbl:'NOT TODAY'});
-    alertEl.innerHTML='<div class="warn-box">&#x26A0;&#xFE0F; Most recent DVIR is from '+fmt(dDate)+' &mdash; not today. Please complete today\'s pre-trip.</div>';
-  } else if(def&&def!=='none'&&def!==false){
-    setBadge('dvir',{cls:'s-expiring',bc:'badge-expiring',lbl:'DEFECTS NOTED'});
-    alertEl.innerHTML='<div class="warn-box">&#x26A0;&#xFE0F; Defects noted on DVIR. Verify all defects corrected before operating.</div>';
-  } else {
-    setBadge('dvir',{cls:'s-valid',bc:'badge-valid',lbl:"TODAY'S DVIR ✓"});
-    alertEl.innerHTML='';
-  }
+  tbody.innerHTML = rows.map(r => {
+    const badgeCls = r.days < 0 ? 'badge-red' : r.days <= 30 ? 'badge-orange' : 'badge-yellow';
+    const label = r.days < 0 ? `EXPIRED ${Math.abs(r.days)}d ago` : `${r.days}d left`;
+    return `<tr><td style="font-weight:700;">${r.driver}</td><td>${r.doc}</td><td class="mono">${fmtD(r.date)}</td><td><span class="badge ${badgeCls}">${label}</span></td></tr>`;
+  }).join('');
 }
 
-// ── 8. IFTA ────────────────────────────────────────────────────────────────
-function saveIFTA(){
-  LS.set('nexus_dot_ifta',{
-    license:document.getElementById('ifta-license').value,
-    state:document.getElementById('ifta-state').value,
-    decalLeft:document.getElementById('ifta-decal-left').value,
-    decalRight:document.getElementById('ifta-decal-right').value,
-    expiry:document.getElementById('ifta-expiry').value
+// ─── DRUG POOL ────────────────────────────────────────────────────────────────
+function renderPool() {
+  const year = new Date().getFullYear().toString();
+  const tests = getDT().filter(t => t.date.startsWith(year));
+  const tested = [...new Set(tests.map(t=>t.driver))];
+  const grid = document.getElementById('poolGrid');
+  grid.innerHTML = DRIVERS.map(name => {
+    const myTests = tests.filter(t=>t.driver===name);
+    const last = myTests.sort((a,b)=>b.date.localeCompare(a.date))[0];
+    const pass  = myTests.filter(t=>t.result==='negative').length;
+    const color = myTests.length ? (last.result==='negative' ? '#15803d' : '#b91c1c') : '#64748b';
+    return `<div class="pool-card">
+      <div class="pool-name" style="color:${color};">${name}</div>
+      <div class="pool-stat">Tests ${year}: <strong>${myTests.length}</strong></div>
+      <div class="pool-stat">Last: <strong>${last ? fmtD(last.date) : 'None'}</strong></div>
+      <div class="pool-stat">Result: <strong style="color:${last?.result==='negative'?'#15803d':last?'#b91c1c':'#94a3b8'}">${last?.result||'—'}</strong></div>
+    </div>`;
+  }).join('');
+  document.getElementById('poolProgress').textContent = `${tested.length} / ${DRIVERS.length}`;
+  const rate = Math.round(tested.length / DRIVERS.length * 100);
+  const rateEl = document.getElementById('poolRate');
+  rateEl.textContent = rate + '%';
+  rateEl.style.color = rate >= 50 ? '#22c55e' : '#ef4444';
+}
+
+// ─── ROADSIDE INSPECTIONS ─────────────────────────────────────────────────────
+function renderRS() {
+  const all = getRS().sort((a,b)=>b.date.localeCompare(a.date));
+  const levelLabel = {1:'Level I',2:'Level II',3:'Level III',5:'Level V',6:'Level VI'};
+  const resultBadge = {
+    no_violation: '<span class="rs-badge rs-level1">CLEAN</span>',
+    warning:      '<span class="rs-badge rs-level2">WARNING</span>',
+    violation:    '<span class="rs-badge rs-level3">VIOLATION</span>',
+    oos:          '<span class="rs-badge rs-oos">OOS</span>',
+  };
+  const oos = all.filter(r=>r.result==='oos').length;
+  document.getElementById('kpi-rs').textContent = all.length;
+  document.getElementById('kpi-rs-sub').textContent = `${all.filter(r=>r.date>=new Date().getFullYear()+'-01-01').length} YTD`;
+  document.getElementById('kpi-oos').textContent = oos;
+  const tbody = document.getElementById('rs-tbody');
+  if (!all.length) { tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:32px;color:#94a3b8;">No inspections logged.</td></tr>'; return; }
+  tbody.innerHTML = all.map(r => `<tr>
+    <td class="mono">${fmtD(r.date)}</td>
+    <td style="font-weight:700;">${r.driver||'—'}</td>
+    <td style="font-family:monospace;font-size:12px;">Unit ${r.unit||'—'}</td>
+    <td><span style="font-size:11px;font-weight:700;">${r.state||'—'}</span></td>
+    <td style="font-size:11px;color:#475569;">${levelLabel[r.level]||r.level}</td>
+    <td style="font-size:12px;max-width:180px;">${r.violations||'—'}</td>
+    <td>${r.result==='oos'?'<span class="badge badge-red">YES</span>':'<span class="badge badge-gray">No</span>'}</td>
+    <td>${resultBadge[r.result]||r.result}</td>
+    <td style="font-size:11px;color:#64748b;">${r.notes||''}</td>
+    <td><button class="btn btn-sm" style="color:#ef4444;" onclick="deleteRS('${r.id}')">✕</button></td>
+  </tr>`).join('');
+}
+
+// ─── ROADSIDE MODAL ──────────────────────────────────────────────────────────
+function openInspModal() {
+  document.getElementById('rs-date').value = today;
+  document.getElementById('rs-driver').value = '';
+  document.getElementById('rs-unit').value = '';
+  document.getElementById('rs-state').value = '';
+  document.getElementById('rs-level').value = '2';
+  document.getElementById('rs-result').value = 'no_violation';
+  document.getElementById('rs-violations').value = '';
+  document.getElementById('rs-notes').value = '';
+  document.getElementById('rs-edit-id').value = '';
+  document.getElementById('rsModal').classList.add('open');
+}
+
+function closeRsModal() { document.getElementById('rsModal').classList.remove('open'); }
+
+function saveInspection() {
+  const date = document.getElementById('rs-date').value;
+  if (!date) { alert('Date required'); return; }
+  const rec = {
+    id: document.getElementById('rs-edit-id').value || ('rs'+Date.now()),
+    date, state: document.getElementById('rs-state').value.toUpperCase(),
+    driver: document.getElementById('rs-driver').value,
+    unit: document.getElementById('rs-unit').value,
+    level: document.getElementById('rs-level').value,
+    result: document.getElementById('rs-result').value,
+    violations: document.getElementById('rs-violations').value.trim(),
+    notes: document.getElementById('rs-notes').value.trim(),
+  };
+  const all = getRS();
+  const idx = all.findIndex(r=>r.id===rec.id);
+  if (idx>=0) all[idx]=rec; else all.unshift(rec);
+  saveRS(all);
+  closeRsModal();
+  renderRS();
+  loadDVIRStatus();
+}
+
+function deleteRS(id) {
+  if (!confirm('Remove this inspection record?')) return;
+  saveRS(getRS().filter(r=>r.id!==id));
+  renderRS();
+  loadDVIRStatus();
+}
+
+// ─── DRUG TEST MODAL ─────────────────────────────────────────────────────────
+function openDrugModal() {
+  document.getElementById('dt-date').value = today;
+  document.getElementById('dt-driver').value = '';
+  document.getElementById('dt-type').value = 'random';
+  document.getElementById('dt-result').value = 'negative';
+  document.getElementById('dt-notes').value = '';
+  document.getElementById('drugModal').classList.add('open');
+}
+function closeDrugModal() { document.getElementById('drugModal').classList.remove('open'); }
+
+function saveDrugTest() {
+  const driver = document.getElementById('dt-driver').value;
+  const date   = document.getElementById('dt-date').value;
+  if (!driver || !date) { alert('Driver and date required'); return; }
+  const rec = {
+    id: 'dt'+Date.now(), driver, date,
+    type:   document.getElementById('dt-type').value,
+    result: document.getElementById('dt-result').value,
+    notes:  document.getElementById('dt-notes').value.trim(),
+  };
+  const all = getDT();
+  all.unshift(rec);
+  saveDT(all);
+  closeDrugModal();
+  renderPool();
+}
+
+// ─── EXPORT ───────────────────────────────────────────────────────────────────
+function exportCompliance() {
+  const rows = [['Driver','CDL Exp','DOT Physical Exp','Last Drug Test','MVR Date','Annual Review','DQ Score']];
+  DRIVERS.forEach(name => {
+    const c = loadComp(name);
+    const score = dqScore(c, name);
+    const dt = getDT().filter(t=>t.driver===name).sort((a,b)=>b.date.localeCompare(a.date))[0];
+    rows.push([name, c.cdl_expires||'—', c.med_cert_expires||'—', dt?.date||'—', c.mvr_date||'—', c.annual_review||'—', score.pct+'%']);
   });
-  loadIFTA();
-}
-function loadIFTA(){
-  var raw=LS.get('nexus_ifta')||{};
-  var stored=LS.get('nexus_dot_ifta')||{};
-  var m={license:stored.license||raw.licenseNum||'',state:stored.state||raw.baseState||'FL',
-    decalLeft:stored.decalLeft||'',decalRight:stored.decalRight||'',
-    expiry:stored.expiry||raw.expiry||''};
-  document.getElementById('ifta-license').value=m.license;
-  document.getElementById('ifta-state').value=m.state;
-  document.getElementById('ifta-decal-left').value=m.decalLeft;
-  document.getElementById('ifta-decal-right').value=m.decalRight;
-  document.getElementById('ifta-expiry').value=m.expiry;
-  setBadge('ifta',expiryStatus(m.expiry));
+  const csv = rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'dot-compliance-report.csv';
+  a.click();
 }
 
-// ── 9. BILL OF LADING ──────────────────────────────────────────────────────
-function saveBOL(){
-  var dId=document.getElementById('driverSelect').value;
-  LS.set('nexus_dot_bol_'+dId,{
-    commodity:document.getElementById('bol-commodity').value,
-    hazmat:document.getElementById('bol-hazmat').value
-  });
-}
-function loadBOL(dId,dName){
-  var loads=LS.get('nexus_loads_v2')||[];
-  var first=dName?(dName.toLowerCase().split(' ')[0]):'';
-  var active=loads.filter(function(l){
-    var s=(l.status||'').toLowerCase();
-    return s==='active'||s==='in-transit'||s==='intransit';
-  });
-  var load=active.find(function(l){
-    return !dId||(l.driverId===dId)||first&&(l.driver||l.driverName||'').toLowerCase().includes(first);
-  })||active[0]||loads.slice().sort(function(a,b){return new Date(b.createdAt||b.date)-new Date(a.createdAt||a.date);})[0]||null;
-  var stored=LS.get('nexus_dot_bol_'+dId)||{};
-  if(load){
-    document.getElementById('bol-loadid').textContent=load.id||load.loadId||'—';
-    document.getElementById('bol-origin').textContent=load.origin||load.pickup||'—';
-    document.getElementById('bol-dest').textContent=load.destination||load.delivery||'—';
-    document.getElementById('bol-shipper').textContent=load.shipper||'—';
-    document.getElementById('bol-consignee').textContent=load.consignee||'—';
-    var docs=LS.get('nexus_documents')||[];
-    var bolDoc=docs.find(function(d){return (d.type||d.docType||'').toLowerCase()==='bol'&&(d.loadId===load.id||first&&(d.driver||'').toLowerCase().includes(first));});
-    document.getElementById('bol-doc-link').innerHTML=(bolDoc&&(bolDoc.driveUrl||bolDoc.url))?'<a class="doc-link" href="'+(bolDoc.driveUrl||bolDoc.url)+'" target="_blank">&#x1F4C4; BOL Document &mdash; Tap to View</a>':'';
-  } else {
-    ['bol-loadid','bol-origin','bol-dest','bol-shipper','bol-consignee'].forEach(function(i){document.getElementById(i).textContent='—';});
-    document.getElementById('bol-doc-link').innerHTML='';
-  }
-  document.getElementById('bol-commodity').value=stored.commodity||(load&&load.commodity)||'';
-  document.getElementById('bol-hazmat').value=stored.hazmat||'no';
-}
-
-// ── 10. PERMITS ────────────────────────────────────────────────────────────
-function savePermits(){
-  LS.set('nexus_dot_permits_standard',document.getElementById('permits-standard').checked);
-  loadPermits();
-}
-function loadPermits(){
-  var isStd=LS.get('nexus_dot_permits_standard')||false;
-  document.getElementById('permits-standard').checked=!!isStd;
-  var permits=(LS.get('nexus_scale_tickets')||[]).concat(LS.get('nexus_permits')||[]);
-  var active=permits.filter(function(p){var e=p.expiry||p.expiryDate||'';return !e||new Date(e)>=new Date();});
-  var listEl=document.getElementById('permits-list');
-  var noneMsg=document.getElementById('permits-none-msg');
-  if(isStd){
-    listEl.innerHTML='';noneMsg.style.display='none';
-    setBadge('permits',{cls:'s-valid',bc:'badge-valid',lbl:'STANDARD LOAD'});
-  } else if(active.length){
-    listEl.innerHTML=active.map(function(p){
-      return '<div style="border:2px solid var(--green-border);border-radius:6px;padding:10px 14px;margin-top:8px;background:var(--green-bg);"><div style="font-size:15px;font-weight:700;color:var(--green);">State: '+(p.state||'—')+' | Permit #: '+(p.permitNum||p.id||'—')+'</div><div style="font-size:13px;color:var(--muted);margin-top:3px;">Expiry: '+fmt(p.expiry||p.expiryDate)+' | '+(p.dimensions||'No dimension notes')+'</div></div>';
-    }).join('');
-    noneMsg.style.display='none';
-    setBadge('permits',{cls:'s-valid',bc:'badge-valid',lbl:'PERMITS ON FILE'});
-  } else {
-    listEl.innerHTML='';noneMsg.style.display='block';
-    setBadge('permits',{cls:'s-na',bc:'badge-na',lbl:'CHECK IF NEEDED'});
-  }
-}
-
-// ── 11. DOT / MC ───────────────────────────────────────────────────────────
-function saveDOT(){
-  LS.set('nexus_dot_authority',{
-    usdot:document.getElementById('dot-usdot-in').value,
-    mc:document.getElementById('dot-mc-in').value,
-    auth:document.getElementById('dot-auth').value
-  });
-  loadDOT();
-}
-function loadDOT(){
-  var d=LS.get('nexus_dot_authority')||{};
-  var cfg=LS.get('nexus_config')||{};
-  var usdot=d.usdot||cfg.usdot||cfg.dotNumber||'';
-  var mc=d.mc||cfg.mc||cfg.mcNumber||'';
-  document.getElementById('dot-usdot-in').value=usdot;
-  document.getElementById('dot-mc-in').value=mc;
-  document.getElementById('dot-auth').value=d.auth||'';
-  document.getElementById('dot-usdot-disp').textContent=usdot||'—';
-  document.getElementById('dot-mc-disp').textContent=mc?'MC-'+mc:'—';
-  document.getElementById('hdrDOT').textContent=usdot||'—';
-  document.getElementById('hdrMC').textContent=mc||'—';
-  setBadge('dot',(usdot&&mc)?{cls:'s-valid',bc:'badge-valid',lbl:'AUTHORIZED'}:{cls:'s-missing',bc:'badge-missing',lbl:'ENTER NUMBERS'});
-}
-
-// ── STATUS PILLS ───────────────────────────────────────────────────────────
-function buildStatusPills(){
-  var items=[{id:'cdl',lbl:'CDL'},{id:'med',lbl:'Medical'},{id:'ins',lbl:'Insurance'},{id:'annual',lbl:'Annual Insp'},{id:'ifta',lbl:'IFTA'}];
-  var c=document.getElementById('statusPills');
-  c.innerHTML='';
-  items.forEach(function(p){
-    var sec=document.getElementById('sec-'+p.id);
-    var btn=document.createElement('button');
-    btn.className='pill pill-gray';
-    var icon='•';
-    if(sec){
-      if(sec.classList.contains('s-valid')){btn.className='pill pill-green';icon='✓';}
-      else if(sec.classList.contains('s-expiring')){btn.className='pill pill-yellow';icon='⚠️';}
-      else if(sec.classList.contains('s-expired')||sec.classList.contains('s-missing')){btn.className='pill pill-red';icon='✗';}
-    }
-    btn.textContent=icon+' '+p.lbl;
-    btn.onclick=(function(id){return function(){document.getElementById('sec-'+id).scrollIntoView({behavior:'smooth',block:'start'});};})(p.id);
-    c.appendChild(btn);
-  });
-}
-
-// ── INIT ───────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded',function(){
-  populateDrivers();
-  restoreSelection();
-  loadAll();
+// ─── CLICK OUTSIDE CLOSE ─────────────────────────────────────────────────────
+['rsModal','drugModal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => { if(e.target.id===id) document.getElementById(id).classList.remove('open'); });
 });
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderDQ();
+renderPool();
+renderRS();
+(async()=>{ if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{}); })();
+
+  // ── Pre-Trip DVIR Status ──────────────────────────────────
+  function loadDVIRStatus() {
+    const inspections = JSON.parse(localStorage.getItem('nexus_pretrip_inspections') || '[]');
+    const el = document.getElementById('dvir-status-content');
+    if (!el) return;
+
+    if (!inspections.length) {
+      el.innerHTML = `<div style="display:flex;align-items:center;gap:14px;padding:8px 0;">
+        <div style="font-size:32px;">📋</div>
+        <div>
+          <div style="font-weight:700;color:#ef4444;font-size:15px;">No DVIR on record</div>
+          <div style="font-size:12px;color:#94a3b8;margin-top:3px;">49 CFR 396.11 requires a DVIR before each trip. <a href="pretrip.html" style="color:#f97316;">Start pre-trip inspection →</a></div>
+        </div>
+      </div>`;
+      return;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    const todayInspections = inspections.filter(r => r.date === today);
+    const latest = inspections[0]; // already sorted newest first
+    const latestDate = new Date(latest.certifiedAt || latest.date);
+    const isToday = latest.date === today;
+    const daysSince = Math.floor((new Date() - latestDate) / 86400000);
+
+    let statusHtml = '';
+    if (isToday) {
+      const icon = latest.majorDefectCount > 0 ? '⚠️' : '✅';
+      const color = latest.majorDefectCount > 0 ? '#ef4444' : '#10b981';
+      const statusText = latest.majorDefectCount > 0 ? 'OUT OF SERVICE' : 'CLEAR TO OPERATE';
+      statusHtml = `<div style="background:${latest.majorDefectCount>0?'rgba(239,68,68,.08)':'rgba(16,185,129,.08)'};border:1px solid ${latest.majorDefectCount>0?'rgba(239,68,68,.3)':'rgba(16,185,129,.3)'};border-radius:9px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:28px;">${icon}</span>
+        <div style="flex:1;">
+          <div style="font-weight:700;color:${color};font-size:15px;">TODAY'S ${(latest.type||'PRE-TRIP').toUpperCase().replace('-',' ')} COMPLETE — ${statusText}</div>
+          <div style="font-size:12px;color:#94a3b8;margin-top:2px;">DVIR #${latest.id} · ${latest.driverName||'—'} · ${latest.vehicleId||''}${latest.trailerId?' + '+latest.trailerId:''} · Certified at ${latest.time||latestDate.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</div>
+          ${latest.defectCount>0?`<div style="font-size:12px;color:#f59e0b;margin-top:4px;">⚠️ ${latest.defectCount} defect${latest.defectCount>1?'s':''} noted (${latest.majorDefectCount} major / ${latest.defectCount-latest.majorDefectCount} minor)</div>`:''}
+        </div>
+        <a href="pretrip.html" style="color:#f97316;font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;">View ›</a>
+      </div>`;
+    } else {
+      const label = daysSince === 0 ? 'today' : daysSince === 1 ? 'yesterday' : `${daysSince} days ago`;
+      statusHtml = `<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:9px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:28px;">⚠️</span>
+        <div style="flex:1;">
+          <div style="font-weight:700;color:#ef4444;font-size:15px;">NO DVIR FOR TODAY — INSPECTION REQUIRED</div>
+          <div style="font-size:12px;color:#94a3b8;margin-top:2px;">Last inspection: ${label} (${latestDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}) by ${latest.driverName||'—'}</div>
+          <div style="font-size:12px;color:#f59e0b;margin-top:3px;">49 CFR 396.11 requires inspection before each trip.</div>
+        </div>
+        <a href="pretrip.html" class="btn btn-primary" style="text-decoration:none;white-space:nowrap;">Start DVIR →</a>
+      </div>`;
+    }
+
+    // Recent inspections table
+    const rows = inspections.slice(0,5).map(r => {
+      const d = new Date(r.certifiedAt||r.date);
+      const isToday2 = r.date === today;
+      const badge = r.majorDefectCount > 0
+        ? `<span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(239,68,68,.12);color:#ef4444;">🚫 OOS</span>`
+        : r.defectCount > 0
+          ? `<span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(245,158,11,.12);color:#f59e0b;">⚠️ ${r.defectCount} Defect${r.defectCount>1?'s':''}</span>`
+          : `<span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(16,185,129,.12);color:#10b981;">✅ Clear</span>`;
+      const tl = (r.type||'pre-trip').split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join('-');
+      return `<tr>
+        <td>${isToday2?'<strong>Today</strong>':d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</td>
+        <td>${tl}</td>
+        <td>${r.vehicleId||'—'}${r.trailerId?' + '+r.trailerId:''}</td>
+        <td>${r.driverName||'—'}</td>
+        <td>${r.time||d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</td>
+        <td>${badge}</td>
+        <td><a href="pretrip.html" style="color:#f97316;font-size:12px;">View ›</a></td>
+      </tr>`;
+    }).join('');
+
+    el.innerHTML = statusHtml + `
+      <div style="font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Recent Inspections</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead><tr style="background:#f8fafc;">
+            <th style="padding:8px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:1px solid #e2e8f0;">Date</th>
+            <th style="padding:8px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:1px solid #e2e8f0;">Type</th>
+            <th style="padding:8px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:1px solid #e2e8f0;">Units</th>
+            <th style="padding:8px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:1px solid #e2e8f0;">Driver</th>
+            <th style="padding:8px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:1px solid #e2e8f0;">Time</th>
+            <th style="padding:8px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:1px solid #e2e8f0;">Status</th>
+            <th style="padding:8px;border-bottom:1px solid #e2e8f0;"></th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div style="margin-top:12px;text-align:right;">
+        <a href="pretrip.html" style="font-size:13px;color:#f97316;font-weight:600;text-decoration:none;">View all DVIR records →</a>
+      </div>`;
+  }
+
 </script>
-</body>
-</html>
+</body></html>
