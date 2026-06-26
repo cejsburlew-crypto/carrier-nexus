@@ -455,8 +455,6 @@ body{
   letter-spacing:0.15em;text-transform:uppercase;
   display:block;margin-bottom:6px;
 }
-
-.main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
 </style>
 <style id="nexus-unified">
 /* ── SIDEBAR BLACK ── */
@@ -491,43 +489,6 @@ body{
 /* ── NAV BADGE ── */
 .nav-badge { background:#e91e8c !important; color:#fff !important; }
 </style>
-
-<style id="touch-target-fix">
-/* Apple HIG / WCAG 2.5.5 — 44x44px minimum touch targets */
-@media(max-width:1024px){
-  button,.btn,a.btn,[role="button"]{min-height:44px!important;min-width:44px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;}
-  input[type="text"],input[type="number"],input[type="date"],input[type="time"],input[type="tel"],input[type="email"],select,textarea{min-height:44px!important;font-size:16px!important;padding:10px 12px!important;}
-  input[type="checkbox"],input[type="radio"]{min-width:24px!important;min-height:24px!important;cursor:pointer!important;}
-  label{font-size:14px!important;cursor:pointer!important;}
-  /* Fix sub-12px inline labels — bring up to 12px minimum */
-  .field-label,.form-label,.label-sm,.badge,.kpi-sub,.kpi-label,.stat-sub,.mid,.nav-badge{font-size:max(12px,1em)!important;}
-}
-</style>
-
-<style id="driver-sticky-nav">
-.driver-sticky-bar{display:none;}
-@media(max-width:768px){
-  .driver-sticky-bar{
-    display:flex;
-    position:fixed;bottom:0;left:0;right:0;
-    background:#0b0f1a;
-    border-top:1px solid #1e2d45;
-    z-index:9999;
-    padding:0 0 env(safe-area-inset-bottom) 0;
-  }
-  .driver-sticky-bar a{
-    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:10px 4px;text-decoration:none;
-    font-size:10px;font-weight:700;letter-spacing:.05em;
-    color:#64748b;gap:4px;
-    transition:.12s;
-  }
-  .driver-sticky-bar a:hover,.driver-sticky-bar a.active{color:#e91e8c;}
-  .driver-sticky-bar a svg{width:22px;height:22px;}
-  /* push content above bar */
-  .action-section:last-child{padding-bottom:80px!important;}
-}
-</style>
 </head>
 <body>
 <script src="nexus-sidebar.js"></script>
@@ -552,15 +513,11 @@ body{
   <div class="app-bar-row">
     <div>
       <div class="app-bar-logo">CARRIER <span>NEXUS</span></div>
-      <div class="app-bar-greeting">Driver Command · <strong id="dc-driver-name">Driver</strong></div>
-      <div id="dc-rank-strip" style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;"></div>
+      <div class="app-bar-greeting">Driver Command · <strong>Marcus Rodriguez</strong></div>
     </div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <button onclick="openCareerModal()" title="Set career baseline" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#94a3b8;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;">⏱ TIS</button>
-      <div class="notif-btn" onclick="openModal('alertModal')">
+    <div class="notif-btn" onclick="openModal('alertModal')">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a5 5 0 00-5 5v3H2v1h12v-1h-1V7a5 5 0 00-5-5zM6 13a2 2 0 004 0H6z" fill="currentColor" opacity="0.7"/></svg>
       <div class="notif-dot"></div>
-    </div>
     </div>
   </div>
 </div>
@@ -593,22 +550,17 @@ body{
   </div>
 </div>
 
-<!-- PERMIT ACK ALERT BANNER -->
-<div id="permit-ack-banner" style="display:none;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.35);border-radius:12px;padding:14px 16px;margin-bottom:12px;cursor:pointer;" onclick="goPermitAck()">
-  <div style="display:flex;align-items:center;gap:10px;">
-    <span style="font-size:20px;">🚨</span>
-    <div>
-      <div style="font-size:13px;font-weight:800;color:#f97316;">Permit Acknowledgment Required</div>
-      <div id="permit-ack-banner-sub" style="font-size:11px;color:#94a3b8;margin-top:2px;">Your active load has permit restrictions — tap to review &amp; acknowledge</div>
-    </div>
-    <span style="color:#f97316;font-size:18px;margin-left:auto;">›</span>
-  </div>
+
+<!-- Weather Card -->
+<div id="driver-weather-card" style="background:#131929;border:1px solid #1e2d45;border-radius:12px;padding:20px;margin:14px 16px 0;">
+  <div style="font-size:14px;font-weight:600;color:#e2e8f0;margin-bottom:12px;">🌦️ My Route Weather</div>
+  <div id="driver-weather-content"><div style="color:#64748b;font-size:13px;">Loading...</div></div>
 </div>
 
-<!-- SAFETY SCORE WIDGET -->
-<div class="section-head">My Safety Score</div>
-<div style="background:rgba(15,30,53,0.7);border:1px solid rgba(59,130,246,0.2);border-radius:14px;padding:16px;margin-bottom:16px;" id="driver-safety-widget">
-  <div style="font-size:12px;color:#64748b;">Loading safety score...</div>
+<!-- Scale Alert Card -->
+<div id="driver-scale-card" style="background:#131929;border:1px solid #1e2d45;border-radius:12px;padding:20px;margin:12px 16px 0;">
+  <div style="font-size:14px;font-weight:600;color:#e2e8f0;margin-bottom:12px;">⚖️ Scale Alert</div>
+  <div id="driver-scale-content"><div style="color:#64748b;font-size:13px;">Checking nearby scales...</div></div>
 </div>
 
 <!-- QUICK ACTIONS -->
@@ -631,57 +583,11 @@ body{
     </div>
   </div>
 
-  <div class="action-btn full" onclick="window.location.href='pretrip.html'" style="background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.25);">
-    <div class="action-icon sm">🔍</div>
-    <div style="flex:1;min-width:0;">
-      <div class="action-label" style="color:#10b981;">Pre-Trip Inspection</div>
-      <div class="action-sub" id="pretrip-status-badge">Tap to start daily DVIR · 49 CFR 396.11</div>
-    </div>
-    <div class="action-arrow">›</div>
-  </div>
-
-  <div class="action-btn full" onclick="window.location.href='incident-report.html'" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);">
-    <div class="action-icon sm">🚨</div>
-    <div style="flex:1;min-width:0;">
-      <div class="action-label" style="color:#ef4444;">Report Incident</div>
-      <div class="action-sub">Accident, breakdown, or near-miss</div>
-    </div>
-    <div class="action-arrow">›</div>
-  </div>
-
-  <div class="action-btn full" onclick="window.location.href='my-pay.html'" style="background:rgba(59,130,246,0.08);border-color:rgba(59,130,246,0.25);">
-    <div class="action-icon sm">💵</div>
-    <div style="flex:1;min-width:0;">
-      <div class="action-label" style="color:#3b82f6;">My Pay</div>
-      <div class="action-sub">Settlements, earnings &amp; deductions</div>
-    </div>
-    <div class="action-arrow">›</div>
-  </div>
-
-
-  <div class="action-btn full" onclick="window.location.href='driver-trophies.html'" style="background:rgba(168,85,247,0.08);border-color:rgba(168,85,247,0.25);">
-    <div class="action-icon sm">🏆</div>
-    <div style="flex:1;min-width:0;">
-      <div class="action-label" style="color:#a855f7;">My Trophies</div>
-      <div class="action-sub" id="trophy-sub">CN Bureau of Official Bragging™</div>
-    </div>
-    <div class="action-arrow">›</div>
-  </div>
-
-  <div class="action-btn full" onclick="window.location.href='nexus-feed.html'" style="background:rgba(59,130,246,0.08);border-color:rgba(59,130,246,0.25);">
-    <div class="action-icon sm">📖</div>
-    <div style="flex:1;min-width:0;">
-      <div class="action-label" style="color:#3b82f6;">The Road Book</div>
-      <div class="action-sub">Team feed · rank-ups · shoutouts</div>
-    </div>
-    <div class="action-arrow">›</div>
-  </div>
-
   <div class="action-btn full" onclick="openModal('signModal')">
     <div class="action-icon sm">✍️</div>
     <div style="flex:1;min-width:0;">
       <div class="action-label">Sign Rate Con</div>
-      <div class="action-sub" id="sign-load-sub">Load your active load to sign</div>
+      <div class="action-sub">LDX-2841 · Coyote Logistics · $3,400</div>
     </div>
     <div class="action-arrow">›</div>
   </div>
@@ -1038,321 +944,118 @@ document.querySelectorAll('.nav-tab').forEach(tab=>{
     this.classList.add('active');
   });
 });
+
+async function loadDriverWeather() {
+  var session = JSON.parse(localStorage.getItem('nexus_session') || '{}');
+  var driverName = session.name || '';
+  var loads = JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]');
+  var myLoad = loads.find(function(l){ return (l.driver === driverName || l.driver_id === session.id) && l.status !== 'DELIVERED' && l.status !== 'CLOSED'; });
+  
+  var el = document.getElementById('driver-weather-content');
+  if (!el) return;
+  
+  if (!myLoad) { el.innerHTML = '<div style="color:#64748b;font-size:13px;">No active load assigned</div>'; return; }
+  
+  var CITY_COORDS = {
+    'houston':{lat:29.7604,lng:-95.3698,tz:'America/Chicago'},
+    'oklahoma city':{lat:35.4676,lng:-97.5164,tz:'America/Chicago'},
+    'corpus christi':{lat:27.8006,lng:-97.3964,tz:'America/Chicago'},
+    'dallas':{lat:32.7767,lng:-96.7970,tz:'America/Chicago'},
+    'san antonio':{lat:29.4241,lng:-98.4936,tz:'America/Chicago'},
+    'lubbock':{lat:33.5779,lng:-101.8552,tz:'America/Chicago'},
+    'beaumont':{lat:30.0860,lng:-94.1018,tz:'America/Chicago'}
+  };
+  
+  var destKey = ((myLoad.destination||'').split(',')[0]).toLowerCase().trim();
+  var coords = CITY_COORDS[destKey] || CITY_COORDS['houston'];
+  
+  try {
+    var r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + coords.lat + '&longitude=' + coords.lng + '&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min,windspeed_10m_max,precipitation_probability_max&wind_speed_unit=mph&temperature_unit=fahrenheit&timezone=' + encodeURIComponent(coords.tz) + '&forecast_days=3');
+    var d = await r.json();
+    var WMO = {0:'sunny',1:'clear',2:'p.cloudy',3:'overcast',45:'fog',48:'fog',51:'drizzle',53:'rain',55:'rain',61:'rain',63:'rain',65:'h.rain',71:'snow',73:'snow',75:'h.snow',80:'showers',81:'showers',82:'storms',95:'t-storm',96:'t-storm',99:'t-storm'};
+    var cw = d.current_weather || {};
+    var dd = d.daily || {};
+    var wind = cw.windspeed || 0;
+    var loadWidth = myLoad.total_width ? parseFloat(myLoad.total_width) : 8.5;
+    var windDanger = wind >= 40 && loadWidth > 8.5;
+    
+    var html = '<div style="font-size:12px;color:#64748b;margin-bottom:8px;">Load ' + (myLoad.load_number||myLoad.id) + ' to ' + myLoad.destination + '</div>';
+    if (windDanger) html += '<div style="background:rgba(239,68,68,.15);border:1px solid #ef4444;border-radius:6px;padding:8px;margin-bottom:10px;font-size:12px;color:#ef4444;font-weight:600;">Wind ' + wind + 'mph - Wide load ops may be suspended. Contact dispatcher.</div>';
+    
+    html += '<div style="display:flex;gap:8px;">';
+    var days = ['Today','Tomorrow','Day 3'];
+    var codes = dd.weathercode || [];
+    for (var i = 0; i < Math.min(codes.length, 3); i++) {
+      var code = codes[i];
+      var hi = Math.round(((dd.temperature_2m_max||[])[i])||0);
+      var lo = Math.round(((dd.temperature_2m_min||[])[i])||0);
+      var w = Math.round(((dd.windspeed_10m_max||[])[i])||0);
+      var prob = Math.round(((dd.precipitation_probability_max||[])[i])||0);
+      html += '<div style="flex:1;background:#0b0f1a;border:1px solid #1e2d45;border-radius:6px;padding:10px;text-align:center;">' +
+        '<div style="font-size:10px;color:#64748b;">' + days[i] + '</div>' +
+        '<div style="font-size:12px;color:#e2e8f0;margin-top:4px;">' + (WMO[code]||'clear') + '</div>' +
+        '<div style="font-size:12px;color:#e2e8f0;">' + hi + '/' + lo + '</div>' +
+        '<div style="font-size:10px;color:#64748b;">' + w + 'mph</div>' +
+        (prob>50 ? '<div style="font-size:10px;color:#3b82f6;">' + prob + '%rain</div>' : '') +
+      '</div>';
+    }
+    html += '</div>';
+    el.innerHTML = html;
+  } catch(e) { el.innerHTML = '<div style="color:#64748b;font-size:13px;">Weather temporarily unavailable</div>'; }
+}
+
+function loadDriverScaleAlert() {
+  var session = JSON.parse(localStorage.getItem('nexus_session') || '{}');
+  var vehicles = JSON.parse(localStorage.getItem('nexus_gps_vehicles') || '[]');
+  var loads = JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]');
+  var myVehicle = vehicles.find(function(v){ return v.driver === session.name || v.driver_id === session.id; });
+  var el = document.getElementById('driver-scale-content');
+  if (!el) return;
+  if (!myVehicle || !myVehicle.lat) { el.innerHTML = '<div style="color:#64748b;font-size:13px;">GPS position not available</div>'; return; }
+  
+  var myLoad = loads.find(function(l){ return (l.unit===myVehicle.unit) && l.status!=='DELIVERED'&&l.status!=='CLOSED'; });
+  var isOSOW = myLoad && (myLoad.os_ow || (myLoad.commodity_weight||0) > 80000);
+  
+  var SCALES = [
+    {state:'TX',name:'I-35 N Gainesville TX',lat:33.6151,lng:-97.1336},
+    {state:'TX',name:'I-45 N Madisonville TX',lat:30.9579,lng:-95.9086},
+    {state:'TX',name:'I-10 W Sierra Blanca TX',lat:31.1771,lng:-105.3536},
+    {state:'OK',name:'I-35 Ardmore OK',lat:34.1748,lng:-97.1436},
+    {state:'OK',name:'I-35 Purcell OK',lat:34.9784,lng:-97.3614},
+    {state:'LA',name:'I-10 Vinton LA',lat:30.1940,lng:-93.5827},
+    {state:'NM',name:'I-10 Lordsburg NM',lat:32.3504,lng:-108.7090}
+  ];
+  
+  function hd(a,b,c,e){
+    var R=3958.8;
+    function toRad(x){return x*Math.PI/180;}
+    var dL=toRad(c-a),dO=toRad(e-b);
+    var f=Math.pow(Math.sin(dL/2),2)+Math.cos(toRad(a))*Math.cos(toRad(c))*Math.pow(Math.sin(dO/2),2);
+    return R*2*Math.atan2(Math.sqrt(f),Math.sqrt(1-f));
+  }
+  
+  var nearby = SCALES.map(function(s){ return {state:s.state,name:s.name,dist:hd(myVehicle.lat,myVehicle.lng,s.lat,s.lng)}; }).filter(function(s){ return s.dist<=30; }).sort(function(a,b){ return a.dist-b.dist; });
+  
+  if (!nearby.length) { el.innerHTML = '<div style="color:#10b981;font-size:14px;font-weight:600;">No scales within 30 miles</div><div style="font-size:12px;color:#64748b;margin-top:4px;">Drive safe</div>'; return; }
+  
+  var closest = nearby[0];
+  var color = isOSOW ? '#ef4444' : (closest.dist < 5 ? '#ef4444' : '#f59e0b');
+  el.innerHTML = '<div style="border:2px solid ' + color + ';border-radius:8px;padding:12px;">' +
+    '<div style="font-weight:700;color:' + color + ';font-size:14px;">' + (closest.dist < 5 ? 'SCALE IMMINENT' : 'SCALE AHEAD') + ' - ' + closest.dist.toFixed(1) + ' miles</div>' +
+    '<div style="font-size:13px;color:#e2e8f0;margin-top:6px;">' + closest.name + '</div>' +
+    '<div style="font-size:12px;color:#64748b;margin-top:4px;">' + (isOSOW ? 'OS/OW load - YOU MUST STOP. Have permits ready.' : 'Legal load - PrePass bypass may apply') + '</div>' +
+    (isOSOW ? '<div style="margin-top:8px;font-size:11px;color:#ef4444;">Have ready: Permit packet, BOL, Rate Con, CDL, Medical cert</div>' : '') +
+  '</div>' +
+  '<a href="route-compliance.html" style="display:block;text-align:center;margin-top:10px;font-size:12px;color:#3b82f6;text-decoration:none;">View Full Route Compliance</a>';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  loadDriverWeather();
+  loadDriverScaleAlert();
+  setInterval(loadDriverScaleAlert, 60000);
+});
+
 </script>
 <script src="nexus-lang.js"></script>
-<script>
-// ─── DRIVER SAFETY WIDGET ────────────────────────────────────────────────────
-(function(){
-  try {
-    var dvirs   = JSON.parse(localStorage.getItem('nexus_pretrip_inspections')||'[]');
-    var rs      = JSON.parse(localStorage.getItem('nexus_rs_inspections')||'[]');
-    var drugs   = JSON.parse(localStorage.getItem('nexus_drug_tests')||'[]');
-    var today   = new Date().toISOString().slice(0,10);
-
-    // Identify current driver from session or fallback
-    var session = null;
-    try{ session = JSON.parse(sessionStorage.getItem('nexus_session')); }catch(e){}
-    var driverName = session ? (session.name||'') : '';
-    var driverShort = driverName.toUpperCase().split(' ')[0]; // e.g. AVIS
-
-    // Update pretrip button badge
-    var badge = document.getElementById('pretrip-status-badge');
-    if(badge){
-      var todayRec = dvirs.find(function(r){ return r.date===today && ((r.driverName||'').toUpperCase().includes(driverShort)||!driverShort); });
-      if(todayRec){
-        badge.textContent='✅ Today's DVIR complete — '+todayRec.id+(todayRec.canDepart?' · Clear to operate':' · OOS defects present');
-        badge.style.color='#10b981';
-      } else {
-        var last = dvirs.find(function(r){ return driverShort ? (r.driverName||'').toUpperCase().includes(driverShort) : true; });
-        if(last) badge.textContent='⚠️ No DVIR today — last: '+last.date+' · Tap to inspect';
-        else     badge.textContent='No inspection on record — tap to start DVIR';
-        badge.style.color='#f59e0b';
-      }
-    }
-
-    // ─ Safety score calculation ─────────────────────────────────────────────
-    function daysAgo(n){ var d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
-    var d30  = daysAgo(30);
-    var d365 = daysAgo(365);
-
-    var myDvirs = dvirs.filter(function(r){
-      if(!driverShort) return true;
-      return (r.driverName||'').toUpperCase().includes(driverShort);
-    });
-    var recentDvirs = myDvirs.filter(function(r){ return r.date >= d30; });
-    var dvirScore   = Math.min(40, Math.round((recentDvirs.length / 20) * 40));
-    var dvirRate    = Math.min(100, Math.round((recentDvirs.length / 20) * 100));
-
-    var myRS = rs.filter(function(r){ return !driverShort || (r.driver||'').toUpperCase()===driverShort; });
-    var recentRS = myRS.filter(function(r){ return r.date >= d365; });
-    var rsScore = 40;
-    recentRS.forEach(function(r){
-      if(r.result==='oos') rsScore-=20;
-      else if(r.result==='violation') rsScore-=10;
-      else if(r.result==='warning') rsScore-=3;
-    });
-    rsScore = Math.max(0, rsScore);
-    var violations = recentRS.filter(function(r){ return r.result==='violation'||r.result==='oos'; }).length;
-
-    var myDrugs = drugs.filter(function(r){ return !driverShort || (r.driver||'').toUpperCase()===driverShort; });
-    var hasPositive = myDrugs.some(function(r){ return r.result==='positive'; });
-    var testedYTD   = myDrugs.filter(function(r){ return r.date >= today.slice(0,4)+'-01-01'; }).length;
-    var drugScore   = hasPositive ? 0 : (testedYTD>=1 ? 20 : 10);
-
-    var totalScore = dvirScore + rsScore + drugScore;
-    var grade = totalScore>=90?'A':totalScore>=80?'B':totalScore>=70?'C':totalScore>=60?'D':'F';
-    var gradeColor = {A:'#10b981',B:'#3b82f6',C:'#f59e0b',D:'#f97316',F:'#ef4444'}[grade];
-
-    // ─ Streak calculation ───────────────────────────────────────────────────
-    var streak = 0;
-    for(var i=0;i<60;i++){
-      var d = daysAgo(i);
-      var found = myDvirs.find(function(r){ return r.date===d; });
-      if(found) streak++;
-      else if(i>0) break;
-    }
-
-    // ─ Inject widget ────────────────────────────────────────────────────────
-    var widget = document.getElementById('driver-safety-widget');
-    if(!widget) return;
-    var gradeMsg = grade==='A'?'Outstanding — Keep it up!':grade==='B'?'Good standing':grade==='C'?'Room to improve':grade==='D'?'Action needed':'Critical — contact dispatch';
-    widget.innerHTML = '<div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;">'
-      +'<div style="width:64px;height:64px;border-radius:50%;border:3px solid '+gradeColor+';background:'+gradeColor+'18;display:flex;flex-direction:column;align-items:center;justify-content:center;">'
-      +'<span style="font-size:24px;font-weight:900;color:'+gradeColor+';">'+grade+'</span>'
-      +'<span style="font-size:9px;color:'+gradeColor+';font-weight:700;">'+totalScore+'/100</span>'
-      +'</div>'
-      +'<div>'
-      +'<div style="font-size:14px;font-weight:700;color:'+gradeColor+';">Safety Score: '+totalScore+'</div>'
-      +'<div style="font-size:12px;color:#94a3b8;margin-top:2px;">'+gradeMsg+'</div>'
-      +'<div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;">'
-      +'<div style="font-size:11px;color:#64748b;"><span style="color:'+(dvirRate>=80?'#10b981':dvirRate>=50?'#f59e0b':'#ef4444')+';font-weight:700;">'+dvirRate+'%</span> DVIR (30d)</div>'
-      +'<div style="font-size:11px;color:#64748b;"><span style="color:'+(violations===0?'#10b981':violations<=1?'#f59e0b':'#ef4444')+';font-weight:700;">'+violations+'</span> violations</div>'
-      +'<div style="font-size:11px;color:#64748b;"><span style="color:#10b981;font-weight:700;">🔥 '+streak+'d</span> streak</div>'
-      +'</div>'
-      +'</div>'
-      +'</div>';
-  } catch(e){ console.warn('Safety widget error:', e); }
-})();
-
-// Trophy count widget
-(function() {
-  try {
-    var loads = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]');
-    var pretrips = JSON.parse(localStorage.getItem('nexus_pretrip_inspections') || '[]');
-    var sess = JSON.parse(sessionStorage.getItem('nexus_session') || '{}');
-    var dId = (sess.id || sess.driverId || '').toUpperCase();
-    if (!dId) return;
-    var myLoads = loads.filter(function(l){ return (l.driver||'').toUpperCase() === dId; });
-    var totalMiles = myLoads.reduce(function(s,l){ return s+(parseFloat(l.miles)||0); }, 0);
-    var totalLoads = myLoads.length;
-    var states = {};
-    myLoads.forEach(function(l){ if(l.originState) states[l.originState.toUpperCase()]=1; if(l.destState) states[l.destState.toUpperCase()]=1; });
-    var myPretrips = pretrips.filter(function(p){ return (p.driverId||p.driverName||'').toUpperCase().includes(dId); });
-    var longestClean = 0; var streak = 0;
-    myPretrips.forEach(function(p){ if(!p.defectCount){ streak++; longestClean=Math.max(longestClean,streak); } else streak=0; });
-    var totalRevenue = myLoads.reduce(function(s,l){ return s+(parseFloat(l.rate)||0); }, 0);
-    var longestHaul = myLoads.reduce(function(max,l){ return Math.max(max,parseFloat(l.miles)||0); }, 0);
-    var stats = { totalMiles:Math.round(totalMiles), totalLoads:totalLoads, totalRevenue:Math.round(totalRevenue), uniqueStates:Object.keys(states).length, longestClean:longestClean, longestHaul:Math.round(longestHaul), totalPretrips:myPretrips.length, nightLoads:0 };
-    var thresholds = [1000,5000,25000,100000,5,25,100,500,10000,50000,100000,3,8,20,5,20,50,500,2000,3,10];
-    var statKeys   = ['totalMiles','totalMiles','totalMiles','totalMiles','totalLoads','totalLoads','totalLoads','totalLoads','totalRevenue','totalRevenue','totalRevenue','uniqueStates','uniqueStates','uniqueStates','longestClean','longestClean','longestClean','longestHaul','longestHaul','nightLoads','totalPretrips'];
-    var earned = statKeys.filter(function(k,i){ return (stats[k]||0) >= thresholds[i]; }).length;
-    var el = document.getElementById('trophy-sub');
-    if (el) el.textContent = earned > 0 ? '🏆 ' + earned + ' badge' + (earned===1?'':'s') + ' earned · CN Verified™' : 'CN Bureau of Official Bragging™ — earn your first badge';
-  } catch(e) {}
-})();
-
-// ── CAREER BASELINE ──────────────────────────────────────────────────────────
-function openCareerModal() {
-  var sess = {};
-  try { sess = JSON.parse(sessionStorage.getItem('nexus_session') || '{}'); } catch(e) {}
-  var dId = (sess.id || sess.driverId || '').toUpperCase();
-  if (!dId) { alert('Log in first.'); return; }
-  var careers = {};
-  try { careers = JSON.parse(localStorage.getItem('nexus_driver_careers') || '{}'); } catch(e) {}
-  var career = careers[dId] || {};
-  document.getElementById('career-start-date').value = career.startDate || '';
-  document.getElementById('career-pre-miles').value  = career.preCnMiles || '';
-  document.getElementById('career-pre-loads').value  = career.preCnLoads || '';
-  document.getElementById('career-modal').style.display = 'flex';
-}
-function closeCareerModal() {
-  document.getElementById('career-modal').style.display = 'none';
-}
-function saveCareerBaseline() {
-  var sess = {};
-  try { sess = JSON.parse(sessionStorage.getItem('nexus_session') || '{}'); } catch(e) {}
-  var dId = (sess.id || sess.driverId || '').toUpperCase();
-  if (!dId) return;
-  var careers = {};
-  try { careers = JSON.parse(localStorage.getItem('nexus_driver_careers') || '{}'); } catch(e) {}
-  careers[dId] = {
-    startDate:  document.getElementById('career-start-date').value || null,
-    preCnMiles: parseFloat(document.getElementById('career-pre-miles').value) || 0,
-    preCnLoads: parseFloat(document.getElementById('career-pre-loads').value) || 0,
-    updatedAt:  new Date().toISOString()
-  };
-  localStorage.setItem('nexus_driver_careers', JSON.stringify(careers));
-  closeCareerModal();
-  initRankStrip();
-}
-
-// ── RANK STRIP ────────────────────────────────────────────────────────────────
-var RANKS_DC = [
-  {id:'e1',title:'Greenhorn',    emoji:'🟢', color:'#94a3b8', minLoads:0,   minMiles:0,      minClean:0},
-  {id:'e2',title:'Wrench Turner',emoji:'🔧', color:'#93c5fd', minLoads:5,   minMiles:3750,   minClean:0},
-  {id:'e3',title:'Road Dog',     emoji:'🐕', color:'#6ee7b7', minLoads:20,  minMiles:15000,  minClean:0},
-  {id:'e4',title:'Gear Jammer',  emoji:'⚙️', color:'#fcd34d', minLoads:50,  minMiles:37500,  minClean:5},
-  {id:'e5',title:'Road Captain', emoji:'⭐', color:'#fdba74', minLoads:100, minMiles:75000,  minClean:10},
-  {id:'e6',title:'Pavement Ghost',emoji:'👻',color:'#d8b4fe', minLoads:300, minMiles:225000, minClean:20},
-];
-function calcTIS_DC(startDate) {
-  if (!startDate) return null;
-  var start = new Date(startDate), now = new Date();
-  if (isNaN(start)) return null;
-  var mo = (now.getFullYear()-start.getFullYear())*12 + (now.getMonth()-start.getMonth());
-  if (mo < 0) mo = 0;
-  var yrs = Math.floor(mo/12), m = mo%12;
-  if (yrs===0&&m===0) return '<1mo';
-  if (yrs===0) return m+'mo';
-  if (m===0) return yrs+(yrs===1?' yr':' yrs');
-  return yrs+(yrs===1?' yr':' yrs')+' '+m+'mo';
-}
-function initRankStrip() {
-  var strip = document.getElementById('dc-rank-strip');
-  var nameEl = document.getElementById('dc-driver-name');
-  if (!strip) return;
-  try {
-    var sess    = JSON.parse(sessionStorage.getItem('nexus_session') || '{}');
-    var dId     = (sess.id || sess.driverId || '').toUpperCase();
-    if (nameEl && sess.name) nameEl.textContent = sess.name;
-    var loads    = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]');
-    var pretrips = JSON.parse(localStorage.getItem('nexus_pretrip_inspections') || '[]');
-    var careers  = JSON.parse(localStorage.getItem('nexus_driver_careers') || '{}');
-    var career   = careers[dId] || {};
-    var myLoads  = dId ? loads.filter(function(l){return (l.driver||'').toUpperCase()===dId;}) : [];
-    var totalLoads = myLoads.length + (parseFloat(career.preCnLoads)||0);
-    var totalMiles = myLoads.reduce(function(s,l){return s+(parseFloat(l.miles)||0);},0) + (parseFloat(career.preCnMiles)||0);
-    var myPre = dId ? pretrips.filter(function(p){return (p.driverId||p.driverName||'').toUpperCase().includes(dId);}) : [];
-    var streak=0, longestClean=0;
-    myPre.forEach(function(p){if(!p.defectCount){streak++;longestClean=Math.max(longestClean,streak);}else streak=0;});
-    var rank = RANKS_DC[0];
-    RANKS_DC.forEach(function(r){
-      if(totalLoads>=r.minLoads && totalMiles>=r.minMiles && longestClean>=r.minClean) rank=r;
-    });
-    var tis = calcTIS_DC(career.startDate);
-    strip.innerHTML =
-      '<span style="font-size:11px;font-weight:800;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:99px;padding:2px 10px;color:'+rank.color+';">'+rank.emoji+' '+rank.title+'</span>' +
-      (tis ? '<span style="font-size:10px;color:#6b7a99;font-weight:600;margin-left:4px;">⏱ '+tis+'</span>' : '');
-  } catch(e) { console.warn('rank strip:', e); }
-}
-
-// ── PERMIT ACK CHECK ──────────────────────────────────────────────────────────
-(function checkPermitAck() {
-  try {
-    var sess    = JSON.parse(sessionStorage.getItem('nexus_session') || '{}');
-    var dId     = (sess.id || sess.driverId || '').toUpperCase();
-    if (!dId) return;
-    var loads   = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]');
-    var permits = JSON.parse(localStorage.getItem('nexus_permits') || '[]');
-    var acks    = JSON.parse(localStorage.getItem('nexus_permit_acks') || '[]');
-    var myActive    = loads.filter(function(l){return (l.driver||'').toUpperCase()===dId && ['active','transit','pending'].includes(l.status);});
-    var myActiveIds = myActive.map(function(l){return l.id;});
-    var pending = permits.filter(function(p){
-      var forMe  = (p.driver||'').toUpperCase()===dId || myActiveIds.includes(p.load_ref);
-      if (!forMe) return false;
-      var expired = p.expiry_date && new Date(p.expiry_date) < new Date();
-      if (expired) return false;
-      var hasRestr = (p.restrictions&&p.restrictions.length) || (p.travel_window&&p.travel_window!=='anytime') || (p.escort&&p.escort!=='none') || !!p.route;
-      if (!hasRestr) return false;
-      return !acks.some(function(a){return a.permitId===p.id && a.allAcked;});
-    });
-    if (pending.length) {
-      var banner = document.getElementById('permit-ack-banner');
-      var sub    = document.getElementById('permit-ack-banner-sub');
-      if (banner) banner.style.display = 'block';
-      if (sub)    sub.textContent = pending.length+' permit'+(pending.length===1?'':' s')+' with unacknowledged restrictions — tap to review';
-      window._pendingPermit = pending[0];
-    }
-  } catch(e) {}
-})();
-
-function goPermitAck() {
-  var p = window._pendingPermit;
-  if (!p) { window.location.href = 'permits.html'; return; }
-  var sess = {}; try { sess = JSON.parse(sessionStorage.getItem('nexus_session') || '{}'); } catch(e) {}
-  var dId = sess.id || sess.driverId || '';
-  var loads = []; try { loads = JSON.parse(localStorage.getItem('nexus_loads_v2') || '[]'); } catch(e) {}
-  var myLoad = loads.find(function(l){return (l.driver||'').toUpperCase()===(dId||'').toUpperCase() && ['active','transit','pending'].includes(l.status);});
-  var url = 'permit-ack.html?permitId='+encodeURIComponent(p.id)+'&driverId='+encodeURIComponent(dId)+'&return=driver-command.html';
-  if (myLoad) url += '&loadId='+encodeURIComponent(myLoad.id);
-  window.location.href = url;
-}
-
-// ── INIT RANK STRIP ───────────────────────────────────────────────────────────
-initRankStrip();
-
-// ── LOAD GEO-ALERT ENGINE ─────────────────────────────────────────────────────
-(function() {
-  var script = document.createElement('script');
-  script.src = 'permit-geo.js';
-  script.onload = function() {
-    if (window.NexusPermitGeo) window.NexusPermitGeo.start();
-  };
-  document.body.appendChild(script);
-})();
-
-</script>
-
-<!-- CAREER BASELINE MODAL -->
-<div id="career-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:8000;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)closeCareerModal()">
-  <div style="background:#131820;border:1px solid rgba(46,109,164,.3);border-radius:16px 16px 0 0;padding:24px 20px 40px;width:100%;max-width:430px;">
-    <div style="font-size:16px;font-weight:900;color:#f0f4f8;margin-bottom:4px;">⏱ Career Baseline</div>
-    <div style="font-size:12px;color:#6b7a99;margin-bottom:20px;">Tell CN when you started driving and your total miles &amp; loads before joining. CN picks up the count from here.</div>
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      <div>
-        <label style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Driving Start Date</label>
-        <input id="career-start-date" type="date" style="width:100%;background:#0d1017;border:1px solid rgba(46,109,164,.3);color:#f0f4f8;border-radius:8px;padding:10px 12px;font-size:14px;">
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Est. Miles Before CN</label>
-        <input id="career-pre-miles" type="number" placeholder="e.g. 150000" style="width:100%;background:#0d1017;border:1px solid rgba(46,109,164,.3);color:#f0f4f8;border-radius:8px;padding:10px 12px;font-size:14px;">
-        <div style="font-size:10px;color:#6b7a99;margin-top:3px;">Your best estimate is fine — this adds to your career total</div>
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Est. Loads Before CN</label>
-        <input id="career-pre-loads" type="number" placeholder="e.g. 400" style="width:100%;background:#0d1017;border:1px solid rgba(46,109,164,.3);color:#f0f4f8;border-radius:8px;padding:10px 12px;font-size:14px;">
-      </div>
-    </div>
-    <div style="display:flex;gap:10px;margin-top:20px;">
-      <button onclick="closeCareerModal()" style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#94a3b8;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;">Cancel</button>
-      <button onclick="saveCareerBaseline()" style="flex:2;background:#2e6da4;border:none;color:#fff;border-radius:10px;padding:13px;font-size:14px;font-weight:900;cursor:pointer;">Save My Baseline</button>
-    </div>
-  </div>
-</div>
-
-<!-- DRIVER STICKY BOTTOM NAV (mobile only) -->
-<div class="driver-sticky-bar" id="driver-sticky-nav-inner">
-  <a href="driver-command.html" class="active">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-    HOME
-  </a>
-  <a href="pretrip.html">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-    INSPECT
-  </a>
-  <a href="upload.html">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-    UPLOAD
-  </a>
-  <a href="my-pay.html">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-    MY PAY
-  </a>
-  <a href="incident-report.html">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-    REPORT
-  </a>
-</div>
-
 </body>
 </html>
