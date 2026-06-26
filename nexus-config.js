@@ -16,7 +16,7 @@ window.NEXUS_COMPANIES = [
     id: 'carrier-trucking-us',
     name: 'Carrier Trucking US, LLC',
     shortName: 'Carrier Trucking',
-    driveRootId: '13hRTmF6XVSI627s5Mc1wb_zkEA3I5rXZ',
+    driveRootId: '1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0',
     sheetsId: '',   // Auto-set after first Sheets sync (see nexus-sheets.js)
     gmailLabel: 'INBOX',
     color: '#e91e8c'
@@ -446,7 +446,7 @@ if (typeof window !== 'undefined') {
   seedKey('nexus_mcs150_last', '2025-03-15');
   seedKey('nexus_mcs150_next', '2027-03-15');
   seedKey('nexus_ucr_year', '2026');
-  seedKey('nexus_fmcsa_webkey', 'DEMO_KEY_REPLACE_WITH_REAL');
+  // seedKey('nexus_fmcsa_webkey', 'DEMO_KEY_REPLACE_WITH_REAL'); // Set real key via admin settings
 
   // Pay settings
   seedKey('nexus_pay_settings', { default_driver_pct: 18, dispatcher_pct_amet: 14, dispatcher_pct_betty: 13, fuel_card: 'EFS', quick_pay_discount: 2 });
@@ -544,11 +544,11 @@ if (typeof window !== 'undefined') {
       var existingIds = users.map(function(u) { return u.id; });
       var added = false;
       if (existingIds.indexOf('usr_011') === -1) {
-        users.push({ id: 'usr_011', email: 'martinez@carriertuckingus.com', name: 'Testing Driver Martinez', role: 'driver', active: true, phone: '(832) 555-0741', cdl: 'TX-CDL-MARTINEZ-001', cdl_class: 'Class A', endorsements: 'H,N,X,T', hire_date: '2021-03-15', companyIds: ['co_001'] });
+        users.push({ id: 'usr_011', email: 'martinez@carriertuckingus.com', name: 'Testing Driver Martinez', role: 'driver', active: false, is_demo: true, phone: '(832) 555-0741', cdl: 'TX-CDL-MARTINEZ-001', cdl_class: 'Class A', endorsements: 'H,N,X,T', hire_date: '2021-03-15', companyIds: ['co_001'] });
         added = true;
       }
       if (existingIds.indexOf('usr_012') === -1) {
-        users.push({ id: 'usr_012', email: 'johnson@carriertuckingus.com', name: 'Testing Driver Johnson', role: 'driver', active: true, phone: '(512) 555-0392', cdl: 'TX-CDL-JOHNSON-002', cdl_class: 'Class A', endorsements: 'N,T', hire_date: '2022-08-01', companyIds: ['co_001'] });
+        users.push({ id: 'usr_012', email: 'johnson@carriertuckingus.com', name: 'Testing Driver Johnson', role: 'driver', active: false, is_demo: true, phone: '(512) 555-0392', cdl: 'TX-CDL-JOHNSON-002', cdl_class: 'Class A', endorsements: 'N,T', hire_date: '2022-08-01', companyIds: ['co_001'] });
         added = true;
       }
       if (added) {

@@ -832,7 +832,7 @@ function loadAssignments() {
       return '<tr><td style="padding:9px 14px;font-size:13px;">' + name + '</td>' +
              '<td style="padding:9px 14px;font-size:11px;color:var(--text-muted);">' + email + '</td>' +
              '<td style="padding:9px 14px;font-size:11px;color:var(--text-muted);">' + date + '</td>' +
-             '<td style="padding:9px 14px;text-align:right;"><button onclick="removeAssignment('' + item.assignment.id + '')" style="background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25);border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer;">Remove</button></td></tr>';
+             '<td style="padding:9px 14px;text-align:right;"><button onclick="removeAssignment(\'' + item.assignment.id + '\')" style="background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25);border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer;">Remove</button></td></tr>';
     }).join('');
     var dispName = group.disp.name || group.disp.email;
     return '<div style="margin-bottom:16px;">' +

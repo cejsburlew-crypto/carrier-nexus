@@ -500,7 +500,7 @@ function renderSummary(){
   document.getElementById('sec-sub').textContent='Review defects and sign off';
   var html='<div class="summary-card">';
   html+='<div class="summary-icon">'+(canDepart?'✅':'🚫')+'</div>';
-  html+='<div class="summary-verdict" style="color:'+(canDepart?'var(--green)':'var(--red))+'">'+(canDepart?'CLEARED TO DEPART':'DO NOT DISPATCH')+'</div>';
+  html+='<div class="summary-verdict" style="color:'+(canDepart?'var(--green)':'var(--red)')+'">'+(canDepart?'CLEARED TO DEPART':'DO NOT DISPATCH')+'</div>';
   html+='<div class="summary-sub">'+(canDepart?'No major defects — vehicle meets FMCSA standards':'Major defect found — repair before operating')+'</div>';
   html+='<div class="summary-stat-row">';
   html+='<div class="sum-stat"><div class="sum-val" style="color:var(--green);">'+okCount+'</div><div class="sum-lbl">Items OK</div></div>';

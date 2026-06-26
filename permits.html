@@ -527,7 +527,7 @@ function addRestrictionRow(type, text) {
       '<option value="other">⚠️ Other</option>' +
     '</select>' +
     '<input id="rtxt_'+id+'" type="text" placeholder="Restriction description…" style="flex:1;background:#0b0f1a;border:1px solid #1e2d45;color:#e2e8f0;border-radius:6px;padding:5px 8px;font-size:12px;" value="">' +
-    '<button type="button" onclick="document.getElementById('row_'+id+'').remove()" style="background:none;border:none;color:#64748b;cursor:pointer;font-size:16px;padding:2px 6px;flex-shrink:0;">✕</button>';
+    '<button type="button" onclick="document.getElementById(\'row_\'+id+\'\').remove()" style="background:none;border:none;color:#64748b;cursor:pointer;font-size:16px;padding:2px 6px;flex-shrink:0;">✕</button>';
   if (type) { var sel = row.querySelector('select'); if(sel) sel.value = type; }
   if (text) { var inp = row.querySelector('input'); if(inp) inp.value = text; }
   document.getElementById('custom-restrictions-list').appendChild(row);

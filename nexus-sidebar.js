@@ -64,7 +64,7 @@
     { key:'dispatch',   label:'Dispatch',            pages:['dispatch-pro.html','dispatcher-hub.html','commissions.html','pilot-escorts.html','available-dispatchers.html','available-drivers.html'] },
     { key:'driver',     label:'Driver Portal',       pages:['driver-command.html','driver-availability.html','driver-intake.html','driver-profile.html','my-pay.html','equipment-marketplace.html','social-recruiting.html'] },
     { key:'finance',    label:'Finance',             pages:['invoicing.html','expenses.html','financials.html','factoring.html','fuel-cards.html','ifta.html','whatsapp-import.html','analysis.html'] },
-    { key:'compliance', label:'Compliance',          pages:['cfr-compliance.html','fmcsa-compliance.html','fmcsa-resources.html','dot-view.html','drug-alcohol.html','accident-register.html','boc3.html','expiration-hub.html','incident-report.html','coaching-log.html'] },
+    { key:'compliance', label:'Compliance',          pages:['cfr-compliance.html','fmcsa-compliance.html','fmcsa-resources.html','dot-view.html','drug-alcohol.html','accident-register.html','boc3.html','expiration-hub.html','incident-report.html','coaching-log.html','alerts.html'] },
     { key:'insurance',  label:'Insurance',           pages:['insurance-kpi.html','insurance-planner.html','coi-management.html','claims.html'] },
     { key:'fleet',      label:'Fleet & Equipment',   pages:['equipment.html','equipment-weights.html','maintenance.html','pm-schedule.html','tires.html','fuel.html','dvir.html','pretrip.html','scale-tickets.html','weight-calculator.html','dot-compliance.html'] },
     { key:'routewx',    label:'Route Intelligence',  pages:['route-compliance.html','gps-tracker.html','pilot-escorts.html','driver-services.html'] },
@@ -73,7 +73,7 @@
     { key:'contacts',   label:'Contacts',            pages:['contacts.html'] },
     { key:'intel',      label:'Intelligence',        pages:['nexus-ai.html','search.html','eld-settings.html','drive-settings.html'] },
     { key:'comms',      label:'Communications',      pages:['comms.html','nexus-connect.html'] },
-    { key:'admin',      label:'Admin',               pages:['admin-users.html','company-management.html','public-profile.html','onboarding.html'] },
+    { key:'admin',      label:'Admin',               pages:['admin-users.html','company-management.html','public-profile.html','onboarding.html','data-import.html'] },
   ];
 
   // Determine which section the current page lives in (first match wins)
@@ -273,6 +273,7 @@
       lnk('accident-register.html',    I.dot,     '🚨 Accident Register') +
       lnk('boc3.html',                 I.doc,     '📋 BOC-3') +
       lnk('expiration-hub.html',       I.clock,   '⏰ Expiration Hub') +
+      lnk('alerts.html',               I.clock,   '🔔 Expiration Alerts') +
       lnk('incident-report.html',      I.dot,     'Incident Reports') +
       lnk('coaching-log.html',         I.dvir,    'Driver Coaching')
     ) +
@@ -354,7 +355,8 @@
       lnk('admin-users.html',          I.admin,   'User Accounts') +
       lnk('company-management.html',   I.truck,   '🏢 Company Management') +
       lnk('public-profile.html?type=company&id=co_001', I.person, '👤 Public Profiles') +
-      lnk('onboarding.html',           I.rocket,  '🚀 Setup Wizard')
+      lnk('onboarding.html',           I.rocket,  '🚀 Setup Wizard') +
+      lnk('data-import.html',          I.upload,  '📥 Data Import')
     );
 
   const html = `

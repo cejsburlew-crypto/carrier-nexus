@@ -292,11 +292,11 @@ function buildDedRows(wk,mid){
   var opts=DED_TYPES.map(function(t){return'<option value="'+t.val+'">'+t.label+'</option>';}).join('');
   return arr.map(function(d,i){
     return'<div class="ded-row">'+
-      '<select onchange="upDedType(''+mid+'','+i+',this.value)">'+
+      '<select onchange="upDedType(\''+mid+'\','+i+',this.value)">'+
         DED_TYPES.map(function(t){return'<option value="'+t.val+'"'+(t.val===d.type?' selected':'')+'>'+t.label+'</option>';}).join('')+
       '</select>'+
-      '<input type="number" step="0.01" placeholder="0.00" value="'+(d.amount||'')+'" onchange="upDedAmt(''+mid+'','+i+',this.value)">'+
-      '<button class="del-btn" onclick="rmDed(''+mid+'','+i+')">✕</button>'+
+      '<input type="number" step="0.01" placeholder="0.00" value="'+(d.amount||'')+'" onchange="upDedAmt(\''+mid+'\','+i+',this.value)">'+
+      '<button class="del-btn" onclick="rmDed(\''+mid+'\','+i+')">✕</button>'+
     '</div>';
   }).join('');
 }
