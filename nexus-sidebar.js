@@ -1,8 +1,8 @@
 /**
  * nexus-sidebar.js — Carrier Nexus canonical sidebar.
- * v3: collapsible sections, Collapse All / Expand All, state persisted in localStorage,
- *     active section always auto-expanded. Driver Services, Scale Tickets, Load Board,
- *     Nexus Connect, Search Everything added. nexus-core.js + nexus-search.js injection.
+ * v4: 14 logical sections, full nav coverage, all pages wired.
+ *     Collapsible sections, Collapse All / Expand All, state persisted in localStorage,
+ *     active section always auto-expanded. nexus-core.js + nexus-search.js injection.
  */
 (function() {
   const page = location.pathname.split('/').pop() || 'index.html';
@@ -36,29 +36,32 @@
   }
 
   // Section definitions — key, label, pages in section (for auto-expand)
+  // Note: pages may appear in multiple sections; auto-expand picks FIRST match.
   var SECTIONS = [
-    { key:'ops',     label:'Operations',     pages:['fleet-command.html','active-loads.html','settlements.html','weekly-settlements.html','settlement-review.html','drivers.html','permits.html','pods.html','issues.html','work-orders.html','load-tracking.html'] },
-    { key:'dispatch',label:'Dispatch',       pages:['dispatch-board.html','dispatcher-hub.html','load-board.html','commissions.html','available-dispatchers.html','available-drivers.html','pilot-escorts.html'] },
-    { key:'driver',  label:'Driver',         pages:['driver-command.html','driver-availability.html','equipment-marketplace.html','my-pay.html','social-recruiting.html','driver-intake.html','driver-profile.html'] },
-    { key:'finance', label:'Finance',        pages:['invoicing.html','whatsapp-import.html','expenses.html','financials.html','ifta.html','factoring.html','fuel-cards.html'] },
-    { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','emails.html','doc-inbox.html'] },
-    { key:'contacts',label:'Contacts',       pages:['contacts.html'] },
-    { key:'taxhr',   label:'Tax & HR',       pages:['tax-forms.html','w9.html'] },
-    { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','insurance-kpi.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html','incident-report.html','coi-management.html','claims.html','coaching-log.html','fmcsa-compliance.html','fmcsa-resources.html','cfr-compliance.html','expiration-hub.html','dot-view.html','drug-alcohol.html','accident-register.html','boc3.html','insurance-planner.html','route-compliance.html','equipment-weights.html'] },
-    { key:'admin',   label:'Admin',          pages:['member-management.html','admin-users.html','company-management.html','doc-privacy.html','public-profile.html','onboarding.html'] },
-    { key:'intel',   label:'Intelligence',   pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html','search.html','gps-tracker.html'] },
-    { key:'comms',   label:'Communications', pages:['comms.html','nexus-connect.html'] },
+    { key:'ops',        label:'Operations',         pages:['fleet-command.html','active-loads.html','load-board.html','dispatch-board.html','settlements.html','weekly-settlements.html','settlement-review.html','drivers.html','permits.html','work-orders.html','load-tracking.html','pods.html','issues.html'] },
+    { key:'dispatch',   label:'Dispatch',            pages:['dispatch-pro.html','dispatcher-hub.html','commissions.html','pilot-escorts.html','available-dispatchers.html','available-drivers.html'] },
+    { key:'driver',     label:'Driver Portal',       pages:['driver-command.html','driver-availability.html','driver-intake.html','driver-profile.html','my-pay.html','equipment-marketplace.html','social-recruiting.html'] },
+    { key:'finance',    label:'Finance',             pages:['invoicing.html','expenses.html','financials.html','factoring.html','fuel-cards.html','ifta.html','whatsapp-import.html','analysis.html'] },
+    { key:'compliance', label:'Compliance',          pages:['cfr-compliance.html','fmcsa-compliance.html','fmcsa-resources.html','dot-view.html','drug-alcohol.html','accident-register.html','boc3.html','expiration-hub.html','incident-report.html','coaching-log.html'] },
+    { key:'insurance',  label:'Insurance',           pages:['insurance-kpi.html','insurance-planner.html','coi-management.html','claims.html'] },
+    { key:'fleet',      label:'Fleet & Equipment',   pages:['equipment.html','equipment-weights.html','maintenance.html','pm-schedule.html','tires.html','fuel.html','dvir.html','pretrip.html','scale-tickets.html','weight-calculator.html','dot-compliance.html'] },
+    { key:'routewx',    label:'Route Intelligence',  pages:['route-compliance.html','gps-tracker.html','pilot-escorts.html','driver-services.html'] },
+    { key:'docs',       label:'Documents',           pages:['documents.html','upload.html','inbox-sync.html','doc-inbox.html','emails.html','doc-privacy.html'] },
+    { key:'taxhr',      label:'Tax & HR',            pages:['tax-forms.html','w9.html','member-management.html'] },
+    { key:'contacts',   label:'Contacts',            pages:['contacts.html'] },
+    { key:'intel',      label:'Intelligence',        pages:['nexus-ai.html','search.html','eld-settings.html','drive-settings.html'] },
+    { key:'comms',      label:'Communications',      pages:['comms.html','nexus-connect.html'] },
+    { key:'admin',      label:'Admin',               pages:['admin-users.html','company-management.html','public-profile.html','onboarding.html'] },
   ];
 
-  // Determine which section the current page lives in
+  // Determine which section the current page lives in (first match wins)
   var activeSection = '';
   SECTIONS.forEach(function(s) {
-    if (s.pages.indexOf(page) > -1) activeSection = s.key;
+    if (!activeSection && s.pages.indexOf(page) > -1) activeSection = s.key;
   });
 
-  // Build collapse state — auto-expand active section, collapse others that user has collapsed
+  // Build collapse state — auto-expand active section
   var colState = getCollapseState();
-  // Active section is never collapsed
   if (activeSection) colState[activeSection] = false;
 
   function isSectionCollapsed(key) {
@@ -115,7 +118,7 @@
 
   function sectionLinks(key, linksHtml) {
     var hidden = isSectionCollapsed(key);
-    return '<div class="sb-sec-links" data-sec="' + key + '" style="overflow:hidden;max-height:' + (hidden ? '0' : '600px') + ';transition:max-height .22s ease' + (hidden ? '' : '-in-out') + ';">' + linksHtml + '</div>';
+    return '<div class="sb-sec-links" data-sec="' + key + '" style="overflow:hidden;max-height:' + (hidden ? '0' : '800px') + ';transition:max-height .22s ease' + (hidden ? '' : '-in-out') + ';">' + linksHtml + '</div>';
   }
 
   function sec(key, label, linksHtml) {
@@ -178,113 +181,158 @@
     people:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
     signal:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>',
     wallet:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 12h.01M2 10h20"/><path d="M14 12a2 2 0 0 1 4 0v2a2 2 0 0 1-4 0v-2z"/></svg>',
+    shield:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    gps:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>',
+    weight:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l2 7H4L6 3z"/><path d="M4 10v9a2 2 0 002 2h12a2 2 0 002-2v-9"/><path d="M12 3v7"/></svg>',
+    rocket:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>',
+    doc:     '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V7L8 2z"/><polyline points="8 2 8 7 13 7"/></svg>',
   };
 
+  // ── Nav HTML — 14 sections ──
   var navHtml =
+
+    // 1. OPERATIONS
     sec('ops', 'Operations',
       lnk('fleet-command.html',        I.grid,    'Operations Dashboard') +
       lnk('active-loads.html',         I.loads,   'Active Loads') +
+      lnk('load-board.html',           I.board,   'Load Board') +
+      lnk('dispatch-board.html',       I.monitor, 'Dispatch Board') +
       lnk('settlements.html',          I.settle,  'Settlements') +
       lnk('weekly-settlements.html',   I.builder, 'Settlement Builder') +
       lnk('settlement-review.html',    I.review,  'Approval Queue') +
       lnk('drivers.html',              I.driver,  'Drivers') +
       lnk('permits.html',              I.permit,  'Permits') +
-      lnk('pods.html',                 I.clock,   'Missing PODs') +
-      lnk('issues.html',               I.issue,   'Issues') +
       lnk('work-orders.html',          I.wrench,  '🔧 Work Orders') +
-      lnk('load-tracking.html',        I.loads,   '📦 Load Tracking')
+      lnk('load-tracking.html',        I.loads,   '📦 Load Tracking') +
+      lnk('pods.html',                 I.clock,   'Missing PODs') +
+      lnk('issues.html',               I.issue,   'Issues')
     ) +
+
+    // 2. DISPATCH
     sec('dispatch', 'Dispatch',
-      lnk('dispatch-pro.html',   I.loads,   '🚀 Dispatch PRO') +
-      lnk('dispatch-board.html', I.truck, 'Dispatch Board') +
-      lnk('dispatcher-hub.html',       I.monitor, 'Dispatch Board') +
-      lnk('load-board.html',           I.map,     'Load Board') +
-      lnk('commissions.html',          I.comm,    'Commissions') +
-      lnk('available-dispatchers.html',I.team,    'Dispatcher Roster') +
-      lnk('available-drivers.html',    I.person,  'Driver Pool') +
-      lnk('pilot-escorts.html',        I.truck,   '🚁 Pilot Escorts')
+      lnk('dispatch-pro.html',             I.rocket,  '🚀 Dispatch PRO') +
+      lnk('dispatcher-hub.html',           I.monitor, 'Dispatcher Hub') +
+      lnk('commissions.html',              I.comm,    'Commissions') +
+      lnk('pilot-escorts.html',            I.truck,   '🚁 Pilot Escorts') +
+      lnk('available-dispatchers.html',    I.team,    'Dispatcher Roster') +
+      lnk('available-drivers.html',        I.person,  'Driver Pool')
     ) +
-    sec('driver', 'Driver',
-      lnk('my-pay.html',               I.wallet,  'My Pay') +
+
+    // 3. DRIVER PORTAL
+    sec('driver', 'Driver Portal',
       lnk('driver-command.html',       I.signal,  'Driver Command') +
-      lnk('driver-intake.html',         I.upload,  'Driver Intake') +
-      lnk('driver-profile.html',         I.person,  'My Profile') +
       lnk('driver-availability.html',  I.signal,  'Availability Network') +
-      lnk('equipment-marketplace.html', I.market,  'Equipment Marketplace') +
-      lnk('social-recruiting.html',     I.people,  'Community &amp; Jobs')
+      lnk('driver-intake.html',        I.upload,  'Driver Intake') +
+      lnk('driver-profile.html',       I.person,  'My Profile') +
+      lnk('my-pay.html',               I.wallet,  'My Pay') +
+      lnk('equipment-marketplace.html',I.market,  'Equipment Marketplace') +
+      lnk('social-recruiting.html',    I.people,  'Community & Jobs')
     ) +
+
+    // 4. FINANCE
     sec('finance', 'Finance',
       lnk('invoicing.html',            I.invoice, 'Invoicing') +
-      lnk('whatsapp-import.html',      I.chat,    'WhatsApp Import') +
       lnk('expenses.html',             I.expense, 'Expenses') +
       lnk('financials.html',           I.bar,     'Financials') +
-      lnk('ifta.html',                 I.ifta,    'IFTA Reporting') +
       lnk('factoring.html',            I.invoice, '💳 Factoring') +
-      lnk('fuel-cards.html',           I.fuel,    '⛽ Fuel Cards')
+      lnk('fuel-cards.html',           I.fuel,    '⛽ Fuel Cards') +
+      lnk('ifta.html',                 I.ifta,    'IFTA Reporting') +
+      lnk('whatsapp-import.html',      I.chat,    'WhatsApp Import') +
+      lnk('analysis.html',             I.bar,     'Analytics')
     ) +
+
+    // 5. COMPLIANCE
+    sec('compliance', 'Compliance',
+      lnk('cfr-compliance.html',       I.dot,     '📋 49 CFR Compliance') +
+      lnk('fmcsa-compliance.html',     I.dot,     '⚖️ FMCSA Compliance') +
+      lnk('fmcsa-resources.html',      I.doc,     '🛡️ FMCSA Resources') +
+      lnk('dot-view.html',             I.dot,     '🚔 DOT View') +
+      lnk('drug-alcohol.html',         I.dot,     '🧪 Drug & Alcohol') +
+      lnk('accident-register.html',    I.dot,     '🚨 Accident Register') +
+      lnk('boc3.html',                 I.doc,     '📋 BOC-3') +
+      lnk('expiration-hub.html',       I.clock,   '⏰ Expiration Hub') +
+      lnk('incident-report.html',      I.dot,     'Incident Reports') +
+      lnk('coaching-log.html',         I.dvir,    'Driver Coaching')
+    ) +
+
+    // 6. INSURANCE
+    sec('insurance', 'Insurance',
+      lnk('insurance-kpi.html',        I.shield,  'Insurance KPI') +
+      lnk('insurance-planner.html',    I.shield,  '🛡️ Insurance Planner') +
+      lnk('coi-management.html',       I.doc,     'COI Registry') +
+      lnk('claims.html',               I.doc,     'Claims')
+    ) +
+
+    // 7. FLEET & EQUIPMENT
+    sec('fleet', 'Fleet & Equipment',
+      lnk('equipment.html',            I.truck,   'Fleet & Equipment') +
+      lnk('equipment-weights.html',    I.weight,  '🏋️ Equip Weights') +
+      lnk('maintenance.html',          I.wrench,  'Maintenance Log') +
+      lnk('pm-schedule.html',          I.cal,     'PM Schedule') +
+      lnk('tires.html',                I.tire,    'Tires') +
+      lnk('fuel.html',                 I.fuel,    'Fuel') +
+      lnk('dvir.html',                 I.dvir,    'DVIR History') +
+      lnk('pretrip.html',              I.dvir,    'Pre-Trip Inspection') +
+      lnk('scale-tickets.html',        I.scale,   'Scale Tickets') +
+      lnk('weight-calculator.html',    I.scale,   'Weight Calculator') +
+      lnk('dot-compliance.html',       I.dot,     'DOT Compliance')
+    ) +
+
+    // 8. ROUTE INTELLIGENCE
+    sec('routewx', 'Route Intelligence',
+      lnk('route-compliance.html',     I.map,     '⚖️ Route Compliance') +
+      lnk('gps-tracker.html',          I.gps,     '📡 GPS Tracker') +
+      lnk('permits.html',              I.permit,  'Permits') +
+      lnk('pilot-escorts.html',        I.truck,   '🚁 Pilot Escorts') +
+      lnk('driver-services.html',      I.service, 'Driver Services')
+    ) +
+
+    // 9. DOCUMENTS
     sec('docs', 'Documents',
       lnk('documents.html',            I.vault,   'Document Vault') +
       lnk('upload.html',               I.upload,  'Upload Docs') +
       lnk('inbox-sync.html',           I.sync,    'Email Import') +
       lnk('doc-inbox.html',            I.inbox,   'Review Queue') +
-      lnk('emails.html',               I.email,   'Emails')
+      lnk('emails.html',               I.email,   'Emails') +
+      lnk('doc-privacy.html',          I.file,    '🔒 Doc Privacy')
     ) +
+
+    // 10. TAX & HR
+    sec('taxhr', 'Tax & HR',
+      lnk('tax-forms.html',            I.tax,     '1099-NEC') +
+      lnk('w9.html',                   I.tax,     'W-9 Forms') +
+      lnk('member-management.html',    I.members, 'Members') +
+      lnk('settlements.html',          I.settle,  'Settlements') +
+      lnk('weekly-settlements.html',   I.builder, 'Settlement Builder') +
+      lnk('settlement-review.html',    I.review,  'Approval Queue')
+    ) +
+
+    // 11. CONTACTS
     sec('contacts', 'Contacts',
       lnk('contacts.html',             I.contact, 'Directory') +
       '<a href="contacts.html?tab=broker" class="sidebar-link">' + I.team + 'Brokers</a>'
     ) +
-    sec('taxhr', 'Tax & HR',
-      lnk('tax-forms.html',            I.tax,     '1099-NEC') +
-      lnk('w9.html',                   I.tax,     'W-9 Forms')
-    ) +
-    sec('maint', 'Maintenance',
-      lnk('equipment.html',            I.truck,   'Fleet & Equipment') +
-      lnk('maintenance.html',          I.wrench,  'Maintenance Log') +
-      lnk('pm-schedule.html',          I.cal,     'PM Schedule') +
-      lnk('pretrip.html',               I.dvir,    'Pre-Trip Inspection') +
-      lnk('dvir.html',                 I.dvir,    'DVIR History') +
-      lnk('dot-compliance.html',       I.dot,     'DOT Compliance') +
-      lnk('insurance-kpi.html',        I.dot,     'Insurance KPI') +
-      lnk('incident-report.html',      I.dot,     'Incident Reports') +
-      lnk('claims.html',               I.doc,     'Claims') +
-      lnk('coi-management.html',       I.doc,     'COI Registry') +
-      lnk('fmcsa-compliance.html',      I.dot,     '⚖️ FMCSA Compliance') +
-      lnk('fmcsa-resources.html',         I.dot,     '🛡️ FMCSA Resources') +
-      lnk('cfr-compliance.html',           I.dot,     '📋 49 CFR Compliance') +
-      lnk('coaching-log.html',         I.dvir,    'Driver Coaching') +
-      lnk('tires.html',                I.tire,    'Tires') +
-      lnk('fuel.html',                 I.fuel,    'Fuel') +
-      lnk('driver-services.html',      I.service, 'Driver Services') +
-      lnk('scale-tickets.html',        I.scale,   'Scale Tickets') +
-      lnk('weight-calculator.html',   I.scale,   'Weight Calculator') +
-      lnk('route-compliance.html',     I.map,     'Route Compliance') +
-      lnk('equipment-weights.html',    I.scale,   'Equip Weights') +
-      lnk('expiration-hub.html',       I.clock,   '⏰ Expiration Hub') +
-      lnk('dot-view.html',              I.dot,     '🚔 DOT View') +
-      lnk('drug-alcohol.html',         I.dot,     '🧪 Drug &amp; Alcohol') +
-      lnk('accident-register.html',    I.dot,     '🚨 Accident Register') +
-      lnk('boc3.html',                 I.dot,     '📋 BOC-3') +
-      lnk('insurance-planner.html',    I.dot,     '🛡️ Insurance Planner')
-    ) +
-    sec('admin', 'Admin',
-      lnk('member-management.html',    I.members, 'Members') +
-      lnk('admin-users.html',          I.admin,   'User Accounts') +
-      lnk('company-management.html',   I.truck,   '🏢 Company Management') +
-      lnk('doc-privacy.html',           I.file,    '🔒 Doc Privacy') +
-      lnk('public-profile.html?type=company&id=co_001', I.person, '👤 Public Profiles') +
-      lnk('onboarding.html',           I.ai,      '🚀 Setup Wizard')
-    ) +
+
+    // 12. INTELLIGENCE
     sec('intel', 'Intelligence',
       lnk('nexus-ai.html',             I.ai,      'AI Assistant') +
-      lnk('analysis.html',             I.bar,     'Analytics') +
-      lnk('drive-settings.html',       I.file,    'Integrations') +
-      lnk('eld-settings.html',         I.eld,     'ELD Integration') +
       lnk('search.html',               I.search,  'Search Everything') +
-      lnk('gps-tracker.html',          I.signal,  '📡 GPS Tracker')
+      lnk('eld-settings.html',         I.eld,     'ELD Integration') +
+      lnk('drive-settings.html',       I.file,    'Integrations')
     ) +
+
+    // 13. COMMUNICATIONS
     sec('comms', 'Communications',
-      lnk('comms.html',               I.email,   'Unified Comms') +
+      lnk('comms.html',                I.email,   'Unified Comms') +
       lnk('nexus-connect.html',        I.connect, 'Nexus Connect')
+    ) +
+
+    // 14. ADMIN
+    sec('admin', 'Admin',
+      lnk('admin-users.html',          I.admin,   'User Accounts') +
+      lnk('company-management.html',   I.truck,   '🏢 Company Management') +
+      lnk('public-profile.html?type=company&id=co_001', I.person, '👤 Public Profiles') +
+      lnk('onboarding.html',           I.rocket,  '🚀 Setup Wizard')
     );
 
   const html = `
@@ -400,7 +448,7 @@
   function applyCollapseState(key, collapsed) {
     var links = document.querySelector('.sb-sec-links[data-sec="' + key + '"]');
     var chev  = document.querySelector('.sb-chevron[data-sec="' + key + '"]');
-    if (links) links.style.maxHeight = collapsed ? '0' : '600px';
+    if (links) links.style.maxHeight = collapsed ? '0' : '800px';
     if (chev)  chev.style.transform  = collapsed ? 'rotate(0deg)' : 'rotate(90deg)';
   }
 
@@ -467,7 +515,7 @@
       '[data-nexus-theme="light"] .content{background:transparent!important}',
       '[data-nexus-theme="light"] .card,[data-nexus-theme="light"] .panel,[data-nexus-theme="light"] .section-card,[data-nexus-theme="light"] .stat-card{background:#fff!important;border-color:#e2e8f0!important;color:#0f172a!important}',
       '[data-nexus-theme="light"] .modal,[data-nexus-theme="light"] .modal-box,[data-nexus-theme="light"] .modal-head,[data-nexus-theme="light"] .modal-hdr,[data-nexus-theme="light"] .modal-footer,[data-nexus-theme="light"] .modal-body{background:#fff!important;border-color:#e2e8f0!important;color:#0f172a!important}',
-      '[data-nexus-theme="light"] .form-input,[data-nexus-theme="light"] .form-select,[data-nexus-theme="light"] textarea,[data-nexus-theme="light"] select,[data-nexus-theme="light"] input:not([type=range]){background:#fff!important;color:#0f172a!important;border-color:#e2e8f0!important}',
+      '[data-nexus-theme="light"] .form-input,[data-nexus-theme="light"] .form-select,[data-nexus-theme="light"] textarea,[data-nexus-theme="light"] select,[data-nexus-theme-light"] input:not([type=range]){background:#fff!important;color:#0f172a!important;border-color:#e2e8f0!important}',
       '[data-nexus-theme="light"] .form-label,[data-nexus-theme="light"] label{color:#334155!important}',
       '[data-nexus-theme="light"] table th{background:#f8fafc!important;color:#64748b!important;border-color:#e2e8f0!important}',
       '[data-nexus-theme="light"] table td{color:#0f172a!important;border-color:#e2e8f0!important}',
@@ -564,9 +612,9 @@
         '<div style="display:flex;align-items:center;justify-content:space-between;">' +
           '<div>' +
             '<div style="font-weight:600;color:var(--text);font-size:14px;">' + c.name + '</div>' +
-            '<div style="font-size:11px;color:var(--mid);margin-top:2px;">' + (c.usdot?'DOT# '+c.usdot:'No USDOT on file') + ' \u00b7 ' + (c.hq||'') + '</div>' +
+            '<div style="font-size:11px;color:var(--mid);margin-top:2px;">' + (c.usdot?'DOT# '+c.usdot:'No USDOT on file') + ' · ' + (c.hq||'') + '</div>' +
           '</div>' +
-          (c.id===active.id?'<span style="color:var(--blue);font-size:18px;">\u2713</span>':'') +
+          (c.id===active.id?'<span style="color:var(--blue);font-size:18px;">✓</span>':'') +
         '</div>' +
       '</div>';
     }).join('');
