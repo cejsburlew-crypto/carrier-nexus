@@ -44,7 +44,7 @@
     { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','emails.html','doc-inbox.html'] },
     { key:'contacts',label:'Contacts',       pages:['contacts.html'] },
     { key:'taxhr',   label:'Tax & HR',       pages:['tax-forms.html','w9.html'] },
-    { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','insurance-kpi.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html','incident-report.html','coi-management.html','claims.html','coaching-log.html','fmcsa-compliance.html','fmcsa-resources.html','cfr-compliance.html','expiration-hub.html'] },
+    { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','insurance-kpi.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html','incident-report.html','coi-management.html','claims.html','coaching-log.html','fmcsa-compliance.html','fmcsa-resources.html','cfr-compliance.html','expiration-hub.html','dot-view.html'] },
     { key:'admin',   label:'Admin',          pages:['member-management.html','admin-users.html','company-management.html','doc-privacy.html','public-profile.html'] },
     { key:'intel',   label:'Intelligence',   pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html','search.html','gps-tracker.html'] },
     { key:'comms',   label:'Communications', pages:['comms.html','nexus-connect.html'] },
@@ -253,7 +253,8 @@
       lnk('driver-services.html',      I.service, 'Driver Services') +
       lnk('scale-tickets.html',        I.scale,   'Scale Tickets') +
       lnk('weight-calculator.html',   I.scale,   'Weight Calculator') +
-      lnk('expiration-hub.html',       I.clock,   '⏰ Expiration Hub')
+      lnk('expiration-hub.html',       I.clock,   '⏰ Expiration Hub') +
+      lnk('dot-view.html',              I.dot,     '🚔 DOT View')
     ) +
     sec('admin', 'Admin',
       lnk('member-management.html',    I.members, 'Members') +
