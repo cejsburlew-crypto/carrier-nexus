@@ -133,7 +133,7 @@
   function sectionLabel(key, label) {
     return '<button class="sb-sec-btn" data-sec="' + key + '" ' +
       'style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 16px 4px;background:none;border:none;cursor:pointer;text-align:left;">' +
-      '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:1.5px;text-transform:uppercase;">' + label + '</span>' +
+      '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:700;color:#6b7280;letter-spacing:1.5px;text-transform:uppercase;">' + label + '</span>' +
       chevron(key) +
       '</button>';
   }
@@ -403,7 +403,7 @@
     ${navHtml}
   </div>
 
-  <div class="sidebar-footer" style="border-top:1px solid rgba(255,255,255,0.07);padding:10px 16px;display:flex;align-items:center;gap:10px;">
+  <div class="sidebar-footer" style="border-top:1px solid #e5e7eb;padding:10px 16px;display:flex;align-items:center;gap:10px;">
     <div style="flex:1;min-width:0;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.55);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="nexus-user-label">Jim Burlew · ADMIN</div>
       <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.25);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="nexus-company-footer">${activeCompany.name}</div>
@@ -439,23 +439,23 @@
     const style = document.createElement('style');
     style.id = 'nexus-sidebar-styles';
     style.textContent = `
-      nav.sidebar{width:220px;min-height:100vh;background:#000!important;border-right:1px solid #1a1a1a!important;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
-      .sidebar-logo{padding:16px!important;display:flex!important;align-items:center!important;gap:10px!important;text-decoration:none!important;border-bottom:1px solid rgba(255,255,255,0.07)!important;}
+      nav.sidebar{width:220px;min-height:100vh;background:#ffffff!important;border-right:1px solid #d0d7de!important;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
+      .sidebar-logo{padding:16px!important;display:flex!important;align-items:center!important;gap:10px!important;text-decoration:none!important;border-bottom:1px solid #e5e7eb!important;}
       .sidebar-logo .logo-hex svg{width:36px!important;height:36px!important;display:block!important;}
       .sidebar-logo .logo-text{display:flex!important;flex-direction:column!important;gap:2px!important;}
-      .sidebar-logo .brand{font-family:'Barlow Condensed',sans-serif!important;font-weight:800!important;font-size:15px!important;letter-spacing:2px!important;color:#fff!important;display:block!important;}
-      .sidebar-logo .sub{font-family:'JetBrains Mono',monospace!important;font-size:9px!important;color:rgba(255,255,255,0.45)!important;letter-spacing:1px!important;display:block!important;}
+      .sidebar-logo .brand{font-family:'Barlow Condensed',sans-serif!important;font-weight:800!important;font-size:15px!important;letter-spacing:2px!important;color:#111827!important;display:block!important;}
+      .sidebar-logo .sub{font-family:'JetBrains Mono',monospace!important;font-size:9px!important;color:#6b7280!important;letter-spacing:1px!important;display:block!important;}
       .sidebar-section{padding:0!important;}
       .sb-sec-btn{transition:background .15s;}
-      .sb-sec-btn:hover{background:rgba(255,255,255,.03)!important;}
+      .sb-sec-btn:hover{background:#f3f4f6!important;}
       .sb-sec-btn:hover .sb-chevron{opacity:.7!important;}
       .sb-sec-links{overflow:hidden;}
-      .sidebar-link{display:flex!important;align-items:center!important;gap:10px!important;padding:7px 16px!important;text-decoration:none!important;color:#a0aec0!important;font-size:13px!important;border-left:3px solid transparent!important;transition:all .15s!important;white-space:nowrap!important;}
-      .sidebar-link:hover{background:rgba(233,30,140,0.14)!important;border-left-color:#c2185b!important;color:#fff!important;}
-      .sidebar-link.active{background:rgba(233,30,140,0.22)!important;border-left:3px solid #e91e8c!important;color:#fff!important;}
+      .sidebar-link{display:flex!important;align-items:center!important;gap:10px!important;padding:7px 16px!important;text-decoration:none!important;color:#374151!important;font-size:13px!important;border-left:3px solid transparent!important;transition:all .15s!important;white-space:nowrap!important;}
+      .sidebar-link:hover{background:#f0f4ff!important;border-left-color:#4f46e5!important;color:#111827!important;}
+      .sidebar-link.active{background:#eef2ff!important;border-left:3px solid #4f46e5!important;color:#4f46e5!important;font-weight:600!important;}
       .sidebar-link svg{width:14px!important;height:14px!important;flex-shrink:0!important;opacity:.7!important;}
       .sidebar-link.active svg{opacity:1!important;}
-      #nexus-sidebar .sidebar-nav{overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;}
+      #nexus-sidebar .sidebar-nav{overflow-y:auto;scrollbar-width:thin;scrollbar-color:#d1d5db transparent;}
     `;
     document.head.appendChild(style);
   }
@@ -593,11 +593,11 @@
       /* Progress bars container */
       '[data-nexus-theme="light"] .progress-bar-bg,[data-nexus-theme="light"] .progress-track{background:#e5e7eb!important}',
       /* Sidebar stays dark regardless of theme — overrides prevent bleed */
-      '[data-nexus-theme="light"] #nexus-sidebar{background:#1e293b!important;border-right-color:#334155!important}',
-      '[data-nexus-theme="light"] #nexus-sidebar .sidebar-section .sb-sec-btn{color:#94a3b8!important}',
-      '[data-nexus-theme="light"] #nexus-sidebar .sidebar-link{color:#94a3b8!important}',
-      '[data-nexus-theme="light"] #nexus-sidebar .sidebar-link:hover{background:rgba(255,255,255,.07)!important;color:#fff!important}',
-      '[data-nexus-theme="light"] #nexus-sidebar .sidebar-link.active{background:rgba(59,130,246,.3)!important;color:#fff!important;border-left-color:#3b82f6!important}',
+      '[data-nexus-theme="light"] #nexus-sidebar{background:#ffffff!important;border-right-color:#e5e7eb!important}',
+      '[data-nexus-theme="light"] #nexus-sidebar .sidebar-section .sb-sec-btn{color:#6b7280!important;font-weight:600!important}',
+      '[data-nexus-theme="light"] #nexus-sidebar .sidebar-link{color:#374151!important}',
+      '[data-nexus-theme="light"] #nexus-sidebar .sidebar-link:hover{background:#f0f4ff!important;color:#111827!important}',
+      '[data-nexus-theme="light"] #nexus-sidebar .sidebar-link.active{background:#eef2ff!important;color:#4f46e5!important;border-left-color:#4f46e5!important;font-weight:600!important}',
       /* Inline style overrides for hardcoded dark hex values */
       '[data-nexus-theme="light"] [style*="background:#0b0f1a"],[data-nexus-theme="light"] [style*="background: #0b0f1a"]{background:#f8f9fa!important;color:#111827!important}',
       '[data-nexus-theme="light"] [style*="background:#131929"],[data-nexus-theme="light"] [style*="background: #131929"]{background:#fff!important;color:#111827!important}',
