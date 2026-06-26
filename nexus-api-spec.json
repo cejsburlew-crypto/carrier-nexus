@@ -1,0 +1,462 @@
+{
+  "title": "Carrier Nexus Data API",
+  "version": "1.0.0",
+  "description": "localStorage-based data layer for Carrier Nexus. External systems can read/write data via the nexus-api.js bridge or via direct localStorage access in the same browser origin.",
+  "baseOrigin": "https://cejsburlew-crypto.github.io/carrier-nexus",
+  "company": {
+    "name": "Carrier Trucking US LLC",
+    "dotNumber": "300823",
+    "mcNumber": "300823"
+  },
+  "integrations": {
+    "highway": {
+      "status": "ready",
+      "description": "Highway.com carrier identity, VPS score, load board, ELD monitoring",
+      "apiBase": "https://highway.com/monitor/api/v1/",
+      "authMethod": "session_cookie",
+      "cookieName": "_highway_session",
+      "mcpServer": "highway_mcp_server.py",
+      "companyId": "300823",
+      "nexusStorageKeys": {
+        "session": "nexus_highway_session",
+        "companyId": "nexus_highway_company_id",
+        "lastSync": "nexus_highway_last_sync"
+      },
+      "dataFlows": [
+        {
+          "direction": "highway → nexus",
+          "description": "VPS score pulled on Highway Connect tab load",
+          "endpoint": "/monitor/api/v1/loads",
+          "targetKey": "nexus_dispatch_loads",
+          "frequency": "on-demand"
+        },
+        {
+          "direction": "highway → nexus",
+          "description": "Equipment/ELD status for fleet table",
+          "endpoint": "/monitor/connect/api/v1/integrations",
+          "targetKey": "nexus_fleet",
+          "frequency": "on-demand"
+        },
+        {
+          "direction": "highway → nexus",
+          "description": "Rate confirmations imported to documents vault",
+          "endpoint": "/monitor/api/v1/rate_confirmations",
+          "targetKey": "nexus_documents",
+          "frequency": "on-demand"
+        },
+        {
+          "direction": "highway → nexus",
+          "description": "Broker connections merged into nexus_brokers",
+          "endpoint": "/monitor/api/v1/broker_connections",
+          "targetKey": "nexus_brokers",
+          "frequency": "on-demand"
+        }
+      ],
+      "tools": [
+        "get_loads", "get_equipment", "get_pickup_score",
+        "get_broker_connections", "get_offers", "get_rate_confirmations",
+        "get_capacity_postings", "get_users", "get_dispatcher_connections", "search_loads"
+      ]
+    },
+    "dat": {
+      "status": "stub",
+      "description": "DAT load board — loads, rates, capacity posting, rate analytics",
+      "apiBase": "https://api.dat.com/",
+      "authMethod": "oauth2",
+      "docsUrl": "https://developer.dat.com/",
+      "scopes": ["loadboard:read", "rateview:read", "posting:write"],
+      "plannedTools": ["search_loads", "post_capacity", "get_rate_check"]
+    },
+    "truckstop": {
+      "status": "stub",
+      "description": "Truckstop.com load board — loads, rates, carrier tools",
+      "apiBase": "https://api.truckstop.com/",
+      "authMethod": "api_key",
+      "docsUrl": "https://developer.truckstop.com/",
+      "plannedTools": ["search_loads", "post_capacity", "get_market_rates"]
+    },
+    "macropoint": {
+      "status": "stub",
+      "description": "GPS tracking, load visibility, automated check-calls",
+      "apiBase": "https://api.macropoint.com/v2/",
+      "authMethod": "oauth2",
+      "docsUrl": "https://developer.macropoint.com/",
+      "plannedTools": ["track_load", "get_location", "send_check_call"]
+    },
+    "keeptruckin_motive": {
+      "status": "stub",
+      "description": "ELD data, HOS (hours of service), GPS tracking, DVIR",
+      "apiBase": "https://api.keeptruckin.com/v1/",
+      "authMethod": "oauth2",
+      "docsUrl": "https://developer.keeptruckin.com/",
+      "nexusIntegrationPage": "eld-settings.html",
+      "plannedTools": [
+        "get_drivers_hos", "get_vehicle_locations", "get_logs",
+        "get_dvir_logs", "get_ifta_data"
+      ]
+    },
+    "samsara": {
+      "status": "stub",
+      "description": "Fleet telematics, ELD, driver app, dash cams",
+      "apiBase": "https://api.samsara.com/",
+      "authMethod": "api_key",
+      "docsUrl": "https://developers.samsara.com/",
+      "plannedTools": [
+        "get_vehicles", "get_driver_hours", "get_trips",
+        "get_safety_events", "get_fuel_usage"
+      ]
+    },
+    "quickbooks": {
+      "status": "stub",
+      "description": "Accounting sync — invoices, expenses, settlements, payroll",
+      "apiBase": "https://quickbooks.api.intuit.com/v3/",
+      "authMethod": "oauth2",
+      "docsUrl": "https://developer.intuit.com/app/developer/qbo/docs",
+      "plannedTools": [
+        "create_invoice", "sync_expenses", "create_bill",
+        "get_profit_loss", "sync_driver_payments"
+      ]
+    }
+  },
+  "dataStores": {
+    "nexus_dispatch_loads": {
+      "description": "All dispatch loads — primary source of truth for dispatch-pro.html",
+      "createdBy": "dispatch-pro.html",
+      "schema": {
+        "id": {"type": "string", "description": "Load ID, format: LOAD-{timestamp}", "example": "LOAD-1719430000000"},
+        "status": {"type": "string", "enum": ["OPEN","ASSIGNED","PICKED_UP","EN_ROUTE","DELIVERED","CLOSED"], "description": "Current load status"},
+        "brokerId": {"type": "string", "description": "Reference to nexus_brokers[].id"},
+        "brokerName": {"type": "string", "description": "Broker display name"},
+        "customerRef": {"type": "string", "description": "Broker/customer reference number"},
+        "bolNumber": {"type": "string", "description": "Bill of lading number"},
+        "poNumber": {"type": "string", "description": "Purchase order number"},
+        "equipmentType": {"type": "string", "enum": ["Van","Reefer","Flatbed","Power Only","Conestoga","Step Deck","Other"]},
+        "commodity": {"type": "string", "description": "Freight description"},
+        "weight": {"type": "number", "description": "Freight weight in pounds"},
+        "stops": {
+          "type": "array",
+          "description": "Pickup and delivery stops",
+          "items": {
+            "type": {"type": "string", "enum": ["Pickup","Delivery"]},
+            "businessName": {"type": "string"},
+            "address": {"type": "string"},
+            "city": {"type": "string"},
+            "state": {"type": "string"},
+            "zip": {"type": "string"},
+            "phone": {"type": "string"},
+            "apptDate": {"type": "string", "format": "date"},
+            "apptFrom": {"type": "string", "description": "Appointment window start (HH:MM)"},
+            "apptTo": {"type": "string", "description": "Appointment window end (HH:MM)"},
+            "notes": {"type": "string"},
+            "arrivedAt": {"type": "string", "format": "datetime", "description": "Actual arrival timestamp (ISO 8601)"},
+            "departedAt": {"type": "string", "format": "datetime", "description": "Actual departure timestamp (ISO 8601)"}
+          }
+        },
+        "driverId": {"type": "string", "description": "Assigned driver user ID"},
+        "driverName": {"type": "string"},
+        "truckId": {"type": "string", "description": "Truck unit number"},
+        "trailerNumber": {"type": "string"},
+        "miles": {"type": "number", "description": "Loaded miles"},
+        "deadheadMiles": {"type": "number", "description": "Deadhead miles"},
+        "totalRate": {"type": "number", "description": "Total carrier rate in USD"},
+        "rateType": {"type": "string", "enum": ["Flat","Per Mile"]},
+        "detentionRate": {"type": "number", "description": "Detention rate per hour (default 35)"},
+        "detentionFreeHours": {"type": "number", "description": "Free detention hours (default 2)"},
+        "accessorials": {
+          "type": "object",
+          "description": "Accessorial charges",
+          "properties": {
+            "tonu": {"type": "number"},
+            "layover": {"type": "number"},
+            "extraStop": {"type": "number"},
+            "lumper": {"type": "number"},
+            "fuelSurcharge": {"type": "number"},
+            "overweight": {"type": "number"},
+            "teamDriver": {"type": "number"},
+            "hazmat": {"type": "number"},
+            "other": {"type": "number"}
+          }
+        },
+        "grossRate": {"type": "number", "description": "totalRate + sum(accessorials)"},
+        "driverPayType": {"type": "string", "enum": ["percent","per_mile","flat"]},
+        "driverPayRate": {"type": "number", "description": "Rate value (% as decimal, or $/mi, or flat $)"},
+        "driverPayAmount": {"type": "number", "description": "Computed driver pay in USD"},
+        "fuelEstimate": {"type": "number", "description": "Estimated fuel cost (miles/mpg * diesel price)"},
+        "dispatchPercent": {"type": "number", "description": "Dispatch fee percent (default 14)"},
+        "netProfit": {"type": "number", "description": "grossRate - driverPay - fuelEstimate"},
+        "rpm": {"type": "number", "description": "Revenue per mile = grossRate / miles"},
+        "netRpm": {"type": "number", "description": "Net profit per mile"},
+        "statusHistory": {
+          "type": "array",
+          "description": "Log of status transitions with timestamps",
+          "items": {
+            "status": {"type": "string"},
+            "timestamp": {"type": "string", "format": "datetime"},
+            "note": {"type": "string"}
+          }
+        },
+        "detentionStartedAt": {"type": "string", "format": "datetime", "description": "Set when PICKED_UP status is applied"},
+        "detentionWaived": {"type": "boolean"},
+        "detentionNotified": {"type": "boolean"},
+        "specialInstructions": {"type": "string"},
+        "internalNotes": {"type": "string"},
+        "createdAt": {"type": "string", "format": "datetime"},
+        "updatedAt": {"type": "string", "format": "datetime"}
+      }
+    },
+    "nexus_loads_v2": {
+      "description": "Legacy active loads from active-loads.html. Contains rate confirmations imported via PDF.",
+      "createdBy": "active-loads.html",
+      "schema": {
+        "id": {"type": "string"},
+        "loadNumber": {"type": "string"},
+        "driver": {"type": "string"},
+        "broker": {"type": "string"},
+        "origin": {"type": "string"},
+        "destination": {"type": "string"},
+        "pickupDate": {"type": "string", "format": "date"},
+        "deliveryDate": {"type": "string", "format": "date"},
+        "rate": {"type": "number"},
+        "miles": {"type": "number"},
+        "status": {"type": "string"},
+        "rateCon": {"type": "object", "description": "Extracted rate confirmation data"}
+      }
+    },
+    "nexus_brokers": {
+      "description": "Broker directory — linked to loads and used in dispatch-pro.html",
+      "createdBy": "dispatch-pro.html",
+      "schema": {
+        "id": {"type": "string"},
+        "name": {"type": "string"},
+        "mc": {"type": "string", "description": "MC number"},
+        "dot": {"type": "string", "description": "DOT number"},
+        "scac": {"type": "string", "description": "SCAC code"},
+        "website": {"type": "string"},
+        "phone": {"type": "string"},
+        "contacts": {
+          "type": "array",
+          "items": {
+            "role": {"type": "string", "enum": ["dispatch","billing","claims"]},
+            "name": {"type": "string"},
+            "email": {"type": "string"},
+            "phone": {"type": "string"}
+          }
+        },
+        "paymentNetDays": {"type": "number"},
+        "quickPayPercent": {"type": "number"},
+        "avgDaysToPay": {"type": "number"},
+        "notes": {"type": "string"},
+        "highwayConnected": {"type": "boolean"},
+        "createdAt": {"type": "string", "format": "datetime"}
+      }
+    },
+    "nexus_documents": {
+      "description": "Document vault — 298 docs as of last QA. Includes BOLs, rate cons, CDLs, permits.",
+      "createdBy": "documents.html, inbox-sync.html, doc-inbox.html",
+      "schema": {
+        "id": {"type": "string"},
+        "type": {"type": "string", "enum": ["bol","ratecon","settlement","permit","cdl","insurance","w9","other"]},
+        "name": {"type": "string", "description": "Display name"},
+        "filename": {"type": "string"},
+        "driver": {"type": "string", "description": "Associated driver name"},
+        "driverId": {"type": "string"},
+        "driveFileId": {"type": "string", "description": "Google Drive file ID"},
+        "driveFolderId": {"type": "string", "description": "Google Drive folder ID"},
+        "driveWebLink": {"type": "string"},
+        "uploadedAt": {"type": "string", "format": "datetime"},
+        "expiryDate": {"type": "string", "format": "date", "description": "For CDLs, permits, insurance"},
+        "confidence": {"type": "number", "description": "AI classification confidence 0-100"},
+        "reviewStatus": {"type": "string", "enum": ["auto_filed","pending_review","reviewed"]},
+        "notes": {"type": "string"}
+      }
+    },
+    "nexus_expenses": {
+      "description": "Manual expense entries, Zelle payments, fuel, tolls, etc.",
+      "createdBy": "expenses.html",
+      "schema": {
+        "id": {"type": "string"},
+        "date": {"type": "string", "format": "date"},
+        "category": {"type": "string", "enum": ["fuel","toll","maintenance","lumper","other"]},
+        "amount": {"type": "number"},
+        "driver": {"type": "string"},
+        "driverId": {"type": "string"},
+        "paymentMethod": {"type": "string", "enum": ["zelle","cash","card","check"]},
+        "note": {"type": "string"},
+        "loadId": {"type": "string", "description": "Optional load reference"},
+        "receiptUrl": {"type": "string"},
+        "createdAt": {"type": "string", "format": "datetime"}
+      }
+    },
+    "nexus_fleet": {
+      "description": "Fleet equipment — trucks and trailers",
+      "createdBy": "equipment.html",
+      "schema": {
+        "id": {"type": "string"},
+        "unitNumber": {"type": "string", "description": "Internal unit number (e.g. Unit 01)"},
+        "type": {"type": "string", "enum": ["truck","trailer"]},
+        "year": {"type": "number"},
+        "make": {"type": "string"},
+        "model": {"type": "string"},
+        "vin": {"type": "string"},
+        "licensePlate": {"type": "string"},
+        "state": {"type": "string"},
+        "eldConnected": {"type": "boolean"},
+        "eldProvider": {"type": "string"},
+        "coiStatus": {"type": "string", "enum": ["active","expiring","expired","missing"]},
+        "coiExpiry": {"type": "string", "format": "date"},
+        "lastSeen": {"type": "string", "format": "datetime"},
+        "assignedDriverId": {"type": "string"},
+        "status": {"type": "string", "enum": ["active","maintenance","inactive"]}
+      }
+    },
+    "nexus_drivers": {
+      "description": "Driver records — separate from user accounts",
+      "createdBy": "drivers.html",
+      "schema": {
+        "id": {"type": "string"},
+        "userId": {"type": "string", "description": "Reference to NEXUS_LOCAL_USERS"},
+        "name": {"type": "string"},
+        "email": {"type": "string"},
+        "phone": {"type": "string"},
+        "cdlNumber": {"type": "string"},
+        "cdlState": {"type": "string"},
+        "cdlExpiry": {"type": "string", "format": "date"},
+        "medicalCardExpiry": {"type": "string", "format": "date"},
+        "payType": {"type": "string", "enum": ["percent","per_mile","flat"]},
+        "payRate": {"type": "number"},
+        "dispatchPercent": {"type": "number"},
+        "truckId": {"type": "string"},
+        "status": {"type": "string", "enum": ["active","inactive","on_leave"]},
+        "hireDate": {"type": "string", "format": "date"},
+        "memberId": {"type": "string", "description": "e.g. LM26165.0 for owner-op settlements"}
+      }
+    },
+    "nexus_settlements": {
+      "description": "Driver settlement records — weekly Mon-Sun per Task #50",
+      "createdBy": "settlements.html, weekly-settlements.html",
+      "weekFormat": "Mon MM/DD/YYYY – Sun MM/DD/YYYY",
+      "storageKeyPattern": "nexus_weekly_ded_{YYYY-MM-DD}_{memberId}",
+      "schema": {
+        "id": {"type": "string"},
+        "driverId": {"type": "string"},
+        "driverName": {"type": "string"},
+        "memberId": {"type": "string"},
+        "weekStart": {"type": "string", "format": "date", "description": "Monday of settlement week"},
+        "weekEnd": {"type": "string", "format": "date", "description": "Sunday of settlement week"},
+        "weekLabel": {"type": "string", "example": "Mon 01/05/2026 – Sun 01/11/2026"},
+        "loads": {"type": "array", "description": "Load IDs included in this week"},
+        "grossRevenue": {"type": "number"},
+        "dispatchFee": {"type": "number"},
+        "fuelDeductions": {"type": "number"},
+        "otherDeductions": {"type": "number"},
+        "balanceForward": {"type": "number"},
+        "netDriverPay": {"type": "number"},
+        "status": {"type": "string", "enum": ["draft","submitted","approved","paid"]},
+        "approvedBy": {"type": "string"},
+        "approvedAt": {"type": "string", "format": "datetime"},
+        "pdfDriveFileId": {"type": "string"},
+        "createdAt": {"type": "string", "format": "datetime"}
+      }
+    },
+    "nexus_pay_settings": {
+      "description": "Per-driver pay configuration for dispatch-pro.html",
+      "createdBy": "dispatch-pro.html",
+      "schema": {
+        "driverId": {
+          "type": "object",
+          "properties": {
+            "type": {"type": "string", "enum": ["percent","per_mile","flat"]},
+            "rate": {"type": "number", "description": "% as decimal (0.86), $/mi, or flat $"},
+            "mpg": {"type": "number", "description": "Truck fuel efficiency (default 6.5)"},
+            "dieselPrice": {"type": "number", "description": "Diesel price per gallon (default 3.89)"},
+            "dispatchPct": {"type": "number", "description": "Dispatch percent (default 14)"}
+          }
+        }
+      }
+    },
+    "nexus_review_queue": {
+      "description": "Low-confidence document items pending human review in doc-inbox.html",
+      "createdBy": "inbox-sync.html",
+      "schema": {
+        "id": {"type": "string"},
+        "filename": {"type": "string"},
+        "gmailMessageId": {"type": "string"},
+        "driveFileId": {"type": "string"},
+        "suggestedType": {"type": "string"},
+        "suggestedDriver": {"type": "string"},
+        "typeConfidence": {"type": "number", "description": "0-100"},
+        "userConfidence": {"type": "number", "description": "0-100"},
+        "queuedAt": {"type": "string", "format": "datetime"},
+        "status": {"type": "string", "enum": ["pending","filed","dismissed"]}
+      }
+    },
+    "nexus_detention_log": {
+      "description": "Detention events logged per load",
+      "createdBy": "dispatch-pro.html",
+      "schema": {
+        "loadId": {"type": "string"},
+        "stopIndex": {"type": "number"},
+        "locationType": {"type": "string", "enum": ["pickup","delivery"]},
+        "arrivedAt": {"type": "string", "format": "datetime"},
+        "departedAt": {"type": "string", "format": "datetime"},
+        "freeHours": {"type": "number"},
+        "ratePerHour": {"type": "number"},
+        "hoursCharged": {"type": "number"},
+        "totalCharged": {"type": "number"},
+        "notifiedBrokerAt": {"type": "string", "format": "datetime"},
+        "waived": {"type": "boolean"},
+        "notes": {"type": "string"}
+      }
+    }
+  },
+  "localStorageKeys": {
+    "nexus_dispatch_loads": "dispatch-pro.html primary load store",
+    "nexus_loads_v2": "Legacy loads from active-loads.html",
+    "nexus_brokers": "Broker directory",
+    "nexus_documents": "Document vault (298 docs)",
+    "nexus_expenses": "Expense log",
+    "nexus_fleet": "Fleet/equipment registry",
+    "nexus_drivers": "Driver records",
+    "nexus_settlements": "Settlement records",
+    "nexus_pay_settings": "Driver pay config per dispatch-pro",
+    "nexus_review_queue": "Doc review queue",
+    "nexus_detention_log": "Detention events",
+    "nexus_highway_session": "Highway.com session cookie",
+    "nexus_highway_company_id": "Highway company ID (300823)",
+    "nexus_staged_files": "Staged files in inbox-sync.html",
+    "NEXUS_LOCAL_USERS": "User accounts (overrides config seed)",
+    "nexus_theme": "UI theme (dark|light)",
+    "nexus_sidebar_sections": "Sidebar collapse state"
+  },
+  "users": [
+    {"id": "usr_001", "email": "crtruckus@gmail.com", "name": "Jim Burlew", "role": "admin"},
+    {"id": "usr_002", "email": "lbmoreno92@gmail.com", "name": "Laura Moreno", "role": "approver", "memberId": "LM26165.0"},
+    {"id": "usr_003", "email": "amet@carriertuckingus.com", "name": "Amet Abreu", "role": "dispatcher"},
+    {"id": "usr_004", "email": "betty@carriertuckingus.com", "name": "Betty", "role": "dispatcher"},
+    {"id": "usr_005", "email": "avis@carriertuckingus.com", "name": "Avis", "role": "driver"},
+    {"id": "usr_006", "email": "david@carriertuckingus.com", "name": "David", "role": "driver"},
+    {"id": "usr_007", "email": "miguel@carriertuckingus.com", "name": "Miguel", "role": "driver"},
+    {"id": "usr_008", "email": "nelson@carriertuckingus.com", "name": "Nelson", "role": "driver"},
+    {"id": "usr_009", "email": "yosviel@carriertuckingus.com", "name": "Yosviel", "role": "driver"},
+    {"id": "usr_010", "email": "guillermo@carriertuckingus.com", "name": "Guillermo Pinera", "role": "driver"}
+  ],
+  "dispatcherMap": {
+    "AMET": ["AVIS", "DAVID", "MIGUEL", "NELSON", "YOSVIEL", "LAURA"],
+    "BETTY": ["GUILLERMO"]
+  },
+  "googleDriveVault": {
+    "rootFolderId": "1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0",
+    "pathStructure": "VAULT_ROOT / DISPATCHER / DRIVER_SHORT / SUBFOLDER",
+    "subfolders": ["BILLS OF LADING", "RATE CONFIRMATIONS", "PERMITS", "DOCUMENTS", "CORRESPONDENCE"],
+    "documentTypeMapping": {
+      "bol": "BILLS OF LADING",
+      "ratecon": "RATE CONFIRMATIONS",
+      "settlement": "DOCUMENTS",
+      "permit": "PERMITS",
+      "cdl": "DOCUMENTS",
+      "insurance": "DOCUMENTS",
+      "w9": "DOCUMENTS",
+      "other": "DOCUMENTS"
+    }
+  }
+}

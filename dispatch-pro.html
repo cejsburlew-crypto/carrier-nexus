@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dispatch PRO — Carrier Nexus</title>
+<script src="nexus-config.js"></script>
+<style>
+:root{
+  --bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;
+  --text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;
+  --yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,sans-serif;font-size:14px}
+@media(max-width:768px){#nexus-app{margin-left:0!important}}
+#nexus-app{margin-left:220px;min-height:100vh}
+.topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.topbar h1{font-size:18px;font-weight:700;letter-spacing:.5px}
+.topbar h1 span{color:var(--blue)}
+.tabs{display:flex;gap:2px;background:var(--bg);padding:12px 20px 0;border-bottom:1px solid var(--border)}
+.tab-btn{padding:9px 18px;background:none;border:none;color:var(--mid);cursor:pointer;font-size:13px;font-weight:600;letter-spacing:.3px;border-bottom:2px solid transparent;transition:all .15s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-content{display:none;padding:0}
+.tab-content.active{display:block}
+.kpi-strip{display:flex;gap:12px;padding:14px 20px;flex-wrap:wrap;align-items:center}
+.kpi-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 18px;min-width:140px}
+.kpi-card .label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.kpi-card .value{font-size:22px;font-weight:700}
+.kpi-card .value.green{color:var(--green)}
+.kpi-card .value.yellow{color:var(--yellow)}
+.kpi-card .value.blue{color:var(--blue)}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#2563eb}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:5px}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--mid)}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
+.btn-green{background:var(--green);color:#fff}
+.btn-red{background:var(--red);color:#fff}
+.filter-bar{padding:10px 20px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filter-bar select,.filter-bar input{background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:5px;font-size:12px}
+.kanban-wrap{overflow-x:auto;padding:16px 20px 20px}
+.kanban{display:flex;gap:14px;min-width:max-content}
+.kanban-col{width:260px;flex-shrink:0;background:var(--panel);border-radius:10px;overflow:hidden}
+.kanban-col-header{padding:10px 14px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border)}
+.kanban-col-body{padding:10px;display:flex;flex-direction:column;gap:8px;min-height:80px;max-height:calc(100vh - 320px);overflow-y:auto}
+.load-card{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:default}
+.load-card:hover{border-color:var(--blue)}
+.load-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.load-id{font-size:11px;font-weight:700;color:var(--blue)}
+.status-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:12px;text-transform:uppercase;letter-spacing:.5px}
+.sb-open{background:#f59e0b22;color:#f59e0b}
+.sb-assigned{background:#3b82f622;color:#3b82f6}
+.sb-picked{background:#f9731622;color:#f97316}
+.sb-enroute{background:#a855f722;color:#a855f7}
+.sb-delivered{background:#10b98122;color:#10b981}
+.sb-closed{background:#64748b22;color:#64748b}
+.load-route{font-size:13px;font-weight:600;margin-bottom:4px}
+.load-meta{font-size:11px;color:var(--mid);margin-bottom:4px}
+.load-rpm{display:inline-block;font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px}
+.rpm-green{background:#10b98122;color:#10b981}
+.rpm-yellow{background:#f59e0b22;color:#f59e0b}
+.rpm-red{background:#ef444422;color:#ef4444}
+.load-revenue{font-size:15px;font-weight:700;color:var(--green);margin:4px 0}
+.detention-badge{background:#ef444422;color:#ef4444;border:1px solid #ef444444;font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;margin:4px 0;display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+.load-actions{display:flex;gap:6px;margin-top:8px}
+.load-actions button{flex:1;padding:5px;font-size:12px;border:1px solid var(--border);background:var(--panel);color:var(--mid);border-radius:5px;cursor:pointer;transition:all .15s}
+.load-actions button:hover{border-color:var(--blue);color:var(--blue)}
+.table-wrap{padding:16px 20px;overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:var(--panel2);padding:10px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--mid);border-bottom:2px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--text)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px}
+tr:hover td{background:rgba(59,130,246,.04)}
+.search-bar{padding:14px 20px 0;display:flex;gap:10px}
+.search-bar input{flex:1;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:13px}
+.detail-panel{position:fixed;right:0;top:0;width:340px;height:100vh;background:var(--panel);border-left:1px solid var(--border);transform:translateX(100%);transition:transform .25s;z-index:200;overflow-y:auto;padding:20px}
+.detail-panel.open{transform:translateX(0)}
+.detail-panel h3{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.detail-row .lbl{color:var(--mid)}
+.broker-layout{display:flex;height:calc(100vh - 220px)}
+.broker-list{width:280px;border-right:1px solid var(--border);overflow-y:auto}
+.broker-list-search{padding:12px}
+.broker-list-search input{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:5px;font-size:13px}
+.broker-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s}
+.broker-item:hover{background:var(--panel2)}
+.broker-item.active{background:rgba(59,130,246,.1);border-left:3px solid var(--blue)}
+.broker-name{font-size:13px;font-weight:600}
+.broker-count{font-size:11px;color:var(--mid);margin-top:2px}
+.broker-detail{flex:1;overflow-y:auto;padding:20px}
+.broker-detail h2{font-size:18px;font-weight:700;margin-bottom:16px}
+.broker-section{margin-bottom:20px}
+.broker-section h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--mid);margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat-box{background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center}
+.stat-box .sv{font-size:18px;font-weight:700}
+.stat-box .sl{font-size:10px;color:var(--mid);margin-top:2px}
+.lane-table td,.lane-table th{padding:8px 10px;font-size:12px}
+.detention-wrap{padding:16px 20px}
+.detention-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px}
+.detention-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.det-clock{font-size:22px;font-weight:700;font-family:monospace}
+.det-clock.free{color:var(--green)}
+.det-clock.over{color:var(--red);animation:pulse 2s infinite}
+.det-owed{font-size:18px;font-weight:700;color:var(--red)}
+.det-summary{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;gap:20px}
+.pay-wrap{padding:16px 20px}
+.driver-selector{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.driver-selector select{background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:13px}
+.pay-config{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px}
+.pay-config h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--mid);margin-bottom:12px}
+.config-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.config-grid label{font-size:11px;color:var(--mid);display:block;margin-bottom:4px}
+.config-grid input,.config-grid select{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:5px;font-size:13px}
+tfoot td{font-weight:700;background:var(--panel2);color:var(--text)}
+.hw-wrap{padding:20px}
+.hw-status-bar{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.hw-connected{color:var(--green);font-weight:700;font-size:14px}
+.hw-disconnected{color:var(--red);font-weight:700;font-size:14px}
+.hw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.hw-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;overflow:hidden}
+.hw-card h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--mid);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.vps-gauge{text-align:center;padding:10px 0}
+.vps-label{font-size:11px;color:var(--mid);margin-top:6px}
+.offer-card{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:8px}
+.offer-actions{display:flex;gap:8px;margin-top:10px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;overflow-y:auto}
+.modal-overlay.open{display:flex;align-items:flex-start;justify-content:center;padding:20px}
+.modal-box{background:var(--panel);border:1px solid var(--border);border-radius:12px;width:100%;max-width:820px;margin:auto}
+.modal-head{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-head h2{font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;color:var(--mid);font-size:22px;cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--text)}
+.modal-body{padding:24px;max-height:75vh;overflow-y:auto}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;color:var(--mid);margin-bottom:5px;font-weight:600}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:13px}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--blue)}
+.section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--mid);padding:8px 0;margin:16px 0 12px;border-bottom:1px solid var(--border)}
+.stop-block{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px}
+.stop-block .stop-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.accessorial-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.acc-item{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:8px 10px}
+.acc-item input[type=checkbox]{width:16px;height:16px;cursor:pointer}
+.acc-item .acc-label{flex:1;font-size:12px}
+.acc-item input[type=number]{width:80px;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:4px 6px;border-radius:4px;font-size:12px}
+.pay-preview{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:8px;padding:14px;margin-top:10px}
+.pay-preview .pp-amount{font-size:22px;font-weight:700;color:var(--blue)}
+.gross-total{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:8px;padding:10px 14px;font-size:16px;font-weight:700;color:var(--green);margin:12px 0}
+.empty-state{text-align:center;padding:48px 20px;color:var(--mid)}
+.empty-state .icon{font-size:48px;margin-bottom:12px}
+.badge{font-size:11px;padding:2px 7px;border-radius:10px;font-weight:700}
+.badge-connected{background:#10b98122;color:#10b981}
+.badge-disconnected{background:#ef444422;color:#ef4444}
+</style>
+</head>
+<body>
+<div id="nexus-app">
+<div class="topbar">
+  <h1>DISPATCH <span>PRO</span></h1>
+  <button class="btn btn-primary" onclick="openLoadModal()">+ NEW LOAD</button>
+</div>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('hotsheet',this)">&#x1F525; Hot Sheet</button>
+  <button class="tab-btn" onclick="switchTab('allloads',this)">&#x1F4CB; All Loads</button>
+  <button class="tab-btn" onclick="switchTab('brokers',this)">&#x1F91D; Brokers</button>
+  <button class="tab-btn" onclick="switchTab('detention',this)">&#x23F1; Detention</button>
+  <button class="tab-btn" onclick="switchTab('driverpay',this)">&#x1F4B0; Driver Pay</button>
+  <button class="tab-btn" onclick="switchTab('highway',this)">&#x1F6E3; Highway</button>
+</div>
+<!-- TAB: HOT SHEET -->
+<div id="tab-hotsheet" class="tab-content active">
+  <div class="kpi-strip" id="kpi-strip"></div>
+  <div class="filter-bar">
+    <select id="flt-driver" onchange="renderKanban()"><option value="">All Drivers</option></select>
+    <select id="flt-broker" onchange="renderKanban()"><option value="">All Brokers</option></select>
+    <input type="date" id="flt-date" onchange="renderKanban()">
+    <select id="flt-status" onchange="renderKanban()">
+      <option value="">All Statuses</option>
+      <option>OPEN</option><option>ASSIGNED</option><option>PICKED_UP</option>
+      <option>EN_ROUTE</option><option>DELIVERED</option><option>CLOSED</option>
+    </select>
+    <button class="btn btn-ghost btn-sm" onclick="clearFilters()">Clear</button>
+  </div>
+  <div class="kanban-wrap"><div class="kanban" id="kanban"></div></div>
+</div>
+<!-- TAB: ALL LOADS -->
+<div id="tab-allloads" class="tab-content">
+  <div class="search-bar">
+    <input type="text" id="load-search" placeholder="Search loads..." oninput="renderAllLoads()">
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th onclick="sortLoads('id')"># &#x2195;</th>
+        <th onclick="sortLoads('status')">Status</th>
+        <th onclick="sortLoads('brokerName')">Broker</th>
+        <th>Route</th>
+        <th onclick="sortLoads('driverName')">Driver</th>
+        <th onclick="sortLoads('miles')">Miles</th>
+        <th onclick="sortLoads('grossRate')">Rate</th>
+        <th>RPM</th>
+        <th onclick="sortLoads('pickupDate')">Pickup</th>
+        <th onclick="sortLoads('netProfit')">Profit</th>
+        <th>Actions</th>
+      </tr></thead>
+      <tbody id="all-loads-body"></tbody>
+    </table>
+  </div>
+  <div class="detail-panel" id="detail-panel">
+    <h3>Load Detail <button onclick="document.getElementById('detail-panel').classList.remove('open')" style="background:none;border:none;color:var(--mid);font-size:20px;cursor:pointer">x</button></h3>
+    <div id="detail-content"></div>
+  </div>
+</div>
+<!-- TAB: BROKERS -->
+<div id="tab-brokers" class="tab-content">
+  <div class="broker-layout">
+    <div class="broker-list">
+      <div class="broker-list-search">
+        <input type="text" id="broker-search" placeholder="Search brokers..." oninput="renderBrokerList()">
+        <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%" onclick="openBrokerModal(false)">+ Add Broker</button>
+      </div>
+      <div id="broker-list-items"></div>
+    </div>
+    <div class="broker-detail" id="broker-detail"><div class="empty-state"><div class="icon">&#x1F91D;</div>Select a broker</div></div>
+  </div>
+</div>
+<!-- TAB: DETENTION -->
+<div id="tab-detention" class="tab-content">
+  <div class="detention-wrap">
+    <div class="det-summary">
+      <span style="font-size:13px;color:var(--mid)">Total detention owed today:</span>
+      <span id="det-total-owed" style="font-size:22px;font-weight:700;color:var(--red)">$0.00</span>
+    </div>
+    <div id="detention-cards"></div>
+  </div>
+</div>
+<!-- TAB: DRIVER PAY -->
+<div id="tab-driverpay" class="tab-content">
+  <div class="pay-wrap">
+    <div class="driver-selector">
+      <label style="color:var(--mid);font-size:13px">Driver:</label>
+      <select id="pay-driver-select" onchange="renderDriverPay()"></select>
+      <button class="btn btn-ghost btn-sm" onclick="exportSettlement()">Export Settlement</button>
+    </div>
+    <div class="pay-config">
+      <h4>Pay Configuration</h4>
+      <div class="config-grid">
+        <div><label>Pay Type</label><select id="pay-type" onchange="savePaySettings();renderDriverPay()"><option value="percent">% of Gross</option><option value="per_mile">Per Mile</option><option value="flat">Flat per Load</option></select></div>
+        <div><label>Rate</label><input type="number" id="pay-rate" placeholder="e.g. 86" onchange="savePaySettings();renderDriverPay()"></div>
+        <div><label>MPG</label><input type="number" id="pay-mpg" value="6.5" step="0.1" onchange="savePaySettings();renderDriverPay()"></div>
+        <div><label>Diesel $/gal</label><input type="number" id="pay-diesel" value="3.89" step="0.01" onchange="savePaySettings();renderDriverPay()"></div>
+        <div><label>Dispatch %</label><input type="number" id="pay-dispatch" value="14" step="0.5" onchange="savePaySettings();renderDriverPay()"></div>
+      </div>
+    </div>
+    <div class="table-wrap" style="padding:0">
+      <table>
+        <thead><tr><th>Load #</th><th>Route</th><th>Miles</th><th>Gross</th><th>Pay Rate</th><th>Driver Pay</th><th>Fuel Est.</th><th>Dispatch %</th><th>Net Profit</th><th>Net RPM</th></tr></thead>
+        <tbody id="pay-table-body"></tbody>
+        <tfoot id="pay-table-foot"></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- TAB: HIGHWAY -->
+<div id="tab-highway" class="tab-content">
+  <div class="hw-wrap">
+    <div class="hw-status-bar">
+      <div id="hw-status-label" class="hw-disconnected">&#x26A0; Not Connected to Highway.com</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:12px;color:var(--mid)">Company ID: <strong style="color:var(--text)">300823</strong></span>
+        <button class="btn btn-primary btn-sm" onclick="openHWModal()">Connect / Refresh</button>
+      </div>
+    </div>
+    <div class="hw-grid">
+      <div class="hw-card">
+        <h3>VPS Score <span class="badge badge-disconnected" id="hw-vps-badge">Not synced</span></h3>
+        <div class="vps-gauge">
+          <svg viewBox="0 0 220 130" width="220" height="130">
+            <defs><linearGradient id="vpsGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#ef4444"/><stop offset="50%" style="stop-color:#f59e0b"/><stop offset="100%" style="stop-color:#10b981"/></linearGradient></defs>
+            <path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#1e2d45" stroke-width="18" stroke-linecap="round"/>
+            <path id="vps-fill" d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="url(#vpsGrad)" stroke-width="18" stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="240"/>
+            <text id="vps-score-text" x="110" y="95" text-anchor="middle" fill="#e2e8f0" font-size="28" font-weight="700" font-family="monospace">14%</text>
+            <text x="110" y="112" text-anchor="middle" fill="#64748b" font-size="10">Your Score</text>
+            <text x="18" y="128" fill="#64748b" font-size="9">0%</text>
+            <text x="180" y="128" fill="#64748b" font-size="9">100%</text>
+          </svg>
+          <div class="vps-label">Verified Pickup Score &mdash; Industry avg: 72%</div>
+        </div>
+      </div>
+      <div class="hw-card">
+        <h3>Fleet ELD Status <button class="btn btn-ghost btn-sm" onclick="syncHighway('equipment')">Sync</button></h3>
+        <div id="hw-eld-table"><div style="color:var(--mid);font-size:12px;padding:10px 0">Connect Highway to view ELD status</div></div>
+      </div>
+      <div class="hw-card">
+        <h3>Pending Offers <span id="hw-offer-count" class="badge" style="background:var(--blue)22;color:var(--blue)">--</span></h3>
+        <div id="hw-offers"><div style="color:var(--mid);font-size:12px;padding:10px 0">No offers loaded</div></div>
+      </div>
+      <div class="hw-card">
+        <h3>Rate Confirmations</h3>
+        <div id="hw-ratecons"><div style="color:var(--mid);font-size:12px;padding:10px 0">Connect Highway to view</div></div>
+      </div>
+      <div class="hw-card">
+        <h3>Connected Brokers <span id="hw-broker-count" class="badge" style="background:var(--green)22;color:var(--green)">--</span></h3>
+        <div id="hw-brokers-list"><div style="color:var(--mid);font-size:12px;padding:10px 0">Connect Highway to view brokers</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOAD MODAL -->
+<div class="modal-overlay" id="load-modal">
+  <div class="modal-box">
+    <div class="modal-head"><h2 id="load-modal-title">New Load</h2><button class="modal-close" onclick="closeLoadModal()">x</button></div>
+    <div class="modal-body">
+      <div class="section-title">Load Info</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Load # (auto)</label><input id="m-load-id" readonly></div>
+        <div class="form-group"><label>Customer Ref</label><input id="m-ref"></div>
+        <div class="form-group"><label>BOL #</label><input id="m-bol"></div>
+        <div class="form-group"><label>PO #</label><input id="m-po"></div>
+      </div>
+      <div class="section-title">Broker</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Broker</label><select id="m-broker"><option value="">-- Select --</option></select></div>
+        <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn btn-ghost btn-sm" onclick="openBrokerModal(true)">+ New Broker</button></div>
+      </div>
+      <div class="section-title">Equipment &amp; Cargo</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Equipment Type</label><select id="m-equip"><option>Van</option><option>Reefer</option><option>Flatbed</option><option>Power Only</option><option>Conestoga</option><option>Step Deck</option><option>Other</option></select></div>
+        <div class="form-group"><label>Commodity</label><input id="m-commodity" placeholder="e.g. General Freight"></div>
+        <div class="form-group"><label>Weight (lbs)</label><input type="number" id="m-weight"></div>
+      </div>
+      <div class="section-title">Stops <button class="btn btn-ghost btn-sm" onclick="addStop()" style="margin-left:10px">+ Add Stop</button></div>
+      <div id="stops-container"></div>
+      <div class="section-title">Assignment</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Driver</label><select id="m-driver"><option value="">-- Unassigned --</option></select></div>
+        <div class="form-group"><label>Truck</label><select id="m-truck"><option value="">-- Select Truck --</option></select></div>
+        <div class="form-group"><label>Trailer #</label><input id="m-trailer"></div>
+        <div class="form-group"><label>Miles</label><input type="number" id="m-miles" oninput="recalcModal()"></div>
+        <div class="form-group"><label>Deadhead Miles</label><input type="number" id="m-deadhead"></div>
+      </div>
+      <div class="section-title">Rate &amp; Detention</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Total Rate ($)</label><input type="number" id="m-rate" oninput="recalcModal()"></div>
+        <div class="form-group"><label>Rate Type</label><select id="m-rate-type"><option value="Flat">Flat</option><option value="Per Mile">Per Mile</option></select></div>
+        <div class="form-group"><label>Detention Rate ($/hr)</label><input type="number" id="m-det-rate" value="35" oninput="recalcModal()"></div>
+        <div class="form-group"><label>Free Hours</label><input type="number" id="m-det-free" value="2"></div>
+      </div>
+      <div class="section-title">Accessorials</div>
+      <div class="accessorial-grid" id="acc-grid"></div>
+      <div class="gross-total" id="gross-total-display">Gross Rate: $0.00</div>
+      <div class="section-title">Driver Pay</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Pay Type</label><select id="m-pay-type" onchange="recalcModal()"><option value="percent">% of Gross</option><option value="per_mile">Per Mile</option><option value="flat">Flat</option></select></div>
+        <div class="form-group"><label>Rate</label><input type="number" id="m-pay-rate" placeholder="e.g. 86" oninput="recalcModal()"></div>
+      </div>
+      <div class="pay-preview" id="m-pay-preview"><div style="font-size:11px;color:var(--mid);margin-bottom:4px">Driver Pay Preview</div><div class="pp-amount">$0.00</div></div>
+      <div class="section-title">Notes</div>
+      <div class="form-group"><label>Special Instructions</label><textarea id="m-special" rows="2" style="resize:vertical"></textarea></div>
+      <div class="form-group"><label>Internal Notes</label><textarea id="m-notes" rows="2" style="resize:vertical"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeLoadModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLoad()">Save Load</button>
+    </div>
+  </div>
+</div>
+<!-- BROKER MODAL -->
+<div class="modal-overlay" id="broker-modal">
+  <div class="modal-box" style="max-width:600px">
+    <div class="modal-head"><h2>Add / Edit Broker</h2><button class="modal-close" onclick="closeBrokerModal()">x</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Name *</label><input id="bm-name"></div>
+        <div class="form-group"><label>MC #</label><input id="bm-mc"></div>
+        <div class="form-group"><label>DOT #</label><input id="bm-dot"></div>
+        <div class="form-group"><label>SCAC</label><input id="bm-scac"></div>
+        <div class="form-group"><label>Website</label><input id="bm-web" placeholder="https://"></div>
+        <div class="form-group"><label>Main Phone</label><input id="bm-phone"></div>
+      </div>
+      <div class="section-title">Contacts</div>
+      <div id="broker-contacts-form"></div>
+      <div class="section-title">Payment Terms</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Net Days</label><input type="number" id="bm-net"></div>
+        <div class="form-group"><label>Quick Pay %</label><input type="number" id="bm-qp"></div>
+        <div class="form-group"><label>Avg Days to Pay</label><input type="number" id="bm-avgdays"></div>
+      </div>
+      <div class="form-group"><label>Notes</label><textarea id="bm-notes" rows="3" style="resize:vertical"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeBrokerModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveBroker()">Save Broker</button>
+    </div>
+  </div>
+</div>
+<!-- HIGHWAY MODAL -->
+<div class="modal-overlay" id="hw-modal">
+  <div class="modal-box" style="max-width:500px">
+    <div class="modal-head"><h2>Connect Highway.com</h2><button class="modal-close" onclick="document.getElementById('hw-modal').classList.remove('open')">x</button></div>
+    <div class="modal-body">
+      <p style="color:var(--mid);font-size:13px;margin-bottom:16px">Paste your Highway session cookie to enable live sync.</p>
+      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--mid);line-height:1.6">
+        <strong style="color:var(--text)">How to get your session cookie:</strong><br>
+        1. Log into highway.com in Chrome<br>
+        2. Press F12 &rarr; Application &rarr; Cookies &rarr; highway.com<br>
+        3. Copy the value of <code style="background:var(--bg);padding:2px 5px;border-radius:3px">_highway_session</code><br>
+        4. Paste it below
+      </div>
+      <div class="form-group"><label>Session Cookie</label><input id="hw-cookie-input" placeholder="Paste _highway_session value..." style="font-family:monospace;font-size:11px"></div>
+      <div class="form-group"><label>Company ID</label><input id="hw-company-input" value="300823"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('hw-modal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveHWSession()">Connect</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var DRIVERS=[{id:'usr_005',name:'Avis'},{id:'usr_006',name:'David'},{id:'usr_007',name:'Miguel'},{id:'usr_008',name:'Nelson'},{id:'usr_009',name:'Yosviel'},{id:'usr_010',name:'Guillermo Pinera'}];
+var STATUS_ORDER=['OPEN','ASSIGNED','PICKED_UP','EN_ROUTE','DELIVERED','CLOSED'];
+var STATUS_LABELS={OPEN:'Open',ASSIGNED:'Assigned',PICKED_UP:'Picked Up',EN_ROUTE:'En Route',DELIVERED:'Delivered',CLOSED:'Closed'};
+var STATUS_COLORS={OPEN:'#f59e0b',ASSIGNED:'#3b82f6',PICKED_UP:'#f97316',EN_ROUTE:'#a855f7',DELIVERED:'#10b981',CLOSED:'#64748b'};
+var STATUS_BC={OPEN:'sb-open',ASSIGNED:'sb-assigned',PICKED_UP:'sb-picked',EN_ROUTE:'sb-enroute',DELIVERED:'sb-delivered',CLOSED:'sb-closed'};
+var ACCS=[{key:'tonu',label:'TONU'},{key:'layover',label:'Layover/day'},{key:'extraStop',label:'Extra Stop'},{key:'lumper',label:'Lumper'},{key:'fuelSurcharge',label:'Fuel Surcharge'},{key:'overweight',label:'Overweight'},{key:'teamDriver',label:'Team Driver'},{key:'hazmat',label:'Hazmat'},{key:'other',label:'Other'}];
+
+function getLoads(){try{return JSON.parse(localStorage.getItem('nexus_dispatch_loads')||'[]')}catch(e){return[]}}
+function saveLoads(a){localStorage.setItem('nexus_dispatch_loads',JSON.stringify(a))}
+function getBrokers(){try{return JSON.parse(localStorage.getItem('nexus_brokers')||'[]')}catch(e){return[]}}
+function saveBrokers(a){localStorage.setItem('nexus_brokers',JSON.stringify(a))}
+function getPaySettings(){try{return JSON.parse(localStorage.getItem('nexus_pay_settings')||'{}')}catch(e){return{}}}
+function savePaySettingsStore(o){localStorage.setItem('nexus_pay_settings',JSON.stringify(o))}
+function getDocuments(){try{return JSON.parse(localStorage.getItem('nexus_documents')||'[]')}catch(e){return[]}}
+function getFleet(){try{return JSON.parse(localStorage.getItem('nexus_fleet')||'[]')}catch(e){return[]}}
+
+function rpmClass(r){return r>=3?'rpm-green':r>=2?'rpm-yellow':'rpm-red'}
+function fmtMoney(n){return '$'+(+n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function fmtRPM(rate,miles){if(!miles)return '--';return '$'+(rate/miles).toFixed(2)+'/mi'}
+
+function calcProfit(load){
+  var ps=getPaySettings()[load.driverId]||{};
+  var payType=ps.type||'percent',payRate=ps.rate||0,mpg=ps.mpg||6.5,diesel=ps.dieselPrice||3.89;
+  var gross=load.grossRate||load.totalRate||0,miles=load.miles||0;
+  var driverPay=payType==='percent'?gross*(payRate/100):payType==='per_mile'?miles*payRate:payRate;
+  var fuel=miles?(miles/mpg)*diesel:0;
+  return{driverPay:driverPay,fuel:fuel,net:gross-driverPay-fuel,gross:gross};
+}
+
+function seedLoads(){
+  var now=Date.now(),h=3600000;
+  return[
+    {id:'LOAD-001',status:'OPEN',brokerName:'XPO Logistics',brokerId:'br-001',driverId:'',driverName:'',origin:'Chicago, IL',destination:'Houston, TX',miles:1050,grossRate:3200,totalRate:3200,accessorials:{},pickupDate:'2026-06-27',equipmentType:'Van',commodity:'General Freight',detentionRate:35,detentionFreeHours:2,statusHistory:[{status:'OPEN',timestamp:new Date(now-2*h).toISOString()}],createdAt:new Date(now-2*h).toISOString(),updatedAt:new Date(now-2*h).toISOString()},
+    {id:'LOAD-002',status:'ASSIGNED',brokerName:'Arrive Logistics',brokerId:'br-002',driverId:'usr_005',driverName:'Avis',origin:'Atlanta, GA',destination:'Miami, FL',miles:662,grossRate:1950,totalRate:1950,accessorials:{},pickupDate:'2026-06-27',equipmentType:'Reefer',commodity:'Perishables',truckId:'Unit 02',detentionRate:35,detentionFreeHours:2,statusHistory:[{status:'OPEN',timestamp:new Date(now-4*h).toISOString()},{status:'ASSIGNED',timestamp:new Date(now-3*h).toISOString()}],createdAt:new Date(now-4*h).toISOString(),updatedAt:new Date(now-3*h).toISOString()},
+    {id:'LOAD-003',status:'PICKED_UP',brokerName:'Echo Global Logistics',brokerId:'br-003',driverId:'usr_006',driverName:'David',origin:'Dallas, TX',destination:'Los Angeles, CA',miles:1415,grossRate:4800,totalRate:4800,accessorials:{},pickupDate:'2026-06-26',equipmentType:'Flatbed',commodity:'Steel Coils',truckId:'Unit 04',detentionRate:35,detentionFreeHours:2,detentionStartedAt:new Date(now-3.5*h).toISOString(),statusHistory:[{status:'OPEN',timestamp:new Date(now-8*h).toISOString()},{status:'ASSIGNED',timestamp:new Date(now-6*h).toISOString()},{status:'PICKED_UP',timestamp:new Date(now-3.5*h).toISOString()}],createdAt:new Date(now-8*h).toISOString(),updatedAt:new Date(now-3.5*h).toISOString()},
+    {id:'LOAD-004',status:'EN_ROUTE',brokerName:'Coyote Logistics',brokerId:'br-004',driverId:'usr_008',driverName:'Nelson',origin:'Memphis, TN',destination:'Chicago, IL',miles:530,grossRate:1450,totalRate:1450,accessorials:{},pickupDate:'2026-06-26',equipmentType:'Van',commodity:'Auto Parts',truckId:'Unit 01',detentionRate:35,detentionFreeHours:2,detentionStartedAt:new Date(now-5*h).toISOString(),statusHistory:[{status:'OPEN',timestamp:new Date(now-12*h).toISOString()},{status:'PICKED_UP',timestamp:new Date(now-7*h).toISOString()},{status:'EN_ROUTE',timestamp:new Date(now-5*h).toISOString()}],createdAt:new Date(now-12*h).toISOString(),updatedAt:new Date(now-5*h).toISOString()},
+    {id:'LOAD-005',status:'DELIVERED',brokerName:'TQL',brokerId:'br-005',driverId:'usr_007',driverName:'Miguel',origin:'Denver, CO',destination:'Kansas City, MO',miles:601,grossRate:1800,totalRate:1800,accessorials:{},pickupDate:'2026-06-25',equipmentType:'Van',commodity:'Consumer Goods',truckId:'Unit 03',detentionRate:35,detentionFreeHours:2,internalNotes:'Needs POD + invoice',statusHistory:[{status:'OPEN',timestamp:new Date(now-24*h).toISOString()},{status:'DELIVERED',timestamp:new Date(now-2*h).toISOString()}],createdAt:new Date(now-24*h).toISOString(),updatedAt:new Date(now-2*h).toISOString()}
+  ];
+}
+function seedBrokers(){
+  return[
+    {id:'br-001',name:'XPO Logistics',mc:'315378',dot:'',scac:'XPOL',website:'https://xpo.com',phone:'800-755-2728',contacts:[{role:'dispatch',name:'Dispatch Team',email:'dispatch@xpo.com',phone:'800-755-2728'},{role:'billing',name:'AR Team',email:'ar@xpo.com',phone:''},{role:'claims',name:'Claims',email:'claims@xpo.com',phone:''}],paymentNetDays:30,quickPayPercent:2,avgDaysToPay:28,notes:'Top broker',highwayConnected:true,createdAt:new Date().toISOString()},
+    {id:'br-002',name:'Arrive Logistics',mc:'958701',dot:'',scac:'',website:'https://arrivelogistics.com',phone:'512-900-9393',contacts:[{role:'dispatch',name:'Carrier Team',email:'carrier@arrivelogistics.com',phone:'512-900-9393'},{role:'billing',name:'',email:'',phone:''},{role:'claims',name:'',email:'',phone:''}],paymentNetDays:30,quickPayPercent:3,avgDaysToPay:25,notes:'',highwayConnected:false,createdAt:new Date().toISOString()},
+    {id:'br-003',name:'Echo Global Logistics',mc:'442780',dot:'',scac:'ECHO',website:'https://echo.com',phone:'800-354-7993',contacts:[{role:'dispatch',name:'Carrier Support',email:'carrier@echo.com',phone:'800-354-7993'},{role:'billing',name:'',email:'',phone:''},{role:'claims',name:'',email:'',phone:''}],paymentNetDays:30,quickPayPercent:2,avgDaysToPay:30,notes:'',highwayConnected:true,createdAt:new Date().toISOString()},
+    {id:'br-004',name:'Coyote Logistics',mc:'521465',dot:'',scac:'COYO',website:'https://coyote.com',phone:'888-269-6831',contacts:[{role:'dispatch',name:'Carrier Desk',email:'carrier@coyote.com',phone:''},{role:'billing',name:'',email:'',phone:''},{role:'claims',name:'',email:'',phone:''}],paymentNetDays:35,quickPayPercent:2.5,avgDaysToPay:33,notes:'',highwayConnected:false,createdAt:new Date().toISOString()},
+    {id:'br-005',name:'TQL',mc:'357813',dot:'',scac:'TQL',website:'https://tql.com',phone:'800-580-3101',contacts:[{role:'dispatch',name:'Carrier Team',email:'carrier@tql.com',phone:'800-580-3101'},{role:'billing',name:'',email:'',phone:''},{role:'claims',name:'',email:'',phone:''}],paymentNetDays:30,quickPayPercent:2,avgDaysToPay:27,notes:'',highwayConnected:true,createdAt:new Date().toISOString()}
+  ];
+}
+
+(function init(){
+  if(!getLoads().length) saveLoads(seedLoads());
+  if(!getBrokers().length) saveBrokers(seedBrokers());
+  buildAccGrid();
+  populateFilters();
+  populateModalDropdowns();
+  renderKanban();
+  renderKpiStrip();
+  renderBrokerList();
+  buildBrokerContactsForm();
+  renderDriverPaySelector();
+  updateVPSGauge(14);
+  var hwCookie=localStorage.getItem('nexus_highway_session')||'';
+  if(hwCookie){document.getElementById('hw-status-label').className='hw-connected';document.getElementById('hw-status-label').textContent='Connected to Highway.com';}
+  setInterval(function(){renderDetentionCards();renderKanban();renderKpiStrip();},1000);
+})();
+
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+  document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active')});
+  if(btn)btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='detention')renderDetentionCards();
+  if(name==='driverpay')renderDriverPay();
+  if(name==='allloads')renderAllLoads();
+  if(name==='brokers')renderBrokerList();
+}
+
+function renderKpiStrip(){
+  var loads=getLoads();
+  var active=loads.filter(function(l){return['ASSIGNED','PICKED_UP','EN_ROUTE'].includes(l.status)}).length;
+  var today=new Date().toISOString().slice(0,10);
+  var todayRev=loads.filter(function(l){return l.updatedAt&&l.updatedAt.startsWith(today)}).reduce(function(s,l){return s+(l.grossRate||0)},0);
+  var wm=loads.filter(function(l){return l.miles>0&&l.grossRate>0});
+  var avgRpm=wm.length?wm.reduce(function(s,l){return s+(l.grossRate/l.miles)},0)/wm.length:0;
+  var fleetUtil=DRIVERS.length?Math.round(loads.filter(function(l){return['ASSIGNED','PICKED_UP','EN_ROUTE'].includes(l.status)&&l.driverId}).length/DRIVERS.length*100):0;
+  document.getElementById('kpi-strip').innerHTML=
+    '<div class="kpi-card"><div class="label">Active Loads</div><div class="value blue">'+active+'</div></div>'+
+    '<div class="kpi-card"><div class="label">Today Revenue</div><div class="value green">'+fmtMoney(todayRev)+'</div></div>'+
+    '<div class="kpi-card"><div class="label">Avg RPM</div><div class="value '+(avgRpm>=3?'green':avgRpm>=2?'yellow':'')+'">$'+avgRpm.toFixed(2)+'</div></div>'+
+    '<div class="kpi-card"><div class="label">Fleet Util.</div><div class="value '+(fleetUtil>=70?'green':fleetUtil>=40?'yellow':'')+'">'+fleetUtil+'%</div></div>';
+}
+
+function clearFilters(){
+  ['flt-driver','flt-broker','flt-status'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('flt-date').value='';
+  renderKanban();
+}
+
+function renderKanban(){
+  var loads=getLoads();
+  var fD=document.getElementById('flt-driver').value;
+  var fB=document.getElementById('flt-broker').value;
+  var fDt=document.getElementById('flt-date').value;
+  var fS=document.getElementById('flt-status').value;
+  if(fD)loads=loads.filter(function(l){return l.driverId===fD||l.driverName===fD});
+  if(fB)loads=loads.filter(function(l){return l.brokerName===fB});
+  if(fDt)loads=loads.filter(function(l){return l.pickupDate===fDt});
+  if(fS)loads=loads.filter(function(l){return l.status===fS});
+  var html='';
+  STATUS_ORDER.forEach(function(st){
+    var col=loads.filter(function(l){return l.status===st});
+    html+='<div class="kanban-col"><div class="kanban-col-header" style="border-top:3px solid '+STATUS_COLORS[st]+';color:'+STATUS_COLORS[st]+'">'+STATUS_LABELS[st]+' <span style="color:var(--mid);font-size:11px">('+col.length+')</span></div><div class="kanban-col-body">';
+    col.forEach(function(load){
+      var rpm=load.miles?load.grossRate/load.miles:0;
+      var profit=calcProfit(load);
+      var detBadge='';
+      if((load.status==='PICKED_UP'||load.status==='EN_ROUTE')&&load.detentionStartedAt){
+        var elapsedHrs=(Date.now()-new Date(load.detentionStartedAt).getTime())/3600000;
+        var freeHrs=load.detentionFreeHours||2;
+        if(elapsedHrs>freeHrs){
+          var charged=(elapsedHrs-freeHrs)*(load.detentionRate||35);
+          var h=Math.floor(elapsedHrs-freeHrs),m=Math.floor(((elapsedHrs-freeHrs)%1)*60);
+          detBadge='<div class="detention-badge">DT: '+h+'h '+m+'m &middot; '+fmtMoney(charged)+'</div>';
+        }
+      }
+      html+='<div class="load-card" onclick="showDetail(\''+load.id+'\')">';
+      html+='<div class="load-card-head"><span class="load-id">'+load.id+'</span><span class="status-badge '+STATUS_BC[st]+'">'+STATUS_LABELS[st]+'</span></div>';
+      html+='<div class="load-route">'+(load.origin||'?')+' &rarr; '+(load.destination||'?')+'</div>';
+      if(load.driverName)html+='<div class="load-meta">&#x1F464; '+load.driverName+(load.truckId?' &middot; '+load.truckId:'')+'</div>';
+      html+='<div style="margin:4px 0;display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--mid)">'+(load.miles||0)+' mi</span><span class="load-rpm '+rpmClass(rpm)+'">'+fmtRPM(load.grossRate,load.miles)+'</span></div>';
+      html+='<div class="load-revenue">'+fmtMoney(load.grossRate)+'</div>';
+      html+='<div style="font-size:11px;color:var(--mid)">Net: '+fmtMoney(profit.net)+'</div>';
+      if(load.pickupDate)html+='<div style="font-size:11px;color:var(--mid);margin-top:4px">&#x1F4C5; '+load.pickupDate+'</div>';
+      html+=detBadge;
+      html+='<div class="load-actions"><button onclick="event.stopPropagation();openLoadModal(\''+load.id+'\')">&#x270F;</button><button onclick="event.stopPropagation();advanceStatus(\''+load.id+'\')" title="Advance">&#x27A1;</button></div></div>';
+    });
+    html+='</div></div>';
+  });
+  document.getElementById('kanban').innerHTML=html;
+}
+
+function advanceStatus(id){
+  var loads=getLoads(),idx=loads.findIndex(function(l){return l.id===id});
+  if(idx<0)return;
+  var next=STATUS_ORDER[STATUS_ORDER.indexOf(loads[idx].status)+1];
+  if(!next)return;
+  loads[idx].status=next;
+  loads[idx].updatedAt=new Date().toISOString();
+  if(!loads[idx].statusHistory)loads[idx].statusHistory=[];
+  loads[idx].statusHistory.push({status:next,timestamp:new Date().toISOString()});
+  if(next==='PICKED_UP'&&!loads[idx].detentionStartedAt)loads[idx].detentionStartedAt=new Date().toISOString();
+  saveLoads(loads);renderKanban();renderKpiStrip();
+}
+
+var sortField='createdAt',sortAsc=false;
+function sortLoads(f){if(sortField===f)sortAsc=!sortAsc;else{sortField=f;sortAsc=false;}renderAllLoads();}
+function renderAllLoads(){
+  var loads=getLoads();
+  var q=(document.getElementById('load-search').value||'').toLowerCase();
+  if(q)loads=loads.filter(function(l){return(l.id+l.driverName+l.brokerName+l.origin+l.destination).toLowerCase().includes(q)});
+  loads.sort(function(a,b){var av=a[sortField]||0,bv=b[sortField]||0;return sortAsc?(av>bv?1:-1):(av<bv?1:-1)});
+  var html='';
+  loads.forEach(function(l){
+    var rpm=l.miles?l.grossRate/l.miles:0,profit=calcProfit(l);
+    html+='<tr onclick="showDetail(\''+l.id+'\')" style="cursor:pointer">';
+    html+='<td><span class="load-id">'+l.id+'</span></td>';
+    html+='<td><span class="status-badge '+(STATUS_BC[l.status]||'sb-closed')+'">'+(STATUS_LABELS[l.status]||l.status)+'</span></td>';
+    html+='<td>'+(l.brokerName||'--')+'</td>';
+    html+='<td>'+(l.origin||'?')+' &rarr; '+(l.destination||'?')+'</td>';
+    html+='<td>'+(l.driverName||'--')+'</td>';
+    html+='<td>'+(l.miles||0)+'</td>';
+    html+='<td>'+fmtMoney(l.grossRate)+'</td>';
+    html+='<td><span class="load-rpm '+rpmClass(rpm)+'">'+fmtRPM(l.grossRate,l.miles)+'</span></td>';
+    html+='<td>'+(l.pickupDate||'--')+'</td>';
+    html+='<td style="color:'+(profit.net>=0?'var(--green)':'var(--red)')+'">'+fmtMoney(profit.net)+'</td>';
+    html+='<td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openLoadModal(\''+l.id+'\')">Edit</button></td></tr>';
+  });
+  document.getElementById('all-loads-body').innerHTML=html||'<tr><td colspan="11" style="text-align:center;color:var(--mid);padding:30px">No loads found</td></tr>';
+}
+
+function showDetail(id){
+  var load=getLoads().find(function(l){return l.id===id});
+  if(!load)return;
+  var profit=calcProfit(load);
+  var rows=[['Load #',load.id],['Status',STATUS_LABELS[load.status]||load.status],['Broker',load.brokerName||'--'],['Equipment',load.equipmentType||'--'],['Driver',load.driverName||'Unassigned'],['Truck',load.truckId||'--'],['Origin',load.origin||'--'],['Destination',load.destination||'--'],['Miles',load.miles||0],['Gross Rate',fmtMoney(load.grossRate)],['RPM',fmtRPM(load.grossRate,load.miles)],['Driver Pay',fmtMoney(profit.driverPay)],['Fuel Est',fmtMoney(profit.fuel)],['Net Profit',fmtMoney(profit.net)],['Pickup',load.pickupDate||'--'],['Notes',load.internalNotes||'--']].map(function(r){return'<div class="detail-row"><span class="lbl">'+r[0]+'</span><span>'+r[1]+'</span></div>'}).join('');
+  document.getElementById('detail-content').innerHTML=rows+'<div style="margin-top:16px"><button class="btn btn-primary btn-sm" onclick="openLoadModal(\''+load.id+'\')" style="width:100%;margin-bottom:8px">Edit Load</button><button class="btn btn-ghost btn-sm" onclick="advanceStatus(\''+load.id+'\');showDetail(\''+load.id+'\')" style="width:100%">Advance Status &rarr;</button></div>';
+  document.getElementById('detail-panel').classList.add('open');
+}
+
+var selectedBrokerId=null;
+function renderBrokerList(){
+  var brokers=getBrokers(),q=(document.getElementById('broker-search').value||'').toLowerCase();
+  if(q)brokers=brokers.filter(function(b){return b.name.toLowerCase().includes(q)});
+  var loads=getLoads();
+  document.getElementById('broker-list-items').innerHTML=brokers.map(function(b){
+    var cnt=loads.filter(function(l){return l.brokerId===b.id||l.brokerName===b.name}).length;
+    return'<div class="broker-item '+(b.id===selectedBrokerId?'active':'')+'" onclick="selectBroker(\''+b.id+'\')"><div class="broker-name">'+b.name+'</div><div class="broker-count">'+cnt+' loads'+(b.highwayConnected?' &middot; <span class="badge badge-connected">HW</span>':'')+' </div></div>';
+  }).join('')||'<div style="padding:16px;color:var(--mid);font-size:12px">No brokers found</div>';
+}
+
+function selectBroker(id){
+  selectedBrokerId=id;renderBrokerList();
+  var b=getBrokers().find(function(x){return x.id===id});
+  if(!b)return;
+  var loads=getLoads().filter(function(l){return l.brokerId===id||l.brokerName===b.name});
+  var totalRev=loads.reduce(function(s,l){return s+(l.grossRate||0)},0);
+  var wm=loads.filter(function(l){return l.miles>0});
+  var avgRpm=wm.length?wm.reduce(function(s,l){return s+(l.grossRate/l.miles)},0)/wm.length:0;
+  var lanes={};
+  loads.forEach(function(l){
+    if(!l.origin||!l.destination)return;
+    var key=l.origin+' > '+l.destination;
+    if(!lanes[key])lanes[key]={count:0,totalRate:0,rates:[],lastDate:''};
+    lanes[key].count++;lanes[key].totalRate+=l.grossRate||0;lanes[key].rates.push(l.grossRate||0);
+    if(l.pickupDate>lanes[key].lastDate)lanes[key].lastDate=l.pickupDate;
+  });
+  var laneRows=Object.entries(lanes).map(function(e){
+    var lane=e[0],d=e[1];
+    var avgR=d.totalRate/d.count,bestR=Math.max.apply(null,d.rates);
+    var laneLoads=loads.filter(function(l){return(l.origin+' > '+l.destination)===lane});
+    var avgMi=laneLoads.reduce(function(s,l){return s+(l.miles||0)},0)/laneLoads.length;
+    var rpmV=avgMi?avgR/avgMi:0;
+    return'<tr><td>'+lane+'</td><td>'+d.count+'</td><td>'+fmtMoney(avgR)+'</td><td><span class="load-rpm '+rpmClass(rpmV)+'">'+( rpmV>0?'$'+rpmV.toFixed(2)+'/mi':'--')+'</span></td><td>'+fmtMoney(bestR)+'</td><td>'+(d.lastDate||'--')+'</td></tr>';
+  }).join('');
+  var contacts=(b.contacts||[]).map(function(c){return'<div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;flex-wrap:wrap"><span style="width:70px;color:var(--mid);text-transform:capitalize">'+c.role+'</span><span style="flex:1">'+(c.name||'--')+'</span><span style="flex:1;color:var(--mid)">'+(c.email||'')+'</span><span style="color:var(--mid)">'+(c.phone||'')+'</span></div>'}).join('');
+  document.getElementById('broker-detail').innerHTML='<h2>'+b.name+' <span class="badge '+(b.highwayConnected?'badge-connected':'badge-disconnected')+'">'+(b.highwayConnected?'HW Connected':'Not Connected')+'</span></h2>'+
+    '<div class="broker-section"><div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;margin-bottom:12px;color:var(--mid)">'+(b.mc?'<span>MC: <strong style="color:var(--text)">'+b.mc+'</strong></span>':'')+(b.dot?'<span>DOT: <strong style="color:var(--text)">'+b.dot+'</strong></span>':'')+(b.phone?'<span>&#x1F4DE; '+b.phone+'</span>':'')+( b.website?'<a href="'+b.website+'" target="_blank" style="color:var(--blue)">'+b.website+'</a>':'')+'</div>'+
+    '<div class="stats-grid"><div class="stat-box"><div class="sv blue">'+loads.length+'</div><div class="sl">Loads</div></div><div class="stat-box"><div class="sv green">'+fmtMoney(totalRev)+'</div><div class="sl">Revenue</div></div><div class="stat-box"><div class="sv '+(rpmClass(avgRpm))+'">$'+avgRpm.toFixed(2)+'</div><div class="sl">Avg RPM</div></div><div class="stat-box"><div class="sv">'+(b.paymentNetDays||'?')+'</div><div class="sl">Net Days</div></div><div class="stat-box"><div class="sv">'+(b.quickPayPercent||'?')+'%</div><div class="sl">Quick Pay</div></div><div class="stat-box"><div class="sv">'+(b.avgDaysToPay||'?')+'</div><div class="sl">Avg Days</div></div></div></div>'+
+    '<div class="broker-section"><h4>Contacts</h4>'+(contacts||'<div style="color:var(--mid);font-size:12px">No contacts</div>')+'</div>'+
+    (laneRows?'<div class="broker-section"><h4>Lane Intelligence</h4><table class="lane-table" style="width:100%"><thead><tr><th>Lane</th><th>#</th><th>Avg Rate</th><th>Avg RPM</th><th>Best Rate</th><th>Last Used</th></tr></thead><tbody>'+laneRows+'</tbody></table></div>':'')+
+    (b.notes?'<div class="broker-section"><h4>Notes</h4><div style="font-size:13px;color:var(--mid)">'+b.notes+'</div></div>':'')+
+    '<button class="btn btn-ghost btn-sm" onclick="openBrokerModal(false,\''+b.id+'\')" style="margin-top:10px">Edit Broker</button>';
+}
+
+function renderDetentionCards(){
+  var loads=getLoads().filter(function(l){return['PICKED_UP','EN_ROUTE'].includes(l.status)&&l.detentionStartedAt});
+  var html='',totalOwed=0;
+  loads.forEach(function(l){
+    var elapsedMs=Date.now()-new Date(l.detentionStartedAt).getTime();
+    var elapsedHrs=elapsedMs/3600000,freeHrs=l.detentionFreeHours||2,rate=l.detentionRate||35;
+    var overHrs=Math.max(0,elapsedHrs-freeHrs),owed=overHrs*rate;
+    totalOwed+=owed;
+    var h=Math.floor(elapsedHrs),m=Math.floor((elapsedHrs%1)*60),s=Math.floor(((elapsedHrs*3600)%60));
+    var over=elapsedHrs>freeHrs;
+    var statusLabel=!over?'FREE TIME':l.detentionNotified?'NOTIFIED':'DETENTION STARTED';
+    var statusColor=!over?'var(--green)':l.detentionNotified?'var(--yellow)':'var(--red)';
+    html+='<div class="detention-card"><div class="detention-card-head"><div><div style="font-size:13px;font-weight:700">'+l.id+' &mdash; '+(l.origin||'?')+' &rarr; '+(l.destination||'?')+'</div><div style="font-size:12px;color:var(--mid);margin-top:3px">Driver: '+(l.driverName||'--')+' &middot; Broker: '+(l.brokerName||'--')+'</div></div><div style="text-align:right"><div class="det-clock '+(over?'over':'free')+'">'+h+'h '+m+'m '+s+'s</div><div style="font-size:11px;color:'+statusColor+';font-weight:700;margin-top:2px">'+statusLabel+'</div></div></div>';
+    html+='<div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap"><div><span style="font-size:11px;color:var(--mid)">Free time: </span><strong>'+freeHrs+'h</strong></div><div><span style="font-size:11px;color:var(--mid)">Elapsed: </span><strong>'+elapsedHrs.toFixed(1)+'h</strong></div><div><span style="font-size:11px;color:var(--mid)">Owed: </span><span class="det-owed">'+fmtMoney(owed)+'</span></div><div style="margin-left:auto;display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="markDeparted(\''+l.id+'\')">Mark Departed</button><button class="btn btn-ghost btn-sm" onclick="notifyDetention(\''+l.id+'\')">Send Notice</button><button class="btn btn-red btn-sm" onclick="waiveDetention(\''+l.id+'\')">Waive</button></div></div></div>';
+  });
+  if(!loads.length)html='<div class="empty-state"><div class="icon" style="color:var(--green)">&#x2713;</div><div style="font-size:16px;font-weight:600;color:var(--green)">All loads clear &mdash; no active detention</div></div>';
+  document.getElementById('detention-cards').innerHTML=html;
+  document.getElementById('det-total-owed').textContent=fmtMoney(totalOwed);
+}
+
+function markDeparted(id){var loads=getLoads(),idx=loads.findIndex(function(l){return l.id===id});if(idx<0)return;loads[idx].detentionStartedAt=null;loads[idx].updatedAt=new Date().toISOString();saveLoads(loads);renderDetentionCards();}
+function notifyDetention(id){var loads=getLoads(),idx=loads.findIndex(function(l){return l.id===id});if(idx>=0){loads[idx].detentionNotified=true;saveLoads(loads);}alert('Detention notice logged for '+id);renderDetentionCards();}
+function waiveDetention(id){if(!confirm('Waive detention for '+id+'?'))return;var loads=getLoads(),idx=loads.findIndex(function(l){return l.id===id});if(idx>=0){loads[idx].detentionWaived=true;loads[idx].detentionStartedAt=null;saveLoads(loads);}renderDetentionCards();}
+
+function renderDriverPaySelector(){
+  document.getElementById('pay-driver-select').innerHTML=DRIVERS.map(function(d){return'<option value="'+d.id+'">'+d.name+'</option>'}).join('');
+}
+function savePaySettings(){
+  var dId=document.getElementById('pay-driver-select').value;if(!dId)return;
+  var ps=getPaySettings();
+  ps[dId]={type:document.getElementById('pay-type').value,rate:+document.getElementById('pay-rate').value,mpg:+document.getElementById('pay-mpg').value||6.5,dieselPrice:+document.getElementById('pay-diesel').value||3.89,dispatchPct:+document.getElementById('pay-dispatch').value||14};
+  savePaySettingsStore(ps);
+}
+function renderDriverPay(){
+  var dId=document.getElementById('pay-driver-select').value;if(!dId)return;
+  var ps=getPaySettings()[dId]||{type:'percent',rate:86,mpg:6.5,dieselPrice:3.89,dispatchPct:14};
+  document.getElementById('pay-type').value=ps.type||'percent';
+  document.getElementById('pay-rate').value=ps.rate||'';
+  document.getElementById('pay-mpg').value=ps.mpg||6.5;
+  document.getElementById('pay-diesel').value=ps.dieselPrice||3.89;
+  document.getElementById('pay-dispatch').value=ps.dispatchPct||14;
+  var loads=getLoads().filter(function(l){return l.driverId===dId&&l.status!=='OPEN'});
+  var totalGross=0,totalPay=0,totalFuel=0,totalNet=0;
+  var rows=loads.map(function(l){
+    var gross=l.grossRate||0,miles=l.miles||0;
+    var payType=ps.type||'percent',payRate=ps.rate||0,mpg=ps.mpg||6.5,diesel=ps.dieselPrice||3.89,disp=ps.dispatchPct||14;
+    var driverPay=payType==='percent'?gross*(payRate/100):payType==='per_mile'?miles*payRate:payRate;
+    var fuel=miles?(miles/mpg)*diesel:0,net=gross-driverPay-fuel,netRpm=miles?net/miles:0;
+    totalGross+=gross;totalPay+=driverPay;totalFuel+=fuel;totalNet+=net;
+    return'<tr><td class="load-id">'+l.id+'</td><td>'+(l.origin||'?')+' &rarr; '+(l.destination||'?')+'</td><td>'+miles+'</td><td>'+fmtMoney(gross)+'</td><td>'+(payType==='percent'?payRate+'%':payType==='per_mile'?'$'+payRate+'/mi':fmtMoney(payRate))+'</td><td style="color:var(--blue)">'+fmtMoney(driverPay)+'</td><td style="color:var(--yellow)">'+fmtMoney(fuel)+'</td><td>'+disp+'%</td><td style="color:'+(net>=0?'var(--green)':'var(--red)')+'">'+fmtMoney(net)+'</td><td><span class="load-rpm '+rpmClass(netRpm)+'">'+( netRpm>0?'$'+netRpm.toFixed(2)+'/mi':'--')+'</span></td></tr>';
+  }).join('');
+  document.getElementById('pay-table-body').innerHTML=rows||'<tr><td colspan="10" style="text-align:center;color:var(--mid);padding:20px">No loads for this driver</td></tr>';
+  document.getElementById('pay-table-foot').innerHTML='<tr><td colspan="3">TOTALS</td><td>'+fmtMoney(totalGross)+'</td><td>--</td><td style="color:var(--blue)">'+fmtMoney(totalPay)+'</td><td style="color:var(--yellow)">'+fmtMoney(totalFuel)+'</td><td>--</td><td style="color:'+(totalNet>=0?'var(--green)':'var(--red)')+'">'+fmtMoney(totalNet)+'</td><td>--</td></tr>';
+}
+function exportSettlement(){var dId=document.getElementById('pay-driver-select').value;var driver=DRIVERS.find(function(d){return d.id===dId});alert('Settlement export for '+(driver?driver.name:'driver')+'\n\nThis would generate a PDF and upload to Google Drive.');}
+
+function updateVPSGauge(score){
+  var pct=Math.min(100,Math.max(0,score)),total=283,offset=total-(pct/100)*total;
+  var fill=document.getElementById('vps-fill'),text=document.getElementById('vps-score-text');
+  if(fill)fill.setAttribute('stroke-dashoffset',offset);
+  if(text)text.textContent=pct+'%';
+}
+function openHWModal(){document.getElementById('hw-modal').classList.add('open');document.getElementById('hw-cookie-input').value=localStorage.getItem('nexus_highway_session')||'';document.getElementById('hw-company-input').value=localStorage.getItem('nexus_highway_company_id')||'300823';}
+function saveHWSession(){
+  var cookie=document.getElementById('hw-cookie-input').value.trim();
+  var cid=document.getElementById('hw-company-input').value.trim()||'300823';
+  localStorage.setItem('nexus_highway_session',cookie);
+  localStorage.setItem('nexus_highway_company_id',cid);
+  document.getElementById('hw-modal').classList.remove('open');
+  if(cookie){document.getElementById('hw-status-label').className='hw-connected';document.getElementById('hw-status-label').textContent='Connected to Highway.com';syncHighway('all');}
+}
+async function syncHighway(target){
+  var cookie=localStorage.getItem('nexus_highway_session')||'';
+  if(!cookie){document.getElementById('hw-status-label').className='hw-disconnected';document.getElementById('hw-status-label').textContent='Not Connected -- click Connect';return;}
+  var base='https://highway.com/monitor/api/v1/';
+  var headers={'Cookie':'_highway_session='+cookie,'Accept':'application/json','X-Requested-With':'XMLHttpRequest'};
+  async function hwFetch(url){try{var r=await fetch(url,{headers:headers});if(r.status===401)return{error:'Session expired -- please reconnect.'};return r.json();}catch(e){return{error:'Network error: '+e.message};}}
+  if(target==='all'||target==='loads'){
+    var data=await hwFetch(base+'loads?per_page=200');
+    if(data&&!data.error){var loads=Array.isArray(data)?data:data.loads||data.data||[];var total=loads.length;var detected=loads.filter(function(l){return l.pickup_detected||l.eld_pickup_verified}).length;var score=total>0?Math.round(detected/total*100):14;updateVPSGauge(score);document.getElementById('hw-vps-badge').textContent='Live';document.getElementById('hw-vps-badge').className='badge badge-connected';}
+  }
+}
+
+var editingLoadId=null,stopCount=0;
+function buildAccGrid(){
+  document.getElementById('acc-grid').innerHTML=ACCS.map(function(a){return'<div class="acc-item"><input type="checkbox" id="acc-'+a.key+'" onchange="toggleAcc(\''+a.key+'\')"><span class="acc-label">'+a.label+'</span><input type="number" id="acc-val-'+a.key+'" placeholder="0" step="0.01" oninput="recalcModal()" style="display:none"></div>'}).join('');
+}
+function toggleAcc(key){document.getElementById('acc-val-'+key).style.display=document.getElementById('acc-'+key).checked?'block':'none';recalcModal();}
+
+function openLoadModal(id){
+  editingLoadId=id||null;stopCount=0;
+  document.getElementById('stops-container').innerHTML='';
+  if(id){
+    var load=getLoads().find(function(l){return l.id===id});if(!load)return;
+    document.getElementById('load-modal-title').textContent='Edit Load';
+    document.getElementById('m-load-id').value=load.id;
+    document.getElementById('m-ref').value=load.customerRef||'';
+    document.getElementById('m-bol').value=load.bolNumber||'';
+    document.getElementById('m-po').value=load.poNumber||'';
+    document.getElementById('m-broker').value=load.brokerId||'';
+    document.getElementById('m-equip').value=load.equipmentType||'Van';
+    document.getElementById('m-commodity').value=load.commodity||'';
+    document.getElementById('m-weight').value=load.weight||'';
+    document.getElementById('m-driver').value=load.driverId||'';
+    document.getElementById('m-truck').value=load.truckId||'';
+    document.getElementById('m-trailer').value=load.trailerNumber||'';
+    document.getElementById('m-miles').value=load.miles||'';
+    document.getElementById('m-deadhead').value=load.deadheadMiles||'';
+    document.getElementById('m-rate').value=load.totalRate||'';
+    document.getElementById('m-rate-type').value=load.rateType||'Flat';
+    document.getElementById('m-det-rate').value=load.detentionRate||35;
+    document.getElementById('m-det-free').value=load.detentionFreeHours||2;
+    document.getElementById('m-special').value=load.specialInstructions||'';
+    document.getElementById('m-notes').value=load.internalNotes||'';
+    ACCS.forEach(function(a){var v=(load.accessorials||{})[a.key]||0;document.getElementById('acc-'+a.key).checked=v>0;document.getElementById('acc-val-'+a.key).style.display=v>0?'block':'none';document.getElementById('acc-val-'+a.key).value=v>0?v:'';});
+    var stops=load.stops||[];
+    if(!stops.length){addStop('Pickup');addStop('Delivery');}else stops.forEach(function(s){addStop(s.type,s);});
+    document.getElementById('m-pay-type').value=load.driverPayType||'percent';
+    document.getElementById('m-pay-rate').value=load.driverPayRate||'';
+  } else {
+    document.getElementById('load-modal-title').textContent='New Load';
+    document.getElementById('m-load-id').value='LOAD-'+Date.now();
+    ['m-ref','m-bol','m-po','m-commodity','m-weight','m-trailer','m-miles','m-deadhead','m-rate','m-special','m-notes','m-pay-rate'].forEach(function(i){document.getElementById(i).value='';});
+    document.getElementById('m-broker').value='';document.getElementById('m-driver').value='';document.getElementById('m-truck').value='';
+    document.getElementById('m-equip').value='Van';document.getElementById('m-rate-type').value='Flat';
+    document.getElementById('m-det-rate').value='35';document.getElementById('m-det-free').value='2';document.getElementById('m-pay-type').value='percent';
+    ACCS.forEach(function(a){document.getElementById('acc-'+a.key).checked=false;document.getElementById('acc-val-'+a.key).style.display='none';document.getElementById('acc-val-'+a.key).value='';});
+    addStop('Pickup');addStop('Delivery');
+  }
+  populateModalDropdowns();recalcModal();
+  document.getElementById('load-modal').classList.add('open');
+}
+function closeLoadModal(){document.getElementById('load-modal').classList.remove('open');}
+
+function addStop(type,data){
+  stopCount++;var sc=stopCount;data=data||{};
+  var div=document.createElement('div');div.className='stop-block';div.id='stop-block-'+sc;
+  div.innerHTML='<div class="stop-hd"><select style="background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:5px;font-size:12px;font-weight:700" id="stop-type-'+sc+'"><option'+(( type||data.type)==='Pickup'?' selected':'')+'>Pickup</option><option'+((type||data.type)==='Delivery'?' selected':'')+'>Delivery</option></select><button onclick="document.getElementById(\'stop-block-'+sc+'\').remove()" style="background:none;border:none;color:var(--mid);cursor:pointer;font-size:16px">x</button></div>'+
+    '<div class="form-grid"><div class="form-group"><label>Business Name</label><input id="stop-biz-'+sc+'" value="'+(data.businessName||'')+'"></div><div class="form-group"><label>Phone</label><input id="stop-phone-'+sc+'" value="'+(data.phone||'')+'"></div><div class="form-group"><label>City</label><input id="stop-city-'+sc+'" value="'+(data.city||'')+'"></div><div class="form-group"><label>State</label><input id="stop-state-'+sc+'" value="'+(data.state||'')+'"></div><div class="form-group"><label>Appt Date</label><input type="date" id="stop-date-'+sc+'" value="'+(data.apptDate||'')+'"></div><div class="form-group"><label>Notes</label><input id="stop-notes-'+sc+'" value="'+(data.notes||'')+'"></div></div>';
+  document.getElementById('stops-container').appendChild(div);
+}
+
+function recalcModal(){
+  var rate=+document.getElementById('m-rate').value||0,accTotal=0;
+  ACCS.forEach(function(a){if(document.getElementById('acc-'+a.key).checked)accTotal+=+document.getElementById('acc-val-'+a.key).value||0;});
+  var gross=rate+accTotal;
+  document.getElementById('gross-total-display').textContent='Gross Rate: '+fmtMoney(gross);
+  var miles=+document.getElementById('m-miles').value||0;
+  var payType=document.getElementById('m-pay-type').value,payRate=+document.getElementById('m-pay-rate').value||0;
+  var driverPay=payType==='percent'?gross*(payRate/100):payType==='per_mile'?miles*payRate:payRate;
+  var pctStr=gross>0&&driverPay>0?' ('+(driverPay/gross*100).toFixed(1)+'% of gross)':'';
+  document.getElementById('m-pay-preview').innerHTML='<div style="font-size:11px;color:var(--mid);margin-bottom:4px">Driver Pay Preview</div><div class="pp-amount">'+fmtMoney(driverPay)+'<span style="font-size:13px;color:var(--mid)">'+pctStr+'</span></div>';
+}
+
+function saveLoad(){
+  var loads=getLoads();
+  var id=document.getElementById('m-load-id').value;
+  var brokerId=document.getElementById('m-broker').value;
+  var broker=getBrokers().find(function(b){return b.id===brokerId});
+  var driverId=document.getElementById('m-driver').value;
+  var driver=DRIVERS.find(function(d){return d.id===driverId});
+  var rate=+document.getElementById('m-rate').value||0,acc={},accTotal=0;
+  ACCS.forEach(function(a){if(document.getElementById('acc-'+a.key).checked){var v=+document.getElementById('acc-val-'+a.key).value||0;acc[a.key]=v;accTotal+=v;}});
+  var gross=rate+accTotal,miles=+document.getElementById('m-miles').value||0;
+  var payType=document.getElementById('m-pay-type').value,payRate=+document.getElementById('m-pay-rate').value||0;
+  var driverPay=payType==='percent'?gross*(payRate/100):payType==='per_mile'?miles*payRate:payRate;
+  var stops=[];
+  for(var i=1;i<=stopCount;i++){var sb=document.getElementById('stop-block-'+i);if(!sb)continue;stops.push({type:document.getElementById('stop-type-'+i).value,businessName:document.getElementById('stop-biz-'+i).value,city:document.getElementById('stop-city-'+i).value,state:document.getElementById('stop-state-'+i).value,apptDate:document.getElementById('stop-date-'+i).value,notes:document.getElementById('stop-notes-'+i).value});}
+  var pickups=stops.filter(function(s){return s.type==='Pickup'});
+  var deliveries=stops.filter(function(s){return s.type==='Delivery'});
+  var origin=pickups.length&&(pickups[0].city||pickups[0].state)?((pickups[0].city||'')+(pickups[0].state?', '+pickups[0].state:'')).trim():'';
+  var destination=deliveries.length&&(deliveries[0].city||deliveries[0].state)?((deliveries[0].city||'')+(deliveries[0].state?', '+deliveries[0].state:'')).trim():'';
+  var pickupDate=pickups.length&&pickups[0].apptDate?pickups[0].apptDate:'';
+  var existing=loads.find(function(l){return l.id===id})||{};
+  var load=Object.assign({},existing,{id:id,status:existing.status||'OPEN',customerRef:document.getElementById('m-ref').value,bolNumber:document.getElementById('m-bol').value,poNumber:document.getElementById('m-po').value,brokerId:brokerId,brokerName:broker?broker.name:'',equipmentType:document.getElementById('m-equip').value,commodity:document.getElementById('m-commodity').value,weight:+document.getElementById('m-weight').value||0,stops:stops,origin:origin,destination:destination,pickupDate:pickupDate,driverId:driverId,driverName:driver?driver.name:'',truckId:document.getElementById('m-truck').value,trailerNumber:document.getElementById('m-trailer').value,miles:miles,deadheadMiles:+document.getElementById('m-deadhead').value||0,totalRate:rate,rateType:document.getElementById('m-rate-type').value,accessorials:acc,grossRate:gross,detentionRate:+document.getElementById('m-det-rate').value||35,detentionFreeHours:+document.getElementById('m-det-free').value||2,driverPayType:payType,driverPayRate:payRate,driverPayAmount:driverPay,rpm:miles?gross/miles:0,specialInstructions:document.getElementById('m-special').value,internalNotes:document.getElementById('m-notes').value,updatedAt:new Date().toISOString()});
+  if(!load.createdAt)load.createdAt=new Date().toISOString();
+  if(!load.statusHistory)load.statusHistory=[{status:'OPEN',timestamp:new Date().toISOString()}];
+  if(editingLoadId){var idx=loads.findIndex(function(l){return l.id===id});if(idx>=0)loads[idx]=load;else loads.push(load);}else loads.push(load);
+  saveLoads(loads);closeLoadModal();renderKanban();renderKpiStrip();renderAllLoads();populateFilters();
+}
+
+var editingBrokerId=null,brokerModalReturnToLoad=false;
+function buildBrokerContactsForm(){
+  var roles=['dispatch','billing','claims'];
+  document.getElementById('broker-contacts-form').innerHTML=roles.map(function(r){return'<div style="background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:8px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--mid);margin-bottom:8px">'+r+'</div><div class="form-grid"><div class="form-group"><label>Name</label><input id="bc-'+r+'-name"></div><div class="form-group"><label>Email</label><input type="email" id="bc-'+r+'-email"></div><div class="form-group"><label>Phone</label><input id="bc-'+r+'-phone"></div></div></div>'}).join('');
+}
+function openBrokerModal(returnToLoad,id){
+  brokerModalReturnToLoad=!!returnToLoad;editingBrokerId=id||null;buildBrokerContactsForm();
+  if(id){
+    var b=getBrokers().find(function(x){return x.id===id});if(!b)return;
+    document.getElementById('bm-name').value=b.name||'';document.getElementById('bm-mc').value=b.mc||'';document.getElementById('bm-dot').value=b.dot||'';document.getElementById('bm-scac').value=b.scac||'';document.getElementById('bm-web').value=b.website||'';document.getElementById('bm-phone').value=b.phone||'';document.getElementById('bm-net').value=b.paymentNetDays||'';document.getElementById('bm-qp').value=b.quickPayPercent||'';document.getElementById('bm-avgdays').value=b.avgDaysToPay||'';document.getElementById('bm-notes').value=b.notes||'';
+    var roles=['dispatch','billing','claims'];roles.forEach(function(r,ri){var c=(b.contacts||[])[ri]||{};document.getElementById('bc-'+r+'-name').value=c.name||'';document.getElementById('bc-'+r+'-email').value=c.email||'';document.getElementById('bc-'+r+'-phone').value=c.phone||'';});
+  } else {
+    ['bm-name','bm-mc','bm-dot','bm-scac','bm-web','bm-phone','bm-net','bm-qp','bm-avgdays','bm-notes'].forEach(function(i){document.getElementById(i).value='';});
+    ['dispatch','billing','claims'].forEach(function(r){['name','email','phone'].forEach(function(f){document.getElementById('bc-'+r+'-'+f).value='';});});
+  }
+  document.getElementById('broker-modal').classList.add('open');
+}
+function closeBrokerModal(){document.getElementById('broker-modal').classList.remove('open');}
+function saveBroker(){
+  var name=document.getElementById('bm-name').value.trim();if(!name){alert('Broker name is required');return;}
+  var brokers=getBrokers();
+  var id=editingBrokerId||(name.toLowerCase().replace(/\s+/g,'-')+'-'+Date.now());
+  var existing=brokers.find(function(x){return x.id===id})||{};
+  var b={id:id,name:name,mc:document.getElementById('bm-mc').value,dot:document.getElementById('bm-dot').value,scac:document.getElementById('bm-scac').value,website:document.getElementById('bm-web').value,phone:document.getElementById('bm-phone').value,contacts:['dispatch','billing','claims'].map(function(r){return{role:r,name:document.getElementById('bc-'+r+'-name').value,email:document.getElementById('bc-'+r+'-email').value,phone:document.getElementById('bc-'+r+'-phone').value};}),paymentNetDays:+document.getElementById('bm-net').value||30,quickPayPercent:+document.getElementById('bm-qp').value||2,avgDaysToPay:+document.getElementById('bm-avgdays').value||30,notes:document.getElementById('bm-notes').value,highwayConnected:false,createdAt:existing.createdAt||new Date().toISOString()};
+  if(editingBrokerId){var idx=brokers.findIndex(function(x){return x.id===editingBrokerId});if(idx>=0)brokers[idx]=b;else brokers.push(b);}else brokers.push(b);
+  saveBrokers(brokers);closeBrokerModal();renderBrokerList();populateModalDropdowns();
+  if(brokerModalReturnToLoad)document.getElementById('load-modal').classList.add('open');
+}
+
+function populateFilters(){
+  var loads=getLoads();
+  var dSel=document.getElementById('flt-driver'),cur=dSel.value;
+  dSel.innerHTML='<option value="">All Drivers</option>'+DRIVERS.map(function(d){return'<option value="'+d.id+'"'+(d.id===cur?' selected':'')+'>'+d.name+'</option>'}).join('');
+  var bSel=document.getElementById('flt-broker'),bcur=bSel.value;
+  var bnames=[...new Set([...getBrokers().map(function(b){return b.name}),...loads.map(function(l){return l.brokerName}).filter(Boolean)])];
+  bSel.innerHTML='<option value="">All Brokers</option>'+bnames.map(function(b){return'<option'+(b===bcur?' selected':'')+'>'+b+'</option>'}).join('');
+}
+function populateModalDropdowns(){
+  var brokers=getBrokers(),bSel=document.getElementById('m-broker'),bcur=bSel.value;
+  bSel.innerHTML='<option value="">-- Select Broker --</option>'+brokers.map(function(b){return'<option value="'+b.id+'"'+(b.id===bcur?' selected':'')+'>'+b.name+'</option>'}).join('');
+  var docs=getDocuments(),now=Date.now(),thirtyDays=30*24*3600000,expiring={};
+  docs.forEach(function(d){if(d.expiryDate&&d.driverId&&(new Date(d.expiryDate).getTime()-now)<thirtyDays)expiring[d.driverId]=true;});
+  var dSel=document.getElementById('m-driver'),dcur=dSel.value;
+  dSel.innerHTML='<option value="">-- Unassigned --</option>'+DRIVERS.map(function(d){return'<option value="'+d.id+'"'+(d.id===dcur?' selected':'')+'>'+d.name+(expiring[d.id]?' (! exp)':'')+' </option>'}).join('');
+  var fleet=getFleet(),tSel=document.getElementById('m-truck'),tcur=tSel.value;
+  var truckOpts=fleet.length?fleet.map(function(f){return'<option value="'+(f.unitNumber||f.id)+'"'+((f.unitNumber||f.id)===tcur?' selected':'')+'>'+( f.unitNumber||f.id)+(f.make?' -- '+f.make+' '+f.model:'')+' </option>'}).join(''):['Unit 01','Unit 02','Unit 03','Unit 04','Unit 05'].map(function(u){return'<option'+(u===tcur?' selected':'')+'>'+u+'</option>'}).join('');
+  tSel.innerHTML='<option value="">-- Select Truck --</option>'+truckOpts;
+}
+</script>
+<script src="nexus-sidebar.js"></script>
+</body>
+</html>

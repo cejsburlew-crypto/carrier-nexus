@@ -193,6 +193,7 @@
       lnk('issues.html',               I.issue,   'Issues')
     ) +
     sec('dispatch', 'Dispatch',
+      lnk('dispatch-pro.html',   I.loads,   '🚀 Dispatch PRO') +
       lnk('dispatch-board.html', I.truck, 'Dispatch Board') +
       lnk('dispatcher-hub.html',       I.monitor, 'Dispatch Board') +
       lnk('load-board.html',           I.map,     'Load Board') +
