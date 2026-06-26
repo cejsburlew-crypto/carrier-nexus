@@ -189,6 +189,7 @@ function renderTable(){
         <button class="btn btn-outline btn-sm" onclick="editCOI('${c.id}')">Edit</button>
         <button class="btn btn-outline btn-sm" style="margin-left:4px;" onclick="renewCOI('${c.id}')">Renew</button>
         <button class="btn btn-outline btn-sm" style="margin-left:4px;color:var(--red);" onclick="revokeCOI('${c.id}')">Revoke</button>
+        <button class="btn btn-outline btn-sm" style="margin-left:4px;" onclick="window.open('https://content.naic.org/cis/searchCompany?searchType=COMPANY_NAME_SEARCH&companyName='+encodeURIComponent(c.insurer||''),'_blank')" title="Verify insurer in NAIC database">🔍 Verify Insurer (FMCSA)</button>
       </td>
     </tr>`;
   }).join('');

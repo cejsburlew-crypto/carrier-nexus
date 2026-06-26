@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FMCSA Compliance — Carrier Nexus</title>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<style>
+:root{
+  --bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;
+  --text:#e2e8f0;--mid:#64748b;--dim:#334155;
+  --blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;
+  --orange:#f97316;--purple:#a855f7;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+.layout{display:flex;min-height:100vh;}
+.main{flex:1;overflow-x:hidden;margin-left:220px;}
+.topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:17px;font-weight:700;}
+.topbar-sub{font-size:11px;color:var(--mid);margin-top:2px;}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
+.btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:#2563eb;}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}.btn-outline:hover{background:var(--panel2);}
+.btn-green{background:var(--green);color:#fff;}.btn-green:hover{background:#059669;}
+.btn-red{background:var(--red);color:#fff;}.btn-red:hover{background:#dc2626;}
+.btn-sm{padding:5px 11px;font-size:12px;}
+.btn-xs{padding:3px 8px;font-size:11px;}
+.content{padding:20px;max-width:1100px;margin:0 auto;}
+
+/* Tabs */
+.tab-bar{display:flex;gap:4px;padding:16px 20px 0;border-bottom:1px solid var(--border);background:var(--panel);position:sticky;top:57px;z-index:40;}
+.tab-btn{padding:9px 16px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--mid);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s;margin-bottom:-1px;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:#fff;border-bottom-color:var(--blue);}
+.tab-pane{display:none;padding:20px 0;}
+.tab-pane.active{display:block;}
+
+/* Cards / Panels */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:14px;font-weight:700;}
+.panel-sub{font-size:12px;color:var(--mid);}
+.panel-body{padding:18px;}
+
+/* Info grid for carrier data */
+.info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:14px;}
+.info-card{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:13px 15px;}
+.info-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:5px;}
+.info-value{font-size:14px;font-weight:700;color:var(--text);}
+.info-value.muted{color:var(--mid);font-weight:400;font-size:13px;}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;gap:4px;}
+.badge-green{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);}
+.badge-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
+.badge-yellow{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25);}
+.badge-gray{background:rgba(100,116,139,.12);color:#94a3b8;border:1px solid rgba(100,116,139,.25);}
+.badge-blue{background:rgba(59,130,246,.12);color:#3b82f6;border:1px solid rgba(59,130,246,.25);}
+.badge-orange{background:rgba(249,115,22,.12);color:#f97316;border:1px solid rgba(249,115,22,.25);}
+.badge-purple{background:rgba(168,85,247,.12);color:#a855f7;border:1px solid rgba(168,85,247,.25);}
+
+/* Form elements */
+.field-group{margin-bottom:14px;}
+.field-label{font-size:12px;color:var(--mid);margin-bottom:5px;display:block;}
+.form-input,.form-select{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:inherit;}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--blue);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+/* Alert / callout boxes */
+.callout{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:14px;line-height:1.5;}
+.callout-blue{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);color:#93c5fd;}
+.callout-yellow{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);color:#fcd34d;}
+.callout-red{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5;}
+.callout-green{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:#6ee7b7;}
+.callout-purple{background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);color:#d8b4fe;}
+
+/* Action link cards */
+.action-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:14px;}
+.action-card{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:.15s;text-decoration:none;color:var(--text);display:block;}
+.action-card:hover{border-color:var(--blue);background:rgba(59,130,246,.06);}
+.action-card-icon{font-size:22px;margin-bottom:8px;}
+.action-card-title{font-size:13px;font-weight:700;margin-bottom:4px;}
+.action-card-desc{font-size:12px;color:var(--mid);line-height:1.4;}
+
+/* Checklist */
+.checklist{list-style:none;padding:0;margin:0;}
+.checklist li{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.checklist li:last-child{border-bottom:none;}
+.checklist li input[type=checkbox]{width:15px;height:15px;margin-top:1px;accent-color:var(--green);flex-shrink:0;cursor:pointer;}
+.checklist li label{cursor:pointer;line-height:1.4;}
+.checklist li.checked label{text-decoration:line-through;color:var(--mid);}
+
+/* Traffic light */
+.traffic-light{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;}
+.tl-green{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);}
+.tl-yellow{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25);}
+.tl-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
+.tl-gray{background:rgba(100,116,139,.12);color:#94a3b8;border:1px solid rgba(100,116,139,.25);}
+
+/* Search bar */
+.search-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.search-bar .form-input{flex:1;min-width:200px;}
+
+/* Status indicator dot */
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;}
+.dot-green{background:var(--green);}
+.dot-yellow{background:var(--yellow);}
+.dot-red{background:var(--red);}
+.dot-gray{background:var(--mid);}
+
+/* Key/value rows */
+.kv-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.kv-row:last-child{border-bottom:none;}
+.kv-key{color:var(--mid);}
+.kv-val{font-weight:600;}
+
+/* Password input wrapper */
+.pass-wrap{position:relative;}
+.pass-wrap .form-input{padding-right:40px;}
+.pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--mid);cursor:pointer;font-size:13px;padding:2px;}
+
+/* Verification list */
+.verif-list{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.verif-item{display:flex;align-items:center;justify-content:space-between;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;}
+.verif-item-left{display:flex;align-items:center;gap:10px;}
+
+/* Steps */
+.steps{counter-reset:step;list-style:none;padding:0;margin:0;}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:13px;line-height:1.5;}
+.steps li::before{content:counter(step);width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+
+/* MCS-150 meter */
+.progress-bar{width:100%;height:8px;background:var(--panel2);border-radius:4px;overflow:hidden;margin-top:8px;}
+.progress-fill{height:100%;border-radius:4px;transition:width .4s;}
+
+@media(max-width:768px){
+  .main{margin-left:0!important;}
+  .form-row,.form-row-3{grid-template-columns:1fr;}
+  .action-cards{grid-template-columns:1fr;}
+  .info-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:500px){
+  .info-grid{grid-template-columns:1fr;}
+  .tab-bar{overflow-x:auto;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<div class="main">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div>
+    <div class="topbar-title">⚖️ FMCSA Compliance</div>
+    <div class="topbar-sub">SAFER · MOTUS · QC API · Carrier Lookup · Insurer Verify</div>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-outline btn-sm" onclick="location.href='coi-management.html'">← COI Registry</button>
+    <button class="btn btn-outline btn-sm" onclick="location.href='dot-compliance.html'">DOT Compliance</button>
+  </div>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar" id="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('profile')">🏢 My Carrier Profile</button>
+  <button class="tab-btn" onclick="switchTab('lookup')">🔍 Carrier Lookup</button>
+  <button class="tab-btn" onclick="switchTab('insurer')">🛡️ Insurer Verify</button>
+  <button class="tab-btn" onclick="switchTab('motus')">⚡ MOTUS / L&amp;I Hub</button>
+  <button class="tab-btn" onclick="switchTab('settings')">🔑 API Settings</button>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════════════════════════════════════════
+     TAB 1 — MY CARRIER PROFILE
+════════════════════════════════════════════════════════════ -->
+<div class="tab-pane active" id="tab-profile">
+
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">My Carrier Profile — Carrier Trucking US, LLC</div>
+        <div class="panel-sub">USDOT &amp; MC# · FMCSA safety data · authority status</div>
+      </div>
+      <div id="profile-traffic-light" class="tl-gray">⬛ Not loaded</div>
+    </div>
+    <div class="panel-body">
+      <div class="form-row" style="margin-bottom:14px;">
+        <div class="field-group" style="margin-bottom:0;">
+          <label class="field-label">USDOT Number</label>
+          <input class="form-input" id="my-usdot" placeholder="e.g. 4326039" oninput="saveMyIdentifiers()">
+        </div>
+        <div class="field-group" style="margin-bottom:0;">
+          <label class="field-label">MC# (without prefix)</label>
+          <input class="form-input" id="my-mc" placeholder="e.g. 1688495" oninput="saveMyIdentifiers()">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+        <button class="btn btn-primary btn-sm" onclick="refreshMyProfile()">🔄 Refresh from FMCSA</button>
+        <button class="btn btn-outline btn-sm" onclick="openSAFER()">🌐 View in SAFER</button>
+        <button class="btn btn-outline btn-sm" onclick="window.open('https://motus.dot.gov','_blank')">⚡ Licensing &amp; Insurance (MOTUS)</button>
+        <button class="btn btn-outline btn-sm" onclick="openCSAScores()">📊 CSA Scores</button>
+      </div>
+
+      <div id="profile-loading" style="display:none;color:var(--mid);font-size:13px;padding:10px 0;">Loading from FMCSA…</div>
+      <div id="profile-error" style="display:none;" class="callout callout-red"></div>
+
+      <div id="profile-data-section">
+        <!-- Identity row -->
+        <div class="info-grid" id="profile-identity-grid">
+          <div class="info-card">
+            <div class="info-label">Legal Name</div>
+            <div class="info-value" id="p-legal-name">—</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">DBA</div>
+            <div class="info-value muted" id="p-dba">—</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Operating Status</div>
+            <div class="info-value" id="p-status">—</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Safety Rating</div>
+            <div class="info-value" id="p-safety-rating">—</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Authority Type</div>
+            <div class="info-value muted" id="p-authority">—</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Insurance on File</div>
+            <div class="info-value" id="p-insurance">—</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Last MCS-150 Update</div>
+            <div class="info-value muted" id="p-mcs150">—</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">USDOT / MC#</div>
+            <div class="info-value muted" id="p-ids">—</div>
+          </div>
+        </div>
+
+        <!-- OOS / Crash row -->
+        <div style="margin-top:14px;">
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:10px;">Safety Statistics (Last 24 Months)</div>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-label">Driver OOS Rate</div>
+              <div class="info-value" id="p-driver-oos">—</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Vehicle OOS Rate</div>
+              <div class="info-value" id="p-vehicle-oos">—</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Total Crashes</div>
+              <div class="info-value" id="p-crashes">—</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Crashes with Injuries</div>
+              <div class="info-value" id="p-crash-injury">—</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Fatal Crashes</div>
+              <div class="info-value" id="p-crash-fatal">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-blue">
+    <strong>Carrier Trucking US, LLC</strong> · US DOT 4326039 · MC 1688495-C<br>
+    SAFER is the FMCSA Safety and Fitness Electronic Records system — the authoritative public source for carrier safety data. The FMCSA QC API (Tab 5) enables live JSON lookups without opening a browser.
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     TAB 2 — CARRIER LOOKUP
+════════════════════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-lookup">
+
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">Carrier Lookup</div>
+      <div class="panel-sub">Search by USDOT#, MC#, or Company Name</div>
+    </div>
+    <div class="panel-body">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <button class="btn btn-sm" id="lk-type-usdot" onclick="setLookupType('usdot')" style="background:var(--blue);color:#fff;">USDOT#</button>
+        <button class="btn btn-outline btn-sm" id="lk-type-mc" onclick="setLookupType('mc')">MC#</button>
+        <button class="btn btn-outline btn-sm" id="lk-type-name" onclick="setLookupType('name')">Company Name</button>
+      </div>
+      <div class="search-bar">
+        <input class="form-input" id="lk-query" placeholder="Enter USDOT#, MC#, or company name…" onkeydown="if(event.key==='Enter')searchCarrier()">
+        <button class="btn btn-primary" onclick="searchCarrier()">🔍 Search FMCSA</button>
+      </div>
+      <div id="lk-loading" style="display:none;color:var(--mid);font-size:13px;padding:8px 0;">Searching…</div>
+      <div id="lk-error" style="display:none;" class="callout callout-yellow"></div>
+      <div id="lk-results" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div id="lk-traffic-light" class="tl-gray">⬛ No data</div>
+          <button class="btn btn-outline btn-sm" onclick="saveToBrokerCRM()">💾 Save to Broker CRM</button>
+        </div>
+        <div class="info-grid" id="lk-grid">
+          <div class="info-card"><div class="info-label">Legal Name</div><div class="info-value" id="lk-legal-name">—</div></div>
+          <div class="info-card"><div class="info-label">USDOT#</div><div class="info-value muted" id="lk-usdot">—</div></div>
+          <div class="info-card"><div class="info-label">MC#</div><div class="info-value muted" id="lk-mc">—</div></div>
+          <div class="info-card"><div class="info-label">Operating Status</div><div class="info-value" id="lk-status">—</div></div>
+          <div class="info-card"><div class="info-label">Safety Rating</div><div class="info-value" id="lk-rating">—</div></div>
+          <div class="info-card"><div class="info-label">Authority Type</div><div class="info-value muted" id="lk-authority">—</div></div>
+          <div class="info-card"><div class="info-label">Insurance on File</div><div class="info-value" id="lk-insurance">—</div></div>
+          <div class="info-card"><div class="info-label">Driver OOS Rate</div><div class="info-value" id="lk-driver-oos">—</div></div>
+          <div class="info-card"><div class="info-label">Vehicle OOS Rate</div><div class="info-value" id="lk-vehicle-oos">—</div></div>
+          <div class="info-card"><div class="info-label">Total Crashes (24mo)</div><div class="info-value" id="lk-crashes">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-blue">
+    <strong>How lookups work:</strong> If an FMCSA QC API key is configured (Tab 5), lookups return real-time JSON data instantly. Without a key, you will be redirected to the SAFER public search page at safer.fmcsa.dot.gov.
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     TAB 3 — INSURER VERIFY
+════════════════════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-insurer">
+
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">Insurer Verification</div>
+      <div class="panel-sub">Verify the insurance company named on a COI is legitimate</div>
+    </div>
+    <div class="panel-body">
+      <div class="field-group">
+        <label class="field-label">Insurance Company Name (as shown on COI)</label>
+        <input class="form-input" id="ins-name" placeholder="e.g. Canal Insurance Company, Great West Casualty Co…">
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+        <button class="btn btn-primary btn-sm" onclick="openNAIC()">🔍 NAIC Lookup (naic.org)</button>
+        <button class="btn btn-outline btn-sm" onclick="window.open('https://motus.dot.gov','_blank')">⚡ FMCSA Filing Check (MOTUS)</button>
+      </div>
+
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--text);">Manual Verification Checklist</div>
+      <ul class="checklist" id="verif-checklist">
+        <li id="chk-item-0"><input type="checkbox" id="chk0" onchange="updateChecklist()"><label for="chk0">Insurer name found in NAIC database (national, admitted carrier)</label></li>
+        <li id="chk-item-1"><input type="checkbox" id="chk1" onchange="updateChecklist()"><label for="chk1">Policy number format is valid (not obviously fake or sequential)</label></li>
+        <li id="chk-item-2"><input type="checkbox" id="chk2" onchange="updateChecklist()"><label for="chk2">Agent phone number answers and verbally confirms active coverage</label></li>
+        <li id="chk-item-3"><input type="checkbox" id="chk3" onchange="updateChecklist()"><label for="chk3">Certificate holder matches the load or assignment on file</label></li>
+        <li id="chk-item-4"><input type="checkbox" id="chk4" onchange="updateChecklist()"><label for="chk4">Policy is not expired (check effective and expiration dates)</label></li>
+        <li id="chk-item-5"><input type="checkbox" id="chk5" onchange="updateChecklist()"><label for="chk5">Coverage meets minimum $300K liability for motor carriers (49 CFR 387)</label></li>
+      </ul>
+
+      <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;align-items:center;">
+        <button class="btn btn-green btn-sm" onclick="markVerified()">✅ Mark as Verified</button>
+        <button class="btn btn-red btn-sm" onclick="markRejected()">❌ Mark as Rejected</button>
+        <span id="verif-progress" style="font-size:12px;color:var(--mid);"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">Recent Verifications</div>
+      <div class="panel-sub">Pulled from COI registry (nexus_pilot_cois + nexus_cois)</div>
+    </div>
+    <div class="panel-body" style="padding:0;">
+      <div class="verif-list" id="recent-verif-list" style="padding:14px;">
+        <div style="color:var(--mid);font-size:13px;text-align:center;padding:16px 0;">No recent verifications. Use the form above to verify an insurer.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-blue">
+    <strong>Why this matters:</strong> Fraudulent COIs are a known problem in trucking. Always cross-check the insurer name in the NAIC database. Legitimate admitted carriers appear at <strong>content.naic.org/cis/searchCompany</strong>. If the insurer cannot be found, do not accept the certificate.
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     TAB 4 — MOTUS / L&I HUB
+════════════════════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-motus">
+
+  <div class="callout callout-purple" style="margin-bottom:16px;">
+    <strong>About MOTUS:</strong> MOTUS is FMCSA's official Licensing &amp; Insurance system at <strong>motus.dot.gov</strong> (part of the U.S. Department of Transportation). It replaced the old L&amp;I Public search. Use it to verify operating authority, broker bonds, and insurance filings for any carrier or broker.
+  </div>
+
+  <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:10px;">Quick Access — Official FMCSA / DOT Links</div>
+  <div class="action-cards">
+    <a class="action-card" href="https://motus.dot.gov" target="_blank" rel="noopener">
+      <div class="action-card-icon">🏢</div>
+      <div class="action-card-title">My Operating Authority</div>
+      <div class="action-card-desc">View and manage your carrier operating authority via the official FMCSA MOTUS system.</div>
+    </a>
+    <a class="action-card" href="https://motus.dot.gov" target="_blank" rel="noopener">
+      <div class="action-card-icon">🔎</div>
+      <div class="action-card-title">Verify a Carrier's Authority</div>
+      <div class="action-card-desc">Confirm that a broker or shipper's carrier is authorized to operate before dispatching a load.</div>
+    </a>
+    <a class="action-card" href="https://motus.dot.gov" target="_blank" rel="noopener">
+      <div class="action-card-icon">💰</div>
+      <div class="action-card-title">Broker Bond Verification</div>
+      <div class="action-card-desc">Confirm a freight broker has filed the required $75,000 BMC-84 surety bond or trust fund.</div>
+    </a>
+    <a class="action-card" href="https://motus.dot.gov" target="_blank" rel="noopener">
+      <div class="action-card-icon">📄</div>
+      <div class="action-card-title">Insurance Filings (BMC-91/91X)</div>
+      <div class="action-card-desc">Verify liability insurance filings. BMC-91 covers public liability; BMC-91X is the cancellation form.</div>
+    </a>
+    <a class="action-card" href="https://motus.dot.gov" target="_blank" rel="noopener">
+      <div class="action-card-icon">📦</div>
+      <div class="action-card-title">Cargo Insurance (BMC-34)</div>
+      <div class="action-card-desc">Check cargo insurance filings. Required for household goods movers and certain for-hire carriers.</div>
+    </a>
+    <a class="action-card" href="https://safer.fmcsa.dot.gov/mcs150t/pkg_shipper.prc_oos_search" target="_blank" rel="noopener">
+      <div class="action-card-icon">🚫</div>
+      <div class="action-card-title">Out-of-Service Orders</div>
+      <div class="action-card-desc">Search active Out-of-Service orders via SAFER. Check before dispatching any driver or vehicle.</div>
+    </a>
+  </div>
+
+  <div class="callout callout-yellow" style="margin-top:16px;">
+    <strong>Important:</strong> The old SAFER L&amp;I search (<code>li-public.fmcsa.dot.gov</code>) has been replaced by MOTUS. If you see websites at <strong>fmcsa.com</strong> (NOT .dot.gov), those are commercial third-party services — <em>not the U.S. Government</em>.
+  </div>
+
+  <!-- MCS-150 Reminder -->
+  <div class="panel" style="margin-top:16px;">
+    <div class="panel-head">
+      <div class="panel-title">MCS-150 Biennial Update Reminder</div>
+      <div class="panel-sub">Motor carrier census form — required every 2 years per 49 CFR 390.19</div>
+    </div>
+    <div class="panel-body">
+      <div class="form-row" style="align-items:flex-end;margin-bottom:14px;">
+        <div class="field-group" style="margin-bottom:0;">
+          <label class="field-label">Date of Last MCS-150 Update</label>
+          <input class="form-input" type="date" id="mcs150-date" onchange="calcMCS150()">
+        </div>
+        <div>
+          <button class="btn btn-outline btn-sm" onclick="window.open('https://portal.fmcsa.dot.gov/URegistrationWizard/','_blank')">Update MCS-150 on FMCSA Portal</button>
+        </div>
+      </div>
+      <div id="mcs150-result" style="font-size:13px;color:var(--mid);">Enter your last update date to see your next filing deadline.</div>
+      <div class="progress-bar" style="margin-top:10px;display:none;" id="mcs150-progress-wrap">
+        <div class="progress-fill" id="mcs150-progress-fill" style="width:0%;background:var(--green);"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     TAB 5 — API SETTINGS
+════════════════════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-settings">
+
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">FMCSA QC API Key — Required for Live Carrier Lookups</div>
+      <div class="panel-sub">Free registration at ask.fmcsa.dot.gov — response within 1 business day</div>
+    </div>
+    <div class="panel-body">
+      <div class="callout callout-blue" style="margin-bottom:16px;">
+        The <strong>FMCSA Query Center (QC) API</strong> returns real-time carrier data in JSON format. It's free to register. Once configured, Carrier Nexus can look up any carrier's safety record, authority status, and insurance directly — no browser redirects needed.
+      </div>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:10px;">How to Get Your API Key</div>
+      <ol class="steps">
+        <li>Go to the FMCSA registration page: <a href="https://ask.fmcsa.dot.gov/app/answers/detail/a_id/1898" target="_blank" rel="noopener" style="color:var(--blue);">ask.fmcsa.dot.gov — Register for QC API</a> — opens in new tab</li>
+        <li>Complete the short registration form with your company name, USDOT#, and email address</li>
+        <li>FMCSA will email your <strong>webKey</strong> — usually within 1 business day</li>
+        <li>Paste it in the field below and click <strong>Save Configuration</strong></li>
+      </ol>
+
+      <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:18px;">
+        <div class="form-row" style="margin-bottom:14px;">
+          <div class="field-group" style="margin-bottom:0;">
+            <label class="field-label">FMCSA QC Web Key</label>
+            <div class="pass-wrap">
+              <input class="form-input" type="password" id="api-webkey" placeholder="Paste your webKey here…">
+              <button class="pass-toggle" type="button" onclick="toggleKeyVisibility()" id="key-toggle-btn" title="Show/hide key">👁</button>
+            </div>
+          </div>
+          <div class="field-group" style="margin-bottom:0;">
+            <label class="field-label">Company Name</label>
+            <input class="form-input" id="api-company" placeholder="e.g. Carrier Trucking US, LLC">
+          </div>
+        </div>
+        <div class="form-row-3" style="margin-bottom:16px;">
+          <div class="field-group" style="margin-bottom:0;">
+            <label class="field-label">Company USDOT#</label>
+            <input class="form-input" id="api-usdot" placeholder="e.g. 4326039">
+          </div>
+          <div class="field-group" style="margin-bottom:0;">
+            <label class="field-label">Company MC# (digits only)</label>
+            <input class="form-input" id="api-mc" placeholder="e.g. 1688495">
+          </div>
+          <div></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+          <button class="btn btn-primary btn-sm" onclick="saveAPIConfig()">💾 Save Configuration</button>
+          <button class="btn btn-outline btn-sm" onclick="testAPIConnection()">🧪 Test Connection</button>
+          <button class="btn btn-outline btn-sm" style="color:var(--red);" onclick="clearAPIConfig()">🗑 Clear Key</button>
+        </div>
+        <div id="api-test-result" style="display:none;"></div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px;">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:10px;">Saved Configuration</div>
+        <div id="api-saved-display">
+          <div style="color:var(--mid);font-size:13px;">No API key configured yet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-yellow">
+    <strong>Security note:</strong> The web key is stored in your browser's localStorage and is only used for direct API calls from this browser. It is never transmitted to any third-party server. The key is masked in the display — only the last 4 characters are shown.
+  </div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<script src="nexus-sidebar.js"></script>
+<script>
+// ─────────────────────────────────────────────────────────
+// STORAGE HELPERS
+// ─────────────────────────────────────────────────────────
+function lsGet(k, fallback) {
+  try { var v = localStorage.getItem(k); return v !== null ? JSON.parse(v) : fallback; } catch(e) { return fallback; }
+}
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {} }
+function lsRaw(k) { return localStorage.getItem(k) || ''; }
+function lsRawSet(k, v) { localStorage.setItem(k, v); }
+
+// ─────────────────────────────────────────────────────────
+// TAB SWITCHING
+// ─────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  var pane = document.getElementById('tab-' + name);
+  if (pane) pane.classList.add('active');
+  var btns = document.querySelectorAll('.tab-btn');
+  var map = { profile: 0, lookup: 1, insurer: 2, motus: 3, settings: 4 };
+  var idx = map[name];
+  if (idx !== undefined && btns[idx]) btns[idx].classList.add('active');
+}
+
+// ─────────────────────────────────────────────────────────
+// TAB 5 — API SETTINGS
+// ─────────────────────────────────────────────────────────
+function loadAPIConfig() {
+  var key = lsRaw('nexus_fmcsa_webkey');
+  var usdot = lsRaw('nexus_my_usdot');
+  var mc = lsRaw('nexus_my_mc');
+  var company = lsRaw('nexus_my_company_name');
+  if (key) document.getElementById('api-webkey').value = key;
+  if (usdot) document.getElementById('api-usdot').value = usdot;
+  if (mc) document.getElementById('api-mc').value = mc;
+  if (company) document.getElementById('api-company').value = company;
+  renderSavedConfig();
+}
+
+function saveAPIConfig() {
+  var key = document.getElementById('api-webkey').value.trim();
+  var usdot = document.getElementById('api-usdot').value.trim();
+  var mc = document.getElementById('api-mc').value.trim();
+  var company = document.getElementById('api-company').value.trim();
+  if (key) lsRawSet('nexus_fmcsa_webkey', key);
+  if (usdot) lsRawSet('nexus_my_usdot', usdot);
+  if (mc) lsRawSet('nexus_my_mc', mc);
+  if (company) lsRawSet('nexus_my_company_name', company);
+  // also sync to profile tab inputs
+  if (usdot) { var u = document.getElementById('my-usdot'); if (u) u.value = usdot; }
+  if (mc) { var m = document.getElementById('my-mc'); if (m) m.value = mc; }
+  renderSavedConfig();
+  showTestResult('success', 'Configuration saved.');
+}
+
+function clearAPIConfig() {
+  if (!confirm('Clear the saved API key?')) return;
+  localStorage.removeItem('nexus_fmcsa_webkey');
+  document.getElementById('api-webkey').value = '';
+  renderSavedConfig();
+  showTestResult('info', 'API key cleared.');
+}
+
+function renderSavedConfig() {
+  var key = lsRaw('nexus_fmcsa_webkey');
+  var usdot = lsRaw('nexus_my_usdot');
+  var mc = lsRaw('nexus_my_mc');
+  var company = lsRaw('nexus_my_company_name');
+  var el = document.getElementById('api-saved-display');
+  if (!el) return;
+  if (!key) {
+    el.innerHTML = '<div style="color:var(--mid);font-size:13px;">No API key configured yet.</div>';
+    return;
+  }
+  var masked = key.length > 4 ? '••••••••••••' + key.slice(-4) : '••••';
+  el.innerHTML = '<div class="kv-row"><span class="kv-key">Web Key</span><span class="kv-val" style="font-family:monospace;">' + masked + ' <span class="badge badge-green">Saved</span></span></div>' +
+    '<div class="kv-row"><span class="kv-key">Company</span><span class="kv-val">' + (company || '—') + '</span></div>' +
+    '<div class="kv-row"><span class="kv-key">USDOT#</span><span class="kv-val">' + (usdot || '—') + '</span></div>' +
+    '<div class="kv-row"><span class="kv-key">MC#</span><span class="kv-val">' + (mc || '—') + '</span></div>';
+}
+
+function toggleKeyVisibility() {
+  var inp = document.getElementById('api-webkey');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+async function testAPIConnection() {
+  var key = lsRaw('nexus_fmcsa_webkey') || document.getElementById('api-webkey').value.trim();
+  var usdot = lsRaw('nexus_my_usdot') || document.getElementById('api-usdot').value.trim();
+  if (!key) { showTestResult('error', 'No web key configured. Save your key first.'); return; }
+  if (!usdot) { showTestResult('error', 'USDOT# required to test connection.'); return; }
+  showTestResult('info', 'Connecting to FMCSA QC API…');
+  var url = 'https://mobile.fmcsa.dot.gov/qc/services/carriers/' + encodeURIComponent(usdot) + '?webKey=' + encodeURIComponent(key);
+  try {
+    var resp = await fetch(url);
+    if (resp.ok) {
+      var data = await resp.json();
+      if (data && data.content) {
+        showTestResult('success', 'Connection successful. Carrier: ' + (data.content.legalName || usdot));
+      } else {
+        showTestResult('warning', 'API responded but carrier data is empty. Check your USDOT#.');
+      }
+    } else {
+      showTestResult('error', 'API returned HTTP ' + resp.status + '. Check your web key.');
+    }
+  } catch(err) {
+    showTestResult('warning', 'Could not reach FMCSA API (CORS or network error). Key saved — live lookups may still work from supported browsers.');
+  }
+}
+
+function showTestResult(type, msg) {
+  var el = document.getElementById('api-test-result');
+  if (!el) return;
+  var map = { success: 'callout-green', error: 'callout-red', warning: 'callout-yellow', info: 'callout-blue' };
+  el.className = 'callout ' + (map[type] || 'callout-blue');
+  el.style.display = 'block';
+  el.textContent = msg;
+}
+
+// ─────────────────────────────────────────────────────────
+// TAB 1 — MY CARRIER PROFILE
+// ─────────────────────────────────────────────────────────
+function saveMyIdentifiers() {
+  var usdot = document.getElementById('my-usdot').value.trim();
+  var mc = document.getElementById('my-mc').value.trim();
+  if (usdot) lsRawSet('nexus_my_usdot', usdot);
+  if (mc) lsRawSet('nexus_my_mc', mc);
+}
+
+function loadMyIdentifiers() {
+  var usdot = lsRaw('nexus_my_usdot') || '4326039';
+  var mc = lsRaw('nexus_my_mc') || '1688495';
+  document.getElementById('my-usdot').value = usdot;
+  document.getElementById('my-mc').value = mc;
+}
+
+function openSAFER() {
+  window.open('https://safer.fmcsa.dot.gov/CompanySnapshot.aspx', '_blank');
+}
+
+function openCSAScores() {
+  var usdot = lsRaw('nexus_my_usdot') || '4326039';
+  window.open('https://ai.fmcsa.dot.gov/SMS/Carrier/' + encodeURIComponent(usdot) + '/Overview.aspx', '_blank');
+}
+
+async function refreshMyProfile() {
+  var key = lsRaw('nexus_fmcsa_webkey');
+  var usdot = document.getElementById('my-usdot').value.trim() || lsRaw('nexus_my_usdot');
+  if (!usdot) { alert('Enter a USDOT# first.'); return; }
+  if (!key) {
+    openSAFER();
+    return;
+  }
+  document.getElementById('profile-loading').style.display = 'block';
+  document.getElementById('profile-error').style.display = 'none';
+  var url = 'https://mobile.fmcsa.dot.gov/qc/services/carriers/' + encodeURIComponent(usdot) + '?webKey=' + encodeURIComponent(key);
+  try {
+    var resp = await fetch(url);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    var data = await resp.json();
+    document.getElementById('profile-loading').style.display = 'none';
+    if (data && data.content) {
+      populateProfileCards(data.content);
+    } else {
+      showProfileError('No carrier data returned. Verify the USDOT# and API key.');
+    }
+  } catch(err) {
+    document.getElementById('profile-loading').style.display = 'none';
+    showProfileError('Could not reach FMCSA API (' + err.message + '). Opening SAFER in browser.');
+    setTimeout(openSAFER, 1000);
+  }
+}
+
+function showProfileError(msg) {
+  var el = document.getElementById('profile-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function populateProfileCards(c) {
+  setText('p-legal-name', c.legalName || '—');
+  setText('p-dba', c.dbaName || '—');
+  var active = (c.usdotStatus || '').toUpperCase() === 'ACTIVE';
+  setHtml('p-status', active ? '<span class="badge badge-green">ACTIVE</span>' : '<span class="badge badge-red">' + (c.usdotStatus || 'UNKNOWN') + '</span>');
+  var sr = (c.safetyRating || '').toUpperCase();
+  var srBadge = sr === 'SATISFACTORY' ? 'badge-green' : sr === 'CONDITIONAL' ? 'badge-yellow' : sr === 'UNSATISFACTORY' ? 'badge-red' : 'badge-gray';
+  setHtml('p-safety-rating', '<span class="badge ' + srBadge + '">' + (c.safetyRating || 'NOT RATED') + '</span>');
+  setText('p-authority', c.carrierOperation || '—');
+  var ins = c.bipdInsuranceOnFile;
+  setHtml('p-insurance', ins ? '<span class="badge badge-green">Yes — ' + (c.bipdInsuranceRequired || 'On File') + '</span>' : '<span class="badge badge-red">Not Filed</span>');
+  setText('p-mcs150', fmtDate(c.mcs150Date) || '—');
+  setText('p-ids', 'DOT ' + (c.dotNumber || '—') + ' / MC ' + (c.docketNumber || '—'));
+  setText('p-driver-oos', fmtPct(c.driverOosRate));
+  setText('p-vehicle-oos', fmtPct(c.vehicleOosRate));
+  setText('p-crashes', c.crashTotal != null ? String(c.crashTotal) : '—');
+  setText('p-crash-injury', c.crashInjuries != null ? String(c.crashInjuries) : '—');
+  setText('p-crash-fatal', c.crashFatalities != null ? String(c.crashFatalities) : '—');
+  updateProfileTrafficLight(c);
+}
+
+function updateProfileTrafficLight(c) {
+  var el = document.getElementById('profile-traffic-light');
+  if (!el) return;
+  var active = (c.usdotStatus || '').toUpperCase() === 'ACTIVE';
+  var sr = (c.safetyRating || '').toUpperCase();
+  var ins = !!c.bipdInsuranceOnFile;
+  if (active && (sr === 'SATISFACTORY' || sr === '') && ins) {
+    el.className = 'tl-green'; el.textContent = '✅ Satisfactory';
+  } else if (!active || sr === 'UNSATISFACTORY' || !ins) {
+    el.className = 'tl-red'; el.textContent = '🔴 Action Required';
+  } else {
+    el.className = 'tl-yellow'; el.textContent = '⚠️ Conditional / Review';
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// TAB 2 — CARRIER LOOKUP
+// ─────────────────────────────────────────────────────────
+var lookupType = 'usdot';
+var lastLookupResult = null;
+
+function setLookupType(t) {
+  lookupType = t;
+  ['usdot','mc','name'].forEach(function(x) {
+    var b = document.getElementById('lk-type-' + x);
+    if (!b) return;
+    if (x === t) { b.style.background = 'var(--blue)'; b.style.color = '#fff'; b.style.border = 'none'; }
+    else { b.style.background = 'transparent'; b.style.color = 'var(--text)'; b.style.border = '1px solid var(--border)'; }
+  });
+  var ph = { usdot: 'Enter USDOT#…', mc: 'Enter MC# (digits only)…', name: 'Enter company name…' };
+  var inp = document.getElementById('lk-query');
+  if (inp) inp.placeholder = ph[t];
+}
+
+async function searchCarrier() {
+  var q = (document.getElementById('lk-query').value || '').trim();
+  if (!q) { alert('Enter a search term.'); return; }
+  var key = lsRaw('nexus_fmcsa_webkey');
+  document.getElementById('lk-loading').style.display = 'block';
+  document.getElementById('lk-error').style.display = 'none';
+  document.getElementById('lk-results').style.display = 'none';
+  if (!key) {
+    document.getElementById('lk-loading').style.display = 'none';
+    document.getElementById('lk-error').style.display = 'block';
+    document.getElementById('lk-error').textContent = 'No API key configured — opening SAFER search in a new tab. Add your key in the API Settings tab for live lookups.';
+    window.open('https://safer.fmcsa.dot.gov/CompanySnapshot.aspx', '_blank');
+    return;
+  }
+  var urlMap = {
+    usdot: 'https://mobile.fmcsa.dot.gov/qc/services/carriers/' + encodeURIComponent(q) + '?webKey=' + encodeURIComponent(key),
+    mc: 'https://mobile.fmcsa.dot.gov/qc/services/carriers/docket-number/' + encodeURIComponent(q) + '?webKey=' + encodeURIComponent(key),
+    name: 'https://mobile.fmcsa.dot.gov/qc/services/carriers/name/' + encodeURIComponent(q) + '?webKey=' + encodeURIComponent(key)
+  };
+  var url = urlMap[lookupType];
+  try {
+    var resp = await fetch(url);
+    document.getElementById('lk-loading').style.display = 'none';
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    var data = await resp.json();
+    var carrier = data && data.content ? data.content : null;
+    if (!carrier && data && Array.isArray(data.content) && data.content.length > 0) carrier = data.content[0];
+    if (!carrier) {
+      document.getElementById('lk-error').style.display = 'block';
+      document.getElementById('lk-error').textContent = 'No carrier found for that search. Try a different search type or open SAFER directly.';
+      return;
+    }
+    lastLookupResult = carrier;
+    populateLookupCards(carrier);
+    document.getElementById('lk-results').style.display = 'block';
+  } catch(err) {
+    document.getElementById('lk-loading').style.display = 'none';
+    document.getElementById('lk-error').style.display = 'block';
+    document.getElementById('lk-error').textContent = 'Search failed: ' + err.message + '. Opening SAFER instead.';
+    window.open('https://safer.fmcsa.dot.gov/CompanySnapshot.aspx', '_blank');
+  }
+}
+
+function populateLookupCards(c) {
+  setText('lk-legal-name', c.legalName || '—');
+  setText('lk-usdot', c.dotNumber || '—');
+  setText('lk-mc', c.docketNumber || '—');
+  var active = (c.usdotStatus || '').toUpperCase() === 'ACTIVE';
+  setHtml('lk-status', active ? '<span class="badge badge-green">ACTIVE</span>' : '<span class="badge badge-red">' + (c.usdotStatus || 'UNKNOWN') + '</span>');
+  var sr = (c.safetyRating || '').toUpperCase();
+  var srBadge = sr === 'SATISFACTORY' ? 'badge-green' : sr === 'CONDITIONAL' ? 'badge-yellow' : sr === 'UNSATISFACTORY' ? 'badge-red' : 'badge-gray';
+  setHtml('lk-rating', '<span class="badge ' + srBadge + '">' + (c.safetyRating || 'NOT RATED') + '</span>');
+  setText('lk-authority', c.carrierOperation || '—');
+  var ins = c.bipdInsuranceOnFile;
+  setHtml('lk-insurance', ins ? '<span class="badge badge-green">Yes</span>' : '<span class="badge badge-red">Not Filed</span>');
+  setText('lk-driver-oos', fmtPct(c.driverOosRate));
+  setText('lk-vehicle-oos', fmtPct(c.vehicleOosRate));
+  setText('lk-crashes', c.crashTotal != null ? String(c.crashTotal) : '—');
+  // Traffic light
+  var el = document.getElementById('lk-traffic-light');
+  if (!el) return;
+  var satisfactory = (sr === 'SATISFACTORY' || sr === 'NOT RATED' || sr === '');
+  if (active && satisfactory && ins) {
+    el.className = 'tl-green'; el.textContent = '✅ Looks Good';
+  } else if (!active || sr === 'UNSATISFACTORY' || !ins) {
+    el.className = 'tl-red'; el.textContent = '🔴 High Risk';
+  } else {
+    el.className = 'tl-yellow'; el.textContent = '⚠️ Review Required';
+  }
+}
+
+function saveToBrokerCRM() {
+  if (!lastLookupResult) { alert('No carrier data loaded.'); return; }
+  var brokers = lsGet('nexus_brokers', []);
+  var c = lastLookupResult;
+  var rec = {
+    id: 'FMCSA-' + (c.dotNumber || Date.now()),
+    name: c.legalName || 'Unknown',
+    usdot: c.dotNumber || '',
+    mc: c.docketNumber || '',
+    status: c.usdotStatus || '',
+    safetyRating: c.safetyRating || '',
+    insurance: !!c.bipdInsuranceOnFile,
+    savedAt: new Date().toISOString()
+  };
+  var existing = brokers.findIndex(function(b) { return b.usdot === rec.usdot; });
+  if (existing >= 0) { brokers[existing] = rec; } else { brokers.unshift(rec); }
+  lsSet('nexus_brokers', brokers);
+  alert('Saved to Broker CRM: ' + rec.name);
+}
+
+// ─────────────────────────────────────────────────────────
+// TAB 3 — INSURER VERIFY
+// ─────────────────────────────────────────────────────────
+function openNAIC() {
+  var name = (document.getElementById('ins-name').value || '').trim();
+  if (name) {
+    window.open('https://content.naic.org/cis/searchCompany?searchType=COMPANY_NAME_SEARCH&companyName=' + encodeURIComponent(name), '_blank');
+  } else {
+    window.open('https://content.naic.org/cis/searchCompany', '_blank');
+  }
+}
+
+function updateChecklist() {
+  var total = 6;
+  var checked = 0;
+  for (var i = 0; i < total; i++) {
+    var cb = document.getElementById('chk' + i);
+    var li = document.getElementById('chk-item-' + i);
+    if (cb && cb.checked) { checked++; if (li) li.classList.add('checked'); }
+    else { if (li) li.classList.remove('checked'); }
+  }
+  var prog = document.getElementById('verif-progress');
+  if (prog) prog.textContent = checked + ' of ' + total + ' checks passed';
+}
+
+function markVerified() {
+  var name = (document.getElementById('ins-name').value || '').trim();
+  if (!name) { alert('Enter an insurance company name first.'); return; }
+  saveVerification(name, 'verified');
+  renderRecentVerifications();
+  alert('Marked as Verified: ' + name);
+}
+
+function markRejected() {
+  var name = (document.getElementById('ins-name').value || '').trim();
+  if (!name) { alert('Enter an insurance company name first.'); return; }
+  saveVerification(name, 'rejected');
+  renderRecentVerifications();
+  alert('Marked as Rejected: ' + name);
+}
+
+function saveVerification(name, status) {
+  var key = 'nexus_insurer_verifications';
+  var list = lsGet(key, []);
+  var rec = { insurer: name, status: status, checkedAt: new Date().toISOString() };
+  var idx = list.findIndex(function(x) { return x.insurer.toLowerCase() === name.toLowerCase(); });
+  if (idx >= 0) { list[idx] = rec; } else { list.unshift(rec); }
+  if (list.length > 50) list = list.slice(0, 50);
+  lsSet(key, list);
+}
+
+function renderRecentVerifications() {
+  var el = document.getElementById('recent-verif-list');
+  if (!el) return;
+  // Merge nexus_insurer_verifications + pilot_cois
+  var verifs = lsGet('nexus_insurer_verifications', []);
+  var cois = lsGet('nexus_pilot_cois', []);
+  var coiVerifs = cois.filter(function(c) { return c.insurerStatus; }).map(function(c) {
+    return { insurer: c.insurer || c.company || '—', status: c.insurerStatus, checkedAt: c.updatedAt || '' };
+  });
+  var all = verifs.concat(coiVerifs).slice(0, 20);
+  if (!all.length) {
+    el.innerHTML = '<div style="color:var(--mid);font-size:13px;text-align:center;padding:16px 0;">No recent verifications. Use the form above to verify an insurer.</div>';
+    return;
+  }
+  el.innerHTML = all.map(function(v) {
+    var badgeCls = v.status === 'verified' ? 'badge-green' : v.status === 'rejected' ? 'badge-red' : 'badge-gray';
+    var badgeLbl = v.status === 'verified' ? '✅ Verified' : v.status === 'rejected' ? '❌ Rejected' : v.status;
+    var dt = v.checkedAt ? new Date(v.checkedAt).toLocaleDateString() : '';
+    return '<div class="verif-item"><div class="verif-item-left"><span class="badge ' + badgeCls + '">' + badgeLbl + '</span><span style="font-weight:600;">' + escHtml(v.insurer) + '</span></div><span style="font-size:11px;color:var(--mid);">' + dt + '</span></div>';
+  }).join('');
+}
+
+// ─────────────────────────────────────────────────────────
+// TAB 4 — MOTUS / MCS-150
+// ─────────────────────────────────────────────────────────
+function loadMCS150Date() {
+  var d = lsRaw('nexus_mcs150_date');
+  if (d) {
+    document.getElementById('mcs150-date').value = d;
+    calcMCS150();
+  }
+}
+
+function calcMCS150() {
+  var val = document.getElementById('mcs150-date').value;
+  if (!val) return;
+  lsRawSet('nexus_mcs150_date', val);
+  var last = new Date(val + 'T12:00:00');
+  var next = new Date(last);
+  next.setFullYear(next.getFullYear() + 2);
+  var today = new Date();
+  var diffDays = Math.ceil((next - today) / 86400000);
+  var el = document.getElementById('mcs150-result');
+  var wrap = document.getElementById('mcs150-progress-wrap');
+  var fill = document.getElementById('mcs150-progress-fill');
+  wrap.style.display = 'block';
+  var totalDays = 730;
+  var daysUsed = Math.ceil((today - last) / 86400000);
+  var pct = Math.min(100, Math.max(0, (daysUsed / totalDays) * 100));
+  fill.style.width = pct + '%';
+  if (diffDays < 0) {
+    el.innerHTML = '<span style="color:var(--red);font-weight:700;">OVERDUE</span> — MCS-150 was due ' + Math.abs(diffDays) + ' days ago (' + fmtDateObj(next) + '). File immediately at the FMCSA portal.';
+    fill.style.background = 'var(--red)';
+  } else if (diffDays <= 60) {
+    el.innerHTML = '<span style="color:var(--yellow);font-weight:700;">Due in ' + diffDays + ' days</span> — Next required update: ' + fmtDateObj(next) + '. File soon to avoid compliance issues.';
+    fill.style.background = 'var(--yellow)';
+  } else {
+    el.innerHTML = '<span style="color:var(--green);font-weight:700;">On schedule</span> — Next MCS-150 update due: ' + fmtDateObj(next) + ' (' + diffDays + ' days away).';
+    fill.style.background = 'var(--green)';
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// UTILITY
+// ─────────────────────────────────────────────────────────
+function setText(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+function setHtml(id, val) { var el = document.getElementById(id); if (el) el.innerHTML = val; }
+function fmtPct(v) { return v != null ? v + '%' : '—'; }
+function fmtDate(s) {
+  if (!s) return '—';
+  try { return new Date(s + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); } catch(e) { return s; }
+}
+function fmtDateObj(d) {
+  try { return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); } catch(e) { return String(d); }
+}
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ─────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────
+loadMyIdentifiers();
+loadAPIConfig();
+loadMCS150Date();
+renderRecentVerifications();
+updateChecklist();
+setLookupType('usdot');
+</script>
+</body>
+</html>
