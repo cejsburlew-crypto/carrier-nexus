@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Insurance Renewal Planner — Carrier Nexus</title>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<script src="nexus-sidebar.js"></script>
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:0;}
+.tab-btn{padding:9px 18px;border:none;background:none;color:var(--mid);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s;}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
+.tab-btn:hover:not(.active){color:var(--text);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+.kpi-label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.kpi-value{font-size:26px;font-weight:800;line-height:1;}
+.kpi-sub{font-size:11px;color:var(--mid);margin-top:4px;}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:14px;font-weight:700;}
+.panel-sub{font-size:12px;color:var(--mid);}
+table{width:100%;border-collapse:collapse;}
+th{padding:9px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;}
+.badge-green{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);}
+.badge-yellow{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25);}
+.badge-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
+.badge-orange{background:rgba(249,115,22,.12);color:#f97316;border:1px solid rgba(249,115,22,.25);}
+.badge-gray{background:rgba(100,116,139,.12);color:#94a3b8;border:1px solid rgba(100,116,139,.25);}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-primary:hover{background:#2563eb;}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}
+.btn-outline:hover{background:var(--panel2);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:#059669;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;color:var(--mid);margin-bottom:5px;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--blue);}
+.form-textarea{resize:vertical;min-height:80px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.policy-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px;}
+.policy-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.policy-type{font-size:15px;font-weight:700;}
+.policy-carrier{font-size:12px;color:var(--mid);margin-top:2px;}
+.policy-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px;}
+.policy-meta-item{font-size:12px;}
+.policy-meta-label{color:var(--mid);margin-bottom:2px;}
+.policy-meta-value{font-weight:600;}
+.countdown{font-size:24px;font-weight:800;line-height:1;}
+.countdown-label{font-size:11px;color:var(--mid);}
+/* Timeline */
+.timeline-wrap{overflow-x:auto;padding:4px 0;}
+.timeline-header{display:flex;margin-bottom:6px;margin-left:180px;}
+.timeline-month{flex:1;font-size:10px;color:var(--mid);text-align:center;font-weight:700;text-transform:uppercase;}
+.timeline-row{display:flex;align-items:center;margin-bottom:10px;min-height:32px;}
+.timeline-label{width:180px;flex-shrink:0;font-size:12px;font-weight:600;padding-right:12px;}
+.timeline-track{flex:1;position:relative;height:28px;background:var(--panel2);border-radius:6px;overflow:hidden;}
+.timeline-bar{position:absolute;top:4px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;overflow:hidden;white-space:nowrap;padding:0 6px;}
+.timeline-today{position:absolute;top:0;bottom:0;width:2px;background:var(--red);z-index:10;}
+/* Brokers */
+.broker-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px;}
+.broker-name{font-size:15px;font-weight:700;margin-bottom:4px;}
+.broker-detail{font-size:13px;color:var(--mid);margin-bottom:3px;}
+.broker-detail a{color:var(--blue);text-decoration:none;}
+.broker-detail a:hover{text-decoration:underline;}
+.broker-policies{margin-top:10px;font-size:12px;color:var(--mid);}
+.alert-success{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#10b981;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px;display:none;}
+.mono{font-family:"SFMono-Regular",Consolas,monospace;font-size:11px;}
+@media(max-width:768px){.kpi-row{grid-template-columns:1fr 1fr;}.form-grid,.form-grid-3,.policy-meta{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="nexus-app" style="display:flex;min-height:100vh;background:var(--bg);">
+  <div id="nexus-sidebar"></div>
+  <main style="flex:1;padding:28px;overflow-y:auto;">
+    <h1 style="font-size:22px;font-weight:700;margin-bottom:4px;">Insurance Renewal Planner</h1>
+    <div style="font-size:13px;color:var(--mid);margin-bottom:20px;">Track policies, renewal deadlines, broker contacts, and coverage timelines.</div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('policies',this)">Policy Dashboard</button>
+      <button class="tab-btn" onclick="switchTab('calendar',this)">Renewal Calendar</button>
+      <button class="tab-btn" onclick="switchTab('add',this)">Add / Edit Policy</button>
+      <button class="tab-btn" onclick="switchTab('brokers',this)">Brokers &amp; Agents</button>
+    </div>
+
+    <!-- TAB: Policy Dashboard -->
+    <div id="tab-policies" class="tab-panel active">
+      <div class="kpi-row" id="kpi-row"></div>
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">All Policies</div>
+            <div class="panel-sub">Active and upcoming insurance policies</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="switchTab('add', document.querySelectorAll('.tab-btn')[2])">+ Add Policy</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Carrier</th>
+              <th>Policy #</th>
+              <th>Effective</th>
+              <th>Expiry</th>
+              <th>Annual Premium</th>
+              <th>Coverage</th>
+              <th>Filing</th>
+              <th>Status</th>
+              <th>Days Left</th>
+            </tr>
+          </thead>
+          <tbody id="policy-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: Renewal Calendar -->
+    <div id="tab-calendar" class="tab-panel">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Coverage Timeline — 2026</div>
+            <div class="panel-sub">Horizontal view of policy effective and expiry dates. Red line = today.</div>
+          </div>
+        </div>
+        <div style="padding:18px;">
+          <div class="timeline-wrap" id="timeline-wrap"></div>
+        </div>
+      </div>
+      <div id="renewal-alerts"></div>
+    </div>
+
+    <!-- TAB: Add/Edit Policy -->
+    <div id="tab-add" class="tab-panel">
+      <div class="panel" style="max-width:700px;">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Add New Policy</div>
+            <div class="panel-sub">Enter insurance policy details for tracking</div>
+          </div>
+        </div>
+        <div style="padding:20px;">
+          <div id="add-success" class="alert-success">Policy saved successfully.</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Policy Type *</label>
+              <select class="form-select" id="p-type">
+                <option value="">-- Select type --</option>
+                <option>Primary Liability</option>
+                <option>Cargo Insurance</option>
+                <option>Physical Damage</option>
+                <option>General Liability</option>
+                <option>Occupational Accident</option>
+                <option>Non-Trucking Liability</option>
+                <option>Workers Compensation</option>
+                <option>Umbrella / Excess</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Insurance Carrier *</label>
+              <input type="text" class="form-input" id="p-carrier" placeholder="e.g. Great West Casualty">
+            </div>
+          </div>
+          <div class="field">
+            <label>Policy Number</label>
+            <input type="text" class="form-input" id="p-policy-num" placeholder="e.g. GWC-HVY-2026-XXX-0001">
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Broker / Agency</label>
+              <input type="text" class="form-input" id="p-broker" placeholder="Agency name">
+            </div>
+            <div class="field">
+              <label>Broker Contact</label>
+              <input type="text" class="form-input" id="p-broker-contact" placeholder="Agent name">
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Broker Phone</label>
+              <input type="tel" class="form-input" id="p-broker-phone" placeholder="(xxx) xxx-xxxx">
+            </div>
+            <div class="field">
+              <label>Broker Email</label>
+              <input type="email" class="form-input" id="p-broker-email" placeholder="agent@agency.com">
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Effective Date *</label>
+              <input type="date" class="form-input" id="p-effective">
+            </div>
+            <div class="field">
+              <label>Expiry Date *</label>
+              <input type="date" class="form-input" id="p-expiry">
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Annual Premium ($)</label>
+              <input type="number" class="form-input" id="p-premium" step="0.01" min="0">
+            </div>
+            <div class="field">
+              <label>Deductible ($)</label>
+              <input type="number" class="form-input" id="p-deductible" step="0.01" min="0">
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Coverage Limit</label>
+              <input type="text" class="form-input" id="p-coverage" placeholder="e.g. $1,000,000 CSL">
+            </div>
+            <div class="field">
+              <label>Filing Required</label>
+              <select class="form-select" id="p-filing">
+                <option value="None">None</option>
+                <option value="BMC-91">BMC-91 (Liability)</option>
+                <option value="BMC-34">BMC-34 (Cargo)</option>
+                <option value="MCS-90">MCS-90</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Notes</label>
+            <textarea class="form-textarea" id="p-notes" placeholder="Additional coverage details..."></textarea>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn btn-green" onclick="savePolicy()">Save Policy</button>
+            <button class="btn btn-outline" onclick="clearPolicyForm()">Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Brokers -->
+    <div id="tab-brokers" class="tab-panel">
+      <div style="margin-bottom:16px;">
+        <div style="font-size:14px;font-weight:700;margin-bottom:2px;">Insurance Brokers &amp; Agents</div>
+        <div style="font-size:13px;color:var(--mid);">Contact directory for all insurance relationships</div>
+      </div>
+      <div id="brokers-list"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+(function() {
+  "use strict";
+
+  var LS_KEY = "nexus_insurance_policies";
+  var TODAY = "2026-06-26";
+
+  var SEED = [
+    { id: "ins_001", type: "Primary Liability", carrier: "Great West Casualty Company", policy_number: "GWC-HVY-2026-CTU-8821", broker: "Testing Insurance Agency LLC", broker_contact: "Tom TestAgent", broker_phone: "(713) 555-0650", broker_email: "tom@testinginsurance.com", effective_date: "2026-01-01", expiry_date: "2027-01-01", premium_annual: 48500, coverage_limit: "$1,000,000 CSL", deductible: 1000, filing_required: "BMC-91", filing_on_file: true, status: "ACTIVE", notes: "Primary liability for all power units. Covers 2 tractors." },
+    { id: "ins_002", type: "Cargo Insurance", carrier: "Canal Insurance Company", policy_number: "CIC-CGO-2026-CTU-4421", broker: "Testing Insurance Agency LLC", broker_contact: "Tom TestAgent", broker_phone: "(713) 555-0650", broker_email: "tom@testinginsurance.com", effective_date: "2026-01-01", expiry_date: "2027-01-01", premium_annual: 12200, coverage_limit: "$250,000 per occurrence", deductible: 2500, filing_required: "BMC-34", filing_on_file: true, status: "ACTIVE", notes: "Motor truck cargo. Covers machinery, equipment, general freight." },
+    { id: "ins_003", type: "Physical Damage", carrier: "Protective Insurance Corporation", policy_number: "PIC-PD-2026-CTU-7710", broker: "Testing Insurance Agency LLC", broker_contact: "Tom TestAgent", broker_phone: "(713) 555-0650", broker_email: "tom@testinginsurance.com", effective_date: "2026-01-01", expiry_date: "2027-01-01", premium_annual: 18750, coverage_limit: "$450,000 agreed value (2 tractors + 3 trailers)", deductible: 5000, filing_required: "None", filing_on_file: false, status: "ACTIVE", notes: "Comprehensive and collision on all units. Includes hired/non-owned." },
+    { id: "ins_004", type: "General Liability", carrier: "Employers Assurance Corporation", policy_number: "EAC-GL-2026-CTU-3301", broker: "Testing Insurance Agency LLC", broker_contact: "Tom TestAgent", broker_phone: "(713) 555-0650", broker_email: "tom@testinginsurance.com", effective_date: "2026-01-01", expiry_date: "2027-01-01", premium_annual: 4800, coverage_limit: "$1,000,000 per occurrence / $2,000,000 aggregate", deductible: 500, filing_required: "None", filing_on_file: false, status: "ACTIVE", notes: "Premises and operations coverage." },
+    { id: "ins_005", type: "Occupational Accident", carrier: "Sentry Insurance", policy_number: "SEN-OA-2026-CTU-9901", broker: "Testing Insurance Agency LLC", broker_contact: "Tom TestAgent", broker_phone: "(713) 555-0650", broker_email: "tom@testinginsurance.com", effective_date: "2026-01-01", expiry_date: "2026-12-31", premium_annual: 6200, coverage_limit: "$1,000,000 accidental death / $500,000 disability", deductible: 0, filing_required: "None", filing_on_file: false, status: "ACTIVE", notes: "Covers owner-operators as independent contractors." }
+  ];
+
+  function getPolicies() {
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    var seeded = JSON.parse(JSON.stringify(SEED));
+    localStorage.setItem(LS_KEY, JSON.stringify(seeded));
+    return seeded;
+  }
+
+  function savePolicies(arr) { localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
+
+  function daysUntil(dateStr) {
+    var exp = new Date(dateStr + "T00:00:00");
+    var tod = new Date(TODAY + "T00:00:00");
+    return Math.round((exp - tod) / 86400000);
+  }
+
+  function getStatusInfo(p) {
+    var days = daysUntil(p.expiry_date);
+    if (days < 0) return { label: "EXPIRED", cls: "badge-red", color: "var(--red)" };
+    if (days < 30) return { label: "URGENT", cls: "badge-red", color: "var(--red)" };
+    if (days < 90) return { label: "RENEWING SOON", cls: "badge-yellow", color: "var(--yellow)" };
+    return { label: "ACTIVE", cls: "badge-green", color: "var(--green)" };
+  }
+
+  function fmt$(n) { return "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
+
+  function renderKPI() {
+    var policies = getPolicies();
+    var totalPremium = policies.reduce(function(a, p) { return a + (p.premium_annual || 0); }, 0);
+    var active = policies.filter(function(p) { return daysUntil(p.expiry_date) >= 0; });
+    var soonList = policies.filter(function(p) { var d = daysUntil(p.expiry_date); return d >= 0 && d < 90; });
+    var urgentList = policies.filter(function(p) { var d = daysUntil(p.expiry_date); return d >= 0 && d < 30; });
+    var nextExp = policies.filter(function(p) { return daysUntil(p.expiry_date) >= 0; })
+      .sort(function(a, b) { return daysUntil(a.expiry_date) - daysUntil(b.expiry_date); });
+    var nextDays = nextExp.length ? daysUntil(nextExp[0].expiry_date) : "—";
+
+    document.getElementById("kpi-row").innerHTML =
+      kpiCard("Total Annual Premium", fmt$(totalPremium), active.length + " active policies", "var(--blue)") +
+      kpiCard("Renewing Soon", soonList.length, "within 90 days", "var(--yellow)") +
+      kpiCard("Urgent Renewals", urgentList.length, "within 30 days", "var(--red)") +
+      kpiCard("Next Expiry", nextDays + (typeof nextDays === "number" ? " days" : ""), nextExp.length ? nextExp[0].type : "", "var(--orange)");
+  }
+
+  function kpiCard(label, value, sub, color) {
+    return "<div class=\"kpi\"><div class=\"kpi-label\">" + label + "</div>" +
+      "<div class=\"kpi-value\" style=\"color:" + color + "\">" + value + "</div>" +
+      "<div class=\"kpi-sub\">" + sub + "</div></div>";
+  }
+
+  function renderPolicies() {
+    var policies = getPolicies();
+    var tbody = document.getElementById("policy-tbody");
+    tbody.innerHTML = policies.map(function(p) {
+      var days = daysUntil(p.expiry_date);
+      var si = getStatusInfo(p);
+      var daysLabel = days < 0 ? "<span style=\"color:var(--red);font-weight:700;\">Expired " + Math.abs(days) + "d ago</span>"
+        : "<span style=\"color:" + si.color + ";font-weight:700;\">" + days + " days</span>";
+      return "<tr>" +
+        "<td><strong>" + p.type + "</strong></td>" +
+        "<td style=\"font-size:12px;\">" + p.carrier + "</td>" +
+        "<td class=\"mono\">" + p.policy_number + "</td>" +
+        "<td>" + p.effective_date + "</td>" +
+        "<td>" + p.expiry_date + "</td>" +
+        "<td style=\"color:var(--blue);font-weight:600;\">" + fmt$(p.premium_annual) + "</td>" +
+        "<td style=\"font-size:12px;max-width:160px;\">" + p.coverage_limit + "</td>" +
+        "<td>" + (p.filing_required !== "None" ? "<span class=\"badge badge-yellow\">" + p.filing_required + "</span>" : "<span style=\"color:var(--mid);\">None</span>") + "</td>" +
+        "<td><span class=\"badge " + si.cls + "\">" + si.label + "</span></td>" +
+        "<td>" + daysLabel + "</td>" +
+        "</tr>";
+    }).join("");
+  }
+
+  function renderTimeline() {
+    var policies = getPolicies();
+    var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    var YEAR = 2026;
+    var COLORS = ["#3b82f6","#10b981","#f59e0b","#a855f7","#f97316","#ef4444","#06b6d4","#84cc16"];
+
+    // Calculate today's position as fraction of year
+    var yearStart = new Date("2026-01-01T00:00:00").getTime();
+    var yearEnd = new Date("2027-01-01T00:00:00").getTime();
+    var todayMs = new Date(TODAY + "T00:00:00").getTime();
+    var todayPct = ((todayMs - yearStart) / (yearEnd - yearStart)) * 100;
+
+    var headerHtml = "<div class=\"timeline-header\">" +
+      MONTHS.map(function(m) { return "<div class=\"timeline-month\">" + m + "</div>"; }).join("") +
+      "</div>";
+
+    var rowsHtml = policies.map(function(p, i) {
+      var effMs = new Date(p.effective_date + "T00:00:00").getTime();
+      var expMs = new Date(p.expiry_date + "T00:00:00").getTime();
+      var startPct = Math.max(0, ((effMs - yearStart) / (yearEnd - yearStart)) * 100);
+      var endPct = Math.min(100, ((expMs - yearStart) / (yearEnd - yearStart)) * 100);
+      var width = Math.max(1, endPct - startPct);
+      var color = COLORS[i % COLORS.length];
+
+      return "<div class=\"timeline-row\">" +
+        "<div class=\"timeline-label\" title=\"" + p.carrier + "\">" + p.type + "</div>" +
+        "<div class=\"timeline-track\">" +
+        "<div class=\"timeline-today\" style=\"left:" + todayPct.toFixed(1) + "%;\"></div>" +
+        "<div class=\"timeline-bar\" style=\"left:" + startPct.toFixed(1) + "%;width:" + width.toFixed(1) + "%;background:" + color + ";\">" +
+        (width > 8 ? p.type.split(" ")[0] : "") +
+        "</div></div></div>";
+    }).join("");
+
+    document.getElementById("timeline-wrap").innerHTML = headerHtml + rowsHtml;
+
+    // Alerts for upcoming renewals
+    var alerts = policies.filter(function(p) { var d = daysUntil(p.expiry_date); return d >= 0 && d < 90; });
+    document.getElementById("renewal-alerts").innerHTML = alerts.map(function(p) {
+      var days = daysUntil(p.expiry_date);
+      var cls = days < 30 ? "badge-red" : "badge-yellow";
+      return "<div style=\"background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;\">" +
+        "<div><strong>" + p.type + "</strong> &mdash; " + p.carrier + "</div>" +
+        "<span class=\"badge " + cls + "\">Renews " + p.expiry_date + " (" + days + " days)</span>" +
+        "</div>";
+    }).join("");
+  }
+
+  function renderBrokers() {
+    var policies = getPolicies();
+    var brokerMap = {};
+    policies.forEach(function(p) {
+      if (!p.broker) return;
+      if (!brokerMap[p.broker]) {
+        brokerMap[p.broker] = {
+          name: p.broker,
+          contact: p.broker_contact,
+          phone: p.broker_phone,
+          email: p.broker_email,
+          policies: []
+        };
+      }
+      brokerMap[p.broker].policies.push(p.type);
+    });
+
+    document.getElementById("brokers-list").innerHTML = Object.values(brokerMap).map(function(b) {
+      return "<div class=\"broker-card\">" +
+        "<div class=\"broker-name\">" + b.name + "</div>" +
+        "<div class=\"broker-detail\">Agent: <strong>" + (b.contact || "—") + "</strong></div>" +
+        "<div class=\"broker-detail\">&#128222; " + (b.phone ? "<a href=\"tel:" + b.phone + "\">" + b.phone + "</a>" : "—") + "</div>" +
+        "<div class=\"broker-detail\">&#9993; " + (b.email ? "<a href=\"mailto:" + b.email + "\">" + b.email + "</a>" : "—") + "</div>" +
+        "<div class=\"broker-policies\">Policies: " + b.policies.join(", ") + "</div>" +
+        "</div>";
+    }).join("") || "<div style=\"color:var(--mid);padding:20px;\">No broker information found.</div>";
+  }
+
+  window.savePolicy = function() {
+    var type = document.getElementById("p-type").value;
+    var carrier = document.getElementById("p-carrier").value;
+    var eff = document.getElementById("p-effective").value;
+    var exp = document.getElementById("p-expiry").value;
+    if (!type || !carrier || !eff || !exp) { alert("Type, Carrier, Effective Date, and Expiry Date are required."); return; }
+
+    var policies = getPolicies();
+    policies.push({
+      id: "ins_" + Date.now(),
+      type: type,
+      carrier: carrier,
+      policy_number: document.getElementById("p-policy-num").value,
+      broker: document.getElementById("p-broker").value,
+      broker_contact: document.getElementById("p-broker-contact").value,
+      broker_phone: document.getElementById("p-broker-phone").value,
+      broker_email: document.getElementById("p-broker-email").value,
+      effective_date: eff,
+      expiry_date: exp,
+      premium_annual: parseFloat(document.getElementById("p-premium").value) || 0,
+      coverage_limit: document.getElementById("p-coverage").value,
+      deductible: parseFloat(document.getElementById("p-deductible").value) || 0,
+      filing_required: document.getElementById("p-filing").value,
+      filing_on_file: false,
+      status: "ACTIVE",
+      notes: document.getElementById("p-notes").value
+    });
+    savePolicies(policies);
+
+    document.getElementById("add-success").style.display = "block";
+    clearPolicyForm();
+    setTimeout(function() { document.getElementById("add-success").style.display = "none"; }, 4000);
+    renderKPI();
+    renderPolicies();
+    renderTimeline();
+    renderBrokers();
+  };
+
+  window.clearPolicyForm = function() {
+    ["p-type","p-carrier","p-policy-num","p-broker","p-broker-contact","p-broker-phone","p-broker-email","p-effective","p-expiry","p-premium","p-coverage","p-deductible","p-filing","p-notes"].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+  };
+
+  window.switchTab = function(tab, btn) {
+    document.querySelectorAll(".tab-panel").forEach(function(p) { p.classList.remove("active"); });
+    document.querySelectorAll(".tab-btn").forEach(function(b) { b.classList.remove("active"); });
+    document.getElementById("tab-" + tab).classList.add("active");
+    if (btn) btn.classList.add("active");
+    if (tab === "calendar") renderTimeline();
+    if (tab === "brokers") renderBrokers();
+  };
+
+  document.addEventListener("DOMContentLoaded", function() {
+    if (typeof NexusSidebar !== "undefined") NexusSidebar.init();
+    renderKPI();
+    renderPolicies();
+    renderTimeline();
+    renderBrokers();
+  });
+})();
+</script>
+</body>
+</html>

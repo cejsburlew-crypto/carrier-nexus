@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work Orders — Carrier Nexus</title>
+<style>
+  :root {
+    --bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;
+    --text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;
+    --yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+  .stats-row { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px; margin-bottom:24px; }
+  .stat-card { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:18px; }
+  .stat-card .lbl { font-size:11px; color:var(--mid); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+  .stat-card .val { font-size:26px; font-weight:800; }
+  .stat-card .sub { font-size:12px; color:var(--mid); margin-top:4px; }
+  .tabs { display:flex; gap:4px; border-bottom:1px solid var(--border); margin-bottom:24px; }
+  .tab { padding:10px 20px; font-size:14px; font-weight:600; cursor:pointer; border-bottom:3px solid transparent; color:var(--mid); transition:all 0.2s; }
+  .tab.active { color:var(--blue); border-bottom-color:var(--blue); }
+  .tab:hover:not(.active) { color:var(--text); }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+  .wo-card { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:20px; margin-bottom:16px; }
+  .wo-header { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
+  .wo-number { font-size:16px; font-weight:800; color:var(--blue); }
+  .wo-unit { font-size:13px; color:var(--mid); margin-top:2px; }
+  .wo-meta { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+  .wo-meta-item { font-size:13px; color:var(--mid); }
+  .wo-meta-item span { color:var(--text); font-weight:500; }
+  .wo-desc { font-size:14px; color:var(--text); line-height:1.5; margin-bottom:12px; }
+  .badge { display:inline-block; padding:4px 12px; border-radius:999px; font-size:12px; font-weight:700; }
+  .badge-completed { background:rgba(16,185,129,0.2); color:var(--green); }
+  .badge-in-progress { background:rgba(249,115,22,0.2); color:var(--orange); }
+  .badge-pending { background:rgba(59,130,246,0.2); color:var(--blue); }
+  .badge-overdue { background:rgba(239,68,68,0.2); color:var(--red); }
+  .badge-due-soon { background:rgba(245,158,11,0.2); color:var(--yellow); }
+  .badge-ok { background:rgba(16,185,129,0.2); color:var(--green); }
+  .expand-btn { background:none; border:1px solid var(--border); color:var(--mid); font-size:12px; padding:5px 12px; border-radius:6px; cursor:pointer; }
+  .expand-btn:hover { border-color:var(--blue); color:var(--blue); }
+  .wo-detail { border-top:1px solid var(--border); margin-top:14px; padding-top:14px; display:none; }
+  .parts-table { width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; }
+  .parts-table th { text-align:left; color:var(--mid); padding:6px 8px; border-bottom:1px solid var(--border); font-size:11px; text-transform:uppercase; }
+  .parts-table td { padding:6px 8px; border-bottom:1px solid rgba(30,45,69,0.5); }
+  .cost-summary { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; margin-top:12px; }
+  .cost-item .lbl { font-size:11px; color:var(--mid); margin-bottom:3px; }
+  .cost-item .val { font-size:15px; font-weight:700; }
+  .form-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; }
+  .form-group { display:flex; flex-direction:column; gap:6px; }
+  .form-group label { font-size:13px; color:var(--mid); }
+  .form-group input, .form-group select, .form-group textarea { background:var(--panel2); border:1px solid var(--border); border-radius:8px; color:var(--text); padding:10px 12px; font-size:14px; outline:none; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--blue); }
+  .form-group textarea { resize:vertical; min-height:80px; }
+  .btn { padding:10px 22px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; border:none; transition:opacity 0.2s; }
+  .btn:hover { opacity:0.85; }
+  .btn-primary { background:var(--blue); color:#fff; }
+  .btn-green { background:var(--green); color:#fff; }
+  .page-title { font-size:24px; font-weight:800; margin-bottom:4px; }
+  .page-sub { font-size:14px; color:var(--mid); margin-bottom:24px; }
+  .filter-row { display:flex; gap:12px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+  .filter-row label { font-size:13px; color:var(--mid); }
+  .filter-row select { background:var(--panel2); border:1px solid var(--border); border-radius:6px; color:var(--text); padding:7px 12px; font-size:13px; outline:none; }
+  .pm-card { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:18px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+  .pm-unit { font-size:15px; font-weight:700; }
+  .pm-sub { font-size:12px; color:var(--mid); margin-top:3px; }
+  .empty-state { text-align:center; padding:48px 20px; color:var(--mid); }
+  .empty-state .icon { font-size:40px; margin-bottom:12px; }
+  select option { background:var(--panel2); }
+  .notes-box { background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); border-radius:6px; padding:10px 14px; font-size:13px; color:var(--yellow); margin-top:10px; }
+</style>
+</head>
+<body>
+<div id="nexus-app" style="display:flex;min-height:100vh;background:var(--bg);">
+  <div id="nexus-sidebar"></div>
+  <main style="flex:1;padding:28px;overflow-y:auto;">
+    <div class="page-title">Work Orders &amp; Shop Log</div>
+    <div class="page-sub">Track vehicle maintenance, repairs, and PM schedules</div>
+    <div class="stats-row" id="stats-row"></div>
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('open')">Open Work Orders</div>
+      <div class="tab" onclick="showTab('history')">Service History</div>
+      <div class="tab" onclick="showTab('create')">Create Work Order</div>
+      <div class="tab" onclick="showTab('pm')">PM Schedule</div>
+    </div>
+    <div id="tab-open" class="tab-content active"></div>
+    <div id="tab-history" class="tab-content"></div>
+    <div id="tab-create" class="tab-content"></div>
+    <div id="tab-pm" class="tab-content"></div>
+  </main>
+</div>
+
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<script src="nexus-sidebar.js"></script>
+<script>
+var SEED_WO = [
+  {
+    id: "wo_001",
+    wo_number: "WO-2026-001",
+    unit: "101",
+    unit_name: "2019 Peterbilt 389",
+    date_opened: "2026-06-23",
+    date_completed: "2026-06-23",
+    status: "COMPLETED",
+    shop: "Testing Truck & Trailer Service",
+    shop_address: "4500 Testing Industrial Dr, Beaumont, TX 77705",
+    shop_phone: "(409) 555-0731",
+    technician: "Bob TestMechanic",
+    odometer_in: 287420,
+    odometer_out: 287420,
+    work_type: "Preventive Maintenance",
+    description: "Full PM service: engine oil & filter change, fuel filters (primary + secondary), coolant check & top-off, belt inspection, air filter replacement, 5th wheel lubrication, all lights check.",
+    parts: [
+      {"part":"Shell Rotella T6 15W-40","qty":14,"unit_cost":8.50,"total":119.00},
+      {"part":"PACCAR MX-13 Oil Filter","qty":1,"unit_cost":38.75,"total":38.75},
+      {"part":"Fuel Filter Kit (Primary+Secondary)","qty":1,"unit_cost":87.50,"total":87.50},
+      {"part":"Air Filter Element","qty":1,"unit_cost":65.00,"total":65.00}
+    ],
+    parts_total: 310.25,
+    labor_hours: 3.5,
+    labor_rate: 125,
+    labor_total: 437.50,
+    shop_supplies: 45.00,
+    tax: 28.18,
+    total_cost: 820.93,
+    paid: true,
+    payment_method: "Company Card",
+    defects_found: "Rear mud flap bracket loose on passenger side. Tightened at no charge.",
+    next_pm_miles: 295000,
+    next_pm_date: "2026-09-23",
+    notes: "Driver reported slight vibration at highway speed. Could not replicate on test drive. Monitor."
+  },
+  {
+    id: "wo_002",
+    wo_number: "WO-2026-002",
+    unit: "101",
+    unit_name: "2019 Peterbilt 389",
+    date_opened: "2026-06-15",
+    date_completed: "2026-06-16",
+    status: "COMPLETED",
+    shop: "Testing Tire & Retreading Co.",
+    shop_address: "8800 Testing Tire Way, Houston, TX 77001",
+    shop_phone: "(713) 555-0842",
+    technician: "Testing Tire Team",
+    odometer_in: 286100,
+    odometer_out: 286105,
+    work_type: "Tire Service",
+    description: "Replace 2 steer tires. Rotate drive tires. Inflate all positions to spec. Replace valve stems on front axle.",
+    parts: [
+      {"part":"Michelin X-Line Energy Z 295/75R22.5","qty":2,"unit_cost":485.00,"total":970.00},
+      {"part":"Valve Stems (set of 4)","qty":1,"unit_cost":22.00,"total":22.00}
+    ],
+    parts_total: 992.00,
+    labor_hours: 2.0,
+    labor_rate: 110,
+    labor_total: 220.00,
+    shop_supplies: 15.00,
+    tax: 82.62,
+    total_cost: 1309.62,
+    paid: true,
+    payment_method: "Company Card",
+    defects_found: "None additional",
+    next_pm_miles: null,
+    next_pm_date: null,
+    notes: "Steer tires were at 3/32nds. Safety-critical replacement."
+  },
+  {
+    id: "wo_003",
+    wo_number: "WO-2026-003",
+    unit: "102",
+    unit_name: "2021 Kenworth W990",
+    date_opened: "2026-06-26",
+    date_completed: null,
+    status: "IN PROGRESS",
+    shop: "Testing Truck & Trailer Service",
+    shop_address: "4500 Testing Industrial Dr, Beaumont, TX 77705",
+    shop_phone: "(409) 555-0731",
+    technician: "Bob TestMechanic",
+    odometer_in: 198320,
+    odometer_out: null,
+    work_type: "Repair",
+    description: "Driver reported air leak in service brake line, rear axle. Unit brought in for inspection and repair.",
+    parts: [],
+    parts_total: 0,
+    labor_hours: 0,
+    labor_rate: 125,
+    labor_total: 0,
+    shop_supplies: 0,
+    tax: 0,
+    total_cost: 0,
+    paid: false,
+    payment_method: "",
+    defects_found: "Diagnosing -- air brake line fitting on axle 3 driver side showing seeping. Likely cracked DOT air fitting.",
+    next_pm_miles: null,
+    next_pm_date: null,
+    notes: "Unit out of service until repair complete. Load HH-2026-0892 may be delayed. Notified Jim and Amet."
+  }
+];
+
+function seedWO() {
+  var existing = localStorage.getItem('nexus_work_orders');
+  if (existing === null || existing === undefined) {
+    localStorage.setItem('nexus_work_orders', JSON.stringify(SEED_WO));
+  }
+}
+
+function getWOs() {
+  try { return JSON.parse(localStorage.getItem('nexus_work_orders') || '[]'); }
+  catch(e) { return []; }
+}
+
+function saveWOs(arr) {
+  localStorage.setItem('nexus_work_orders', JSON.stringify(arr));
+}
+
+function fmt(n) {
+  if (n === null || n === undefined || n === 0) { return '$0.00'; }
+  return '$' + parseFloat(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function fmtDate(d) {
+  if (!d) { return 'N/A'; }
+  var parts = d.split('-');
+  if (parts.length < 3) { return d; }
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(parts[1],10)-1] + ' ' + parseInt(parts[2],10) + ', ' + parts[0];
+}
+
+function badgeForStatus(status) {
+  if (!status) { return '<span class="badge badge-pending">Pending</span>'; }
+  var s = status.toUpperCase();
+  if (s === 'COMPLETED') { return '<span class="badge badge-completed">Completed</span>'; }
+  if (s === 'IN PROGRESS') { return '<span class="badge badge-in-progress">In Progress</span>'; }
+  return '<span class="badge badge-pending">' + status + '</span>';
+}
+
+function buildWOCard(wo) {
+  var partsHTML = '';
+  if (wo.parts && wo.parts.length > 0) {
+    partsHTML = '<table class="parts-table"><thead><tr><th>Part</th><th>Qty</th><th>Unit Cost</th><th>Total</th></tr></thead><tbody>';
+    for (var i = 0; i < wo.parts.length; i++) {
+      var p = wo.parts[i];
+      partsHTML += '<tr><td>' + p.part + '</td><td>' + p.qty + '</td><td>' + fmt(p.unit_cost) + '</td><td>' + fmt(p.total) + '</td></tr>';
+    }
+    partsHTML += '</tbody></table>';
+  } else {
+    partsHTML = '<div style="color:var(--mid);font-size:13px;">No parts recorded yet.</div>';
+  }
+
+  var notesHTML = wo.notes ? '<div class="notes-box">Note: ' + wo.notes + '</div>' : '';
+  var defectsHTML = wo.defects_found ? '<div style="font-size:13px;margin-top:8px;color:var(--yellow);">Defects: ' + wo.defects_found + '</div>' : '';
+  var costLabel = wo.total_cost > 0 ? fmt(wo.total_cost) : 'In Progress';
+  var costColor = wo.total_cost > 0 ? 'var(--text)' : 'var(--mid)';
+
+  return '<div class="wo-card" id="card-' + wo.id + '">'
+    + '<div class="wo-header">'
+    + '<div><div class="wo-number">' + wo.wo_number + '</div><div class="wo-unit">Unit ' + wo.unit + ' &mdash; ' + wo.unit_name + '</div></div>'
+    + '<div style="display:flex;gap:10px;align-items:center;">' + badgeForStatus(wo.status) + '<button class="expand-btn" onclick="toggleDetail(\'' + wo.id + '\')">Details &#9660;</button></div>'
+    + '</div>'
+    + '<div class="wo-meta">'
+    + '<div class="wo-meta-item">Shop: <span>' + wo.shop + '</span></div>'
+    + '<div class="wo-meta-item">Type: <span>' + wo.work_type + '</span></div>'
+    + '<div class="wo-meta-item">Opened: <span>' + fmtDate(wo.date_opened) + '</span></div>'
+    + (wo.date_completed ? '<div class="wo-meta-item">Completed: <span>' + fmtDate(wo.date_completed) + '</span></div>' : '')
+    + '<div class="wo-meta-item">Total: <span style="color:' + costColor + ';font-weight:700;">' + costLabel + '</span></div>'
+    + '</div>'
+    + '<div class="wo-desc">' + wo.description + '</div>'
+    + '<div class="wo-detail" id="detail-' + wo.id + '">'
+    + '<div style="font-size:13px;font-weight:600;color:var(--mid);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">Parts Used</div>'
+    + partsHTML
+    + '<div class="cost-summary">'
+    + '<div class="cost-item"><div class="lbl">Parts Total</div><div class="val">' + fmt(wo.parts_total) + '</div></div>'
+    + '<div class="cost-item"><div class="lbl">Labor (' + wo.labor_hours + ' hrs @ ' + fmt(wo.labor_rate) + ')</div><div class="val">' + fmt(wo.labor_total) + '</div></div>'
+    + '<div class="cost-item"><div class="lbl">Shop Supplies</div><div class="val">' + fmt(wo.shop_supplies) + '</div></div>'
+    + '<div class="cost-item"><div class="lbl">Tax</div><div class="val">' + fmt(wo.tax) + '</div></div>'
+    + '<div class="cost-item"><div class="lbl" style="color:var(--text);">TOTAL</div><div class="val" style="color:var(--green);">' + fmt(wo.total_cost) + '</div></div>'
+    + '</div>'
+    + '<div style="font-size:13px;margin-top:12px;"><span style="color:var(--mid);">Technician:</span> ' + wo.technician + ' &nbsp; <span style="color:var(--mid);">Phone:</span> ' + wo.shop_phone + '</div>'
+    + '<div style="font-size:13px;margin-top:4px;"><span style="color:var(--mid);">Odometer In:</span> ' + (wo.odometer_in ? wo.odometer_in.toLocaleString() : 'N/A') + ' &nbsp; <span style="color:var(--mid);">Out:</span> ' + (wo.odometer_out ? wo.odometer_out.toLocaleString() : 'Pending') + '</div>'
+    + (wo.next_pm_date ? '<div style="font-size:13px;margin-top:4px;color:var(--blue);">Next PM Due: ' + fmtDate(wo.next_pm_date) + (wo.next_pm_miles ? ' or ' + wo.next_pm_miles.toLocaleString() + ' miles' : '') + '</div>' : '')
+    + defectsHTML
+    + notesHTML
+    + '</div>'
+    + '</div>';
+}
+
+function toggleDetail(id) {
+  var el = document.getElementById('detail-' + id);
+  if (el) {
+    el.style.display = el.style.display === 'block' ? 'none' : 'block';
+  }
+}
+
+function renderStats() {
+  var wos = getWOs();
+  var ytd = 0;
+  var openCount = 0;
+  var inShop = {};
+  var nextPM = null;
+  for (var i = 0; i < wos.length; i++) {
+    var w = wos[i];
+    ytd += (w.total_cost || 0);
+    var s = (w.status || '').toUpperCase();
+    if (s === 'IN PROGRESS' || s === 'PENDING') {
+      openCount++;
+      inShop[w.unit] = true;
+    }
+    if (w.next_pm_date) {
+      if (!nextPM || w.next_pm_date < nextPM) { nextPM = w.next_pm_date; }
+    }
+  }
+  var statsEl = document.getElementById('stats-row');
+  statsEl.innerHTML = '<div class="stat-card"><div class="lbl">YTD Maintenance Cost</div><div class="val" style="color:var(--green);">' + fmt(ytd) + '</div><div class="sub">All work orders</div></div>'
+    + '<div class="stat-card"><div class="lbl">Open Work Orders</div><div class="val" style="color:var(--orange);">' + openCount + '</div><div class="sub">In progress or pending</div></div>'
+    + '<div class="stat-card"><div class="lbl">Units in Shop</div><div class="val" style="color:var(--yellow);">' + Object.keys(inShop).length + '</div><div class="sub">Currently being serviced</div></div>'
+    + '<div class="stat-card"><div class="lbl">Next PM Due</div><div class="val" style="font-size:16px;color:var(--blue);">' + (nextPM ? fmtDate(nextPM) : 'None Scheduled') + '</div><div class="sub">Earliest upcoming PM</div></div>';
+}
+
+function renderOpenTab() {
+  var wos = getWOs();
+  var el = document.getElementById('tab-open');
+  var open = wos.filter(function(w) {
+    var s = (w.status || '').toUpperCase();
+    return s === 'IN PROGRESS' || s === 'PENDING';
+  });
+  if (open.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="icon">✅</div><strong>No open work orders</strong><p style="margin-top:8px;">All units are currently cleared for service.</p></div>';
+    return;
+  }
+  el.innerHTML = open.map(function(w) { return buildWOCard(w); }).join('');
+}
+
+function renderHistoryTab(filterUnit) {
+  var wos = getWOs();
+  var units = {};
+  wos.forEach(function(w) { units[w.unit] = w.unit_name; });
+  var opts = '<option value="">All Units</option>';
+  Object.keys(units).sort().forEach(function(u) {
+    var sel = filterUnit === u ? ' selected' : '';
+    opts += '<option value="' + u + '"' + sel + '>Unit ' + u + ' - ' + units[u] + '</option>';
+  });
+  var filtered = filterUnit ? wos.filter(function(w) { return w.unit === filterUnit; }) : wos;
+  var cards = filtered.map(function(w) { return buildWOCard(w); }).join('');
+  document.getElementById('tab-history').innerHTML = '<div class="filter-row"><label>Filter by Unit:</label><select onchange="renderHistoryTab(this.value)">' + opts + '</select></div>' + (cards || '<div class="empty-state"><div class="icon">📋</div><strong>No records found</strong></div>');
+}
+
+function renderCreateTab() {
+  document.getElementById('tab-create').innerHTML = '<div style="max-width:720px;">'
+    + '<h3 style="font-size:18px;font-weight:700;margin-bottom:20px;">Open New Work Order</h3>'
+    + '<div class="form-grid">'
+    + '<div class="form-group"><label>Unit</label><select id="new-unit"><option value="101">101 - 2019 Peterbilt 389</option><option value="102">102 - 2021 Kenworth W990</option><option value="103">103 - 2020 Freightliner Cascadia</option><option value="other">Other</option></select></div>'
+    + '<div class="form-group"><label>Work Type</label><select id="new-wtype"><option>Preventive Maintenance</option><option>Repair</option><option>Tire Service</option><option>Annual Inspection</option><option>Other</option></select></div>'
+    + '<div class="form-group"><label>Shop / Vendor</label><input type="text" id="new-shop" placeholder="Shop name"></div>'
+    + '<div class="form-group"><label>Technician</label><input type="text" id="new-tech" placeholder="Technician name"></div>'
+    + '<div class="form-group"><label>Odometer In</label><input type="number" id="new-odo" placeholder="e.g. 287420"></div>'
+    + '<div class="form-group"><label>Date Opened</label><input type="date" id="new-date"></div>'
+    + '<div class="form-group" style="grid-column:1/-1;"><label>Work Description</label><textarea id="new-desc" placeholder="Describe the work to be performed..."></textarea></div>'
+    + '<div class="form-group" style="grid-column:1/-1;"><label>Notes</label><textarea id="new-notes" placeholder="Additional notes..."></textarea></div>'
+    + '</div>'
+    + '<div style="margin-top:20px;"><button class="btn btn-green" onclick="createWO()">Open Work Order</button></div>'
+    + '</div>';
+
+  var today = new Date().toISOString().split('T')[0];
+  document.getElementById('new-date').value = today;
+}
+
+function createWO() {
+  var unitEl = document.getElementById('new-unit');
+  var unitVal = unitEl.value;
+  var unitNames = {"101":"2019 Peterbilt 389","102":"2021 Kenworth W990","103":"2020 Freightliner Cascadia","other":"Other"};
+  var wos = getWOs();
+  var num = wos.length + 1;
+  var padded = num < 10 ? '00' + num : (num < 100 ? '0' + num : '' + num);
+  var newWO = {
+    id: "wo_" + Date.now(),
+    wo_number: "WO-2026-" + padded,
+    unit: unitVal,
+    unit_name: unitNames[unitVal] || unitVal,
+    date_opened: document.getElementById('new-date').value || new Date().toISOString().split('T')[0],
+    date_completed: null,
+    status: "IN PROGRESS",
+    shop: document.getElementById('new-shop').value || 'TBD',
+    shop_address: '',
+    shop_phone: '',
+    technician: document.getElementById('new-tech').value || 'TBD',
+    odometer_in: parseInt(document.getElementById('new-odo').value) || null,
+    odometer_out: null,
+    work_type: document.getElementById('new-wtype').value,
+    description: document.getElementById('new-desc').value || 'No description provided.',
+    parts: [],
+    parts_total: 0,
+    labor_hours: 0,
+    labor_rate: 125,
+    labor_total: 0,
+    shop_supplies: 0,
+    tax: 0,
+    total_cost: 0,
+    paid: false,
+    payment_method: '',
+    defects_found: '',
+    next_pm_miles: null,
+    next_pm_date: null,
+    notes: document.getElementById('new-notes').value || ''
+  };
+  wos.push(newWO);
+  saveWOs(wos);
+  renderStats();
+  showTab('open');
+}
+
+function renderPMTab() {
+  var wos = getWOs();
+  var today = new Date().toISOString().split('T')[0];
+  var pmByUnit = {};
+  for (var i = 0; i < wos.length; i++) {
+    var w = wos[i];
+    if (!pmByUnit[w.unit]) {
+      pmByUnit[w.unit] = { unit: w.unit, unit_name: w.unit_name, last_pm: null, next_pm: null };
+    }
+    if (w.work_type === 'Preventive Maintenance' && w.date_completed) {
+      if (!pmByUnit[w.unit].last_pm || w.date_completed > pmByUnit[w.unit].last_pm) {
+        pmByUnit[w.unit].last_pm = w.date_completed;
+      }
+    }
+    if (w.next_pm_date) {
+      if (!pmByUnit[w.unit].next_pm || w.next_pm_date < pmByUnit[w.unit].next_pm) {
+        pmByUnit[w.unit].next_pm = w.next_pm_date;
+      }
+    }
+  }
+  var keys = Object.keys(pmByUnit);
+  var html = '<h3 style="font-size:18px;font-weight:700;margin-bottom:16px;">Preventive Maintenance Schedule</h3>';
+  if (keys.length === 0) {
+    html += '<div class="empty-state"><div class="icon">🔧</div><strong>No units found</strong></div>';
+  }
+  for (var j = 0; j < keys.length; j++) {
+    var pm = pmByUnit[keys[j]];
+    var status = 'OK';
+    var badgeClass = 'badge-ok';
+    if (pm.next_pm) {
+      var diff = (new Date(pm.next_pm) - new Date(today)) / (1000 * 60 * 60 * 24);
+      if (diff < 0) { status = 'OVERDUE'; badgeClass = 'badge-overdue'; }
+      else if (diff <= 30) { status = 'DUE SOON'; badgeClass = 'badge-due-soon'; }
+    }
+    html += '<div class="pm-card">'
+      + '<div><div class="pm-unit">Unit ' + pm.unit + ' &mdash; ' + pm.unit_name + '</div>'
+      + '<div class="pm-sub">Last PM: ' + (pm.last_pm ? fmtDate(pm.last_pm) : 'No record') + '</div></div>'
+      + '<div style="text-align:right;">'
+      + '<div style="font-size:13px;color:var(--mid);">Next PM: <strong style="color:var(--text);">' + (pm.next_pm ? fmtDate(pm.next_pm) : 'Not scheduled') + '</strong></div>'
+      + '<div style="margin-top:6px;"><span class="badge ' + badgeClass + '">' + status + '</span></div>'
+      + '</div>'
+      + '</div>';
+  }
+  document.getElementById('tab-pm').innerHTML = html;
+}
+
+function showTab(name) {
+  var tabs = document.querySelectorAll('.tab');
+  var contents = document.querySelectorAll('.tab-content');
+  var tabMap = ['open','history','create','pm'];
+  contents.forEach(function(c) { c.classList.remove('active'); });
+  tabs.forEach(function(t) { t.classList.remove('active'); });
+  document.getElementById('tab-' + name).classList.add('active');
+  var idx = tabMap.indexOf(name);
+  if (idx >= 0) { tabs[idx].classList.add('active'); }
+  if (name === 'open') { renderOpenTab(); }
+  else if (name === 'history') { renderHistoryTab(''); }
+  else if (name === 'create') { renderCreateTab(); }
+  else if (name === 'pm') { renderPMTab(); }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof NexusSidebar !== 'undefined') { NexusSidebar.init(); }
+  seedWO();
+  renderStats();
+  renderOpenTab();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onboarding — Carrier Nexus</title>
+<style>
+  :root {
+    --bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;
+    --text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;
+    --yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+  .progress-bar-outer { height:6px; background:var(--panel2); border-radius:3px; margin-bottom:28px; }
+  .progress-bar-fill { height:6px; background:linear-gradient(90deg,var(--blue),var(--purple)); border-radius:3px; transition:width 0.4s; }
+  .wizard-layout { display:flex; gap:24px; align-items:flex-start; }
+  .steps-list { width:260px; flex-shrink:0; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px; }
+  .steps-list-title { font-size:11px; color:var(--mid); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+  .step-item { display:flex; align-items:center; gap:10px; padding:8px; border-radius:8px; cursor:pointer; transition:background 0.15s; margin-bottom:2px; }
+  .step-item:hover { background:var(--panel2); }
+  .step-item.current { background:rgba(59,130,246,0.1); }
+  .step-badge { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+  .step-badge-current { background:var(--blue); color:#fff; }
+  .step-badge-done { background:var(--green); color:#fff; }
+  .step-badge-future { background:var(--panel2); color:var(--mid); border:1px solid var(--border); }
+  .step-label { font-size:13px; flex:1; }
+  .step-label-current { color:var(--blue); font-weight:600; }
+  .step-label-done { color:var(--green); }
+  .step-label-future { color:var(--mid); }
+  .step-content { flex:1; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:32px; min-height:400px; display:flex; flex-direction:column; }
+  .step-title { font-size:20px; font-weight:800; margin-bottom:6px; }
+  .step-sub { font-size:14px; color:var(--mid); margin-bottom:24px; }
+  .form-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
+  .form-group { display:flex; flex-direction:column; gap:5px; }
+  .form-group label { font-size:13px; color:var(--mid); }
+  .form-group input, .form-group select { background:var(--panel2); border:1px solid var(--border); border-radius:8px; color:var(--text); padding:10px 12px; font-size:14px; outline:none; }
+  .form-group input:focus, .form-group select:focus { border-color:var(--blue); }
+  .btn { padding:10px 22px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; border:none; transition:opacity 0.2s; display:inline-block; }
+  .btn:hover { opacity:0.85; }
+  .btn-primary { background:var(--blue); color:#fff; }
+  .btn-green { background:var(--green); color:#fff; }
+  .btn-mid { background:var(--panel2); color:var(--text); border:1px solid var(--border); }
+  .nav-row { display:flex; gap:12px; margin-top:auto; padding-top:24px; }
+  .banner-demo { padding:12px 16px; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:8px; font-size:13px; color:var(--yellow); margin-bottom:20px; }
+  .banner-success { padding:12px 16px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:8px; font-size:13px; color:var(--green); margin-bottom:14px; }
+  .banner-info { padding:12px 16px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3); border-radius:8px; font-size:13px; color:var(--blue); margin-bottom:14px; }
+  .checklist-item { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+  .checklist-item:last-child { border-bottom:none; }
+  .check-icon { font-size:18px; }
+  .check-label { font-size:14px; flex:1; }
+  .check-link { font-size:13px; color:var(--blue); text-decoration:none; }
+  .check-link:hover { text-decoration:underline; }
+  .skip-link { display:block; text-align:center; margin-top:16px; padding-top:14px; border-top:1px solid var(--border); font-size:12px; color:var(--mid); cursor:pointer; }
+  .skip-link:hover { color:var(--red); }
+  .complete-page { text-align:center; padding:48px 24px; }
+  .complete-page h1 { font-size:32px; font-weight:800; margin-bottom:12px; color:var(--green); }
+  .complete-page p { color:var(--mid); font-size:16px; margin-bottom:28px; }
+  .complete-steps { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; text-align:left; margin-bottom:32px; }
+  .complete-step-item { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:14px; display:flex; align-items:center; gap:10px; }
+  .complete-step-item .check { color:var(--green); font-size:18px; }
+  .complete-step-item .lbl { font-size:13px; color:var(--text); }
+  .page-title { font-size:24px; font-weight:800; margin-bottom:4px; }
+  .page-sub { font-size:14px; color:var(--mid); margin-bottom:24px; }
+
+  /* Confetti */
+  .confetti-wrap { position:relative; height:60px; overflow:hidden; margin-bottom:20px; }
+  .confetti-piece { position:absolute; width:10px; height:10px; opacity:0; animation:confettiFall 2.5s ease-in forwards; }
+  @keyframes confettiFall {
+    0% { opacity:1; transform:translateY(-20px) rotate(0deg); }
+    100% { opacity:0; transform:translateY(80px) rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+<div id="nexus-app" style="display:flex;min-height:100vh;background:var(--bg);">
+  <div id="nexus-sidebar"></div>
+  <main style="flex:1;padding:28px;overflow-y:auto;">
+    <div id="main-content"></div>
+  </main>
+</div>
+
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<script src="nexus-sidebar.js"></script>
+<script>
+var currentStep = 1;
+var TOTAL_STEPS = 8;
+
+var STEP_TITLES = [
+  '', // index 0 unused
+  'Company Information',
+  'FMCSA Verification',
+  'Add Your First Driver',
+  'Add Your First Vehicle',
+  'Upload Key Documents',
+  'Set Up Your Team',
+  'Review Compliance',
+  'Go Live!'
+];
+
+var STEP_SUBS = [
+  '',
+  'Enter your carrier profile details',
+  'Connect your FMCSA Safety Measurement System access',
+  'Add at least one driver to get started',
+  'Register your first vehicle or unit',
+  'Make sure critical compliance documents are on file',
+  'Invite dispatchers and additional team members',
+  'Review FMCSA and 49 CFR compliance requirements',
+  'You are ready to run your fleet with Carrier Nexus'
+];
+
+function checkStepCompletion(step) {
+  switch(step) {
+    case 1: return !!(localStorage.getItem('nexus_my_usdot') && localStorage.getItem('nexus_my_company_name'));
+    case 2: {
+      var k = localStorage.getItem('nexus_fmcsa_webkey');
+      return !!(k && k !== 'DEMO_KEY_REPLACE_WITH_REAL');
+    }
+    case 3: {
+      var users = JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS') || '[]');
+      return users.filter(function(u){ return u.role === 'driver' && u.active; }).length > 0;
+    }
+    case 4: return JSON.parse(localStorage.getItem('nexus_equipment_units') || '[]').length > 0;
+    case 5: return JSON.parse(localStorage.getItem('nexus_documents') || '[]').length > 0;
+    case 6: {
+      var users2 = JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS') || '[]');
+      return users2.filter(function(u){ return u.role === 'dispatcher' && u.active; }).length > 0;
+    }
+    case 7: return localStorage.getItem('nexus_cfr_last_check') !== null;
+    case 8: return false;
+    default: return false;
+  }
+}
+
+function buildStepContent(step) {
+  if (step === 1) {
+    return '<div class="form-grid">'
+      + '<div class="form-group"><label>DOT #</label><input type="text" id="s1-usdot" placeholder="e.g. 4521893"></div>'
+      + '<div class="form-group"><label>MC #</label><input type="text" id="s1-mc" placeholder="e.g. 1234567"></div>'
+      + '<div class="form-group"><label>Company Name</label><input type="text" id="s1-company" placeholder="e.g. Carrier Trucking US"></div>'
+      + '<div class="form-group"><label>Phone</label><input type="text" id="s1-phone" placeholder="e.g. (409) 555-0100"></div>'
+      + '<div class="form-group"><label>State</label><input type="text" id="s1-state" placeholder="e.g. TX" maxlength="2"></div>'
+      + '</div>'
+      + '<div style="margin-top:18px;"><button class="btn btn-primary" onclick="saveStep1()">Save &amp; Continue</button></div>';
+  }
+  if (step === 2) {
+    var savedKey = localStorage.getItem('nexus_fmcsa_webkey') || '';
+    var bannerHTML = '';
+    if (savedKey && savedKey !== 'DEMO_KEY_REPLACE_WITH_REAL') {
+      bannerHTML = '<div class="banner-success">FMCSA Web Key is saved. SMS data access is enabled.</div>';
+    }
+    return '<div class="banner-info">Your FMCSA SMS Web Key allows Carrier Nexus to pull your safety data automatically. '
+      + '<a href="https://ai.fmcsa.dot.gov/SMS/Tools/Downloads.aspx" target="_blank" style="color:var(--blue);">Get your key from FMCSA here.</a></div>'
+      + bannerHTML
+      + '<div class="form-group" style="max-width:360px;"><label>FMCSA SMS Web Key</label>'
+      + '<input type="text" id="s2-key" placeholder="Your FMCSA web key" value="' + savedKey + '"></div>'
+      + '<div style="margin-top:16px;"><button class="btn btn-primary" onclick="saveStep2()">Save Key</button></div>';
+  }
+  if (step === 3) {
+    return '<div class="banner-info">Add drivers so they can receive invite links and log into the Carrier Nexus driver portal.</div>'
+      + '<div class="form-grid">'
+      + '<div class="form-group"><label>Full Name</label><input type="text" id="s3-name" placeholder="Driver full name"></div>'
+      + '<div class="form-group"><label>CDL Number</label><input type="text" id="s3-cdl" placeholder="CDL#"></div>'
+      + '<div class="form-group"><label>CDL State</label><input type="text" id="s3-cdlstate" placeholder="e.g. TX" maxlength="2"></div>'
+      + '<div class="form-group"><label>Phone</label><input type="text" id="s3-phone" placeholder="(555) 000-0000"></div>'
+      + '<div class="form-group"><label>Email</label><input type="text" id="s3-email" placeholder="driver@example.com"></div>'
+      + '</div>'
+      + '<div style="margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">'
+      + '<button class="btn btn-green" onclick="saveStep3()">Add Driver</button>'
+      + '<a href="drivers.html" style="font-size:13px;color:var(--blue);">Manage all drivers in Drivers page</a>'
+      + '</div>'
+      + '<div id="s3-msg"></div>';
+  }
+  if (step === 4) {
+    return '<div class="banner-info">Register your tractor(s) and trailers so they appear in dispatch, permits, and maintenance.</div>'
+      + '<div class="form-grid">'
+      + '<div class="form-group"><label>Unit #</label><input type="text" id="s4-unit" placeholder="e.g. 101"></div>'
+      + '<div class="form-group"><label>Year</label><input type="text" id="s4-year" placeholder="e.g. 2019"></div>'
+      + '<div class="form-group"><label>Make</label><input type="text" id="s4-make" placeholder="e.g. Peterbilt"></div>'
+      + '<div class="form-group"><label>Model</label><input type="text" id="s4-model" placeholder="e.g. 389"></div>'
+      + '<div class="form-group"><label>VIN</label><input type="text" id="s4-vin" placeholder="17-character VIN"></div>'
+      + '<div class="form-group"><label>License Plate</label><input type="text" id="s4-plate" placeholder="e.g. ABC1234"></div>'
+      + '<div class="form-group"><label>Plate State</label><input type="text" id="s4-plstate" placeholder="e.g. TX" maxlength="2"></div>'
+      + '</div>'
+      + '<div style="margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">'
+      + '<button class="btn btn-green" onclick="saveStep4()">Add Vehicle</button>'
+      + '<a href="equipment.html" style="font-size:13px;color:var(--blue);">Equipment page</a>'
+      + '</div>'
+      + '<div id="s4-msg"></div>';
+  }
+  if (step === 5) {
+    var docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]');
+    var hasCDL = docs.some(function(d) { return d.type === 'cdl'; });
+    var hasMed = docs.some(function(d) { return d.type === 'medical'; });
+    var hasIns = docs.some(function(d) { return d.type === 'insurance'; });
+    function checkRow(has, label) {
+      return '<div class="checklist-item">'
+        + '<div class="check-icon">' + (has ? '✅' : '⬜') + '</div>'
+        + '<div class="check-label">' + label + '</div>'
+        + '<a href="documents.html" class="check-link">Upload in Documents</a>'
+        + '</div>';
+    }
+    return '<div class="banner-info">Make sure critical compliance documents are uploaded before dispatching loads.</div>'
+      + checkRow(hasCDL, 'CDL on file?')
+      + checkRow(hasMed, 'Medical Certificate on file?')
+      + checkRow(hasIns, 'Insurance (BMC-91) on file?');
+  }
+  if (step === 6) {
+    var allUsers = JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS') || '[]');
+    var driverCount = allUsers.filter(function(u) { return u.role === 'driver' && u.active; }).length;
+    var dispCount = allUsers.filter(function(u) { return u.role === 'dispatcher' && u.active; }).length;
+    return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:400px;margin-bottom:20px;">'
+      + '<div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">'
+      + '<div style="font-size:28px;font-weight:800;color:var(--blue);">' + driverCount + '</div>'
+      + '<div style="font-size:12px;color:var(--mid);margin-top:4px;">Active Drivers</div>'
+      + '</div>'
+      + '<div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">'
+      + '<div style="font-size:28px;font-weight:800;color:var(--purple);">' + dispCount + '</div>'
+      + '<div style="font-size:12px;color:var(--mid);margin-top:4px;">Dispatchers</div>'
+      + '</div>'
+      + '</div>'
+      + '<div style="display:flex;gap:12px;flex-wrap:wrap;">'
+      + '<a href="admin-users.html" class="btn btn-primary" style="text-decoration:none;">Manage Team</a>'
+      + '<a href="admin-users.html" class="btn btn-mid" style="text-decoration:none;">Send Invite Link</a>'
+      + '</div>';
+  }
+  if (step === 7) {
+    var lastCheck = localStorage.getItem('nexus_cfr_last_check');
+    var lastHTML = lastCheck ? '<div class="banner-success">Last compliance check: ' + lastCheck + '</div>' : '';
+    return '<div class="banner-info">49 CFR (Code of Federal Regulations, Title 49) governs all commercial motor vehicle operations in the US. Carrier Nexus helps you track hours of service, driver qualifications, vehicle inspections, and more.</div>'
+      + lastHTML
+      + '<div style="margin-top:16px;">'
+      + '<button class="btn btn-primary" onclick="openCFR()">Run Compliance Check</button>'
+      + '</div>';
+  }
+  if (step === 8) {
+    var confettiHTML = '<div class="confetti-wrap">';
+    var colors = ['var(--blue)','var(--green)','var(--yellow)','var(--orange)','var(--purple)','var(--red)'];
+    for (var ci = 0; ci < 20; ci++) {
+      var color = colors[ci % colors.length];
+      var left = (ci * 4.8 + 2).toFixed(1);
+      var delay = (ci * 0.12).toFixed(2);
+      var shape = ci % 2 === 0 ? 'border-radius:50%' : 'border-radius:2px';
+      confettiHTML += '<div class="confetti-piece" style="left:' + left + '%;background:' + color + ';animation-delay:' + delay + 's;' + shape + ';"></div>';
+    }
+    confettiHTML += '</div>';
+
+    var summary = '';
+    var dot = localStorage.getItem('nexus_my_usdot');
+    var company = localStorage.getItem('nexus_my_company_name');
+    if (dot || company) {
+      summary = '<div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:20px;">'
+        + '<div style="font-size:13px;color:var(--mid);margin-bottom:8px;">Your Configuration</div>'
+        + (company ? '<div style="font-size:14px;"><strong>Company:</strong> ' + company + '</div>' : '')
+        + (dot ? '<div style="font-size:14px;margin-top:4px;"><strong>DOT#:</strong> ' + dot + '</div>' : '')
+        + '</div>';
+    }
+    return confettiHTML
+      + '<h2 style="font-size:26px;font-weight:800;color:var(--green);margin-bottom:10px;">You are all set!</h2>'
+      + '<p style="color:var(--mid);font-size:15px;margin-bottom:20px;">Your Carrier Nexus platform is configured and ready to use.</p>'
+      + summary
+      + '<div style="display:flex;gap:12px;flex-wrap:wrap;">'
+      + '<a href="index.html" class="btn btn-green" style="text-decoration:none;">Go to Dashboard</a>'
+      + '<button class="btn btn-mid" onclick="markComplete()">Mark Setup Complete</button>'
+      + '</div>';
+  }
+  return '<div style="color:var(--mid);">Step content not found.</div>';
+}
+
+function saveStep1() {
+  var dot = document.getElementById('s1-usdot').value.trim();
+  var mc = document.getElementById('s1-mc').value.trim();
+  var company = document.getElementById('s1-company').value.trim();
+  var phone = document.getElementById('s1-phone').value.trim();
+  var state = document.getElementById('s1-state').value.trim();
+  if (!dot || !company) { alert('DOT # and Company Name are required.'); return; }
+  localStorage.setItem('nexus_my_usdot', dot);
+  localStorage.setItem('nexus_my_mc', mc);
+  localStorage.setItem('nexus_my_company_name', company);
+  localStorage.setItem('nexus_my_phone', phone);
+  localStorage.setItem('nexus_my_state', state);
+  goNext();
+}
+
+function saveStep2() {
+  var key = document.getElementById('s2-key').value.trim();
+  if (!key) { alert('Please enter your FMCSA web key.'); return; }
+  localStorage.setItem('nexus_fmcsa_webkey', key);
+  goNext();
+}
+
+function saveStep3() {
+  var name = document.getElementById('s3-name').value.trim();
+  var email = document.getElementById('s3-email').value.trim();
+  if (!name || !email) { alert('Name and email are required.'); return; }
+  var users = JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS') || '[]');
+  users.push({
+    id: 'usr_' + Date.now(),
+    name: name,
+    email: email,
+    role: 'driver',
+    active: true,
+    cdl: document.getElementById('s3-cdl').value.trim(),
+    cdl_state: document.getElementById('s3-cdlstate').value.trim(),
+    phone: document.getElementById('s3-phone').value.trim()
+  });
+  localStorage.setItem('NEXUS_LOCAL_USERS', JSON.stringify(users));
+  var msg = document.getElementById('s3-msg');
+  if (msg) { msg.innerHTML = '<div class="banner-success" style="margin-top:12px;">Driver "' + name + '" added successfully!</div>'; }
+}
+
+function saveStep4() {
+  var unit = document.getElementById('s4-unit').value.trim();
+  if (!unit) { alert('Unit # is required.'); return; }
+  var units = JSON.parse(localStorage.getItem('nexus_equipment_units') || '[]');
+  units.push({
+    id: 'eq_' + Date.now(),
+    unit: unit,
+    year: document.getElementById('s4-year').value.trim(),
+    make: document.getElementById('s4-make').value.trim(),
+    model: document.getElementById('s4-model').value.trim(),
+    vin: document.getElementById('s4-vin').value.trim(),
+    plate: document.getElementById('s4-plate').value.trim(),
+    plate_state: document.getElementById('s4-plstate').value.trim()
+  });
+  localStorage.setItem('nexus_equipment_units', JSON.stringify(units));
+  var msg = document.getElementById('s4-msg');
+  if (msg) { msg.innerHTML = '<div class="banner-success" style="margin-top:12px;">Unit ' + unit + ' added successfully!</div>'; }
+}
+
+function openCFR() {
+  localStorage.setItem('nexus_cfr_last_check', new Date().toLocaleDateString());
+  window.location.href = 'cfr-compliance.html';
+}
+
+function markComplete() {
+  localStorage.setItem('nexus_onboarding_complete', 'true');
+  renderMain();
+}
+
+function skipSetup() {
+  localStorage.setItem('nexus_onboarding_complete', 'true');
+  window.location.href = 'index.html';
+}
+
+function goNext() {
+  if (currentStep < TOTAL_STEPS) { currentStep++; renderWizard(); }
+}
+
+function goBack() {
+  if (currentStep > 1) { currentStep--; renderWizard(); }
+}
+
+function goToStep(n) {
+  currentStep = n;
+  renderWizard();
+}
+
+function renderCompleted() {
+  var stepNames = STEP_TITLES.slice(1);
+  var stepsHTML = stepNames.map(function(s) {
+    return '<div class="complete-step-item"><div class="check">✅</div><div class="lbl">' + s + '</div></div>';
+  }).join('');
+  document.getElementById('main-content').innerHTML = '<div class="complete-page">'
+    + '<div style="font-size:56px;margin-bottom:16px;">🎉</div>'
+    + '<h1>Setup Complete!</h1>'
+    + '<p>Your Carrier Nexus platform is fully configured.</p>'
+    + '<div class="complete-steps">' + stepsHTML + '</div>'
+    + '<a href="index.html" class="btn btn-green" style="text-decoration:none;font-size:16px;padding:14px 32px;">Go to Dashboard</a>'
+    + '</div>';
+}
+
+function renderWizard() {
+  var pct = Math.round((currentStep / TOTAL_STEPS) * 100);
+
+  var stepsListHTML = '';
+  for (var i = 1; i <= TOTAL_STEPS; i++) {
+    var isDone = checkStepCompletion(i);
+    var isCurrent = i === currentStep;
+    var badgeClass = isCurrent ? 'step-badge-current' : (isDone ? 'step-badge-done' : 'step-badge-future');
+    var labelClass = isCurrent ? 'step-label-current' : (isDone ? 'step-label-done' : 'step-label-future');
+    var icon = isDone && !isCurrent ? '✓' : i;
+    var itemClass = isCurrent ? 'step-item current' : 'step-item';
+    stepsListHTML += '<div class="' + itemClass + '" onclick="goToStep(' + i + ')">'
+      + '<div class="step-badge ' + badgeClass + '">' + icon + '</div>'
+      + '<div class="step-label ' + labelClass + '">' + STEP_TITLES[i] + '</div>'
+      + '</div>';
+  }
+
+  var demoBanner = '';
+  if (localStorage.getItem('nexus_my_usdot') === '4521893') {
+    demoBanner = '<div class="banner-demo">Demo data is loaded. This wizard shows what onboarding looks like for a new carrier. Your data is already configured.</div>';
+  }
+
+  var backBtn = currentStep > 1 ? '<button class="btn btn-mid" onclick="goBack()">&#8592; Back</button>' : '';
+  var nextBtn;
+  if (currentStep === 8) {
+    nextBtn = '<button class="btn btn-green" onclick="markComplete()">Mark Setup Complete</button>';
+  } else {
+    nextBtn = '<button class="btn btn-primary" onclick="goNext()">Next &#8594;</button>';
+  }
+
+  var contentHTML = buildStepContent(currentStep);
+
+  document.getElementById('main-content').innerHTML = '<div class="page-title">New Carrier Onboarding</div>'
+    + '<div class="page-sub">Step ' + currentStep + ' of ' + TOTAL_STEPS + ' &mdash; ' + STEP_TITLES[currentStep] + '</div>'
+    + demoBanner
+    + '<div class="progress-bar-outer"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div>'
+    + '<div class="wizard-layout">'
+    + '<div class="steps-list"><div class="steps-list-title">Setup Steps</div>' + stepsListHTML
+    + '<div class="skip-link" onclick="skipSetup()">Skip Setup &rarr;</div></div>'
+    + '<div class="step-content">'
+    + '<div class="step-title">' + STEP_TITLES[currentStep] + '</div>'
+    + '<div class="step-sub">' + STEP_SUBS[currentStep] + '</div>'
+    + contentHTML
+    + '<div class="nav-row">' + backBtn + nextBtn + '</div>'
+    + '</div>'
+    + '</div>';
+
+  if (currentStep === 1) {
+    var fields = [
+      ['s1-usdot', 'nexus_my_usdot'],
+      ['s1-mc', 'nexus_my_mc'],
+      ['s1-company', 'nexus_my_company_name'],
+      ['s1-phone', 'nexus_my_phone'],
+      ['s1-state', 'nexus_my_state']
+    ];
+    for (var fi = 0; fi < fields.length; fi++) {
+      var el = document.getElementById(fields[fi][0]);
+      if (el) { el.value = localStorage.getItem(fields[fi][1]) || ''; }
+    }
+  }
+}
+
+function renderMain() {
+  if (localStorage.getItem('nexus_onboarding_complete') === 'true') {
+    renderCompleted();
+  } else {
+    renderWizard();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof NexusSidebar !== 'undefined') { NexusSidebar.init(); }
+  renderMain();
+});
+</script>
+</body>
+</html>

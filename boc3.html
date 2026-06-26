@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BOC-3 Filing — Carrier Nexus</title>
+  <script src="nexus-config.js"></script>
+  <script src="nexus-db.js"></script>
+  <script src="nexus-sidebar.js"></script>
+  <style>
+    :root {
+      --bg:#0b0f1a;
+      --panel:#131929;
+      --panel2:#1a2235;
+      --border:#1e2d45;
+      --text:#e2e8f0;
+      --mid:#64748b;
+      --blue:#3b82f6;
+      --green:#10b981;
+      --yellow:#f59e0b;
+      --red:#ef4444;
+      --orange:#f97316;
+      --purple:#a855f7;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+
+    h1, h2, h3 { color: var(--text); }
+
+    /* Status Card */
+    .status-card {
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 24px;
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .status-card.on-file {
+      background: rgba(16,185,129,0.08);
+      border: 2px solid var(--green);
+    }
+    .status-card.not-on-file {
+      background: rgba(239,68,68,0.08);
+      border: 2px solid var(--red);
+    }
+    .status-card-left { display: flex; align-items: flex-start; gap: 20px; flex: 1; }
+    .status-icon {
+      font-size: 48px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .status-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .status-title.green { color: var(--green); }
+    .status-title.red { color: var(--red); }
+    .status-subtitle {
+      font-size: 15px;
+      color: var(--mid);
+      margin-bottom: 12px;
+    }
+    .status-meta {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .status-meta-item { font-size: 13px; }
+    .status-meta-item span { color: var(--mid); }
+    .status-meta-item strong { color: var(--text); margin-left: 4px; }
+    .status-confirm {
+      font-size: 12px;
+      color: var(--mid);
+      margin-top: 8px;
+      font-family: monospace;
+    }
+    .status-confirm strong { color: var(--blue); }
+
+    /* Edit button */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.15s;
+      text-decoration: none;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-blue { background: var(--blue); color: #fff; }
+    .btn-mid { background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
+
+    /* Section panels */
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .panel-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Detail grid */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .detail-item { display: flex; flex-direction: column; gap: 4px; }
+    .detail-item.full { grid-column: 1 / -1; }
+    .detail-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--mid);
+      font-weight: 600;
+    }
+    .detail-value {
+      font-size: 14px;
+      color: var(--text);
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+      min-height: 40px;
+      line-height: 1.5;
+    }
+    .detail-value.notes {
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+    .badge-yes { background: rgba(239,68,68,0.2); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-no { background: rgba(16,185,129,0.2); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+
+    /* Info banner */
+    .info-banner {
+      background: rgba(59,130,246,0.08);
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .info-banner h3 {
+      color: var(--blue);
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-banner ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .info-banner li {
+      font-size: 14px;
+      color: var(--text);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .info-banner li::before {
+      content: "•";
+      color: var(--blue);
+      font-weight: 900;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .info-banner li strong { color: var(--blue); }
+
+    /* Resources */
+    .resource-list { display: flex; flex-direction: column; gap: 12px; }
+    .resource-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 600;
+      transition: border-color 0.15s;
+    }
+    .resource-link:hover { border-color: var(--blue); }
+    .resource-link .resource-desc {
+      font-size: 12px;
+      color: var(--mid);
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    .providers-list {
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--mid);
+    }
+    .providers-list strong { color: var(--text); }
+    .explanation-box {
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .modal-header h2 { font-size: 18px; font-weight: 700; }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--mid);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--text); }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--mid);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .form-input, .form-select, .form-textarea {
+      background: var(--panel2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 9px 12px;
+      font-size: 14px;
+      width: 100%;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+    }
+    .form-select option { background: var(--panel2); }
+    .form-textarea { resize: vertical; min-height: 80px; }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+    }
+    .checkbox-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 640px) {
+      .detail-grid, .form-grid { grid-template-columns: 1fr; }
+      .detail-item.full, .form-group.full { grid-column: 1; }
+      .status-card { flex-direction: column; }
+      .status-meta { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+<div id="nexus-app" style="display:flex;min-height:100vh;background:var(--bg);">
+  <div id="nexus-sidebar"></div>
+  <main style="flex:1;padding:28px;overflow-y:auto;">
+
+    <div style="max-width:900px;">
+      <!-- Page Header -->
+      <div style="margin-bottom:24px;">
+        <h1 style="font-size:22px;font-weight:800;margin-bottom:4px;">BOC-3 Filing</h1>
+        <p style="color:var(--mid);font-size:14px;">FMCSA Process Agent Filing Status &amp; Details</p>
+      </div>
+
+      <!-- SECTION 1: Status Card -->
+      <div id="status-card" class="status-card on-file">
+        <div class="status-card-left">
+          <div class="status-icon" id="status-icon">✅</div>
+          <div>
+            <div class="status-title green" id="status-title">BOC-3 ON FILE</div>
+            <div class="status-subtitle" id="status-subtitle">All 48 Contiguous States + DC Covered</div>
+            <div class="status-meta">
+              <div class="status-meta-item"><span>Last Verified:</span><strong id="meta-verified">—</strong></div>
+              <div class="status-meta-item"><span>Next Review:</span><strong id="meta-review">—</strong></div>
+            </div>
+            <div class="status-confirm" id="status-confirm" style="margin-top:12px;">
+              Confirmation #: <strong id="meta-confirm">—</strong>
+            </div>
+          </div>
+        </div>
+        <div style="flex-shrink:0;">
+          <button class="btn btn-blue" onclick="openModal()">✏️ Edit Filing</button>
+        </div>
+      </div>
+
+      <!-- SECTION 2: Filing Details -->
+      <div class="panel">
+        <div class="panel-title">📋 Current Filing Details</div>
+        <div class="detail-grid" id="detail-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- SECTION 3: Info Banner -->
+      <div class="info-banner">
+        <h3>ℹ️ When is a BOC-3 Update Required?</h3>
+        <ul>
+          <li>Your operating authority changes (new MC/DOT number, authority type changes)</li>
+          <li>You add operations in states beyond your current filing coverage</li>
+          <li>Your blanket agent withdraws or changes coverage</li>
+          <li>Your agent's contact information changes</li>
+          <li><strong>Otherwise, the BOC-3 is a ONE-TIME filing — no annual renewal required</strong></li>
+        </ul>
+      </div>
+
+      <!-- SECTION 4: Resources -->
+      <div class="panel">
+        <div class="panel-title">🔗 Resources &amp; Reference</div>
+        <div class="explanation-box" style="margin-top:0;margin-bottom:16px;">
+          A BOC-3 designates a process agent in each state where you operate. Process agents accept legal documents on behalf of your company on service of process matters. A BOC-3 filing is required for interstate operating authority and must be on file with the FMCSA before your authority becomes active.
+        </div>
+        <div class="resource-list">
+          <a class="resource-link" href="https://www.fmcsa.dot.gov/registration/process-agents" target="_blank" rel="noopener">
+            🌐 FMCSA Process Agents Page
+            <span class="resource-desc">— Official FMCSA information on BOC-3 process agent requirements</span>
+          </a>
+          <a class="resource-link" href="https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-366/section-366.3" target="_blank" rel="noopener">
+            📜 eCFR 49 CFR Part 366.3
+            <span class="resource-desc">— Federal regulation governing process agent designations</span>
+          </a>
+        </div>
+        <div class="providers-list">
+          <strong>Common BOC-3 Filing Providers:</strong> PROCESS AGENT.COM &nbsp;·&nbsp; Universal Agents Inc. &nbsp;·&nbsp; BOC-3 Filing Service &nbsp;·&nbsp; National Registered Agents &nbsp;·&nbsp; FMCSA-registered blanket agent networks
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Edit BOC-3 Filing</h2>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <form id="edit-form" onsubmit="saveFiling(event)">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label class="form-label" for="f-status">Status</label>
+          <select class="form-select" id="f-status" name="status">
+            <option value="ON FILE">ON FILE</option>
+            <option value="NOT ON FILE">NOT ON FILE</option>
+            <option value="PENDING">PENDING</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-filing_date">Filing Date</label>
+          <input class="form-input" type="date" id="f-filing_date" name="filing_date">
+        </div>
+
+        <div class="form-group full">
+          <label class="form-label" for="f-filing_method">Filing Method</label>
+          <input class="form-input" type="text" id="f-filing_method" name="filing_method" placeholder="e.g. Blanket Agent (National)">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-blanket_agent_company">Blanket Agent Company</label>
+          <input class="form-input" type="text" id="f-blanket_agent_company" name="blanket_agent_company">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-fmcsa_confirmation">FMCSA Confirmation #</label>
+          <input class="form-input" type="text" id="f-fmcsa_confirmation" name="fmcsa_confirmation">
+        </div>
+
+        <div class="form-group full">
+          <label class="form-label" for="f-blanket_agent_address">Agent Address</label>
+          <input class="form-input" type="text" id="f-blanket_agent_address" name="blanket_agent_address">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-blanket_agent_phone">Agent Phone</label>
+          <input class="form-input" type="text" id="f-blanket_agent_phone" name="blanket_agent_phone">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-blanket_agent_email">Agent Email</label>
+          <input class="form-input" type="email" id="f-blanket_agent_email" name="blanket_agent_email">
+        </div>
+
+        <div class="form-group full">
+          <label class="form-label" for="f-states_covered">States Covered</label>
+          <input class="form-input" type="text" id="f-states_covered" name="states_covered" placeholder="e.g. All 48 Contiguous States + DC">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-last_verified">Last Verified</label>
+          <input class="form-input" type="date" id="f-last_verified" name="last_verified">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-next_review_date">Next Review Date</label>
+          <input class="form-input" type="date" id="f-next_review_date" name="next_review_date">
+        </div>
+
+        <div class="form-group full">
+          <div class="checkbox-row">
+            <input type="checkbox" id="f-requires_update" name="requires_update">
+            <label for="f-requires_update" style="font-size:14px;color:var(--text);cursor:pointer;">Requires Update</label>
+          </div>
+        </div>
+
+        <div class="form-group full">
+          <label class="form-label" for="f-notes">Notes</label>
+          <textarea class="form-textarea" id="f-notes" name="notes" rows="4"></textarea>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-mid" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-blue">💾 Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  var BOC3_KEY = 'nexus_boc3';
+
+  var BOC3_SEED = {
+    "status": "ON FILE",
+    "filing_date": "2019-06-15",
+    "filing_method": "Blanket Agent (National)",
+    "blanket_agent_company": "Universal Agents Inc.",
+    "blanket_agent_address": "1802 N 169th Plaza, Omaha, NE 68154",
+    "blanket_agent_phone": "(402) 934-1990",
+    "blanket_agent_email": "fmcsa@universalagents.com",
+    "fmcsa_confirmation": "BOC3-CTU-2019-06-15-4521893",
+    "states_covered": "All 48 Contiguous States + DC",
+    "last_verified": "2026-01-10",
+    "next_review_date": "2027-01-10",
+    "notes": "Blanket BOC-3 filed at time of operating authority grant. Universal Agents covers all contiguous states. No action required unless operating authority changes.",
+    "requires_update": false
+  };
+
+  function loadData() {
+    try {
+      var raw = localStorage.getItem(BOC3_KEY);
+      if (raw) {
+        return JSON.parse(raw);
+      }
+    } catch(e) {
+      // ignore parse errors
+    }
+    localStorage.setItem(BOC3_KEY, JSON.stringify(BOC3_SEED));
+    return BOC3_SEED;
+  }
+
+  function saveData(data) {
+    localStorage.setItem(BOC3_KEY, JSON.stringify(data));
+  }
+
+  function formatDate(d) {
+    if (!d) return '—';
+    var parts = d.split('-');
+    if (parts.length !== 3) return d;
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var m = parseInt(parts[1], 10) - 1;
+    return months[m] + ' ' + parseInt(parts[2], 10) + ', ' + parts[0];
+  }
+
+  function renderPage(data) {
+    var isOnFile = data.status === 'ON FILE';
+
+    // Status card
+    var card = document.getElementById('status-card');
+    card.className = 'status-card ' + (isOnFile ? 'on-file' : 'not-on-file');
+
+    var icon = document.getElementById('status-icon');
+    icon.textContent = isOnFile ? '✅' : '⚠️';
+
+    var title = document.getElementById('status-title');
+    title.textContent = isOnFile ? 'BOC-3 ON FILE' : 'BOC-3 NOT ON FILE';
+    title.className = 'status-title ' + (isOnFile ? 'green' : 'red');
+
+    var subtitle = document.getElementById('status-subtitle');
+    subtitle.textContent = isOnFile
+      ? (data.states_covered || 'All 48 Contiguous States + DC Covered')
+      : 'Operating Authority May Be Suspended';
+
+    document.getElementById('meta-verified').textContent = formatDate(data.last_verified);
+    document.getElementById('meta-review').textContent = formatDate(data.next_review_date);
+    document.getElementById('meta-confirm').textContent = data.fmcsa_confirmation || '—';
+
+    var confirmRow = document.getElementById('status-confirm');
+    confirmRow.style.display = data.fmcsa_confirmation ? 'block' : 'none';
+
+    // Detail grid
+    var grid = document.getElementById('detail-grid');
+    grid.innerHTML = '';
+
+    function addItem(label, value, full, isHtml) {
+      var item = document.createElement('div');
+      item.className = 'detail-item' + (full ? ' full' : '');
+      var lbl = document.createElement('div');
+      lbl.className = 'detail-label';
+      lbl.textContent = label;
+      var val = document.createElement('div');
+      val.className = 'detail-value' + (label === 'Notes' ? ' notes' : '');
+      if (isHtml) {
+        val.innerHTML = value;
+      } else {
+        val.textContent = value || '—';
+      }
+      item.appendChild(lbl);
+      item.appendChild(val);
+      grid.appendChild(item);
+    }
+
+    addItem('Filing Date', formatDate(data.filing_date), false, false);
+    addItem('Filing Method', data.filing_method, false, false);
+    addItem('Blanket Agent Company', data.blanket_agent_company, false, false);
+    addItem('FMCSA Confirmation #', data.fmcsa_confirmation, false, false);
+    addItem('Agent Address', data.blanket_agent_address, true, false);
+    addItem('Agent Phone', data.blanket_agent_phone, false, false);
+    addItem('Agent Email', data.blanket_agent_email, false, false);
+    addItem('States Covered', data.states_covered, true, false);
+    addItem('Last Verified', formatDate(data.last_verified), false, false);
+    addItem('Next Review Date', formatDate(data.next_review_date), false, false);
+
+    var reqItem = document.createElement('div');
+    reqItem.className = 'detail-item full';
+    var reqLbl = document.createElement('div');
+    reqLbl.className = 'detail-label';
+    reqLbl.textContent = 'Requires Update';
+    var reqVal = document.createElement('div');
+    reqVal.className = 'detail-value';
+    var badge = document.createElement('span');
+    badge.className = data.requires_update ? 'badge badge-yes' : 'badge badge-no';
+    badge.textContent = data.requires_update ? 'Yes' : 'No';
+    reqVal.appendChild(badge);
+    reqItem.appendChild(reqLbl);
+    reqItem.appendChild(reqVal);
+    grid.appendChild(reqItem);
+
+    addItem('Notes', data.notes, true, false);
+  }
+
+  function openModal() {
+    var data = loadData();
+    document.getElementById('f-status').value = data.status || 'ON FILE';
+    document.getElementById('f-filing_date').value = data.filing_date || '';
+    document.getElementById('f-filing_method').value = data.filing_method || '';
+    document.getElementById('f-blanket_agent_company').value = data.blanket_agent_company || '';
+    document.getElementById('f-blanket_agent_address').value = data.blanket_agent_address || '';
+    document.getElementById('f-blanket_agent_phone').value = data.blanket_agent_phone || '';
+    document.getElementById('f-blanket_agent_email').value = data.blanket_agent_email || '';
+    document.getElementById('f-fmcsa_confirmation').value = data.fmcsa_confirmation || '';
+    document.getElementById('f-states_covered').value = data.states_covered || '';
+    document.getElementById('f-last_verified').value = data.last_verified || '';
+    document.getElementById('f-next_review_date').value = data.next_review_date || '';
+    document.getElementById('f-requires_update').checked = !!data.requires_update;
+    document.getElementById('f-notes').value = data.notes || '';
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+
+  function saveFiling(e) {
+    e.preventDefault();
+    var data = {
+      status: document.getElementById('f-status').value,
+      filing_date: document.getElementById('f-filing_date').value,
+      filing_method: document.getElementById('f-filing_method').value,
+      blanket_agent_company: document.getElementById('f-blanket_agent_company').value,
+      blanket_agent_address: document.getElementById('f-blanket_agent_address').value,
+      blanket_agent_phone: document.getElementById('f-blanket_agent_phone').value,
+      blanket_agent_email: document.getElementById('f-blanket_agent_email').value,
+      fmcsa_confirmation: document.getElementById('f-fmcsa_confirmation').value,
+      states_covered: document.getElementById('f-states_covered').value,
+      last_verified: document.getElementById('f-last_verified').value,
+      next_review_date: document.getElementById('f-next_review_date').value,
+      requires_update: document.getElementById('f-requires_update').checked,
+      notes: document.getElementById('f-notes').value
+    };
+    saveData(data);
+    renderPage(data);
+    closeModal();
+  }
+
+  // Close modal on overlay click
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeModal();
+    }
+  });
+
+  // Init
+  document.addEventListener('DOMContentLoaded', function() {
+    if (typeof NexusSidebar !== 'undefined') {
+      NexusSidebar.init();
+    }
+    var data = loadData();
+    renderPage(data);
+  });
+</script>
+</body>
+</html>

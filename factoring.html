@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Factoring &amp; Quick Pay — Carrier Nexus</title>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<script src="nexus-sidebar.js"></script>
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+main{padding:24px;}
+h1{font-size:22px;font-weight:700;margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--mid);margin-bottom:20px;}
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:0;}
+.tab-btn{padding:9px 18px;border:none;background:none;color:var(--mid);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s;}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
+.tab-btn:hover:not(.active){color:var(--text);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+.kpi-label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.kpi-value{font-size:26px;font-weight:800;line-height:1;}
+.kpi-sub{font-size:11px;color:var(--mid);margin-top:4px;}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:14px;font-weight:700;}
+.panel-sub{font-size:12px;color:var(--mid);}
+table{width:100%;border-collapse:collapse;}
+th{padding:9px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;}
+.badge-green{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);}
+.badge-yellow{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25);}
+.badge-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
+.badge-blue{background:rgba(59,130,246,.12);color:#3b82f6;border:1px solid rgba(59,130,246,.25);}
+.badge-gray{background:rgba(100,116,139,.12);color:#94a3b8;border:1px solid rgba(100,116,139,.25);}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-primary:hover{background:#2563eb;}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}
+.btn-outline:hover{background:var(--panel2);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:#059669;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;color:var(--mid);margin-bottom:5px;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--blue);}
+.form-textarea{resize:vertical;min-height:80px;}
+.company-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.company-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.company-name{font-size:15px;font-weight:700;margin-bottom:4px;}
+.company-rate{font-size:13px;color:var(--green);font-weight:600;margin-bottom:8px;}
+.company-detail{font-size:12px;color:var(--mid);margin-bottom:3px;}
+.company-detail a{color:var(--blue);text-decoration:none;}
+.company-detail a:hover{text-decoration:underline;}
+.alert-success{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#10b981;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px;display:none;}
+.mono{font-family:'SFMono-Regular',Consolas,monospace;font-size:12px;}
+@media(max-width:768px){.kpi-row{grid-template-columns:1fr 1fr;}.form-grid,.form-grid-3{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="nexus-app" style="display:flex;min-height:100vh;background:var(--bg);">
+  <div id="nexus-sidebar"></div>
+  <main style="flex:1;padding:28px;overflow-y:auto;">
+    <h1>Factoring &amp; Quick Pay</h1>
+    <div class="page-sub">Manage factoring relationships, submit invoices for quick pay, track fees and funding timelines.</div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('dashboard',this)">Dashboard</button>
+      <button class="tab-btn" onclick="switchTab('submit',this)">Submit Invoice</button>
+      <button class="tab-btn" onclick="switchTab('companies',this)">Factoring Companies</button>
+      <button class="tab-btn" onclick="switchTab('history',this)">History</button>
+    </div>
+
+    <!-- TAB: Dashboard -->
+    <div id="tab-dashboard" class="tab-panel active">
+      <div class="kpi-row" id="kpi-row"></div>
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Recent Submissions</div>
+            <div class="panel-sub">Latest factoring activity</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="switchTab('submit', document.querySelectorAll('.tab-btn')[1])">+ Submit Invoice</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Load #</th>
+              <th>Invoice Amt</th>
+              <th>Company</th>
+              <th>Fee</th>
+              <th>Net Proceeds</th>
+              <th>Days to Fund</th>
+              <th>Submitted</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="recent-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: Submit Invoice -->
+    <div id="tab-submit" class="tab-panel">
+      <div class="panel" style="max-width:640px;">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Submit Invoice for Quick Pay</div>
+            <div class="panel-sub">Choose a delivered load and submit to your factoring company</div>
+          </div>
+        </div>
+        <div style="padding:20px;">
+          <div id="submit-success" class="alert-success">Invoice submitted successfully! Your factoring company will be in touch shortly.</div>
+          <div class="field">
+            <label>Select Load *</label>
+            <select class="form-select" id="f-load">
+              <option value="">-- Select a delivered load --</option>
+            </select>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Invoice Amount ($) *</label>
+              <input type="number" class="form-input" id="f-amount" placeholder="0.00" step="0.01" min="0">
+            </div>
+            <div class="field">
+              <label>Factoring Company *</label>
+              <select class="form-select" id="f-company">
+                <option value="">-- Select company --</option>
+                <option value="OTR Capital">OTR Capital (2-3%)</option>
+                <option value="RTS Financial">RTS Financial (3-5%)</option>
+                <option value="Triumph Business Capital">Triumph Business Capital (2-4%)</option>
+                <option value="Apex Capital">Apex Capital (1.5-4%)</option>
+                <option value="TBS Factoring">TBS Factoring (1-5%)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Notes</label>
+            <textarea class="form-textarea" id="f-notes" placeholder="Additional notes for factoring company..."></textarea>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn btn-green" onclick="submitInvoice()">Submit for Quick Pay</button>
+            <button class="btn btn-outline" onclick="clearSubmitForm()">Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Factoring Companies -->
+    <div id="tab-companies" class="tab-panel">
+      <div style="margin-bottom:16px;">
+        <div class="panel-title" style="font-size:16px;">Factoring Company Directory</div>
+        <div style="font-size:13px;color:var(--mid);margin-top:4px;">Carrier Nexus preferred factoring partners. Rates may vary based on volume and creditworthiness.</div>
+      </div>
+      <div class="company-grid" id="companies-grid"></div>
+    </div>
+
+    <!-- TAB: History -->
+    <div id="tab-history" class="tab-panel">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Factoring History</div>
+            <div class="panel-sub">All past submissions and funded transactions</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <select class="form-select btn-sm" id="h-filter-status" onchange="renderHistory()" style="width:auto;padding:6px 10px;">
+              <option value="">All Statuses</option>
+              <option value="FUNDED">Funded</option>
+              <option value="PENDING">Pending</option>
+              <option value="REJECTED">Rejected</option>
+            </select>
+            <select class="form-select btn-sm" id="h-filter-company" onchange="renderHistory()" style="width:auto;padding:6px 10px;">
+              <option value="">All Companies</option>
+              <option>OTR Capital</option>
+              <option>RTS Financial</option>
+              <option>Triumph Business Capital</option>
+              <option>Apex Capital</option>
+              <option>TBS Factoring</option>
+            </select>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Load #</th>
+              <th>Invoice Amt</th>
+              <th>Company</th>
+              <th>Fee %</th>
+              <th>Fee $</th>
+              <th>Net</th>
+              <th>Days to Fund</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+(function() {
+  "use strict";
+
+  var LS_KEY = "nexus_factoring_submissions";
+
+  var SEED_DATA = [
+    {
+      id: "fac_001",
+      load: "HH-2026-0885",
+      amount: 15380,
+      company: "OTR Capital",
+      fee_pct: 3,
+      fee_amt: 461.40,
+      net: 14918.60,
+      days_to_fund: 2,
+      submitted: "2026-06-20",
+      funded: "2026-06-22",
+      status: "FUNDED",
+      notes: "Flatbed load, steel coils. Austin to Memphis."
+    },
+    {
+      id: "fac_002",
+      load: "HH-2026-0884",
+      amount: 11200,
+      company: "RTS Financial",
+      fee_pct: 3.5,
+      fee_amt: 392,
+      net: 10808,
+      days_to_fund: null,
+      submitted: "2026-06-24",
+      funded: null,
+      status: "PENDING",
+      notes: "Flatbed load. Awaiting broker payment confirmation."
+    },
+    {
+      id: "fac_003",
+      load: "HH-2026-0880",
+      amount: 9850,
+      company: "Triumph Business Capital",
+      fee_pct: 2.5,
+      fee_amt: 246.25,
+      net: 9603.75,
+      days_to_fund: 3,
+      submitted: "2026-06-15",
+      funded: "2026-06-18",
+      status: "FUNDED",
+      notes: ""
+    }
+  ];
+
+  var FALLBACK_LOADS = [
+    { id: "HH-2026-0885", label: "HH-2026-0885 — Austin TX → Memphis TN — Flatbed" },
+    { id: "HH-2026-0884", label: "HH-2026-0884 — Dallas TX → Atlanta GA — Flatbed" },
+    { id: "HH-2026-0880", label: "HH-2026-0880 — Houston TX → Chicago IL — Reefer" },
+    { id: "HH-2026-0891", label: "HH-2026-0891 — Beaumont TX → Nashville TN — Van" },
+    { id: "HH-2026-0892", label: "HH-2026-0892 — Corpus Christi TX → Denver CO — Flatbed" }
+  ];
+
+  var COMPANIES = [
+    { name: "OTR Capital", fee: "2–3%", speed: "Same day funding", url: "otrca.com", phone: "(877) 465-8726", note: "Specializes in trucking & transportation. No long-term contracts." },
+    { name: "RTS Financial", fee: "3–5%", speed: "1–2 day funding", url: "rtsfinancial.com", phone: "(877) 787-4687", note: "Full-service factoring with fuel discounts and credit checking." },
+    { name: "Triumph Business Capital", fee: "2–4%", speed: "2–3 day funding", url: "triumphbusiness.com", phone: "(866) 600-8477", note: "Strong broker relationships. Recourse and non-recourse options." },
+    { name: "Apex Capital", fee: "1.5–4%", speed: "Same day funding", url: "apexcapitalcorp.com", phone: "(800) 385-5823", note: "Competitive rates for established carriers. Free credit checks." },
+    { name: "TBS Factoring", fee: "1–5%", speed: "Next day funding", url: "tbsfactoring.com", phone: "(877) 827-6444", note: "Flexible flat-rate and percentage options. No minimums." }
+  ];
+
+  function getSubmissions() {
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    var seeded = JSON.parse(JSON.stringify(SEED_DATA));
+    localStorage.setItem(LS_KEY, JSON.stringify(seeded));
+    return seeded;
+  }
+
+  function saveSubmissions(arr) {
+    localStorage.setItem(LS_KEY, JSON.stringify(arr));
+  }
+
+  function fmt$(n) {
+    return "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function statusBadge(s) {
+    if (s === "FUNDED") return "<span class=\"badge badge-green\">FUNDED</span>";
+    if (s === "PENDING") return "<span class=\"badge badge-yellow\">PENDING</span>";
+    if (s === "REJECTED") return "<span class=\"badge badge-red\">REJECTED</span>";
+    return "<span class=\"badge badge-gray\">" + s + "</span>";
+  }
+
+  function renderKPI() {
+    var subs = getSubmissions();
+    var funded = subs.filter(function(s) { return s.status === "FUNDED"; });
+    var pending = subs.filter(function(s) { return s.status === "PENDING"; });
+    var totalFunded = funded.reduce(function(a, s) { return a + s.amount; }, 0);
+    var totalFees = subs.reduce(function(a, s) { return a + (s.fee_amt || 0); }, 0);
+    var daysArr = funded.filter(function(s) { return s.days_to_fund; }).map(function(s) { return s.days_to_fund; });
+    var avgDays = daysArr.length ? (daysArr.reduce(function(a, d) { return a + d; }, 0) / daysArr.length).toFixed(1) : "N/A";
+
+    document.getElementById("kpi-row").innerHTML =
+      kpiCard("Funded This Month", fmt$(totalFunded), funded.length + " invoices funded", "var(--green)") +
+      kpiCard("Pending Submissions", pending.length, "awaiting funding", "var(--yellow)") +
+      kpiCard("Fees Paid", fmt$(totalFees), "total factoring fees", "var(--red)") +
+      kpiCard("Avg Days to Fund", avgDays + (avgDays !== "N/A" ? " days" : ""), "funded invoices only", "var(--blue)");
+  }
+
+  function kpiCard(label, value, sub, color) {
+    return "<div class=\"kpi\"><div class=\"kpi-label\">" + label + "</div>" +
+      "<div class=\"kpi-value\" style=\"color:" + color + "\">" + value + "</div>" +
+      "<div class=\"kpi-sub\">" + sub + "</div></div>";
+  }
+
+  function renderRecent() {
+    var subs = getSubmissions();
+    var tbody = document.getElementById("recent-tbody");
+    if (!subs.length) { tbody.innerHTML = "<tr><td colspan=\"8\" style=\"text-align:center;color:var(--mid);padding:24px;\">No submissions yet.</td></tr>"; return; }
+    tbody.innerHTML = subs.map(function(s) {
+      return "<tr><td class=\"mono\">" + s.load + "</td><td>" + fmt$(s.amount) + "</td>" +
+        "<td>" + s.company + "</td>" +
+        "<td style=\"color:var(--red)\">" + s.fee_pct + "%</td>" +
+        "<td style=\"color:var(--green)\">" + fmt$(s.net) + "</td>" +
+        "<td>" + (s.days_to_fund ? s.days_to_fund + "d" : "—") + "</td>" +
+        "<td>" + s.submitted + "</td>" +
+        "<td>" + statusBadge(s.status) + "</td></tr>";
+    }).join("");
+  }
+
+  function renderHistory() {
+    var subs = getSubmissions();
+    var filterStatus = document.getElementById("h-filter-status") ? document.getElementById("h-filter-status").value : "";
+    var filterCompany = document.getElementById("h-filter-company") ? document.getElementById("h-filter-company").value : "";
+    if (filterStatus) subs = subs.filter(function(s) { return s.status === filterStatus; });
+    if (filterCompany) subs = subs.filter(function(s) { return s.company === filterCompany; });
+    var tbody = document.getElementById("history-tbody");
+    if (!subs.length) { tbody.innerHTML = "<tr><td colspan=\"9\" style=\"text-align:center;color:var(--mid);padding:24px;\">No records match filter.</td></tr>"; return; }
+    tbody.innerHTML = subs.map(function(s) {
+      return "<tr><td>" + s.submitted + "</td><td class=\"mono\">" + s.load + "</td>" +
+        "<td>" + fmt$(s.amount) + "</td><td>" + s.company + "</td>" +
+        "<td>" + s.fee_pct + "%</td><td style=\"color:var(--red)\">" + fmt$(s.fee_amt) + "</td>" +
+        "<td style=\"color:var(--green)\">" + fmt$(s.net) + "</td>" +
+        "<td>" + (s.days_to_fund ? s.days_to_fund + "d" : "—") + "</td>" +
+        "<td>" + statusBadge(s.status) + "</td></tr>";
+    }).join("");
+  }
+
+  function renderCompanies() {
+    document.getElementById("companies-grid").innerHTML = COMPANIES.map(function(c) {
+      return "<div class=\"company-card\">" +
+        "<div class=\"company-name\">" + c.name + "</div>" +
+        "<div class=\"company-rate\">Fee: " + c.fee + " &bull; " + c.speed + "</div>" +
+        "<div class=\"company-detail\">&#128222; " + c.phone + "</div>" +
+        "<div class=\"company-detail\">&#127760; <a href=\"https://" + c.url + "\" target=\"_blank\" rel=\"noopener\">" + c.url + "</a></div>" +
+        "<div style=\"font-size:12px;color:var(--mid);margin-top:8px;\">" + c.note + "</div>" +
+        "</div>";
+    }).join("");
+  }
+
+  function populateLoadDropdown() {
+    var select = document.getElementById("f-load");
+    if (!select) return;
+    var loads = [];
+    try {
+      var raw = localStorage.getItem("nexus_dispatch_loads");
+      if (raw) {
+        var all = JSON.parse(raw);
+        loads = all.filter(function(l) { return l.status === "DELIVERED" || l.status === "Delivered"; });
+      }
+    } catch (e) {}
+    if (!loads.length) loads = FALLBACK_LOADS.map(function(l) { return { id: l.id, load_number: l.id, label: l.label }; });
+    loads.forEach(function(l) {
+      var opt = document.createElement("option");
+      opt.value = l.load_number || l.id;
+      opt.textContent = l.label || (l.load_number + (l.origin ? " — " + l.origin + " → " + l.destination : ""));
+      select.appendChild(opt);
+    });
+  }
+
+  window.submitInvoice = function() {
+    var load = document.getElementById("f-load").value;
+    var amount = parseFloat(document.getElementById("f-amount").value);
+    var company = document.getElementById("f-company").value;
+    var notes = document.getElementById("f-notes").value;
+    if (!load || !amount || !company) { alert("Please fill in Load, Invoice Amount, and Factoring Company."); return; }
+
+    var feeRates = {
+      "OTR Capital": 3,
+      "RTS Financial": 3.5,
+      "Triumph Business Capital": 3,
+      "Apex Capital": 2.5,
+      "TBS Factoring": 3
+    };
+    var fee_pct = feeRates[company] || 3;
+    var fee_amt = Math.round(amount * fee_pct) / 100;
+    var net = amount - fee_amt;
+
+    var subs = getSubmissions();
+    var newSub = {
+      id: "fac_" + Date.now(),
+      load: load,
+      amount: amount,
+      company: company,
+      fee_pct: fee_pct,
+      fee_amt: fee_amt,
+      net: net,
+      days_to_fund: null,
+      submitted: new Date().toISOString().slice(0, 10),
+      funded: null,
+      status: "PENDING",
+      notes: notes
+    };
+    subs.unshift(newSub);
+    saveSubmissions(subs);
+
+    document.getElementById("submit-success").style.display = "block";
+    clearSubmitForm();
+    setTimeout(function() { document.getElementById("submit-success").style.display = "none"; }, 5000);
+    renderKPI();
+    renderRecent();
+    renderHistory();
+  };
+
+  window.clearSubmitForm = function() {
+    document.getElementById("f-load").value = "";
+    document.getElementById("f-amount").value = "";
+    document.getElementById("f-company").value = "";
+    document.getElementById("f-notes").value = "";
+  };
+
+  window.switchTab = function(tab, btn) {
+    document.querySelectorAll(".tab-panel").forEach(function(p) { p.classList.remove("active"); });
+    document.querySelectorAll(".tab-btn").forEach(function(b) { b.classList.remove("active"); });
+    document.getElementById("tab-" + tab).classList.add("active");
+    if (btn) btn.classList.add("active");
+    if (tab === "history") renderHistory();
+  };
+
+  document.addEventListener("DOMContentLoaded", function() {
+    if (typeof NexusSidebar !== "undefined") NexusSidebar.init();
+    renderKPI();
+    renderRecent();
+    renderCompanies();
+    populateLoadDropdown();
+  });
+})();
+</script>
+</body>
+</html>

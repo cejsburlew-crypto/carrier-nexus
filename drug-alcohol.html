@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drug & Alcohol Testing — Carrier Nexus</title>
+  <script src="nexus-config.js"></script>
+  <script src="nexus-db.js"></script>
+  <script src="nexus-sidebar.js"></script>
+  <style>
+    :root {
+      --bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;
+      --text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;
+      --yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; }
+    h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
+    h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; color: var(--text); }
+    p { color: var(--mid); font-size: 0.9rem; }
+
+    /* Tabs */
+    .tab-nav {
+      display: flex; gap: 4px; margin-bottom: 24px;
+      border-bottom: 1px solid var(--border); padding-bottom: 0;
+    }
+    .tab-btn {
+      background: none; border: none; color: var(--mid);
+      padding: 10px 18px; cursor: pointer; font-size: 0.9rem;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* KPI Cards */
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+      gap: 16px; margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px;
+    }
+    .kpi-card .kpi-label { font-size: 0.78rem; color: var(--mid); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .kpi-card .kpi-value { font-size: 2rem; font-weight: 700; line-height: 1; }
+    .kpi-card .kpi-sub { font-size: 0.78rem; color: var(--mid); margin-top: 6px; }
+
+    /* Info Banner */
+    .info-banner {
+      background: var(--panel2); border: 1px solid var(--border);
+      border-left: 4px solid var(--blue);
+      border-radius: 8px; padding: 16px 20px; margin-bottom: 20px;
+    }
+    .info-banner p { color: var(--text); font-size: 0.88rem; line-height: 1.6; }
+    .info-banner a { color: var(--blue); text-decoration: none; }
+    .info-banner a:hover { text-decoration: underline; }
+
+    /* Warning Banner */
+    .warning-banner {
+      background: rgba(245,158,11,0.1); border: 1px solid var(--yellow);
+      border-left: 4px solid var(--yellow);
+      border-radius: 8px; padding: 14px 18px; margin-bottom: 16px;
+    }
+    .warning-banner p { color: var(--yellow); font-size: 0.88rem; }
+
+    /* CFR Citations */
+    .cfr-grid { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+    .cfr-pill {
+      background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 6px; padding: 8px 14px; font-size: 0.82rem; color: var(--blue);
+    }
+    .cfr-pill strong { display: block; font-size: 0.75rem; color: var(--mid); margin-bottom: 2px; }
+
+    /* Panel */
+    .panel {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px; margin-bottom: 20px;
+    }
+
+    /* Tables */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    thead th {
+      background: var(--panel2); color: var(--mid);
+      text-align: left; padding: 10px 14px;
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:hover { background: rgba(255,255,255,0.03); }
+    tbody td { padding: 10px 14px; color: var(--text); vertical-align: middle; }
+    .empty-row td { color: var(--mid); text-align: center; font-style: italic; }
+
+    /* Badges */
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 4px;
+      font-size: 0.76rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .badge-green { background: rgba(16,185,129,0.15); color: var(--green); }
+    .badge-red { background: rgba(239,68,68,0.15); color: var(--red); }
+    .badge-yellow { background: rgba(245,158,11,0.15); color: var(--yellow); }
+    .badge-orange { background: rgba(249,115,22,0.15); color: var(--orange); }
+    .badge-blue { background: rgba(59,130,246,0.15); color: var(--blue); }
+    .badge-purple { background: rgba(168,85,247,0.15); color: var(--purple); }
+    .badge-mid { background: rgba(100,116,139,0.15); color: var(--mid); }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: 6px; border: none;
+      cursor: pointer; font-size: 0.86rem; font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-danger { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+    .btn-mid { background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
+    .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+    .btn-green { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+
+    /* Forms */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    label { font-size: 0.82rem; color: var(--mid); font-weight: 500; }
+    input[type="text"], input[type="date"], select, textarea {
+      background: var(--panel); color: var(--text);
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 9px 12px; font-size: 0.88rem; width: 100%;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--blue);
+    }
+    select option { background: var(--panel2); }
+    textarea { resize: vertical; min-height: 80px; }
+
+    /* Checkboxes */
+    .check-group { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+    .check-item { display: flex; align-items: center; gap: 6px; font-size: 0.86rem; cursor: pointer; }
+    input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--blue); cursor: pointer; }
+
+    /* Filters */
+    .filters { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .filters input, .filters select { max-width: 220px; }
+
+    /* Row actions bar */
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7); z-index: 1000;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px; width: 100%; max-width: 520px;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal h3 { font-size: 1.1rem; margin-bottom: 20px; }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+    /* Success msg */
+    .success-msg {
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 6px; padding: 12px 16px; color: var(--green);
+      font-size: 0.88rem; margin-bottom: 16px; display: none;
+    }
+    .success-msg.show { display: block; }
+
+    /* Compliant status */
+    .status-compliant {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .tab-btn { padding: 8px 12px; font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+<div id="nexus-app" style="display:flex;min-height:100vh;background:var(--bg);">
+  <div id="nexus-sidebar"></div>
+  <main style="flex:1;padding:28px;overflow-y:auto;">
+
+    <!-- Header -->
+    <div style="margin-bottom:24px;">
+      <h1>Drug &amp; Alcohol Testing</h1>
+      <p>49 CFR Part 382 Compliance Tracker &mdash; FMCSA Drug &amp; Alcohol Clearinghouse</p>
+    </div>
+
+    <!-- Tab Nav -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="showTab('dashboard')">Dashboard</button>
+      <button class="tab-btn" onclick="showTab('records')">Test Records</button>
+      <button class="tab-btn" onclick="showTab('add')">Add Test Record</button>
+      <button class="tab-btn" onclick="showTab('pool')">Random Pool</button>
+      <button class="tab-btn" onclick="showTab('clearinghouse')">Clearinghouse</button>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div id="tab-dashboard" class="tab-panel active">
+      <div class="kpi-grid" id="kpi-grid"></div>
+
+      <div class="info-banner">
+        <p><strong>FMCSA Drug &amp; Alcohol Clearinghouse</strong> &mdash; Employers must query the Clearinghouse for all new CDL driver hires and conduct annual limited queries for all current CDL drivers.
+        <br>Access the Clearinghouse at: <a href="https://clearinghouse.fmcsa.dot.gov" target="_blank">https://clearinghouse.fmcsa.dot.gov</a></p>
+        <div class="cfr-grid">
+          <div class="cfr-pill"><strong>49 CFR &sect;382.301</strong>Pre-Employment Testing</div>
+          <div class="cfr-pill"><strong>49 CFR &sect;382.305</strong>Random Testing</div>
+          <div class="cfr-pill"><strong>49 CFR &sect;382.303</strong>Post-Accident Testing</div>
+          <div class="cfr-pill"><strong>49 CFR &sect;382.307</strong>Reasonable Suspicion</div>
+          <div class="cfr-pill"><strong>49 CFR &sect;382.309</strong>Return-to-Duty</div>
+        </div>
+      </div>
+
+      <div id="dashboard-warnings"></div>
+    </div>
+
+    <!-- TEST RECORDS TAB -->
+    <div id="tab-records" class="tab-panel">
+      <div class="panel">
+        <div class="section-header">
+          <h2 style="margin:0;">All Test Records</h2>
+        </div>
+        <div class="filters">
+          <input type="text" id="filter-driver" placeholder="Filter by driver..." oninput="renderRecordsTable()">
+          <select id="filter-type" onchange="renderRecordsTable()">
+            <option value="">All Types</option>
+            <option>Pre-Employment</option>
+            <option>Random</option>
+            <option>Post-Accident</option>
+            <option>Reasonable Suspicion</option>
+            <option>Return-to-Duty</option>
+            <option>Follow-Up</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table id="records-table">
+            <thead>
+              <tr>
+                <th>Date</th><th>Driver</th><th>Type</th><th>Collection Site</th>
+                <th>MRO</th><th>Result</th><th>Result Date</th><th>CH Query</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="records-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD TEST RECORD TAB -->
+    <div id="tab-add" class="tab-panel">
+      <div class="panel" style="max-width:760px;">
+        <h2>Add Test Record</h2>
+        <div id="add-success" class="success-msg">Test record saved successfully.</div>
+        <form id="add-form" onsubmit="saveTestRecord(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Driver Name *</label>
+              <input type="text" id="f-driver" required placeholder="Full name">
+            </div>
+            <div class="form-group">
+              <label>Test Type *</label>
+              <select id="f-type" required>
+                <option value="">Select type...</option>
+                <option>Pre-Employment</option>
+                <option>Random</option>
+                <option>Post-Accident</option>
+                <option>Reasonable Suspicion</option>
+                <option>Return-to-Duty</option>
+                <option>Follow-Up</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Test Date *</label>
+              <input type="date" id="f-test-date" required>
+            </div>
+            <div class="form-group">
+              <label>Collection Site</label>
+              <input type="text" id="f-site" placeholder="Site name and location">
+            </div>
+            <div class="form-group">
+              <label>MRO Name</label>
+              <input type="text" id="f-mro" placeholder="Medical Review Officer">
+            </div>
+            <div class="form-group">
+              <label>Result *</label>
+              <select id="f-result" required>
+                <option value="">Select result...</option>
+                <option>NEGATIVE</option>
+                <option>POSITIVE</option>
+                <option>CANCELLED</option>
+                <option>REFUSAL TO TEST</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Result Date</label>
+              <input type="date" id="f-result-date">
+            </div>
+            <div class="form-group full">
+              <label>Substances Tested</label>
+              <div class="check-group">
+                <label class="check-item"><input type="checkbox" class="substance-cb" value="Marijuana" checked> Marijuana</label>
+                <label class="check-item"><input type="checkbox" class="substance-cb" value="Cocaine" checked> Cocaine</label>
+                <label class="check-item"><input type="checkbox" class="substance-cb" value="Opiates" checked> Opiates</label>
+                <label class="check-item"><input type="checkbox" class="substance-cb" value="Amphetamines" checked> Amphetamines</label>
+                <label class="check-item"><input type="checkbox" class="substance-cb" value="PCP" checked> PCP</label>
+              </div>
+            </div>
+            <div class="form-group full">
+              <label class="check-item" style="font-size:0.88rem;color:var(--text);">
+                <input type="checkbox" id="f-ch-done" onchange="toggleQueryDate()"> Clearinghouse Query Completed
+              </label>
+            </div>
+            <div class="form-group" id="f-query-date-group" style="display:none;">
+              <label>Query Date</label>
+              <input type="date" id="f-query-date">
+            </div>
+            <div class="form-group full">
+              <label>Notes</label>
+              <textarea id="f-notes" placeholder="Additional notes..."></textarea>
+            </div>
+          </div>
+          <div style="margin-top:20px;display:flex;gap:10px;">
+            <button type="submit" class="btn btn-primary">Save Record</button>
+            <button type="button" class="btn btn-mid" onclick="resetAddForm()">Clear</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- RANDOM POOL TAB -->
+    <div id="tab-pool" class="tab-panel">
+      <div class="panel">
+        <div class="section-header">
+          <h2 style="margin:0;">Random Testing Pool</h2>
+          <button class="btn btn-primary" onclick="openAddPoolModal()">+ Add to Pool</button>
+        </div>
+        <div class="table-wrap">
+          <table id="pool-table">
+            <thead>
+              <tr>
+                <th>Driver</th><th>Pool Entry Date</th><th>Tests This Year</th>
+                <th>Last Tested</th><th>Next Due Quarter</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="pool-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLEARINGHOUSE TAB -->
+    <div id="tab-clearinghouse" class="tab-panel">
+      <div class="info-banner" style="margin-bottom:16px;">
+        <p><strong>FMCSA Drug &amp; Alcohol Clearinghouse Requirements</strong><br>
+        Employers must conduct a <strong>full query</strong> before a CDL driver operates a CMV for the first time (pre-employment).
+        Employers must conduct a <strong>limited query</strong> at least annually for all currently employed CDL drivers.
+        Drivers must provide electronic consent via the Clearinghouse portal for full queries.
+        <br><br>Access the Clearinghouse: <a href="https://clearinghouse.fmcsa.dot.gov" target="_blank">https://clearinghouse.fmcsa.dot.gov</a></p>
+      </div>
+
+      <div id="ch-warnings"></div>
+
+      <div class="panel">
+        <div class="section-header">
+          <h2 style="margin:0;">Query Records</h2>
+          <button class="btn btn-primary" onclick="openAddQueryModal()">+ Add Query Record</button>
+        </div>
+        <div class="table-wrap">
+          <table id="ch-table">
+            <thead>
+              <tr>
+                <th>Date</th><th>Driver</th><th>Query Type</th>
+                <th>Result</th><th>Queried By</th><th>Consent</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ch-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ADD POOL MODAL -->
+<div class="modal-overlay" id="modal-pool">
+  <div class="modal">
+    <h3>Add Driver to Random Pool</h3>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label>Driver Name *</label>
+      <input type="text" id="pool-driver-name" placeholder="Full name">
+    </div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label>Pool Entry Date</label>
+      <input type="date" id="pool-entry-date">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-mid" onclick="closeModal('modal-pool')">Cancel</button>
+      <button class="btn btn-primary" onclick="addToPool()">Add to Pool</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD QUERY MODAL -->
+<div class="modal-overlay" id="modal-query">
+  <div class="modal">
+    <h3>Add Clearinghouse Query Record</h3>
+    <div class="form-grid" style="grid-template-columns:1fr;">
+      <div class="form-group">
+        <label>Driver Name *</label>
+        <input type="text" id="q-driver" placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label>Query Date *</label>
+        <input type="date" id="q-date">
+      </div>
+      <div class="form-group">
+        <label>Query Type *</label>
+        <select id="q-type">
+          <option>Pre-Employment Full Query</option>
+          <option>Annual Limited Query</option>
+          <option>Pre-Employment Limited Query</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Result</label>
+        <input type="text" id="q-result" placeholder="e.g. No Records Found">
+      </div>
+      <div class="form-group">
+        <label>Queried By</label>
+        <input type="text" id="q-by" placeholder="Name of person who ran query">
+      </div>
+      <div class="form-group">
+        <label class="check-item" style="font-size:0.88rem;color:var(--text);">
+          <input type="checkbox" id="q-consent" checked> Driver Consent Obtained
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-mid" onclick="closeModal('modal-query')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveQueryRecord()">Save Record</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+
+  // ── Seed data ──────────────────────────────────────────────────────────────
+  var SEED_TESTS = [
+    { id:"dt_001", driver:"Testing Driver Martinez", test_type:"Pre-Employment", test_date:"2021-03-10", collection_site:"Testing Occupational Health Clinic", mro:"Testing MRO Services LLC", result:"NEGATIVE", substances_tested:["Marijuana","Cocaine","Opiates","Amphetamines","PCP"], result_date:"2021-03-12", clearinghouse_query:true, query_date:"2021-03-08", notes:"Pre-employment. Clean record confirmed via Clearinghouse." },
+    { id:"dt_002", driver:"Testing Driver Johnson", test_type:"Pre-Employment", test_date:"2022-07-28", collection_site:"Testing Occupational Health Clinic", mro:"Testing MRO Services LLC", result:"NEGATIVE", substances_tested:["Marijuana","Cocaine","Opiates","Amphetamines","PCP"], result_date:"2022-07-30", clearinghouse_query:true, query_date:"2022-07-25", notes:"Pre-employment. All clear." },
+    { id:"dt_003", driver:"Testing Driver Martinez", test_type:"Random", test_date:"2025-04-15", collection_site:"ClinCheck Testing Centers - Houston TX", mro:"Testing MRO Services LLC", result:"NEGATIVE", substances_tested:["Marijuana","Cocaine","Opiates","Amphetamines","PCP"], result_date:"2025-04-16", clearinghouse_query:false, notes:"Q2 2025 random selection." },
+    { id:"dt_004", driver:"Testing Driver Johnson", test_type:"Random", test_date:"2025-09-22", collection_site:"ClinCheck Testing Centers - San Antonio TX", mro:"Testing MRO Services LLC", result:"NEGATIVE", substances_tested:["Marijuana","Cocaine","Opiates","Amphetamines","PCP"], result_date:"2025-09-23", clearinghouse_query:false, notes:"Q3 2025 random selection." },
+    { id:"dt_005", driver:"Testing Driver Martinez", test_type:"Random", test_date:"2026-02-10", collection_site:"ClinCheck Testing Centers - Beaumont TX", mro:"Testing MRO Services LLC", result:"NEGATIVE", substances_tested:["Marijuana","Cocaine","Opiates","Amphetamines","PCP"], result_date:"2026-02-11", clearinghouse_query:false, notes:"Q1 2026 random selection." }
+  ];
+
+  var SEED_QUERIES = [
+    { id:"chq_001", driver:"Testing Driver Martinez", query_date:"2021-03-08", query_type:"Pre-Employment Full Query", result:"No Records Found", queried_by:"Jim Burlew", consent_obtained:true },
+    { id:"chq_002", driver:"Testing Driver Johnson", query_date:"2022-07-25", query_type:"Pre-Employment Full Query", result:"No Records Found", queried_by:"Jim Burlew", consent_obtained:true },
+    { id:"chq_003", driver:"Testing Driver Martinez", query_date:"2026-01-05", query_type:"Annual Limited Query", result:"No Records Found", queried_by:"Jim Burlew", consent_obtained:true },
+    { id:"chq_004", driver:"Testing Driver Johnson", query_date:"2026-01-05", query_type:"Annual Limited Query", result:"No Records Found", queried_by:"Jim Burlew", consent_obtained:true }
+  ];
+
+  var SEED_POOL = [
+    { driver:"Testing Driver Martinez", in_pool:true, pool_entry_date:"2021-03-15", tests_this_year:1, last_tested:"2026-02-10", next_due_quarter:"Q3 2026" },
+    { driver:"Testing Driver Johnson", in_pool:true, pool_entry_date:"2022-08-01", tests_this_year:0, last_tested:"2025-09-22", next_due_quarter:"Q3 2026" }
+  ];
+
+  // ── Storage helpers ────────────────────────────────────────────────────────
+  function getTests() {
+    var raw = localStorage.getItem('nexus_drug_tests');
+    if (!raw) { localStorage.setItem('nexus_drug_tests', JSON.stringify(SEED_TESTS)); return SEED_TESTS.slice(); }
+    try { return JSON.parse(raw); } catch(e) { return SEED_TESTS.slice(); }
+  }
+  function saveTests(arr) { localStorage.setItem('nexus_drug_tests', JSON.stringify(arr)); }
+
+  function getQueries() {
+    var raw = localStorage.getItem('nexus_clearinghouse_queries');
+    if (!raw) { localStorage.setItem('nexus_clearinghouse_queries', JSON.stringify(SEED_QUERIES)); return SEED_QUERIES.slice(); }
+    try { return JSON.parse(raw); } catch(e) { return SEED_QUERIES.slice(); }
+  }
+  function saveQueries(arr) { localStorage.setItem('nexus_clearinghouse_queries', JSON.stringify(arr)); }
+
+  function getPool() {
+    var raw = localStorage.getItem('nexus_random_pool');
+    if (!raw) { localStorage.setItem('nexus_random_pool', JSON.stringify(SEED_POOL)); return SEED_POOL.slice(); }
+    try { return JSON.parse(raw); } catch(e) { return SEED_POOL.slice(); }
+  }
+  function savePool(arr) { localStorage.setItem('nexus_random_pool', JSON.stringify(arr)); }
+
+  // ── Tab switching ──────────────────────────────────────────────────────────
+  window.showTab = function(name) {
+    document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    var panel = document.getElementById('tab-' + name);
+    if (panel) panel.classList.add('active');
+    document.querySelectorAll('.tab-btn').forEach(function(b){
+      if (b.getAttribute('onclick') === "showTab('" + name + "')") b.classList.add('active');
+    });
+    if (name === 'records') renderRecordsTable();
+    if (name === 'pool') renderPoolTable();
+    if (name === 'clearinghouse') renderClearinghouseTab();
+    if (name === 'dashboard') renderDashboard();
+  };
+
+  // ── Dashboard ──────────────────────────────────────────────────────────────
+  function renderDashboard() {
+    var tests = getTests();
+    var pool = getPool();
+    var queries = getQueries();
+    var currentYear = new Date().getFullYear().toString();
+
+    var poolCount = pool.filter(function(p){ return p.in_pool; }).length;
+    var testsThisYear = tests.filter(function(t){ return t.test_date && t.test_date.startsWith(currentYear); }).length;
+
+    // Annual queries due: pool drivers whose last query was not in current year
+    var queriesDue = 0;
+    pool.filter(function(p){ return p.in_pool; }).forEach(function(driver) {
+      var driverQueries = queries.filter(function(q){ return q.driver === driver.driver; });
+      var hasCurrentYear = driverQueries.some(function(q){ return q.query_date && q.query_date.startsWith(currentYear); });
+      if (!hasCurrentYear) queriesDue++;
+    });
+
+    var kpiGrid = document.getElementById('kpi-grid');
+    kpiGrid.innerHTML = [
+      { label:'Drivers in Random Pool', value:poolCount, sub:'Active CDL drivers', color:'var(--blue)' },
+      { label:'Tests This Year', value:testsThisYear, sub:'All types — ' + currentYear, color:'var(--green)' },
+      { label:'Annual Queries Due', value:queriesDue, sub:'Clearinghouse limited queries', color: queriesDue > 0 ? 'var(--yellow)' : 'var(--green)' },
+      { label:'Program Status', value:'COMPLIANT', sub:'49 CFR Part 382', color:'var(--green)', isStatus:true }
+    ].map(function(kpi){
+      return '<div class="kpi-card">' +
+        '<div class="kpi-label">' + kpi.label + '</div>' +
+        (kpi.isStatus
+          ? '<div class="status-compliant"><div class="status-dot"></div><div class="kpi-value" style="font-size:1.4rem;color:' + kpi.color + '">' + kpi.value + '</div></div>'
+          : '<div class="kpi-value" style="color:' + kpi.color + '">' + kpi.value + '</div>') +
+        '<div class="kpi-sub">' + kpi.sub + '</div>' +
+        '</div>';
+    }).join('');
+
+    // Warnings
+    var warnings = document.getElementById('dashboard-warnings');
+    var warnHtml = '';
+    if (queriesDue > 0) {
+      warnHtml += '<div class="warning-banner"><p><strong>Action Required:</strong> ' + queriesDue + ' driver(s) in the random pool are due for an annual Clearinghouse limited query. Navigate to the Clearinghouse tab for details.</p></div>';
+    }
+    warnings.innerHTML = warnHtml;
+  }
+
+  // ── Result badge ───────────────────────────────────────────────────────────
+  function resultBadge(result) {
+    var map = {
+      'NEGATIVE':'badge-green',
+      'POSITIVE':'badge-red',
+      'CANCELLED':'badge-yellow',
+      'REFUSAL TO TEST':'badge-orange'
+    };
+    var cls = map[result] || 'badge-mid';
+    return '<span class="badge ' + cls + '">' + (result || '—') + '</span>';
+  }
+
+  function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── Test Records ───────────────────────────────────────────────────────────
+  window.renderRecordsTable = function() {
+    var tests = getTests();
+    var filterDriver = (document.getElementById('filter-driver') || {}).value || '';
+    var filterType = (document.getElementById('filter-type') || {}).value || '';
+    filterDriver = filterDriver.toLowerCase();
+
+    var filtered = tests.filter(function(t){
+      var dMatch = !filterDriver || (t.driver && t.driver.toLowerCase().indexOf(filterDriver) !== -1);
+      var tMatch = !filterType || t.test_type === filterType;
+      return dMatch && tMatch;
+    });
+
+    // Sort by date desc
+    filtered.sort(function(a,b){ return (b.test_date||'').localeCompare(a.test_date||''); });
+
+    var tbody = document.getElementById('records-tbody');
+    if (!filtered.length) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="9">No records found.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = filtered.map(function(t){
+      return '<tr>' +
+        '<td>' + esc(t.test_date) + '</td>' +
+        '<td>' + esc(t.driver) + '</td>' +
+        '<td><span class="badge badge-blue">' + esc(t.test_type) + '</span></td>' +
+        '<td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(t.collection_site) + '</td>' +
+        '<td>' + esc(t.mro) + '</td>' +
+        '<td>' + resultBadge(t.result) + '</td>' +
+        '<td>' + esc(t.result_date) + '</td>' +
+        '<td>' + (t.clearinghouse_query ? '<span class="badge badge-green">Yes</span>' : '<span class="badge badge-mid">No</span>') + '</td>' +
+        '<td><button class="btn btn-danger btn-sm" onclick="deleteTest(\'' + esc(t.id) + '\')">Delete</button></td>' +
+        '</tr>';
+    }).join('');
+  };
+
+  window.deleteTest = function(id) {
+    if (!confirm('Delete this test record?')) return;
+    var tests = getTests().filter(function(t){ return t.id !== id; });
+    saveTests(tests);
+    renderRecordsTable();
+    renderDashboard();
+  };
+
+  // ── Add Test Record ────────────────────────────────────────────────────────
+  window.toggleQueryDate = function() {
+    var cb = document.getElementById('f-ch-done');
+    var grp = document.getElementById('f-query-date-group');
+    grp.style.display = cb.checked ? 'flex' : 'none';
+  };
+
+  window.saveTestRecord = function(e) {
+    e.preventDefault();
+    var substances = [];
+    document.querySelectorAll('.substance-cb:checked').forEach(function(cb){ substances.push(cb.value); });
+
+    var record = {
+      id: 'dt_' + Date.now(),
+      driver: document.getElementById('f-driver').value.trim(),
+      test_type: document.getElementById('f-type').value,
+      test_date: document.getElementById('f-test-date').value,
+      collection_site: document.getElementById('f-site').value.trim(),
+      mro: document.getElementById('f-mro').value.trim(),
+      result: document.getElementById('f-result').value,
+      result_date: document.getElementById('f-result-date').value,
+      substances_tested: substances,
+      clearinghouse_query: document.getElementById('f-ch-done').checked,
+      query_date: document.getElementById('f-ch-done').checked ? document.getElementById('f-query-date').value : '',
+      notes: document.getElementById('f-notes').value.trim()
+    };
+
+    var tests = getTests();
+    tests.push(record);
+    saveTests(tests);
+
+    var msg = document.getElementById('add-success');
+    msg.classList.add('show');
+    setTimeout(function(){ msg.classList.remove('show'); }, 3000);
+
+    resetAddForm();
+    showTab('records');
+  };
+
+  window.resetAddForm = function() {
+    document.getElementById('add-form').reset();
+    document.querySelectorAll('.substance-cb').forEach(function(cb){ cb.checked = true; });
+    document.getElementById('f-query-date-group').style.display = 'none';
+  };
+
+  // ── Random Pool ────────────────────────────────────────────────────────────
+  window.renderPoolTable = function() {
+    var pool = getPool();
+    var tbody = document.getElementById('pool-tbody');
+    if (!pool.length) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No drivers in pool.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = pool.map(function(p, idx){
+      return '<tr>' +
+        '<td><strong>' + esc(p.driver) + '</strong></td>' +
+        '<td>' + esc(p.pool_entry_date) + '</td>' +
+        '<td>' + (p.tests_this_year || 0) + '</td>' +
+        '<td>' + esc(p.last_tested) + '</td>' +
+        '<td>' + esc(p.next_due_quarter) + '</td>' +
+        '<td>' + (p.in_pool ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-mid">Inactive</span>') + '</td>' +
+        '<td><button class="btn btn-danger btn-sm" onclick="removeFromPool(' + idx + ')">Remove</button></td>' +
+        '</tr>';
+    }).join('');
+  };
+
+  window.openAddPoolModal = function() {
+    document.getElementById('pool-driver-name').value = '';
+    var today = new Date().toISOString().slice(0,10);
+    document.getElementById('pool-entry-date').value = today;
+    document.getElementById('modal-pool').classList.add('open');
+  };
+
+  window.addToPool = function() {
+    var name = document.getElementById('pool-driver-name').value.trim();
+    if (!name) { alert('Driver name required.'); return; }
+    var entry = document.getElementById('pool-entry-date').value;
+    var pool = getPool();
+    pool.push({ driver:name, in_pool:true, pool_entry_date:entry, tests_this_year:0, last_tested:'', next_due_quarter:'' });
+    savePool(pool);
+    closeModal('modal-pool');
+    renderPoolTable();
+  };
+
+  window.removeFromPool = function(idx) {
+    if (!confirm('Remove this driver from the random pool?')) return;
+    var pool = getPool();
+    pool.splice(idx, 1);
+    savePool(pool);
+    renderPoolTable();
+  };
+
+  // ── Clearinghouse ──────────────────────────────────────────────────────────
+  window.renderClearinghouseTab = function() {
+    var queries = getQueries();
+    var pool = getPool();
+    var currentYear = new Date().getFullYear().toString();
+
+    // Warnings for drivers overdue annual query
+    var warnHtml = '';
+    pool.filter(function(p){ return p.in_pool; }).forEach(function(driver) {
+      var driverQueries = queries.filter(function(q){ return q.driver === driver.driver; });
+      var annualQueries = driverQueries.filter(function(q){ return q.query_type && q.query_type.indexOf('Limited') !== -1; });
+      var hasCurrentYear = annualQueries.some(function(q){ return q.query_date && q.query_date.startsWith(currentYear); });
+      if (!hasCurrentYear) {
+        var lastQuery = annualQueries.length ? annualQueries.sort(function(a,b){ return b.query_date.localeCompare(a.query_date); })[0] : null;
+        warnHtml += '<div class="warning-banner"><p><strong>Annual Query Overdue:</strong> ' + esc(driver.driver) + ' — Last annual limited query: ' + (lastQuery ? esc(lastQuery.query_date) : 'Never') + '. Run a limited query at <a href="https://clearinghouse.fmcsa.dot.gov" target="_blank" style="color:var(--yellow);">clearinghouse.fmcsa.dot.gov</a></p></div>';
+      }
+    });
+    document.getElementById('ch-warnings').innerHTML = warnHtml;
+
+    // Sort by date desc
+    queries.sort(function(a,b){ return (b.query_date||'').localeCompare(a.query_date||''); });
+
+    var tbody = document.getElementById('ch-tbody');
+    if (!queries.length) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No query records found.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = queries.map(function(q){
+      return '<tr>' +
+        '<td>' + esc(q.query_date) + '</td>' +
+        '<td>' + esc(q.driver) + '</td>' +
+        '<td><span class="badge badge-purple">' + esc(q.query_type) + '</span></td>' +
+        '<td>' + esc(q.result) + '</td>' +
+        '<td>' + esc(q.queried_by) + '</td>' +
+        '<td>' + (q.consent_obtained ? '<span class="badge badge-green">Yes</span>' : '<span class="badge badge-red">No</span>') + '</td>' +
+        '<td><button class="btn btn-danger btn-sm" onclick="deleteQuery(\'' + esc(q.id) + '\')">Delete</button></td>' +
+        '</tr>';
+    }).join('');
+  };
+
+  window.openAddQueryModal = function() {
+    document.getElementById('q-driver').value = '';
+    document.getElementById('q-date').value = new Date().toISOString().slice(0,10);
+    document.getElementById('q-result').value = 'No Records Found';
+    document.getElementById('q-by').value = 'Jim Burlew';
+    document.getElementById('q-consent').checked = true;
+    document.getElementById('modal-query').classList.add('open');
+  };
+
+  window.saveQueryRecord = function() {
+    var driver = document.getElementById('q-driver').value.trim();
+    var date = document.getElementById('q-date').value;
+    if (!driver || !date) { alert('Driver name and query date are required.'); return; }
+    var record = {
+      id: 'chq_' + Date.now(),
+      driver: driver,
+      query_date: date,
+      query_type: document.getElementById('q-type').value,
+      result: document.getElementById('q-result').value.trim(),
+      queried_by: document.getElementById('q-by').value.trim(),
+      consent_obtained: document.getElementById('q-consent').checked
+    };
+    var queries = getQueries();
+    queries.push(record);
+    saveQueries(queries);
+    closeModal('modal-query');
+    renderClearinghouseTab();
+  };
+
+  window.deleteQuery = function(id) {
+    if (!confirm('Delete this query record?')) return;
+    var queries = getQueries().filter(function(q){ return q.id !== id; });
+    saveQueries(queries);
+    renderClearinghouseTab();
+  };
+
+  // ── Modal helpers ──────────────────────────────────────────────────────────
+  window.closeModal = function(id) {
+    document.getElementById(id).classList.remove('open');
+  };
+
+  // Close modals on backdrop click
+  document.querySelectorAll('.modal-overlay').forEach(function(overlay){
+    overlay.addEventListener('click', function(e){
+      if (e.target === overlay) overlay.classList.remove('open');
+    });
+  });
+
+  // ── Init ───────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    if (typeof NexusSidebar !== 'undefined') NexusSidebar.init();
+    // Ensure seed data is loaded
+    getTests(); getQueries(); getPool();
+    renderDashboard();
+  });
+
+})();
+</script>
+</body>
+</html>

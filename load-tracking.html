@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track Your Shipment — Carrier Trucking US</title>
+<style>
+  :root {
+    --bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;
+    --text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;
+    --yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+  header { background: linear-gradient(135deg,#0b0f1a,#131929); border-bottom: 1px solid #1e2d45; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .search-wrap { max-width: 660px; margin: 48px auto; padding: 0 20px; }
+  .search-card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 40px; }
+  .search-card h2 { font-size: 22px; font-weight: 800; letter-spacing: 2px; color: var(--blue); margin-bottom: 24px; text-align: center; }
+  .search-card label { display: block; font-size: 14px; color: var(--mid); margin-bottom: 8px; }
+  .search-card input { width: 100%; padding: 14px 16px; background: var(--panel2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 16px; outline: none; transition: border-color 0.2s; }
+  .search-card input:focus { border-color: var(--blue); }
+  .btn-track { width: 100%; margin-top: 18px; padding: 15px; background: var(--blue); color: #fff; font-size: 16px; font-weight: 700; letter-spacing: 1px; border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+  .btn-track:hover { background: #2563eb; }
+  .notice { margin-top: 20px; padding: 12px 16px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: 8px; font-size: 12px; color: var(--mid); text-align: center; }
+  .result-card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 32px; margin-top: 32px; }
+  .result-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+  .load-id-label { font-size: 12px; color: var(--mid); margin-bottom: 4px; }
+  .load-id-val { font-size: 24px; font-weight: 800; color: var(--text); }
+  .commodity { font-size: 14px; color: var(--mid); margin-top: 4px; }
+  .badge { display: inline-block; padding: 5px 14px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+  .badge-pending { background: rgba(100,116,139,0.2); color: var(--mid); }
+  .badge-assigned { background: rgba(59,130,246,0.2); color: var(--blue); }
+  .badge-loaded { background: rgba(249,115,22,0.2); color: var(--orange); }
+  .badge-in_transit { background: rgba(168,85,247,0.2); color: var(--purple); }
+  .badge-arriving { background: rgba(245,158,11,0.2); color: var(--yellow); }
+  .badge-delivered { background: rgba(16,185,129,0.2); color: var(--green); }
+  .badge-closed { background: rgba(16,185,129,0.15); color: var(--green); }
+  .route-row { display: flex; align-items: center; gap: 16px; margin: 20px 0; flex-wrap: wrap; }
+  .route-city { text-align: center; }
+  .route-city .city { font-size: 18px; font-weight: 700; }
+  .route-city .state { font-size: 13px; color: var(--mid); }
+  .route-city .date-lbl { font-size: 11px; color: var(--mid); margin-top: 4px; }
+  .route-arrow { flex: 1; display: flex; align-items: center; min-width: 60px; }
+  .route-arrow .line { flex: 1; height: 2px; background: var(--border); }
+  .route-arrow .arrow { color: var(--blue); font-size: 20px; margin-left: 4px; }
+  .progress-wrap { margin: 20px 0; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--mid); margin-bottom: 8px; }
+  .progress-bar { height: 8px; background: var(--panel2); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width 0.5s; background: linear-gradient(90deg, var(--blue), var(--purple)); }
+  .timeline { margin: 24px 0; }
+  .timeline-title { font-size: 13px; font-weight: 600; color: var(--mid); letter-spacing: 1px; margin-bottom: 16px; text-transform: uppercase; }
+  .tl-step { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+  .tl-dot-wrap { display: flex; flex-direction: column; align-items: center; }
+  .tl-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .tl-dot-done { background: var(--green); color: #fff; }
+  .tl-dot-current { background: var(--blue); color: #fff; box-shadow: 0 0 0 4px rgba(59,130,246,0.25); }
+  .tl-dot-pending { background: var(--panel2); border: 2px solid var(--border); color: var(--mid); }
+  .tl-line { width: 2px; flex: 1; background: var(--border); min-height: 16px; }
+  .tl-content { padding-top: 4px; }
+  .tl-name { font-size: 14px; font-weight: 600; }
+  .tl-name-done { color: var(--green); }
+  .tl-name-current { color: var(--blue); }
+  .tl-name-pending { color: var(--mid); }
+  .tl-date { font-size: 12px; color: var(--mid); margin-top: 2px; }
+  .details-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .detail-item .lbl { font-size: 11px; color: var(--mid); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .detail-item .val { font-size: 14px; color: var(--text); font-weight: 500; }
+  .contact-box { margin-top: 20px; padding: 16px; background: var(--panel2); border-radius: 8px; }
+  .contact-box .title { font-size: 12px; font-weight: 600; color: var(--mid); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .contact-row { display: flex; gap: 24px; flex-wrap: wrap; }
+  .contact-item { font-size: 14px; }
+  .demo-notice { margin-top: 20px; padding: 12px 16px; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; font-size: 12px; color: var(--yellow); }
+  .error-card { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px; padding: 24px; margin-top: 24px; text-align: center; }
+  .error-card .icon { font-size: 36px; margin-bottom: 12px; }
+  .error-card p { color: var(--mid); font-size: 14px; margin-top: 8px; }
+  footer { text-align: center; padding: 32px 20px; font-size: 12px; color: var(--mid); border-top: 1px solid var(--border); margin-top: 48px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <span style="font-size:32px;">🚛</span>
+    <div>
+      <div style="font-size:22px;font-weight:800;color:#e2e8f0;">Track Your Shipment</div>
+      <div style="font-size:13px;color:#64748b;">Powered by Carrier Nexus</div>
+    </div>
+  </div>
+  <div style="font-size:12px;color:#3b82f6;">Carrier Trucking US &middot; DOT# 4521893</div>
+</header>
+
+<div class="search-wrap">
+  <div class="search-card">
+    <h2>TRACK YOUR LOAD</h2>
+    <label for="track-input">Enter your BOL Number or Load ID:</label>
+    <input type="text" id="track-input" placeholder="e.g. BOL-HH-0891-2026 or HH-2026-0891" autocomplete="off" />
+    <button class="btn-track" onclick="doTrack()">TRACK NOW</button>
+    <div class="notice">
+      Live tracking requires the carrier to use the same device, or connect to Carrier Nexus cloud sync (coming soon).
+    </div>
+  </div>
+  <div id="result-area"></div>
+</div>
+
+<footer>
+  &copy; 2026 Carrier Trucking US &mdash; DOT# 4521893 &mdash; Powered by Carrier Nexus
+</footer>
+
+<script>
+var SEED_LOADS = [
+  {
+    id: "load_001",
+    load_id: "HH-2026-0891",
+    bol_number: "BOL-HH-0891-2026",
+    commodity: "Caterpillar 395 Hydraulic Excavator",
+    weight: "220,000 lbs",
+    dimensions: "115ft x 18ft6in x 16ft2in",
+    origin_city: "Beaumont",
+    origin_state: "TX",
+    destination_city: "Oklahoma City",
+    destination_state: "OK",
+    pickup_date: "2026-06-25",
+    eta_date: "2026-06-28",
+    status: "IN_TRANSIT",
+    driver_name: "David Hernandez",
+    unit: "101"
+  },
+  {
+    id: "load_002",
+    load_id: "HH-2026-0892",
+    bol_number: "BOL-HH-0892-2026",
+    commodity: "John Deere 850L Dozer",
+    weight: "97,000 lbs",
+    dimensions: "22ft x 11ft4in x 12ft8in",
+    origin_city: "Houston",
+    origin_state: "TX",
+    destination_city: "Memphis",
+    destination_state: "TN",
+    pickup_date: "2026-06-27",
+    eta_date: "2026-06-30",
+    status: "ASSIGNED",
+    driver_name: "Avis Torres",
+    unit: "102"
+  }
+];
+
+function seedLoads() {
+  var existing = localStorage.getItem('nexus_active_loads');
+  if (!existing) {
+    localStorage.setItem('nexus_active_loads', JSON.stringify(SEED_LOADS));
+  }
+}
+
+function getLoads() {
+  try {
+    return JSON.parse(localStorage.getItem('nexus_active_loads') || '[]');
+  } catch(e) { return []; }
+}
+
+function getProgress(status) {
+  var map = {
+    PENDING: 5, ASSIGNED: 15, LOADED: 35, IN_TRANSIT: 65,
+    ARRIVING: 90, DELIVERED: 100, CLOSED: 100
+  };
+  return map[status] || 5;
+}
+
+function getBadgeClass(status) {
+  var s = status ? status.toLowerCase().replace(' ', '_') : 'pending';
+  return 'badge badge-' + s;
+}
+
+function getStatusLabel(status) {
+  var map = {
+    PENDING: 'Pending', ASSIGNED: 'Assigned', LOADED: 'Loaded',
+    IN_TRANSIT: 'In Transit', ARRIVING: 'Arriving Soon',
+    DELIVERED: 'Delivered', CLOSED: 'Closed'
+  };
+  return map[status] || status;
+}
+
+function getTimelineSteps(status) {
+  var order = ['PENDING', 'ASSIGNED', 'LOADED', 'IN_TRANSIT', 'DELIVERED'];
+  var idx = order.indexOf(status);
+  if (status === 'ARRIVING') { idx = 3; }
+  if (status === 'CLOSED') { idx = 4; }
+  var labels = ['Load Created', 'Driver Assigned', 'Loaded at Origin', 'In Transit', 'Delivered'];
+  var steps = [];
+  for (var i = 0; i < labels.length; i++) {
+    var state;
+    if (i < idx) { state = 'done'; }
+    else if (i === idx) { state = 'current'; }
+    else { state = 'pending'; }
+    steps.push({ label: labels[i], state: state });
+  }
+  return steps;
+}
+
+function formatDate(d) {
+  if (!d) { return 'TBD'; }
+  var parts = d.split('-');
+  if (parts.length < 3) { return d; }
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(parts[1], 10) - 1] + ' ' + parseInt(parts[2], 10) + ', ' + parts[0];
+}
+
+function buildTimelineHTML(status) {
+  var steps = getTimelineSteps(status);
+  var icons = ['📋', '👤', '📦', '🚛', '✅'];
+  var html = '<div class="timeline"><div class="timeline-title">Shipment Timeline</div>';
+  for (var i = 0; i < steps.length; i++) {
+    var s = steps[i];
+    var dotClass = 'tl-dot tl-dot-' + s.state;
+    var nameClass = 'tl-name tl-name-' + s.state;
+    var icon = s.state === 'done' ? '✓' : icons[i];
+    html += '<div class="tl-step">';
+    html += '<div class="tl-dot-wrap">';
+    html += '<div class="' + dotClass + '">' + icon + '</div>';
+    if (i < steps.length - 1) { html += '<div class="tl-line"></div>'; }
+    html += '</div>';
+    html += '<div class="tl-content"><div class="' + nameClass + '">' + s.label + '</div></div>';
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function doTrack() {
+  var query = document.getElementById('track-input').value.trim().toLowerCase();
+  var area = document.getElementById('result-area');
+  if (!query) {
+    area.innerHTML = '<div class="error-card"><div class="icon">🔍</div><strong>Enter a BOL number or Load ID</strong><p>Please enter your BOL number or Load ID above.</p></div>';
+    return;
+  }
+  var loads = getLoads();
+  var found = null;
+  for (var i = 0; i < loads.length; i++) {
+    var l = loads[i];
+    if ((l.load_id && l.load_id.toLowerCase() === query) ||
+        (l.bol_number && l.bol_number.toLowerCase() === query)) {
+      found = l;
+      break;
+    }
+  }
+  if (!found) {
+    area.innerHTML = '<div class="error-card"><div class="icon">❌</div><strong style="color:var(--red)">Load Not Found</strong><p>No shipment found for "<strong>' + query + '</strong>".</p><p style="margin-top:10px;">Please double-check your BOL number or Load ID, or contact your carrier directly.</p></div>';
+    return;
+  }
+
+  var pct = getProgress(found.status);
+  var timelineHTML = buildTimelineHTML(found.status);
+  var badgeClass = getBadgeClass(found.status);
+
+  area.innerHTML = '<div class="result-card">'
+    + '<div class="result-header">'
+    + '<div><div class="load-id-label">Load ID</div>'
+    + '<div class="load-id-val">' + found.load_id + '</div>'
+    + '<div class="commodity">' + found.commodity + '</div></div>'
+    + '<div class="' + badgeClass + '">' + getStatusLabel(found.status) + '</div>'
+    + '</div>'
+    + '<div class="route-row">'
+    + '<div class="route-city"><div class="city">' + found.origin_city + '</div><div class="state">' + found.origin_state + '</div><div class="date-lbl">Pickup: ' + formatDate(found.pickup_date) + '</div></div>'
+    + '<div class="route-arrow"><div class="line"></div><div class="arrow">&#x27A4;</div></div>'
+    + '<div class="route-city"><div class="city">' + found.destination_city + '</div><div class="state">' + found.destination_state + '</div><div class="date-lbl">ETA: ' + formatDate(found.eta_date) + '</div></div>'
+    + '</div>'
+    + '<div class="progress-wrap">'
+    + '<div class="progress-label"><span>Progress</span><span>' + pct + '%</span></div>'
+    + '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>'
+    + '</div>'
+    + timelineHTML
+    + '<div class="details-grid">'
+    + '<div class="detail-item"><div class="lbl">BOL Number</div><div class="val">' + found.bol_number + '</div></div>'
+    + '<div class="detail-item"><div class="lbl">Weight</div><div class="val">' + (found.weight || 'N/A') + '</div></div>'
+    + '<div class="detail-item"><div class="lbl">Dimensions</div><div class="val">' + (found.dimensions || 'N/A') + '</div></div>'
+    + '<div class="detail-item"><div class="lbl">Driver</div><div class="val">[Hidden for privacy]</div></div>'
+    + '<div class="detail-item"><div class="lbl">Unit #</div><div class="val">[Hidden for privacy]</div></div>'
+    + '</div>'
+    + '<div class="contact-box"><div class="title">Need Help?</div><div class="contact-row"><div class="contact-item">📞 <strong>Carrier Trucking US</strong></div><div class="contact-item">✉ crtruckus@gmail.com</div></div></div>'
+    + '<div class="demo-notice">⚠ This is a demo. To share live tracking with your customer, send them this page URL with their BOL number.</div>'
+    + '</div>';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  seedLoads();
+  document.getElementById('track-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { doTrack(); }
+  });
+});
+</script>
+</body>
+</html>

@@ -37,15 +37,15 @@
 
   // Section definitions — key, label, pages in section (for auto-expand)
   var SECTIONS = [
-    { key:'ops',     label:'Operations',     pages:['fleet-command.html','active-loads.html','settlements.html','weekly-settlements.html','settlement-review.html','drivers.html','permits.html','pods.html','issues.html'] },
+    { key:'ops',     label:'Operations',     pages:['fleet-command.html','active-loads.html','settlements.html','weekly-settlements.html','settlement-review.html','drivers.html','permits.html','pods.html','issues.html','work-orders.html','load-tracking.html'] },
     { key:'dispatch',label:'Dispatch',       pages:['dispatch-board.html','dispatcher-hub.html','load-board.html','commissions.html','available-dispatchers.html','available-drivers.html','pilot-escorts.html'] },
     { key:'driver',  label:'Driver',         pages:['driver-command.html','driver-availability.html','equipment-marketplace.html','my-pay.html','social-recruiting.html','driver-intake.html','driver-profile.html'] },
-    { key:'finance', label:'Finance',        pages:['invoicing.html','whatsapp-import.html','expenses.html','financials.html','ifta.html'] },
+    { key:'finance', label:'Finance',        pages:['invoicing.html','whatsapp-import.html','expenses.html','financials.html','ifta.html','factoring.html','fuel-cards.html'] },
     { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','emails.html','doc-inbox.html'] },
     { key:'contacts',label:'Contacts',       pages:['contacts.html'] },
     { key:'taxhr',   label:'Tax & HR',       pages:['tax-forms.html','w9.html'] },
-    { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','insurance-kpi.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html','incident-report.html','coi-management.html','claims.html','coaching-log.html','fmcsa-compliance.html','fmcsa-resources.html','cfr-compliance.html','expiration-hub.html','dot-view.html'] },
-    { key:'admin',   label:'Admin',          pages:['member-management.html','admin-users.html','company-management.html','doc-privacy.html','public-profile.html'] },
+    { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','insurance-kpi.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html','incident-report.html','coi-management.html','claims.html','coaching-log.html','fmcsa-compliance.html','fmcsa-resources.html','cfr-compliance.html','expiration-hub.html','dot-view.html','drug-alcohol.html','accident-register.html','boc3.html','insurance-planner.html'] },
+    { key:'admin',   label:'Admin',          pages:['member-management.html','admin-users.html','company-management.html','doc-privacy.html','public-profile.html','onboarding.html'] },
     { key:'intel',   label:'Intelligence',   pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html','search.html','gps-tracker.html'] },
     { key:'comms',   label:'Communications', pages:['comms.html','nexus-connect.html'] },
   ];
@@ -190,7 +190,9 @@
       lnk('drivers.html',              I.driver,  'Drivers') +
       lnk('permits.html',              I.permit,  'Permits') +
       lnk('pods.html',                 I.clock,   'Missing PODs') +
-      lnk('issues.html',               I.issue,   'Issues')
+      lnk('issues.html',               I.issue,   'Issues') +
+      lnk('work-orders.html',          I.wrench,  '🔧 Work Orders') +
+      lnk('load-tracking.html',        I.loads,   '📦 Load Tracking')
     ) +
     sec('dispatch', 'Dispatch',
       lnk('dispatch-pro.html',   I.loads,   '🚀 Dispatch PRO') +
@@ -216,7 +218,9 @@
       lnk('whatsapp-import.html',      I.chat,    'WhatsApp Import') +
       lnk('expenses.html',             I.expense, 'Expenses') +
       lnk('financials.html',           I.bar,     'Financials') +
-      lnk('ifta.html',                 I.ifta,    'IFTA Reporting')
+      lnk('ifta.html',                 I.ifta,    'IFTA Reporting') +
+      lnk('factoring.html',            I.invoice, '💳 Factoring') +
+      lnk('fuel-cards.html',           I.fuel,    '⛽ Fuel Cards')
     ) +
     sec('docs', 'Documents',
       lnk('documents.html',            I.vault,   'Document Vault') +
@@ -254,14 +258,19 @@
       lnk('scale-tickets.html',        I.scale,   'Scale Tickets') +
       lnk('weight-calculator.html',   I.scale,   'Weight Calculator') +
       lnk('expiration-hub.html',       I.clock,   '⏰ Expiration Hub') +
-      lnk('dot-view.html',              I.dot,     '🚔 DOT View')
+      lnk('dot-view.html',              I.dot,     '🚔 DOT View') +
+      lnk('drug-alcohol.html',         I.dot,     '🧪 Drug &amp; Alcohol') +
+      lnk('accident-register.html',    I.dot,     '🚨 Accident Register') +
+      lnk('boc3.html',                 I.dot,     '📋 BOC-3') +
+      lnk('insurance-planner.html',    I.dot,     '🛡️ Insurance Planner')
     ) +
     sec('admin', 'Admin',
       lnk('member-management.html',    I.members, 'Members') +
       lnk('admin-users.html',          I.admin,   'User Accounts') +
       lnk('company-management.html',   I.truck,   '🏢 Company Management') +
       lnk('doc-privacy.html',           I.file,    '🔒 Doc Privacy') +
-      lnk('public-profile.html?type=company&id=co_001', I.person, '👤 Public Profiles')
+      lnk('public-profile.html?type=company&id=co_001', I.person, '👤 Public Profiles') +
+      lnk('onboarding.html',           I.ai,      '🚀 Setup Wizard')
     ) +
     sec('intel', 'Intelligence',
       lnk('nexus-ai.html',             I.ai,      'AI Assistant') +
