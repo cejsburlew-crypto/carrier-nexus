@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>49 CFR Compliance — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="nexus-sidebar.js"></script>
+<style>
+  :root {
+    --bg:#0b0f1a; --panel:#131929; --panel2:#1a2235; --border:#1e2d45;
+    --text:#e2e8f0; --mid:#64748b; --blue:#3b82f6; --green:#10b981;
+    --yellow:#f59e0b; --red:#ef4444; --orange:#f97316; --purple:#a855f7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; font-size: 14px; }
+  .main-content { margin-left: 220px; padding: 28px 32px; min-height: 100vh; }
+
+  .page-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .page-header .shield-icon { font-size: 32px; }
+  .page-header h1 { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: 0.5px; }
+  .page-header .subtitle { color: var(--mid); font-size: 13px; margin-top: 2px; }
+
+  .tab-nav { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+  .tab-btn { background: none; border: none; color: var(--mid); font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px; font-weight: 600; padding: 10px 18px; cursor: pointer; border-bottom: 2px solid transparent;
+    letter-spacing: 0.4px; transition: color 0.15s; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  .scan-bar { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .btn { border: none; cursor: pointer; font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600;
+    padding: 8px 16px; border-radius: 6px; transition: opacity 0.15s; }
+  .btn:hover { opacity: 0.85; }
+  .btn-blue { background: var(--blue); color: #fff; }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-mid { background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
+  .last-scanned { color: var(--mid); font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+  .filter-btn { background: var(--panel2); border: 1px solid var(--border); color: var(--mid);
+    font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px; cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.3px; transition: all 0.15s; }
+  .filter-btn:hover { border-color: var(--blue); color: var(--text); }
+  .filter-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .filter-btn.f-critical.active { background: var(--red); border-color: var(--red); }
+  .filter-btn.f-warning.active { background: var(--yellow); border-color: var(--yellow); color: #000; }
+  .filter-btn.f-info.active { background: var(--blue); border-color: var(--blue); }
+
+  .stats-row { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .stat-chip { display: flex; align-items: center; gap: 6px; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 600; font-family: 'Barlow Condensed', sans-serif; }
+  .stat-chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-red { background: var(--red); }
+  .dot-yellow { background: var(--yellow); }
+  .dot-blue { background: var(--blue); }
+  .dot-green { background: var(--green); }
+
+  .alerts-container { display: flex; flex-direction: column; gap: 12px; }
+  .alert-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+    border-left: 4px solid var(--mid); padding: 16px 18px; }
+  .alert-card.sev-CRITICAL { border-left-color: var(--red); }
+  .alert-card.sev-WARNING { border-left-color: var(--yellow); }
+  .alert-card.sev-INFO { border-left-color: var(--blue); }
+  .alert-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+  .alert-card-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .sev-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; padding: 2px 8px;
+    border-radius: 4px; white-space: nowrap; }
+  .sev-badge.CRITICAL { background: rgba(239,68,68,0.2); color: var(--red); }
+  .sev-badge.WARNING { background: rgba(245,158,11,0.2); color: var(--yellow); }
+  .sev-badge.INFO { background: rgba(59,130,246,0.2); color: var(--blue); }
+  .cfr-cite { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mid); }
+  .alert-title { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 600; }
+  .dismiss-btn { background: none; border: none; color: var(--mid); font-size: 18px; cursor: pointer;
+    line-height: 1; padding: 0 4px; flex-shrink: 0; }
+  .dismiss-btn:hover { color: var(--red); }
+  .alert-detail { color: var(--mid); font-size: 13px; margin-bottom: 12px; }
+  .alert-detail strong { color: var(--text); }
+  .alert-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-sm { font-size: 12px; padding: 5px 12px; border: none; border-radius: 5px; cursor: pointer;
+    font-family: 'Barlow', sans-serif; font-weight: 600; transition: opacity 0.15s; }
+  .btn-sm:hover { opacity: 0.8; }
+  .btn-reg { background: rgba(59,130,246,0.15); color: var(--blue); }
+  .btn-ack { background: rgba(16,185,129,0.15); color: var(--green); }
+  .btn-dna { background: rgba(100,116,139,0.15); color: var(--mid); }
+  .inline-action { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
+  .inline-action textarea { width: 100%; background: var(--panel2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 5px; padding: 8px 10px; font-family: 'Barlow', sans-serif;
+    font-size: 13px; resize: vertical; min-height: 60px; }
+  .inline-action textarea:focus { outline: none; border-color: var(--blue); }
+  .inline-action .confirm-inline-btn { margin-top: 8px; background: var(--green); color: #fff;
+    font-size: 12px; padding: 5px 12px; border: none; border-radius: 5px; cursor: pointer;
+    font-family: 'Barlow', sans-serif; font-weight: 600; }
+
+  .empty-state { text-align: center; padding: 60px 20px; }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
+  .empty-state p { color: var(--mid); font-size: 13px; }
+
+  #toast { position: fixed; bottom: 24px; right: 24px; background: var(--panel2); border: 1px solid var(--border);
+    color: var(--text); padding: 12px 20px; border-radius: 8px; font-size: 13px; z-index: 9999;
+    opacity: 0; transition: opacity 0.3s; pointer-events: none; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+  #toast.show { opacity: 1; }
+
+  .log-filter-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 20px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; }
+  .log-filter-bar label { font-size: 11px; color: var(--mid); font-weight: 600; display: flex; flex-direction: column; gap: 4px; }
+  .log-filter-bar input, .log-filter-bar select { background: var(--panel2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 5px; padding: 5px 9px; font-family: 'Barlow', sans-serif; font-size: 13px; }
+  .log-filter-bar input:focus, .log-filter-bar select:focus { outline: none; border-color: var(--blue); }
+  .log-toolbar { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+  .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; background: var(--panel); }
+  thead tr { background: var(--panel2); }
+  th { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 600; color: var(--mid);
+    text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 14px; text-align: left;
+    border-bottom: 1px solid var(--border); white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid rgba(30,45,69,0.6); }
+  tbody tr:nth-child(even) { background: var(--panel2); }
+  tbody tr:last-child { border-bottom: none; }
+  td { padding: 9px 14px; font-size: 12px; vertical-align: middle; }
+  td .cfr-mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mid); }
+  td .note-text { color: var(--mid); font-style: italic; font-size: 11px; max-width: 160px; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap; display: block; }
+  .btn-review { font-size: 11px; padding: 3px 10px; background: rgba(168,85,247,0.15); color: var(--purple);
+    border: 1px solid rgba(168,85,247,0.3); border-radius: 4px; cursor: pointer; white-space: nowrap; }
+  .btn-review:hover { background: rgba(168,85,247,0.3); }
+  .reviewed-tag { font-size: 11px; color: var(--green); font-family: 'JetBrains Mono', monospace; }
+
+  .library-intro { background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+    padding: 16px 20px; margin-bottom: 24px; }
+  .library-intro p { color: var(--mid); font-size: 13px; line-height: 1.6; }
+  .library-search { display: flex; gap: 10px; margin-bottom: 28px; }
+  .library-search input { flex: 1; background: var(--panel); border: 1px solid var(--border); color: var(--text);
+    border-radius: 6px; padding: 9px 14px; font-family: 'Barlow', sans-serif; font-size: 14px; }
+  .library-search input:focus { outline: none; border-color: var(--blue); }
+  .lib-category { margin-bottom: 28px; }
+  .lib-category-title { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700;
+    color: var(--mid); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
+    padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .lib-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .lib-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px;
+    transition: border-color 0.15s; }
+  .lib-card:hover { border-color: var(--blue); }
+  .lib-card .part-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--blue); margin-bottom: 4px; }
+  .lib-card h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .lib-card p { color: var(--mid); font-size: 12px; line-height: 1.5; margin-bottom: 12px; }
+  .btn-ecfr { background: rgba(59,130,246,0.12); color: var(--blue); border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 5px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: 'Barlow', sans-serif; text-decoration: none; display: inline-block; transition: background 0.15s; }
+  .btn-ecfr:hover { background: rgba(59,130,246,0.25); }
+  .lib-footer { background: var(--panel2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; }
+  .lib-footer span { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 600; }
+
+  .settings-section { background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+    padding: 20px 24px; margin-bottom: 20px; }
+  .settings-section h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700;
+    margin-bottom: 16px; color: var(--text); letter-spacing: 0.3px; }
+  .rule-toggle-row { display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid rgba(30,45,69,0.6); }
+  .rule-toggle-row:last-child { border-bottom: none; }
+  .rule-info { flex: 1; }
+  .rule-info .rule-name { font-size: 13px; font-weight: 600; }
+  .rule-info .rule-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mid); margin-top: 2px; }
+  .toggle-wrap { display: flex; align-items: center; gap: 8px; }
+  .toggle-label { font-size: 12px; color: var(--mid); }
+  .toggle { position: relative; display: inline-block; width: 40px; height: 22px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--panel2); border: 1px solid var(--border); border-radius: 22px; transition: 0.2s; }
+  .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px;
+    background: var(--mid); border-radius: 50%; transition: 0.2s; }
+  input:checked + .slider { background: rgba(16,185,129,0.3); border-color: var(--green); }
+  input:checked + .slider:before { transform: translateX(18px); background: var(--green); }
+  .confirm-checkbox-row { display: flex; align-items: center; gap: 12px; padding: 10px 0;
+    border-bottom: 1px solid rgba(30,45,69,0.6); cursor: pointer; }
+  .confirm-checkbox-row:last-child { border-bottom: none; }
+  .confirm-checkbox-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--green); cursor: pointer; }
+  .confirm-checkbox-row span { font-size: 13px; }
+  .scan-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
+  .danger-zone { border-color: rgba(239,68,68,0.3); }
+  .danger-zone h3 { color: var(--red); }
+</style>
+</head>
+<body>
+
+<div class="main-content">
+  <div class="page-header">
+    <span class="shield-icon">&#x1F6E1;&#xFE0F;</span>
+    <div>
+      <h1>49 CFR Compliance</h1>
+      <div class="subtitle">Federal Motor Carrier Safety Regulations &#8212; Live Rules Engine</div>
+    </div>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('alerts')">Active Alerts</button>
+    <button class="tab-btn" onclick="switchTab('log')">Alert Log</button>
+    <button class="tab-btn" onclick="switchTab('library')">CFR Reference Library</button>
+    <button class="tab-btn" onclick="switchTab('settings')">Settings</button>
+  </div>
+
+  <!-- TAB 1: Active Alerts -->
+  <div class="tab-pane active" id="tab-alerts">
+    <div class="scan-bar">
+      <button class="btn btn-blue" onclick="runScan()">&#9654; Run Compliance Scan</button>
+      <span class="last-scanned" id="last-scanned-text">Last scanned: &#8212;</span>
+    </div>
+
+    <div class="filter-bar">
+      <span style="font-size:12px;color:var(--mid);font-weight:600;">Filter:</span>
+      <button class="filter-btn active" data-filter="ALL" onclick="setFilter('ALL')">All</button>
+      <button class="filter-btn f-critical" data-filter="CRITICAL" onclick="setFilter('CRITICAL')">CRITICAL</button>
+      <button class="filter-btn f-warning" data-filter="WARNING" onclick="setFilter('WARNING')">WARNING</button>
+      <button class="filter-btn f-info" data-filter="INFO" onclick="setFilter('INFO')">INFO</button>
+    </div>
+
+    <div class="stats-row" id="stats-row" style="display:none;">
+      <div class="stat-chip"><span class="dot dot-red"></span><span id="stat-critical">0 CRITICAL</span></div>
+      <div class="stat-chip"><span class="dot dot-yellow"></span><span id="stat-warning">0 WARNING</span></div>
+      <div class="stat-chip"><span class="dot dot-blue"></span><span id="stat-info">0 INFO</span></div>
+      <div class="stat-chip"><span class="dot dot-green"></span><span id="stat-acked">0 Acknowledged today</span></div>
+    </div>
+
+    <div class="alerts-container" id="alerts-container">
+      <div class="empty-state">
+        <div class="icon">&#x1F6E1;&#xFE0F;</div>
+        <h3>Ready to Scan</h3>
+        <p>Click "Run Compliance Scan" to check all 10 CFR rules against your data.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Alert Log -->
+  <div class="tab-pane" id="tab-log">
+    <div class="log-filter-bar">
+      <label>From<input type="date" id="log-from"></label>
+      <label>To<input type="date" id="log-to"></label>
+      <label>Action
+        <select id="log-action-filter">
+          <option value="">All</option>
+          <option value="ACKNOWLEDGED">ACKNOWLEDGED</option>
+          <option value="DISMISSED">DISMISSED</option>
+        </select>
+      </label>
+      <label>Severity
+        <select id="log-sev-filter">
+          <option value="">All</option>
+          <option value="CRITICAL">CRITICAL</option>
+          <option value="WARNING">WARNING</option>
+          <option value="INFO">INFO</option>
+        </select>
+      </label>
+      <label>Entity<input type="text" id="log-entity-filter" placeholder="Name or unit..."></label>
+      <button class="btn btn-blue" onclick="renderLog()" style="align-self:flex-end;">Apply</button>
+    </div>
+    <div class="log-toolbar">
+      <button class="btn btn-mid" onclick="exportLogCSV()">&#11015; Export CSV</button>
+    </div>
+    <div class="table-wrap" id="log-table-wrap">
+      <div class="empty-state" style="padding:40px;">
+        <div class="icon">&#x1F4CB;</div>
+        <h3 style="color:var(--mid);">No log entries yet</h3>
+        <p>Acknowledged and dismissed alerts will appear here.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: CFR Reference Library -->
+  <div class="tab-pane" id="tab-library">
+    <div class="library-intro">
+      <p>Live links to the official electronic Code of Federal Regulations (eCFR.gov). Updated daily &#8212; the current authoritative version of Title 49.</p>
+    </div>
+    <div class="library-search">
+      <input type="text" id="ecfr-search" placeholder="Search eCFR.gov..." onkeydown="if(event.key==='Enter')searchECFR()">
+      <button class="btn btn-blue" onclick="searchECFR()">Search eCFR</button>
+    </div>
+
+    <div class="lib-category">
+      <div class="lib-category-title">Driver Qualifications</div>
+      <div class="lib-cards">
+        <div class="lib-card">
+          <div class="part-label">49 CFR Part 383</div>
+          <h4>CDL Standards</h4>
+          <p>Commercial driver's license standards, testing, and endorsements for drivers of commercial motor vehicles.</p>
+          <a class="btn-ecfr" href="https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-383" target="_blank">Open in eCFR &#8599;</a>
+        </div>
+        <div class="lib-card">
+          <div class="part-label">49 CFR Part 391</div>
+          <h4>Qualification of Drivers</h4>
+          <p>Minimum qualifications for drivers including medical, license, and record requirements.</p>
+          <a class="btn-ecfr" href="https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-391" target="_blank">Open in eCFR &#8599;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="lib-category">
+      <div class="lib-category-title">Hours of Service</div>
+      <div class="lib-cards">
+        <div class="lib-card">
+          <div class="part-label">49 CFR Part 395</div>
+          <h4>Hours of Service of Drivers</h4>
+          <p>Maximum driving times, mandatory rest periods, ELD requirements, and recordkeeping rules for commercial drivers.</p>
+          <a class="btn-ecfr" href="https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-395" target="_blank">Open in eCFR &#8599;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="lib-category">
+      <div class="lib-category-title">Drug &amp; Alcohol Testing</div>
+      <div class="lib-cards">
+        <div class="lib-card">
+          <div class="part-label">49 CFR Part 382</div>
+          <h4>Controlled Substances and Alcohol Use and Testing</h4>
+          <p>Mandatory drug and alcohol testing program requirements including pre-employment, random, and post-accident testing.</p>
+          <a class="btn-ecfr" href="https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-382" target="_blank">Open in eCFR &#8599;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="lib-category">
+      <div class="lib-category-title">Vehicle Safety</div>
+      <div class="lib-cards">
+        <div class="lib-card">
+          <div class="part-label">49 CFR Part 393</div>
+          <h4>Parts and Accessories Necessary for Safe Operation</h4>
+          <p>Equipment requirements for lighting, brakes, fuel systems, coupling devices, and other vehicle components.</p>
+          <a class="btn-ecfr" href="https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-393" target="_blank">Open in eCFR &#8599;</a>
+        </div>
+        <div class="lib-card">
+          <div class="part-label">49 CFR Part 396</div>
+          <h4>Inspection, Repair, and Maintenance</h4>
+          <p>Annual inspection requirements, preventive maintenance, driver vehicle inspection reports (DVIR), and out-of-service criteria.</p>
+          <a class="btn-ecfr" href="https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-396" target="_blank">Open in eCFR &#8599;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="lib-category">
+      <div class="lib-category-title">General Regulations</div>
+      <div class="lib-cards">
+        <div class="lib-card">
+          <div class="part-label">49 CFR Part 390</div>
+          <h4>FMCSR General Regulations</h4>
+          <p>Scope, definitions, general requirements including accident registers, MCS-150 filings, and carrier identification.</p>
+          <a class="btn-ecfr" href="https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-390" target="_blank">Open in eCFR &#8599;</a>
+        </div>
+        <div class="lib-card">
+          <div class="part-label">49 CFR Part 392</div>
+          <h4>Driving of Commercial Motor Vehicles</h4>
+          <p>Rules governing driver conduct: ill/fatigued driving, railroad crossings, fueling, cargo securement checks.</p>
+          <a class="btn-ecfr" href="https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-392" target="_blank">Open in eCFR &#8599;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="lib-category">
+      <div class="lib-category-title">Cargo</div>
+      <div class="lib-cards">
+        <div class="lib-card">
+          <div class="part-label">49 CFR Part 393 Subpart I</div>
+          <h4>Cargo Securement</h4>
+          <p>Specific requirements for securing cargo by commodity type including blocking, bracing, tiedowns, and anchor points.</p>
+          <a class="btn-ecfr" href="https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-393/subpart-I" target="_blank">Open in eCFR &#8599;</a>
+        </div>
+        <div class="lib-card">
+          <div class="part-label">49 CFR Part 397</div>
+          <h4>Transportation of Hazardous Materials</h4>
+          <p>Rules for routing, parking, attendance, and other requirements for carriers transporting hazardous materials.</p>
+          <a class="btn-ecfr" href="https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-397" target="_blank">Open in eCFR &#8599;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="lib-category">
+      <div class="lib-category-title">Registration &amp; Authority</div>
+      <div class="lib-cards">
+        <div class="lib-card">
+          <div class="part-label">49 CFR Part 365</div>
+          <h4>Rules Governing Broker Authorities</h4>
+          <p>Registration and licensing rules for freight brokers and broker-carrier relationships.</p>
+          <a class="btn-ecfr" href="https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-A/part-365" target="_blank">Open in eCFR &#8599;</a>
+        </div>
+        <div class="lib-card">
+          <div class="part-label">49 CFR Part 366</div>
+          <h4>Designation of Process Agents (BOC-3)</h4>
+          <p>Requirements for designating process agents in each state &#8212; mandatory BOC-3 filing for operating authority.</p>
+          <a class="btn-ecfr" href="https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-A/part-366" target="_blank">Open in eCFR &#8599;</a>
+        </div>
+        <div class="lib-card">
+          <div class="part-label">49 CFR Part 385</div>
+          <h4>Safety Fitness Procedures</h4>
+          <p>FMCSA safety rating methodology, compliance reviews, and out-of-service orders for motor carriers.</p>
+          <a class="btn-ecfr" href="https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-385" target="_blank">Open in eCFR &#8599;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="lib-footer">
+      <span>Full Title 49 &#8212; Subtitle B (Transportation, Parts 200&#8211;999)</span>
+      <a class="btn-ecfr" href="https://www.ecfr.gov/current/title-49/subtitle-B" target="_blank">Open Full Title 49 &#8599;</a>
+    </div>
+  </div>
+
+  <!-- TAB 4: Settings -->
+  <div class="tab-pane" id="tab-settings">
+    <div class="settings-section">
+      <h3>Rule Toggles</h3>
+      <div id="rule-toggles-container"></div>
+    </div>
+
+    <div class="settings-section">
+      <h3>Program Confirmations</h3>
+      <label class="confirm-checkbox-row">
+        <input type="checkbox" id="confirm-da" onchange="saveConfirm('nexus_da_program_confirmed', this.checked)">
+        <span>Drug &amp; Alcohol Testing Program Exists</span>
+      </label>
+      <label class="confirm-checkbox-row">
+        <input type="checkbox" id="confirm-eld" onchange="saveConfirm('nexus_eld_confirmed', this.checked)">
+        <span>ELD Compliance Confirmed</span>
+      </label>
+      <label class="confirm-checkbox-row">
+        <input type="checkbox" id="confirm-accident" onchange="saveConfirm('nexus_accident_register_confirmed', this.checked)">
+        <span>Accident Register Maintained</span>
+      </label>
+    </div>
+
+    <div class="settings-section">
+      <h3>Scan Settings</h3>
+      <div class="scan-toggle-row">
+        <span style="font-size:13px;">Auto-scan on page load</span>
+        <label class="toggle">
+          <input type="checkbox" id="autoscan-toggle" checked onchange="saveAutoscan(this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-section danger-zone">
+      <h3>Data Management</h3>
+      <p style="color:var(--mid);font-size:13px;margin-bottom:14px;">Destructive actions &#8212; use with caution.</p>
+      <button class="btn btn-red" onclick="clearAlertLog()">&#x1F5D1; Clear Alert Log</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+var CFR_RULES = [
+  {
+    id: "r001",
+    cfr: "49 CFR § 391.11(b)(5)",
+    cfr_url: "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-391/section-391.11",
+    part: 391,
+    category: "Driver Qualifications",
+    title: "Driver CDL Expired or Missing",
+    description: "Every driver must hold a valid Commercial Driver License.",
+    severity: "CRITICAL",
+    check: function() {
+      var alerts = [];
+      var docs = JSON.parse(localStorage.getItem("nexus_documents") || "[]");
+      var users = JSON.parse(localStorage.getItem("NEXUS_LOCAL_USERS") || "[]");
+      var drivers = users.filter(function(u) { return u.role === "driver"; });
+      var today = new Date();
+      drivers.forEach(function(driver) {
+        var cdl = docs.find(function(d) { return (d.type === "cdl" || d.category === "cdl") && d.driver === driver.name; });
+        if (!cdl) {
+          alerts.push({ entity: driver.name, detail: "No CDL on file" });
+        } else if (cdl.expiry_date && new Date(cdl.expiry_date) < today) {
+          alerts.push({ entity: driver.name, detail: "CDL expired " + cdl.expiry_date });
+        }
+      });
+      return alerts;
+    }
+  },
+  {
+    id: "r002",
+    cfr: "49 CFR § 391.41(a)(1)",
+    cfr_url: "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-391/section-391.41",
+    part: 391,
+    category: "Driver Qualifications",
+    title: "Medical Certificate Expired or Missing",
+    description: "Every driver must have a valid medical examiner certificate.",
+    severity: "CRITICAL",
+    check: function() {
+      var alerts = [];
+      var docs = JSON.parse(localStorage.getItem("nexus_documents") || "[]");
+      var users = JSON.parse(localStorage.getItem("NEXUS_LOCAL_USERS") || "[]");
+      var drivers = users.filter(function(u) { return u.role === "driver"; });
+      var today = new Date();
+      drivers.forEach(function(driver) {
+        var med = docs.find(function(d) {
+          return (d.type === "medical" || (d.name && d.name.toLowerCase().indexOf("medical") > -1)) && d.driver === driver.name;
+        });
+        if (!med) {
+          alerts.push({ entity: driver.name, detail: "No medical certificate on file" });
+        } else if (med.expiry_date && new Date(med.expiry_date) < today) {
+          alerts.push({ entity: driver.name, detail: "Medical certificate expired " + med.expiry_date });
+        }
+      });
+      return alerts;
+    }
+  },
+  {
+    id: "r003",
+    cfr: "49 CFR § 382.301",
+    cfr_url: "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-382/section-382.301",
+    part: 382,
+    category: "Drug and Alcohol",
+    title: "Pre-Employment Drug Test Record Required",
+    description: "Carriers must conduct pre-employment drug testing and retain records.",
+    severity: "CRITICAL",
+    check: function() {
+      var alerts = [];
+      var docs = JSON.parse(localStorage.getItem("nexus_documents") || "[]");
+      var users = JSON.parse(localStorage.getItem("NEXUS_LOCAL_USERS") || "[]");
+      var drivers = users.filter(function(u) { return u.role === "driver" && u.active === true; });
+      drivers.forEach(function(driver) {
+        var test = docs.find(function(d) {
+          return (d.type === "drug_test" || (d.name && d.name.toLowerCase().indexOf("drug") > -1)) && d.driver === driver.name;
+        });
+        if (!test) {
+          alerts.push({ entity: driver.name, detail: "No pre-employment drug test record on file" });
+        }
+      });
+      return alerts;
+    }
+  },
+  {
+    id: "r004",
+    cfr: "49 CFR § 396.17(a)",
+    cfr_url: "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-396/section-396.17",
+    part: 396,
+    category: "Vehicle Safety",
+    title: "Annual Vehicle Inspection Required",
+    description: "Every commercial motor vehicle must be inspected at least once every 12 months.",
+    severity: "CRITICAL",
+    check: function() {
+      var alerts = [];
+      var units = JSON.parse(localStorage.getItem("nexus_equipment_units") || "[]");
+      var today = new Date();
+      var oneYearAgo = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000);
+      units.forEach(function(unit) {
+        if (!unit.last_annual_inspection) {
+          alerts.push({ entity: unit.unit_number || unit.id || "Unknown Unit", detail: "No annual inspection date recorded" });
+        } else if (new Date(unit.last_annual_inspection) < oneYearAgo) {
+          alerts.push({ entity: unit.unit_number || unit.id || "Unknown Unit", detail: "Annual inspection overdue since " + unit.last_annual_inspection });
+        }
+      });
+      return alerts;
+    }
+  },
+  {
+    id: "r005",
+    cfr: "49 CFR § 390.19(b)(2)",
+    cfr_url: "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-390/section-390.19",
+    part: 390,
+    category: "Registration",
+    title: "MCS-150 Biennial Update Overdue",
+    description: "Motor carriers must file an MCS-150 update every 24 months.",
+    severity: "WARNING",
+    check: function() {
+      var alerts = [];
+      var dateStr = localStorage.getItem("nexus_mcs150_date");
+      if (!dateStr) {
+        alerts.push({ entity: "Carrier", detail: "MCS-150 last update date not recorded" });
+        return alerts;
+      }
+      var lastUpdate = new Date(dateStr);
+      var today = new Date();
+      var dueDate = new Date(lastUpdate.getTime() + 2 * 365 * 24 * 60 * 60 * 1000);
+      var sixMonthsFromNow = new Date(today.getTime() + 6 * 30 * 24 * 60 * 60 * 1000);
+      if (dueDate < today) {
+        alerts.push({ entity: "Carrier", detail: "MCS-150 was due " + dueDate.toLocaleDateString() + " - OVERDUE" });
+      } else if (dueDate < sixMonthsFromNow) {
+        alerts.push({ entity: "Carrier", detail: "MCS-150 due " + dueDate.toLocaleDateString() + " - update soon" });
+      }
+      return alerts;
+    }
+  },
+  {
+    id: "r006",
+    cfr: "49 CFR § 396.3(a)",
+    cfr_url: "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-396/section-396.3",
+    part: 396,
+    category: "Vehicle Safety",
+    title: "Systematic Preventive Maintenance Required",
+    description: "Motor carriers must systematically inspect, repair, and maintain all vehicles.",
+    severity: "WARNING",
+    check: function() {
+      var alerts = [];
+      var units = JSON.parse(localStorage.getItem("nexus_equipment_units") || "[]");
+      units.forEach(function(unit) {
+        if (!unit.next_pm_date && !unit.last_pm_date) {
+          alerts.push({ entity: unit.unit_number || unit.id || "Unknown Unit", detail: "No preventive maintenance schedule recorded" });
+        }
+      });
+      return alerts;
+    }
+  },
+  {
+    id: "r007",
+    cfr: "49 CFR § 382.103",
+    cfr_url: "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-382/section-382.103",
+    part: 382,
+    category: "Drug and Alcohol",
+    title: "Drug and Alcohol Testing Program Required",
+    description: "Every employer must implement a drug and alcohol testing program.",
+    severity: "WARNING",
+    check: function() {
+      var alerts = [];
+      var confirmed = localStorage.getItem("nexus_da_program_confirmed");
+      if (!confirmed || confirmed !== "true") {
+        alerts.push({ entity: "Carrier", detail: "D and A testing program not confirmed in Nexus settings" });
+      }
+      return alerts;
+    }
+  },
+  {
+    id: "r008",
+    cfr: "49 CFR § 395.8",
+    cfr_url: "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-395/section-395.8",
+    part: 395,
+    category: "Hours of Service",
+    title: "ELD or Log Book Records Required",
+    description: "Drivers subject to HOS rules must use an ELD or paper log book.",
+    severity: "INFO",
+    check: function() {
+      var alerts = [];
+      var confirmed = localStorage.getItem("nexus_eld_confirmed");
+      if (!confirmed || confirmed !== "true") {
+        alerts.push({ entity: "Carrier", detail: "ELD compliance not confirmed in Nexus settings" });
+      }
+      return alerts;
+    }
+  },
+  {
+    id: "r009",
+    cfr: "49 CFR § 390.15(b)",
+    cfr_url: "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-390/section-390.15",
+    part: 390,
+    category: "General",
+    title: "Accident Register Required",
+    description: "Motor carriers must maintain an accident register for 3 years.",
+    severity: "INFO",
+    check: function() {
+      var alerts = [];
+      var confirmed = localStorage.getItem("nexus_accident_register_confirmed");
+      var incidents = JSON.parse(localStorage.getItem("nexus_incidents") || "[]");
+      var hasAccidents = incidents.some(function(i) { return i.type === "accident" || i.is_accident === true; });
+      if (!confirmed || confirmed !== "true") {
+        if (!hasAccidents) {
+          alerts.push({ entity: "Carrier", detail: "Accident register not confirmed in Nexus settings" });
+        }
+      }
+      return alerts;
+    }
+  },
+  {
+    id: "r010",
+    cfr: "49 CFR § 391.51",
+    cfr_url: "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-391/section-391.51",
+    part: 391,
+    category: "Driver Qualifications",
+    title: "Driver Qualification File Required",
+    description: "Motor carriers must maintain a driver qualification file for each driver.",
+    severity: "WARNING",
+    check: function() {
+      var alerts = [];
+      var docs = JSON.parse(localStorage.getItem("nexus_documents") || "[]");
+      var users = JSON.parse(localStorage.getItem("NEXUS_LOCAL_USERS") || "[]");
+      var drivers = users.filter(function(u) { return u.role === "driver" && u.active === true; });
+      drivers.forEach(function(driver) {
+        var app = docs.find(function(d) {
+          return (d.type === "application" || (d.name && d.name.toLowerCase().indexOf("application") > -1)) && d.driver === driver.name;
+        });
+        if (!app) {
+          alerts.push({ entity: driver.name, detail: "No driver application/qualification file on file" });
+        }
+      });
+      return alerts;
+    }
+  }
+];
+
+var currentFilter = "ALL";
+var scanResults = [];
+
+function switchTab(name) {
+  var panes = document.querySelectorAll(".tab-pane");
+  var btns = document.querySelectorAll(".tab-btn");
+  panes.forEach(function(p) { p.classList.remove("active"); });
+  btns.forEach(function(b) { b.classList.remove("active"); });
+  document.getElementById("tab-" + name).classList.add("active");
+  var idx = ["alerts","log","library","settings"].indexOf(name);
+  if (idx >= 0) btns[idx].classList.add("active");
+  if (name === "log") renderLog();
+  if (name === "settings") renderSettings();
+}
+
+function getDisabledRules() {
+  return JSON.parse(localStorage.getItem("nexus_cfr_rules_disabled") || "[]");
+}
+
+function runScan() {
+  var disabled = getDisabledRules();
+  scanResults = [];
+  CFR_RULES.forEach(function(rule) {
+    if (disabled.indexOf(rule.id) > -1) return;
+    var items = [];
+    try { items = rule.check(); } catch(e) { console.warn("Rule check error:", rule.id, e); }
+    items.forEach(function(item) {
+      scanResults.push({ rule: rule, item: item });
+    });
+  });
+  var now = new Date();
+  document.getElementById("last-scanned-text").textContent = "Last scanned: " + now.toLocaleTimeString();
+  updateStats();
+  renderAlerts();
+}
+
+function updateStats() {
+  var crit = scanResults.filter(function(r) { return r.rule.severity === "CRITICAL"; }).length;
+  var warn = scanResults.filter(function(r) { return r.rule.severity === "WARNING"; }).length;
+  var info = scanResults.filter(function(r) { return r.rule.severity === "INFO"; }).length;
+  var log = JSON.parse(localStorage.getItem("nexus_cfr_alert_log") || "[]");
+  var today = new Date().toDateString();
+  var ackedToday = log.filter(function(e) { return new Date(e.timestamp).toDateString() === today; }).length;
+  document.getElementById("stat-critical").textContent = crit + " CRITICAL";
+  document.getElementById("stat-warning").textContent = warn + " WARNING";
+  document.getElementById("stat-info").textContent = info + " INFO";
+  document.getElementById("stat-acked").textContent = ackedToday + " Acknowledged today";
+  document.getElementById("stats-row").style.display = "flex";
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll(".filter-btn").forEach(function(b) { b.classList.remove("active"); });
+  var btn = document.querySelector(".filter-btn[data-filter='" + f + "']");
+  if (btn) btn.classList.add("active");
+  renderAlerts();
+}
+
+function escHtml(str) {
+  if (!str) return "";
+  return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function renderAlerts() {
+  var container = document.getElementById("alerts-container");
+  var filtered = scanResults.filter(function(r) {
+    return currentFilter === "ALL" || r.rule.severity === currentFilter;
+  });
+
+  if (scanResults.length === 0) {
+    container.innerHTML = "<div class=\"empty-state\"><div class=\"icon\">&#x2705;</div><h3>All clear — no compliance issues detected</h3><p>All enabled rules passed.</p></div>";
+    return;
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = "<div class=\"empty-state\"><div class=\"icon\">&#x1F50D;</div><h3 style=\"color:var(--mid);\">No alerts for this filter</h3><p>No " + currentFilter + " severity alerts found.</p></div>";
+    return;
+  }
+
+  var html = "";
+  filtered.forEach(function(r) {
+    var realIdx = scanResults.indexOf(r);
+    var borderClass = "sev-" + r.rule.severity;
+    html += "<div class=\"alert-card " + borderClass + "\" id=\"acard-" + realIdx + "\">";
+    html += "<div class=\"alert-card-header\">";
+    html += "<div class=\"alert-card-left\">";
+    html += "<span class=\"sev-badge " + r.rule.severity + "\">" + r.rule.severity + "</span>";
+    html += "<span class=\"cfr-cite\">" + escHtml(r.rule.cfr) + "</span>";
+    html += "<span class=\"alert-title\">" + escHtml(r.rule.title) + "</span>";
+    html += "</div>";
+    html += "<button class=\"dismiss-btn\" onclick=\"dismissCard(" + realIdx + ")\" title=\"Dismiss\">&#x2715;</button>";
+    html += "</div>";
+    html += "<div class=\"alert-detail\"><strong>Affected:</strong> " + escHtml(r.item.entity) + " — " + escHtml(r.item.detail) + "</div>";
+    html += "<div class=\"alert-actions\">";
+    html += "<button class=\"btn-sm btn-reg\" onclick=\"window.open('" + r.rule.cfr_url + "','_blank')\">&#x1F4D6; View Regulation</button>";
+    html += "<button class=\"btn-sm btn-ack\" onclick=\"showAckForm(" + realIdx + ")\">&#x2713; Acknowledge</button>";
+    html += "<button class=\"btn-sm btn-dna\" onclick=\"showDNAForm(" + realIdx + ")\">Does Not Apply</button>";
+    html += "</div>";
+    html += "<div id=\"inline-" + realIdx + "\"></div>";
+    html += "</div>";
+  });
+
+  container.innerHTML = html;
+}
+
+function dismissCard(idx) {
+  var card = document.getElementById("acard-" + idx);
+  if (card) card.remove();
+}
+
+function showAckForm(idx) {
+  var container = document.getElementById("inline-" + idx);
+  if (!container) return;
+  var html = "<div class=\"inline-action\">";
+  html += "<textarea id=\"ack-note-" + idx + "\" placeholder=\"Add a note (optional)...\"></textarea>";
+  html += "<button class=\"confirm-inline-btn\" onclick=\"confirmAck(" + idx + ")\">Confirm Acknowledge</button>";
+  html += "</div>";
+  container.innerHTML = html;
+}
+
+function confirmAck(idx) {
+  var r = scanResults[idx];
+  if (!r) return;
+  var noteEl = document.getElementById("ack-note-" + idx);
+  var note = noteEl ? noteEl.value.trim() : "";
+  var session = JSON.parse(localStorage.getItem("nexus_session") || "{}");
+  var entry = {
+    id: Date.now().toString(36) + Math.random().toString(36).substr(2, 6),
+    rule_id: r.rule.id,
+    cfr: r.rule.cfr,
+    title: r.rule.title,
+    entity: r.item.entity,
+    severity: r.rule.severity,
+    detail: r.item.detail,
+    action: "ACKNOWLEDGED",
+    note: note,
+    user: session.name || "Admin",
+    timestamp: new Date().toISOString(),
+    reviewed_by: null,
+    reviewed_at: null
+  };
+  saveLogEntry(entry);
+  var card = document.getElementById("acard-" + idx);
+  if (card) card.remove();
+  updateStats();
+  showToast("Alert acknowledged");
+}
+
+function showDNAForm(idx) {
+  var container = document.getElementById("inline-" + idx);
+  if (!container) return;
+  var html = "<div class=\"inline-action\">";
+  html += "<textarea id=\"dna-reason-" + idx + "\" placeholder=\"Reason this rule does not apply... (required)\"></textarea>";
+  html += "<button class=\"confirm-inline-btn\" onclick=\"confirmDNA(" + idx + ")\">Confirm Does Not Apply</button>";
+  html += "</div>";
+  container.innerHTML = html;
+}
+
+function confirmDNA(idx) {
+  var r = scanResults[idx];
+  if (!r) return;
+  var reasonEl = document.getElementById("dna-reason-" + idx);
+  var reason = reasonEl ? reasonEl.value.trim() : "";
+  if (!reason) {
+    showToast("Please enter a reason before confirming.");
+    return;
+  }
+  var session = JSON.parse(localStorage.getItem("nexus_session") || "{}");
+  var entry = {
+    id: Date.now().toString(36) + Math.random().toString(36).substr(2, 6),
+    rule_id: r.rule.id,
+    cfr: r.rule.cfr,
+    title: r.rule.title,
+    entity: r.item.entity,
+    severity: r.rule.severity,
+    detail: r.item.detail,
+    action: "DISMISSED",
+    note: reason,
+    user: session.name || "Admin",
+    timestamp: new Date().toISOString(),
+    reviewed_by: null,
+    reviewed_at: null
+  };
+  saveLogEntry(entry);
+  var card = document.getElementById("acard-" + idx);
+  if (card) card.remove();
+  updateStats();
+  showToast("Alert dismissed");
+}
+
+function saveLogEntry(entry) {
+  var log = JSON.parse(localStorage.getItem("nexus_cfr_alert_log") || "[]");
+  log.push(entry);
+  localStorage.setItem("nexus_cfr_alert_log", JSON.stringify(log));
+}
+
+function renderLog() {
+  var log = JSON.parse(localStorage.getItem("nexus_cfr_alert_log") || "[]");
+  var fromVal = document.getElementById("log-from").value;
+  var toVal = document.getElementById("log-to").value;
+  var actionVal = document.getElementById("log-action-filter").value;
+  var sevVal = document.getElementById("log-sev-filter").value;
+  var entityVal = document.getElementById("log-entity-filter").value.toLowerCase().trim();
+
+  var filtered = log.filter(function(e) {
+    if (fromVal && new Date(e.timestamp) < new Date(fromVal)) return false;
+    if (toVal) {
+      var toDate = new Date(toVal);
+      toDate.setDate(toDate.getDate() + 1);
+      if (new Date(e.timestamp) > toDate) return false;
+    }
+    if (actionVal && e.action !== actionVal) return false;
+    if (sevVal && e.severity !== sevVal) return false;
+    if (entityVal && (!e.entity || e.entity.toLowerCase().indexOf(entityVal) === -1)) return false;
+    return true;
+  });
+
+  var wrap = document.getElementById("log-table-wrap");
+
+  if (filtered.length === 0) {
+    wrap.innerHTML = "<div class=\"empty-state\" style=\"padding:40px;\"><div class=\"icon\">&#x1F4CB;</div><h3 style=\"color:var(--mid);\">No log entries</h3><p>No entries match your filters.</p></div>";
+    return;
+  }
+
+  var rows = "";
+  filtered.forEach(function(e) {
+    var ts = new Date(e.timestamp).toLocaleString();
+    var sevBadge = "<span class=\"sev-badge " + e.severity + "\" style=\"font-size:10px;\">" + e.severity + "</span>";
+    var actionColor = e.action === "ACKNOWLEDGED" ? "var(--green)" : "var(--orange)";
+    var reviewedCell = e.reviewed_by
+      ? "<span class=\"reviewed-tag\">&#x2713; " + escHtml(e.reviewed_by) + "</span>"
+      : "<button class=\"btn-review\" onclick=\"markReviewed('" + escHtml(e.id) + "')\">Mark Reviewed</button>";
+    rows += "<tr>";
+    rows += "<td style=\"white-space:nowrap;font-size:11px;\">" + ts + "</td>";
+    rows += "<td><span class=\"cfr-mono\">" + escHtml(e.cfr) + "</span></td>";
+    rows += "<td style=\"font-size:12px;max-width:160px;\">" + escHtml(e.title) + "</td>";
+    rows += "<td>" + escHtml(e.entity) + "</td>";
+    rows += "<td>" + sevBadge + "</td>";
+    rows += "<td style=\"color:" + actionColor + ";font-weight:600;font-size:12px;\">" + e.action + "</td>";
+    rows += "<td><span class=\"note-text\" title=\"" + escHtml(e.note) + "\">" + escHtml(e.note || "—") + "</span></td>";
+    rows += "<td>" + escHtml(e.user || "—") + "</td>";
+    rows += "<td>" + reviewedCell + "</td>";
+    rows += "</tr>";
+  });
+
+  wrap.innerHTML = "<table><thead><tr>"
+    + "<th>Date/Time</th><th>CFR</th><th>Title</th><th>Entity</th><th>Severity</th>"
+    + "<th>Action</th><th>Note</th><th>User</th><th>Reviewed By</th>"
+    + "</tr></thead><tbody>" + rows + "</tbody></table>";
+}
+
+function markReviewed(entryId) {
+  var reviewer = prompt("Enter reviewer name:");
+  if (!reviewer || !reviewer.trim()) return;
+  var log = JSON.parse(localStorage.getItem("nexus_cfr_alert_log") || "[]");
+  var entry = null;
+  log.forEach(function(e) { if (e.id === entryId) entry = e; });
+  if (entry) {
+    entry.reviewed_by = reviewer.trim();
+    entry.reviewed_at = new Date().toISOString();
+    localStorage.setItem("nexus_cfr_alert_log", JSON.stringify(log));
+    showToast("Marked reviewed by " + reviewer.trim());
+    renderLog();
+  }
+}
+
+function exportLogCSV() {
+  var log = JSON.parse(localStorage.getItem("nexus_cfr_alert_log") || "[]");
+  if (log.length === 0) { showToast("No log entries to export."); return; }
+  var headers = ["Date/Time","CFR","Title","Entity","Severity","Action","Note","User","Reviewed By","Reviewed At"];
+  var rows = log.map(function(e) {
+    return [
+      new Date(e.timestamp).toLocaleString(),
+      e.cfr, e.title, e.entity, e.severity, e.action,
+      (e.note || "").replace(/,/g, ";"),
+      e.user || "",
+      e.reviewed_by || "",
+      e.reviewed_at ? new Date(e.reviewed_at).toLocaleString() : ""
+    ].map(function(v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(",");
+  });
+  var csv = headers.join(",") + "\n" + rows.join("\n");
+  var blob = new Blob([csv], { type: "text/csv" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = "cfr_alert_log_" + new Date().toISOString().slice(0, 10) + ".csv";
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("CSV exported");
+}
+
+function searchECFR() {
+  var q = document.getElementById("ecfr-search").value.trim();
+  if (!q) return;
+  window.open("https://www.ecfr.gov/search?query=" + encodeURIComponent(q), "_blank");
+}
+
+function renderSettings() {
+  var disabled = getDisabledRules();
+  var container = document.getElementById("rule-toggles-container");
+  var html = "";
+  CFR_RULES.forEach(function(rule) {
+    var isEnabled = disabled.indexOf(rule.id) === -1;
+    html += "<div class=\"rule-toggle-row\">";
+    html += "<div class=\"rule-info\">";
+    html += "<div class=\"rule-name\">" + escHtml(rule.title) + " <span class=\"sev-badge " + rule.severity + "\" style=\"font-size:10px;margin-left:6px;\">" + rule.severity + "</span></div>";
+    html += "<div class=\"rule-meta\">" + escHtml(rule.cfr) + "</div>";
+    html += "</div>";
+    html += "<div class=\"toggle-wrap\">";
+    html += "<span class=\"toggle-label\" id=\"tl-" + rule.id + "\">" + (isEnabled ? "On" : "Off") + "</span>";
+    html += "<label class=\"toggle\"><input type=\"checkbox\" " + (isEnabled ? "checked" : "") + " onchange=\"toggleRule('" + rule.id + "', this)\"><span class=\"slider\"></span></label>";
+    html += "</div>";
+    html += "</div>";
+  });
+  container.innerHTML = html;
+
+  document.getElementById("confirm-da").checked = localStorage.getItem("nexus_da_program_confirmed") === "true";
+  document.getElementById("confirm-eld").checked = localStorage.getItem("nexus_eld_confirmed") === "true";
+  document.getElementById("confirm-accident").checked = localStorage.getItem("nexus_accident_register_confirmed") === "true";
+
+  var autoscan = localStorage.getItem("nexus_cfr_autoscan");
+  document.getElementById("autoscan-toggle").checked = (autoscan !== "false");
+}
+
+function toggleRule(ruleId, checkbox) {
+  var disabled = getDisabledRules();
+  var labelEl = document.getElementById("tl-" + ruleId);
+  if (checkbox.checked) {
+    var i = disabled.indexOf(ruleId);
+    if (i > -1) disabled.splice(i, 1);
+    if (labelEl) labelEl.textContent = "On";
+  } else {
+    if (disabled.indexOf(ruleId) === -1) disabled.push(ruleId);
+    if (labelEl) labelEl.textContent = "Off";
+  }
+  localStorage.setItem("nexus_cfr_rules_disabled", JSON.stringify(disabled));
+  showToast("Rule " + (checkbox.checked ? "enabled" : "disabled"));
+}
+
+function saveConfirm(key, checked) {
+  localStorage.setItem(key, checked ? "true" : "false");
+  showToast("Setting saved");
+}
+
+function saveAutoscan(checked) {
+  localStorage.setItem("nexus_cfr_autoscan", checked ? "true" : "false");
+  showToast("Auto-scan " + (checked ? "enabled" : "disabled"));
+}
+
+function clearAlertLog() {
+  if (!confirm("Clear all alert log entries? This cannot be undone.")) return;
+  localStorage.removeItem("nexus_cfr_alert_log");
+  showToast("Alert log cleared");
+  if (document.getElementById("tab-log").classList.contains("active")) renderLog();
+}
+
+var toastTimer = null;
+function showToast(msg) {
+  var el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.classList.remove("show"); }, 2800);
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  var autoscan = localStorage.getItem("nexus_cfr_autoscan");
+  if (autoscan !== "false") {
+    runScan();
+  }
+});
+</script>
+</body>
+</html>
