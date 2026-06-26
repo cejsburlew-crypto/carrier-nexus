@@ -157,6 +157,32 @@
         <button class="btn btn-primary" onclick="runAnalysis()">Analyze Route</button>
       </div>
       <div id="rc-results"></div>
+
+      <!-- WIM Scale Intelligence -->
+      <div class="card" style="margin-top:8px">
+        <div class="card-title">&#128225; WIM &amp; Scale Intelligence</div>
+        <div style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3);border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px;color:var(--text);line-height:1.65">
+          <strong style="color:var(--blue)">&#8505;&#65039; How WIM Works for Your Truck:</strong><br>
+          WIM sensors embedded in highway pavement automatically measure your truck's axle weights and gross weight as you drive over them at highway speed. The data is used for pavement engineering &mdash; it is NOT linked to your vehicle ID in real time via any public API.<br><br>
+          <strong style="color:var(--green)">What IS real-time for your truck:</strong><br>
+          &#10003; <strong>PrePass &amp; Drivewyze</strong> &mdash; Your transponder communicates with weigh stations and either flashes GREEN (bypass) or RED (must stop). OS/OW permitted loads ALWAYS STOP &mdash; no bypass for oversize/overweight.<br>
+          &#10003; <strong>Carrier Nexus GPS Proximity Alerts</strong> &mdash; As your driver approaches a known WIM station or scale location, this platform auto-calculates your current load weight vs. that state's limits.
+        </div>
+
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px">&#128308; Live Scale Proximity Alerts <span style="font-size:11px;color:var(--mid);font-weight:400">(reads nexus_gps_vehicles + nexus_dispatch_loads &mdash; refreshes every 60s)</span></div>
+        <div id="scale-proximity-panel">
+          <div style="color:var(--mid);font-size:13px">Loading proximity data...</div>
+        </div>
+
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+          <div style="font-size:12px;font-weight:600;color:var(--mid);margin-bottom:8px">&#128279; BYPASS PROGRAMS</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <a href="https://prepass.com" target="_blank" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:var(--blue);border-radius:6px;padding:8px 14px;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:6px">&#128279; PrePass &mdash; prepass.com</a>
+            <a href="https://drivewyze.com" target="_blank" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:var(--blue);border-radius:6px;padding:8px 14px;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:6px">&#128279; Drivewyze &mdash; drivewyze.com</a>
+          </div>
+          <div style="font-size:11px;color:var(--mid);margin-top:8px">&#9888;&#65039; OS/OW permitted loads CANNOT use bypass programs. Always stop at scales regardless of transponder status.</div>
+        </div>
+      </div>
     </div>
 
     <!-- Tab 2: State Weight Limits -->
@@ -341,36 +367,308 @@ var STATE_WEIGHT_LIMITS = {
 };
 
 var WEIGH_STATIONS = [
-  { id:"ws_001", state:"TX", name:"I-10 West - Sierra Blanca", highway:"I-10", direction:"EB/WB", city:"Sierra Blanca", prepass:true, notes:"Major port of entry from NM." },
-  { id:"ws_002", state:"TX", name:"I-10 East - Orange", highway:"I-10", direction:"WB", city:"Orange", prepass:true, notes:"Entry from Louisiana." },
-  { id:"ws_003", state:"TX", name:"I-35 N - Gainesville", highway:"I-35", direction:"NB/SB", city:"Gainesville", prepass:true, notes:"Major station on TX/OK corridor." },
-  { id:"ws_004", state:"TX", name:"I-35 S - Laredo", highway:"I-35", direction:"NB", city:"Laredo", prepass:false, notes:"Primary port of entry from Mexico." },
-  { id:"ws_005", state:"TX", name:"I-45 N - Madisonville", highway:"I-45", direction:"NB", city:"Madisonville", prepass:true, notes:"Houston to Dallas corridor." },
-  { id:"ws_006", state:"TX", name:"I-20 W - Pecos", highway:"I-20", direction:"EB/WB", city:"Pecos", prepass:true, notes:"West Texas I-20 corridor." },
-  { id:"ws_010", state:"OK", name:"I-35 - Ardmore", highway:"I-35", direction:"NB/SB", city:"Ardmore", prepass:true, notes:"" },
-  { id:"ws_011", state:"OK", name:"I-35 - Purcell", highway:"I-35", direction:"NB/SB", city:"Purcell", prepass:true, notes:"Closer to OKC." },
-  { id:"ws_012", state:"OK", name:"I-40 W - Sayre", highway:"I-40", direction:"EB/WB", city:"Sayre", prepass:true, notes:"Western OK, near TX border." },
-  { id:"ws_020", state:"NM", name:"I-10 - Lordsburg", highway:"I-10", direction:"EB/WB", city:"Lordsburg", prepass:true, notes:"TX-AZ corridor." },
-  { id:"ws_021", state:"NM", name:"I-40 E - San Jon", highway:"I-40", direction:"EB", city:"San Jon", prepass:true, notes:"Entry from TX on I-40." },
-  { id:"ws_030", state:"AZ", name:"I-10 - Ehrenberg", highway:"I-10", direction:"EB", city:"Ehrenberg", prepass:true, notes:"Entry from CA." },
-  { id:"ws_031", state:"AZ", name:"I-40 - Topock", highway:"I-40", direction:"EB", city:"Topock", prepass:true, notes:"Entry from CA on I-40." },
-  { id:"ws_040", state:"CA", name:"I-10 - Blythe", highway:"I-10", direction:"WB", city:"Blythe", prepass:true, notes:"Entry from AZ." },
-  { id:"ws_041", state:"CA", name:"I-40 - Needles", highway:"I-40", direction:"WB", city:"Needles", prepass:true, notes:"Entry from AZ on I-40." },
-  { id:"ws_042", state:"CA", name:"I-5 - Grapevine (Tejon Pass)", highway:"I-5", direction:"NB/SB", city:"Lebec", prepass:true, notes:"Major CA station. OS/OW must stop regardless of PrePass." },
-  { id:"ws_043", state:"CA", name:"I-15 - Victorville", highway:"I-15", direction:"NB/SB", city:"Victorville", prepass:true, notes:"LA to Vegas corridor." },
-  { id:"ws_050", state:"LA", name:"I-10 - Vinton", highway:"I-10", direction:"EB", city:"Vinton", prepass:true, notes:"Entry from TX on I-10." },
-  { id:"ws_051", state:"LA", name:"I-20 - Greenwood", highway:"I-20", direction:"EB", city:"Greenwood", prepass:true, notes:"Entry from TX on I-20." },
-  { id:"ws_060", state:"KS", name:"I-35 - Belle Plaine", highway:"I-35", direction:"NB/SB", city:"Belle Plaine", prepass:true, notes:"" },
-  { id:"ws_061", state:"KS", name:"I-70 E - Salina", highway:"I-70", direction:"EB/WB", city:"Salina", prepass:true, notes:"" },
-  { id:"ws_070", state:"MO", name:"I-44 - Joplin", highway:"I-44", direction:"EB", city:"Joplin", prepass:true, notes:"Entry from OK/KS." },
-  { id:"ws_071", state:"MO", name:"I-70 W - Kingdom City", highway:"I-70", direction:"EB/WB", city:"Kingdom City", prepass:true, notes:"Central MO scale." },
-  { id:"ws_080", state:"FL", name:"I-10 - Pensacola", highway:"I-10", direction:"EB", city:"Pensacola", prepass:true, notes:"Entry from AL." },
-  { id:"ws_081", state:"FL", name:"I-75 - Wildwood", highway:"I-75", direction:"NB/SB", city:"Wildwood", prepass:true, notes:"Major FL scale. All trucks." },
-  { id:"ws_090", state:"TN", name:"I-40 - White Pine", highway:"I-40", direction:"EB/WB", city:"White Pine", prepass:true, notes:"" },
-  { id:"ws_091", state:"TN", name:"I-75 - Jellico", highway:"I-75", direction:"NB", city:"Jellico", prepass:true, notes:"Entry from KY." }
+  { id:"ws_001", state:"TX", name:"I-10 West - Sierra Blanca", highway:"I-10", direction:"EB/WB", city:"Sierra Blanca", lat:31.1735, lng:-105.3566, prepass:true, notes:"Major port of entry from NM." },
+  { id:"ws_002", state:"TX", name:"I-10 East - Orange", highway:"I-10", direction:"WB", city:"Orange", lat:30.0877, lng:-93.7496, prepass:true, notes:"Entry from Louisiana." },
+  { id:"ws_003", state:"TX", name:"I-35 N - Gainesville", highway:"I-35", direction:"NB/SB", city:"Gainesville", lat:33.6262, lng:-97.1477, prepass:true, notes:"Major station on TX/OK corridor." },
+  { id:"ws_004", state:"TX", name:"I-35 S - Laredo", highway:"I-35", direction:"NB", city:"Laredo", lat:27.5035, lng:-99.5075, prepass:false, notes:"Primary port of entry from Mexico." },
+  { id:"ws_005", state:"TX", name:"I-45 N - Madisonville", highway:"I-45", direction:"NB", city:"Madisonville", lat:30.9488, lng:-95.9058, prepass:true, notes:"Houston to Dallas corridor." },
+  { id:"ws_006", state:"TX", name:"I-20 W - Pecos", highway:"I-20", direction:"EB/WB", city:"Pecos", lat:31.4233, lng:-103.4932, prepass:true, notes:"West Texas I-20 corridor." },
+  { id:"ws_010", state:"OK", name:"I-35 - Ardmore", highway:"I-35", direction:"NB/SB", city:"Ardmore", lat:34.1742, lng:-97.1428, prepass:true, notes:"" },
+  { id:"ws_011", state:"OK", name:"I-35 - Purcell", highway:"I-35", direction:"NB/SB", city:"Purcell", lat:34.9773, lng:-97.3581, prepass:true, notes:"Closer to OKC." },
+  { id:"ws_012", state:"OK", name:"I-40 W - Sayre", highway:"I-40", direction:"EB/WB", city:"Sayre", lat:35.6326, lng:-99.6412, prepass:true, notes:"Western OK, near TX border." },
+  { id:"ws_020", state:"NM", name:"I-10 - Lordsburg", highway:"I-10", direction:"EB/WB", city:"Lordsburg", lat:32.3516, lng:-108.7048, prepass:true, notes:"TX-AZ corridor." },
+  { id:"ws_021", state:"NM", name:"I-40 E - San Jon", highway:"I-40", direction:"EB", city:"San Jon", lat:35.1117, lng:-103.3318, prepass:true, notes:"Entry from TX on I-40." },
+  { id:"ws_030", state:"AZ", name:"I-10 - Ehrenberg", highway:"I-10", direction:"EB", city:"Ehrenberg", lat:33.6003, lng:-114.5165, prepass:true, notes:"Entry from CA." },
+  { id:"ws_031", state:"AZ", name:"I-40 - Topock", highway:"I-40", direction:"EB", city:"Topock", lat:34.7253, lng:-114.4700, prepass:true, notes:"Entry from CA on I-40." },
+  { id:"ws_040", state:"CA", name:"I-10 - Blythe", highway:"I-10", direction:"WB", city:"Blythe", lat:33.6151, lng:-114.5963, prepass:true, notes:"Entry from AZ." },
+  { id:"ws_041", state:"CA", name:"I-40 - Needles", highway:"I-40", direction:"WB", city:"Needles", lat:34.8510, lng:-114.6141, prepass:true, notes:"Entry from AZ on I-40." },
+  { id:"ws_042", state:"CA", name:"I-5 - Grapevine (Tejon Pass)", highway:"I-5", direction:"NB/SB", city:"Lebec", lat:34.8531, lng:-118.8597, prepass:true, notes:"Major CA station. OS/OW must stop regardless of PrePass." },
+  { id:"ws_043", state:"CA", name:"I-15 - Victorville", highway:"I-15", direction:"NB/SB", city:"Victorville", lat:34.5362, lng:-117.2928, prepass:true, notes:"LA to Vegas corridor." },
+  { id:"ws_050", state:"LA", name:"I-10 - Vinton", highway:"I-10", direction:"EB", city:"Vinton", lat:30.0750, lng:-93.5952, prepass:true, notes:"Entry from TX on I-10." },
+  { id:"ws_051", state:"LA", name:"I-20 - Greenwood", highway:"I-20", direction:"EB", city:"Greenwood", lat:32.4432, lng:-93.9913, prepass:true, notes:"Entry from TX on I-20." },
+  { id:"ws_060", state:"KS", name:"I-35 - Belle Plaine", highway:"I-35", direction:"NB/SB", city:"Belle Plaine", lat:37.3770, lng:-97.2706, prepass:true, notes:"" },
+  { id:"ws_061", state:"KS", name:"I-70 E - Salina", highway:"I-70", direction:"EB/WB", city:"Salina", lat:38.8403, lng:-97.6114, prepass:true, notes:"" },
+  { id:"ws_070", state:"MO", name:"I-44 - Joplin", highway:"I-44", direction:"EB", city:"Joplin", lat:37.0842, lng:-94.5133, prepass:true, notes:"Entry from OK/KS." },
+  { id:"ws_071", state:"MO", name:"I-70 W - Kingdom City", highway:"I-70", direction:"EB/WB", city:"Kingdom City", lat:38.9561, lng:-91.9254, prepass:true, notes:"Central MO scale." },
+  { id:"ws_080", state:"FL", name:"I-10 - Pensacola", highway:"I-10", direction:"EB", city:"Pensacola", lat:30.5227, lng:-87.2169, prepass:true, notes:"Entry from AL." },
+  { id:"ws_081", state:"FL", name:"I-75 - Wildwood", highway:"I-75", direction:"NB/SB", city:"Wildwood", lat:28.8538, lng:-82.0499, prepass:true, notes:"Major FL scale. All trucks." },
+  { id:"ws_090", state:"TN", name:"I-40 - White Pine", highway:"I-40", direction:"EB/WB", city:"White Pine", lat:36.1068, lng:-83.2999, prepass:true, notes:"" },
+  { id:"ws_091", state:"TN", name:"I-75 - Jellico", highway:"I-75", direction:"NB", city:"Jellico", lat:36.5879, lng:-84.1324, prepass:true, notes:"Entry from KY." }
 ];
 
 var ALL_STATES = Object.keys(STATE_WEIGHT_LIMITS).sort();
+
+var CITY_COORDS = {
+  'houston': { lat: 29.7604, lng: -95.3698, tz: 'America/Chicago' },
+  'beaumont': { lat: 30.0860, lng: -94.1018, tz: 'America/Chicago' },
+  'dallas': { lat: 32.7767, lng: -96.7970, tz: 'America/Chicago' },
+  'fort worth': { lat: 32.7555, lng: -97.3308, tz: 'America/Chicago' },
+  'san antonio': { lat: 29.4241, lng: -98.4936, tz: 'America/Chicago' },
+  'austin': { lat: 30.2672, lng: -97.7431, tz: 'America/Chicago' },
+  'el paso': { lat: 31.7619, lng: -106.4850, tz: 'America/Denver' },
+  'midland': { lat: 31.9973, lng: -102.0779, tz: 'America/Chicago' },
+  'corpus christi': { lat: 27.8006, lng: -97.3964, tz: 'America/Chicago' },
+  'oklahoma city': { lat: 35.4676, lng: -97.5164, tz: 'America/Chicago' },
+  'okc': { lat: 35.4676, lng: -97.5164, tz: 'America/Chicago' },
+  'tulsa': { lat: 36.1540, lng: -95.9928, tz: 'America/Chicago' },
+  'kansas city': { lat: 39.0997, lng: -94.5786, tz: 'America/Chicago' },
+  'st louis': { lat: 38.6270, lng: -90.1994, tz: 'America/Chicago' },
+  'chicago': { lat: 41.8781, lng: -87.6298, tz: 'America/Chicago' },
+  'memphis': { lat: 35.1495, lng: -90.0490, tz: 'America/Chicago' },
+  'nashville': { lat: 36.1627, lng: -86.7816, tz: 'America/Chicago' },
+  'atlanta': { lat: 33.7490, lng: -84.3880, tz: 'America/New_York' },
+  'new orleans': { lat: 29.9511, lng: -90.0715, tz: 'America/Chicago' },
+  'baton rouge': { lat: 30.4515, lng: -91.1871, tz: 'America/Chicago' },
+  'jackson': { lat: 32.2988, lng: -90.1848, tz: 'America/Chicago' },
+  'birmingham': { lat: 33.5186, lng: -86.8104, tz: 'America/Chicago' },
+  'albuquerque': { lat: 35.0844, lng: -106.6504, tz: 'America/Denver' },
+  'phoenix': { lat: 33.4484, lng: -112.0740, tz: 'America/Phoenix' },
+  'tucson': { lat: 32.2226, lng: -110.9747, tz: 'America/Phoenix' },
+  'los angeles': { lat: 34.0522, lng: -118.2437, tz: 'America/Los_Angeles' },
+  'san francisco': { lat: 37.7749, lng: -122.4194, tz: 'America/Los_Angeles' },
+  'las vegas': { lat: 36.1699, lng: -115.1398, tz: 'America/Los_Angeles' },
+  'denver': { lat: 39.7392, lng: -104.9903, tz: 'America/Denver' },
+  'salt lake city': { lat: 40.7608, lng: -111.8910, tz: 'America/Denver' },
+  'seattle': { lat: 47.6062, lng: -122.3321, tz: 'America/Los_Angeles' },
+  'portland': { lat: 45.5051, lng: -122.6750, tz: 'America/Los_Angeles' },
+  'minneapolis': { lat: 44.9778, lng: -93.2650, tz: 'America/Chicago' },
+  'detroit': { lat: 42.3314, lng: -83.0458, tz: 'America/Detroit' },
+  'cleveland': { lat: 41.4993, lng: -81.6944, tz: 'America/New_York' },
+  'miami': { lat: 25.7617, lng: -80.1918, tz: 'America/New_York' },
+  'charlotte': { lat: 35.2271, lng: -80.8431, tz: 'America/New_York' },
+  'raleigh': { lat: 35.7796, lng: -78.6382, tz: 'America/New_York' },
+  'new york': { lat: 40.7128, lng: -74.0060, tz: 'America/New_York' },
+  'philadelphia': { lat: 39.9526, lng: -75.1652, tz: 'America/New_York' },
+  'washington': { lat: 38.9072, lng: -77.0369, tz: 'America/New_York' }
+};
+
+function haversineDistance(lat1, lon1, lat2, lon2) {
+  var R = 3958.8;
+  var toRad = function(x) { return x * Math.PI / 180; };
+  var dLat = toRad(lat2 - lat1);
+  var dLon = toRad(lon2 - lon1);
+  var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+var WMO_CODES = {
+  0: { desc: 'Clear Sky', emoji: '☀️', alert: 'NONE' },
+  1: { desc: 'Mainly Clear', emoji: '🌤️', alert: 'NONE' },
+  2: { desc: 'Partly Cloudy', emoji: '⛅', alert: 'NONE' },
+  3: { desc: 'Overcast', emoji: '☁️', alert: 'NONE' },
+  45: { desc: 'Foggy', emoji: '🌫️', alert: 'CAUTION' },
+  48: { desc: 'Freezing Fog', emoji: '🌫️', alert: 'WARNING' },
+  51: { desc: 'Light Drizzle', emoji: '🌦️', alert: 'NONE' },
+  53: { desc: 'Moderate Drizzle', emoji: '🌧️', alert: 'CAUTION' },
+  55: { desc: 'Dense Drizzle', emoji: '🌧️', alert: 'CAUTION' },
+  61: { desc: 'Light Rain', emoji: '🌧️', alert: 'CAUTION' },
+  63: { desc: 'Moderate Rain', emoji: '🌧️', alert: 'CAUTION' },
+  65: { desc: 'Heavy Rain', emoji: '🌧️', alert: 'WARNING' },
+  71: { desc: 'Light Snow', emoji: '🌨️', alert: 'WARNING' },
+  73: { desc: 'Moderate Snow', emoji: '❄️', alert: 'WARNING' },
+  75: { desc: 'Heavy Snow', emoji: '❄️', alert: 'CRITICAL' },
+  77: { desc: 'Snow Grains', emoji: '❄️', alert: 'WARNING' },
+  80: { desc: 'Rain Showers', emoji: '🌦️', alert: 'CAUTION' },
+  81: { desc: 'Moderate Showers', emoji: '🌧️', alert: 'CAUTION' },
+  82: { desc: 'Violent Showers', emoji: '⛈️', alert: 'WARNING' },
+  85: { desc: 'Snow Showers', emoji: '🌨️', alert: 'WARNING' },
+  86: { desc: 'Heavy Snow Showers', emoji: '❄️', alert: 'CRITICAL' },
+  95: { desc: 'Thunderstorm', emoji: '⛈️', alert: 'CRITICAL' },
+  96: { desc: 'Thunderstorm + Hail', emoji: '⛈️', alert: 'CRITICAL' },
+  99: { desc: 'Thunderstorm + Heavy Hail', emoji: '⛈️', alert: 'CRITICAL' }
+};
+
+function getWindAlert(windMph, loadWidthFt) {
+  if (!loadWidthFt || loadWidthFt <= 8.5) {
+    if (windMph >= 60) return { level: 'CRITICAL', msg: '⛔ ' + windMph + ' mph wind — Extreme danger. Do not travel.' };
+    if (windMph >= 45) return { level: 'WARNING', msg: '⚠️ ' + windMph + ' mph wind — High crosswind risk. Exercise caution.' };
+    return null;
+  } else {
+    if (windMph >= 40) return { level: 'CRITICAL', msg: '⛔ ' + windMph + ' mph wind — WIDE LOAD STOP ORDER. Pilot car escorts cannot operate safely.' };
+    if (windMph >= 35) return { level: 'WARNING', msg: '⚠️ ' + windMph + ' mph wind — Wide load wind threshold approaching. Check permit restrictions.' };
+    if (windMph >= 25) return { level: 'CAUTION', msg: '🟡 ' + windMph + ' mph wind — Elevated wind. Wide load drivers exercise caution.' };
+    return null;
+  }
+}
+
+async function fetchRouteWeather(cities) {
+  var results = [];
+  for (var i = 0; i < cities.length; i++) {
+    var city = cities[i];
+    try {
+      var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + city.lat + '&longitude=' + city.lng +
+        '&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max,precipitation_probability_max' +
+        '&wind_speed_unit=mph&temperature_unit=fahrenheit&precipitation_unit=inch' +
+        '&timezone=' + encodeURIComponent(city.tz) + '&forecast_days=5';
+      var resp = await fetch(url);
+      var data = await resp.json();
+      results.push({ city: city.name, lat: city.lat, lng: city.lng, weather: data });
+    } catch(e) {
+      results.push({ city: city.name, error: true });
+    }
+  }
+  return results;
+}
+
+function getCitiesFromRoute(origin, dest) {
+  var cities = [];
+  var seen = {};
+  function addCity(nameRaw) {
+    var key = nameRaw.toLowerCase().split(',')[0].trim();
+    var coord = CITY_COORDS[key];
+    if (coord && !seen[key]) {
+      seen[key] = true;
+      cities.push({ name: nameRaw.split(',')[0].trim(), lat: coord.lat, lng: coord.lng, tz: coord.tz });
+    }
+  }
+  addCity(origin);
+  addCity(dest);
+  return cities;
+}
+
+function renderWeatherWidget(weatherResults, loadWidthFt) {
+  if (!weatherResults || weatherResults.length === 0) return '';
+  var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var criticalAlerts = [];
+  var cityCards = weatherResults.map(function(result) {
+    if (result.error) {
+      return '<div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px">' +
+        '<div style="font-size:13px;color:var(--mid)">📍 ' + result.city + ' — Weather data unavailable</div></div>';
+    }
+    var w = result.weather;
+    var daily = w.daily;
+    if (!daily || !daily.time) return '';
+    var dayCards = daily.time.map(function(dateStr, idx) {
+      var code = daily.weathercode[idx];
+      var wmo = WMO_CODES[code] || { desc: 'Unknown', emoji: '❓', alert: 'NONE' };
+      var tmax = Math.round(daily.temperature_2m_max[idx]);
+      var tmin = Math.round(daily.temperature_2m_min[idx]);
+      var wind = Math.round(daily.windspeed_10m_max[idx]);
+      var precip = (daily.precipitation_sum[idx] || 0).toFixed(1);
+      var d = new Date(dateStr + 'T12:00:00');
+      var dayLabel = idx === 0 ? 'TODAY' : days[d.getDay()] + ' ' + (d.getMonth()+1) + '/' + d.getDate();
+      var windAlert = getWindAlert(wind, loadWidthFt);
+      var alertBorder = wmo.alert === 'CRITICAL' ? 'var(--red)' : wmo.alert === 'WARNING' ? 'var(--yellow)' : wmo.alert === 'CAUTION' ? 'var(--orange)' : 'var(--border)';
+      if (wmo.alert === 'CRITICAL') {
+        criticalAlerts.push(result.city + ' — ' + wmo.desc + ' (' + dayLabel + ')');
+      }
+      if (windAlert && windAlert.level === 'CRITICAL') {
+        criticalAlerts.push(result.city + ' — ' + windAlert.msg + ' (' + dayLabel + ')');
+      }
+      return '<div style="flex:1;min-width:90px;background:var(--panel2);border:1px solid ' + alertBorder + ';border-radius:7px;padding:10px 8px;text-align:center">' +
+        '<div style="font-size:11px;font-weight:700;color:var(--mid);margin-bottom:4px">' + dayLabel + '</div>' +
+        '<div style="font-size:20px;margin-bottom:4px">' + wmo.emoji + '</div>' +
+        '<div style="font-size:12px;color:var(--text);font-weight:600">' + tmax + '°F</div>' +
+        '<div style="font-size:11px;color:var(--mid)">Lo: ' + tmin + '°</div>' +
+        '<div style="font-size:11px;color:var(--mid);margin-top:3px">💨 ' + wind + 'mph</div>' +
+        '<div style="font-size:11px;color:var(--mid)">🌧️ ' + precip + '"</div>' +
+        (windAlert ? '<div style="font-size:10px;color:' + (windAlert.level==='CRITICAL'?'var(--red)':windAlert.level==='WARNING'?'var(--yellow)':'var(--orange)') + ';margin-top:3px;font-weight:600">' + windAlert.level + '</div>' : '') +
+      '</div>';
+    }).join('');
+    return '<div style="margin-bottom:14px">' +
+      '<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">📍 ' + result.city + '</div>' +
+      '<div style="display:flex;gap:6px;flex-wrap:wrap">' + dayCards + '</div>' +
+      '</div>';
+  }).join('');
+
+  var alertBanner = criticalAlerts.length > 0
+    ? '<div style="background:rgba(239,68,68,.15);border:1px solid #ef4444;border-radius:8px;padding:14px;margin-bottom:14px">' +
+      '<div style="font-weight:700;color:#ef4444;font-size:14px">⛔ WEATHER ALERT ON THIS ROUTE</div>' +
+      '<div style="color:#e2e8f0;font-size:13px;margin-top:6px">' + criticalAlerts.join('<br>') + '</div>' +
+      '</div>'
+    : '';
+
+  return '<div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px">' +
+    '<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px">🌦️ ROUTE WEATHER FORECAST <span style="font-size:12px;color:var(--mid);font-weight:400">(Next 5 Days — Open-Meteo)</span></div>' +
+    alertBanner +
+    cityCards +
+    '<div style="font-size:11px;color:var(--mid);margin-top:8px">Data: <a href="https://open-meteo.com" target="_blank" style="color:var(--blue)">Open-Meteo</a> — Free weather API, no key required &bull; For official forecasts: <a href="https://weather.gov" target="_blank" style="color:var(--blue)">weather.gov</a></div>' +
+  '</div>';
+}
+
+function checkScaleProximity() {
+  var vehicles = JSON.parse(localStorage.getItem('nexus_gps_vehicles') || '[]');
+  var loads = JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]');
+  var alerts = [];
+  vehicles.forEach(function(vehicle) {
+    if (!vehicle.lat || !vehicle.lng) return;
+    var activeLoad = null;
+    for (var i = 0; i < loads.length; i++) {
+      var l = loads[i];
+      if ((l.unit === vehicle.unit || l.truck === vehicle.unit) && l.status !== 'DELIVERED' && l.status !== 'CLOSED') {
+        activeLoad = l; break;
+      }
+    }
+    var loadWeight = activeLoad ? (activeLoad.commodity_weight || 0) : 0;
+    WEIGH_STATIONS.forEach(function(station) {
+      if (!station.lat || !station.lng) return;
+      var dist = haversineDistance(vehicle.lat, vehicle.lng, station.lat, station.lng);
+      if (dist <= 30) {
+        var stateRules = STATE_WEIGHT_LIMITS[station.state];
+        var stateLimit = stateRules ? stateRules.gvw : 80000;
+        var isOverweight = loadWeight > stateLimit;
+        var isOSOW = activeLoad && (activeLoad.os_ow || loadWeight > 80000);
+        alerts.push({
+          vehicle: vehicle.unit,
+          driver: vehicle.driver || 'Unknown Driver',
+          station: station.name,
+          highway: station.highway,
+          distanceMiles: dist.toFixed(1),
+          loadWeight: loadWeight,
+          stateLimit: stateLimit,
+          isOverweight: isOverweight,
+          isOSOW: isOSOW,
+          mustStop: isOSOW,
+          prepassEligible: !isOSOW && station.prepass,
+          urgency: dist <= 5 ? 'IMMINENT' : dist <= 15 ? 'APPROACHING' : 'AHEAD',
+          loadId: activeLoad ? (activeLoad.id || activeLoad.load_id || '') : ''
+        });
+      }
+    });
+  });
+  return alerts;
+}
+
+function renderScaleAlerts() {
+  var container = document.getElementById('scale-proximity-panel');
+  if (!container) return;
+  var alerts = checkScaleProximity();
+  var ts = new Date().toLocaleTimeString();
+  if (alerts.length === 0) {
+    container.innerHTML = '<div style="background:rgba(16,185,129,.08);border:1px solid var(--green);border-radius:8px;padding:14px">' +
+      '<div style="font-size:13px;font-weight:700;color:var(--green)">✅ No Scales Within 30 Miles of Active Units</div>' +
+      '<div style="font-size:12px;color:var(--mid);margin-top:6px">GPS data from nexus_gps_vehicles — No active proximity alerts<br>' +
+      'Last updated: ' + ts + ' &nbsp; <button onclick="renderScaleAlerts()" style="background:var(--panel2);border:1px solid var(--border);color:var(--blue);border-radius:5px;padding:3px 10px;font-size:12px;cursor:pointer">🔄 Refresh</button></div>' +
+    '</div>';
+    return;
+  }
+  var urgencyColor = { 'IMMINENT': 'var(--red)', 'APPROACHING': 'var(--yellow)', 'AHEAD': 'var(--orange)' };
+  var html = alerts.map(function(a) {
+    var uColor = urgencyColor[a.urgency] || 'var(--mid)';
+    var overBy = a.loadWeight > a.stateLimit ? (a.loadWeight - a.stateLimit).toLocaleString() : '0';
+    return '<div style="background:var(--panel2);border:1px solid ' + (a.mustStop ? 'var(--red)' : 'var(--yellow)') + ';border-radius:8px;padding:16px;margin-bottom:12px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">' +
+        '<div style="font-size:14px;font-weight:700;color:var(--text)">🔴 SCALE ' + a.urgency + ' — UNIT ' + a.vehicle + ' (' + a.driver + ')</div>' +
+        '<span style="background:' + uColor + '20;color:' + uColor + ';border:1px solid ' + uColor + ';border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700">' + a.urgency + '</span>' +
+      '</div>' +
+      '<div style="font-size:13px;color:var(--mid);margin-bottom:10px">' + a.highway + ' — ' + a.station + ' &nbsp;·&nbsp; <strong style="color:var(--text)">' + a.distanceMiles + ' miles ahead</strong></div>' +
+      (a.loadId ? '<div style="font-size:12px;color:var(--mid);margin-bottom:8px">Load: ' + a.loadId + '</div>' : '') +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:12px">' +
+        '<div style="background:var(--panel);border-radius:6px;padding:8px"><div style="font-size:10px;color:var(--mid);text-transform:uppercase">Current Weight</div><div style="font-size:14px;font-weight:700;color:var(--text)">' + (a.loadWeight > 0 ? a.loadWeight.toLocaleString() + ' lbs' : 'Unknown') + '</div></div>' +
+        '<div style="background:var(--panel);border-radius:6px;padding:8px"><div style="font-size:10px;color:var(--mid);text-transform:uppercase">State Limit</div><div style="font-size:14px;font-weight:700;color:var(--green)">' + a.stateLimit.toLocaleString() + ' lbs</div></div>' +
+        (a.isOverweight ? '<div style="background:rgba(239,68,68,.1);border-radius:6px;padding:8px"><div style="font-size:10px;color:var(--mid);text-transform:uppercase">Over By</div><div style="font-size:14px;font-weight:700;color:var(--red)">' + overBy + ' lbs</div></div>' : '') +
+      '</div>' +
+      '<div style="background:' + (a.mustStop ? 'rgba(239,68,68,.1)' : 'rgba(245,158,11,.1)') + ';border-radius:6px;padding:10px;margin-bottom:10px">' +
+        '<div style="font-size:13px;font-weight:700;color:' + (a.mustStop ? 'var(--red)' : 'var(--yellow)') + '">' +
+          (a.mustStop ? '⛔ OS/OW PERMITTED LOAD — MUST STOP. Do NOT attempt PrePass bypass.' : (a.prepassEligible ? '🟢 PrePass eligible — bypass may apply if legal weight' : '🟡 No PrePass — plan to stop')) +
+        '</div>' +
+        (a.mustStop ? '<div style="font-size:12px;color:var(--mid);margin-top:6px">Have permit packet ready: OS/OW permits, pilot car documentation, CDL + medical cert, pre-trip inspection report</div>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+  container.innerHTML = html +
+    '<div style="font-size:12px;color:var(--mid);margin-top:8px">Last updated: ' + ts + ' &nbsp; <button onclick="renderScaleAlerts()" style="background:var(--panel2);border:1px solid var(--border);color:var(--blue);border-radius:5px;padding:3px 10px;font-size:12px;cursor:pointer">🔄 Refresh</button></div>';
+}
 
 // Tab switching
 function showTab(id) {
@@ -447,11 +745,13 @@ function analyzeRouteCompliance(states, grossWeightLbs, widthFt, heightFt, lengt
 }
 
 // Run analysis
-function runAnalysis() {
+async function runAnalysis() {
   var weight = parseFloat(document.getElementById("rc-weight").value) || 0;
   var width = parseFloat(document.getElementById("rc-width").value) || 8.5;
   var height = parseFloat(document.getElementById("rc-height").value) || 13.6;
   var length = parseFloat(document.getElementById("rc-length").value) || 65;
+  var origin = (document.getElementById("rc-origin").value || "").trim();
+  var dest = (document.getElementById("rc-dest").value || "").trim();
   var selectedStates = [];
   document.querySelectorAll("input[name=rc-state]:checked").forEach(function(cb) { selectedStates.push(cb.value); });
   if (!weight) { alert("Please enter a load weight."); return; }
@@ -483,7 +783,18 @@ function runAnalysis() {
       (r.state.notes ? "<div style=\"margin-top:6px;font-size:11px;color:var(--mid);font-style:italic\">" + r.state.notes + "</div>" : "") +
       "</div>";
   }).join("");
-  container.innerHTML = summary + cards;
+  var weatherHtml = '';
+  var routeCities = getCitiesFromRoute(origin, dest);
+  if (routeCities.length > 0) {
+    container.innerHTML = summary + '<div style="color:var(--mid);font-size:13px;padding:12px 0">&#127775; Fetching route weather forecast...</div>' + cards;
+    try {
+      var weatherResults = await fetchRouteWeather(routeCities);
+      weatherHtml = renderWeatherWidget(weatherResults, width);
+    } catch(e) {
+      weatherHtml = '';
+    }
+  }
+  container.innerHTML = summary + weatherHtml + cards;
 }
 
 // State Weight Limits table
@@ -650,6 +961,8 @@ document.addEventListener("DOMContentLoaded", function() {
   filterStations();
   buildWimGrid();
   updateBridgeTable();
+  renderScaleAlerts();
+  setInterval(renderScaleAlerts, 60000);
 });
 </script>
 </body></html>
