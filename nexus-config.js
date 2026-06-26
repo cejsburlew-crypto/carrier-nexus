@@ -422,3 +422,139 @@ if (typeof window !== 'undefined') {
     localStorage.setItem('nexus_companies', JSON.stringify(NEXUS_COMPANY_PROFILES));
   }
 }
+
+
+// ============================================================
+// NEXUS DEMO SEED DATA — Heavy Haul Focus
+// Seeds localStorage on first load only. Real data always wins.
+// Each key is only written if it doesn't already exist.
+// ============================================================
+(function NexusSeedDemo() {
+  if (typeof window === 'undefined') return;
+
+  function seedKey(key, data) {
+    if (!localStorage.getItem(key)) {
+      localStorage.setItem(key, typeof data === 'string' ? data : JSON.stringify(data));
+    }
+  }
+
+  // Company info
+  seedKey('nexus_my_usdot', '4521893');
+  seedKey('nexus_my_mc', '1678234');
+  seedKey('nexus_my_company_name', 'Carrier Trucking US');
+  seedKey('nexus_my_dot_pin', '7823');
+  seedKey('nexus_mcs150_last', '2025-03-15');
+  seedKey('nexus_mcs150_next', '2027-03-15');
+  seedKey('nexus_ucr_year', '2026');
+  seedKey('nexus_fmcsa_webkey', 'DEMO_KEY_REPLACE_WITH_REAL');
+
+  // Pay settings
+  seedKey('nexus_pay_settings', { default_driver_pct: 18, dispatcher_pct_amet: 14, dispatcher_pct_betty: 13, fuel_card: 'EFS', quick_pay_discount: 2 });
+
+  // ELD config
+  seedKey('nexus_gps_eld_config', { provider: 'Motive', account_id: 'CTU-MOTIVE-2892', fleet_id: 'FL-CTU-HEAVY', api_key: '', last_sync: '2026-06-26T10:30:00.000Z' });
+
+  // Equipment units
+  seedKey('nexus_equipment_units', [
+    { id: 'eq_101', unit_number: '101', type: 'power_unit', year: '2019', make: 'Peterbilt', model: '389', vin: '1XPWD40X1ED215307', license_plate: 'TX-CMV-101', state: 'TX', gvwr: 80000, axles: 5, engine: 'PACCAR MX-13 565HP', transmission: '18-Speed Eaton Fuller', fuel_type: 'Diesel', odometer: 287450, last_annual_inspection: '2025-12-01', next_pm_date: '2026-07-15', registration_expiry: '2026-12-31', insurance_policy: 'CTU-2026-HVY-8821', status: 'active', active_load: 'HH-2026-0891', driver: 'Testing Driver Martinez', notes: 'Primary heavy haul tractor. Pusher axle equipped.', lat: 30.0849, lng: -94.1341 },
+    { id: 'eq_102', unit_number: '102', type: 'power_unit', year: '2021', make: 'Kenworth', model: 'W990', vin: '2NKHHM6X5MM000456', license_plate: 'TX-CMV-102', state: 'TX', gvwr: 80000, axles: 5, engine: 'PACCAR MX-13 510HP', transmission: '18-Speed Eaton Fuller', fuel_type: 'Diesel', odometer: 198320, last_annual_inspection: '2025-11-15', next_pm_date: '2026-08-01', registration_expiry: '2026-12-31', insurance_policy: 'CTU-2026-HVY-8822', status: 'active', active_load: 'HH-2026-0892', driver: 'Testing Driver Johnson', notes: 'Secondary heavy haul unit. Steerable lift axle.', lat: 27.8006, lng: -97.3964 },
+    { id: 'eq_201', unit_number: '201', type: 'trailer', year: '2018', make: 'XL Specialized', model: '48ft RGN', vin: 'XLS18RGN00000201', license_plate: 'TX-TRL-201', state: 'TX', gvwr: 80000, axles: 3, deck_length: 48, deck_width: 102, capacity_tons: 40, last_annual_inspection: '2025-12-01', registration_expiry: '2026-12-31', status: 'active', attached_to: '101', notes: '48ft Removable Gooseneck. Hydraulic detach. Good for excavators and dozers.' },
+    { id: 'eq_202', unit_number: '202', type: 'trailer', year: '2020', make: 'Load King', model: '55-Ton Lowboy', vin: 'LK20LB55T00000202', license_plate: 'TX-TRL-202', state: 'TX', gvwr: 110000, axles: 3, deck_length: 53, deck_width: 102, capacity_tons: 55, last_annual_inspection: '2025-10-20', registration_expiry: '2026-12-31', status: 'active', attached_to: '102', notes: '55-ton capacity. Flip axle. Used for wind tower components and transformers.' },
+    { id: 'eq_301', unit_number: '301', type: 'trailer', year: '2017', make: 'Fontaine', model: '53ft Flatbed', vin: 'FTN17FB53T00000301', license_plate: 'TX-TRL-301', state: 'TX', gvwr: 48000, axles: 2, deck_length: 53, deck_width: 96, capacity_tons: 24, last_annual_inspection: '2026-01-10', registration_expiry: '2026-12-31', status: 'available', notes: 'Standard flatbed. Coil package. 22 chains, 8 binders.' }
+  ]);
+
+  // Dispatch loads
+  seedKey('nexus_dispatch_loads', [
+    { id: 'HH-2026-0891', load_number: 'HH-2026-0891', status: 'IN_TRANSIT', broker: 'TestingBroker Transport Solutions', broker_mc: '892341', broker_contact: 'Mike Testing', broker_phone: '(713) 555-0182', broker_email: 'dispatch@testingbroker.com', shipper: 'Testing Industrial Equipment Co.', consignee: 'Testing Construction Site OKC', origin: 'Beaumont, TX', origin_address: '4200 Testing Industrial Blvd, Beaumont, TX 77701', destination: 'Oklahoma City, OK', destination_address: '8800 Testing Construction Way, Oklahoma City, OK 73101', pickup_date: '2026-06-25', delivery_date: '2026-06-28', commodity: 'Caterpillar 395 Hydraulic Excavator', commodity_weight: 220000, commodity_weight_unit: 'lbs', total_length: '115ft', total_width: "18'6\"", total_height: "16'2\"", os_ow: true, pilot_required: true, pilot_count: 2, pilot_config: 'Front + Rear', unit: '101', driver: 'Testing Driver Martinez', trailer: '201', rate: 18750, fuel_surcharge: 1250, detention: 0, total_pay: 20000, driver_pay: 3375, driver_pay_pct: 18, miles: 610, rpm: 3.07, bol_number: 'BOL-HH-0891-2026', notes: 'Oversize load. Escort required all states. TX + OK permits attached. Night travel restricted.', permits: ['TX-2026-H-89234', 'OK-2026-4521'] },
+    { id: 'HH-2026-0892', load_number: 'HH-2026-0892', status: 'LOADED', broker: 'Testing Freight Partners LLC', broker_mc: '445123', broker_contact: 'Sarah TestFreight', broker_phone: '(361) 555-0247', broker_email: 'ops@testingfreight.com', shipper: 'Testing Wind Energy Corp', consignee: 'Testing Wind Farm - Lubbock', origin: 'Corpus Christi, TX', origin_address: '1200 Testing Port Access Rd, Corpus Christi, TX 78401', destination: 'Lubbock, TX', destination_address: '5500 Testing Wind Farm Rd, Lubbock, TX 79401', pickup_date: '2026-06-26', delivery_date: '2026-06-29', commodity: 'Wind Turbine Blade GE 3.8-130', commodity_weight: 52000, commodity_weight_unit: 'lbs', total_length: '165ft', total_width: "14'0\"", total_height: "15'6\"", os_ow: true, pilot_required: true, pilot_count: 3, pilot_config: 'Front x2 + Rear x1', unit: '102', driver: 'Testing Driver Johnson', trailer: '202', rate: 22400, fuel_surcharge: 1800, detention: 450, total_pay: 24650, driver_pay: 4032, driver_pay_pct: 18, miles: 840, rpm: 2.66, bol_number: 'BOL-HH-0892-2026', notes: 'Extreme length. Blade transport dolly attached. Highway closures required in Nueces County. Move starts at 10pm.', permits: ['TX-2026-H-90102', 'TX-2026-H-90103'] },
+    { id: 'HH-2026-0885', load_number: 'HH-2026-0885', status: 'DELIVERED', broker: 'TestingCarrier Direct Corp', broker_mc: '778902', broker_contact: 'James TestDirect', broker_phone: '(972) 555-0318', broker_email: 'loads@testingdirect.com', shipper: 'Testing Mining Equipment Rentals', consignee: 'Testing Aggregate Quarry Inc', origin: 'San Antonio, TX', destination: 'Midland, TX', pickup_date: '2026-06-20', delivery_date: '2026-06-21', commodity: 'Komatsu HD785 Haul Truck Body', commodity_weight: 178000, commodity_weight_unit: 'lbs', total_length: '92ft', total_width: "16'0\"", total_height: "14'8\"", os_ow: true, pilot_required: true, pilot_count: 2, unit: '101', driver: 'Testing Driver Martinez', trailer: '201', rate: 14200, fuel_surcharge: 980, detention: 200, total_pay: 15380, driver_pay: 2768, miles: 490, rpm: 2.90, bol_number: 'BOL-HH-0885-2026', notes: 'Delivered on time. No incidents.' }
+  ]);
+
+  // Brokers
+  seedKey('nexus_brokers', [
+    { id: 'br_001', name: 'TestingBroker Transport Solutions', mc_number: '892341', dot_number: '3421789', contact_name: 'Mike Testing', phone: '(713) 555-0182', email: 'dispatch@testingbroker.com', address: '1400 Testing Brokerage Pkwy, Houston, TX 77002', payment_terms: 'Quick Pay 2% / Net 30', credit_score: 92, avg_rpm: 3.10, loads_completed: 47, rating: 4.8, preferred: true, notes: 'Preferred broker for heavy haul in TX/OK corridor. Always pays on time.' },
+    { id: 'br_002', name: 'Testing Freight Partners LLC', mc_number: '445123', dot_number: '2891034', contact_name: 'Sarah TestFreight', phone: '(361) 555-0247', email: 'ops@testingfreight.com', address: '850 Testing Freight Dr, Corpus Christi, TX 78401', payment_terms: 'Net 30', credit_score: 88, avg_rpm: 2.75, loads_completed: 23, rating: 4.5, preferred: false, notes: 'Specializes in wind energy components. Good volume in spring/summer.' },
+    { id: 'br_003', name: 'TestingCarrier Direct Corp', mc_number: '778902', dot_number: '4102378', contact_name: 'James TestDirect', phone: '(972) 555-0318', email: 'loads@testingdirect.com', address: '2200 Testing Corporate Blvd, Dallas, TX 75201', payment_terms: 'Quick Pay 1.5% / Net 45', credit_score: 85, avg_rpm: 2.95, loads_completed: 31, rating: 4.2, preferred: false, notes: 'Mining and aggregate industry. Midwest and Texas focus.' }
+  ]);
+
+  // Permits
+  seedKey('nexus_permits', [
+    { id: 'pmt_001', permit_number: 'TX-2026-H-89234', state: 'TX', type: 'OS/OW - Single Trip', issued: '2026-06-23', expires: '2026-06-28', unit: '101', trailer: '201', load: 'HH-2026-0891', commodity: 'Caterpillar 395 Excavator', max_weight: 220000, max_width: "18'6\"", max_height: "16'2\"", max_length: '115ft', route: 'I-10 E to US-69 N to US-271 N to I-40 W', travel_restrictions: 'No travel 30 min before sunset to 30 min after sunrise. No holiday travel.', escort_required: '2 pilot cars', permit_fee: 385, status: 'ACTIVE', doc_url: '' },
+    { id: 'pmt_002', permit_number: 'OK-2026-4521', state: 'OK', type: 'OS/OW - Single Trip', issued: '2026-06-23', expires: '2026-06-28', unit: '101', trailer: '201', load: 'HH-2026-0891', commodity: 'Caterpillar 395 Excavator', max_weight: 220000, max_width: "18'6\"", max_height: "16'2\"", max_length: '115ft', route: 'I-40 W to I-35 N to OK-152 W', travel_restrictions: 'Daylight only. Escort required at all times.', escort_required: '2 pilot cars', permit_fee: 290, status: 'ACTIVE', doc_url: '' },
+    { id: 'pmt_003', permit_number: 'TX-2026-H-90102', state: 'TX', type: 'OS/OW - Single Trip', issued: '2026-06-25', expires: '2026-06-30', unit: '102', trailer: '202', load: 'HH-2026-0892', commodity: 'Wind Turbine Blade GE 3.8-130', max_weight: 80000, max_width: "14'0\"", max_height: "15'6\"", max_length: '165ft', route: 'US-77 N to US-181 N to I-37 N to US-83 N to US-87 N', travel_restrictions: 'Night move only (10pm-6am). Requires utility company coordination on Hwy 83.', escort_required: '3 pilot cars + 1 crane at origin', permit_fee: 520, status: 'ACTIVE', doc_url: '' },
+    { id: 'pmt_004', permit_number: 'TX-2026-H-87891', state: 'TX', type: 'OS/OW - Annual', issued: '2026-01-01', expires: '2026-12-31', unit: '101', trailer: '201', load: '', commodity: 'Construction Equipment - General', max_weight: 200000, max_width: "16'0\"", max_height: "15'0\"", max_length: '110ft', route: 'Statewide Texas', travel_restrictions: 'Daylight only. Escort required for loads over 14ft wide.', escort_required: 'Varies by load dimensions', permit_fee: 1800, status: 'ACTIVE', doc_url: '' }
+  ]);
+
+  // Pilot escort companies
+  seedKey('nexus_pilot_companies', [
+    { id: 'pilot_001', company_name: 'Testing Pilot Escort Services LLC', contact_name: 'Ray TestPilot', phone: '(713) 555-0401', email: 'dispatch@testingpilot.com', address: '300 Testing Escort Way, Houston, TX 77001', states_covered: ['TX', 'OK', 'LA', 'AR', 'NM'], vehicles: 3, rate_per_day: 650, rate_per_mile: 2.50, insurance_carrier: 'Progressive Commercial', insurance_policy: 'PCO-9821-TEST', insurance_expiry: '2027-01-31', coi_on_file: true, rating: 4.9, preferred: true, notes: 'Our go-to escort company. Always on time. Drivers all certified.' },
+    { id: 'pilot_002', company_name: 'TestPilot Pro LLC', contact_name: 'Linda TestPro', phone: '(214) 555-0523', email: 'info@testpilotpro.com', address: '1100 Testing Pilot Dr, Dallas, TX 75201', states_covered: ['TX', 'OK', 'KS', 'MO', 'NM', 'CO'], vehicles: 5, rate_per_day: 600, rate_per_mile: 2.25, insurance_carrier: 'Nationwide Commercial', insurance_policy: 'NWC-4421-TPRO', insurance_expiry: '2026-11-30', coi_on_file: true, rating: 4.6, preferred: false, notes: 'Good backup option. Better rates for long-haul runs.' }
+  ]);
+
+  // Pilot assignments
+  seedKey('nexus_pilot_assignments', [
+    { id: 'pa_001', load_id: 'HH-2026-0891', company_id: 'pilot_001', company_name: 'Testing Pilot Escort Services LLC', pilot_driver: 'Carlos TestEscort', pilot_vehicle: '2022 Toyota 4Runner - White - TX PLT-TEST-01', position: 'FRONT', contact_phone: '(713) 555-9001', status: 'ACTIVE', assigned_date: '2026-06-24', coi_verified: true, notes: 'Lead pilot. Has route survey completed.' },
+    { id: 'pa_002', load_id: 'HH-2026-0891', company_id: 'pilot_001', company_name: 'Testing Pilot Escort Services LLC', pilot_driver: 'Maria TestEscort2', pilot_vehicle: '2021 Chevy Tahoe - Orange - TX PLT-TEST-02', position: 'REAR', contact_phone: '(713) 555-9002', status: 'ACTIVE', assigned_date: '2026-06-24', coi_verified: true, notes: 'Rear pilot. Experienced with excavator loads.' },
+    { id: 'pa_003', load_id: 'HH-2026-0892', company_id: 'pilot_002', company_name: 'TestPilot Pro LLC', pilot_driver: 'Dave TestPro1', pilot_vehicle: '2023 Ford F-150 - Yellow - TX PLT-PRO-01', position: 'FRONT', contact_phone: '(214) 555-8801', status: 'ASSIGNED', assigned_date: '2026-06-25', coi_verified: true, notes: 'Blade load experience required. Confirmed.' },
+    { id: 'pa_004', load_id: 'HH-2026-0892', company_id: 'pilot_002', company_name: 'TestPilot Pro LLC', pilot_driver: 'Annie TestPro2', pilot_vehicle: '2022 Dodge Ram 1500 - Yellow - TX PLT-PRO-02', position: 'FRONT_2', contact_phone: '(214) 555-8802', status: 'ASSIGNED', assigned_date: '2026-06-25', coi_verified: true, notes: 'Second front pilot for 165ft blade.' },
+    { id: 'pa_005', load_id: 'HH-2026-0892', company_id: 'pilot_001', company_name: 'Testing Pilot Escort Services LLC', pilot_driver: 'Bob TestEscort3', pilot_vehicle: '2020 Chevy Silverado - Orange - TX PLT-TEST-03', position: 'REAR', contact_phone: '(713) 555-9003', status: 'ASSIGNED', assigned_date: '2026-06-25', coi_verified: false, notes: 'COI requested, pending receipt. Follow up before move.' }
+  ]);
+
+  // Documents
+  seedKey('nexus_documents', [
+    { id: 'doc_001', type: 'cdl', category: 'DRIVER', name: 'CDL - Testing Driver Martinez', driver: 'Testing Driver Martinez', unit: '', doc_number: 'TX-CDL-MARTINEZ-001', issue_date: '2022-03-10', expiry_date: '2028-03-10', issuing_state: 'TX', cdl_class: 'Class A', endorsements: ['H - Hazmat', 'N - Tank', 'X - Combo Tank/Hazmat', 'T - Double/Triple'], status: 'VALID', uploaded: '2026-01-05', notes: 'Oversize load certified. 15 years CDL experience.' },
+    { id: 'doc_002', type: 'medical', category: 'DRIVER', name: 'Medical Cert - Testing Driver Martinez', driver: 'Testing Driver Martinez', unit: '', doc_number: 'MED-CERT-MARTINEZ-2024', issue_date: '2024-10-15', expiry_date: '2026-10-15', examiner: 'Dr. Testing Medical Examiners Inc.', examiner_npi: '1891234567', restrictions: 'None', status: 'VALID', uploaded: '2024-10-16' },
+    { id: 'doc_003', type: 'cdl', category: 'DRIVER', name: 'CDL - Testing Driver Johnson', driver: 'Testing Driver Johnson', unit: '', doc_number: 'TX-CDL-JOHNSON-002', issue_date: '2020-07-22', expiry_date: '2026-07-22', issuing_state: 'TX', cdl_class: 'Class A', endorsements: ['N - Tank', 'T - Double/Triple'], status: 'EXPIRING_SOON', uploaded: '2026-01-05', notes: 'Renewal due July 2026. Remind 60 days out.' },
+    { id: 'doc_004', type: 'medical', category: 'DRIVER', name: 'Medical Cert - Testing Driver Johnson', driver: 'Testing Driver Johnson', unit: '', doc_number: 'MED-CERT-JOHNSON-2025', issue_date: '2025-05-20', expiry_date: '2027-05-20', examiner: 'TestMed Occupational Health LLC', examiner_npi: '1234509876', restrictions: 'Must wear corrective lenses', status: 'VALID', uploaded: '2025-05-21' },
+    { id: 'doc_005', type: 'annual_inspection', category: 'VEHICLE', name: 'Annual Inspection - Unit 101 Peterbilt', driver: '', unit: '101', doc_number: 'INSP-2025-DEC-101', issue_date: '2025-12-01', expiry_date: '2026-12-01', inspector: 'Testing Truck and Trailer Service', inspector_vin_confirmed: '1XPWD40X1ED215307', defects_found: 'None', status: 'VALID', uploaded: '2025-12-02' },
+    { id: 'doc_006', type: 'annual_inspection', category: 'VEHICLE', name: 'Annual Inspection - Unit 102 Kenworth', driver: '', unit: '102', doc_number: 'INSP-2025-NOV-102', issue_date: '2025-11-15', expiry_date: '2026-11-15', inspector: 'Testing Truck and Trailer Service', inspector_vin_confirmed: '2NKHHM6X5MM000456', defects_found: 'Replaced brake pads axle 3. Adjusted 5th wheel.', status: 'VALID', uploaded: '2025-11-16' },
+    { id: 'doc_007', type: 'bol', category: 'LOAD', name: 'BOL - HH-2026-0891 - Cat 395 Excavator', driver: 'Testing Driver Martinez', unit: '101', load_id: 'HH-2026-0891', doc_number: 'BOL-HH-0891-2026', issue_date: '2026-06-25', expiry_date: '', shipper: 'Testing Industrial Equipment Co.', consignee: 'Testing Construction Site OKC', commodity: 'Caterpillar 395 Hydraulic Excavator', weight: '220,000 lbs', status: 'ACTIVE', uploaded: '2026-06-25' },
+    { id: 'doc_008', type: 'ratecon', category: 'LOAD', name: 'Rate Con - HH-2026-0891 - TestingBroker', driver: 'Testing Driver Martinez', unit: '101', load_id: 'HH-2026-0891', doc_number: 'RC-TBTS-0891-2026', issue_date: '2026-06-23', expiry_date: '', broker: 'TestingBroker Transport Solutions', rate: '$18,750', status: 'ACTIVE', uploaded: '2026-06-23' },
+    { id: 'doc_009', type: 'bol', category: 'LOAD', name: 'BOL - HH-2026-0892 - Wind Turbine Blade', driver: 'Testing Driver Johnson', unit: '102', load_id: 'HH-2026-0892', doc_number: 'BOL-HH-0892-2026', issue_date: '2026-06-26', expiry_date: '', shipper: 'Testing Wind Energy Corp', consignee: 'Testing Wind Farm - Lubbock', commodity: 'Wind Turbine Blade GE 3.8-130', weight: '52,000 lbs', status: 'ACTIVE', uploaded: '2026-06-26' },
+    { id: 'doc_010', type: 'insurance', category: 'CARRIER', name: 'Insurance Certificate - Carrier Trucking US', driver: '', unit: '', doc_number: 'BMC-91-CTU-2026', issue_date: '2026-01-01', expiry_date: '2027-01-01', carrier: 'Great West Casualty Company', policy_number: 'GWC-HVY-2026-CTU-8821', coverage_amount: '$1,000,000', status: 'VALID', uploaded: '2026-01-03' },
+    { id: 'doc_011', type: 'permit', category: 'PERMIT', name: 'OS/OW Permit TX-2026-H-89234 - Unit 101', driver: 'Testing Driver Martinez', unit: '101', load_id: 'HH-2026-0891', doc_number: 'TX-2026-H-89234', issue_date: '2026-06-23', expiry_date: '2026-06-28', state: 'TX', status: 'ACTIVE', uploaded: '2026-06-23' },
+    { id: 'doc_012', type: 'permit', category: 'PERMIT', name: 'OS/OW Permit TX-2026-H-90102 - Unit 102', driver: 'Testing Driver Johnson', unit: '102', load_id: 'HH-2026-0892', doc_number: 'TX-2026-H-90102', issue_date: '2026-06-25', expiry_date: '2026-06-30', state: 'TX', status: 'ACTIVE', uploaded: '2026-06-25' },
+    { id: 'doc_013', type: 'w9', category: 'CARRIER', name: 'W-9 - Carrier Trucking US', driver: '', unit: '', doc_number: 'W9-CTU-2025', issue_date: '2025-01-10', expiry_date: '', status: 'VALID', uploaded: '2025-01-10' }
+  ]);
+
+  // GPS vehicles
+  seedKey('nexus_gps_vehicles', [
+    { id: 'v101', unit: '101', driver: 'Testing Driver Martinez', lat: 30.0849, lng: -94.1341, speed: 58, heading: 'NW', last_update: '2026-06-26T10:30:00.000Z', status: 'MOVING', eld_provider: 'Motive', eld_id: 'MOT-101-CTU' },
+    { id: 'v102', unit: '102', driver: 'Testing Driver Johnson', lat: 27.8006, lng: -97.3964, speed: 0, heading: 'N', last_update: '2026-06-26T10:30:00.000Z', status: 'STOPPED', eld_provider: 'Motive', eld_id: 'MOT-102-CTU' },
+    { id: 'v301', unit: '301', driver: '', lat: 29.7604, lng: -95.3698, speed: 0, heading: '', last_update: '2026-06-26T10:30:00.000Z', status: 'YARD', eld_provider: '', eld_id: '' }
+  ]);
+
+  // Expenses
+  seedKey('nexus_expenses', [
+    { id: 'exp_001', date: '2026-06-25', type: 'FUEL', description: 'Pilot Flying J - Beaumont TX - Unit 101', amount: 487.23, unit: '101', driver: 'Testing Driver Martinez', load: 'HH-2026-0891', method: 'EFS Fuel Card', receipt: 'RCPT-EFS-001' },
+    { id: 'exp_002', date: '2026-06-25', type: 'PERMIT', description: 'TX OS/OW Permit #TX-2026-H-89234', amount: 385.00, unit: '101', driver: '', load: 'HH-2026-0891', method: 'Company Card', receipt: 'RCPT-TX-PMT-001' },
+    { id: 'exp_003', date: '2026-06-25', type: 'PERMIT', description: 'OK OS/OW Permit #OK-2026-4521', amount: 290.00, unit: '101', driver: '', load: 'HH-2026-0891', method: 'Company Card', receipt: 'RCPT-OK-PMT-001' },
+    { id: 'exp_004', date: '2026-06-25', type: 'PILOT_CAR', description: 'Testing Pilot Escort Services - 2 Cars - HH-0891', amount: 1300.00, unit: '101', driver: '', load: 'HH-2026-0891', method: 'Zelle', receipt: '' },
+    { id: 'exp_005', date: '2026-06-26', type: 'FUEL', description: "Love's Travel Stop - Corpus Christi TX - Unit 102", amount: 412.85, unit: '102', driver: 'Testing Driver Johnson', load: 'HH-2026-0892', method: 'EFS Fuel Card', receipt: 'RCPT-EFS-002' },
+    { id: 'exp_006', date: '2026-06-26', type: 'PERMIT', description: 'TX OS/OW Permit #TX-2026-H-90102', amount: 520.00, unit: '102', driver: '', load: 'HH-2026-0892', method: 'Company Card', receipt: 'RCPT-TX-PMT-002' },
+    { id: 'exp_007', date: '2026-06-23', type: 'MAINTENANCE', description: 'Oil change + filter service - Unit 101 - Testing Truck Service', amount: 285.00, unit: '101', driver: '', load: '', method: 'Company Card', receipt: 'RCPT-SVC-001' },
+    { id: 'exp_008', date: '2026-06-20', type: 'TOLL', description: 'TX-288 Toll + TX-8 Beltway - Unit 101', amount: 48.75, unit: '101', driver: 'Testing Driver Martinez', load: 'HH-2026-0885', method: 'TxTag', receipt: '' }
+  ]);
+
+  // Inject testing drivers into NEXUS_LOCAL_USERS if they don't already exist
+  var usersRaw = localStorage.getItem('NEXUS_LOCAL_USERS');
+  if (usersRaw) {
+    try {
+      var users = JSON.parse(usersRaw);
+      var existingIds = users.map(function(u) { return u.id; });
+      var added = false;
+      if (existingIds.indexOf('usr_011') === -1) {
+        users.push({ id: 'usr_011', email: 'martinez@carriertuckingus.com', name: 'Testing Driver Martinez', role: 'driver', active: true, phone: '(832) 555-0741', cdl: 'TX-CDL-MARTINEZ-001', cdl_class: 'Class A', endorsements: 'H,N,X,T', hire_date: '2021-03-15', companyIds: ['co_001'] });
+        added = true;
+      }
+      if (existingIds.indexOf('usr_012') === -1) {
+        users.push({ id: 'usr_012', email: 'johnson@carriertuckingus.com', name: 'Testing Driver Johnson', role: 'driver', active: true, phone: '(512) 555-0392', cdl: 'TX-CDL-JOHNSON-002', cdl_class: 'Class A', endorsements: 'N,T', hire_date: '2022-08-01', companyIds: ['co_001'] });
+        added = true;
+      }
+      if (added) {
+        localStorage.setItem('NEXUS_LOCAL_USERS', JSON.stringify(users));
+      }
+    } catch(e) {}
+  }
+
+})();
