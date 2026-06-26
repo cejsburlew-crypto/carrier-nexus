@@ -1,0 +1,609 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Equipment Weights — Carrier Nexus</title>
+  <script src="nexus-config.js"></script>
+  <script src="nexus-db.js"></script>
+  <script src="nexus-sidebar.js"></script>
+  <style>
+    :root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+    main{margin-left:220px}
+    .page-hdr{padding:24px 28px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    .page-title{font-size:22px;font-weight:700;color:var(--text)}
+    .page-sub{font-size:13px;color:var(--mid);margin-top:2px}
+    .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 28px;margin-top:16px}
+    .tab-btn{background:none;border:none;border-bottom:2px solid transparent;color:var(--mid);font-size:13px;font-weight:500;padding:10px 18px;cursor:pointer;transition:.15s;white-space:nowrap}
+    .tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+    .tab-btn:hover:not(.active){color:var(--text)}
+    .tab-panel{display:none;padding:24px 28px}
+    .tab-panel.active{display:block}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px}
+    .card-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px}
+    .form-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+    .form-group{display:flex;flex-direction:column;gap:5px;flex:1;min-width:140px}
+    .form-group label{font-size:12px;color:var(--mid);font-weight:500}
+    .form-group input,.form-group select,.form-group textarea{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;transition:.15s}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--blue)}
+    .form-group select option{background:var(--panel2)}
+    .form-group textarea{resize:vertical;min-height:70px}
+    .btn{padding:9px 18px;border-radius:7px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+    .btn-primary{background:var(--blue);color:#fff}
+    .btn-primary:hover{background:#2563eb}
+    .btn-danger{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+    .btn-danger:hover{background:rgba(239,68,68,.3)}
+    .btn-sm{padding:5px 12px;font-size:12px}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{background:var(--panel2);color:var(--mid);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+    td{padding:9px 12px;border-bottom:1px solid rgba(30,45,69,.5);color:var(--text);vertical-align:top}
+    tr:hover td{background:rgba(255,255,255,.02)}
+    .tbl-wrap{overflow-x:auto}
+    .search-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+    .search-bar input,.search-bar select{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:8px 12px;font-size:13px;outline:none}
+    .search-bar input:focus,.search-bar select:focus{border-color:var(--blue)}
+    .badge-config{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.4px}
+    .cfg-full{background:rgba(16,185,129,.2);color:var(--green)}
+    .cfg-partial{background:rgba(59,130,246,.2);color:var(--blue)}
+    .cfg-disassembled{background:rgba(249,115,22,.2);color:var(--orange)}
+    .cfg-component{background:rgba(168,85,247,.2);color:var(--purple)}
+    .wt-display{font-size:11px;color:var(--mid);margin-top:3px}
+    .result-box{padding:16px;border-radius:8px;margin-top:16px;border:1px solid var(--border)}
+    .result-box.legal{background:rgba(16,185,129,.08);border-color:var(--green)}
+    .result-box.permit{background:rgba(245,158,11,.08);border-color:var(--yellow)}
+    .result-box.overweight{background:rgba(239,68,68,.08);border-color:var(--red)}
+    .trailer-rec{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:12px}
+    .trailer-rec-title{font-size:12px;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+    .trailer-rec-value{font-size:14px;font-weight:600;color:var(--text)}
+    .info-box{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:8px;padding:14px;font-size:13px;color:var(--text);margin-bottom:16px;line-height:1.6}
+    .live-weight{font-size:13px;color:var(--mid);margin-top:6px;padding:8px 10px;background:var(--panel2);border-radius:6px;border:1px solid var(--border)}
+  </style>
+</head>
+<body>
+<div id="nexus-app" style="display:flex;min-height:100vh;">
+  <div id="nexus-sidebar"></div>
+  <main>
+    <div class="page-hdr">
+      <div>
+        <div class="page-title">Heavy Equipment Weight Database</div>
+        <div class="page-sub">Operating weights, transport configurations, component calculator, and scale ticket records</div>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('search')">Search Database</button>
+      <button class="tab-btn" onclick="showTab('calc')">Component Calculator</button>
+      <button class="tab-btn" onclick="showTab('add')">Add / Edit Equipment</button>
+      <button class="tab-btn" onclick="showTab('scale')">Scale Ticket Links</button>
+    </div>
+
+    <!-- Tab 1: Search Database -->
+    <div class="tab-panel active" id="tab-search">
+      <div class="search-bar">
+        <input type="text" id="eq-search" placeholder="Search equipment, make, model..." oninput="filterEquipment()" style="flex:1;min-width:200px">
+        <select id="eq-cat" onchange="filterEquipment()">
+          <option value="">All Categories</option>
+          <option>Excavator</option>
+          <option>Bulldozer</option>
+          <option>Motor Grader</option>
+          <option>Crawler Crane</option>
+          <option>Mobile Crane</option>
+          <option>Wind Turbine</option>
+          <option>Mining Equipment</option>
+          <option>Power Transformer</option>
+          <option>Articulated Dump Truck</option>
+          <option>Wheel Loader</option>
+          <option>Scraper</option>
+          <option>Compactor</option>
+          <option>Pipe Layer</option>
+          <option>Other</option>
+        </select>
+        <select id="eq-config" onchange="filterEquipment()">
+          <option value="">All Configs</option>
+          <option value="FULL">FULL</option>
+          <option value="PARTIAL_AVAILABLE">PARTIAL_AVAILABLE</option>
+          <option value="ALWAYS_DISASSEMBLED">ALWAYS_DISASSEMBLED</option>
+          <option value="COMPONENT_ONLY">COMPONENT_ONLY</option>
+        </select>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>Equipment</th>
+            <th>Category</th>
+            <th>Operating Weight</th>
+            <th>Transport Config</th>
+            <th>Notes</th>
+          </tr></thead>
+          <tbody id="eq-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab 2: Component Calculator -->
+    <div class="tab-panel" id="tab-calc">
+      <div class="card">
+        <div class="card-title">Component Weight Calculator</div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2;min-width:240px">
+            <label>Select Equipment</label>
+            <select id="calc-eq" onchange="onCalcEqChange()">
+              <option value="">-- Select Equipment --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Check State Compliance</label>
+            <select id="calc-state">
+              <option value="">-- Select State --</option>
+            </select>
+          </div>
+        </div>
+        <div id="calc-eq-info" style="display:none" class="card" style="background:var(--panel2)">
+          <div style="font-size:13px;color:var(--mid);margin-bottom:8px">Equipment Info</div>
+          <div id="calc-eq-detail"></div>
+        </div>
+        <div class="form-row" style="margin-top:12px">
+          <div class="form-group">
+            <label>Planned Load Weight (lbs)</label>
+            <input type="number" id="calc-weight" placeholder="Enter weight in lbs" min="0" oninput="updateLiveWeight()">
+            <div class="live-weight" id="calc-weight-display">Enter weight above to see tons</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="runCalc()">Check Compliance</button>
+        <div id="calc-results"></div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Add/Edit Equipment -->
+    <div class="tab-panel" id="tab-add">
+      <div class="card">
+        <div class="card-title">Add Custom Equipment</div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2;min-width:200px">
+            <label>Equipment Name *</label>
+            <input type="text" id="add-name" placeholder="e.g. Caterpillar 390F">
+          </div>
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="add-cat">
+              <option value="">Select...</option>
+              <option>Excavator</option>
+              <option>Bulldozer</option>
+              <option>Motor Grader</option>
+              <option>Crawler Crane</option>
+              <option>Mobile Crane</option>
+              <option>Wind Turbine</option>
+              <option>Mining Equipment</option>
+              <option>Power Transformer</option>
+              <option>Articulated Dump Truck</option>
+              <option>Wheel Loader</option>
+              <option>Scraper</option>
+              <option>Compactor</option>
+              <option>Pipe Layer</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Make</label>
+            <input type="text" id="add-make" placeholder="e.g. Caterpillar">
+          </div>
+          <div class="form-group">
+            <label>Model</label>
+            <input type="text" id="add-model" placeholder="e.g. 390F L">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Operating Weight (lbs) *</label>
+            <input type="number" id="add-opwt" placeholder="0" min="0" oninput="updateAddLiveWeight()">
+            <div class="live-weight" id="add-wt-display">Enter weight to see tons</div>
+          </div>
+          <div class="form-group">
+            <label>Transport Config *</label>
+            <select id="add-config">
+              <option value="">Select...</option>
+              <option value="FULL">FULL - Transport as-is</option>
+              <option value="PARTIAL_AVAILABLE">PARTIAL_AVAILABLE - Some disassembly</option>
+              <option value="ALWAYS_DISASSEMBLED">ALWAYS_DISASSEMBLED - Always disassemble</option>
+              <option value="COMPONENT_ONLY">COMPONENT_ONLY - Individual components only</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Transport Weight (lbs) <span style="color:var(--mid)">(optional)</span></label>
+            <input type="number" id="add-transwt" placeholder="If different from operating" min="0">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="flex:3">
+            <label>Notes</label>
+            <textarea id="add-notes" placeholder="Disassembly details, special requirements, etc."></textarea>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="saveCustomEquipment()">Save Equipment</button>
+        <div id="add-feedback" style="margin-top:10px;font-size:13px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Custom Equipment Records</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Operating Weight</th>
+              <th>Config</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr></thead>
+            <tbody id="custom-eq-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Scale Tickets -->
+    <div class="tab-panel" id="tab-scale">
+      <div class="info-box">
+        <strong>Scale Ticket Records</strong> — Verified weight data from certified scales provides accurate load weights for permitting, compliance documentation, and billing. Always obtain a scale ticket when moving heavy equipment. Scale tickets may be required by state permit authorities as proof of actual vehicle weight.</div>
+      <div class="card">
+        <div class="card-title">Add Scale Ticket Record</div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2;min-width:200px">
+            <label>Equipment ID / Name *</label>
+            <input type="text" id="st-name" placeholder="Equipment name or ID">
+          </div>
+          <div class="form-group">
+            <label>Scale Ticket Date *</label>
+            <input type="date" id="st-date">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Gross Weight (lbs) *</label>
+            <input type="number" id="st-weight" placeholder="0" min="0" oninput="updateScaleLiveWeight()">
+            <div class="live-weight" id="st-wt-display">Enter weight to see tons</div>
+          </div>
+          <div class="form-group" style="flex:2">
+            <label>Location / Scale Name *</label>
+            <input type="text" id="st-location" placeholder="Scale name and city">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="flex:3">
+            <label>Notes</label>
+            <textarea id="st-notes" placeholder="Load description, ticket number, driver, etc."></textarea>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="saveScaleTicket()">Save Scale Ticket</button>
+        <div id="st-feedback" style="margin-top:10px;font-size:13px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Scale Ticket Records</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Equipment</th>
+              <th>Date</th>
+              <th>Gross Weight</th>
+              <th>Location</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr></thead>
+            <tbody id="st-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+var EQUIPMENT_DB = [
+  { id:"e001", name:"Caterpillar 395", category:"Excavator", make:"Caterpillar", model:"395", operating_weight_lbs:220000, transport_config:"ALWAYS_DISASSEMBLED", transport_weight_lbs:175000, notes:"Counterweight, boom, and stick removed for transport. Counterweight alone ~35,000 lbs. Boom ~18,000 lbs." },
+  { id:"e002", name:"Caterpillar 390F", category:"Excavator", make:"Caterpillar", model:"390F L", operating_weight_lbs:195000, transport_config:"ALWAYS_DISASSEMBLED", transport_weight_lbs:155000, notes:"Counterweight and boom assembly removed. Max trailer load typically 155k." },
+  { id:"e003", name:"Caterpillar 374", category:"Excavator", make:"Caterpillar", model:"374 Next Gen", operating_weight_lbs:178000, transport_config:"ALWAYS_DISASSEMBLED", transport_weight_lbs:140000, notes:"Large excavator. Disassemble counterweight minimum." },
+  { id:"e004", name:"Komatsu PC800-8", category:"Excavator", make:"Komatsu", model:"PC800-8", operating_weight_lbs:187000, transport_config:"ALWAYS_DISASSEMBLED", transport_weight_lbs:148000, notes:"Similar size class to Cat 390." },
+  { id:"e005", name:"Hitachi ZX890LC-6", category:"Excavator", make:"Hitachi", model:"ZX890LC-6", operating_weight_lbs:196000, transport_config:"ALWAYS_DISASSEMBLED", transport_weight_lbs:155000, notes:"Counterweight 34,000 lbs. Boom 20,000 lbs." },
+  { id:"e006", name:"Caterpillar 349", category:"Excavator", make:"Caterpillar", model:"349 Next Gen", operating_weight_lbs:107000, transport_config:"PARTIAL_AVAILABLE", transport_weight_lbs:95000, notes:"Mid-size. Counterweight removable. May need superheavy permit for full transport." },
+  { id:"e007", name:"Caterpillar 336", category:"Excavator", make:"Caterpillar", model:"336 Next Gen", operating_weight_lbs:82300, transport_config:"PARTIAL_AVAILABLE", transport_weight_lbs:72000, notes:"Counterweight removed for transport. Typically within TX legal with proper axle config." },
+  { id:"e008", name:"Caterpillar 323", category:"Excavator", make:"Caterpillar", model:"323 Next Gen", operating_weight_lbs:50700, transport_config:"FULL", transport_weight_lbs:50700, notes:"Legal load on 3-4 axle RGN. No disassembly required in most states." },
+  { id:"b001", name:"Caterpillar D11", category:"Bulldozer", make:"Caterpillar", model:"D11 XE", operating_weight_lbs:230000, transport_config:"ALWAYS_DISASSEMBLED", transport_weight_lbs:130000, notes:"Largest production dozer. Blade, ripper, and push arms all removed. Body alone ~130k." },
+  { id:"b002", name:"Caterpillar D10T2", category:"Bulldozer", make:"Caterpillar", model:"D10T2", operating_weight_lbs:151600, transport_config:"ALWAYS_DISASSEMBLED", transport_weight_lbs:115000, notes:"Blade removed. May transport with push arms attached if weight allows." },
+  { id:"b003", name:"Komatsu D475A-8", category:"Bulldozer", make:"Komatsu", model:"D475A-8EO", operating_weight_lbs:265000, transport_config:"ALWAYS_DISASSEMBLED", transport_weight_lbs:145000, notes:"Heaviest production dozer. Multiple loads required. Blade and ripper each ship separately." },
+  { id:"b004", name:"Caterpillar D9T", category:"Bulldozer", make:"Caterpillar", model:"D9T", operating_weight_lbs:110000, transport_config:"ALWAYS_DISASSEMBLED", transport_weight_lbs:90000, notes:"Blade removed standard. Push arms may stay on." },
+  { id:"b005", name:"Caterpillar D8T", category:"Bulldozer", make:"Caterpillar", model:"D8T", operating_weight_lbs:80600, transport_config:"PARTIAL_AVAILABLE", transport_weight_lbs:75000, notes:"Blade typically removed. May transport in TX without superheavy permit with 5-axle RGN." },
+  { id:"g001", name:"Caterpillar 24M", category:"Motor Grader", make:"Caterpillar", model:"24M", operating_weight_lbs:136000, transport_config:"PARTIAL_AVAILABLE", transport_weight_lbs:90000, notes:"Blade and cab section may separate. Wide load - typically 14+ ft for full transport." },
+  { id:"g002", name:"Komatsu GD825A-2", category:"Motor Grader", make:"Komatsu", model:"GD825A-2", operating_weight_lbs:118000, transport_config:"PARTIAL_AVAILABLE", transport_weight_lbs:90000, notes:"Similar to Cat 24M class." },
+  { id:"c001", name:"Manitowoc 18000", category:"Crawler Crane", make:"Manitowoc", model:"18000", operating_weight_lbs:1000000, transport_config:"COMPONENT_ONLY", transport_weight_lbs:0, notes:"1,000-ton crane. Carbody alone ~200,000 lbs. Requires 20-30+ truckloads. Expert rigging and assembly crew required." },
+  { id:"c002", name:"Manitowoc 2250", category:"Crawler Crane", make:"Manitowoc", model:"2250", operating_weight_lbs:500000, transport_config:"COMPONENT_ONLY", transport_weight_lbs:0, notes:"Carbody ~100,000 lbs. 15-20 truckloads. Boom sections ship individually." },
+  { id:"c003", name:"Link-Belt LS-518 HV", category:"Crawler Crane", make:"Link-Belt", model:"LS-518 HV", operating_weight_lbs:280000, transport_config:"COMPONENT_ONLY", transport_weight_lbs:0, notes:"Carbody ~80,000 lbs. 8-12 truckloads typical." },
+  { id:"c004", name:"Liebherr LTM 1500-8.1", category:"Mobile Crane", make:"Liebherr", model:"LTM 1500-8.1", operating_weight_lbs:264000, transport_config:"PARTIAL_AVAILABLE", transport_weight_lbs:132000, notes:"Self-propelled - counterweight removed for road travel. 8-axle unit. Each axle ~33k lbs." },
+  { id:"w001", name:"GE 3.8-130 Blade", category:"Wind Turbine", make:"GE Renewable Energy", model:"3.8-130 Blade", operating_weight_lbs:56000, transport_config:"COMPONENT_ONLY", transport_weight_lbs:56000, notes:"Single blade. 213 ft long. Requires specialized blade transport trailer. 1 blade per truck." },
+  { id:"w002", name:"GE 3.8-130 Nacelle", category:"Wind Turbine", make:"GE Renewable Energy", model:"3.8-130 Nacelle", operating_weight_lbs:390000, transport_config:"COMPONENT_ONLY", transport_weight_lbs:390000, notes:"Heaviest single wind turbine component. 20+ axle platform trailer required." },
+  { id:"w003", name:"GE 3.8-130 Tower Base Section", category:"Wind Turbine", make:"GE Renewable Energy", model:"3.8-130 Tower Base", operating_weight_lbs:160000, transport_config:"COMPONENT_ONLY", transport_weight_lbs:160000, notes:"Tower ships in 3 sections. Base section heaviest. Very wide - 14-18 ft diameter." },
+  { id:"w004", name:"Vestas V136 Blade", category:"Wind Turbine", make:"Vestas", model:"V136 Blade", operating_weight_lbs:44000, transport_config:"COMPONENT_ONLY", transport_weight_lbs:44000, notes:"220 ft long. One blade per specialized transport. Telescoping escort required." },
+  { id:"m001", name:"Caterpillar 793F Body", category:"Mining Equipment", make:"Caterpillar", model:"793F Truck Body", operating_weight_lbs:100000, transport_config:"COMPONENT_ONLY", transport_weight_lbs:100000, notes:"Truck body only. Frame, engine, and axles ship separately. Mine haul trucks are never road-driven." },
+  { id:"m002", name:"Komatsu HD785-7 Frame", category:"Mining Equipment", make:"Komatsu", model:"HD785-7 Main Frame", operating_weight_lbs:80000, transport_config:"COMPONENT_ONLY", transport_weight_lbs:80000, notes:"Main frame section. Multiple loads for full truck assembly." },
+  { id:"t001", name:"ABB 345kV 300MVA Transformer", category:"Power Transformer", make:"ABB", model:"345kV 300MVA", operating_weight_lbs:550000, transport_config:"COMPONENT_ONLY", transport_weight_lbs:550000, notes:"Requires specialized transformer trailer - typically 48-axle Goldhofer PST. One of the heaviest single-piece loads moved on US roads." },
+  { id:"t002", name:"GE 230kV 150MVA Transformer", category:"Power Transformer", make:"GE", model:"230kV 150MVA", operating_weight_lbs:350000, transport_config:"COMPONENT_ONLY", transport_weight_lbs:350000, notes:"20-36 axle SPMT typically required." },
+  { id:"t003", name:"Siemens 115kV 50MVA Transformer", category:"Power Transformer", make:"Siemens", model:"115kV 50MVA", operating_weight_lbs:120000, transport_config:"COMPONENT_ONLY", transport_weight_lbs:120000, notes:"Smaller substation transformer. 8-12 axle platform trailer." },
+  { id:"a001", name:"Caterpillar 745", category:"Articulated Dump Truck", make:"Caterpillar", model:"745", operating_weight_lbs:108100, transport_config:"ALWAYS_DISASSEMBLED", transport_weight_lbs:85000, notes:"Articulation joint disconnected. Front and rear sections ship separately." },
+  { id:"a002", name:"Volvo A60H", category:"Articulated Dump Truck", make:"Volvo", model:"A60H", operating_weight_lbs:122000, transport_config:"ALWAYS_DISASSEMBLED", transport_weight_lbs:90000, notes:"Largest ADT. Front module ~55k lbs, rear module ~35k lbs. Box ships separately." },
+  { id:"l001", name:"Caterpillar 994K", category:"Wheel Loader", make:"Caterpillar", model:"994K", operating_weight_lbs:297000, transport_config:"ALWAYS_DISASSEMBLED", transport_weight_lbs:140000, notes:"Largest production wheel loader. Front frame, rear frame, bucket, arms all separate loads. 6+ truckloads." },
+  { id:"l002", name:"Caterpillar 993K", category:"Wheel Loader", make:"Caterpillar", model:"993K", operating_weight_lbs:220000, transport_config:"ALWAYS_DISASSEMBLED", transport_weight_lbs:115000, notes:"Disassemble at hitch point minimum." },
+  { id:"l003", name:"Caterpillar 980M", category:"Wheel Loader", make:"Caterpillar", model:"980M", operating_weight_lbs:53700, transport_config:"FULL", transport_weight_lbs:53700, notes:"Legal load on 3-axle RGN in most states. No disassembly required." },
+  { id:"s001", name:"Caterpillar 657G", category:"Scraper", make:"Caterpillar", model:"657G", operating_weight_lbs:109200, transport_config:"ALWAYS_DISASSEMBLED", transport_weight_lbs:80000, notes:"Twin-engine push-pull scraper. Front tractor section and rear bowl separate." },
+  { id:"co001", name:"Caterpillar CS56B", category:"Compactor", make:"Caterpillar", model:"CS56B", operating_weight_lbs:25300, transport_config:"FULL", transport_weight_lbs:25300, notes:"Legal load. Standard RGN or flatbed." },
+  { id:"p001", name:"Caterpillar PL87", category:"Pipe Layer", make:"Caterpillar", model:"PL87", operating_weight_lbs:91000, transport_config:"PARTIAL_AVAILABLE", transport_weight_lbs:85000, notes:"Based on D8 dozer. Counterweight and blade removed for transport." }
+];
+
+var STATE_WEIGHT_LIMITS_EW = {
+  AL:80000,AK:80000,AZ:80000,AR:80000,CA:80000,CO:80000,CT:80000,DE:80000,FL:80000,GA:80000,
+  HI:80000,ID:105500,IL:80000,IN:80000,IA:80000,KS:85500,KY:80000,LA:88000,ME:80000,MD:80000,
+  MA:80000,MI:164000,MN:80000,MS:80000,MO:80000,MT:105500,NE:95000,NV:80000,NH:80000,NJ:80000,
+  NM:86400,NY:80000,NC:80000,ND:105500,OH:80000,OK:90000,OR:105500,PA:80000,RI:80000,SC:80000,
+  SD:105500,TN:80000,TX:80000,UT:80000,VT:80000,VA:80000,WA:105500,WV:80000,WI:80000,WY:117000,DC:80000
+};
+
+var STATE_NAMES_EW = {
+  AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",CO:"Colorado",CT:"Connecticut",
+  DE:"Delaware",FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",
+  KS:"Kansas",KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",MA:"Massachusetts",MI:"Michigan",
+  MN:"Minnesota",MS:"Mississippi",MO:"Missouri",MT:"Montana",NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",
+  NJ:"New Jersey",NM:"New Mexico",NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",
+  OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",RI:"Rhode Island",SC:"South Carolina",SD:"South Dakota",
+  TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",VA:"Virginia",WA:"Washington",WV:"West Virginia",
+  WI:"Wisconsin",WY:"Wyoming",DC:"Washington DC"
+};
+
+function fmtWeight(lbs) {
+  if (!lbs || lbs <= 0) return "N/A";
+  var usTons = (lbs / 2000).toFixed(1);
+  var metricTons = (lbs / 2204.62).toFixed(1);
+  return lbs.toLocaleString() + " lbs (" + usTons + " US tons / " + metricTons + " MT)";
+}
+
+function configBadge(cfg) {
+  var map = {
+    "FULL": ["cfg-full","FULL"],
+    "PARTIAL_AVAILABLE": ["cfg-partial","PARTIAL"],
+    "ALWAYS_DISASSEMBLED": ["cfg-disassembled","DISASSEMBLED"],
+    "COMPONENT_ONLY": ["cfg-component","COMPONENT"]
+  };
+  var info = map[cfg] || ["","" + cfg];
+  return "<span class=\"badge-config " + info[0] + "\">" + info[1] + "</span>";
+}
+
+function trailerRecommendation(lbs) {
+  if (lbs < 50000) return "Standard RGN or Flatbed";
+  if (lbs < 80000) return "Standard RGN, 3-5 axle";
+  if (lbs < 120000) return "Heavy Haul RGN, 5-7 axle";
+  if (lbs < 200000) return "Lowboy + Boosters or Extendable RGN";
+  if (lbs < 400000) return "Multi-axle platform, 12-24 axles (Goldhofer/Nicolas)";
+  return "Specialized SPMT or custom solution — contact carrier";
+}
+
+// ── Tab switching ──
+function showTab(id) {
+  document.querySelectorAll(".tab-panel").forEach(function(p) { p.classList.remove("active"); });
+  document.querySelectorAll(".tab-btn").forEach(function(b) { b.classList.remove("active"); });
+  document.getElementById("tab-" + id).classList.add("active");
+  var tabOrder = ["search","calc","add","scale"];
+  var idx = tabOrder.indexOf(id);
+  var btns = document.querySelectorAll(".tab-btn");
+  if (idx >= 0 && btns[idx]) btns[idx].classList.add("active");
+  if (id === "add") renderCustomEquipment();
+  if (id === "scale") renderScaleTickets();
+}
+
+// ── Search Database ──
+function getAllEquipment() {
+  var custom = [];
+  try { custom = JSON.parse(localStorage.getItem("nexus_equipment_db_custom") || "[]"); } catch(e) {}
+  return EQUIPMENT_DB.concat(custom);
+}
+
+function filterEquipment() {
+  var search = (document.getElementById("eq-search").value || "").toLowerCase();
+  var cat = document.getElementById("eq-cat").value;
+  var cfg = document.getElementById("eq-config").value;
+  var all = getAllEquipment();
+  var rows = all.filter(function(e) {
+    if (cat && e.category !== cat) return false;
+    if (cfg && e.transport_config !== cfg) return false;
+    if (search && !e.name.toLowerCase().includes(search) && !e.make.toLowerCase().includes(search) && !e.model.toLowerCase().includes(search)) return false;
+    return true;
+  }).map(function(e) {
+    var transWt = e.transport_weight_lbs && e.transport_weight_lbs !== e.operating_weight_lbs ? "<div class=\"wt-display\">Transport: " + fmtWeight(e.transport_weight_lbs) + "</div>" : "";
+    return "<tr>" +
+      "<td><strong>" + e.name + "</strong><br><span style=\"font-size:11px;color:var(--mid)\">" + e.make + " " + e.model + "</span></td>" +
+      "<td><span style=\"font-size:12px;color:var(--mid)\">" + e.category + "</span></td>" +
+      "<td>" + fmtWeight(e.operating_weight_lbs) + transWt + "</td>" +
+      "<td>" + configBadge(e.transport_config) + "</td>" +
+      "<td style=\"font-size:12px;color:var(--mid);max-width:300px\">" + (e.notes || "-") + "</td>" +
+    "</tr>";
+  });
+  document.getElementById("eq-tbody").innerHTML = rows.join("") || "<tr><td colspan=\"5\" style=\"color:var(--mid);text-align:center\">No results</td></tr>";
+}
+
+// ── Component Calculator ──
+function buildCalcDropdowns() {
+  var eqSel = document.getElementById("calc-eq");
+  EQUIPMENT_DB.forEach(function(e) {
+    var opt = document.createElement("option");
+    opt.value = e.id;
+    opt.textContent = e.name + " (" + e.category + ")";
+    eqSel.appendChild(opt);
+  });
+  var stateSel = document.getElementById("calc-state");
+  Object.keys(STATE_NAMES_EW).sort().forEach(function(code) {
+    var opt = document.createElement("option");
+    opt.value = code;
+    opt.textContent = code + " - " + STATE_NAMES_EW[code];
+    stateSel.appendChild(opt);
+  });
+}
+
+function onCalcEqChange() {
+  var id = document.getElementById("calc-eq").value;
+  var eq = EQUIPMENT_DB.find(function(e) { return e.id === id; });
+  var infoDiv = document.getElementById("calc-eq-info");
+  var detailDiv = document.getElementById("calc-eq-detail");
+  if (!eq) { infoDiv.style.display = "none"; return; }
+  var transWt = eq.transport_weight_lbs || eq.operating_weight_lbs;
+  document.getElementById("calc-weight").value = transWt;
+  updateLiveWeight();
+  detailDiv.innerHTML = "<div style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px\">" +
+    "<div><div style=\"font-size:11px;color:var(--mid)\">Operating Weight</div><div style=\"font-size:13px;font-weight:600;color:var(--text)\">" + fmtWeight(eq.operating_weight_lbs) + "</div></div>" +
+    "<div><div style=\"font-size:11px;color:var(--mid)\">Transport Config</div><div style=\"margin-top:3px\">" + configBadge(eq.transport_config) + "</div></div>" +
+    "<div><div style=\"font-size:11px;color:var(--mid)\">Transport Weight</div><div style=\"font-size:13px;font-weight:600;color:var(--text)\">" + fmtWeight(transWt) + "</div></div>" +
+    "</div>" +
+    (eq.notes ? "<div style=\"margin-top:10px;font-size:12px;color:var(--mid);line-height:1.5;padding:10px;background:var(--bg);border-radius:6px;border:1px solid var(--border)\">" + eq.notes + "</div>" : "");
+  infoDiv.style.display = "block";
+}
+
+function updateLiveWeight() {
+  var lbs = parseFloat(document.getElementById("calc-weight").value) || 0;
+  document.getElementById("calc-weight-display").textContent = lbs > 0 ? fmtWeight(lbs) : "Enter weight above to see tons";
+}
+
+function runCalc() {
+  var lbs = parseFloat(document.getElementById("calc-weight").value) || 0;
+  var stateCode = document.getElementById("calc-state").value;
+  if (!lbs) { alert("Please enter a weight."); return; }
+  if (!stateCode) { alert("Please select a state."); return; }
+  var legalGvw = STATE_WEIGHT_LIMITS_EW[stateCode] || 80000;
+  var stateName = STATE_NAMES_EW[stateCode] || stateCode;
+  var overBy = lbs - legalGvw;
+  var isLegal = lbs <= legalGvw;
+  var status = isLegal ? "legal" : "overweight";
+  var trailerRec = trailerRecommendation(lbs);
+  var html = "<div class=\"result-box " + status + "\" style=\"margin-top:16px\">" +
+    "<div style=\"font-size:16px;font-weight:700;color:" + (isLegal ? "var(--green)" : "var(--red)") + ";margin-bottom:10px\">" +
+    (isLegal ? "LEGAL in " + stateName : "OVERWEIGHT in " + stateName) + "</div>" +
+    "<div style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px\">" +
+    "<div><div style=\"font-size:11px;color:var(--mid)\">Planned Load Weight</div><div style=\"font-size:13px;font-weight:600;color:var(--text)\">" + fmtWeight(lbs) + "</div></div>" +
+    "<div><div style=\"font-size:11px;color:var(--mid)\">" + stateName + " Legal GVW</div><div style=\"font-size:13px;font-weight:600;color:var(--text)\">" + fmtWeight(legalGvw) + "</div></div>" +
+    (isLegal ? "<div><div style=\"font-size:11px;color:var(--mid)\">Margin</div><div style=\"font-size:13px;font-weight:600;color:var(--green)\">Under by " + (legalGvw - lbs).toLocaleString() + " lbs</div></div>" : "<div><div style=\"font-size:11px;color:var(--mid)\">Over By</div><div style=\"font-size:13px;font-weight:600;color:var(--red)\">" + overBy.toLocaleString() + " lbs — permit required</div></div>") +
+    "</div>" +
+    "</div>" +
+    "<div class=\"trailer-rec\"><div class=\"trailer-rec-title\">Recommended Trailer Type</div><div class=\"trailer-rec-value\">" + trailerRec + "</div><div style=\"font-size:11px;color:var(--mid);margin-top:4px\">Based on planned load weight of " + fmtWeight(lbs) + "</div></div>";
+  document.getElementById("calc-results").innerHTML = html;
+}
+
+// ── Add Custom Equipment ──
+function updateAddLiveWeight() {
+  var lbs = parseFloat(document.getElementById("add-opwt").value) || 0;
+  document.getElementById("add-wt-display").textContent = lbs > 0 ? fmtWeight(lbs) : "Enter weight to see tons";
+}
+
+function saveCustomEquipment() {
+  var name = document.getElementById("add-name").value.trim();
+  var cat = document.getElementById("add-cat").value;
+  var make = document.getElementById("add-make").value.trim();
+  var model = document.getElementById("add-model").value.trim();
+  var opwt = parseFloat(document.getElementById("add-opwt").value) || 0;
+  var cfg = document.getElementById("add-config").value;
+  var transwt = parseFloat(document.getElementById("add-transwt").value) || opwt;
+  var notes = document.getElementById("add-notes").value.trim();
+  var fb = document.getElementById("add-feedback");
+  if (!name || !cat || !opwt || !cfg) { fb.innerHTML = "<span style=\"color:var(--red)\">Please fill in all required fields (Name, Category, Operating Weight, Config).</span>"; return; }
+  var custom = [];
+  try { custom = JSON.parse(localStorage.getItem("nexus_equipment_db_custom") || "[]"); } catch(e) {}
+  var entry = { id: "cust_" + Date.now(), name: name, category: cat, make: make, model: model, operating_weight_lbs: opwt, transport_config: cfg, transport_weight_lbs: transwt, notes: notes };
+  custom.push(entry);
+  localStorage.setItem("nexus_equipment_db_custom", JSON.stringify(custom));
+  ["add-name","add-make","add-model","add-opwt","add-transwt","add-notes"].forEach(function(id) { document.getElementById(id).value = ""; });
+  document.getElementById("add-cat").value = "";
+  document.getElementById("add-config").value = "";
+  document.getElementById("add-wt-display").textContent = "Enter weight to see tons";
+  fb.innerHTML = "<span style=\"color:var(--green)\">Equipment saved successfully!</span>";
+  renderCustomEquipment();
+  filterEquipment();
+  setTimeout(function() { fb.innerHTML = ""; }, 3000);
+}
+
+function renderCustomEquipment() {
+  var custom = [];
+  try { custom = JSON.parse(localStorage.getItem("nexus_equipment_db_custom") || "[]"); } catch(e) {}
+  var tbody = document.getElementById("custom-eq-tbody");
+  if (custom.length === 0) { tbody.innerHTML = "<tr><td colspan=\"6\" style=\"color:var(--mid);text-align:center\">No custom equipment saved yet</td></tr>"; return; }
+  tbody.innerHTML = custom.map(function(e, idx) {
+    return "<tr>" +
+      "<td><strong>" + e.name + "</strong></td>" +
+      "<td>" + e.category + "</td>" +
+      "<td>" + fmtWeight(e.operating_weight_lbs) + "</td>" +
+      "<td>" + configBadge(e.transport_config) + "</td>" +
+      "<td style=\"font-size:12px;color:var(--mid)\">" + (e.notes || "-") + "</td>" +
+      "<td><button class=\"btn btn-danger btn-sm\" onclick=\"deleteCustomEquipment(" + idx + ")\">Delete</button></td>" +
+    "</tr>";
+  }).join("");
+}
+
+function deleteCustomEquipment(idx) {
+  var custom = [];
+  try { custom = JSON.parse(localStorage.getItem("nexus_equipment_db_custom") || "[]"); } catch(e) {}
+  custom.splice(idx, 1);
+  localStorage.setItem("nexus_equipment_db_custom", JSON.stringify(custom));
+  renderCustomEquipment();
+  filterEquipment();
+}
+
+// ── Scale Tickets ──
+function updateScaleLiveWeight() {
+  var lbs = parseFloat(document.getElementById("st-weight").value) || 0;
+  document.getElementById("st-wt-display").textContent = lbs > 0 ? fmtWeight(lbs) : "Enter weight to see tons";
+}
+
+function saveScaleTicket() {
+  var name = document.getElementById("st-name").value.trim();
+  var date = document.getElementById("st-date").value;
+  var weight = parseFloat(document.getElementById("st-weight").value) || 0;
+  var location = document.getElementById("st-location").value.trim();
+  var notes = document.getElementById("st-notes").value.trim();
+  var fb = document.getElementById("st-feedback");
+  if (!name || !date || !weight || !location) { fb.innerHTML = "<span style=\"color:var(--red)\">Please fill in all required fields.</span>"; return; }
+  var tickets = [];
+  try { tickets = JSON.parse(localStorage.getItem("nexus_scale_tickets") || "[]"); } catch(e) {}
+  tickets.push({ id: "st_" + Date.now(), name: name, date: date, weight: weight, location: location, notes: notes });
+  localStorage.setItem("nexus_scale_tickets", JSON.stringify(tickets));
+  ["st-name","st-date","st-weight","st-location","st-notes"].forEach(function(id) { document.getElementById(id).value = ""; });
+  document.getElementById("st-wt-display").textContent = "Enter weight to see tons";
+  fb.innerHTML = "<span style=\"color:var(--green)\">Scale ticket saved!</span>";
+  renderScaleTickets();
+  setTimeout(function() { fb.innerHTML = ""; }, 3000);
+}
+
+function renderScaleTickets() {
+  var tickets = [];
+  try { tickets = JSON.parse(localStorage.getItem("nexus_scale_tickets") || "[]"); } catch(e) {}
+  var tbody = document.getElementById("st-tbody");
+  if (tickets.length === 0) { tbody.innerHTML = "<tr><td colspan=\"6\" style=\"color:var(--mid);text-align:center\">No scale ticket records yet</td></tr>"; return; }
+  tbody.innerHTML = tickets.map(function(t, idx) {
+    return "<tr>" +
+      "<td><strong>" + t.name + "</strong></td>" +
+      "<td>" + t.date + "</td>" +
+      "<td>" + fmtWeight(t.weight) + "</td>" +
+      "<td>" + t.location + "</td>" +
+      "<td style=\"font-size:12px;color:var(--mid)\">" + (t.notes || "-") + "</td>" +
+      "<td><button class=\"btn btn-danger btn-sm\" onclick=\"deleteScaleTicket(" + idx + ")\">Delete</button></td>" +
+    "</tr>";
+  }).join("");
+}
+
+function deleteScaleTicket(idx) {
+  var tickets = [];
+  try { tickets = JSON.parse(localStorage.getItem("nexus_scale_tickets") || "[]"); } catch(e) {}
+  tickets.splice(idx, 1);
+  localStorage.setItem("nexus_scale_tickets", JSON.stringify(tickets));
+  renderScaleTickets();
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  NexusSidebar.init();
+  filterEquipment();
+  buildCalcDropdowns();
+  renderScaleTickets();
+});
+</script>
+</body></html>
