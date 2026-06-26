@@ -38,7 +38,7 @@
   // Section definitions — key, label, pages in section (for auto-expand)
   var SECTIONS = [
     { key:'ops',     label:'Operations',     pages:['fleet-command.html','active-loads.html','settlements.html','weekly-settlements.html','settlement-review.html','drivers.html','permits.html','pods.html','issues.html'] },
-    { key:'dispatch',label:'Dispatch',       pages:['dispatch-board.html','dispatcher-hub.html','load-board.html','commissions.html','available-dispatchers.html','available-drivers.html'] },
+    { key:'dispatch',label:'Dispatch',       pages:['dispatch-board.html','dispatcher-hub.html','load-board.html','commissions.html','available-dispatchers.html','available-drivers.html','pilot-escorts.html'] },
     { key:'driver',  label:'Driver',         pages:['driver-command.html','driver-availability.html','equipment-marketplace.html','my-pay.html','social-recruiting.html','driver-intake.html','driver-profile.html'] },
     { key:'finance', label:'Finance',        pages:['invoicing.html','whatsapp-import.html','expenses.html','financials.html','ifta.html'] },
     { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','emails.html','doc-inbox.html'] },
@@ -46,7 +46,7 @@
     { key:'taxhr',   label:'Tax & HR',       pages:['tax-forms.html','w9.html'] },
     { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','insurance-kpi.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html','incident-report.html','coi-management.html','claims.html','coaching-log.html'] },
     { key:'admin',   label:'Admin',          pages:['member-management.html','admin-users.html'] },
-    { key:'intel',   label:'Intelligence',   pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html','search.html'] },
+    { key:'intel',   label:'Intelligence',   pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html','search.html','gps-tracker.html'] },
     { key:'comms',   label:'Communications', pages:['comms.html','nexus-connect.html'] },
   ];
 
@@ -199,7 +199,8 @@
       lnk('load-board.html',           I.map,     'Load Board') +
       lnk('commissions.html',          I.comm,    'Commissions') +
       lnk('available-dispatchers.html',I.team,    'Dispatcher Roster') +
-      lnk('available-drivers.html',    I.person,  'Driver Pool')
+      lnk('available-drivers.html',    I.person,  'Driver Pool') +
+      lnk('pilot-escorts.html',        I.truck,   '🚁 Pilot Escorts')
     ) +
     sec('driver', 'Driver',
       lnk('my-pay.html',               I.wallet,  'My Pay') +
@@ -259,7 +260,8 @@
       lnk('analysis.html',             I.bar,     'Analytics') +
       lnk('drive-settings.html',       I.file,    'Integrations') +
       lnk('eld-settings.html',         I.eld,     'ELD Integration') +
-      lnk('search.html',               I.search,  'Search Everything')
+      lnk('search.html',               I.search,  'Search Everything') +
+      lnk('gps-tracker.html',          I.signal,  '📡 GPS Tracker')
     ) +
     sec('comms', 'Communications',
       lnk('comms.html',               I.email,   'Unified Comms') +

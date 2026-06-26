@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPS Tracker — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;overflow:hidden;}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.topbar{padding:18px 24px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;letter-spacing:.03em;}
+.filter-row{display:flex;gap:10px;align-items:center;}
+.filter-row select,.filter-row input{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;}
+.filter-row select:focus,.filter-row input:focus{outline:none;border-color:var(--blue);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-blue:hover{background:#2563eb;}
+.btn-ghost{background:transparent;color:var(--mid);border:1px solid var(--border);}
+.btn-ghost:hover{color:var(--text);border-color:var(--blue);}
+.btn-sm{padding:5px 10px;font-size:12px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;text-transform:uppercase;}
+.badge-moving{background:rgba(16,185,129,.15);color:var(--green);}
+.badge-idle{background:rgba(245,158,11,.15);color:var(--yellow);}
+.badge-stopped{background:rgba(239,68,68,.15);color:var(--red);}
+.badge-offline{background:rgba(100,116,139,.15);color:var(--mid);}
+.badge-live{background:rgba(16,185,129,.15);color:var(--green);}
+.badge-off{background:rgba(100,116,139,.15);color:var(--mid);}
+/* LAYOUT */
+.tracker-body{display:flex;flex:1;overflow:hidden;}
+/* VEHICLE LIST */
+.vehicle-list-panel{width:320px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.vlp-header{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;}
+.vlp-header span{font-size:12px;color:var(--mid);}
+.vehicle-list{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;}
+.vehicle-item{padding:12px 16px;border-bottom:1px solid rgba(30,45,69,.5);cursor:pointer;transition:background .15s;}
+.vehicle-item:hover{background:var(--panel);}
+.vehicle-item.selected{background:var(--panel);border-left:3px solid var(--blue);}
+.vi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.vi-unit{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;}
+.vi-driver{font-size:12px;color:var(--mid);}
+.vi-loc{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mid);margin-top:3px;}
+.vi-ping{font-size:10px;color:var(--mid);}
+/* MAP PANEL */
+.map-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#map{flex:1;min-height:350px;z-index:1;}
+/* DETAIL PANEL */
+.detail-panel{padding:16px 20px;background:var(--panel);border-top:1px solid var(--border);flex-shrink:0;}
+.detail-panel.hidden{display:none;}
+.detail-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;margin-bottom:12px;}
+.gps-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.gps-card{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:16px;}
+.gps-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.gps-card-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;}
+.gps-provider-sel{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-size:12px;font-family:'Barlow',sans-serif;}
+.gps-provider-sel:focus{outline:none;border-color:var(--blue);}
+.gps-stat{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(30,45,69,.4);font-size:12px;}
+.gps-stat:last-of-type{border-bottom:none;}
+.gps-stat-label{color:var(--mid);}
+.gps-stat-val{font-family:'JetBrains Mono',monospace;}
+.gps-card-footer{display:flex;gap:8px;margin-top:10px;}
+.connect-hint{font-size:11px;color:var(--mid);margin-top:8px;}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px;width:480px;max-width:95vw;}
+.modal h3{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;margin-bottom:6px;}
+.modal p{font-size:13px;color:var(--mid);margin-bottom:20px;}
+.form-row{margin-bottom:14px;}
+.form-row label{display:block;font-size:12px;color:var(--mid);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.form-row input,.form-row select{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;}
+.form-row input:focus,.form-row select:focus{outline:none;border-color:var(--blue);}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+.provider-instructions{background:var(--panel2);border-radius:6px;padding:12px;font-size:12px;color:var(--mid);line-height:1.6;margin-bottom:14px;}
+/* LEAFLET DARK OVERRIDES */
+.leaflet-container{background:#0b0f1a !important;}
+.leaflet-popup-content-wrapper{background:#131929;border:1px solid #1e2d45;color:#e2e8f0;border-radius:8px;}
+.leaflet-popup-tip{background:#131929;}
+.leaflet-popup-content{font-family:'Barlow',sans-serif;font-size:13px;margin:8px 12px;}
+.leaflet-bar a{background:#131929;color:#e2e8f0;border-color:#1e2d45;}
+.leaflet-bar a:hover{background:#1a2235;}
+.popup-unit{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px;}
+.popup-row{display:flex;gap:8px;margin-top:3px;font-size:12px;color:#94a3b8;}
+</style>
+</head>
+<body>
+<script src="nexus-sidebar.js"></script>
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="page-title">📡 GPS Tracker</div>
+      <div style="font-size:12px;color:var(--mid);">Live dual-source tracking — ELD + hardware GPS</div>
+    </div>
+    <div class="filter-row">
+      <input type="text" id="searchInput" placeholder="Search driver or unit…" oninput="filterVehicles()" style="width:180px;">
+      <select id="statusFilter" onchange="filterVehicles()">
+        <option value="">All Status</option>
+        <option value="MOVING">Moving</option>
+        <option value="IDLE">Idle</option>
+        <option value="STOPPED">Stopped</option>
+        <option value="OFFLINE">Offline</option>
+      </select>
+      <button class="btn btn-blue btn-sm" onclick="refreshAll()">↺ Refresh</button>
+    </div>
+  </div>
+
+  <div class="tracker-body">
+    <!-- VEHICLE LIST -->
+    <div class="vehicle-list-panel">
+      <div class="vlp-header">
+        <span id="vehicleCount">0 vehicles</span>
+        <span id="lastRefresh" style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--mid);"></span>
+      </div>
+      <div class="vehicle-list" id="vehicleList"></div>
+    </div>
+
+    <!-- MAP + DETAIL -->
+    <div class="map-panel">
+      <div id="map"></div>
+      <div class="detail-panel hidden" id="detailPanel">
+        <div class="detail-title" id="detailTitle">Select a vehicle</div>
+        <div class="gps-cards">
+          <!-- ELD Card -->
+          <div class="gps-card">
+            <div class="gps-card-header">
+              <div class="gps-card-title">📟 ELD GPS</div>
+              <span class="badge badge-off" id="eld-status-badge">OFFLINE</span>
+            </div>
+            <div style="margin-bottom:8px;">
+              <select class="gps-provider-sel" id="eld-provider-sel" onchange="saveELDProvider()">
+                <option value="">Select ELD Provider…</option>
+                <option value="motive">Motive (KeepTruckin)</option>
+                <option value="samsara">Samsara</option>
+                <option value="teletrac">Teletrac Navman</option>
+                <option value="jjkeller">J.J. Keller</option>
+              </select>
+            </div>
+            <div class="gps-stat"><span class="gps-stat-label">Position</span><span class="gps-stat-val" id="eld-pos">—</span></div>
+            <div class="gps-stat"><span class="gps-stat-label">Speed</span><span class="gps-stat-val" id="eld-speed">—</span></div>
+            <div class="gps-stat"><span class="gps-stat-label">HOS Status</span><span class="gps-stat-val" id="eld-hos">—</span></div>
+            <div class="gps-stat"><span class="gps-stat-label">Engine Hours</span><span class="gps-stat-val" id="eld-hours">—</span></div>
+            <div class="gps-stat"><span class="gps-stat-label">Last Update</span><span class="gps-stat-val" id="eld-updated">—</span></div>
+            <div class="gps-card-footer">
+              <button class="btn btn-blue btn-sm" onclick="openProviderModal('eld')">Connect ELD Provider</button>
+              <button class="btn btn-ghost btn-sm" onclick="locateOnMap('eld')">📍 Locate</button>
+            </div>
+          </div>
+          <!-- Hardware GPS Card -->
+          <div class="gps-card">
+            <div class="gps-card-header">
+              <div class="gps-card-title">🛰️ Hardware GPS</div>
+              <span class="badge badge-off" id="hw-status-badge">OFFLINE</span>
+            </div>
+            <div style="margin-bottom:8px;">
+              <select class="gps-provider-sel" id="hw-provider-sel" onchange="saveHWProvider()">
+                <option value="">Select Hardware Provider…</option>
+                <option value="gpsntrack">GPS &amp; Track</option>
+                <option value="calamp">CalAmp</option>
+                <option value="spireon">Spireon</option>
+                <option value="omnitracs">Omnitracs</option>
+                <option value="coretex">Coretex</option>
+              </select>
+            </div>
+            <div class="gps-stat"><span class="gps-stat-label">Position</span><span class="gps-stat-val" id="hw-pos">—</span></div>
+            <div class="gps-stat"><span class="gps-stat-label">Speed</span><span class="gps-stat-val" id="hw-speed">—</span></div>
+            <div class="gps-stat"><span class="gps-stat-label">Heading</span><span class="gps-stat-val" id="hw-heading">—</span></div>
+            <div class="gps-stat"><span class="gps-stat-label">Battery</span><span class="gps-stat-val" id="hw-battery">—</span></div>
+            <div class="gps-stat"><span class="gps-stat-label">Last Update</span><span class="gps-stat-val" id="hw-updated">—</span></div>
+            <div class="gps-card-footer">
+              <button class="btn btn-blue btn-sm" onclick="openProviderModal('hw')">Connect GPS Provider</button>
+              <button class="btn btn-ghost btn-sm" onclick="locateOnMap('hw')">📍 Locate</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Provider Config Modal -->
+<div class="modal-overlay" id="providerModal">
+  <div class="modal">
+    <h3 id="provModal-title">Connect Provider</h3>
+    <p id="provModal-desc">Enter your API credentials to connect this provider.</p>
+    <div class="provider-instructions" id="provModal-instructions"></div>
+    <div class="form-row">
+      <label>API Key</label>
+      <input type="text" id="prov-api-key" placeholder="Your API key…">
+    </div>
+    <div class="form-row">
+      <label>Company / Account ID</label>
+      <input type="text" id="prov-company-id" placeholder="Your company or account ID…">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('providerModal')">Cancel</button>
+      <button class="btn btn-blue" onclick="saveProviderConfig()">Save &amp; Connect</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+// ── SEED DATA ──
+var SEED_VEHICLES = [
+  {id:'unit_101',unit:'Unit 101',driver:'David Hernandez',make:'Peterbilt',model:'389',year:2022,lat:32.7767,lng:-96.7970,speed:58,status:'MOVING',heading:'NE',hos:'Driving',engineHours:12450,lastPing:'2 min ago'},
+  {id:'unit_102',unit:'Unit 102',driver:'Avis',make:'Kenworth',model:'T680',year:2021,lat:34.0522,lng:-118.2437,speed:0,status:'IDLE',heading:'—',hos:'On Duty',engineHours:9870,lastPing:'1 min ago'},
+  {id:'unit_103',unit:'Unit 103',driver:'Miguel',make:'Freightliner',model:'Cascadia',year:2023,lat:29.7604,lng:-95.3698,speed:62,status:'MOVING',heading:'SW',hos:'Driving',engineHours:7320,lastPing:'Just now'},
+  {id:'unit_104',unit:'Unit 104',driver:'Nelson',make:'International',model:'LT',year:2020,lat:41.8781,lng:-87.6298,speed:0,status:'STOPPED',heading:'—',hos:'Off Duty',engineHours:15680,lastPing:'18 min ago'},
+  {id:'unit_105',unit:'Unit 105',driver:'Yosviel',make:'Kenworth',model:'T660',year:2022,lat:33.4484,lng:-112.0740,speed:55,status:'MOVING',heading:'W',hos:'Driving',engineHours:11200,lastPing:'3 min ago'},
+  {id:'unit_106',unit:'Unit 106',driver:'Guillermo Pinera',make:'Peterbilt',model:'579',year:2023,lat:25.7617,lng:-80.1918,speed:0,status:'IDLE',heading:'—',hos:'Sleeper Berth',engineHours:6540,lastPing:'5 min ago'}
+];
+
+var PROVIDER_INSTRUCTIONS = {
+  eld: {
+    motive: 'In Motive dashboard: Settings → API → Generate Fleet API Key. Use Fleet API Key here.',
+    samsara: 'In Samsara: Settings → Developer Tools → API Tokens → Create Token (Fleet scope).',
+    teletrac: 'In Teletrac Navman: Admin → Integrations → API Access → Generate Key.',
+    jjkeller: 'Contact J.J. Keller support for API credentials at 800-327-6868.'
+  },
+  hw: {
+    gpsntrack: 'Log into GPS & Track portal → Account Settings → API Access → Copy API Key.',
+    calamp: 'CalAmp iOn portal: Admin → API Credentials → Generate new key.',
+    spireon: 'Spireon Fleet Locate: Settings → Integrations → API Token → Create.',
+    omnitracs: 'Omnitracs One portal: Administrator → API Management → Create API Key.',
+    coretex: 'Coretex 360: Administration → API Keys → New Key → Fleet scope.'
+  }
+};
+
+var selectedVehicle = null;
+var currentProviderType = null;
+var map = null;
+var markers = {};
+
+// ── LOCALSTORAGE ──
+function getVehicles() {
+  var d = localStorage.getItem('nexus_equipment_units');
+  if (!d) {
+    localStorage.setItem('nexus_equipment_units', JSON.stringify(SEED_VEHICLES));
+    return SEED_VEHICLES;
+  }
+  var units = JSON.parse(d);
+  // Merge seed GPS data if units lack it
+  return units.map(function(u, i) {
+    var seed = SEED_VEHICLES[i];
+    if (!u.lat && seed) { u.lat = seed.lat; u.lng = seed.lng; u.speed = seed.speed; u.status = seed.status || 'OFFLINE'; u.lastPing = seed.lastPing; u.heading = seed.heading || '—'; u.hos = seed.hos || '—'; u.engineHours = seed.engineHours || 0; }
+    if (!u.status) u.status = 'OFFLINE';
+    return u;
+  });
+}
+
+function getELDConfig(unitId) {
+  var d = localStorage.getItem('nexus_gps_eld_config');
+  var obj = d ? JSON.parse(d) : {};
+  return obj[unitId] || {};
+}
+function saveELDConfig(unitId, cfg) {
+  var d = localStorage.getItem('nexus_gps_eld_config');
+  var obj = d ? JSON.parse(d) : {};
+  obj[unitId] = cfg;
+  localStorage.setItem('nexus_gps_eld_config', JSON.stringify(obj));
+}
+function getHWConfig(unitId) {
+  var d = localStorage.getItem('nexus_gps_hw_config');
+  var obj = d ? JSON.parse(d) : {};
+  return obj[unitId] || {};
+}
+function saveHWConfig(unitId, cfg) {
+  var d = localStorage.getItem('nexus_gps_hw_config');
+  var obj = d ? JSON.parse(d) : {};
+  obj[unitId] = cfg;
+  localStorage.setItem('nexus_gps_hw_config', JSON.stringify(obj));
+}
+
+// ── MAP INIT ──
+function initMap() {
+  map = L.map('map', {
+    center: [37.8, -96],
+    zoom: 4,
+    zoomControl: true
+  });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+    className: 'map-tiles'
+  }).addTo(map);
+}
+
+function markerColor(status) {
+  if (status === 'MOVING') return '#10b981';
+  if (status === 'IDLE') return '#f59e0b';
+  if (status === 'STOPPED') return '#ef4444';
+  return '#64748b';
+}
+
+function createMarkerIcon(status, unit) {
+  var color = markerColor(status);
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="44" viewBox="0 0 36 44">' +
+    '<ellipse cx="18" cy="40" rx="8" ry="3" fill="rgba(0,0,0,0.3)"/>' +
+    '<path d="M18 2 C10 2 4 8 4 16 C4 26 18 40 18 40 C18 40 32 26 32 16 C32 8 26 2 18 2Z" fill="' + color + '" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>' +
+    '<text x="18" y="20" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="8" fill="white">' + (unit || '') + '</text>' +
+  '</svg>';
+  return L.divIcon({
+    html: svg,
+    iconSize: [36, 44],
+    iconAnchor: [18, 44],
+    popupAnchor: [0, -44],
+    className: ''
+  });
+}
+
+function addMarkers(vehicles) {
+  vehicles.forEach(function(v) {
+    if (!v.lat || !v.lng) return;
+    var icon = createMarkerIcon(v.status, v.unit.replace('Unit ',''));
+    var speedStr = v.speed > 0 ? v.speed + ' mph' : 'Stopped';
+    var popupHtml = '<div class="popup-unit">🚛 ' + v.unit + '</div>' +
+      '<div style="font-size:12px;font-weight:600;color:#e2e8f0;">' + v.driver + '</div>' +
+      '<div class="popup-row">📍 ' + v.lat.toFixed(4) + ', ' + v.lng.toFixed(4) + '</div>' +
+      '<div class="popup-row">⚡ ' + speedStr + ' &nbsp;·&nbsp; Heading: ' + (v.heading || '—') + '</div>' +
+      '<div class="popup-row">🕐 Last ping: ' + (v.lastPing || '—') + '</div>';
+    var marker = L.marker([v.lat, v.lng], {icon: icon}).addTo(map).bindPopup(popupHtml);
+    marker.on('click', function() { selectVehicle(v.id); });
+    markers[v.id] = marker;
+  });
+}
+
+// ── VEHICLE LIST ──
+function renderVehicleList(vehicles) {
+  var list = document.getElementById('vehicleList');
+  document.getElementById('vehicleCount').textContent = vehicles.length + ' vehicle' + (vehicles.length !== 1 ? 's' : '');
+  document.getElementById('lastRefresh').textContent = new Date().toLocaleTimeString();
+
+  if (!vehicles.length) {
+    list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--mid);">No vehicles found</div>';
+    return;
+  }
+
+  list.innerHTML = vehicles.map(function(v) {
+    var badgeClass = 'badge-' + v.status.toLowerCase().replace(' ','');
+    var isSelected = selectedVehicle && selectedVehicle.id === v.id;
+    return '<div class="vehicle-item' + (isSelected ? ' selected' : '') + '" onclick="selectVehicle(\'' + v.id + '\')" id="vi_' + v.id + '">' +
+      '<div class="vi-top">' +
+        '<div class="vi-unit">🚛 ' + v.unit + '</div>' +
+        '<span class="badge ' + badgeClass + '">' + v.status + '</span>' +
+      '</div>' +
+      '<div class="vi-driver">' + v.driver + ' &nbsp;·&nbsp; ' + v.year + ' ' + v.make + ' ' + v.model + '</div>' +
+      '<div class="vi-loc">' + (v.lat ? v.lat.toFixed(4) + ', ' + v.lng.toFixed(4) : 'No position') + '</div>' +
+      '<div class="vi-ping" style="margin-top:3px;">⏱ ' + (v.lastPing || '—') + ' &nbsp;·&nbsp; ' + (v.speed || 0) + ' mph</div>' +
+    '</div>';
+  }).join('');
+}
+
+function filterVehicles() {
+  var search = document.getElementById('searchInput').value.toLowerCase();
+  var statusF = document.getElementById('statusFilter').value;
+  var all = getVehicles();
+  var filtered = all.filter(function(v) {
+    var matchSearch = !search || v.unit.toLowerCase().includes(search) || (v.driver || '').toLowerCase().includes(search);
+    var matchStatus = !statusF || v.status === statusF;
+    return matchSearch && matchStatus;
+  });
+  renderVehicleList(filtered);
+}
+
+function selectVehicle(id) {
+  var vehicles = getVehicles();
+  var v = vehicles.find(function(v) { return v.id === id; });
+  if (!v) return;
+  selectedVehicle = v;
+
+  // Highlight list item
+  document.querySelectorAll('.vehicle-item').forEach(function(el) { el.classList.remove('selected'); });
+  var el = document.getElementById('vi_' + id);
+  if (el) el.classList.add('selected');
+
+  // Pan map
+  if (v.lat && v.lng && map) {
+    map.setView([v.lat, v.lng], 8, {animate: true});
+    if (markers[id]) markers[id].openPopup();
+  }
+
+  // Show detail panel
+  document.getElementById('detailPanel').classList.remove('hidden');
+  document.getElementById('detailTitle').textContent = '🚛 ' + v.unit + ' — ' + v.driver + ' (' + v.year + ' ' + v.make + ' ' + v.model + ')';
+
+  // ELD card
+  var eldCfg = getELDConfig(id);
+  var eldSel = document.getElementById('eld-provider-sel');
+  eldSel.value = eldCfg.provider || '';
+  var eldConnected = !!(eldCfg.provider && eldCfg.apiKey);
+  document.getElementById('eld-status-badge').textContent = eldConnected ? 'LIVE' : 'OFFLINE';
+  document.getElementById('eld-status-badge').className = 'badge ' + (eldConnected ? 'badge-live' : 'badge-off');
+  document.getElementById('eld-pos').textContent = v.lat ? v.lat.toFixed(4) + ', ' + v.lng.toFixed(4) : '—';
+  document.getElementById('eld-speed').textContent = eldConnected ? (v.speed || 0) + ' mph' : '—';
+  document.getElementById('eld-hos').textContent = eldConnected ? (v.hos || '—') : '—';
+  document.getElementById('eld-hours').textContent = eldConnected ? ((v.engineHours || 0).toLocaleString() + ' hrs') : '—';
+  document.getElementById('eld-updated').textContent = eldConnected ? (v.lastPing || '—') : 'Not connected';
+
+  // HW GPS card
+  var hwCfg = getHWConfig(id);
+  var hwSel = document.getElementById('hw-provider-sel');
+  hwSel.value = hwCfg.provider || '';
+  var hwConnected = !!(hwCfg.provider && hwCfg.apiKey);
+  document.getElementById('hw-status-badge').textContent = hwConnected ? 'LIVE' : 'OFFLINE';
+  document.getElementById('hw-status-badge').className = 'badge ' + (hwConnected ? 'badge-live' : 'badge-off');
+  document.getElementById('hw-pos').textContent = v.lat ? v.lat.toFixed(4) + ', ' + v.lng.toFixed(4) : '—';
+  document.getElementById('hw-speed').textContent = hwConnected ? (v.speed || 0) + ' mph' : '—';
+  document.getElementById('hw-heading').textContent = hwConnected ? (v.heading || '—') : '—';
+  document.getElementById('hw-battery').textContent = hwConnected ? '87%' : '—';
+  document.getElementById('hw-updated').textContent = hwConnected ? (v.lastPing || '—') : 'Not connected';
+}
+
+function saveELDProvider() {
+  if (!selectedVehicle) return;
+  var provider = document.getElementById('eld-provider-sel').value;
+  var cfg = getELDConfig(selectedVehicle.id);
+  cfg.provider = provider;
+  saveELDConfig(selectedVehicle.id, cfg);
+  selectVehicle(selectedVehicle.id);
+}
+
+function saveHWProvider() {
+  if (!selectedVehicle) return;
+  var provider = document.getElementById('hw-provider-sel').value;
+  var cfg = getHWConfig(selectedVehicle.id);
+  cfg.provider = provider;
+  saveHWConfig(selectedVehicle.id, cfg);
+  selectVehicle(selectedVehicle.id);
+}
+
+function locateOnMap(source) {
+  if (!selectedVehicle || !selectedVehicle.lat) return;
+  if (map) {
+    map.setView([selectedVehicle.lat, selectedVehicle.lng], 10, {animate: true});
+    if (markers[selectedVehicle.id]) markers[selectedVehicle.id].openPopup();
+  }
+}
+
+// ── PROVIDER MODAL ──
+function openProviderModal(type) {
+  currentProviderType = type;
+  var provider = type === 'eld'
+    ? document.getElementById('eld-provider-sel').value
+    : document.getElementById('hw-provider-sel').value;
+
+  var provNames = {
+    motive:'Motive (KeepTruckin)',samsara:'Samsara',teletrac:'Teletrac Navman',jjkeller:'J.J. Keller',
+    gpsntrack:'GPS & Track',calamp:'CalAmp',spireon:'Spireon',omnitracs:'Omnitracs',coretex:'Coretex'
+  };
+  var name = provNames[provider] || (type === 'eld' ? 'ELD Provider' : 'Hardware GPS Provider');
+  document.getElementById('provModal-title').textContent = 'Connect ' + name;
+  document.getElementById('provModal-desc').textContent = 'Enter your API credentials to enable ' + (type === 'eld' ? 'ELD' : 'hardware GPS') + ' integration.';
+
+  var instructions = '';
+  if (provider && PROVIDER_INSTRUCTIONS[type] && PROVIDER_INSTRUCTIONS[type][provider]) {
+    instructions = PROVIDER_INSTRUCTIONS[type][provider];
+  } else {
+    instructions = 'Select a provider first, then enter your API credentials. API keys are stored locally on this device only.';
+  }
+  document.getElementById('provModal-instructions').textContent = instructions;
+
+  // Pre-fill existing config
+  var cfg = type === 'eld' ? getELDConfig(selectedVehicle && selectedVehicle.id) : getHWConfig(selectedVehicle && selectedVehicle.id);
+  document.getElementById('prov-api-key').value = cfg.apiKey || '';
+  document.getElementById('prov-company-id').value = cfg.companyId || '';
+
+  openModal('providerModal');
+}
+
+function saveProviderConfig() {
+  if (!selectedVehicle) { closeModal('providerModal'); return; }
+  var apiKey = document.getElementById('prov-api-key').value.trim();
+  var companyId = document.getElementById('prov-company-id').value.trim();
+  if (!apiKey) { alert('API Key is required'); return; }
+
+  var provider = currentProviderType === 'eld'
+    ? document.getElementById('eld-provider-sel').value
+    : document.getElementById('hw-provider-sel').value;
+
+  var cfg = { provider: provider, apiKey: apiKey, companyId: companyId, savedAt: new Date().toISOString() };
+  if (currentProviderType === 'eld') {
+    saveELDConfig(selectedVehicle.id, cfg);
+  } else {
+    saveHWConfig(selectedVehicle.id, cfg);
+  }
+  closeModal('providerModal');
+  selectVehicle(selectedVehicle.id);
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('open');
+});
+
+function refreshAll() {
+  document.getElementById('lastRefresh').textContent = new Date().toLocaleTimeString();
+  if (selectedVehicle) selectVehicle(selectedVehicle.id);
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', function() {
+  initMap();
+  var vehicles = getVehicles();
+  renderVehicleList(vehicles);
+  addMarkers(vehicles);
+  // Auto-select first vehicle
+  if (vehicles.length) selectVehicle(vehicles[0].id);
+  document.getElementById('lastRefresh').textContent = new Date().toLocaleTimeString();
+});
+</script>
+</body>
+</html>

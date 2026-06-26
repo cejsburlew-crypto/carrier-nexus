@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pilot Escorts — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{padding:24px 28px 0;display:flex;align-items:flex-start;justify-content:space-between;}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;letter-spacing:.03em;}
+.page-subtitle{font-size:13px;color:var(--mid);margin-top:2px;}
+.topbar-actions{display:flex;gap:10px;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-blue:hover{background:#2563eb;}
+.btn-ghost{background:transparent;color:var(--mid);border:1px solid var(--border);}
+.btn-ghost:hover{color:var(--text);border-color:var(--blue);}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:#059669;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-red:hover{background:#dc2626;}
+.btn-yellow{background:var(--yellow);color:#000;}
+/* TABS */
+.tabs{display:flex;gap:2px;padding:20px 28px 0;border-bottom:1px solid var(--border);margin:0;}
+.tab{padding:10px 20px;font-size:13px;font-weight:600;color:var(--mid);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);}
+/* CONTENT */
+.content{padding:24px 28px;flex:1;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+/* FILTER BAR */
+.filter-bar{display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;}
+.filter-bar input,.filter-bar select{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;}
+.filter-bar input:focus,.filter-bar select:focus{outline:none;border-color:var(--blue);}
+/* ESCORT CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;}
+.escort-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:18px;transition:border-color .15s;}
+.escort-card:hover{border-color:var(--blue);}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.card-company{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;}
+.card-contact{font-size:12px;color:var(--mid);margin-bottom:4px;}
+.card-phone,.card-email{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue);}
+.card-states{display:flex;flex-wrap:wrap;gap:4px;margin:10px 0;}
+.state-badge{background:var(--panel2);border:1px solid var(--border);color:var(--mid);font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 6px;border-radius:3px;}
+.card-cert{font-size:11px;color:var(--mid);margin-top:8px;font-family:'JetBrains Mono',monospace;}
+.card-actions{display:flex;gap:8px;margin-top:12px;}
+/* COI STATUS */
+.coi-ok{color:var(--green);}
+.coi-missing{color:var(--red);}
+.coi-pending{color:var(--yellow);}
+/* STATUS BADGES */
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;text-transform:uppercase;}
+.badge-pending{background:rgba(245,158,11,.15);color:var(--yellow);}
+.badge-confirmed{background:rgba(59,130,246,.15);color:var(--blue);}
+.badge-enroute{background:rgba(168,85,247,.15);color:var(--purple);}
+.badge-complete{background:rgba(16,185,129,.15);color:var(--green);}
+.badge-rejected{background:rgba(239,68,68,.15);color:var(--red);}
+.badge-verified{background:rgba(16,185,129,.15);color:var(--green);}
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--panel2);color:var(--mid);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+td{padding:11px 14px;border-bottom:1px solid rgba(30,45,69,.6);vertical-align:middle;}
+tr:hover td{background:rgba(59,130,246,.04);}
+/* COI VAULT */
+.coi-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;}
+.coi-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.coi-checklist{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.check-item{display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:6px 8px;border-radius:5px;transition:background .1s;}
+.check-item:hover{background:var(--panel2);}
+.check-item input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;}
+.score-bar{background:var(--panel2);border-radius:6px;height:8px;margin:8px 0;}
+.score-fill{height:8px;border-radius:6px;transition:width .3s;}
+.vin-row{display:flex;gap:8px;align-items:center;margin-top:12px;}
+.vin-row input{flex:1;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:12px;}
+.vin-row input:focus{outline:none;border-color:var(--blue);}
+.vin-result{font-size:12px;font-family:'JetBrains Mono',monospace;margin-top:6px;}
+/* STATE REQ TABLE */
+.state-search{margin-bottom:16px;display:flex;gap:10px;}
+.state-search input{flex:1;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:9px 14px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;}
+.state-search input:focus{outline:none;border-color:var(--blue);}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;}
+.modal h3{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;margin-bottom:20px;}
+.form-row{margin-bottom:14px;}
+.form-row label{display:block;font-size:12px;color:var(--mid);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.form-row input,.form-row select,.form-row textarea{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;}
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus{outline:none;border-color:var(--blue);}
+.form-row textarea{resize:vertical;min-height:80px;}
+.state-checkboxes{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;max-height:180px;overflow-y:auto;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:10px;}
+.state-cb-item{display:flex;align-items:center;gap:4px;font-size:11px;}
+.state-cb-item input{accent-color:var(--blue);}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+.empty-state{text-align:center;padding:60px 20px;color:var(--mid);}
+.empty-state .icon{font-size:48px;margin-bottom:12px;}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.fmcsa-bar{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.fmcsa-bar span{font-size:13px;color:var(--mid);}
+</style>
+</head>
+<body>
+<script src="nexus-sidebar.js"></script>
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="page-title">🚁 Pilot Escorts</div>
+      <div class="page-subtitle">Oversize/overweight load pilot car management, COI verification &amp; state requirements</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-blue" onclick="openModal('addEscortModal')">+ Add Escort Company</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('find')">🔍 Find Escorts</div>
+    <div class="tab" onclick="switchTab('assignments')">📋 Active Assignments</div>
+    <div class="tab" onclick="switchTab('coi')">🛡️ COI Vault</div>
+    <div class="tab" onclick="switchTab('requirements')">📖 State Requirements</div>
+  </div>
+
+  <div class="content">
+
+    <!-- TAB 1: FIND ESCORTS -->
+    <div class="tab-pane active" id="pane-find">
+      <div class="filter-bar">
+        <input type="text" id="escortSearch" placeholder="Search company, contact…" oninput="renderEscorts()" style="width:220px;">
+        <select id="stateFilter" onchange="renderEscorts()" style="width:180px;">
+          <option value="">All States</option>
+        </select>
+        <select id="coiFilter" onchange="renderEscorts()">
+          <option value="">All COI Status</option>
+          <option value="verified">COI Verified</option>
+          <option value="pending">COI Pending</option>
+          <option value="missing">COI Missing</option>
+        </select>
+      </div>
+      <div class="card-grid" id="escortGrid"></div>
+    </div>
+
+    <!-- TAB 2: ACTIVE ASSIGNMENTS -->
+    <div class="tab-pane" id="pane-assignments">
+      <div class="section-header">
+        <span style="font-size:14px;color:var(--mid);" id="assignCount">0 assignments</span>
+        <button class="btn btn-blue btn-sm" onclick="openModal('assignModal')">+ Assign Escort</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Load #</th>
+              <th>Route</th>
+              <th>Escort Company</th>
+              <th>Phone</th>
+              <th>Assigned</th>
+              <th>COI</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="assignTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: COI VAULT -->
+    <div class="tab-pane" id="pane-coi">
+      <div class="fmcsa-bar">
+        <span>🔍 Verify carrier insurance status on FMCSA SAFER System</span>
+        <a href="https://safer.fmcsa.dot.gov/CompanySnapshot.aspx" target="_blank" class="btn btn-ghost btn-sm">Open FMCSA Lookup ↗</a>
+      </div>
+      <div class="section-header">
+        <span style="font-size:14px;color:var(--mid);" id="coiCount">0 COI records</span>
+        <button class="btn btn-blue btn-sm" onclick="openModal('uploadCOIModal')">+ Upload COI</button>
+      </div>
+      <div id="coiVault"></div>
+    </div>
+
+    <!-- TAB 4: STATE REQUIREMENTS -->
+    <div class="tab-pane" id="pane-requirements">
+      <div class="state-search">
+        <input type="text" id="stateReqSearch" placeholder="Search state…" oninput="filterStateReqs()">
+        <span style="font-size:12px;color:var(--mid);align-self:center;">* All measurements in feet. Verify current rules with your state DOT before each move.</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>State</th>
+              <th>Max Width (no pilot)</th>
+              <th>Max Width (1 pilot)</th>
+              <th>Max Width (2 pilots)</th>
+              <th>Max Length</th>
+              <th>Max Height</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="stateReqTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- MODALS -->
+
+<!-- Add Escort Modal -->
+<div class="modal-overlay" id="addEscortModal">
+  <div class="modal">
+    <h3>Add Escort Company</h3>
+    <div class="form-row">
+      <label>Company Name *</label>
+      <input type="text" id="esc_company" placeholder="e.g. Wide Load Pilots LLC">
+    </div>
+    <div class="form-row">
+      <label>Contact Name</label>
+      <input type="text" id="esc_contact" placeholder="Primary contact">
+    </div>
+    <div class="form-row">
+      <label>Phone *</label>
+      <input type="tel" id="esc_phone" placeholder="(555) 000-0000">
+    </div>
+    <div class="form-row">
+      <label>Email</label>
+      <input type="email" id="esc_email" placeholder="dispatch@company.com">
+    </div>
+    <div class="form-row">
+      <label>OOIDA / Certification #</label>
+      <input type="text" id="esc_cert" placeholder="Certification number">
+    </div>
+    <div class="form-row">
+      <label>States Covered</label>
+      <div class="state-checkboxes" id="escortStateCBs"></div>
+    </div>
+    <div class="form-row">
+      <label>Notes</label>
+      <textarea id="esc_notes" placeholder="Additional info…"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('addEscortModal')">Cancel</button>
+      <button class="btn btn-blue" onclick="saveEscort()">Save Company</button>
+    </div>
+  </div>
+</div>
+
+<!-- Assign Escort Modal -->
+<div class="modal-overlay" id="assignModal">
+  <div class="modal">
+    <h3>Assign Escort to Load</h3>
+    <div class="form-row">
+      <label>Load # *</label>
+      <input type="text" id="asgn_load" placeholder="Load number or ID">
+    </div>
+    <div class="form-row">
+      <label>Route Description</label>
+      <input type="text" id="asgn_route" placeholder="e.g. Dallas TX → Memphis TN">
+    </div>
+    <div class="form-row">
+      <label>Escort Company *</label>
+      <select id="asgn_company"></select>
+    </div>
+    <div class="form-row">
+      <label>Assignment Date</label>
+      <input type="date" id="asgn_date">
+    </div>
+    <div class="form-row">
+      <label>Status</label>
+      <select id="asgn_status">
+        <option value="PENDING">PENDING</option>
+        <option value="CONFIRMED">CONFIRMED</option>
+        <option value="EN ROUTE">EN ROUTE</option>
+        <option value="COMPLETE">COMPLETE</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('assignModal')">Cancel</button>
+      <button class="btn btn-blue" onclick="saveAssignment()">Save Assignment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Upload COI Modal -->
+<div class="modal-overlay" id="uploadCOIModal">
+  <div class="modal">
+    <h3>Upload Certificate of Insurance</h3>
+    <div class="form-row">
+      <label>Escort Company *</label>
+      <select id="coi_company"></select>
+    </div>
+    <div class="form-row">
+      <label>Document File Name *</label>
+      <input type="text" id="coi_filename" placeholder="e.g. ACME_Pilots_COI_2026.pdf">
+    </div>
+    <div class="form-row">
+      <label>Policy Number</label>
+      <input type="text" id="coi_policy" placeholder="Policy #">
+    </div>
+    <div class="form-row">
+      <label>Effective Date</label>
+      <input type="date" id="coi_eff">
+    </div>
+    <div class="form-row">
+      <label>Expiration Date</label>
+      <input type="date" id="coi_exp">
+    </div>
+    <div class="form-row">
+      <label>Coverage Amount ($)</label>
+      <input type="number" id="coi_coverage" placeholder="300000" step="1000">
+    </div>
+    <div class="form-row">
+      <label>Agent Name</label>
+      <input type="text" id="coi_agent" placeholder="Agent name">
+    </div>
+    <div class="form-row">
+      <label>Agent Phone</label>
+      <input type="tel" id="coi_agent_phone" placeholder="(555) 000-0000">
+    </div>
+    <div class="form-row">
+      <label>VIN on COI</label>
+      <input type="text" id="coi_vin" placeholder="17-character VIN">
+    </div>
+    <div class="form-row">
+      <label>ACORD Form #</label>
+      <input type="text" id="coi_acord" placeholder="e.g. ACORD 25">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('uploadCOIModal')">Cancel</button>
+      <button class="btn btn-blue" onclick="saveCOI()">Save COI Record</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA & CONSTANTS ──
+var US_STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
+
+var STATE_NAMES = {AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming'};
+
+var COI_CHECKS = [
+  'Insurer is admitted/licensed (FMCSA or state insurance dept)',
+  'Policy number present and formatted correctly',
+  'Effective date ≤ today',
+  'Expiration date > today',
+  'Coverage amount meets state minimum ($300K)',
+  'VIN on COI matches VIN in equipment database',
+  'Agent name and phone number present',
+  'ACORD form number visible (ACORD 25 standard)',
+  'No signs of alteration (dates/amounts consistent)'
+];
+
+var SEED_ESCORTS = [
+  {id:'esc_001',company:'Wide Load Pilots LLC',contact:'Randy Kowalski',phone:'(800) 555-0141',email:'dispatch@wideloadpilots.com',states:['TX','OK','AR','LA','MS','TN'],cert:'OOIDA-TX-88412',notes:'24/7 dispatch. Preferred partner.',coiStatus:'verified'},
+  {id:'esc_002',company:'Pacific Oversize Escorts',contact:'Maria Chen',phone:'(888) 555-0227',email:'ops@pacificescorts.com',states:['CA','OR','WA','NV','AZ','ID'],cert:'OOIDA-CA-55301',notes:'Covers all Pacific coastal states.',coiStatus:'verified'},
+  {id:'esc_003',company:'MidAmerica Pilot Cars',contact:'Dale Thompson',phone:'(877) 555-0389',email:'dale@midampilots.com',states:['KS','MO','NE','IA','MN','SD','ND'],cert:'OOIDA-KS-22087',notes:'Midwest specialist.',coiStatus:'pending'},
+  {id:'esc_004',company:'Southeast Escort Services',contact:'Bobby Reeves',phone:'(866) 555-0491',email:'dispatch@seescorts.net',states:['FL','GA','AL','SC','NC','VA'],cert:'OOIDA-FL-67734',notes:'Licensed in 6 southeastern states.',coiStatus:'missing'},
+  {id:'esc_005',company:'Rockies & Plains Pilots',contact:'Susan Hartfield',phone:'(844) 555-0562',email:'info@rockiespilots.com',states:['CO','WY','MT','UT','NM','ID'],cert:'OOIDA-CO-34112',notes:'Mountain state specialists. Snow/ice experience.',coiStatus:'verified'}
+];
+
+var STATE_REQUIREMENTS = [
+  {state:'AL',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Verify with ALDOT'},
+  {state:'AK',noP:8.5,oneP:14,twoP:16,length:75,height:14,notes:'Special permits required for loads over 14\' wide'},
+  {state:'AZ',noP:8.5,oneP:14,twoP:18,length:85,height:14.5,notes:'Night travel restrictions in summer'},
+  {state:'AR',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Verify with ArDOT'},
+  {state:'CA',noP:8.5,oneP:12,twoP:15,length:95,height:14,notes:'Caltrans routing required; strictest in West'},
+  {state:'CO',noP:8.5,oneP:14,twoP:16,length:95,height:14.5,notes:'Mountain corridor restrictions apply'},
+  {state:'CT',noP:8,oneP:12,twoP:14,length:75,height:13.6,notes:'Urban corridor limitations'},
+  {state:'DE',noP:8,oneP:12,twoP:14,length:85,height:14,notes:'Verify with DelDOT'},
+  {state:'FL',noP:8.5,oneP:14,twoP:18,length:85,height:14.5,notes:'Sunpass corridor permitting available'},
+  {state:'GA',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Verify with GDOT'},
+  {state:'HI',noP:8,oneP:12,twoP:14,length:65,height:14,notes:'Island-specific rules; no interstate routing'},
+  {state:'ID',noP:8.5,oneP:14,twoP:16,length:95,height:14,notes:'Mountain routes require advance notice'},
+  {state:'IL',noP:8,oneP:14,twoP:16,length:85,height:13.6,notes:'Chicago metro has additional restrictions'},
+  {state:'IN',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Verify with INDOT'},
+  {state:'IA',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Spring road restrictions apply'},
+  {state:'KS',noP:8.5,oneP:14,twoP:16,length:85,height:14,notes:'Verify with KDOT'},
+  {state:'KY',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Bridge weight limits critical'},
+  {state:'LA',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Coastal routing restrictions'},
+  {state:'ME',noP:8,oneP:12,twoP:14,length:85,height:14,notes:'Spring restrictions common'},
+  {state:'MD',noP:8,oneP:12,twoP:14,length:85,height:13.6,notes:'Bay Bridge restrictions'},
+  {state:'MA',noP:8,oneP:12,twoP:14,length:85,height:13.5,notes:'Strict urban restrictions; MassDOT routing'},
+  {state:'MI',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'UP requires additional planning'},
+  {state:'MN',noP:8.5,oneP:14,twoP:16,length:85,height:14,notes:'Spring road restrictions'},
+  {state:'MS',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Verify with MDOT'},
+  {state:'MO',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Verify with MoDOT'},
+  {state:'MT',noP:8.5,oneP:14,twoP:16,length:95,height:14,notes:'Long distances; limited services'},
+  {state:'NE',noP:8.5,oneP:14,twoP:16,length:85,height:14,notes:'Verify with NDOT'},
+  {state:'NV',noP:8.5,oneP:14,twoP:18,length:95,height:14.5,notes:'Desert routing; fuel planning critical'},
+  {state:'NH',noP:8,oneP:12,twoP:14,length:85,height:14,notes:'Spring weight restrictions'},
+  {state:'NJ',noP:8,oneP:12,twoP:14,length:85,height:13.6,notes:'Turnpike has special procedures'},
+  {state:'NM',noP:8.5,oneP:14,twoP:16,length:90,height:14.5,notes:'Verify with NMDOT'},
+  {state:'NY',noP:8,oneP:12,twoP:14,length:85,height:13.5,notes:'NYC metro restricted; NYSDOT routing'},
+  {state:'NC',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Verify with NCDOT'},
+  {state:'ND',noP:8.5,oneP:14,twoP:16,length:85,height:14,notes:'Spring restrictions common'},
+  {state:'OH',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Verify with ODOT'},
+  {state:'OK',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Turnpike toll routing required'},
+  {state:'OR',noP:8.5,oneP:14,twoP:16,length:95,height:14,notes:'ODOT pre-approval for extreme loads'},
+  {state:'PA',noP:8,oneP:14,twoP:16,length:85,height:13.5,notes:'Turnpike restrictions; PennDOT routing'},
+  {state:'RI',noP:8,oneP:12,twoP:14,length:75,height:13.6,notes:'Small state; few viable routes'},
+  {state:'SC',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Verify with SCDOT'},
+  {state:'SD',noP:8.5,oneP:14,twoP:16,length:85,height:14,notes:'Spring restrictions apply'},
+  {state:'TN',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Mountain routes require advance notice'},
+  {state:'TX',noP:8.5,oneP:14,twoP:20,length:95,height:14.5,notes:'SuperLoad category above 20\'; TxDOT routing'},
+  {state:'UT',noP:8.5,oneP:14,twoP:16,length:95,height:14,notes:'Canyon corridors require planning'},
+  {state:'VT',noP:8,oneP:12,twoP:14,length:85,height:14,notes:'Spring weight restrictions'},
+  {state:'VA',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Verify with VDOT'},
+  {state:'WA',noP:8.5,oneP:14,twoP:16,length:95,height:14,notes:'WSDOT pre-approval for extreme loads'},
+  {state:'WV',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Mountain routes; weight restrictions'},
+  {state:'WI',noP:8,oneP:14,twoP:16,length:85,height:14,notes:'Spring road restrictions apply'},
+  {state:'WY',noP:8.5,oneP:14,twoP:16,length:95,height:14.5,notes:'Wind restrictions on certain routes'}
+];
+
+// ── LOCALSTORAGE ──
+function getEscorts() {
+  var d = localStorage.getItem('nexus_pilot_companies');
+  if (!d) {
+    localStorage.setItem('nexus_pilot_companies', JSON.stringify(SEED_ESCORTS));
+    return SEED_ESCORTS;
+  }
+  return JSON.parse(d);
+}
+function saveEscorts(arr) { localStorage.setItem('nexus_pilot_companies', JSON.stringify(arr)); }
+
+function getAssignments() {
+  var d = localStorage.getItem('nexus_pilot_assignments');
+  return d ? JSON.parse(d) : [];
+}
+function saveAssignments(arr) { localStorage.setItem('nexus_pilot_assignments', JSON.stringify(arr)); }
+
+function getCOIs() {
+  var d = localStorage.getItem('nexus_pilot_cois');
+  return d ? JSON.parse(d) : [];
+}
+function saveCOIs(arr) { localStorage.setItem('nexus_pilot_cois', JSON.stringify(arr)); }
+
+// ── TABS ──
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(function(t,i) {
+    var names = ['find','assignments','coi','requirements'];
+    t.classList.toggle('active', names[i] === name);
+  });
+  document.querySelectorAll('.tab-pane').forEach(function(p) {
+    p.classList.toggle('active', p.id === 'pane-' + name);
+  });
+  if (name === 'assignments') renderAssignments();
+  if (name === 'coi') renderCOIVault();
+}
+
+// ── MODAL ──
+function openModal(id) {
+  if (id === 'assignModal') populateAssignCompanySelect();
+  if (id === 'uploadCOIModal') populateCOICompanySelect();
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('open');
+});
+
+// ── STATE FILTER DROPDOWN ──
+function populateStateFilter() {
+  var sel = document.getElementById('stateFilter');
+  US_STATES.forEach(function(st) {
+    var o = document.createElement('option');
+    o.value = st;
+    o.textContent = st + ' — ' + STATE_NAMES[st];
+    sel.appendChild(o);
+  });
+}
+
+function populateEscortStateCBs() {
+  var wrap = document.getElementById('escortStateCBs');
+  wrap.innerHTML = '';
+  US_STATES.forEach(function(st) {
+    wrap.innerHTML += '<label class="state-cb-item"><input type="checkbox" value="' + st + '" class="esc-state-cb"> ' + st + '</label>';
+  });
+}
+
+// ── RENDER ESCORT CARDS ──
+function coiIcon(status) {
+  if (status === 'verified') return '<span class="coi-ok">✓ COI Verified</span>';
+  if (status === 'pending') return '<span class="coi-pending">⏳ COI Pending</span>';
+  return '<span class="coi-missing">✗ COI Missing</span>';
+}
+
+function renderEscorts() {
+  var escorts = getEscorts();
+  var search = document.getElementById('escortSearch').value.toLowerCase();
+  var stateF = document.getElementById('stateFilter').value;
+  var coiF = document.getElementById('coiFilter').value;
+
+  var filtered = escorts.filter(function(e) {
+    var matchSearch = !search || e.company.toLowerCase().includes(search) || (e.contact && e.contact.toLowerCase().includes(search));
+    var matchState = !stateF || (e.states && e.states.includes(stateF));
+    var matchCOI = !coiF || e.coiStatus === coiF;
+    return matchSearch && matchState && matchCOI;
+  });
+
+  var grid = document.getElementById('escortGrid');
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="icon">🚁</div><div>No escort companies found</div></div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(function(e) {
+    var states = (e.states || []).map(function(s) { return '<span class="state-badge">' + s + '</span>'; }).join('');
+    return '<div class="escort-card">' +
+      '<div class="card-header">' +
+        '<div class="card-company">' + e.company + '</div>' +
+        coiIcon(e.coiStatus) +
+      '</div>' +
+      '<div class="card-contact">👤 ' + (e.contact || '—') + '</div>' +
+      '<div class="card-phone">📞 ' + e.phone + '</div>' +
+      '<div class="card-email">✉ ' + (e.email || '—') + '</div>' +
+      '<div class="card-states">' + states + '</div>' +
+      '<div class="card-cert">OOIDA/Cert: ' + (e.cert || '—') + '</div>' +
+      (e.notes ? '<div style="font-size:11px;color:var(--mid);margin-top:6px;">' + e.notes + '</div>' : '') +
+      '<div class="card-actions">' +
+        '<button class="btn btn-blue btn-sm" onclick="quickAssign(\'' + e.id + '\')">Assign to Load</button>' +
+        '<button class="btn btn-ghost btn-sm" onclick="deleteEscort(\'' + e.id + '\')">Delete</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function quickAssign(escId) {
+  populateAssignCompanySelect(escId);
+  openModal('assignModal');
+}
+
+function deleteEscort(id) {
+  if (!confirm('Delete this escort company?')) return;
+  var arr = getEscorts().filter(function(e) { return e.id !== id; });
+  saveEscorts(arr);
+  renderEscorts();
+}
+
+function saveEscort() {
+  var company = document.getElementById('esc_company').value.trim();
+  if (!company) { alert('Company name is required'); return; }
+  var states = Array.from(document.querySelectorAll('.esc-state-cb:checked')).map(function(cb) { return cb.value; });
+  var rec = {
+    id: 'esc_' + Date.now(),
+    company: company,
+    contact: document.getElementById('esc_contact').value.trim(),
+    phone: document.getElementById('esc_phone').value.trim(),
+    email: document.getElementById('esc_email').value.trim(),
+    cert: document.getElementById('esc_cert').value.trim(),
+    states: states,
+    notes: document.getElementById('esc_notes').value.trim(),
+    coiStatus: 'missing'
+  };
+  var arr = getEscorts();
+  arr.push(rec);
+  saveEscorts(arr);
+  closeModal('addEscortModal');
+  ['esc_company','esc_contact','esc_phone','esc_email','esc_cert','esc_notes'].forEach(function(id) { document.getElementById(id).value = ''; });
+  document.querySelectorAll('.esc-state-cb').forEach(function(cb) { cb.checked = false; });
+  renderEscorts();
+}
+
+// ── ASSIGNMENTS ──
+function populateAssignCompanySelect(preselect) {
+  var sel = document.getElementById('asgn_company');
+  sel.innerHTML = '<option value="">Select escort company…</option>';
+  getEscorts().forEach(function(e) {
+    var o = document.createElement('option');
+    o.value = e.id;
+    o.textContent = e.company;
+    if (preselect && e.id === preselect) o.selected = true;
+    sel.appendChild(o);
+  });
+  // default date to today
+  document.getElementById('asgn_date').value = new Date().toISOString().slice(0,10);
+}
+
+function saveAssignment() {
+  var loadNum = document.getElementById('asgn_load').value.trim();
+  var compId = document.getElementById('asgn_company').value;
+  if (!loadNum || !compId) { alert('Load # and Escort Company are required'); return; }
+  var escorts = getEscorts();
+  var esc = escorts.find(function(e) { return e.id === compId; });
+  var rec = {
+    id: 'asgn_' + Date.now(),
+    loadNum: loadNum,
+    route: document.getElementById('asgn_route').value.trim(),
+    escortId: compId,
+    escortName: esc ? esc.company : '',
+    escortPhone: esc ? esc.phone : '',
+    date: document.getElementById('asgn_date').value,
+    coiVerified: esc && esc.coiStatus === 'verified',
+    status: document.getElementById('asgn_status').value
+  };
+  var arr = getAssignments();
+  arr.push(rec);
+  saveAssignments(arr);
+  closeModal('assignModal');
+  renderAssignments();
+  switchTab('assignments');
+}
+
+function renderAssignments() {
+  var arr = getAssignments();
+  document.getElementById('assignCount').textContent = arr.length + ' assignment' + (arr.length !== 1 ? 's' : '');
+  var tbody = document.getElementById('assignTable');
+  if (!arr.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--mid);padding:40px;">No assignments yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML = arr.map(function(a) {
+    var statusMap = {PENDING:'badge-pending',CONFIRMED:'badge-confirmed','EN ROUTE':'badge-enroute',COMPLETE:'badge-complete'};
+    var badgeClass = statusMap[a.status] || 'badge-pending';
+    var coiCell = a.coiVerified ? '<span class="coi-ok">✓</span>' : '<span class="coi-missing">✗</span>';
+    return '<tr>' +
+      '<td><strong>' + a.loadNum + '</strong></td>' +
+      '<td style="color:var(--mid);">' + (a.route || '—') + '</td>' +
+      '<td>' + a.escortName + '</td>' +
+      '<td style="font-family:\'JetBrains Mono\',monospace;font-size:12px;">' + a.escortPhone + '</td>' +
+      '<td style="font-size:12px;">' + a.date + '</td>' +
+      '<td>' + coiCell + '</td>' +
+      '<td><span class="badge ' + badgeClass + '">' + a.status + '</span></td>' +
+      '<td><button class="btn btn-ghost btn-sm" onclick="changeStatus(\'' + a.id + '\')">Update</button> <button class="btn btn-ghost btn-sm" style="color:var(--red);" onclick="deleteAssignment(\'' + a.id + '\')">Del</button></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function changeStatus(id) {
+  var statuses = ['PENDING','CONFIRMED','EN ROUTE','COMPLETE'];
+  var arr = getAssignments();
+  var rec = arr.find(function(a) { return a.id === id; });
+  if (!rec) return;
+  var cur = statuses.indexOf(rec.status);
+  var next = statuses[(cur + 1) % statuses.length];
+  rec.status = next;
+  saveAssignments(arr);
+  renderAssignments();
+}
+
+function deleteAssignment(id) {
+  if (!confirm('Delete this assignment?')) return;
+  saveAssignments(getAssignments().filter(function(a) { return a.id !== id; }));
+  renderAssignments();
+}
+
+// ── COI VAULT ──
+function populateCOICompanySelect() {
+  var sel = document.getElementById('coi_company');
+  sel.innerHTML = '<option value="">Select escort company…</option>';
+  getEscorts().forEach(function(e) {
+    var o = document.createElement('option');
+    o.value = e.id;
+    o.textContent = e.company;
+    sel.appendChild(o);
+  });
+}
+
+function saveCOI() {
+  var compId = document.getElementById('coi_company').value;
+  var filename = document.getElementById('coi_filename').value.trim();
+  if (!compId || !filename) { alert('Company and filename are required'); return; }
+  var escorts = getEscorts();
+  var esc = escorts.find(function(e) { return e.id === compId; });
+  var rec = {
+    id: 'coi_' + Date.now(),
+    escortId: compId,
+    escortName: esc ? esc.company : '',
+    filename: filename,
+    uploadDate: new Date().toISOString().slice(0,10),
+    policy: document.getElementById('coi_policy').value.trim(),
+    effDate: document.getElementById('coi_eff').value,
+    expDate: document.getElementById('coi_exp').value,
+    coverage: parseFloat(document.getElementById('coi_coverage').value) || 0,
+    agent: document.getElementById('coi_agent').value.trim(),
+    agentPhone: document.getElementById('coi_agent_phone').value.trim(),
+    vin: document.getElementById('coi_vin').value.trim(),
+    acord: document.getElementById('coi_acord').value.trim(),
+    checks: {}
+  };
+  var arr = getCOIs();
+  arr.push(rec);
+  saveCOIs(arr);
+  closeModal('uploadCOIModal');
+  renderCOIVault();
+}
+
+function renderCOIVault() {
+  var arr = getCOIs();
+  document.getElementById('coiCount').textContent = arr.length + ' COI record' + (arr.length !== 1 ? 's' : '');
+  var wrap = document.getElementById('coiVault');
+  if (!arr.length) {
+    wrap.innerHTML = '<div class="empty-state"><div class="icon">🛡️</div><div>No COI records yet — upload a certificate to start fraud prevention tracking</div></div>';
+    return;
+  }
+  wrap.innerHTML = arr.map(function(coi) { return renderCOICard(coi); }).join('');
+}
+
+function renderCOICard(coi) {
+  var totalChecks = COI_CHECKS.length;
+  var checkedCount = Object.values(coi.checks).filter(Boolean).length;
+  var score = Math.round((checkedCount / totalChecks) * 100);
+  var today = new Date().toISOString().slice(0,10);
+  var expOk = coi.expDate && coi.expDate > today;
+  var effOk = coi.effDate && coi.effDate <= today;
+
+  var status, statusClass;
+  if (coi.vinMismatch) { status = 'REJECTED'; statusClass = 'badge-rejected'; }
+  else if (score >= 80 && !coi.vinMismatch) { status = 'VERIFIED'; statusClass = 'badge-verified'; }
+  else { status = 'PENDING REVIEW'; statusClass = 'badge-pending'; }
+
+  var checklistHtml = COI_CHECKS.map(function(label, i) {
+    var key = 'c' + i;
+    var checked = coi.checks[key] ? 'checked' : '';
+    return '<label class="check-item">' +
+      '<input type="checkbox" ' + checked + ' onchange="toggleCOICheck(\'' + coi.id + '\',' + i + ',this.checked)"> ' +
+      label +
+    '</label>';
+  }).join('');
+
+  var fillColor = score >= 80 ? 'var(--green)' : score >= 50 ? 'var(--yellow)' : 'var(--red)';
+
+  return '<div class="coi-card" id="coicard_' + coi.id + '">' +
+    '<div class="coi-card-header">' +
+      '<div>' +
+        '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:17px;font-weight:700;">' + coi.escortName + '</div>' +
+        '<div style="font-size:12px;color:var(--mid);margin-top:2px;">📄 ' + coi.filename + ' &nbsp;·&nbsp; Uploaded: ' + coi.uploadDate + '</div>' +
+      '</div>' +
+      '<span class="badge ' + statusClass + '">' + status + '</span>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;">' +
+      '<div style="background:var(--panel2);border-radius:6px;padding:8px 10px;">' +
+        '<div style="font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;">Policy #</div>' +
+        '<div style="font-family:\'JetBrains Mono\',monospace;font-size:12px;margin-top:2px;">' + (coi.policy || '—') + '</div>' +
+      '</div>' +
+      '<div style="background:var(--panel2);border-radius:6px;padding:8px 10px;">' +
+        '<div style="font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;">Effective</div>' +
+        '<div style="font-size:12px;margin-top:2px;color:' + (effOk ? 'var(--green)' : 'var(--red)') + ';">' + (coi.effDate || '—') + '</div>' +
+      '</div>' +
+      '<div style="background:var(--panel2);border-radius:6px;padding:8px 10px;">' +
+        '<div style="font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;">Expires</div>' +
+        '<div style="font-size:12px;margin-top:2px;color:' + (expOk ? 'var(--green)' : 'var(--red)') + ';">' + (coi.expDate || '—') + '</div>' +
+      '</div>' +
+      '<div style="background:var(--panel2);border-radius:6px;padding:8px 10px;">' +
+        '<div style="font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;">Coverage</div>' +
+        '<div style="font-size:12px;margin-top:2px;color:' + (coi.coverage >= 300000 ? 'var(--green)' : 'var(--red)') + ';">' + (coi.coverage ? '$' + coi.coverage.toLocaleString() : '—') + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="font-size:12px;font-weight:600;color:var(--mid);margin-bottom:8px;">Verification Checklist</div>' +
+    '<div class="coi-checklist">' + checklistHtml + '</div>' +
+    '<div style="display:flex;align-items:center;gap:12px;margin-top:8px;">' +
+      '<div style="font-size:12px;color:var(--mid);">Score:</div>' +
+      '<div style="flex:1;background:var(--panel2);border-radius:6px;height:8px;overflow:hidden;">' +
+        '<div style="height:8px;border-radius:6px;width:' + score + '%;background:' + fillColor + ';transition:width .3s;"></div>' +
+      '</div>' +
+      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:12px;font-weight:700;color:' + fillColor + ';">' + score + '%</div>' +
+    '</div>' +
+    '<div class="vin-row">' +
+      '<div style="font-size:12px;color:var(--mid);white-space:nowrap;">VIN on COI:</div>' +
+      '<input type="text" id="vin_input_' + coi.id + '" value="' + (coi.vin || '') + '" placeholder="Enter VIN from COI…" maxlength="17">' +
+      '<button class="btn btn-ghost btn-sm" onclick="checkVIN(\'' + coi.id + '\')">Check VIN</button>' +
+    '</div>' +
+    '<div id="vin_result_' + coi.id + '" class="vin-result"></div>' +
+    '<div style="display:flex;gap:8px;margin-top:12px;">' +
+      '<button class="btn btn-ghost btn-sm" onclick="deleteCOI(\'' + coi.id + '\')" style="color:var(--red);">Delete COI</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function toggleCOICheck(coiId, index, checked) {
+  var arr = getCOIs();
+  var rec = arr.find(function(c) { return c.id === coiId; });
+  if (!rec) return;
+  rec.checks['c' + index] = checked;
+  saveCOIs(arr);
+  // re-render just this card
+  var card = document.getElementById('coicard_' + coiId);
+  if (card) card.outerHTML = renderCOICard(rec);
+}
+
+function checkVIN(coiId) {
+  var input = document.getElementById('vin_input_' + coiId);
+  var resultEl = document.getElementById('vin_result_' + coiId);
+  var vin = input.value.trim().toUpperCase();
+  if (!vin) { resultEl.textContent = 'Enter a VIN to check'; resultEl.style.color = 'var(--mid)'; return; }
+
+  // Update stored VIN
+  var arr = getCOIs();
+  var rec = arr.find(function(c) { return c.id === coiId; });
+  if (rec) { rec.vin = vin; saveCOIs(arr); }
+
+  // Look up in nexus_equipment_units
+  var units = [];
+  try { units = JSON.parse(localStorage.getItem('nexus_equipment_units') || '[]'); } catch(e) {}
+  var match = units.find(function(u) {
+    return u.vin && u.vin.toUpperCase() === vin;
+  });
+  if (match) {
+    resultEl.innerHTML = '<span style="color:var(--green);">✓ VIN MATCH — Unit ' + (match.unit || match.id) + ' · ' + (match.year || '') + ' ' + (match.make || '') + ' ' + (match.model || '') + '</span>';
+    if (rec) { rec.vinMismatch = false; saveCOIs(arr); }
+  } else {
+    resultEl.innerHTML = '<span style="color:var(--red);">✗ NO MATCH in equipment database. Verify manually.</span>';
+    if (rec) { rec.vinMismatch = true; saveCOIs(arr); }
+  }
+}
+
+function deleteCOI(id) {
+  if (!confirm('Delete this COI record?')) return;
+  saveCOIs(getCOIs().filter(function(c) { return c.id !== id; }));
+  renderCOIVault();
+}
+
+// ── STATE REQUIREMENTS ──
+function renderStateReqs(filter) {
+  var tbody = document.getElementById('stateReqTable');
+  var data = filter ? STATE_REQUIREMENTS.filter(function(r) {
+    var q = filter.toLowerCase();
+    return r.state.toLowerCase().includes(q) || (STATE_NAMES[r.state] || '').toLowerCase().includes(q);
+  }) : STATE_REQUIREMENTS;
+  tbody.innerHTML = data.map(function(r) {
+    return '<tr>' +
+      '<td><strong>' + r.state + '</strong> <span style="color:var(--mid);font-size:11px;">' + (STATE_NAMES[r.state] || '') + '</span></td>' +
+      '<td>' + r.noP + '\'</td>' +
+      '<td>' + r.oneP + '\'</td>' +
+      '<td>' + r.twoP + '\'</td>' +
+      '<td>' + r.length + '\'</td>' +
+      '<td>' + r.height + '\'</td>' +
+      '<td style="font-size:12px;color:var(--mid);">' + r.notes + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+function filterStateReqs() {
+  renderStateReqs(document.getElementById('stateReqSearch').value);
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', function() {
+  populateStateFilter();
+  populateEscortStateCBs();
+  renderEscorts();
+  renderStateReqs();
+});
+</script>
+</body>
+</html>
