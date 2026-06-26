@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FMCSA Resources — Carrier Nexus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:#0b0f1a; --panel:#131929; --panel2:#1a2235; --border:#1e2d45;
+      --text:#e2e8f0; --mid:#64748b; --blue:#3b82f6; --green:#10b981;
+      --yellow:#f59e0b; --red:#ef4444; --orange:#f97316; --purple:#a855f7;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+    .main-content {
+      margin-left: 220px;
+      padding: 0 0 60px 0;
+      min-height: 100vh;
+    }
+    /* Page header */
+    .page-header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .page-header-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--blue), #1d4ed8);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .page-header h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .page-header p {
+      color: var(--mid);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+    /* Tab nav */
+    .tab-nav {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 0;
+      padding: 0 32px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: var(--mid);
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 13px 18px;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active {
+      color: var(--blue);
+      border-bottom-color: var(--blue);
+    }
+    /* Tab content */
+    .tab-pane { display: none; padding: 28px 32px; }
+    .tab-pane.active { display: block; }
+    /* Quick-access buttons */
+    .quick-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .quick-btn {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 10px 18px;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    }
+    .quick-btn:hover {
+      background: var(--border);
+      border-color: var(--blue);
+      transform: translateY(-1px);
+    }
+    .quick-btn .q-icon { margin-right: 6px; }
+    /* Info / dashboard cards */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+    }
+    .info-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 24px;
+    }
+    .info-card h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-card .field-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .info-card .field-label {
+      color: var(--mid);
+      font-size: 12px;
+      font-weight: 500;
+      min-width: 90px;
+    }
+    .info-card .field-value {
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+    .info-card .field-value.empty { color: var(--mid); font-style: italic; font-family: 'Barlow', sans-serif; }
+    .card-actions { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .btn {
+      background: var(--blue);
+      border: none;
+      border-radius: 7px;
+      color: #fff;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 16px;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+    .btn-ghost {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--mid);
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--blue); }
+    .btn-green { background: var(--green); }
+    .btn-orange { background: var(--orange); }
+    .link-btn {
+      background: none;
+      border: none;
+      color: var(--blue);
+      cursor: pointer;
+      font-size: 13px;
+      font-family: 'Barlow', sans-serif;
+      text-decoration: underline;
+      padding: 0;
+    }
+    .link-btn:hover { color: #93c5fd; }
+    /* Status badges */
+    .badge {
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-green { background: rgba(16,185,129,0.15); color: var(--green); }
+    .badge-yellow { background: rgba(245,158,11,0.15); color: var(--yellow); }
+    .badge-red { background: rgba(239,68,68,0.15); color: var(--red); }
+    .badge-mid { background: rgba(100,116,139,0.15); color: var(--mid); }
+    /* MCS date input */
+    .date-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .date-row label { color: var(--mid); font-size: 12px; font-weight: 500; min-width: 140px; }
+    input[type="date"], input[type="text"], input[type="password"], input[type="number"] {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      padding: 7px 11px;
+    }
+    input[type="date"]:focus, input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus {
+      border-color: var(--blue);
+      outline: none;
+    }
+    /* Emergency card */
+    .notice-box {
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: 8px;
+      color: #fcd34d;
+      font-size: 13px;
+      line-height: 1.6;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+    }
+    /* Section headings */
+    .section-heading {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      margin-bottom: 16px;
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+    }
+    .section-heading:first-child { margin-top: 0; }
+    .section-heading::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    /* Resource cards grid */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+    .res-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      padding: 16px 18px;
+      transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .res-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px var(--blue), 0 6px 24px rgba(59,130,246,0.12);
+    }
+    .res-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+    .res-card-url {
+      color: var(--mid);
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .res-card .inline-search {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      align-items: center;
+    }
+    .res-card .inline-search input {
+      flex: 1;
+      min-width: 0;
+      font-size: 12px;
+      padding: 5px 9px;
+    }
+    .res-card .inline-search button {
+      background: var(--blue);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 12px;
+      font-family: 'Barlow', sans-serif;
+      transition: opacity 0.2s;
+    }
+    .res-card .inline-search button:hover { opacity: 0.8; }
+    /* Forms tab */
+    .form-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .form-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--orange);
+      box-shadow: 0 0 0 1px var(--orange), 0 6px 24px rgba(249,115,22,0.12);
+    }
+    .form-icon {
+      width: 36px; height: 36px;
+      background: rgba(249,115,22,0.12);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .form-info h4 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .form-info span {
+      color: var(--mid);
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* QC API tab */
+    .api-section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 26px;
+      margin-bottom: 20px;
+      max-width: 700px;
+    }
+    .api-section h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .info-box {
+      background: rgba(59,130,246,0.08);
+      border: 1px solid rgba(59,130,246,0.25);
+      border-radius: 8px;
+      color: #93c5fd;
+      font-size: 13px;
+      line-height: 1.6;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+    }
+    .info-box a { color: var(--blue); }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      color: var(--mid);
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .input-row input { flex: 1; }
+    .pw-wrap {
+      position: relative;
+      flex: 1;
+    }
+    .pw-wrap input { width: 100%; padding-right: 40px; }
+    .pw-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--mid);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0;
+    }
+    .pw-toggle:hover { color: var(--text); }
+    .api-response {
+      background: #060a13;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: #86efac;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      margin-top: 14px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding: 14px 16px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      display: none;
+    }
+    .api-response.visible { display: block; }
+    .api-response.error { color: var(--red); }
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--green);
+      color: #fff;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 11px 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+    #toast.toast-error { background: var(--red); }
+    /* Due date row */
+    .due-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+    .due-label { color: var(--mid); font-size: 12px; font-weight: 500; min-width: 140px; }
+    .due-value { font-size: 13px; color: var(--text); }
+  </style>
+</head>
+<body>
+<script src="nexus-sidebar.js"></script>
+
+<div class="main-content">
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-header-icon">🛡️</div>
+    <div>
+      <h1>FMCSA Resources</h1>
+      <p>Federal Motor Carrier Safety Administration — compliance, registration, and safety tools</p>
+    </div>
+  </div>
+
+  <!-- Tab nav -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('dashboard', this)">My FMCSA Dashboard</button>
+    <button class="tab-btn" onclick="switchTab('registration', this)">Registration &amp; MOTUS</button>
+    <button class="tab-btn" onclick="switchTab('safety', this)">Safety &amp; Compliance</button>
+    <button class="tab-btn" onclick="switchTab('cdl', this)">CDL &amp; Drivers</button>
+    <button class="tab-btn" onclick="switchTab('forms', this)">Forms &amp; Filing</button>
+    <button class="tab-btn" onclick="switchTab('qcapi', this)">QC API</button>
+  </div>
+
+  <!-- TAB 1: Dashboard -->
+  <div id="tab-dashboard" class="tab-pane active">
+    <div class="quick-row">
+      <button class="quick-btn" onclick="openMotus()"><span class="q-icon">🔗</span>My MOTUS Record</button>
+      <button class="quick-btn" onclick="window.open('https://safer.fmcsa.dot.gov/CompanySnapshot.aspx','_blank')"><span class="q-icon">📋</span>My SAFER Profile</button>
+      <button class="quick-btn" onclick="openCSA()"><span class="q-icon">📊</span>My CSA Scores</button>
+      <button class="quick-btn" onclick="window.open('https://portal.fmcsa.dot.gov/login','_blank')"><span class="q-icon">🔐</span>FMCSA Portal Login</button>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Carrier info card -->
+      <div class="info-card">
+        <h3>🚛 Carrier Information</h3>
+        <div class="field-row">
+          <span class="field-label">Company</span>
+          <span class="field-value" id="dash-company"></span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">USDOT #</span>
+          <span class="field-value" id="dash-usdot"></span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">MC #</span>
+          <span class="field-value" id="dash-mc"></span>
+        </div>
+        <div id="fmcsa-refresh-result" style="margin-top:10px;font-size:12px;color:var(--mid);display:none;"></div>
+        <div class="card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="refreshFromFMCSA()">Refresh from FMCSA</button>
+          <button class="link-btn" onclick="switchTab('qcapi', document.querySelector('[onclick*=qcapi]'))">Edit Settings</button>
+        </div>
+      </div>
+
+      <!-- MCS-150 card -->
+      <div class="info-card">
+        <h3>📅 MCS-150 Biennial Update</h3>
+        <div class="date-row">
+          <label for="mcs150-input">Last MCS-150 Update</label>
+          <input type="date" id="mcs150-input" onchange="saveMCS150()" />
+        </div>
+        <div class="due-row">
+          <span class="due-label">Next Due Date</span>
+          <span class="due-value" id="mcs150-due">—</span>
+          <span id="mcs150-badge" class="badge badge-mid" style="display:none;"></span>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-sm" onclick="openMotus()">Update Now in MOTUS</button>
+        </div>
+      </div>
+
+      <!-- Emergency Declarations card -->
+      <div class="info-card">
+        <h3>⚠️ Emergency Declarations</h3>
+        <div class="notice-box">
+          FMCSA may issue emergency declarations that temporarily waive certain HOS and other regulations. Always check for active declarations before dispatching.
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-orange btn-sm" onclick="window.open('https://www.fmcsa.dot.gov/emergency-declarations','_blank')">View Active Declarations</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Registration & MOTUS -->
+  <div id="tab-registration" class="tab-pane">
+    <div class="section-heading">MOTUS — USDOT Registration System</div>
+    <div class="card-grid">
+      <div class="res-card" onclick="window.open('https://motus.dot.gov/registration/carrier/business/06ab4ea1-e678-44f1-84d5-c2d421abbd76/018e3433-d6f3-7fae-aba3-f3de8b61336a','_blank')">
+        <div class="res-card-title">Access My MOTUS Record</div>
+        <div class="res-card-url">motus.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/motus-quick-start-job-aid-guide-your-first-login','_blank')">
+        <div class="res-card-title">MOTUS First Login Guide</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/claim-usdot-number-motus-job-aid','_blank')">
+        <div class="res-card-title">Claim Your USDOT Number</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/company-account-page-overview-motus-job-aid','_blank')">
+        <div class="res-card-title">Navigate Company Account</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/changes-fmcsa-registrations-motus','_blank')">
+        <div class="res-card-title">What Changed in MOTUS</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/motus-supporting-company-access-fact-sheet','_blank')">
+        <div class="res-card-title">Supporting Company Access</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+    </div>
+
+    <div class="section-heading">General Registration</div>
+    <div class="card-grid">
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/do-i-need-usdot-number','_blank')">
+        <div class="res-card-title">Do I Need a USDOT Number?</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://portal.fmcsa.dot.gov/UrsRegistrationWizard/','_blank')">
+        <div class="res-card-title">Apply for New USDOT + Authority</div>
+        <div class="res-card-url">portal.fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/registration-forms','_blank')">
+        <div class="res-card-title">Update My USDOT / Authority</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/daily-fmcsa-registration-decisions-letters-certificates-permits-and-licenses','_blank')">
+        <div class="res-card-title">Daily Register / Certificates</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/registration-video-library','_blank')">
+        <div class="res-card-title">Registration Video Library</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/identity-verification','_blank')">
+        <div class="res-card-title">ID Verification Help</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/ask-fmcsa','_blank')">
+        <div class="res-card-title">Contact FMCSA Registration</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: Safety & Compliance -->
+  <div id="tab-safety" class="tab-pane">
+    <div class="section-heading">Safety Databases</div>
+    <div class="card-grid">
+      <div class="res-card">
+        <div class="res-card-title">SAFER Company Snapshot</div>
+        <div class="res-card-url">safer.fmcsa.dot.gov</div>
+        <div class="inline-search">
+          <input type="text" id="safer-usdot" placeholder="Enter USDOT #" />
+          <button onclick="openSAFER()">Search</button>
+        </div>
+      </div>
+      <div class="res-card">
+        <div class="res-card-title">SMS / CSA Scores</div>
+        <div class="res-card-url">ai.fmcsa.dot.gov</div>
+        <div class="inline-search">
+          <input type="text" id="csa-usdot" placeholder="USDOT #" />
+          <button onclick="openCSADirect()">View Scores</button>
+        </div>
+      </div>
+      <div class="res-card" onclick="window.open('https://motus.dot.gov','_blank')">
+        <div class="res-card-title">Licensing &amp; Insurance (MOTUS)</div>
+        <div class="res-card-url">motus.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://safer.fmcsa.dot.gov/mcs150t/pkg_shipper.prc_oos_search','_blank')">
+        <div class="res-card-title">Out-of-Service Orders</div>
+        <div class="res-card-url">safer.fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://dataqs.fmcsa.dot.gov','_blank')">
+        <div class="res-card-title">DataQs — Challenge FMCSA Data</div>
+        <div class="res-card-url">dataqs.fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://nationalregistry.fmcsa.dot.gov','_blank')">
+        <div class="res-card-title">National Registry — Medical Examiners</div>
+        <div class="res-card-url">nationalregistry.fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://clearinghouse.fmcsa.dot.gov','_blank')">
+        <div class="res-card-title">Drug &amp; Alcohol Clearinghouse</div>
+        <div class="res-card-url">clearinghouse.fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.ucr.gov','_blank')">
+        <div class="res-card-title">UCR (Unified Carrier Registration)</div>
+        <div class="res-card-url">ucr.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/consumer-protection/report-safety-violations','_blank')">
+        <div class="res-card-title">Report a Safety Violation</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://csa.fmcsa.dot.gov/safetyplanner/','_blank')">
+        <div class="res-card-title">Motor Carrier Safety Planner</div>
+        <div class="res-card-url">csa.fmcsa.dot.gov</div>
+      </div>
+    </div>
+
+    <div class="section-heading">Regulations &amp; Rules</div>
+    <div class="card-grid">
+      <div class="res-card" onclick="window.open('https://www.ecfr.gov/current/title-49','_blank')">
+        <div class="res-card-title">49 CFR Full Text (eCFR)</div>
+        <div class="res-card-url">ecfr.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/regulations/hours-of-service','_blank')">
+        <div class="res-card-title">Hours of Service Rules</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/hours-service/elds/electronic-logging-devices','_blank')">
+        <div class="res-card-title">ELD Requirements</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/regulations/drug-alcohol-testing/overview-drug-and-alcohol-rules','_blank')">
+        <div class="res-card-title">Drug &amp; Alcohol Testing Rules</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/regulations/cargo-securement/cargo-securement-rules','_blank')">
+        <div class="res-card-title">Cargo Securement Rules</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/regulations/hazardous-materials','_blank')">
+        <div class="res-card-title">Hazardous Materials Safety</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/safety/new-entrant-safety-assurance-program','_blank')">
+        <div class="res-card-title">New Entrant Safety Program</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/regulations/medical','_blank')">
+        <div class="res-card-title">Medical Requirements</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/regulations/enforcement/civil-penalties','_blank')">
+        <div class="res-card-title">Civil Penalties</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/guidance','_blank')">
+        <div class="res-card-title">FMCSA Guidance Documents</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: CDL & Drivers -->
+  <div id="tab-cdl" class="tab-pane">
+    <div class="section-heading">CDL &amp; Driver Resources</div>
+    <div class="card-grid">
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/cdl','_blank')">
+        <div class="res-card-title">CDL Licensing Overview</div>
+        <div class="res-card-url">fmcsa.dot.gov/cdl</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/commercial-drivers-license/states','_blank')">
+        <div class="res-card-title">CDL State Resources</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/militarydriverprograms','_blank')">
+        <div class="res-card-title">Military Driver Programs</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/sdap','_blank')">
+        <div class="res-card-title">Safe Driver Apprenticeship (SDAP)</div>
+        <div class="res-card-url">fmcsa.dot.gov/sdap</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/driver-resources','_blank')">
+        <div class="res-card-title">Driver Resources</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.ecfr.gov/current/title-49/subtitle-B/chapter-III/subchapter-B/part-391','_blank')">
+        <div class="res-card-title">Driver Qualification Requirements (49 CFR Part 391)</div>
+        <div class="res-card-url">ecfr.gov — Part 391</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/regulations/hours-of-service','_blank')">
+        <div class="res-card-title">Hours of Service — Driver Rules</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/safety/coercion','_blank')">
+        <div class="res-card-title">Coercion / Harassment Protections</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://clearinghouse.fmcsa.dot.gov','_blank')">
+        <div class="res-card-title">Drug &amp; Alcohol Clearinghouse (Required)</div>
+        <div class="res-card-url">clearinghouse.fmcsa.dot.gov</div>
+      </div>
+      <div class="res-card" onclick="window.open('https://www.fmcsa.dot.gov/stophumantrafficking','_blank')">
+        <div class="res-card-title">Stop Human Trafficking</div>
+        <div class="res-card-url">fmcsa.dot.gov</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 5: Forms & Filing -->
+  <div id="tab-forms" class="tab-pane">
+    <div class="section-heading">Forms &amp; Filing</div>
+    <div class="card-grid">
+      <div class="form-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/registration-forms','_blank')">
+        <div class="form-icon">📝</div>
+        <div class="form-info">
+          <h4>MCS-150 — Biennial Update</h4>
+          <span>fmcsa.dot.gov/registration/registration-forms</span>
+        </div>
+      </div>
+      <div class="form-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/forms','_blank')">
+        <div class="form-icon">📄</div>
+        <div class="form-info">
+          <h4>BOC-3 — Process Agent Filing</h4>
+          <span>fmcsa.dot.gov/registration/forms</span>
+        </div>
+      </div>
+      <div class="form-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/forms','_blank')">
+        <div class="form-icon">🏢</div>
+        <div class="form-info">
+          <h4>OP-1 — Application for Motor Property Carrier Authority</h4>
+          <span>fmcsa.dot.gov/registration/forms</span>
+        </div>
+      </div>
+      <div class="form-card" onclick="window.open('https://motus.dot.gov','_blank')">
+        <div class="form-icon">🛡️</div>
+        <div class="form-info">
+          <h4>BMC-91 / 91X — Insurance Filing</h4>
+          <span>motus.dot.gov</span>
+        </div>
+      </div>
+      <div class="form-card" onclick="window.open('https://motus.dot.gov','_blank')">
+        <div class="form-icon">📦</div>
+        <div class="form-info">
+          <h4>BMC-34 — Cargo Insurance</h4>
+          <span>motus.dot.gov</span>
+        </div>
+      </div>
+      <div class="form-card" onclick="window.open('https://www.ucr.gov','_blank')">
+        <div class="form-icon">🔑</div>
+        <div class="form-info">
+          <h4>UCR Registration</h4>
+          <span>ucr.gov</span>
+        </div>
+      </div>
+      <div class="form-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/forms','_blank')">
+        <div class="form-icon">🗂️</div>
+        <div class="form-info">
+          <h4>FMCSA Registration Forms Hub</h4>
+          <span>fmcsa.dot.gov/registration/forms</span>
+        </div>
+      </div>
+      <div class="form-card" onclick="window.open('https://www.fmcsa.dot.gov/registration/ask-fmcsa','_blank')">
+        <div class="form-icon">💬</div>
+        <div class="form-info">
+          <h4>FMCSA Contact Center</h4>
+          <span>fmcsa.dot.gov/registration/ask-fmcsa</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 6: QC API -->
+  <div id="tab-qcapi" class="tab-pane">
+    <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;margin-bottom:22px;">FMCSA QC API Configuration</h2>
+
+    <div class="api-section">
+      <h3>About the QC API</h3>
+      <div class="info-box">
+        The FMCSA Query &amp; Capture (QC) API allows programmatic lookup of carrier and driver data directly from FMCSA databases. Register for a free WebKey at
+        <a href="https://mobile.fmcsa.dot.gov/QCDevsite/" target="_blank">mobile.fmcsa.dot.gov/QCDevsite/</a>.
+        Your WebKey is stored locally in your browser and never sent to any third-party server.
+      </div>
+      <div class="form-group">
+        <label>FMCSA WebKey</label>
+        <div class="input-row">
+          <div class="pw-wrap">
+            <input type="password" id="webkey-input" placeholder="Enter your FMCSA WebKey" />
+            <button class="pw-toggle" onclick="toggleWebkey()" id="webkey-toggle" title="Show/Hide">👁</button>
+          </div>
+          <button class="btn btn-sm" onclick="saveWebkey()">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="api-section">
+      <h3>Test Connection</h3>
+      <div class="form-group">
+        <label>USDOT Number</label>
+        <div class="input-row">
+          <input type="text" id="test-usdot" placeholder="e.g. 3812345" style="max-width:200px;" />
+          <button class="btn btn-sm" onclick="testAPI()">Test API</button>
+        </div>
+      </div>
+      <pre class="api-response" id="api-response-box"></pre>
+    </div>
+
+    <div class="api-section">
+      <h3>Carrier Settings</h3>
+      <div class="form-group">
+        <label>Company Name</label>
+        <input type="text" id="setting-company" placeholder="Your company name" style="width:100%;max-width:400px;" />
+      </div>
+      <div class="form-group">
+        <label>USDOT Number</label>
+        <input type="text" id="setting-usdot" placeholder="e.g. 3812345" style="max-width:200px;" />
+      </div>
+      <div class="form-group">
+        <label>MC Number</label>
+        <input type="text" id="setting-mc" placeholder="e.g. MC-1234567" style="max-width:200px;" />
+      </div>
+      <button class="btn" onclick="saveSettings()">Save Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+  // Tab switching
+  function switchTab(name, btn) {
+    document.querySelectorAll(".tab-pane").forEach(function(p) { p.classList.remove("active"); });
+    document.querySelectorAll(".tab-btn").forEach(function(b) { b.classList.remove("active"); });
+    document.getElementById("tab-" + name).classList.add("active");
+    if (btn) {
+      btn.classList.add("active");
+    } else {
+      // find by onclick attr
+      var all = document.querySelectorAll(".tab-btn");
+      all.forEach(function(b) {
+        if (b.getAttribute("onclick") && b.getAttribute("onclick").indexOf("'" + name + "'") !== -1) {
+          b.classList.add("active");
+        }
+      });
+    }
+    if (name === "qcapi") { loadQCSettings(); }
+  }
+
+  // Toast helper
+  function showToast(msg, isError) {
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className = isError ? "toast-error" : "";
+    t.classList.add("show");
+    setTimeout(function() { t.classList.remove("show"); }, 3000);
+  }
+
+  // Open MOTUS
+  function openMotus() {
+    var url = localStorage.getItem("nexus_motus_url") || "https://motus.dot.gov/registration/carrier/business/06ab4ea1-e678-44f1-84d5-c2d421abbd76/018e3433-d6f3-7fae-aba3-f3de8b61336a";
+    window.open(url, "_blank");
+  }
+
+  // Open CSA scores
+  function openCSA() {
+    var usdot = localStorage.getItem("nexus_my_usdot") || "";
+    window.open("https://ai.fmcsa.dot.gov/SMS/Carrier/" + usdot, "_blank");
+  }
+
+  // Open SAFER
+  function openSAFER() {
+    window.open("https://safer.fmcsa.dot.gov/CompanySnapshot.aspx", "_blank");
+  }
+
+  // Open CSA direct from safety tab input
+  function openCSADirect() {
+    var usdot = document.getElementById("csa-usdot").value.trim();
+    if (!usdot) {
+      showToast("Enter a USDOT number", true);
+      return;
+    }
+    window.open("https://ai.fmcsa.dot.gov/SMS/Carrier/" + usdot + "/Overview.aspx", "_blank");
+  }
+
+  // Load dashboard carrier info
+  function loadDashboard() {
+    var company = localStorage.getItem("nexus_my_company_name") || "";
+    var usdot = localStorage.getItem("nexus_my_usdot") || "";
+    var mc = localStorage.getItem("nexus_my_mc") || "";
+
+    var companyEl = document.getElementById("dash-company");
+    var usdotEl = document.getElementById("dash-usdot");
+    var mcEl = document.getElementById("dash-mc");
+
+    companyEl.textContent = company || "Not set";
+    companyEl.className = company ? "field-value" : "field-value empty";
+    usdotEl.textContent = usdot || "Not set";
+    usdotEl.className = usdot ? "field-value" : "field-value empty";
+    mcEl.textContent = mc || "Not set";
+    mcEl.className = mc ? "field-value" : "field-value empty";
+
+    // Load MCS-150 date
+    var mcsDate = localStorage.getItem("nexus_mcs150_date") || "";
+    if (mcsDate) {
+      document.getElementById("mcs150-input").value = mcsDate;
+      updateMCS150Display(mcsDate);
+    }
+
+    // Prefill CSA input in safety tab
+    if (usdot) {
+      var csaEl = document.getElementById("csa-usdot");
+      if (csaEl) { csaEl.value = usdot; }
+    }
+  }
+
+  // MCS-150 save
+  function saveMCS150() {
+    var val = document.getElementById("mcs150-input").value;
+    if (val) {
+      localStorage.setItem("nexus_mcs150_date", val);
+      updateMCS150Display(val);
+    }
+  }
+
+  function updateMCS150Display(dateStr) {
+    var parts = dateStr.split("-");
+    var lastDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    var dueDate = new Date(lastDate);
+    dueDate.setFullYear(dueDate.getFullYear() + 2);
+
+    var options = { year: "numeric", month: "short", day: "numeric" };
+    document.getElementById("mcs150-due").textContent = dueDate.toLocaleDateString("en-US", options);
+
+    var now = new Date();
+    var sixMonths = new Date(now);
+    sixMonths.setMonth(sixMonths.getMonth() + 6);
+
+    var badge = document.getElementById("mcs150-badge");
+    badge.style.display = "";
+
+    if (dueDate < now) {
+      badge.textContent = "OVERDUE";
+      badge.className = "badge badge-red";
+    } else if (dueDate <= sixMonths) {
+      badge.textContent = "DUE SOON";
+      badge.className = "badge badge-yellow";
+    } else {
+      badge.textContent = "CURRENT";
+      badge.className = "badge badge-green";
+    }
+  }
+
+  // Refresh from FMCSA
+  function refreshFromFMCSA() {
+    var key = localStorage.getItem("nexus_fmcsa_webkey");
+    var usdot = localStorage.getItem("nexus_my_usdot");
+    if (!key) {
+      alert("FMCSA WebKey not configured. Go to the QC API tab to set your WebKey.");
+      return;
+    }
+    if (!usdot) {
+      alert("USDOT number not configured. Go to the QC API tab to set your carrier settings.");
+      return;
+    }
+    var resultEl = document.getElementById("fmcsa-refresh-result");
+    resultEl.style.display = "";
+    resultEl.textContent = "Fetching from FMCSA...";
+    doFMCSAFetch(usdot, key, function(data, err) {
+      if (err) {
+        resultEl.style.color = "var(--red)";
+        resultEl.textContent = "Error: " + err;
+      } else {
+        resultEl.style.color = "var(--green)";
+        resultEl.textContent = "Refreshed. Carrier: " + (data && data.content && data.content.carrier && data.content.carrier.legalName ? data.content.carrier.legalName : "See QC API tab for full response");
+      }
+    });
+  }
+
+  function doFMCSAFetch(usdot, key, callback) {
+    var url = "https://mobile.fmcsa.dot.gov/qc/services/carriers/" + usdot + "?webKey=" + key;
+    fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(data) { callback(data, null); })
+      .catch(function(e) { callback(null, e.message || "Network error"); });
+  }
+
+  // QC API tab
+  function loadQCSettings() {
+    var key = localStorage.getItem("nexus_fmcsa_webkey") || "";
+    var webkeyInput = document.getElementById("webkey-input");
+    if (key) {
+      webkeyInput.value = key.substring(0, 4) + "****";
+      webkeyInput.dataset.saved = "true";
+    }
+
+    var usdot = localStorage.getItem("nexus_my_usdot") || "";
+    var mc = localStorage.getItem("nexus_my_mc") || "";
+    var company = localStorage.getItem("nexus_my_company_name") || "";
+    document.getElementById("setting-usdot").value = usdot;
+    document.getElementById("setting-mc").value = mc;
+    document.getElementById("setting-company").value = company;
+
+    if (usdot) {
+      document.getElementById("test-usdot").value = usdot;
+    }
+  }
+
+  function toggleWebkey() {
+    var inp = document.getElementById("webkey-input");
+    inp.type = inp.type === "password" ? "text" : "password";
+  }
+
+  function saveWebkey() {
+    var inp = document.getElementById("webkey-input");
+    var val = inp.value.trim();
+    if (!val) {
+      showToast("Enter a WebKey first", true);
+      return;
+    }
+    // If masked placeholder, do not overwrite
+    if (inp.dataset.saved === "true" && val.indexOf("****") !== -1) {
+      showToast("WebKey already saved", false);
+      return;
+    }
+    localStorage.setItem("nexus_fmcsa_webkey", val);
+    inp.dataset.saved = "true";
+    showToast("WebKey saved");
+  }
+
+  function testAPI() {
+    var usdot = document.getElementById("test-usdot").value.trim();
+    var key = localStorage.getItem("nexus_fmcsa_webkey") || "";
+    var box = document.getElementById("api-response-box");
+
+    if (!usdot) { showToast("Enter a USDOT number", true); return; }
+    if (!key) { showToast("No WebKey saved — configure it above", true); return; }
+
+    box.className = "api-response visible";
+    box.textContent = "Fetching...";
+
+    doFMCSAFetch(usdot, key, function(data, err) {
+      if (err) {
+        box.className = "api-response visible error";
+        box.textContent = "Error: " + err;
+      } else {
+        box.className = "api-response visible";
+        box.textContent = JSON.stringify(data, null, 2);
+      }
+    });
+  }
+
+  function saveSettings() {
+    var company = document.getElementById("setting-company").value.trim();
+    var usdot = document.getElementById("setting-usdot").value.trim();
+    var mc = document.getElementById("setting-mc").value.trim();
+    localStorage.setItem("nexus_my_company_name", company);
+    localStorage.setItem("nexus_my_usdot", usdot);
+    localStorage.setItem("nexus_my_mc", mc);
+    showToast("Settings saved");
+    loadDashboard();
+  }
+
+  // Init
+  loadDashboard();
+</script>
+</body>
+</html>

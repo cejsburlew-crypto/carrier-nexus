@@ -44,7 +44,7 @@
     { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','emails.html','doc-inbox.html'] },
     { key:'contacts',label:'Contacts',       pages:['contacts.html'] },
     { key:'taxhr',   label:'Tax & HR',       pages:['tax-forms.html','w9.html'] },
-    { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','insurance-kpi.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html','incident-report.html','coi-management.html','claims.html','coaching-log.html','fmcsa-compliance.html'] },
+    { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','insurance-kpi.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html','incident-report.html','coi-management.html','claims.html','coaching-log.html','fmcsa-compliance.html','fmcsa-resources.html','cfr-compliance.html'] },
     { key:'admin',   label:'Admin',          pages:['member-management.html','admin-users.html','company-management.html','doc-privacy.html','public-profile.html'] },
     { key:'intel',   label:'Intelligence',   pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html','search.html','gps-tracker.html'] },
     { key:'comms',   label:'Communications', pages:['comms.html','nexus-connect.html'] },
@@ -245,6 +245,8 @@
       lnk('claims.html',               I.doc,     'Claims') +
       lnk('coi-management.html',       I.doc,     'COI Registry') +
       lnk('fmcsa-compliance.html',      I.dot,     '⚖️ FMCSA Compliance') +
+      lnk('fmcsa-resources.html',         I.dot,     '🛡️ FMCSA Resources') +
+      lnk('cfr-compliance.html',           I.dot,     '📋 49 CFR Compliance') +
       lnk('coaching-log.html',         I.dvir,    'Driver Coaching') +
       lnk('tires.html',                I.tire,    'Tires') +
       lnk('fuel.html',                 I.fuel,    'Fuel') +
