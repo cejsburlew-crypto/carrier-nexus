@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrier Nexus — Public Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script src="nexus-config.js"></script>
+  <style>
+    :root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;}
+    a{color:var(--blue);text-decoration:none;}
+    /* TOP NAV */
+    .top-nav{background:#060912;border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+    .top-nav-brand{display:flex;align-items:center;gap:10px;}
+    .top-nav-brand .hex{width:32px;height:32px;}
+    .top-nav-brand .brand-text{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;letter-spacing:2px;color:#fff;}
+    .top-nav-brand .powered{font-family:'JetBrains Mono',monospace;font-size:9px;color:#64748b;letter-spacing:1px;margin-left:4px;}
+    .nav-actions{display:flex;align-items:center;gap:10px;}
+    .btn-login{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.35);color:var(--blue);padding:7px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;transition:all .15s;}
+    .btn-login:hover{background:rgba(59,130,246,.25);}
+    /* HERO BANNER */
+    .banner-wrap{position:relative;height:280px;overflow:hidden;background:#0d1421;}
+    .banner-img{width:100%;height:100%;object-fit:cover;display:block;}
+    .banner-overlay{position:absolute;inset:0;background:linear-gradient(to bottom, rgba(6,9,18,.3) 0%, rgba(6,9,18,.8) 100%);}
+    .banner-placeholder{width:100%;height:100%;background:linear-gradient(135deg,#0d1421 0%,#1a2235 50%,#0b1628 100%);display:flex;align-items:center;justify-content:center;}
+    .banner-placeholder-text{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:800;color:rgba(255,255,255,.06);letter-spacing:8px;text-transform:uppercase;}
+    /* PROFILE HEADER */
+    .profile-header{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;}
+    .logo-circle{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#1a2235,#0d1421);border:3px solid var(--border);display:flex;align-items:center;justify-content:center;position:absolute;bottom:-50px;left:24px;font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#fff;overflow:hidden;}
+    .logo-circle img{width:100%;height:100%;object-fit:cover;}
+    /* CONTENT */
+    .main-content{max-width:1100px;margin:0 auto;padding:0 24px;}
+    .company-title-row{padding:60px 0 20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+    .company-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:36px;color:#fff;letter-spacing:1px;}
+    .company-tagline{color:var(--mid);font-size:15px;margin-top:4px;}
+    .badge-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+    .badge-green{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:var(--green);}
+    .badge-blue{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);color:var(--blue);}
+    .badge-gray{background:rgba(100,116,139,.12);border:1px solid rgba(100,116,139,.25);color:var(--mid);}
+    .badge-yellow{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:var(--yellow);}
+    .info-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:8px 0 16px;}
+    .info-item{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mid);}
+    .info-item svg{width:14px;height:14px;flex-shrink:0;}
+    .action-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
+    .btn-action{padding:9px 20px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;transition:all .15s;border:none;}
+    .btn-primary{background:var(--blue);color:#fff;}
+    .btn-primary:hover{background:#2563eb;}
+    .btn-secondary{background:var(--panel2);border:1px solid var(--border);color:var(--text);}
+    .btn-secondary:hover{background:#212d40;}
+    .social-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+    .social-btn{width:34px;height:34px;border-radius:7px;background:var(--panel2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--mid);text-decoration:none;transition:all .15s;cursor:pointer;}
+    .social-btn:hover{border-color:var(--blue);color:var(--blue);}
+    /* STATS ROW */
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+    .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px 16px;text-align:center;}
+    .stat-icon{font-size:22px;margin-bottom:8px;}
+    .stat-num{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:#fff;line-height:1;}
+    .stat-label{font-size:12px;color:var(--mid);margin-top:4px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px;}
+    /* TABS */
+    .tab-nav{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:24px;}
+    .tab-btn{padding:10px 20px;background:none;border:none;border-bottom:2px solid transparent;color:var(--mid);font-size:13px;font-weight:600;font-family:'Barlow',sans-serif;cursor:pointer;transition:all .15s;margin-bottom:-1px;}
+    .tab-btn:hover{color:var(--text);}
+    .tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
+    .tab-panel{display:none;}
+    .tab-panel.active{display:block;}
+    /* ABOUT */
+    .about-text{font-size:15px;line-height:1.7;color:#b0bec5;margin-bottom:24px;}
+    .services-grid{display:flex;gap:8px;flex-wrap:wrap;}
+    .service-chip{background:var(--panel2);border:1px solid var(--border);padding:6px 14px;border-radius:20px;font-size:13px;color:var(--text);}
+    /* FLEET */
+    .fleet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+    .fleet-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+    .fleet-img{height:120px;background:linear-gradient(135deg,#1a2235,#0d1421);display:flex;align-items:center;justify-content:center;font-size:32px;}
+    .fleet-info{padding:12px;}
+    .fleet-name{font-weight:600;font-size:14px;color:var(--text);}
+    .fleet-type{font-size:12px;color:var(--mid);margin-top:2px;}
+    /* CREDENTIALS */
+    .cred-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+    .cred-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;}
+    .cred-title{font-size:11px;color:var(--mid);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+    .cred-value{font-size:16px;font-weight:700;color:var(--text);}
+    .cred-link{font-size:12px;color:var(--blue);margin-top:4px;display:block;}
+    /* BRAG */
+    .brag-list{list-style:none;display:flex;flex-direction:column;gap:12px;}
+    .brag-item{display:flex;align-items:flex-start;gap:12px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;}
+    .brag-check{color:var(--green);font-size:18px;flex-shrink:0;margin-top:1px;}
+    .brag-text{font-size:15px;color:var(--text);line-height:1.5;}
+    /* CONTACT */
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+    .contact-info-block{display:flex;flex-direction:column;gap:12px;}
+    .contact-item{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text);}
+    .contact-item svg{width:16px;height:16px;color:var(--blue);}
+    .contact-form{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px;}
+    .form-title{font-weight:700;font-size:16px;margin-bottom:16px;}
+    .form-group{margin-bottom:14px;}
+    .form-label{display:block;font-size:12px;color:var(--mid);margin-bottom:6px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px;text-transform:uppercase;}
+    .form-input{width:100%;background:#0d1421;border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:6px;font-size:13px;font-family:'Barlow',sans-serif;}
+    .form-input:focus{outline:none;border-color:var(--blue);}
+    textarea.form-input{resize:vertical;min-height:80px;}
+    /* PRIVATE */
+    .private-msg{text-align:center;padding:80px 24px;}
+    .private-msg h2{font-size:24px;color:var(--text);margin-bottom:12px;}
+    .private-msg p{color:var(--mid);}
+    /* DRIVER */
+    .driver-hero{text-align:center;padding:48px 24px 24px;}
+    .driver-initials{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:inline-flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:#fff;margin-bottom:16px;}
+    /* RIG */
+    .rig-hero{height:400px;background:linear-gradient(135deg,#0d1421,#1a2235);display:flex;align-items:center;justify-content:center;font-size:64px;position:relative;}
+    .rig-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,var(--bg) 100%);}
+    .rig-content{max-width:1100px;margin:0 auto;padding:24px;}
+    .rig-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;}
+    .spec-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px;}
+    .spec-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mid);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+    .spec-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+    .spec-row:last-child{border-bottom:none;}
+    .spec-key{font-size:13px;color:var(--mid);}
+    .spec-val{font-size:13px;font-weight:600;color:var(--text);}
+    .broker-badge{background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(168,85,247,.1));border:1px solid rgba(59,130,246,.3);border-radius:12px;padding:20px 24px;margin-bottom:24px;}
+    .broker-badge-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;color:var(--green);letter-spacing:1px;margin-bottom:12px;}
+    .broker-specs{display:flex;gap:20px;flex-wrap:wrap;}
+    .broker-spec{font-size:13px;color:var(--text);}
+    .broker-spec strong{color:var(--blue);}
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:24px;background:#1e293b;border:1px solid var(--green);color:var(--green);padding:12px 20px;border-radius:8px;font-size:13px;z-index:9999;animation:slideIn .2s ease;font-family:'JetBrains Mono',monospace;}
+    @keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+    /* FOOTER */
+    .page-footer{background:#060912;border-top:1px solid var(--border);padding:20px 24px;text-align:center;font-size:12px;color:var(--mid);margin-top:48px;}
+    .page-footer a{color:var(--blue);}
+    /* MODAL */
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;}
+    .modal-bg.open{display:flex;}
+    .modal-box{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px;max-width:440px;width:90%;}
+    .modal-title{font-weight:700;font-size:18px;margin-bottom:16px;}
+    .modal-close{float:right;background:none;border:none;color:var(--mid);font-size:20px;cursor:pointer;line-height:1;}
+    @media(max-width:768px){
+      .stats-row{grid-template-columns:repeat(2,1fr);}
+      .contact-grid{grid-template-columns:1fr;}
+      .rig-grid{grid-template-columns:1fr;}
+      .company-title-row{flex-direction:column;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <div class="top-nav-brand">
+    <svg class="hex" viewBox="0 0 36 36" fill="none">
+      <defs><linearGradient id="sg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#000"/><stop offset="60%" stop-color="#6b0000"/><stop offset="100%" stop-color="#e91e8c"/></linearGradient></defs>
+      <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="url(#sg2)" stroke="#e91e8c" stroke-width="1.5"/>
+      <text x="18" y="22" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#fff">CN</text>
+    </svg>
+    <span class="brand-text">CARRIER NEXUS</span>
+    <span class="powered">POWERED BY CARRIER NEXUS</span>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-login" onclick="window.location.href='login.html'">Login</button>
+  </div>
+</nav>
+
+<div id="profileRoot"></div>
+
+<!-- CONTACT REQUEST MODAL -->
+<div class="modal-bg" id="contactModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('contactModal').classList.remove('open')">×</button>
+    <div class="modal-title">Request a Load</div>
+    <div class="form-group">
+      <label class="form-label">Your Name</label>
+      <input class="form-input" id="cr_name" placeholder="Full Name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Company / Brokerage</label>
+      <input class="form-input" id="cr_company" placeholder="Company name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email or Phone</label>
+      <input class="form-input" id="cr_contact" placeholder="Email or phone">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Load Details</label>
+      <textarea class="form-input" id="cr_details" placeholder="Origin, destination, weight, dates..."></textarea>
+    </div>
+    <button class="btn-action btn-primary" style="width:100%" onclick="submitContactRequest()">Send Request</button>
+  </div>
+</div>
+
+<script>
+  // Animated counter
+  function animateCounter(el, target) {
+    var count = 0;
+    var inc = Math.ceil(target / 60);
+    var timer = setInterval(function() {
+      count = Math.min(count + inc, target);
+      el.textContent = count.toLocaleString();
+      if (count >= target) clearInterval(timer);
+    }, 16);
+  }
+
+  function showToast(msg) {
+    var t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(function() { t.remove(); }, 3000);
+  }
+
+  function shareProfile() {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href).then(function() {
+        showToast('Link copied!');
+      });
+    } else {
+      showToast('Copy this URL: ' + window.location.href);
+    }
+  }
+
+  function submitContactRequest() {
+    var req = {
+      id: 'cr_' + Date.now(),
+      name: document.getElementById('cr_name').value,
+      company: document.getElementById('cr_company').value,
+      contact: document.getElementById('cr_contact').value,
+      details: document.getElementById('cr_details').value,
+      timestamp: new Date().toISOString(),
+      profileUrl: window.location.href
+    };
+    var reqs = JSON.parse(localStorage.getItem('nexus_contact_requests') || '[]');
+    reqs.push(req);
+    localStorage.setItem('nexus_contact_requests', JSON.stringify(reqs));
+    document.getElementById('contactModal').classList.remove('open');
+    showToast('Request sent! We will be in touch.');
+  }
+
+  function switchTab(id) {
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelector('.tab-btn[data-tab="' + id + '"]').classList.add('active');
+    document.getElementById('tab_' + id).classList.add('active');
+  }
+
+  // Parse URL params
+  var params = new URLSearchParams(window.location.search);
+  var pType = params.get('type') || 'company';
+  var pId   = params.get('id') || '';
+  var pSlug = params.get('slug') || '';
+
+  // Load data
+  var companies = [];
+  try {
+    var stored = localStorage.getItem('nexus_companies');
+    if (stored) {
+      companies = JSON.parse(stored);
+    } else if (window.NEXUS_COMPANY_PROFILES) {
+      companies = window.NEXUS_COMPANY_PROFILES;
+    }
+  } catch(e) {
+    companies = window.NEXUS_COMPANY_PROFILES || [];
+  }
+
+  function getCompany() {
+    if (pId) return companies.find(function(c) { return c.id === pId; });
+    if (pSlug) return companies.find(function(c) { return c.slug === pSlug; });
+    return companies[0];
+  }
+
+  function getUsers() {
+    try {
+      var stored = localStorage.getItem('NEXUS_LOCAL_USERS');
+      if (stored) return JSON.parse(stored);
+    } catch(e) {}
+    return window.NEXUS_LOCAL_USERS || [];
+  }
+
+  function socialIcon(platform) {
+    var icons = {
+      facebook: '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>',
+      instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>',
+      twitter: '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>',
+      linkedin: '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>',
+      youtube: '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#000"/></svg>'
+    };
+    return icons[platform] || '';
+  }
+
+  function renderCompany(co) {
+    if (!co) {
+      document.getElementById('profileRoot').innerHTML = '<div class="private-msg"><h2>Profile Not Found</h2><p>No profile found with that ID.</p></div>';
+      return;
+    }
+    if (!co.public) {
+      document.getElementById('profileRoot').innerHTML = '<div class="private-msg"><h2>This profile is private</h2><p>Contact <a href="mailto:' + (co.email||'') + '">' + (co.email || 'the company') + '</a> for more information.</p></div>';
+      return;
+    }
+    document.title = co.name + ' — Carrier Nexus';
+
+    var banner = co.banner_url
+      ? '<img class="banner-img" src="' + co.banner_url + '" onerror="this.style.display=\'none\'"><div class="banner-overlay"></div>'
+      : '<div class="banner-placeholder"><span class="banner-placeholder-text">TRUCKING</span></div>';
+
+    var logoInitials = (co.dba || co.name || 'CT').split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
+    var logoHtml = co.logo_url
+      ? '<img src="' + co.logo_url + '" onerror="this.innerHTML=\'' + logoInitials + '\'">'
+      : logoInitials;
+
+    var fmcsaBadge = co.verified_fmcsa
+      ? '<span class="badge badge-green">✓ FMCSA Verified</span>'
+      : '';
+
+    var dotChip  = co.usdot ? '<span class="badge badge-blue">DOT# ' + co.usdot + '</span>' : '';
+    var mcChip   = co.mc    ? '<span class="badge badge-blue">MC# ' + co.mc + '</span>' : '';
+    var dunsChip = co.duns  ? '<span class="badge badge-gray">DUNS# ' + co.duns + '</span>' : '';
+
+    var socialHtml = '';
+    if (co.social) {
+      Object.keys(co.social).forEach(function(k) {
+        socialHtml += '<a class="social-btn" href="' + co.social[k] + '" target="_blank" rel="noopener" title="' + k + '">' + socialIcon(k) + '</a>';
+      });
+    }
+
+    var stats = co.stats || {};
+    var statItems = [
+      { icon: '📦', val: stats.loads || 0, label: 'Loads Completed' },
+      { icon: '⭐', val: stats.years_experience || 0, label: 'Years Experience' },
+      { icon: '✅', val: stats.oos_days || 0, label: 'OOS Days' },
+      { icon: '🏆', val: stats.awards || 0, label: 'Awards Won' }
+    ];
+
+    var statsHtml = statItems.map(function(s, i) {
+      return '<div class="stat-card"><div class="stat-icon">' + s.icon + '</div><div class="stat-num" id="sc' + i + '">0</div><div class="stat-label">' + s.label + '</div></div>';
+    }).join('');
+
+    // About tab
+    var servicesChips = (co.services || []).map(function(s) {
+      return '<span class="service-chip">' + s + '</span>';
+    }).join('');
+    var aboutContent = '<p class="about-text">' + (co.about || '') + '</p>';
+    if (co.founded) aboutContent += '<p style="color:var(--mid);font-size:13px;margin-bottom:16px;">Founded: ' + co.founded + '</p>';
+    if (co.services && co.services.length) {
+      aboutContent += '<div style="margin-top:16px"><div style="font-size:11px;color:var(--mid);font-family:\'JetBrains Mono\',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Services</div><div class="services-grid">' + servicesChips + '</div></div>';
+    }
+
+    // Fleet tab
+    var fleetContent = '';
+    if (co.fleet) {
+      var allUnits = (co.fleet.trucks || []).map(function(t){return {name:t,type:'Truck'};})
+        .concat((co.fleet.trailers||[]).map(function(t){return {name:t,type:'Trailer'};}))
+        .concat((co.fleet.service||[]).map(function(t){return {name:t,type:'Service'};}));
+      if (allUnits.length) {
+        fleetContent = '<div class="fleet-grid">' + allUnits.map(function(u){
+          return '<div class="fleet-card"><div class="fleet-img">🚛</div><div class="fleet-info"><div class="fleet-name">' + u.name + '</div><div class="fleet-type">' + u.type + '</div></div></div>';
+        }).join('') + '</div>';
+      } else {
+        fleetContent = '<p style="color:var(--mid)">Fleet size: ' + (co.fleet_size || 'N/A') + ' units</p>';
+      }
+    } else {
+      fleetContent = '<p style="color:var(--mid)">Fleet size: ' + (co.fleet_size || 'N/A') + ' units</p>';
+    }
+
+    // Credentials tab
+    var credContent = '<div class="cred-grid">';
+    if (co.verified_fmcsa) credContent += '<div class="cred-card"><div class="cred-title">FMCSA Status</div><div class="cred-value" style="color:var(--green)">✓ Verified</div>' + (co.safer_url ? '<a class="cred-link" href="' + co.safer_url + '" target="_blank">View SAFER record →</a>' : '') + '</div>';
+    if (co.usdot) credContent += '<div class="cred-card"><div class="cred-title">USDOT Number</div><div class="cred-value">' + co.usdot + '</div></div>';
+    if (co.mc) credContent += '<div class="cred-card"><div class="cred-title">MC Number</div><div class="cred-value">' + co.mc + '</div></div>';
+    if (co.duns) credContent += '<div class="cred-card"><div class="cred-title">DUNS Number</div><div class="cred-value">' + co.duns + '</div></div>';
+    var insp = co.stats && co.stats.inspections_passed;
+    if (insp) credContent += '<div class="cred-card"><div class="cred-title">Inspections</div><div class="cred-value">' + insp + ' passed</div><div class="cred-link">' + (co.stats.violations || 0) + ' violations</div></div>';
+    credContent += '</div>';
+
+    // Brag tab
+    var bragContent = '';
+    if (co.brag && co.brag.length) {
+      bragContent = '<ul class="brag-list">' + co.brag.map(function(b){
+        return '<li class="brag-item"><span class="brag-check">✓</span><span class="brag-text">' + b + '</span></li>';
+      }).join('') + '</ul>';
+    } else {
+      bragContent = '<p style="color:var(--mid)">No highlights added yet.</p>';
+    }
+
+    // Contact tab
+    var contactInfo = '<div class="contact-info-block">';
+    if (co.phone) contactInfo += '<div class="contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 14a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.38 3h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.92z"/></svg>' + co.phone + '</div>';
+    if (co.fax) contactInfo += '<div class="contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 17 13 17"/><path d="M2 17l.09-.09A4 4 0 0 1 5 15.76V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7.75"/><line x1="6" y1="15" x2="6" y2="17"/></svg>Fax: ' + co.fax + '</div>';
+    if (co.email) contactInfo += '<div class="contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:' + co.email + '">' + co.email + '</a></div>';
+    if (co.website) contactInfo += '<div class="contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><a href="' + co.website + '" target="_blank" rel="noopener">' + co.website + '</a></div>';
+    if (co.hq) contactInfo += '<div class="contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' + co.hq + '</div>';
+    contactInfo += '</div>';
+
+    var html = `
+      <div class="banner-wrap">${banner}</div>
+      <div class="profile-header">
+        <div class="logo-circle">${logoHtml}</div>
+      </div>
+      <div class="main-content">
+        <div class="company-title-row">
+          <div>
+            <h1 class="company-name">${co.name}</h1>
+            <p class="company-tagline">${co.tagline || ''}</p>
+            <div class="badge-row">
+              ${fmcsaBadge}${dotChip}${mcChip}${dunsChip}
+              ${co.founded ? '<span class="badge badge-gray">Est. ' + co.founded + '</span>' : ''}
+              ${co.hq ? '<span class="badge badge-gray">📍 ' + co.hq + '</span>' : ''}
+            </div>
+          </div>
+          <div class="action-row">
+            <button class="btn-action btn-primary" onclick="document.getElementById('contactModal').classList.add('open')">Contact</button>
+            <button class="btn-action btn-secondary" onclick="document.getElementById('contactModal').classList.add('open')">Get Quote</button>
+            <button class="btn-action btn-secondary" onclick="shareProfile()">Share</button>
+            <button class="btn-action btn-secondary" onclick="window.print()">PDF</button>
+          </div>
+        </div>
+        ${socialHtml ? '<div class="social-row">' + socialHtml + '</div>' : ''}
+        <div class="stats-row">${statsHtml}</div>
+        <div class="tab-nav">
+          <button class="tab-btn active" data-tab="about" onclick="switchTab('about')">About</button>
+          <button class="tab-btn" data-tab="fleet" onclick="switchTab('fleet')">Fleet</button>
+          <button class="tab-btn" data-tab="creds" onclick="switchTab('creds')">Credentials</button>
+          <button class="tab-btn" data-tab="brag" onclick="switchTab('brag')">Highlights</button>
+          <button class="tab-btn" data-tab="contact" onclick="switchTab('contact')">Contact</button>
+        </div>
+        <div id="tab_about" class="tab-panel active">${aboutContent}</div>
+        <div id="tab_fleet" class="tab-panel">${fleetContent}</div>
+        <div id="tab_creds" class="tab-panel">${credContent}</div>
+        <div id="tab_brag" class="tab-panel">${bragContent}</div>
+        <div id="tab_contact" class="tab-panel">
+          <div class="contact-grid">
+            ${contactInfo}
+            <div class="contact-form">
+              <div class="form-title">Request a Load</div>
+              <div class="form-group"><label class="form-label">Your Name</label><input class="form-input" id="ctf_name" placeholder="Full Name"></div>
+              <div class="form-group"><label class="form-label">Company</label><input class="form-input" id="ctf_company" placeholder="Brokerage or company"></div>
+              <div class="form-group"><label class="form-label">Contact</label><input class="form-input" id="ctf_contact" placeholder="Email or phone"></div>
+              <div class="form-group"><label class="form-label">Load Details</label><textarea class="form-input" id="ctf_details" placeholder="Origin, destination, weight, dates..."></textarea></div>
+              <button class="btn-action btn-primary" style="width:100%" onclick="submitInlineRequest()">Send Request</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('profileRoot').innerHTML = html;
+
+    // Animate counters
+    setTimeout(function() {
+      statItems.forEach(function(s, i) {
+        var el = document.getElementById('sc' + i);
+        if (el) animateCounter(el, s.val);
+      });
+    }, 200);
+  }
+
+  function submitInlineRequest() {
+    var req = {
+      id: 'cr_' + Date.now(),
+      name: document.getElementById('ctf_name').value,
+      company: document.getElementById('ctf_company').value,
+      contact: document.getElementById('ctf_contact').value,
+      details: document.getElementById('ctf_details').value,
+      timestamp: new Date().toISOString()
+    };
+    var reqs = JSON.parse(localStorage.getItem('nexus_contact_requests') || '[]');
+    reqs.push(req);
+    localStorage.setItem('nexus_contact_requests', JSON.stringify(reqs));
+    showToast('Request submitted!');
+  }
+
+  function renderDriver(user) {
+    if (!user) {
+      document.getElementById('profileRoot').innerHTML = '<div class="private-msg"><h2>Driver Not Found</h2><p>No driver found with that ID.</p></div>';
+      return;
+    }
+    var nameParts = (user.name || 'Driver').split(' ');
+    var initials = nameParts.map(function(p){ return p[0]; }).join('').toUpperCase().slice(0,2);
+    document.title = user.name + ' — Carrier Nexus';
+
+    var html = `
+      <div class="main-content" style="padding-top:32px;">
+        <div class="driver-hero">
+          <div class="driver-initials">${initials}</div>
+          <h1 class="company-name">${user.name || 'Driver'}</h1>
+          <p class="company-tagline" style="margin-top:6px;">${user.role ? user.role.replace('_',' ').toUpperCase() : 'DRIVER'}</p>
+          <div class="badge-row" style="justify-content:center;margin-top:12px;">
+            <span class="badge badge-green">CDL-A</span>
+            <span class="badge badge-blue">Carrier Trucking US</span>
+            ${user.active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-gray">Inactive</span>'}
+          </div>
+        </div>
+        <div class="stats-row" style="max-width:700px;margin:24px auto;">
+          <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-num" id="dsc0">0</div><div class="stat-label">Loads Delivered</div></div>
+          <div class="stat-card"><div class="stat-icon">🛣️</div><div class="stat-num" id="dsc1">0</div><div class="stat-label">Miles Driven</div></div>
+          <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-num" id="dsc2">0</div><div class="stat-label">Inspections Passed</div></div>
+          <div class="stat-card"><div class="stat-icon">🚫</div><div class="stat-num">0</div><div class="stat-label">OOS Days</div></div>
+        </div>
+        <div class="tab-nav" style="max-width:700px;margin:0 auto 24px;">
+          <button class="tab-btn active" data-tab="dabout" onclick="switchTab('dabout')">About</button>
+          <button class="tab-btn" data-tab="dendorse" onclick="switchTab('dendorse')">Endorsements</button>
+          <button class="tab-btn" data-tab="dsafety" onclick="switchTab('dsafety')">Safety Record</button>
+        </div>
+        <div id="tab_dabout" class="tab-panel active" style="max-width:700px;margin:0 auto;">
+          <p class="about-text">Professional driver with Carrier Trucking US. CDL-A licensed, experienced in OTR and regional operations.</p>
+        </div>
+        <div id="tab_dendorse" class="tab-panel" style="max-width:700px;margin:0 auto;">
+          <div class="services-grid">
+            <span class="service-chip">HazMat</span>
+            <span class="service-chip">Tanker</span>
+            <span class="service-chip">Doubles/Triples</span>
+            <span class="service-chip">Oversize</span>
+          </div>
+        </div>
+        <div id="tab_dsafety" class="tab-panel" style="max-width:700px;margin:0 auto;">
+          <div class="brag-item"><span class="brag-check">✓</span><span class="brag-text">Clean driving record — zero violations on file</span></div>
+          <div class="brag-item" style="margin-top:10px"><span class="brag-check">✓</span><span class="brag-text">All DOT physicals current</span></div>
+          <div class="brag-item" style="margin-top:10px"><span class="brag-check">✓</span><span class="brag-text">Zero out-of-service days</span></div>
+        </div>
+      </div>
+    `;
+    document.getElementById('profileRoot').innerHTML = html;
+    setTimeout(function() {
+      var el0 = document.getElementById('dsc0'); if(el0) animateCounter(el0, 48);
+      var el1 = document.getElementById('dsc1'); if(el1) animateCounter(el1, 142000);
+      var el2 = document.getElementById('dsc2'); if(el2) animateCounter(el2, 3);
+    }, 200);
+  }
+
+  function renderRig(rigId) {
+    var units = [];
+    try { units = JSON.parse(localStorage.getItem('nexus_equipment_units') || '[]'); } catch(e) {}
+    var rig = units.find(function(u){ return u.id === rigId; }) || {
+      id: 'demo_001', unit_num: 'DEMO-01', make: 'Peterbilt', model: '389', year: '2018',
+      status: 'available', length: '53 ft', weight_cap: '80,000 lbs',
+      trailer_type: 'Flatbed', oversize: true
+    };
+
+    document.title = 'Rig ' + (rig.unit_num || rig.id) + ' — Carrier Nexus';
+    var statusColor = rig.status === 'available' ? 'var(--green)' : 'var(--yellow)';
+    var html = `
+      <div class="rig-hero">
+        <div style="font-size:80px;position:relative;z-index:1;">🚛</div>
+        <div class="rig-overlay"></div>
+      </div>
+      <div class="rig-content">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+          <div>
+            <h1 class="company-name">Unit #${rig.unit_num || rig.id}</h1>
+            <p class="company-tagline">${rig.year || ''} ${rig.make || ''} ${rig.model || ''}</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="badge" style="background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:${statusColor};font-size:13px;padding:6px 14px;">${(rig.status||'available').toUpperCase()}</span>
+            <button class="btn-action btn-primary" onclick="document.getElementById('contactModal').classList.add('open')">Request This Rig</button>
+          </div>
+        </div>
+        <div class="broker-badge">
+          <div class="broker-badge-title">✓ READY FOR DISPATCH</div>
+          <div class="broker-specs">
+            <div class="broker-spec"><strong>Unit:</strong> ${rig.unit_num || rig.id}</div>
+            <div class="broker-spec"><strong>Type:</strong> ${rig.trailer_type || 'Flatbed'}</div>
+            <div class="broker-spec"><strong>Length:</strong> ${rig.length || '53 ft'}</div>
+            <div class="broker-spec"><strong>Max Weight:</strong> ${rig.weight_cap || '80,000 lbs'}</div>
+            <div class="broker-spec"><strong>Oversize:</strong> ${rig.oversize ? 'Yes' : 'No'}</div>
+          </div>
+        </div>
+        <div class="rig-grid">
+          <div class="spec-card">
+            <div class="spec-title">Power Unit</div>
+            <div class="spec-row"><span class="spec-key">Make/Model</span><span class="spec-val">${rig.make || 'N/A'} ${rig.model || ''}</span></div>
+            <div class="spec-row"><span class="spec-key">Year</span><span class="spec-val">${rig.year || 'N/A'}</span></div>
+            <div class="spec-row"><span class="spec-key">Unit #</span><span class="spec-val">${rig.unit_num || rig.id}</span></div>
+            <div class="spec-row"><span class="spec-key">Status</span><span class="spec-val" style="color:${statusColor}">${(rig.status||'available').toUpperCase()}</span></div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-title">Trailing Unit</div>
+            <div class="spec-row"><span class="spec-key">Trailer Type</span><span class="spec-val">${rig.trailer_type || 'Flatbed'}</span></div>
+            <div class="spec-row"><span class="spec-key">Length</span><span class="spec-val">${rig.length || '53 ft'}</span></div>
+            <div class="spec-row"><span class="spec-key">Max Weight</span><span class="spec-val">${rig.weight_cap || '80,000 lbs'}</span></div>
+            <div class="spec-row"><span class="spec-key">Oversize Capable</span><span class="spec-val">${rig.oversize ? 'Yes' : 'No'}</span></div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.getElementById('profileRoot').innerHTML = html;
+  }
+
+  // Route
+  if (pType === 'driver') {
+    var users = getUsers();
+    var user = users.find(function(u){ return u.id === pId; }) || users[0];
+    renderDriver(user);
+  } else if (pType === 'rig') {
+    renderRig(pId);
+  } else {
+    renderCompany(getCompany());
+  }
+</script>
+
+<footer class="page-footer">
+  © 2026 Carrier Nexus &nbsp;|&nbsp;
+  <a href="javascript:document.getElementById('contactModal').classList.add('open')">Request a load</a> &nbsp;|&nbsp;
+  <a href="javascript:shareProfile()">Share</a> &nbsp;|&nbsp;
+  <a href="javascript:window.print()">Export PDF</a>
+</footer>
+
+</body>
+</html>

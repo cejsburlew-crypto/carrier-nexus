@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Privacy Manager — Carrier Nexus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script src="nexus-config.js"></script>
+  <style>
+    :root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
+    .content{margin-left:220px;flex:1;min-height:100vh;padding:0;}
+    .topbar{background:#0d1117;border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;}
+    .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;color:#fff;letter-spacing:1px;}
+    .inner{padding:24px;}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;}
+    .card-title{font-size:11px;color:var(--mid);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+    .form-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+    .form-label{font-size:12px;color:var(--mid);display:block;margin-bottom:5px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px;text-transform:uppercase;}
+    .form-select{background:#0d1421;border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:6px;font-size:13px;font-family:'Barlow',sans-serif;min-width:300px;}
+    .form-select:focus{outline:none;border-color:var(--blue);}
+    .btn{padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;border:none;transition:all .15s;}
+    .btn-primary{background:var(--blue);color:#fff;}
+    .btn-primary:hover{background:#2563eb;}
+    .btn-secondary{background:var(--panel2);border:1px solid var(--border);color:var(--text);}
+    .btn-secondary:hover{background:#212d40;}
+    .btn-danger{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--red);}
+    .btn-danger:hover{background:rgba(239,68,68,.25);}
+    .btn-yellow{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:var(--yellow);}
+    .btn-yellow:hover{background:rgba(245,158,11,.25);}
+    .mode-toggle{display:flex;gap:8px;margin-bottom:16px;}
+    .mode-btn{padding:8px 20px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;border:1px solid var(--border);background:var(--panel2);color:var(--mid);transition:all .15s;}
+    .mode-btn.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+    .instruction-bar{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:10px 14px;font-size:13px;color:#93c5fd;margin-bottom:14px;display:none;}
+    .preset-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+    .doc-wrap{position:relative;display:inline-block;max-width:100%;user-select:none;}
+    #docImg{max-width:100%;display:block;border-radius:8px;border:1px solid var(--border);}
+    #blurLayer{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+    #blurLayer.edit-mode{pointer-events:all;}
+    .blur-zone{position:absolute;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(0,0,0,0.5);border:2px solid var(--red);display:flex;align-items:center;justify-content:center;cursor:default;}
+    .blur-zone.edit-mode-zone{cursor:move;}
+    .blur-zone-label{font-size:10px;color:#fff;font-family:'JetBrains Mono',monospace;text-align:center;pointer-events:none;padding:2px 4px;background:rgba(0,0,0,.6);border-radius:3px;max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .blur-zone-remove{position:absolute;top:-8px;right:-8px;width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;border:none;cursor:pointer;font-size:11px;line-height:1;display:none;align-items:center;justify-content:center;font-weight:700;}
+    .blur-zone-remove.visible{display:flex;}
+    .drag-rect{position:absolute;background:rgba(59,130,246,.2);border:2px dashed var(--blue);pointer-events:none;}
+    .placeholder-box{width:600px;max-width:100%;height:400px;background:var(--panel2);border:2px dashed var(--border);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--mid);font-size:14px;gap:8px;}
+    .placeholder-box svg{opacity:.3;}
+    .save-row{margin-top:14px;display:flex;align-items:center;gap:10px;}
+    .toast{position:fixed;bottom:24px;right:24px;background:#1e293b;border:1px solid var(--green);color:var(--green);padding:12px 20px;border-radius:8px;font-size:13px;z-index:9999;animation:slideIn .2s ease;font-family:'JetBrains Mono',monospace;}
+    @keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .zone-count{font-size:12px;color:var(--mid);font-family:'JetBrains Mono',monospace;}
+    .clear-all-btn{margin-left:auto;}
+  </style>
+</head>
+<body>
+<script src="nexus-sidebar.js"></script>
+<div class="content">
+  <div class="topbar">
+    <span class="page-title">🔒 Document Privacy Manager</span>
+    <span class="zone-count" id="zoneCountLabel">0 zones</span>
+  </div>
+  <div class="inner">
+
+    <!-- DOC SELECTOR -->
+    <div class="card">
+      <div class="card-title">Select Document</div>
+      <div class="form-row">
+        <div>
+          <label class="form-label">Document</label>
+          <select class="form-select" id="docSelect" onchange="loadDocument(this.value)">
+            <option value="">— Choose a document —</option>
+          </select>
+        </div>
+        <div style="margin-top:18px">
+          <button class="btn btn-secondary" onclick="refreshDocList()">↻ Refresh</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODE + CONTROLS -->
+    <div class="card" id="controlsCard" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+        <div class="mode-toggle">
+          <button class="mode-btn active" id="modeEditBtn" onclick="setMode('edit')">✏️ Edit Privacy</button>
+          <button class="mode-btn" id="modeViewBtn" onclick="setMode('view')">👁️ View Mode</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span class="zone-count" id="zoneCountInline">0 blur zones</span>
+          <button class="btn btn-danger clear-all-btn" onclick="clearAllZones()">Clear All</button>
+        </div>
+      </div>
+
+      <!-- EDIT MODE controls -->
+      <div id="editControls">
+        <div class="instruction-bar" id="instructionBar" style="display:flex;">
+          Drag on the document to draw a blur zone. Use presets for common CDL/document fields.
+        </div>
+        <div class="card-title">Quick Presets</div>
+        <div class="preset-row">
+          <button class="btn btn-yellow" onclick="addPresetZone('License #', 60, 5, 30, 8)">🪪 License #</button>
+          <button class="btn btn-yellow" onclick="addPresetZone('Home Address', 5, 35, 55, 10)">🏠 Home Address</button>
+          <button class="btn btn-yellow" onclick="addPresetZone('Date of Birth', 5, 25, 35, 8)">🎂 Date of Birth</button>
+          <button class="btn btn-yellow" onclick="addPresetZone('Barcode', 5, 80, 90, 15)">▓ Barcode</button>
+          <button class="btn btn-yellow" onclick="addPresetZone('SSN/EIN', 5, 50, 35, 8)">🔐 SSN / EIN</button>
+          <button class="btn btn-yellow" onclick="addPresetZone('Signature', 5, 70, 55, 8)">✍️ Signature</button>
+        </div>
+      </div>
+
+      <div class="save-row">
+        <button class="btn btn-primary" onclick="saveBlurZones()">💾 Save Privacy Settings</button>
+        <button class="btn btn-secondary" onclick="exportBlurred()">📄 Export Blurred View</button>
+      </div>
+    </div>
+
+    <!-- DOC DISPLAY -->
+    <div class="card">
+      <div class="card-title">Document Preview</div>
+      <div id="docContainer">
+        <div class="placeholder-box" id="placeholderBox">
+          <svg viewBox="0 0 48 48" fill="none" width="48" height="48"><rect x="8" y="4" width="32" height="40" rx="4" stroke="#64748b" stroke-width="2"/><line x1="16" y1="14" x2="32" y2="14" stroke="#64748b" stroke-width="2"/><line x1="16" y1="20" x2="32" y2="20" stroke="#64748b" stroke-width="2"/><line x1="16" y1="26" x2="28" y2="26" stroke="#64748b" stroke-width="2"/></svg>
+          <span>Select a document above to view it</span>
+          <span style="font-size:12px;">CDL, W-9, insurance, and other driver documents</span>
+        </div>
+        <div class="doc-wrap" id="docWrap" style="display:none;">
+          <img id="docImg" alt="Document" ondragstart="return false">
+          <div id="blurLayer"></div>
+          <div class="drag-rect" id="dragRect" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  var currentDocId = null;
+  var currentMode = 'edit';
+  var blurZones = [];
+  var isDragging = false;
+  var dragStart = { x: 0, y: 0 };
+
+  function showToast(msg) {
+    var t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(function() { t.remove(); }, 3000);
+  }
+
+  function updateZoneCount() {
+    var n = blurZones.length;
+    var label = n + ' blur zone' + (n !== 1 ? 's' : '');
+    var el1 = document.getElementById('zoneCountLabel');
+    var el2 = document.getElementById('zoneCountInline');
+    if (el1) el1.textContent = label;
+    if (el2) el2.textContent = label;
+  }
+
+  // Load doc list from nexus_documents localStorage
+  function refreshDocList() {
+    var docs = [];
+    try { docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e) {}
+    // Sort: CDL/driver docs first
+    var priority = ['cdl', 'w9', 'insurance'];
+    docs.sort(function(a, b) {
+      var aP = priority.indexOf((a.type||'').toLowerCase());
+      var bP = priority.indexOf((b.type||'').toLowerCase());
+      if (aP === -1 && bP === -1) return (a.filename||'').localeCompare(b.filename||'');
+      if (aP === -1) return 1;
+      if (bP === -1) return -1;
+      return aP - bP;
+    });
+
+    var sel = document.getElementById('docSelect');
+    var existing = sel.innerHTML;
+    sel.innerHTML = '<option value="">— Choose a document —</option>';
+    docs.forEach(function(d) {
+      var opt = document.createElement('option');
+      opt.value = d.id || d.filename;
+      opt.textContent = (d.filename || d.id || 'Untitled') + (d.type ? ' [' + d.type.toUpperCase() + ']' : '');
+      opt.dataset.url = d.driveUrl || d.url || '';
+      sel.appendChild(opt);
+    });
+
+    // Add sample docs if none
+    if (docs.length === 0) {
+      var samples = [
+        { id: 'sample_cdl', label: 'Sample CDL — David Fonseca [CDL]', url: '' },
+        { id: 'sample_w9', label: 'Sample W-9 [W9]', url: '' }
+      ];
+      samples.forEach(function(s) {
+        var opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = s.label;
+        sel.appendChild(opt);
+      });
+    }
+  }
+
+  function loadDocument(docId) {
+    if (!docId) return;
+    currentDocId = docId;
+
+    // Get drive URL from select option
+    var sel = document.getElementById('docSelect');
+    var selected = sel.options[sel.selectedIndex];
+    var url = selected ? selected.dataset.url : '';
+
+    document.getElementById('placeholderBox').style.display = 'none';
+    document.getElementById('docWrap').style.display = 'inline-block';
+    document.getElementById('controlsCard').style.display = 'block';
+
+    var img = document.getElementById('docImg');
+    if (url && url.startsWith('http')) {
+      img.src = url;
+      img.style.display = 'block';
+    } else {
+      // Show placeholder image
+      img.style.display = 'none';
+      // Create a canvas placeholder
+      var wrap = document.getElementById('docWrap');
+      var existingCanvas = wrap.querySelector('canvas.doc-canvas');
+      if (existingCanvas) existingCanvas.remove();
+      var canvas = document.createElement('canvas');
+      canvas.className = 'doc-canvas';
+      canvas.width = 600; canvas.height = 800;
+      canvas.style.maxWidth = '100%';
+      canvas.style.borderRadius = '8px';
+      canvas.style.border = '1px solid var(--border)';
+      var ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#1a2235';
+      ctx.fillRect(0, 0, 600, 800);
+      ctx.fillStyle = '#2d3f5c';
+      ctx.fillRect(20, 20, 560, 760);
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = 'bold 18px Barlow Condensed, sans-serif';
+      ctx.fillText('DOCUMENT PREVIEW', 30, 60);
+      ctx.font = '14px Barlow, sans-serif';
+      ctx.fillStyle = '#64748b';
+      ctx.fillText('ID: ' + docId, 30, 90);
+      ctx.fillText('Connect Google Drive to view actual document.', 30, 120);
+      // Draw some fake content lines
+      ctx.fillStyle = '#334155';
+      for (var i = 0; i < 12; i++) {
+        var y = 160 + i * 50;
+        ctx.fillRect(30, y, 400 + Math.random() * 100, 16);
+      }
+      wrap.insertBefore(canvas, wrap.querySelector('#blurLayer'));
+      img.style.display = 'none';
+    }
+
+    // Clear and reload blur zones
+    blurZones = [];
+    document.getElementById('blurLayer').innerHTML = '';
+    loadBlurZones(docId);
+    setMode(currentMode);
+  }
+
+  function loadBlurZones(docId) {
+    var privacy = {};
+    try { privacy = JSON.parse(localStorage.getItem('nexus_doc_privacy') || '{}'); } catch(e) {}
+    var zones = privacy[docId] || [];
+    zones.forEach(function(z) { addBlurZone(z.x, z.y, z.w, z.h, z.label); });
+  }
+
+  function addBlurZone(x, y, w, h, label) {
+    var layer = document.getElementById('blurLayer');
+    var zone = document.createElement('div');
+    zone.className = 'blur-zone' + (currentMode === 'edit' ? ' edit-mode-zone' : '');
+    zone.style.left = x + 'px';
+    zone.style.top = y + 'px';
+    zone.style.width = w + 'px';
+    zone.style.height = h + 'px';
+
+    var lbl = document.createElement('div');
+    lbl.className = 'blur-zone-label';
+    lbl.textContent = label || 'Blur';
+    zone.appendChild(lbl);
+
+    var rmBtn = document.createElement('button');
+    rmBtn.className = 'blur-zone-remove' + (currentMode === 'edit' ? ' visible' : '');
+    rmBtn.textContent = '×';
+    rmBtn.onclick = function(e) {
+      e.stopPropagation();
+      var idx = blurZones.findIndex(function(z) { return z.el === zone; });
+      if (idx > -1) blurZones.splice(idx, 1);
+      zone.remove();
+      updateZoneCount();
+    };
+    zone.appendChild(rmBtn);
+
+    layer.appendChild(zone);
+    blurZones.push({ el: zone, x: x, y: y, w: w, h: h, label: label || 'Blur' });
+    updateZoneCount();
+  }
+
+  function addPresetZone(label, xPct, yPct, wPct, hPct) {
+    var container = getDocContainer();
+    if (!container) { showToast('Load a document first'); return; }
+    var rect = container.getBoundingClientRect();
+    var cw = container.offsetWidth || rect.width || 600;
+    var ch = container.offsetHeight || rect.height || 800;
+    var x = cw * xPct / 100;
+    var y = ch * yPct / 100;
+    var w = cw * wPct / 100;
+    var h = ch * hPct / 100;
+    addBlurZone(x, y, w, h, label);
+    saveBlurZones();
+  }
+
+  function getDocContainer() {
+    var img = document.getElementById('docImg');
+    if (img && img.style.display !== 'none' && img.offsetWidth > 0) return img;
+    var canvas = document.querySelector('canvas.doc-canvas');
+    if (canvas) return canvas;
+    return null;
+  }
+
+  function saveBlurZones() {
+    if (!currentDocId) { showToast('No document selected'); return; }
+    var privacy = {};
+    try { privacy = JSON.parse(localStorage.getItem('nexus_doc_privacy') || '{}'); } catch(e) {}
+    privacy[currentDocId] = blurZones.map(function(z) {
+      return { x: z.x, y: z.y, w: z.w, h: z.h, label: z.label };
+    });
+    localStorage.setItem('nexus_doc_privacy', JSON.stringify(privacy));
+    showToast('Privacy settings saved (' + blurZones.length + ' zones)');
+  }
+
+  function clearAllZones() {
+    blurZones = [];
+    document.getElementById('blurLayer').innerHTML = '';
+    updateZoneCount();
+    showToast('All blur zones cleared');
+  }
+
+  function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('modeEditBtn').classList.toggle('active', mode === 'edit');
+    document.getElementById('modeViewBtn').classList.toggle('active', mode === 'view');
+    document.getElementById('editControls').style.display = mode === 'edit' ? 'block' : 'none';
+
+    var layer = document.getElementById('blurLayer');
+    if (mode === 'edit') {
+      layer.classList.add('edit-mode');
+    } else {
+      layer.classList.remove('edit-mode');
+    }
+
+    // Show/hide remove buttons
+    document.querySelectorAll('.blur-zone-remove').forEach(function(btn) {
+      btn.classList.toggle('visible', mode === 'edit');
+    });
+    document.querySelectorAll('.blur-zone').forEach(function(z) {
+      z.classList.toggle('edit-mode-zone', mode === 'edit');
+    });
+  }
+
+  function exportBlurred() {
+    showToast('Print the page to export a blurred PDF (Ctrl+P / Cmd+P)');
+    window.print();
+  }
+
+  // ── Drag-to-draw ──
+  var docWrapEl = document.getElementById('docWrap');
+  var dragRectEl = document.getElementById('dragRect');
+
+  docWrapEl.addEventListener('mousedown', function(e) {
+    if (currentMode !== 'edit') return;
+    if (e.target.closest('.blur-zone')) return;
+    if (!currentDocId) return;
+    isDragging = true;
+    var rect = docWrapEl.getBoundingClientRect();
+    dragStart = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    dragRectEl.style.display = 'block';
+    dragRectEl.style.left = dragStart.x + 'px';
+    dragRectEl.style.top = dragStart.y + 'px';
+    dragRectEl.style.width = '0';
+    dragRectEl.style.height = '0';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    if (!isDragging) return;
+    var rect = docWrapEl.getBoundingClientRect();
+    var cx = e.clientX - rect.left;
+    var cy = e.clientY - rect.top;
+    var x = Math.min(cx, dragStart.x);
+    var y = Math.min(cy, dragStart.y);
+    var w = Math.abs(cx - dragStart.x);
+    var h = Math.abs(cy - dragStart.y);
+    dragRectEl.style.left = x + 'px';
+    dragRectEl.style.top = y + 'px';
+    dragRectEl.style.width = w + 'px';
+    dragRectEl.style.height = h + 'px';
+  });
+
+  document.addEventListener('mouseup', function(e) {
+    if (!isDragging) return;
+    isDragging = false;
+    dragRectEl.style.display = 'none';
+    var rect = docWrapEl.getBoundingClientRect();
+    var cx = e.clientX - rect.left;
+    var cy = e.clientY - rect.top;
+    var x = Math.min(cx, dragStart.x);
+    var y = Math.min(cy, dragStart.y);
+    var w = Math.abs(cx - dragStart.x);
+    var h = Math.abs(cy - dragStart.y);
+    if (w > 15 && h > 15) {
+      var label = prompt('Label for this blur zone (e.g. "SSN", "License #"):', 'Private');
+      if (label !== null) {
+        addBlurZone(x, y, w, h, label || 'Private');
+      }
+    }
+  });
+
+  // Init
+  refreshDocList();
+  updateZoneCount();
+</script>
+</body>
+</html>

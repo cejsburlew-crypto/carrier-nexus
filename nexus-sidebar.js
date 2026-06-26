@@ -45,7 +45,7 @@
     { key:'contacts',label:'Contacts',       pages:['contacts.html'] },
     { key:'taxhr',   label:'Tax & HR',       pages:['tax-forms.html','w9.html'] },
     { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','insurance-kpi.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html','incident-report.html','coi-management.html','claims.html','coaching-log.html','fmcsa-compliance.html'] },
-    { key:'admin',   label:'Admin',          pages:['member-management.html','admin-users.html'] },
+    { key:'admin',   label:'Admin',          pages:['member-management.html','admin-users.html','company-management.html','doc-privacy.html','public-profile.html'] },
     { key:'intel',   label:'Intelligence',   pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html','search.html','gps-tracker.html'] },
     { key:'comms',   label:'Communications', pages:['comms.html','nexus-connect.html'] },
   ];
@@ -254,7 +254,10 @@
     ) +
     sec('admin', 'Admin',
       lnk('member-management.html',    I.members, 'Members') +
-      lnk('admin-users.html',          I.admin,   'User Accounts')
+      lnk('admin-users.html',          I.admin,   'User Accounts') +
+      lnk('company-management.html',   I.truck,   '🏢 Company Management') +
+      lnk('doc-privacy.html',           I.file,    '🔒 Doc Privacy') +
+      lnk('public-profile.html?type=company&id=co_001', I.person, '👤 Public Profiles')
     ) +
     sec('intel', 'Intelligence',
       lnk('nexus-ai.html',             I.ai,      'AI Assistant') +

@@ -323,3 +323,102 @@ window.NexusMembers = {
     }).filter(Boolean);
   }
 };
+
+// ============================================================
+// PUBLIC COMPANY PROFILES (for public-profile.html)
+// ============================================================
+const NEXUS_COMPANY_PROFILES = [
+  {
+    id: 'co_001',
+    name: 'Carrier Trucking US',
+    dba: 'Carrier Trucking',
+    slug: 'carrier-trucking-us',
+    usdot: '',
+    mc: '',
+    duns: '',
+    founded: '2024',
+    hq: 'Miami, FL',
+    phone: '',
+    email: 'crtruckus@gmail.com',
+    website: '',
+    tagline: 'Reliable. Professional. On Time.',
+    about: 'Carrier Trucking US operates a modern fleet serving carriers and brokers across the United States.',
+    services: ['Dry Van', 'Flatbed', 'OTR', 'Regional'],
+    social: {},
+    stats: { loads: 0, years_experience: 2, oos_days: 0, awards: 0, inspections_passed: 0 },
+    brag: [],
+    fleet_size: 6,
+    public: true,
+    verified_fmcsa: false,
+    logo_url: '',
+    banner_url: '',
+    invite_token: 'ct2026inv',
+    created: '2024-01-01'
+  },
+  {
+    id: 'co_002',
+    name: 'Heavy Hauling Heavy Haulers LLC',
+    dba: 'Heavy Hauling',
+    slug: 'heavy-hauling-heavy-haulers',
+    usdot: '1150193',
+    mc: '529493',
+    duns: '045434921',
+    founded: '2003',
+    hq: 'Cashion, OK 73016',
+    phone: '405-885-6040',
+    fax: '1-800-858-6163',
+    email: 'heavyhauling@execs.com',
+    website: 'https://www.heavyhaulingheavyhaulers.com',
+    tagline: 'Leading the Way in Heavy Haul',
+    about: 'Heavy Hauling has been in business since 2003 with a total of 31 years of trucking experience. Let us put your mind at ease by taking the load off you. Specializing in oversize and superload transportation with an unmatched safety record.',
+    services: ['Heavy Haul', 'Oversize / OD Loads', 'Superloads', 'Pre-Trip Planning', 'Pilot Car Services', 'Service Truck', 'Equipment Towing', 'Rental'],
+    social: {
+      facebook: 'https://www.facebook.com/HeavyHaulingHeavyHaulersLLC/',
+      instagram: 'https://www.instagram.com/heavyhaulingheavy/',
+      twitter: 'https://twitter.com/HeavyHauling8',
+      linkedin: 'https://www.linkedin.com/in/albert-napolitano-7626b0a2/',
+      youtube: 'https://www.youtube.com/channel/UCCqAsAgNcnFTfJ7rTb35Ilw'
+    },
+    stats: {
+      loads: 10543,
+      years_experience: 31,
+      oos_days: 0,
+      awards: 26,
+      inspections_passed: 4,
+      level1_inspections: 3,
+      level2_inspections: 1,
+      violations: 0
+    },
+    brag: [
+      '10,543 loads completed with zero out-of-service days',
+      '31 years of combined trucking experience',
+      '26 industry awards won',
+      '4 FMCSA roadside inspections — all passed, zero violations (as of Sept 2023)',
+      '3 Level 1 and 1 Level 2 inspections — all clean',
+      'Specializes in oversize and superloads requiring pre-trip engineering',
+      'Oklahoma-based, serving all 48 contiguous states'
+    ],
+    fleet_size: 6,
+    fleet: {
+      trucks: ['2016 Peterbilt', '2014 Peterbilt', '2007 Western Star', '2005 Western Star'],
+      service: ['Service Truck'],
+      trailers: ['See Trailer Fleet Info page']
+    },
+    partners: ['Premier Truck Group (OKC)'],
+    driver_app: 'https://intelliapp.driverapponline.com/c/heavyhaulingheavyhaulers',
+    public: true,
+    verified_fmcsa: true,
+    safer_url: 'https://safer.fmcsa.dot.gov/CompanySnapshot.aspx',
+    logo_url: '',
+    banner_url: 'https://static.wixstatic.com/media/fe0499_a626f6b75291405894aefccafd37d522f002.jpg',
+    invite_token: 'hhhh2026inv',
+    created: '2026-06-26'
+  }
+];
+
+if (typeof window !== 'undefined') {
+  window.NEXUS_COMPANY_PROFILES = NEXUS_COMPANY_PROFILES;
+  if (!localStorage.getItem('nexus_companies')) {
+    localStorage.setItem('nexus_companies', JSON.stringify(NEXUS_COMPANY_PROFILES));
+  }
+}
