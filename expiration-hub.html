@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⏰ Expiration Hub — Carrier Nexus</title>
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;min-height:100vh;padding-left:220px}
+@media(max-width:768px){body{padding-left:0!important}}
+#sidebar{width:220px;min-width:220px;background:var(--panel);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto}
+.main-content{flex:1;padding:24px;max-width:1100px}
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:26px;font-weight:700;color:var(--text)}
+.page-header p{color:var(--mid);font-size:14px;margin-top:4px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+@media(max-width:700px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.stat-card .stat-num{font-size:28px;font-weight:700}
+.stat-card .stat-label{font-size:12px;color:var(--mid);margin-top:4px}
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center}
+.filter-btn{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--panel2);color:var(--mid);cursor:pointer;font-size:13px;transition:.15s}
+.filter-btn.active{border-color:var(--blue);color:var(--blue);background:rgba(59,130,246,.1)}
+.filter-sep{width:1px;height:28px;background:var(--border)}
+.item-card{background:var(--panel);border-radius:10px;border:1px solid var(--border);padding:16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px;border-left:4px solid var(--border)}
+.item-card.EXPIRED{border-left-color:var(--red)}
+.item-card.URGENT{border-left-color:var(--orange)}
+.item-card.SOON{border-left-color:var(--yellow)}
+.item-card.OK{border-left-color:var(--green)}
+.item-card.UNKNOWN{border-left-color:var(--mid)}
+.badge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap}
+.badge.EXPIRED{background:rgba(239,68,68,.15);color:var(--red)}
+.badge.URGENT{background:rgba(249,115,22,.15);color:var(--orange)}
+.badge.SOON{background:rgba(245,158,11,.15);color:var(--yellow)}
+.badge.OK{background:rgba(16,185,129,.15);color:var(--green)}
+.badge.UNKNOWN{background:rgba(100,116,139,.15);color:var(--mid)}
+.item-name{font-size:15px;font-weight:600;color:var(--text)}
+.item-meta{font-size:12px;color:var(--mid);margin-top:3px}
+.item-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.btn-sm{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--panel2);color:var(--text);cursor:pointer;font-size:12px}
+.btn-sm:hover{border-color:var(--blue);color:var(--blue)}
+.top-actions{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.btn-primary{padding:10px 20px;background:var(--blue);color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600}
+.empty-state{text-align:center;padding:60px 20px;color:var(--mid)}
+.empty-state div:first-child{font-size:48px;margin-bottom:12px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;width:420px;max-width:95vw}
+.modal-box h3{font-size:16px;color:var(--text);margin-bottom:16px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;color:var(--mid);margin-bottom:5px}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-size:14px}
+.form-row{display:flex;gap:8px}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.btn-cancel{padding:8px 16px;background:var(--panel2);border:1px solid var(--border);color:var(--mid);border-radius:6px;cursor:pointer}
+.reminder-bar{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--mid)}
+.reminder-bar input{width:60px;background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:4px 8px;color:var(--text);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<div id="sidebar"></div>
+<script src="nexus-sidebar.js"></script>
+<div class="main-content">
+  <div class="page-header">
+    <h1>&#x23F0; Expiration Hub</h1>
+    <p>Everything that expires — all in one place</p>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-num" id="statExpired" style="color:var(--red)">0</div><div class="stat-label">&#x1F534; EXPIRED</div></div>
+    <div class="stat-card"><div class="stat-num" id="statUrgent" style="color:var(--orange)">0</div><div class="stat-label">&#x1F7E0; URGENT (&lt; 30 days)</div></div>
+    <div class="stat-card"><div class="stat-num" id="statSoon" style="color:var(--yellow)">0</div><div class="stat-label">&#x1F7E1; SOON (&lt; 60 days)</div></div>
+    <div class="stat-card"><div class="stat-num" id="statOk" style="color:var(--green)">0</div><div class="stat-label">&#x1F7E2; GOOD (&gt; 60 days)</div></div>
+  </div>
+
+  <div class="reminder-bar">
+    &#x1F514; Remind me
+    <input type="number" id="reminderDays" value="30" min="1" max="365" onchange="saveReminder(this.value)">
+    days before expiry
+  </div>
+
+  <div class="top-actions">
+    <div class="filter-row" id="statusFilters">
+      <button class="filter-btn active" data-status="ALL" onclick="setStatusFilter('ALL',this)">All</button>
+      <button class="filter-btn" data-status="EXPIRED" onclick="setStatusFilter('EXPIRED',this)">&#x1F534; Expired</button>
+      <button class="filter-btn" data-status="URGENT" onclick="setStatusFilter('URGENT',this)">&#x1F7E0; &lt; 30 Days</button>
+      <button class="filter-btn" data-status="SOON" onclick="setStatusFilter('SOON',this)">&#x1F7E1; &lt; 60 Days</button>
+      <button class="filter-btn" data-status="OK" onclick="setStatusFilter('OK',this)">&#x1F7E2; OK</button>
+      <div class="filter-sep"></div>
+      <button class="filter-btn active" data-cat="ALL" onclick="setCatFilter('ALL',this)">All Categories</button>
+      <button class="filter-btn" data-cat="Drivers" onclick="setCatFilter('Drivers',this)">Drivers</button>
+      <button class="filter-btn" data-cat="Vehicles" onclick="setCatFilter('Vehicles',this)">Vehicles</button>
+      <button class="filter-btn" data-cat="Insurance" onclick="setCatFilter('Insurance',this)">Insurance</button>
+      <button class="filter-btn" data-cat="Permits" onclick="setCatFilter('Permits',this)">Permits</button>
+      <button class="filter-btn" data-cat="Carrier" onclick="setCatFilter('Carrier',this)">Carrier</button>
+      <button class="filter-btn" data-cat="Documents" onclick="setCatFilter('Documents',this)">Documents</button>
+    </div>
+    <button class="btn-primary" onclick="openAddModal()">&#x2795; Add Expiration</button>
+  </div>
+
+  <div id="itemList"></div>
+</div>
+
+<div class="modal-overlay" id="addModal">
+  <div class="modal-box">
+    <h3>&#x2795; Add Expiration Item</h3>
+    <div class="form-group"><label>Item Name *</label><input type="text" id="addName" placeholder="e.g. David CDL"></div>
+    <div class="form-row">
+      <div class="form-group" style="flex:1"><label>Category *</label>
+        <select id="addCategory">
+          <option>Driver</option><option>Vehicle</option><option>Insurance</option>
+          <option>Permit</option><option>Carrier</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group" style="flex:1"><label>Expiry Date *</label><input type="date" id="addExpiry"></div>
+    </div>
+    <div class="form-group"><label>CFR / Note</label><input type="text" id="addCfr" placeholder="e.g. 49 CFR § 391.51"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveCustomItem()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="updateModal">
+  <div class="modal-box">
+    <h3>&#x270F;&#xFE0F; Update Expiry Date</h3>
+    <div class="form-group"><label>Item</label><div id="updateItemName" style="color:var(--text);font-size:14px;padding:8px;background:var(--panel2);border-radius:6px;"></div></div>
+    <div class="form-group"><label>New Expiry Date *</label><input type="date" id="updateExpiry"></div>
+    <input type="hidden" id="updateItemId">
+    <input type="hidden" id="updateItemSource">
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeUpdateModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveUpdateDate()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var currentStatusFilter = 'ALL';
+var currentCatFilter = 'ALL';
+var allItems = [];
+
+function scanAllExpirations() {
+  var items = [];
+  var today = new Date();
+  today.setHours(0,0,0,0);
+
+  function addItem(name, category, expiryDateStr, docId, cfr, source) {
+    if (!expiryDateStr) {
+      items.push({name:name, category:category, expiry:null, daysLeft:null, status:'UNKNOWN', docId:docId, cfr:cfr||'', source:source||'auto'});
+      return;
+    }
+    var expiry = new Date(expiryDateStr);
+    expiry.setHours(0,0,0,0);
+    var daysLeft = Math.floor((expiry - today) / 86400000);
+    var status = daysLeft < 0 ? 'EXPIRED' : daysLeft <= 30 ? 'URGENT' : daysLeft <= 60 ? 'SOON' : 'OK';
+    items.push({name:name, category:category, expiry:expiry, daysLeft:daysLeft, status:status, docId:docId, cfr:cfr||'', expiryStr:expiryDateStr, source:source||'auto'});
+  }
+
+  var docs = [];
+  try { docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e){}
+  docs.forEach(function(d) {
+    var expiry = d.expiry_date || d.expiration_date || d.expiry || d.expires || d.valid_until || d.valid_through;
+    if (expiry) {
+      var label = (d.type||d.category||'Document') + ': ' + (d.name||d.filename||'') + (d.driver?' — '+d.driver:'');
+      addItem(label, 'Documents', expiry, d.id, '49 CFR § 391.51', 'doc');
+    }
+  });
+
+  var equip = [];
+  try { equip = JSON.parse(localStorage.getItem('nexus_equipment_units') || '[]'); } catch(e){}
+  equip.forEach(function(u) {
+    var label = 'Unit ' + (u.unit_number||u.id||'?') + ' (' + [u.year,u.make,u.model].filter(Boolean).join(' ') + ')';
+    if (u.last_annual_inspection) {
+      var due = new Date(u.last_annual_inspection);
+      due.setFullYear(due.getFullYear() + 1);
+      addItem('Annual Inspection — ' + label, 'Vehicles', due.toISOString().split('T')[0], u.id, '49 CFR § 396.17', 'equip');
+    }
+    if (u.next_pm_date) addItem('PM Service — ' + label, 'Vehicles', u.next_pm_date, u.id, '49 CFR § 396.3', 'equip');
+    if (u.registration_expiry) addItem('Registration — ' + label, 'Vehicles', u.registration_expiry, u.id, 'State DOT', 'equip');
+  });
+
+  var cois = [];
+  try { cois = JSON.parse(localStorage.getItem('nexus_pilot_cois') || '[]'); } catch(e){}
+  cois.forEach(function(c) {
+    var exp = c.expiry_date || c.expiration_date;
+    if (exp) addItem('COI — ' + (c.company||c.insurer||'Unknown'), 'Insurance', exp, c.id, '49 CFR § 387.7', 'coi');
+  });
+
+  var permits = [];
+  try { permits = JSON.parse(localStorage.getItem('nexus_permits') || '[]'); } catch(e){}
+  permits.forEach(function(p) {
+    var exp = p.expiry_date || p.end_date;
+    if (exp) addItem('Permit ' + (p.permit_number||'') + ' — ' + (p.state||''), 'Permits', exp, p.id, 'State DOT', 'permit');
+  });
+
+  var mcs150 = localStorage.getItem('nexus_mcs150_date');
+  if (mcs150) {
+    var due = new Date(mcs150); due.setFullYear(due.getFullYear()+2);
+    addItem('MCS-150 Biennial Update', 'Carrier', due.toISOString().split('T')[0], 'mcs150', '49 CFR § 390.19(b)(2)', 'carrier');
+  }
+  var ucrYear = localStorage.getItem('nexus_ucr_year');
+  if (ucrYear) {
+    addItem('UCR Annual Registration — Year ' + ucrYear, 'Carrier', ucrYear + '-12-31', 'ucr', '49 CFR § 367', 'carrier');
+  }
+  var daDate = localStorage.getItem('nexus_da_program_date');
+  if (daDate) {
+    var daDue = new Date(daDate); daDue.setFullYear(daDue.getFullYear()+1);
+    addItem('Drug & Alcohol Program', 'Carrier', daDue.toISOString().split('T')[0], 'da', '49 CFR § 382', 'carrier');
+  }
+
+  var custom = [];
+  try { custom = JSON.parse(localStorage.getItem('nexus_custom_expirations') || '[]'); } catch(e){}
+  custom.forEach(function(c) {
+    addItem(c.name, c.category||'Other', c.expiry_date, c.id, c.cfr||'', 'custom');
+  });
+
+  items.sort(function(a,b) {
+    var order = {EXPIRED:0,URGENT:1,SOON:2,OK:3,UNKNOWN:4};
+    if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
+    if (a.daysLeft === null) return 1;
+    if (b.daysLeft === null) return -1;
+    return a.daysLeft - b.daysLeft;
+  });
+
+  return items;
+}
+
+function formatDate(d) {
+  if (!d) return 'Unknown';
+  return d.toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'});
+}
+
+function daysText(daysLeft) {
+  if (daysLeft === null) return 'No date set';
+  if (daysLeft < 0) return Math.abs(daysLeft) + ' days ago';
+  if (daysLeft === 0) return 'Today!';
+  return 'in ' + daysLeft + ' days';
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function renderItems(items) {
+  var list = document.getElementById('itemList');
+  if (!items.length) {
+    list.innerHTML = '<div class="empty-state"><div>&#x2705;</div><div style="font-size:18px;font-weight:600;">Nothing found</div><div style="margin-top:8px;font-size:14px;">No items match the current filters.</div></div>';
+    return;
+  }
+  list.innerHTML = items.map(function(item, i) {
+    var badgeText = item.status === 'EXPIRED' ? '&#x1F534; EXPIRED' :
+                    item.status === 'URGENT' ? '&#x1F7E0; URGENT' :
+                    item.status === 'SOON' ? '&#x1F7E1; SOON' :
+                    item.status === 'OK' ? '&#x1F7E2; OK' : '&#x26AA; UNKNOWN';
+    return '<div class="item-card ' + item.status + '">' +
+      '<div style="flex:1">' +
+        '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">' +
+          '<span class="badge ' + item.status + '">' + badgeText + '</span>' +
+          '<span class="item-name">' + escHtml(item.name) + '</span>' +
+        '</div>' +
+        '<div class="item-meta" style="margin-top:6px;">' +
+          (item.expiry ? 'Expires: ' + formatDate(item.expiry) + ' (' + daysText(item.daysLeft) + ')' : 'No expiry date set') +
+          ' · Category: ' + escHtml(item.category) +
+          (item.cfr ? ' · ' + escHtml(item.cfr) : '') +
+        '</div>' +
+        '<div class="item-actions">' +
+          (item.docId ? '<button class="btn-sm" onclick="viewItem(\'' + escHtml(item.docId) + '\',\'' + escHtml(item.source||'') + '\')">&#x1F4CB; View</button>' : '') +
+          '<button class="btn-sm" onclick="openUpdateModal(' + i + ')">&#x270F;&#xFE0F; Update Date</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function updateStats(items) {
+  document.getElementById('statExpired').textContent = items.filter(function(i){return i.status==='EXPIRED';}).length;
+  document.getElementById('statUrgent').textContent = items.filter(function(i){return i.status==='URGENT';}).length;
+  document.getElementById('statSoon').textContent = items.filter(function(i){return i.status==='SOON';}).length;
+  document.getElementById('statOk').textContent = items.filter(function(i){return i.status==='OK';}).length;
+}
+
+function applyFilters() {
+  var filtered = allItems.filter(function(item) {
+    var statusOk = currentStatusFilter === 'ALL' || item.status === currentStatusFilter;
+    var catOk = currentCatFilter === 'ALL' || item.category === currentCatFilter;
+    return statusOk && catOk;
+  });
+  renderItems(filtered);
+}
+
+function setStatusFilter(status, btn) {
+  currentStatusFilter = status;
+  document.querySelectorAll('[data-status]').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function setCatFilter(cat, btn) {
+  currentCatFilter = cat;
+  document.querySelectorAll('[data-cat]').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function openAddModal() {
+  document.getElementById('addName').value = '';
+  document.getElementById('addExpiry').value = '';
+  document.getElementById('addCfr').value = '';
+  document.getElementById('addModal').classList.add('open');
+}
+
+function closeAddModal() {
+  document.getElementById('addModal').classList.remove('open');
+}
+
+function saveCustomItem() {
+  var name = document.getElementById('addName').value.trim();
+  var expiry = document.getElementById('addExpiry').value;
+  var cat = document.getElementById('addCategory').value;
+  var cfr = document.getElementById('addCfr').value.trim();
+  if (!name || !expiry) { alert('Please fill in the item name and expiry date.'); return; }
+  var custom = [];
+  try { custom = JSON.parse(localStorage.getItem('nexus_custom_expirations') || '[]'); } catch(e){}
+  custom.push({id:'cust_'+Date.now(), name:name, category:cat, expiry_date:expiry, cfr:cfr, added:new Date().toISOString()});
+  localStorage.setItem('nexus_custom_expirations', JSON.stringify(custom));
+  closeAddModal();
+  refreshPage();
+}
+
+function openUpdateModal(index) {
+  var item = allItems[index];
+  if (!item) return;
+  document.getElementById('updateItemName').textContent = item.name;
+  document.getElementById('updateExpiry').value = item.expiryStr || '';
+  document.getElementById('updateItemId').value = item.docId || '';
+  document.getElementById('updateItemSource').value = item.source || '';
+  document.getElementById('updateModal').classList.add('open');
+  document.getElementById('updateModal').dataset.itemIndex = index;
+}
+
+function closeUpdateModal() {
+  document.getElementById('updateModal').classList.remove('open');
+}
+
+function saveUpdateDate() {
+  var expiry = document.getElementById('updateExpiry').value;
+  if (!expiry) { alert('Please enter a date.'); return; }
+  var index = parseInt(document.getElementById('updateModal').dataset.itemIndex);
+  var item = allItems[index];
+  if (!item) return;
+  if (item.source === 'custom') {
+    var custom = [];
+    try { custom = JSON.parse(localStorage.getItem('nexus_custom_expirations') || '[]'); } catch(e){}
+    custom = custom.map(function(c) { return c.id === item.docId ? Object.assign({},c,{expiry_date:expiry}) : c; });
+    localStorage.setItem('nexus_custom_expirations', JSON.stringify(custom));
+  } else if (item.source === 'doc') {
+    var docs = [];
+    try { docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e){}
+    docs = docs.map(function(d) { return d.id === item.docId ? Object.assign({},d,{expiry_date:expiry}) : d; });
+    localStorage.setItem('nexus_documents', JSON.stringify(docs));
+  }
+  closeUpdateModal();
+  refreshPage();
+}
+
+function viewItem(id, source) {
+  if (source === 'doc') window.location.href = 'documents.html';
+  else if (source === 'permit') window.location.href = 'permits.html';
+  else alert('Item ID: ' + id);
+}
+
+function saveReminder(val) {
+  localStorage.setItem('nexus_expiry_reminder_days', val);
+}
+
+function refreshPage() {
+  allItems = scanAllExpirations();
+  updateStats(allItems);
+  applyFilters();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var rd = localStorage.getItem('nexus_expiry_reminder_days') || '30';
+  document.getElementById('reminderDays').value = rd;
+  refreshPage();
+  document.getElementById('addModal').addEventListener('click', function(e){ if(e.target===this) closeAddModal(); });
+  document.getElementById('updateModal').addEventListener('click', function(e){ if(e.target===this) closeUpdateModal(); });
+});
+</script>
+</body>
+</html>

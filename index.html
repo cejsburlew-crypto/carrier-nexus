@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#3b82f6">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,234 +10,273 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="refresh" content="0; url=landing.html">
-<title>Carrier Nexus</title>
+<title>Carrier Nexus — Dashboard</title>
+<style>
+:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding-left:220px;min-height:100vh}
+@media(max-width:768px){body{padding-left:0!important}}
+.main{padding:28px 28px 40px;max-width:1100px}
 
-  <style id="nexus-gradient-header">
-  .topbar, nav.topbar {
-    background: linear-gradient(135deg, #000000 0%, #6b0000 45%, #c2185b 80%, #e91e8c 100%) !important;
-    border-bottom: none !important;
-  }
-  .topbar *, .topbar-title, .topbar .user-name,
-  .topbar button:not(.btn-primary):not(.btn-orange) {
-    color: #ffffff !important;
-  }
-  .topbar .btn-ghost {
-    border-color: rgba(255,255,255,0.35) !important;
-    color: #fff !important;
-    background: rgba(255,255,255,0.08) !important;
-  }
-  .topbar .btn-ghost:hover { background: rgba(255,255,255,0.18) !important; }
-  
-      body{padding-left:220px;box-sizing:border-box;}
-      @media(max-width:768px){body{padding-left:0!important;}}
-</style>
+/* Welcome banner */
+.welcome-banner{background:linear-gradient(135deg,#0f2040 0%,#0d1f3a 60%,#111929 100%);border:1px solid var(--border);border-radius:14px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.welcome-greeting{font-size:24px;font-weight:700;color:var(--text)}
+.welcome-date{font-size:14px;color:var(--mid);margin-top:4px}
+.urgent-badge{padding:8px 16px;background:rgba(239,68,68,.15);border:1px solid var(--red);border-radius:20px;color:var(--red);font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;transition:.15s;white-space:nowrap}
+.urgent-badge:hover{background:rgba(239,68,68,.25)}
+.urgent-badge.ok{background:rgba(16,185,129,.1);border-color:var(--green);color:var(--green)}
 
-  <style id="nexus-contrast-fix">
-  /* ── TOPBAR ── */
-  .topbar-title, .topbar h1, .topbar h2 {
-    font-size: 20px !important;
-    font-weight: 800 !important;
-    letter-spacing: .08em !important;
-    color: #fff !important;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.4) !important;
-  }
-  .topbar * { color: #fff !important; }
-  .topbar .btn-ghost {
-    background: rgba(255,255,255,0.15) !important;
-    border: 1px solid rgba(255,255,255,0.45) !important;
-    color: #fff !important;
-    font-weight: 700 !important;
-  }
-  .topbar .btn-ghost:hover { background: rgba(255,255,255,0.28) !important; }
-  .topbar .btn-orange, .topbar .btn-primary {
-    background: #fff !important;
-    color: #c2185b !important;
-    border: none !important;
-    font-weight: 700 !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
-  }
+/* 4 big action cards */
+.action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:24px}
+@media(max-width:600px){.action-grid{grid-template-columns:1fr}}
+.action-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:28px 24px;text-decoration:none;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:all .2s;min-height:120px;position:relative;overflow:hidden}
+.action-card:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.action-card .card-icon{font-size:36px;line-height:1}
+.action-card .card-title{font-size:20px;font-weight:700;color:var(--text)}
+.action-card .card-sub{font-size:13px;color:var(--mid)}
+.action-card .card-count{position:absolute;top:20px;right:20px;font-size:28px;font-weight:800;color:rgba(255,255,255,.12)}
 
-  /* ── KPI CARDS ── */
-  .kpi-card, .stat-card {
-    border-left: 4px solid var(--steel-blue) !important;
-    background: #fff !important;
-    box-shadow: 0 1px 4px rgba(15,23,42,0.07) !important;
-  }
-  .kpi-card:nth-child(2), .stat-card:nth-child(2) { border-left-color: #22c55e !important; }
-  .kpi-card:nth-child(3), .stat-card:nth-child(3) { border-left-color: #e8640a !important; }
-  .kpi-card:nth-child(4), .stat-card:nth-child(4) { border-left-color: #ef4444 !important; }
-  .kpi-label, .stat-label, .card-label {
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    color: #374151 !important;
-    letter-spacing: .07em !important;
-  }
-  .kpi-val, .stat-val {
-    font-size: 32px !important;
-    font-weight: 800 !important;
-    color: #0f172a !important;
-    line-height: 1.1 !important;
-  }
-  .kpi-sub, .stat-sub {
-    font-size: 12px !important;
-    color: #475569 !important;
-    font-weight: 500 !important;
-  }
+/* Quick actions */
+.quick-label{font-size:12px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.quick-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
+.quick-pill{padding:11px 18px;background:var(--panel2);border:1px solid var(--border);border-radius:24px;color:var(--text);font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;transition:.15s;min-height:44px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.quick-pill:hover{border-color:var(--blue);color:var(--blue);background:rgba(59,130,246,.08)}
 
-  /* ── PANELS & SECTION HEADERS ── */
-  .panel-title, .section-title, .panel-head h2,
-  .panel-head h3, .section-header {
-    font-size: 13px !important;
-    font-weight: 800 !important;
-    color: #0f172a !important;
-    letter-spacing: .07em !important;
-  }
-  .panel-head {
-    background: #f8fafc !important;
-    border-bottom: 2px solid #e2e8f0 !important;
-  }
+/* Recent activity */
+.section-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:14px}
+.recent-list{background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:28px}
+.recent-item{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;font-size:14px}
+.recent-item:last-child{border-bottom:none}
+.recent-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.recent-name{font-weight:600;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.recent-type{font-size:11px;color:var(--mid);background:var(--panel2);padding:2px 8px;border-radius:10px;white-space:nowrap}
+.recent-time{font-size:11px;color:var(--mid);white-space:nowrap}
+.empty-recent{padding:32px;text-align:center;color:var(--mid);font-size:14px}
 
-  /* ── TABLES ── */
-  th {
-    background: #e8edf4 !important;
-    color: #1e293b !important;
-    font-size: 11px !important;
-    font-weight: 800 !important;
-    letter-spacing: .07em !important;
-    border-bottom: 2px solid #cbd5e1 !important;
-    padding: 11px 16px !important;
-  }
-  td {
-    color: #1e293b !important;
-    font-size: 13px !important;
-    font-weight: 500 !important;
-    border-bottom: 1px solid #e8edf4 !important;
-  }
-  tr:hover td { background: #f0f4f8 !important; }
-
-  /* ── BUTTONS (non-topbar) ── */
-  .btn, button.btn, a.btn {
-    font-weight: 700 !important;
-    font-size: 12px !important;
-    border: 1.5px solid #94a3b8 !important;
-    color: #1e293b !important;
-    background: #fff !important;
-  }
-  .btn:hover { background: #f1f5f9 !important; border-color: #64748b !important; }
-  .btn-primary {
-    background: #2e6da4 !important;
-    color: #fff !important;
-    border-color: #2e6da4 !important;
-  }
-  .btn-primary:hover { background: #1d5a8a !important; }
-  .btn-orange, .btn-finalize {
-    background: #e8640a !important;
-    color: #fff !important;
-    border-color: #e8640a !important;
-  }
-  .btn-view {
-    background: #2e6da4 !important;
-    color: #fff !important;
-    border: none !important;
-    padding: 5px 12px !important;
-    border-radius: 6px !important;
-    font-weight: 700 !important;
-    font-size: 11px !important;
-    cursor: pointer !important;
-  }
-
-  /* ── EQUIPMENT / TRUCK CARDS ── */
-  .truck-card, .driver-card {
-    border: 1.5px solid #cbd5e1 !important;
-    box-shadow: 0 2px 8px rgba(15,23,42,0.06) !important;
-  }
-  .truck-unit, .unit-number {
-    color: #e8640a !important;
-    font-weight: 800 !important;
-  }
-  .truck-name, .driver-name {
-    color: #0f172a !important;
-    font-weight: 700 !important;
-  }
-  .truck-detail, .driver-role {
-    color: #475569 !important;
-    font-weight: 500 !important;
-  }
-
-  /* ── BADGES ── */
-  .badge, [class*="badge-"] {
-    font-weight: 700 !important;
-    font-size: 11px !important;
-  }
-
-  /* ── SIDEBAR ── */
-  .sidebar-section {
-    color: #7aa3c4 !important;
-    font-weight: 800 !important;
-    font-size: 10px !important;
-  }
-  .sidebar-link {
-    font-weight: 600 !important;
-    font-size: 13px !important;
-  }
-
-  /* ── SETTLEMENT QUEUE ── */
-  .settle-name, .driver-list-name { color: #0f172a !important; font-weight: 700 !important; }
-  .settle-date, .driver-list-sub { color: #475569 !important; font-weight: 500 !important; }
-  .settle-amount { color: #0f172a !important; font-weight: 800 !important; font-size: 16px !important; }
-
-  /* ── MISSING DOC / ALERT ROWS ── */
-  .missing-doc, .alert-row {
-    border-left: 4px solid #ef4444 !important;
-    background: #fff !important;
-  }
-  .doc-title, .alert-title { color: #0f172a !important; font-weight: 700 !important; }
-  .doc-desc, .alert-desc { color: #475569 !important; }
-  </style>
-<style id="nexus-unified">
-/* ── SIDEBAR BLACK ── */
-.sidebar, nav.sidebar { background: #000000 !important; border-right: 1px solid #1a1a1a !important; }
-/* ── LOGO AREA ── */
-.sidebar-logo { padding:16px !important; display:flex !important; align-items:center !important; gap:10px !important; text-decoration:none !important; border-bottom:1px solid rgba(255,255,255,0.07) !important; flex-direction:row !important; }
-.sidebar-logo .logo-hex { flex-shrink:0 !important; }
-.sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
-.sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
-.sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#ffffff !important; display:block !important; }
-.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
-/* ── NAV LINKS ── */
-.sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
-.sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
-.sidebar-link.active { background:rgba(233,30,140,0.22) !important; border-left:3px solid #e91e8c !important; color:#fff !important; }
-.sidebar-link svg { width:14px !important; height:14px !important; flex-shrink:0 !important; opacity:0.7 !important; }
-.sidebar-link.active svg { opacity:1 !important; }
-/* ── SECTION LABELS ── */
-.sidebar-section { padding:12px 0 4px !important; }
-.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
-/* ── TOPBAR ── */
-.topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
-.topbar *, .top-bar * { color:#ffffff !important; }
-.topbar .btn { color:#ffffff !important; border-color:rgba(255,255,255,0.3) !important; }
-/* ── MOBILE NAV ── */
-.mobile-nav { background:#000000 !important; }
-.mobile-nav-tab.active { color:#e91e8c !important; }
-/* ── SIDEBAR USER ── */
-.sidebar-user { border-top:1px solid rgba(255,255,255,0.07) !important; }
-.sidebar-user .user-name { color:rgba(255,255,255,0.7) !important; }
-.sidebar-user .user-role { color:rgba(255,255,255,0.35) !important; }
-/* ── NAV BADGE ── */
-.nav-badge { background:#e91e8c !important; color:#fff !important; }
+/* Platform modules grid */
+.modules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:700px){.modules-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:400px){.modules-grid{grid-template-columns:1fr}}
+.module-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:18px 16px;text-decoration:none;display:flex;align-items:center;gap:12px;transition:.15s;min-height:64px}
+.module-card:hover{border-color:var(--blue);background:rgba(59,130,246,.06)}
+.module-icon{font-size:22px;line-height:1;flex-shrink:0}
+.module-label{font-size:14px;font-weight:600;color:var(--text)}
 </style>
 </head>
 <body>
-<script>window.location.replace('landing.html');</script>
+<div id="sidebar"></div>
 <script src="nexus-sidebar.js"></script>
+
+<div class="main">
+
+  <!-- Welcome Banner -->
+  <div class="welcome-banner">
+    <div>
+      <div class="welcome-greeting" id="greetingText">Loading...</div>
+      <div class="welcome-date" id="todayDate"></div>
+    </div>
+    <a href="expiration-hub.html" class="urgent-badge" id="urgentBadge" style="display:none"></a>
+  </div>
+
+  <!-- 4 Big Action Cards -->
+  <div class="action-grid">
+    <a href="active-loads.html" class="action-card">
+      <span class="card-icon">&#x1F69B;</span>
+      <span class="card-title">Active Loads</span>
+      <span class="card-sub">View and manage current loads</span>
+      <span class="card-count" id="countLoads">—</span>
+    </a>
+    <a href="drivers.html" class="action-card">
+      <span class="card-icon">&#x1F464;</span>
+      <span class="card-title">My Drivers</span>
+      <span class="card-sub">Driver roster and status</span>
+      <span class="card-count" id="countDrivers">—</span>
+    </a>
+    <a href="financials.html" class="action-card">
+      <span class="card-icon">&#x1F4B0;</span>
+      <span class="card-title">Money</span>
+      <span class="card-sub">P&amp;L, expenses, settlements</span>
+    </a>
+    <a href="expiration-hub.html" class="action-card">
+      <span class="card-icon">&#x1F514;</span>
+      <span class="card-title">Alerts</span>
+      <span class="card-sub">Expirations and compliance items</span>
+      <span class="card-count" id="countAlerts" style="color:rgba(239,68,68,.25)">—</span>
+    </a>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-label">Quick Actions</div>
+  <div class="quick-row">
+    <a href="active-loads.html" class="quick-pill">&#x2795; Add Load</a>
+    <a href="upload.html" class="quick-pill">&#x1F4E4; Upload Doc</a>
+    <a href="drivers.html" class="quick-pill">&#x1F697; Add Driver</a>
+    <a href="expenses.html" class="quick-pill">&#x1F4B8; Add Expense</a>
+    <a href="documents.html" class="quick-pill">&#x1F50D; Search</a>
+  </div>
+
+  <!-- Recently Added -->
+  <div class="section-title">Recently Added</div>
+  <div class="recent-list" id="recentList">
+    <div class="empty-recent">Loading recent activity...</div>
+  </div>
+
+  <!-- Platform Modules -->
+  <div class="section-title">Platform Modules</div>
+  <div class="modules-grid">
+    <a href="active-loads.html" class="module-card"><span class="module-icon">&#x1F69B;</span><span class="module-label">Loads</span></a>
+    <a href="dispatcher-hub.html" class="module-card"><span class="module-icon">&#x1F4CB;</span><span class="module-label">Dispatch</span></a>
+    <a href="drivers.html" class="module-card"><span class="module-icon">&#x1F464;</span><span class="module-label">Drivers</span></a>
+    <a href="equipment.html" class="module-card"><span class="module-icon">&#x1F527;</span><span class="module-label">Equipment</span></a>
+    <a href="financials.html" class="module-card"><span class="module-icon">&#x1F4B0;</span><span class="module-label">Finance</span></a>
+    <a href="documents.html" class="module-card"><span class="module-icon">&#x1F4C4;</span><span class="module-label">Documents</span></a>
+    <a href="expiration-hub.html" class="module-card"><span class="module-icon">&#x23F0;</span><span class="module-label">Expirations</span></a>
+    <a href="fmcsa-compliance.html" class="module-card"><span class="module-icon">&#x2696;&#xFE0F;</span><span class="module-label">FMCSA Compliance</span></a>
+    <a href="gps-tracker.html" class="module-card"><span class="module-icon">&#x1F5FA;&#xFE0F;</span><span class="module-label">GPS Tracker</span></a>
+    <a href="pilot-portal.html" class="module-card"><span class="module-icon">&#x2708;&#xFE0F;</span><span class="module-label">Pilot Escorts</span></a>
+    <a href="companies.html" class="module-card"><span class="module-icon">&#x1F3E2;</span><span class="module-label">Companies</span></a>
+    <a href="settings.html" class="module-card"><span class="module-icon">&#x2699;&#xFE0F;</span><span class="module-label">Settings</span></a>
+  </div>
+
+</div>
+
+<script>
+function getGreeting() {
+  var h = new Date().getHours();
+  if (h < 12) return 'Good morning! 👋';
+  if (h < 17) return 'Good afternoon! 👋';
+  return 'Good evening! 👋';
+}
+
+function countUrgentItems() {
+  var docs = [];
+  try { docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e){}
+  var today = new Date();
+  var thirtyDays = new Date(today); thirtyDays.setDate(today.getDate() + 30);
+  return docs.filter(function(d) {
+    var exp = d.expiry_date || d.expiration_date;
+    if (!exp) return false;
+    var expDate = new Date(exp);
+    return expDate <= thirtyDays;
+  }).length;
+}
+
+function countActiveLoads() {
+  var loads = [];
+  try { loads = JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]'); } catch(e){}
+  return loads.filter(function(l) { return l.status !== 'CLOSED' && l.status !== 'DELIVERED'; }).length;
+}
+
+function countActiveDrivers() {
+  var users = [];
+  try { users = JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS') || '[]'); } catch(e){}
+  return users.filter(function(u) { return u.role === 'driver' && u.active; }).length;
+}
+
+function formatRelativeTime(dateStr) {
+  if (!dateStr) return '';
+  var d = new Date(dateStr);
+  var now = new Date();
+  var diff = Math.floor((now - d) / 60000);
+  if (diff < 1) return 'just now';
+  if (diff < 60) return diff + 'm ago';
+  if (diff < 1440) return Math.floor(diff/60) + 'h ago';
+  return Math.floor(diff/1440) + 'd ago';
+}
+
+function loadRecentItems() {
+  var items = [];
+
+  var docs = [];
+  try { docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e){}
+  docs.forEach(function(d) {
+    var ts = d.added_at || d.created_at || d.date || '';
+    items.push({name: d.name || d.filename || 'Document', type: 'Document', ts: ts});
+  });
+
+  var loads = [];
+  try { loads = JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]'); } catch(e){}
+  loads.forEach(function(l) {
+    var ts = l.created_at || l.date || '';
+    items.push({name: 'Load #' + (l.load_number || l.id || ''), type: 'Load', ts: ts});
+  });
+
+  var expenses = [];
+  try { expenses = JSON.parse(localStorage.getItem('nexus_expenses') || '[]'); } catch(e){}
+  expenses.forEach(function(e) {
+    var ts = e.created_at || e.date || '';
+    items.push({name: e.description || e.vendor || 'Expense', type: 'Expense', ts: ts});
+  });
+
+  items.sort(function(a,b) {
+    if (!a.ts && !b.ts) return 0;
+    if (!a.ts) return 1;
+    if (!b.ts) return -1;
+    return new Date(b.ts) - new Date(a.ts);
+  });
+
+  var top5 = items.slice(0,5);
+  var list = document.getElementById('recentList');
+
+  if (!top5.length) {
+    list.innerHTML = '<div class="empty-recent">No recent activity yet. Add a load, document, or expense to get started.</div>';
+    return;
+  }
+
+  list.innerHTML = top5.map(function(item) {
+    return '<div class="recent-item">' +
+      '<span class="recent-dot"></span>' +
+      '<span class="recent-name">' + escHtml(item.name) + '</span>' +
+      '<span class="recent-type">' + escHtml(item.type) + '</span>' +
+      (item.ts ? '<span class="recent-time">' + formatRelativeTime(item.ts) + '</span>' : '') +
+    '</div>';
+  }).join('');
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function initDashboard() {
+  // Greeting
+  document.getElementById('greetingText').textContent = getGreeting();
+
+  // Date
+  var d = new Date();
+  document.getElementById('todayDate').textContent = d.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+
+  // Urgent badge
+  var urgent = countUrgentItems();
+  var badge = document.getElementById('urgentBadge');
+  if (urgent > 0) {
+    badge.textContent = '⚠️ ' + urgent + ' item' + (urgent !== 1 ? 's' : '') + ' expiring soon';
+    badge.style.display = 'flex';
+  } else {
+    badge.textContent = '✅ All expirations OK';
+    badge.classList.add('ok');
+    badge.style.display = 'flex';
+  }
+
+  // Counts
+  var loadsCount = countActiveLoads();
+  var driversCount = countActiveDrivers();
+  document.getElementById('countLoads').textContent = loadsCount || '';
+  document.getElementById('countDrivers').textContent = driversCount || '';
+  document.getElementById('countAlerts').textContent = urgent > 0 ? urgent : '';
+
+  loadRecentItems();
+}
+
+document.addEventListener('DOMContentLoaded', initDashboard);
+</script>
+
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
+  window.addEventListener('load', function() {
     navigator.serviceWorker.register('/carrier-nexus/sw.js')
-      .then(reg => console.log('SW registered:', reg.scope))
-      .catch(err => console.log('SW registration failed:', err));
+      .then(function(reg) { console.log('SW registered:', reg.scope); })
+      .catch(function(err) { console.log('SW registration failed:', err); });
   });
 }
 </script>

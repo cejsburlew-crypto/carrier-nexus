@@ -44,7 +44,7 @@
     { key:'docs',    label:'Documents',      pages:['documents.html','upload.html','inbox-sync.html','emails.html','doc-inbox.html'] },
     { key:'contacts',label:'Contacts',       pages:['contacts.html'] },
     { key:'taxhr',   label:'Tax & HR',       pages:['tax-forms.html','w9.html'] },
-    { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','insurance-kpi.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html','incident-report.html','coi-management.html','claims.html','coaching-log.html','fmcsa-compliance.html','fmcsa-resources.html','cfr-compliance.html'] },
+    { key:'maint',   label:'Maintenance',    pages:['equipment.html','maintenance.html','pm-schedule.html','dot-compliance.html','insurance-kpi.html','tires.html','fuel.html','dvir.html','pretrip.html','driver-services.html','scale-tickets.html','weight-calculator.html','incident-report.html','coi-management.html','claims.html','coaching-log.html','fmcsa-compliance.html','fmcsa-resources.html','cfr-compliance.html','expiration-hub.html'] },
     { key:'admin',   label:'Admin',          pages:['member-management.html','admin-users.html','company-management.html','doc-privacy.html','public-profile.html'] },
     { key:'intel',   label:'Intelligence',   pages:['nexus-ai.html','analysis.html','drive-settings.html','eld-settings.html','search.html','gps-tracker.html'] },
     { key:'comms',   label:'Communications', pages:['comms.html','nexus-connect.html'] },
@@ -252,7 +252,8 @@
       lnk('fuel.html',                 I.fuel,    'Fuel') +
       lnk('driver-services.html',      I.service, 'Driver Services') +
       lnk('scale-tickets.html',        I.scale,   'Scale Tickets') +
-      lnk('weight-calculator.html',   I.scale,   'Weight Calculator')
+      lnk('weight-calculator.html',   I.scale,   'Weight Calculator') +
+      lnk('expiration-hub.html',       I.clock,   '⏰ Expiration Hub')
     ) +
     sec('admin', 'Admin',
       lnk('member-management.html',    I.members, 'Members') +
@@ -276,6 +277,16 @@
 
   const html = `
 <nav class="sidebar" id="nexus-sidebar">
+  <div id="companySwitcherBar" style="background:var(--panel2);border-bottom:1px solid var(--border);padding:10px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;" onclick="openCompanySwitcher()">
+    <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+      <span style="font-size:18px;">🏢</span>
+      <div style="min-width:0;">
+        <div style="font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;">Active Company</div>
+        <div id="activeCompanyName" style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;">Loading...</div>
+      </div>
+    </div>
+    <span style="color:var(--mid);font-size:12px;">⇅</span>
+  </div>
   <a href="landing.html" class="sidebar-logo">
     <div class="logo-hex">
       <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -320,7 +331,16 @@
       <svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13"><path d="M8 1a3 3 0 110 6A3 3 0 018 1zm5 11c0-2.21-2.24-4-5-4S3 9.79 3 12v1h10v-1z"/></svg>
     </a>
   </div>
-</nav>`;
+</nav>
+<div id="companySwitcherModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;width:360px;max-width:95vw;max-height:80vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3 style="margin:0;color:var(--text);font-size:16px;">Switch Company</h3>
+      <button onclick="closeCompanySwitcher()" style="background:none;border:none;color:var(--mid);cursor:pointer;font-size:20px;">×</button>
+    </div>
+    <div id="companySwitcherList" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+</div>`;
 
   // Replace existing sidebar or prepend to body
   const existing = document.querySelector('nav.sidebar, .sidebar');
@@ -474,4 +494,92 @@
     if (dd && btn && !btn.contains(e.target)) dd.style.display = 'none';
   });
 
+})();
+
+(function() {
+  var SUPER_ADMIN = 'cejsburlew@gmail.com';
+
+  function getSession() {
+    try { return JSON.parse(localStorage.getItem('nexus_session') || 'null'); } catch(e) { return null; }
+  }
+
+  function getCompanies() {
+    try {
+      var stored = localStorage.getItem('nexus_companies');
+      if (stored) return JSON.parse(stored);
+      return typeof NEXUS_COMPANIES !== 'undefined' ? NEXUS_COMPANIES : [{id:'co_001',name:'Carrier Trucking US',slug:'carrier-trucking-us'}];
+    } catch(e) { return [{id:'co_001',name:'Carrier Trucking US',slug:'carrier-trucking-us'}]; }
+  }
+
+  function getActiveCompany() {
+    var id = localStorage.getItem('nexus_active_company') || 'co_001';
+    var companies = getCompanies();
+    return companies.find(function(c) { return c.id === id; }) || companies[0];
+  }
+
+  function isSuperAdmin() {
+    var session = getSession();
+    if (!session) return false;
+    return session.email === SUPER_ADMIN || (session.role === 'admin' && !session.companyId);
+  }
+
+  function getAccessibleCompanies() {
+    var companies = getCompanies();
+    if (isSuperAdmin()) return companies;
+    var session = getSession();
+    if (!session) return companies.slice(0,1);
+    var users = JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS') || '[]');
+    var user = users.find(function(u) { return u.email === session.email; });
+    if (!user) return companies.slice(0,1);
+    if (user.companyIds && Array.isArray(user.companyIds)) {
+      return companies.filter(function(c) {
+        return user.companyIds.some(function(ci) {
+          return (typeof ci === 'string' ? ci : ci.companyId) === c.id;
+        });
+      });
+    }
+    if (user.companyId) return companies.filter(function(c) { return c.id === user.companyId; });
+    return companies.slice(0,1);
+  }
+
+  window.openCompanySwitcher = function() {
+    var accessible = getAccessibleCompanies();
+    var active = getActiveCompany();
+    var list = document.getElementById('companySwitcherList');
+    if (!list) return;
+    list.innerHTML = accessible.map(function(c) {
+      return '<div onclick="switchToCompany(\'' + c.id + '\')" style="padding:12px 14px;border-radius:8px;border:2px solid ' + (c.id===active.id?'var(--blue)':'var(--border)') + ';cursor:pointer;background:' + (c.id===active.id?'rgba(59,130,246,.1)':'var(--panel2)') + ';transition:.15s">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;">' +
+          '<div>' +
+            '<div style="font-weight:600;color:var(--text);font-size:14px;">' + c.name + '</div>' +
+            '<div style="font-size:11px;color:var(--mid);margin-top:2px;">' + (c.usdot?'DOT# '+c.usdot:'No USDOT on file') + ' \u00b7 ' + (c.hq||'') + '</div>' +
+          '</div>' +
+          (c.id===active.id?'<span style="color:var(--blue);font-size:18px;">\u2713</span>':'') +
+        '</div>' +
+      '</div>';
+    }).join('');
+    document.getElementById('companySwitcherModal').style.display = 'flex';
+  };
+
+  window.closeCompanySwitcher = function() {
+    document.getElementById('companySwitcherModal').style.display = 'none';
+  };
+
+  window.switchToCompany = function(id) {
+    localStorage.setItem('nexus_active_company', id);
+    closeCompanySwitcher();
+    var c = getCompanies().find(function(co) { return co.id === id; });
+    var nameEl = document.getElementById('activeCompanyName');
+    if (nameEl && c) nameEl.textContent = c.name;
+    var bar = document.getElementById('companySwitcherBar');
+    if (bar) { bar.style.background='rgba(59,130,246,.2)'; setTimeout(function(){bar.style.background='';},500); }
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var c = getActiveCompany();
+    var nameEl = document.getElementById('activeCompanyName');
+    if (nameEl && c) nameEl.textContent = c.name;
+    var modal = document.getElementById('companySwitcherModal');
+    if (modal) modal.addEventListener('click', function(e) { if(e.target===modal) closeCompanySwitcher(); });
+  });
 })();
