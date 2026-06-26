@@ -154,7 +154,7 @@
           <label style="font-size:12px;color:var(--mid);font-weight:500;display:block;margin-bottom:6px">States on Route <span style="color:var(--blue);font-size:11px">(auto-detected from origin/dest — check/uncheck as needed)</span></label>
           <div class="states-grid" id="rc-states-grid"></div>
         </div>
-        <button class="btn btn-primary" onclick="runAnalysis()">Analyze Route</button>
+        <button class="btn btn-primary" id="analyze-btn" onclick="runAnalysis()">Analyze Route</button>
       </div>
       <div id="rc-results"></div>
 
@@ -954,6 +954,24 @@ function calcBridgeFormula() {
 
 // Init
 document.addEventListener("DOMContentLoaded", function() {
+  // Read prefill from active-loads or dispatch-pro
+  var prefillData = localStorage.getItem('nexus_route_prefill');
+  if (prefillData && window.location.search.includes('prefill=1')) {
+    try {
+      var pf = JSON.parse(prefillData);
+      if (pf.origin) { var el = document.getElementById('rc-origin'); if(el) el.value = pf.origin; }
+      if (pf.destination) { var el = document.getElementById('rc-dest'); if(el) el.value = pf.destination; }
+      if (pf.weight) { var el = document.getElementById('rc-weight'); if(el) el.value = pf.weight; }
+      if (pf.width) { var el = document.getElementById('rc-width'); if(el) el.value = pf.width; }
+      if (pf.height) { var el = document.getElementById('rc-height'); if(el) el.value = pf.height; }
+      if (pf.length) { var el = document.getElementById('rc-length'); if(el) el.value = pf.length; }
+      localStorage.removeItem('nexus_route_prefill');
+      if (pf.origin && pf.destination) setTimeout(function() {
+        var btn = document.getElementById('analyze-btn') || document.querySelector('[onclick*="runAnalysis"]');
+        if(btn) btn.click();
+      }, 300);
+    } catch(e) {}
+  }
   NexusSidebar.init();
   buildStatesGrid();
   buildLimitsTable();

@@ -177,6 +177,9 @@ tfoot td{font-weight:700;background:var(--panel2);color:var(--text)}
 </div>
 <!-- TAB: HOT SHEET -->
 <div id="tab-hotsheet" class="tab-content active">
+  <div id="dispatch-weather-strip" style="display:flex;gap:8px;margin:12px 20px 0;flex-wrap:wrap;">
+    <div style="color:#64748b;font-size:12px;padding:8px;">Loading weather...</div>
+  </div>
   <div class="kpi-strip" id="kpi-strip"></div>
   <div class="filter-bar">
     <select id="flt-driver" onchange="renderKanban()"><option value="">All Drivers</option></select>
@@ -484,6 +487,7 @@ function seedBrokers(){
   populateModalDropdowns();
   renderKanban();
   renderKpiStrip();
+  loadDispatchWeather();
   renderBrokerList();
   buildBrokerContactsForm();
   renderDriverPaySelector();
@@ -498,6 +502,7 @@ function switchTab(name,btn){
   document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active')});
   if(btn)btn.classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
+  if(name==='hotsheet')loadDispatchWeather();
   if(name==='detention')renderDetentionCards();
   if(name==='driverpay')renderDriverPay();
   if(name==='allloads')renderAllLoads();
@@ -612,7 +617,7 @@ function showDetail(id){
   if(!load)return;
   var profit=calcProfit(load);
   var rows=[['Load #',load.id],['Status',STATUS_LABELS[load.status]||load.status],['Broker',load.brokerName||'--'],['Equipment',load.equipmentType||'--'],['Driver',load.driverName||'Unassigned'],['Truck',load.truckId||'--'],['Origin',load.origin||'--'],['Destination',load.destination||'--'],['Miles',load.miles||0],['Gross Rate',fmtMoney(load.grossRate)],['RPM',fmtRPM(load.grossRate,load.miles)],['Driver Pay',fmtMoney(profit.driverPay)],['Fuel Est',fmtMoney(profit.fuel)],['Net Profit',fmtMoney(profit.net)],['Pickup',load.pickupDate||'--'],['Notes',load.internalNotes||'--']].map(function(r){return'<div class="detail-row"><span class="lbl">'+r[0]+'</span><span>'+r[1]+'</span></div>'}).join('');
-  document.getElementById('detail-content').innerHTML=rows+'<div style="margin-top:16px"><button class="btn btn-primary btn-sm" onclick="openLoadModal(\''+load.id+'\')" style="width:100%;margin-bottom:8px">Edit Load</button><button class="btn btn-ghost btn-sm" onclick="advanceStatus(\''+load.id+'\');showDetail(\''+load.id+'\')" style="width:100%">Advance Status &rarr;</button></div>';
+  document.getElementById('detail-content').innerHTML=rows+'<div style="margin-top:16px"><button class="btn btn-primary btn-sm" onclick="openLoadModal(\''+load.id+'\')" style="width:100%;margin-bottom:8px">Edit Load</button><button class="btn btn-ghost btn-sm" onclick="advanceStatus(\''+load.id+'\');showDetail(\''+load.id+'\')" style="width:100%;margin-bottom:8px">Advance Status &rarr;</button><a href="#" onclick="return openRouteFromDispatch(\''+load.id+'\')" style="display:block;text-align:center;background:rgba(59,130,246,.15);color:#3b82f6;border:1px solid rgba(59,130,246,.3);border-radius:6px;padding:6px 14px;font-size:12px;text-decoration:none;cursor:pointer;margin-top:6px">&#x1F5FA; Route Compliance</a></div>';
   document.getElementById('detail-panel').classList.add('open');
 }
 
@@ -889,6 +894,41 @@ function populateModalDropdowns(){
   var fleet=getFleet(),tSel=document.getElementById('m-truck'),tcur=tSel.value;
   var truckOpts=fleet.length?fleet.map(function(f){return'<option value="'+(f.unitNumber||f.id)+'"'+((f.unitNumber||f.id)===tcur?' selected':'')+'>'+( f.unitNumber||f.id)+(f.make?' -- '+f.make+' '+f.model:'')+' </option>'}).join(''):['Unit 01','Unit 02','Unit 03','Unit 04','Unit 05'].map(function(u){return'<option'+(u===tcur?' selected':'')+'>'+u+'</option>'}).join('');
   tSel.innerHTML='<option value="">-- Select Truck --</option>'+truckOpts;
+}
+
+function openRouteFromDispatch(loadId) {
+  var load = getLoads().find(function(l) { return l.id === loadId; });
+  if (!load) return true;
+  localStorage.setItem("nexus_route_prefill", JSON.stringify({
+    origin: load.origin || "",
+    destination: load.destination || "",
+    weight: load.weight || 0,
+    load_id: load.id
+  }));
+  window.location.href = "route-compliance.html?prefill=1";
+  return false;
+}
+
+
+function loadDispatchWeather() {
+  var strip = document.getElementById('dispatch-weather-strip');
+  if (!strip) return;
+  var COORDS = {'Houston,TX':{lat:29.7604,lng:-95.3698,tz:'America/Chicago'},'Oklahoma City,OK':{lat:35.4676,lng:-97.5164,tz:'America/Chicago'},'Corpus Christi,TX':{lat:27.8006,lng:-97.3964,tz:'America/Chicago'}};
+  var loads = JSON.parse(localStorage.getItem('nexus_dispatch_loads')||'[]');
+  var active = loads.filter(function(l){return l.status==='EN_ROUTE'||l.status==='PICKED_UP'});
+  var cities = [['Home Base',29.7604,-95.3698,'America/Chicago']];
+  active.slice(0,2).forEach(function(l){ var dest=(l.destination||'').trim(); var k=Object.keys(COORDS).find(function(c){return dest.toLowerCase().includes(c.toLowerCase().split(',')[0])}); if(k)cities.push([dest,COORDS[k].lat,COORDS[k].lng,COORDS[k].tz]); });
+  var WMO={0:'&#9728;',1:'&#127780;',2:'&#9925;',3:'&#9729;',45:'&#127787;',48:'&#127787;',51:'&#127782;',53:'&#127783;',55:'&#127783;',61:'&#127783;',63:'&#127783;',65:'&#127783;',71:'&#127784;',73:'&#10052;',75:'&#10052;',80:'&#127782;',81:'&#127783;',82:'&#9928;',95:'&#9928;',96:'&#9928;',99:'&#9928;'};
+  var promises=cities.map(function(city){
+    var name=city[0],lat=city[1],lng=city[2],tz=city[3];
+    return fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lng+'&current_weather=true&wind_speed_unit=mph&temperature_unit=fahrenheit&timezone='+encodeURIComponent(tz)+'&forecast_days=1')
+      .then(function(r){return r.json();})
+      .then(function(d){var cw=d.current_weather||{};var w=Math.round(cw.windspeed||0);var temp=Math.round(cw.temperature||0);var em=WMO[cw.weathercode||0]||'&#9728;';return '<div style="background:#131929;border:1px solid #1e2d45;border-radius:6px;padding:8px 12px;font-size:12px;white-space:nowrap;">'+em+' <strong style="color:#e2e8f0;">'+name.split(',')[0]+'</strong> <span style="color:#64748b;">'+temp+'&#176;F</span> <span style="'+(w>=35?'color:#ef4444;font-weight:700;':'color:#64748b;')+'">&#128168;'+w+'mph'+(w>=35?' &#9888;':'')+' </span></div>';})
+      .catch(function(){return '<div style="background:#131929;border:1px solid #1e2d45;border-radius:6px;padding:8px 12px;font-size:12px;color:#64748b;">'+name.split(',')[0]+': N/A</div>';});
+  });
+  Promise.all(promises).then(function(parts){
+    strip.innerHTML = parts.join('') || '<div style="color:#64748b;font-size:12px;">Weather unavailable</div>';
+  });
 }
 </script>
 <script src="nexus-sidebar.js"></script>

@@ -508,6 +508,45 @@ function fmtRate(r) {
   return '$' + Number(r).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
 }
 
+// ─── ROUTE COMPLIANCE DEEP-LINK ──────────────────────────────────────────
+function openRouteCompliance(load) {
+  localStorage.setItem('nexus_route_prefill', JSON.stringify({
+    origin: load.originCity ? (load.originCity + (load.originState ? ', ' + load.originState : '')) : '',
+    destination: load.destCity ? (load.destCity + (load.destState ? ', ' + load.destState : '')) : '',
+    weight: load.commodity_weight || 0,
+    width: parseFloat(load.total_width) || 8.5,
+    height: parseFloat(load.total_height) || 13.5,
+    length: parseFloat(load.total_length) || 53,
+    load_id: load.id || load.loadNum || ''
+  }));
+  window.location.href = 'route-compliance.html?prefill=1';
+}
+
+// ─── WEATHER BADGES ──────────────────────────────────────────────────────
+async function addWeatherBadges() {
+  const CITY_COORDS = {'houston':{lat:29.7604,lng:-95.3698,tz:'America/Chicago'},'oklahoma city':{lat:35.4676,lng:-97.5164,tz:'America/Chicago'},'corpus christi':{lat:27.8006,lng:-97.3964,tz:'America/Chicago'},'dallas':{lat:32.7767,lng:-96.7970,tz:'America/Chicago'},'san antonio':{lat:29.4241,lng:-98.4936,tz:'America/Chicago'},'lubbock':{lat:33.5779,lng:-101.8552,tz:'America/Chicago'},'beaumont':{lat:30.0860,lng:-94.1018,tz:'America/Chicago'},'midland':{lat:31.9973,lng:-102.0779,tz:'America/Chicago'},'phoenix':{lat:33.4484,lng:-112.0740,tz:'America/Phoenix'},'atlanta':{lat:33.7490,lng:-84.3880,tz:'America/New_York'}};
+  const WMO_WARN = {65:1,71:1,73:1,75:1,80:1,81:1,82:1,85:1,86:1,95:1,96:1,99:1};
+  const loads = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  const active = loads.filter(l => l.status==='transit'||l.status==='active');
+  for (const load of active.slice(0,3)) {
+    const key = (load.destCity||'').toLowerCase().trim();
+    const coords = CITY_COORDS[key];
+    if (!coords) continue;
+    try {
+      const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}&current_weather=true&daily=windspeed_10m_max&wind_speed_unit=mph&temperature_unit=fahrenheit&timezone=${encodeURIComponent(coords.tz)}&forecast_days=1`);
+      const d = await r.json();
+      const code = (d.current_weather||{}).weathercode||0;
+      const wind = (d.current_weather||{}).windspeed||0;
+      const badge = document.getElementById('weather-badge-' + load.id);
+      if (!badge) continue;
+      const isBad = WMO_WARN[code] || wind >= 35;
+      if (isBad) {
+        badge.innerHTML = wind>=35 ? `<span style="background:#ef4444;color:#fff;border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700;">&#128168; ${Math.round(wind)}mph</span>` : `<span style="background:#f59e0b;color:#000;border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700;">&#9928; Check Weather</span>`;
+      }
+    } catch(e) {}
+  }
+}
+
 // ─── RENDER TABLE ────────────────────────────────────────────────────────
 function renderLoads() {
   const loads = getLoads();
@@ -538,7 +577,7 @@ function renderLoads() {
       <td><span class="load-num">${l.loadNum||'—'}</span></td>
       <td>${driverBadge(l.driver)}</td>
       <td>${l.originCity||'—'}${l.originState?', '+l.originState:''}</td>
-      <td>${l.destCity||'—'}${l.destState?', '+l.destState:''}</td>
+      <td>${l.destCity||'—'}${l.destState?', '+l.destState:''}<span id="weather-badge-${l.id}"></span></td>
       <td style="font-size:12px;">${l.broker||'—'}</td>
       <td style="color:#22c55e;font-weight:600;">${fmtRate(l.rate)}</td>
       <td style="font-size:12px;">${fmtDate(l.pickupDate)}</td>
@@ -549,6 +588,7 @@ function renderLoads() {
         <div class="action-btns">
           <button class="icon-btn" title="Edit" onclick="editLoad('${l.id}')">✏️</button>
           <button class="icon-btn" title="Delete" onclick="deleteLoad('${l.id}')">🗑</button>
+          <button onclick="openRouteCompliance(getLoads().find(x=>x.id==='${l.id}'))" style="background:rgba(59,130,246,.15);color:#3b82f6;border:1px solid rgba(59,130,246,.3);border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;">&#x1F5FA; Route Check</button>
         </div>
       </td>
     </tr>`;
@@ -875,6 +915,7 @@ document.getElementById('loadModal').addEventListener('click', function(e){
 });
 
 renderLoads();
+addWeatherBadges();
 
 (async()=>{
   if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
