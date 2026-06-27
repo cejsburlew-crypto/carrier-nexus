@@ -7,7 +7,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
+  :root {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
+  :root {
   --black: #f1f5f9;
   --gunmetal: #ffffff;
   --gunmetal-light: #f8fafc;
@@ -869,7 +882,7 @@ function setView(v) {
     } else if (vaultEl) {
       vaultEl.innerHTML = '<div style="padding:40px;text-align:center;color:#6b7280;">'
         + '<div style="font-size:36px;margin-bottom:12px;">☁️</div>'
-        + '<div style="font-family:Barlow Condensed,sans-serif;font-size:18px;font-weight:700;color:#e2e8f0;margin-bottom:8px;">CONNECT GOOGLE DRIVE</div>'
+        + '<div style="font-family:Barlow Condensed,sans-serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;">CONNECT GOOGLE DRIVE</div>'
         + '<div style="font-size:13px;margin-bottom:16px;">Authorize Drive access to browse the document vault.</div>'
         + '<button class="btn btn-orange" onclick="vaultConnect()">Connect Drive</button>'
         + '</div>';
@@ -1072,40 +1085,40 @@ document.addEventListener('DOMContentLoaded', function() {
   <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;width:100%;max-max-width: min(90vw, 640px);max-height:90vh;overflow-y:auto;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid #334155;">
       <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#f1f5f9;letter-spacing:.06em;">SYNC NEXUS DOCUMENTS</span>
-      <button onclick="closeSyncModal()" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;line-height:1;">&#10005;</button>
+      <button onclick="closeSyncModal()" style="background:none;border:none;color:var(--mid);font-size:20px;cursor:pointer;line-height:1;">&#10005;</button>
     </div>
     <!-- TABS -->
     <div style="display:flex;border-bottom:1px solid #334155;padding:0 24px;">
       <button id="tab-sync" onclick="switchSyncTab('sync')" style="padding:12px 16px;background:none;border:none;border-bottom:2px solid #e8640a;color:#f1f5f9;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;cursor:pointer;">SYNC WORKFLOW</button>
-      <button id="tab-cfg" onclick="switchSyncTab('cfg')" style="padding:12px 16px;background:none;border:none;border-bottom:2px solid transparent;color:#64748b;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;cursor:pointer;">&#9881; CONFIGURE</button>
+      <button id="tab-cfg" onclick="switchSyncTab('cfg')" style="padding:12px 16px;background:none;border:none;border-bottom:2px solid transparent;color:var(--mid);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;cursor:pointer;">&#9881; CONFIGURE</button>
     </div>
     <!-- SYNC TAB -->
     <div id="sync-tab-sync" style="padding:24px;">
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
-        <a href="https://mail.google.com/mail/u/0/#search/has:attachment+carrier+OR+BOL+OR+load" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;" onmouseover="this.style.borderColor='#2e6da4'" onmouseout="this.style.borderColor='#334155'">
+        <a href="https://mail.google.com/mail/u/0/#search/has:attachment+carrier+OR+BOL+OR+load" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--bg);border:1px solid #334155;border-radius:8px;text-decoration:none;" onmouseover="this.style.borderColor='#2e6da4'" onmouseout="this.style.borderColor='#334155'">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#ea4335"/><path d="M4 8l8 5 8-5V18H4V8z" fill="white"/></svg>
-          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">GMAIL</div><div style="font-size:11px;color:#64748b;margin-top:2px;">BOL, load confirmations, permits</div></div>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">GMAIL</div><div style="font-size:11px;color:var(--mid);margin-top:2px;">BOL, load confirmations, permits</div></div>
           <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
-        <a href="https://web.whatsapp.com" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#334155'">
+        <a href="https://web.whatsapp.com" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--bg);border:1px solid #334155;border-radius:8px;text-decoration:none;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#334155'">
           <svg width="28" height="28" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#25d366"/><path d="M12 4a8 8 0 100 16 8 8 0 000-16z" fill="white" fill-opacity="0.2"/><path d="M9 9.5s1-1.5 3.5-.5 2 4 0 5-4.5-1-4.5-1L9 15.5" stroke="white" stroke-width="1.2" fill="none"/></svg>
-          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">WHATSAPP WEB</div><div style="font-size:11px;color:#64748b;margin-top:2px;">Download PDFs from driver chats</div></div>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">WHATSAPP WEB</div><div style="font-size:11px;color:var(--mid);margin-top:2px;">Download PDFs from driver chats</div></div>
           <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
-        <a href="https://drive.google.com" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:8px;text-decoration:none;" onmouseover="this.style.borderColor='#4285f4'" onmouseout="this.style.borderColor='#334155'">
+        <a href="https://drive.google.com" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--bg);border:1px solid #334155;border-radius:8px;text-decoration:none;" onmouseover="this.style.borderColor='#4285f4'" onmouseout="this.style.borderColor='#334155'">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#1a73e8"/><path d="M6 18l3.5-6L12 18H6zM12 18l3.5-6 2.5-4.5L16 6l-4 7-1.5 2.5L12 18zm6 0l-2-3.5L12 6h2.5l5.5 9.5L18 18z" fill="white"/></svg>
-          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">GOOGLE DRIVE</div><div style="font-size:11px;color:#64748b;margin-top:2px;">Drop files into vault folder</div></div>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">GOOGLE DRIVE</div><div style="font-size:11px;color:var(--mid);margin-top:2px;">Drop files into vault folder</div></div>
           <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
       </div>
       <!-- IMPORT NOW -->
-      <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:16px 18px;margin-bottom:16px;">
+      <div style="background:var(--bg);border:1px solid #334155;border-radius:8px;padding:16px 18px;margin-bottom:16px;">
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#e8640a;letter-spacing:.06em;margin-bottom:10px;">IMPORT FROM GMAIL SYNC</div>
         <p style="font-size:12px;color:#94a3b8;margin:0 0 12px;">Pull all documents the Gmail Apps Script synced into NEXUS automatically.</p>
         <button id="import-drive-btn" onclick="quickImportDrive()" style="width:100%;padding:10px;background:#1a73e8;color:#fff;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;cursor:pointer;">
           &#8595; IMPORT FROM DRIVE SYNC
         </button>
-        <div id="import-status" style="font-size:11px;color:#64748b;margin-top:8px;text-align:center;"></div>
+        <div id="import-status" style="font-size:11px;color:var(--mid);margin-top:8px;text-align:center;"></div>
       </div>
       <button onclick="closeSyncModal()" style="width:100%;padding:11px;background:#2e6da4;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;cursor:pointer;">DONE</button>
     </div>
@@ -1115,16 +1128,16 @@ document.addEventListener('DOMContentLoaded', function() {
       <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px;">
         <div>
           <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">GOOGLE ACCOUNT EMAIL</label>
-          <input id="sc-email" type="email" placeholder="crtruckus@gmail.com" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
+          <input id="sc-email" type="email" placeholder="crtruckus@gmail.com" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
         </div>
         <div>
           <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DRIVE VAULT FOLDER ID</label>
-          <input id="sc-folder" type="text" placeholder="Paste folder ID or full Drive share URL" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
+          <input id="sc-folder" type="text" placeholder="Paste folder ID or full Drive share URL" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
           <div style="font-size:10px;color:#475569;margin-top:4px;">Paste the full share URL or just the folder ID</div>
         </div>
         <div>
           <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DRIVE SYNC — AUTO-IMPORT CSV URL</label>
-          <input id="sc-csvurl" type="url" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?...output=csv" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
+          <input id="sc-csvurl" type="url" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?...output=csv" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
           <div style="font-size:10px;color:#475569;margin-top:4px;">Google Sheet published as CSV (NEXUS Vault tab)</div>
         </div>
       </div>
@@ -1139,20 +1152,20 @@ document.addEventListener('DOMContentLoaded', function() {
   <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;width:100%;max-width:480px;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid #334155;">
       <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#f1f5f9;letter-spacing:.06em;">ADD DOCUMENT</span>
-      <button onclick="closeAddDocModal()" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;">✕</button>
+      <button onclick="closeAddDocModal()" style="background:none;border:none;color:var(--mid);font-size:20px;cursor:pointer;">✕</button>
     </div>
     <form id="add-doc-form" onsubmit="submitAddDoc(event)" style="padding:24px;display:flex;flex-direction:column;gap:14px;">
       <div>
         <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DATE</label>
-        <input type="date" id="nd-date" required style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;box-sizing:border-box;color-scheme:dark;">
+        <input type="date" id="nd-date" required style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;box-sizing:border-box;color-scheme:dark;">
       </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">FILENAME</label>
-        <input type="text" id="nd-filename" placeholder="AMET - BROKER BOL 12345.pdf (optional)" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
+        <input type="text" id="nd-filename" placeholder="AMET - BROKER BOL 12345.pdf (optional)" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
       </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DRIVER</label>
-        <select id="nd-driver" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
+        <select id="nd-driver" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
           <option value="">Select driver...</option>
           <option value="AMET">Amet Abreu</option><option value="AVIS">Avis Modesto</option>
           <option value="DAVID">David Fonseca</option><option value="GUILLERMO">Guillermo Pinera</option>
@@ -1162,7 +1175,7 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">TYPE</label>
-        <select id="nd-type" required style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
+        <select id="nd-type" required style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
           <option value="BOL">BOL</option>
           <option value="Load Confirmation">Load Confirmation</option>
           <option value="Rate Confirmation">Rate Confirmation</option>
@@ -1177,13 +1190,13 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">ADD / DEDUCT</label>
-        <select id="nd-ad" style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
+        <select id="nd-ad" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
           <option value="ADD">Revenue</option><option value="DEDUCT">Expense</option><option value="REVIEW">REVIEW</option>
         </select>
       </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">GOOGLE DRIVE LINK (optional)</label>
-        <input type="url" id="nd-drive" placeholder="https://drive.google.com/file/d/..." style="width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
+        <input type="url" id="nd-drive" placeholder="https://drive.google.com/file/d/..." style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
       </div>
       <button type="submit" style="padding:11px;background:#2e6da4;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;cursor:pointer;margin-top:4px;">ADD TO VAULT</button>
     </form>

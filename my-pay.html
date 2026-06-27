@@ -7,9 +7,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{background:#0a0a0a;color:#c9d1d9;font-family:'Barlow',sans-serif;margin-left:220px;min-height:100vh}
+    body{background:#0a0a0a;color: var(--text);font-family:'Barlow',sans-serif;margin-left:220px;min-height:100vh}
     @media(max-width:768px){body{margin-left:0}}
-    .topbar{background:#111827;border-bottom:1px solid #1f2937;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50}
+    .topbar{background:var(--panel2);border-bottom:1px solid #1f2937;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50}
     .topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:1px;color:#fff}
     .topbar-right{display:flex;align-items:center;gap:12px}
     .driver-select{background:#1f2937;border:1px solid #374151;color:#e5e7eb;padding:7px 12px;border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;cursor:pointer}
@@ -52,7 +52,7 @@
     .hero-pdf-btn{margin-top:14px;width:100%;background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.3);color:#5eead4;padding:9px;border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;text-decoration:none;display:block}
     .hero-pdf-btn:hover{background:rgba(20,184,166,.2)}
     .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-    .metric-card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 16px}
+    .metric-card{background:var(--panel2);border:1px solid #1f2937;border-radius:12px;padding:14px 16px}
     .metric-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:#6b7280;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
     .metric-value{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#e5e7eb}
     .metric-sub{font-size:11px;color:#4b5563;margin-top:3px}
@@ -61,7 +61,7 @@
     .tab-btn.active{background:#1f2937;color:#e5e7eb}
     .tab-panel{display:none}
     .tab-panel.active{display:block}
-    .history-row{background:#111827;border:1px solid #1f2937;border-radius:10px;margin-bottom:8px;overflow:hidden;cursor:pointer;transition:border-color .15s}
+    .history-row{background:var(--panel2);border:1px solid #1f2937;border-radius:10px;margin-bottom:8px;overflow:hidden;cursor:pointer;transition:border-color .15s}
     .history-row:hover{border-color:#374151}
     .history-row-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;gap:8px}
     .history-row-left{flex:1;min-width:0}
@@ -98,7 +98,7 @@
     .badge-completed{background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.25);padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
     .badge-progress{background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.25);padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
     .badge-cancelled{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.25);padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
-    .dispute-form-card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:18px;margin-bottom:16px}
+    .dispute-form-card{background:var(--panel2);border:1px solid #1f2937;border-radius:12px;padding:18px;margin-bottom:16px}
     .dispute-form-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:#e5e7eb;margin-bottom:14px}
     .form-group{margin-bottom:12px}
     .form-label{display:block;font-size:11px;font-weight:600;color:#6b7280;letter-spacing:.3px;margin-bottom:5px}
@@ -109,7 +109,7 @@
     .btn-submit{background:#e91e8c;border:none;color:#fff;padding:10px 20px;border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;width:100%}
     .btn-submit:hover{background:#c2185b}
     .disputes-list-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:#9ca3af;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
-    .dispute-item{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:14px 16px;margin-bottom:8px}
+    .dispute-item{background:var(--panel2);border:1px solid #1f2937;border-radius:10px;padding:14px 16px;margin-bottom:8px}
     .dispute-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
     .dispute-week{font-family:'JetBrains Mono',monospace;font-size:10px;color:#6b7280}
     .dispute-deduction{font-size:13px;font-weight:600;color:#e5e7eb}
@@ -121,7 +121,7 @@
     .dispute-resolve-input{flex:1;background:#0d1117;border:1px solid #1f2937;border-radius:6px;color:#c9d1d9;padding:7px 10px;font-size:12px;font-family:'Barlow',sans-serif}
     .btn-resolve{background:#14b8a6;border:none;color:#fff;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
     .empty-state{text-align:center;padding:32px 20px;color:#4b5563;font-size:13px}
-    .panel-card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px;overflow-x:auto}
+    .panel-card{background:var(--panel2);border:1px solid #1f2937;border-radius:12px;padding:16px;overflow-x:auto}
   </style>
 
   <style>

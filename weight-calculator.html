@@ -7,7 +7,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--orange:#e8640a;--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#eab308;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
+  :root {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
+  :root{--orange:#e8640a;--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#eab308;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
 .sidebar{width:220px;min-height:100vh;background:#000;border-right:1px solid #1a1a1a;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
@@ -73,7 +86,7 @@ body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:fl
 .radio-row{display:flex;gap:16px;}
 .radio-label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;cursor:pointer;min-height:36px;}
 .radio-label input[type=radio]{width:16px;height:16px;accent-color:var(--blue);cursor:pointer;}
-.diagram-wrap{background:#0f172a;border-radius:10px;padding:16px;margin-bottom:16px;}
+.diagram-wrap{background:var(--bg);border-radius:10px;padding:16px;margin-bottom:16px;}
 .diagram-title{font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
 .results-panel{display:flex;flex-direction:column;gap:12px;}
 .axle-gauge-card{background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;}

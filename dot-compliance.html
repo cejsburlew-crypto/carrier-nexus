@@ -6,7 +6,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--orange:#e8640a;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
+  :root {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
+  :root{--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--orange:#e8640a;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
 .main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
@@ -27,7 +40,7 @@ body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:fl
 /* DQ GRID */
 .dq-grid{display:grid;grid-template-columns:180px repeat(10,1fr);font-size:11px;}
 .dq-header{background:#f8fafc;border-bottom:2px solid #e2e8f0;display:contents;}
-.dq-header-cell{padding:8px 6px;font-size:9px;font-weight:700;color:#64748b;letter-spacing:.08em;text-transform:uppercase;text-align:center;border-right:1px solid #f1f5f9;}
+.dq-header-cell{padding:8px 6px;font-size:9px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;text-align:center;border-right:1px solid #f1f5f9;}
 .dq-header-cell:first-child{text-align:left;padding-left:16px;}
 .dq-row{display:contents;}
 .dq-row:hover .dq-cell{background:#fafcff;}
@@ -45,7 +58,7 @@ body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:fl
 .badge-red{background:#fee2e2;color:#b91c1c;}
 .badge-yellow{background:#fef9c3;color:#a16207;}
 .badge-blue{background:#dbeafe;color:#1d4ed8;}
-.badge-gray{background:#f1f5f9;color:#64748b;}
+.badge-gray{background:#f1f5f9;color:var(--mid);}
 .badge-orange{background:#ffedd5;color:#c2410c;}
 /* EXPIRY TABLE */
 table{width:100%;border-collapse:collapse;}
@@ -94,7 +107,7 @@ tr:hover td{background:#fafcff;}
 .modal-footer{padding:12px 22px 18px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid #f1f5f9;}
 /* mobile */
 .mobile-nav{display:none;}
-@media(max-width:768px){.main{margin-left:0!important;}.content{padding:14px 12px 80px!important;}.kpi-row{grid-template-columns:1fr 1fr!important;}.two-col{grid-template-columns:1fr!important;}.mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;height:56px;background:#000;border-top:1px solid rgba(233,30,140,0.2);z-index:200;}.mobile-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;font-size:9px;font-weight:700;color:#64748b;}.mobile-nav a.active{color:#e91e8c;}}
+@media(max-width:768px){.main{margin-left:0!important;}.content{padding:14px 12px 80px!important;}.kpi-row{grid-template-columns:1fr 1fr!important;}.two-col{grid-template-columns:1fr!important;}.mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;height:56px;background:#000;border-top:1px solid rgba(233,30,140,0.2);z-index:200;}.mobile-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;font-size:9px;font-weight:700;color:var(--mid);}.mobile-nav a.active{color:#e91e8c;}}
 </style>
 <style id="nexus-unified">
 .sidebar,nav.sidebar{background:#000!important;border-right:1px solid #1a1a1a!important;}
@@ -147,22 +160,22 @@ tr:hover td{background:#fafcff;}
           <div class="panel-title">Driver Qualification (DQ) File Tracker</div>
           <div class="panel-sub">49 CFR §391 — Required documents per driver</div>
         </div>
-        <span style="font-size:11px;color:#64748b;">🟢 Current &nbsp; 🟡 Expiring ≤60d &nbsp; 🔴 Expired / Missing &nbsp; ⚪ N/A</span>
+        <span style="font-size:11px;color:var(--mid);">🟢 Current &nbsp; 🟡 Expiring ≤60d &nbsp; 🔴 Expired / Missing &nbsp; ⚪ N/A</span>
       </div>
       <div style="overflow-x:auto;">
         <div class="dq-grid" id="dqGrid">
           <!-- Header -->
-          <div class="dq-header-cell" style="text-align:left;padding-left:16px;background:#f8fafc;padding:10px 16px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;letter-spacing:.08em;text-transform:uppercase;">Driver</div>
-          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">CDL</div>
-          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">DOT Physical</div>
-          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">Drug Test</div>
-          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">MVR Annual</div>
-          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">Annual Review</div>
-          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">Emp. App</div>
-          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">Road Test</div>
-          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">Prev Emp</div>
-          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">Clearinghouse</div>
-          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;">DQ Score</div>
+          <div class="dq-header-cell" style="text-align:left;padding-left:16px;background:#f8fafc;padding:10px 16px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;">Driver</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:var(--mid);text-align:center;text-transform:uppercase;letter-spacing:.06em;">CDL</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:var(--mid);text-align:center;text-transform:uppercase;letter-spacing:.06em;">DOT Physical</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:var(--mid);text-align:center;text-transform:uppercase;letter-spacing:.06em;">Drug Test</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:var(--mid);text-align:center;text-transform:uppercase;letter-spacing:.06em;">MVR Annual</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:var(--mid);text-align:center;text-transform:uppercase;letter-spacing:.06em;">Annual Review</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:var(--mid);text-align:center;text-transform:uppercase;letter-spacing:.06em;">Emp. App</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:var(--mid);text-align:center;text-transform:uppercase;letter-spacing:.06em;">Road Test</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:var(--mid);text-align:center;text-transform:uppercase;letter-spacing:.06em;">Prev Emp</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:var(--mid);text-align:center;text-transform:uppercase;letter-spacing:.06em;">Clearinghouse</div>
+          <div class="dq-header-cell" style="background:#f8fafc;padding:10px 6px;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:700;color:var(--mid);text-align:center;text-transform:uppercase;letter-spacing:.06em;">DQ Score</div>
           <!-- Rows rendered by JS -->
         </div>
       </div>
@@ -195,7 +208,7 @@ tr:hover td{background:#fafcff;}
           <button class="btn btn-sm btn-primary" onclick="openDrugModal()">＋ Log Test</button>
         </div>
         <div class="pool-grid" id="poolGrid"></div>
-        <div style="padding:12px 20px;border-top:1px solid #f1f5f9;font-size:11px;color:#64748b;">
+        <div style="padding:12px 20px;border-top:1px solid #f1f5f9;font-size:11px;color:var(--mid);">
           <strong style="color:#0f172a;" id="poolProgress">0 / 0</strong> drivers tested this year &nbsp;·&nbsp; 
           <span id="poolRate" style="font-weight:700;">0%</span> rate
           &nbsp;(<span style="color:#22c55e;">50% required</span>)
@@ -622,7 +635,7 @@ function renderRS() {
     <td style="font-size:12px;max-width:180px;">${r.violations||'—'}</td>
     <td>${r.result==='oos'?'<span class="badge badge-red">YES</span>':'<span class="badge badge-gray">No</span>'}</td>
     <td>${resultBadge[r.result]||r.result}</td>
-    <td style="font-size:11px;color:#64748b;">${r.notes||''}</td>
+    <td style="font-size:11px;color:var(--mid);">${r.notes||''}</td>
     <td><button class="btn btn-sm" style="color:#ef4444;" onclick="deleteRS('${r.id}')">✕</button></td>
   </tr>`).join('');
 }
@@ -804,12 +817,12 @@ renderRS();
       <div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;font-size:13px;">
           <thead><tr style="background:#f8fafc;">
-            <th style="padding:8px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:1px solid #e2e8f0;">Date</th>
-            <th style="padding:8px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:1px solid #e2e8f0;">Type</th>
-            <th style="padding:8px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:1px solid #e2e8f0;">Units</th>
-            <th style="padding:8px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:1px solid #e2e8f0;">Driver</th>
-            <th style="padding:8px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:1px solid #e2e8f0;">Time</th>
-            <th style="padding:8px;text-align:left;font-size:11px;color:#64748b;font-weight:700;border-bottom:1px solid #e2e8f0;">Status</th>
+            <th style="padding:8px;text-align:left;font-size:11px;color:var(--mid);font-weight:700;border-bottom:1px solid #e2e8f0;">Date</th>
+            <th style="padding:8px;text-align:left;font-size:11px;color:var(--mid);font-weight:700;border-bottom:1px solid #e2e8f0;">Type</th>
+            <th style="padding:8px;text-align:left;font-size:11px;color:var(--mid);font-weight:700;border-bottom:1px solid #e2e8f0;">Units</th>
+            <th style="padding:8px;text-align:left;font-size:11px;color:var(--mid);font-weight:700;border-bottom:1px solid #e2e8f0;">Driver</th>
+            <th style="padding:8px;text-align:left;font-size:11px;color:var(--mid);font-weight:700;border-bottom:1px solid #e2e8f0;">Time</th>
+            <th style="padding:8px;text-align:left;font-size:11px;color:var(--mid);font-weight:700;border-bottom:1px solid #e2e8f0;">Status</th>
             <th style="padding:8px;border-bottom:1px solid #e2e8f0;"></th>
           </tr></thead>
           <tbody>${rows}</tbody>

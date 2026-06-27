@@ -10,9 +10,22 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{height:100%;-webkit-text-size-adjust:100%;}
-body{background:#0f1724;color:#f0f4f8;font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;}
+body{background:#0f1724;color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;}
 .layout{display:flex;min-height:100vh;}
 .main-content{flex:1;min-width:0;margin-left:220px;padding-bottom:30px;}
 @media(max-width:768px){.main-content{margin-left:0;padding-bottom:80px;}}
@@ -51,7 +64,7 @@ body{background:#0f1724;color:#f0f4f8;font-family:'Barlow',sans-serif;min-height
 /* FORM */
 .form-group{margin-bottom:16px;}
 .form-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:8px;}
-.form-input{width:100%;padding:10px 14px;background:#0f1724;border:1px solid rgba(255,255,255,.12);color:#f0f4f8;font-family:'Barlow',sans-serif;font-size:14px;outline:none;transition:border-color .15s;}
+.form-input{width:100%;padding:10px 14px;background:#0f1724;border:1px solid rgba(255,255,255,.12);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;outline:none;transition:border-color .15s;}
 .form-input:focus{border-color:#00d4aa;}
 .form-input::placeholder{color:rgba(255,255,255,.25);}
 textarea.form-input{resize:vertical;min-height:80px;max-height:120px;}
@@ -124,7 +137,7 @@ select.form-input option{background:#1a2236;}
 .dc-meta{display:flex;gap:16px;margin-bottom:12px;}
 .dc-meta-item{display:flex;flex-direction:column;gap:1px;}
 .dc-meta-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(255,255,255,.3);letter-spacing:.12em;text-transform:uppercase;}
-.dc-meta-value{font-size:12px;font-weight:600;color:#f0f4f8;}
+.dc-meta-value{font-size:12px;font-weight:600;color:var(--text);}
 .dc-footer{display:flex;justify-content:space-between;align-items:center;}
 .dc-updated{font-size:10px;color:rgba(255,255,255,.25);}
 .dc-contact-btn{padding:6px 14px;background:transparent;border:1px solid rgba(0,212,170,.35);color:#00d4aa;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;text-decoration:none;transition:all .15s;}
@@ -291,7 +304,7 @@ select.form-input option{background:#1a2236;}
       Privacy &amp; Visibility
     </div>
     <ul>
-      <li>Your availability profile is visible to <strong style="color:#f0f4f8;">approved dispatchers and brokers only</strong> — never public.</li>
+      <li>Your availability profile is visible to <strong style="color:var(--text);">approved dispatchers and brokers only</strong> — never public.</li>
       <li>Toggle "Available" OFF at any time to immediately hide yourself from the network.</li>
       <li>Your contact information is never shared without your dispatcher's approval.</li>
       <li>Equipment types and radius help dispatchers find the right driver for each load.</li>

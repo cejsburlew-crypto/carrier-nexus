@@ -6,12 +6,25 @@
 <title>Expiration Alerts — Carrier Nexus</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
+  :root {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
+  :root {
   --black: #0a0a0a;
   --navy: #111827;
   --navy2: #1f2937;
   --navy3: #374151;
-  --border: #21262d;
+  --border: var(--border);
   --border2: #30363d;
   --text: #c9d1d9;
   --text-muted: #6b7280;
@@ -139,7 +152,7 @@ body {
 .ef-group { display: flex; flex-direction: column; gap: 4px; }
 .ef-group label { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .8px; }
 .ef-group input, .ef-group select, .ef-group textarea {
-  background: #0d1117; border: 1px solid var(--border2); border-radius: 5px;
+  background: var(--bg); border: 1px solid var(--border2); border-radius: 5px;
   color: var(--text); font-family: 'Barlow', sans-serif; font-size: 13px;
   padding: 6px 10px;
 }
@@ -153,7 +166,7 @@ body {
 }
 .modal-overlay.open { display: flex; }
 .modal {
-  background: #161b22; border: 1px solid var(--border); border-radius: 12px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 12px;
   width: 560px; max-width: 96vw; max-height: 90vh; overflow-y: auto;
   box-shadow: 0 24px 64px rgba(0,0,0,.6);
 }
@@ -171,7 +184,7 @@ body {
 .form-group { display: flex; flex-direction: column; gap: 5px; }
 .form-group label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .8px; }
 .form-group input, .form-group select, .form-group textarea {
-  background: #0d1117; border: 1px solid var(--border2); border-radius: 6px;
+  background: var(--bg); border: 1px solid var(--border2); border-radius: 6px;
   color: var(--text); font-family: 'Barlow', sans-serif; font-size: 14px; padding: 9px 12px;
 }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--orange); outline: none; }

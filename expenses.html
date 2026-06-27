@@ -6,7 +6,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--sb:#000;--orange:#e8640a;--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
+  :root {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
+  :root{--sb:#000;--orange:#e8640a;--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
 .sidebar{width:220px;min-height:100vh;background:#000;border-right:1px solid #1a1a1a;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
@@ -52,7 +65,7 @@ tr.row-deleted td{background:#fef2f2 !important;opacity:.65;}
 tr.row-deleted td.cell-main{text-decoration:line-through;color:#94a3b8;}
 .deleted-stamp{font-family:'JetBrains Mono',monospace;font-size:9px;color:#ef4444;display:block;margin-top:3px;}
 /* AUDIT */
-.audit-cell{font-family:'JetBrains Mono',monospace;font-size:9px;color:#64748b;line-height:1.5;}
+.audit-cell{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--mid);line-height:1.5;}
 .audit-cell span{display:block;}
 .audit-by{color:#0f172a;font-weight:600;}
 /* BADGES */
@@ -61,7 +74,7 @@ tr.row-deleted td.cell-main{text-decoration:line-through;color:#94a3b8;}
 .badge-red{background:#fee2e2;color:#b91c1c;}
 .badge-yellow{background:#fef9c3;color:#a16207;}
 .badge-blue{background:#dbeafe;color:#1d4ed8;}
-.badge-gray{background:#f1f5f9;color:#64748b;}
+.badge-gray{background:#f1f5f9;color:var(--mid);}
 .badge-orange{background:#ffedd5;color:#c2410c;}
 .badge-purple{background:#ede9fe;color:#6d28d9;}
 .badge-pink{background:#fce7f3;color:#be185d;}

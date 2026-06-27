@@ -6,7 +6,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--orange:#e8640a;--border:#e2e8f0;--muted:#64748b;}
+  :root {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
+  :root{--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--orange:#e8640a;--border:#e2e8f0;--muted:#64748b;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
 .main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
@@ -41,13 +54,13 @@ body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:fl
 .badge-red{background:#fee2e2;color:#b91c1c;}
 .badge-yellow{background:#fef9c3;color:#a16207;}
 .badge-blue{background:#dbeafe;color:#1d4ed8;}
-.badge-gray{background:#f1f5f9;color:#64748b;}
+.badge-gray{background:#f1f5f9;color:var(--mid);}
 .badge-orange{background:#ffedd5;color:#c2410c;}
 .status-pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;}
 .pill-green{background:#dcfce7;color:#15803d;}
 .pill-yellow{background:#fef9c3;color:#a16207;}
 .pill-red{background:#fee2e2;color:#b91c1c;}
-.pill-gray{background:#f1f5f9;color:#64748b;}
+.pill-gray{background:#f1f5f9;color:var(--mid);}
 .pill-blue{background:#dbeafe;color:#1d4ed8;}
 /* PANELS */
 .panel{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;}
@@ -85,7 +98,7 @@ tr:hover td{background:#fafcff;}
 .modal-footer{padding:12px 22px 18px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid #f1f5f9;position:sticky;bottom:0;background:#fff;}
 /* MOBILE */
 .mobile-nav{display:none;}
-@media(max-width:768px){.main{margin-left:0!important;}.content{padding:14px 12px 80px!important;}.kpi-row{grid-template-columns:1fr 1fr!important;}.fleet-grid{grid-template-columns:1fr!important;}.form-grid{grid-template-columns:1fr!important;}.mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;height:56px;background:#000;border-top:1px solid rgba(233,30,140,0.2);z-index:200;}.mobile-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;font-size:9px;font-weight:700;color:#64748b;}.mobile-nav a.active{color:#e91e8c;}}
+@media(max-width:768px){.main{margin-left:0!important;}.content{padding:14px 12px 80px!important;}.kpi-row{grid-template-columns:1fr 1fr!important;}.fleet-grid{grid-template-columns:1fr!important;}.form-grid{grid-template-columns:1fr!important;}.mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;height:56px;background:#000;border-top:1px solid rgba(233,30,140,0.2);z-index:200;}.mobile-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;font-size:9px;font-weight:700;color:var(--mid);}.mobile-nav a.active{color:#e91e8c;}}
 </style>
 <style id="nexus-unified">
 .sidebar,nav.sidebar{background:#000!important;border-right:1px solid #1a1a1a!important;}
@@ -425,7 +438,7 @@ function renderFleet() {
       <div class="unit-card-body">
         <div class="pm-item"><span class="pm-item-label">Mileage</span><span class="pm-item-val"><span class="mono">${fmtMi(u.mileage)}</span></span></div>
         <div class="pm-item"><span class="pm-item-label">Oil Change (PM)</span><span class="pm-item-val"><span class="status-pill ${pm.cls}" style="font-size:10px;">${pm.label}</span></span></div>
-        <div class="pm-item"><span class="pm-item-label">Annual Inspection</span><span class="pm-item-val">${annualBadge}<span style="font-size:11px;color:#64748b;">${fmtD(u.annualInsp)}</span></span></div>
+        <div class="pm-item"><span class="pm-item-label">Annual Inspection</span><span class="pm-item-val">${annualBadge}<span style="font-size:11px;color:var(--mid);">${fmtD(u.annualInsp)}</span></span></div>
         <div class="pm-item"><span class="pm-item-label">Last Service</span><span class="pm-item-val"><span style="font-size:11px;">${lastSvc ? SVC_LABELS[lastSvc.type]||lastSvc.type : '—'} · ${fmtD(lastSvc?.date)}</span></span></div>
         <div style="margin-top:8px;display:flex;gap:6px;">
           <button class="btn btn-sm" onclick="openServiceModal('${u.unit}')">+ Log Service</button>
@@ -458,7 +471,7 @@ function renderServiceLog() {
     <td style="color:#22c55e;font-weight:600;">${s.cost?'$'+Number(s.cost).toLocaleString():'—'}</td>
     <td style="font-size:12px;">${s.shop||'—'}</td>
     <td class="mono" style="font-size:11px;">${s.nextDate?fmtD(s.nextDate):s.nextMiles?fmtMi(s.nextMiles):'—'}</td>
-    <td style="font-size:11px;color:#64748b;max-width:160px;">${s.notes||''}</td>
+    <td style="font-size:11px;color:var(--mid);max-width:160px;">${s.notes||''}</td>
     <td><button class="btn-ghost" onclick="deleteSvc('${s.id}')" style="color:#ef4444;">🗑</button></td>
   </tr>`).join('');
 }
@@ -475,7 +488,7 @@ function renderReg() {
     <td class="mono">${fmtD(r.due)}</td>
     <td><span class="badge ${statusBadge[r.status]||'badge-gray'}">${r.status?.replace('_',' ').toUpperCase()}</span></td>
     <td style="font-size:12px;">${r.authority||'—'}</td>
-    <td style="font-size:11px;color:#64748b;">${r.notes||''}</td>
+    <td style="font-size:11px;color:var(--mid);">${r.notes||''}</td>
     <td><button class="btn-ghost" onclick="editReg('${r.id}')">✏️</button><button class="btn-ghost" onclick="deleteReg('${r.id}')" style="color:#ef4444;">🗑</button></td>
   </tr>`).join('');
 }

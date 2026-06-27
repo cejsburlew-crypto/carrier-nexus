@@ -6,7 +6,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--black:#f1f5f9;--gunmetal:#ffffff;--steel-blue:#2e6da4;--orange:#e8640a;--border:rgba(15,23,42,0.10);--white:#0f172a;--text-muted:#64748b;--red:#ef4444;--green:#22c55e;--yellow:#fbbf24;}
+  :root {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
+  :root{--black:#f1f5f9;--gunmetal:#ffffff;--steel-blue:#2e6da4;--orange:#e8640a;--border:rgba(15,23,42,0.10);--white:#0f172a;--text-muted:#64748b;--red:#ef4444;--green:#22c55e;--yellow:#fbbf24;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
 .sidebar{width:220px;min-height:100vh;background:#1a2744;border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
@@ -23,21 +36,21 @@ body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:fl
 .content{padding:24px 28px;}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
 .kpi-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;}
-.kpi-label{font-size:10px;font-weight:700;color:#64748b;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.kpi-label{font-size:10px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
 .kpi-val{font-size:28px;font-weight:700;color:#0f172a;line-height:1;}
 .kpi-sub{font-size:11px;color:#2e6da4;margin-top:4px;}
 .panel{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:20px;}
 .panel-head{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;}
 .panel-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:#0f172a;letter-spacing:.04em;text-transform:uppercase;}
 table{width:100%;border-collapse:collapse;}
-th{font-size:10px;font-weight:700;color:#64748b;letter-spacing:.08em;text-transform:uppercase;padding:10px 16px;text-align:left;background:#f8fafc;border-bottom:1px solid #e2e8f0;}
+th{font-size:10px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;padding:10px 16px;text-align:left;background:#f8fafc;border-bottom:1px solid #e2e8f0;}
 td{padding:12px 16px;font-size:13px;color:#0f172a;border-bottom:1px solid #f8fafc;}
 tr:hover td{background:#f8fafc;}
 .status-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em;}
 .status-active{background:#dcfce7;color:#15803d;}
 .status-pending{background:#fef9c3;color:#a16207;}
 .status-transit{background:#dbeafe;color:#1d4ed8;}
-.status-delivered{background:#f1f5f9;color:#64748b;}
+.status-delivered{background:#f1f5f9;color:var(--mid);}
 .driver-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;}
 .load-num{font-family:'JetBrains Mono',monospace;font-size:12px;color:#2e6da4;font-weight:600;}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;letter-spacing:.04em;transition:all .15s;}
@@ -58,7 +71,7 @@ tr:hover td{background:#f8fafc;}
 .import-zone{border:2px dashed #e2e8f0;border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:20px;background:#fafafa;}
 .import-zone:hover,.import-zone.drag-over{border-color:#e91e8c;background:#fdf2f8;}
 .import-zone-icon{font-size:32px;margin-bottom:8px;}
-.import-zone-text{font-size:13px;color:#64748b;}
+.import-zone-text{font-size:13px;color:var(--mid);}
 .import-zone-text strong{color:#e91e8c;}
 .import-status{margin-top:10px;font-size:12px;font-weight:600;}
 .import-status.extracting{color:#f59e0b;}
@@ -68,7 +81,7 @@ tr:hover td{background:#f8fafc;}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .form-full{grid-column:1/-1;}
 .form-group{display:flex;flex-direction:column;gap:5px;}
-.form-label{font-size:11px;font-weight:700;color:#64748b;letter-spacing:.06em;text-transform:uppercase;}
+.form-label{font-size:11px;font-weight:700;color:var(--mid);letter-spacing:.06em;text-transform:uppercase;}
 .form-input,.form-select{padding:9px 12px;border:1px solid #e2e8f0;border-radius:7px;font-size:13px;font-family:'Barlow',sans-serif;color:#0f172a;background:#fff;transition:border .15s;}
 .form-input:focus,.form-select:focus{outline:none;border-color:#e91e8c;}
 .form-row{display:flex;gap:8px;}
@@ -84,7 +97,7 @@ tr:hover td{background:#f8fafc;}
 .modal-footer{padding:16px 24px;border-top:1px solid #f1f5f9;display:flex;align-items:center;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:#fff;}
 /* ── ACTION ICONS ── */
 .action-btns{display:flex;gap:6px;}
-.icon-btn{background:none;border:1px solid #e2e8f0;border-radius:5px;padding:4px 7px;cursor:pointer;font-size:12px;color:#64748b;transition:all .15s;}
+.icon-btn{background:none;border:1px solid #e2e8f0;border-radius:5px;padding:4px 7px;cursor:pointer;font-size:12px;color:var(--mid);transition:all .15s;}
 .icon-btn:hover{border-color:#e91e8c;color:#e91e8c;}
 /* ── PERMIT TAGS ── */
 .permit-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;margin:1px;}
@@ -148,7 +161,7 @@ tr:hover td{background:#f8fafc;}
     <div class="panel">
       <div class="panel-head">
         <span class="panel-title">Current Loads</span>
-        <span style="font-size:11px;color:#64748b;">Tap row to edit · <span id="load-count">0</span> loads</span>
+        <span style="font-size:11px;color:var(--mid);">Tap row to edit · <span id="load-count">0</span> loads</span>
       </div>
       <div style="overflow-x:auto;">
         <table>

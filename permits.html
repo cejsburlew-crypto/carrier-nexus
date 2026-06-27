@@ -6,7 +6,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--sb:#000;--orange:#e8640a;--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
+  :root {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
+  :root{--sb:#000;--orange:#e8640a;--pink:#e91e8c;--blue:#2e6da4;--green:#22c55e;--red:#ef4444;--yellow:#fbbf24;--border:#e2e8f0;--muted:#64748b;--mid:#475569;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f1f5f9;color:#0f172a;font-family:'Barlow',sans-serif;display:flex;min-height:100vh;}
 .sidebar{width:220px;min-height:100vh;background:#000;border-right:1px solid #1a1a1a;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
@@ -48,7 +61,7 @@ tr:hover td{background:#f8fafc;}
 .badge-red{background:#fee2e2;color:#b91c1c;}
 .badge-yellow{background:#fef9c3;color:#a16207;}
 .badge-blue{background:#dbeafe;color:#1d4ed8;}
-.badge-gray{background:#f1f5f9;color:#64748b;}
+.badge-gray{background:#f1f5f9;color:var(--mid);}
 .badge-orange{background:#ffedd5;color:#c2410c;}
 .badge-purple{background:#ede9fe;color:#6d28d9;}
 .btn{padding:7px 16px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.8px;cursor:pointer;border:1px solid var(--border);background:#fff;color:#334155;transition:all .15s;}
@@ -110,7 +123,7 @@ tr:hover td{background:#f8fafc;}
 /* ── PDF IMPORT ── */
 .import-zone{border:2px dashed #e2e8f0;border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:4px;background:#fafafa;grid-column:1/-1;}
 .import-zone:hover,.import-zone.drag-over{border-color:#e91e8c;background:#fdf2f8;}
-.import-zone-text{font-size:12px;color:#64748b;}
+.import-zone-text{font-size:12px;color:var(--mid);}
 .import-zone-text strong{color:#e91e8c;}
 .import-status{margin-top:6px;font-size:11px;font-weight:700;}
 .import-status.extracting{color:#f59e0b;}
@@ -123,7 +136,7 @@ tr:hover td{background:#f8fafc;}
 .rc-suggest-item:last-child{border-bottom:none;}
 .rc-suggest-item:hover{background:#dcfce7;border-radius:4px;padding-left:4px;}
 .rc-suggest-info{font-size:12px;color:#0f172a;font-weight:600;}
-.rc-suggest-sub{font-size:10px;color:#64748b;}
+.rc-suggest-sub{font-size:10px;color:var(--mid);}
 .rc-suggest-btn{font-size:10px;font-weight:700;color:#e91e8c;background:none;border:none;cursor:pointer;text-decoration:underline;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 </style>
@@ -515,9 +528,9 @@ function addRestrictionRow(type, text) {
   var id = 'res_' + (++_restrictionIdCounter);
   var row = document.createElement('div');
   row.id = 'row_' + id;
-  row.style.cssText = 'display:flex;gap:6px;align-items:flex-start;background:rgba(30,45,69,.4);border:1px solid #1e2d45;border-radius:8px;padding:8px;';
+  row.style.cssText = 'display:flex;gap:6px;align-items:flex-start;background:rgba(30,45,69,.4);border:1px solid var(--border);border-radius:8px;padding:8px;';
   row.innerHTML =
-    '<select id="rtype_'+id+'" style="background:#0b0f1a;border:1px solid #1e2d45;color:#e2e8f0;border-radius:6px;padding:5px 8px;font-size:11px;flex-shrink:0;">' +
+    '<select id="rtype_'+id+'" style="background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 8px;font-size:11px;flex-shrink:0;">' +
       '<option value="time">⏰ Time</option>' +
       '<option value="route">🗺️ Route</option>' +
       '<option value="escort">🚔 Escort</option>' +
@@ -526,8 +539,8 @@ function addRestrictionRow(type, text) {
       '<option value="weight">⚖️ Weight</option>' +
       '<option value="other">⚠️ Other</option>' +
     '</select>' +
-    '<input id="rtxt_'+id+'" type="text" placeholder="Restriction description…" style="flex:1;background:#0b0f1a;border:1px solid #1e2d45;color:#e2e8f0;border-radius:6px;padding:5px 8px;font-size:12px;" value="">' +
-    '<button type="button" onclick="document.getElementById(\'row_\'+id+\'\').remove()" style="background:none;border:none;color:#64748b;cursor:pointer;font-size:16px;padding:2px 6px;flex-shrink:0;">✕</button>';
+    '<input id="rtxt_'+id+'" type="text" placeholder="Restriction description…" style="flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 8px;font-size:12px;" value="">' +
+    '<button type="button" onclick="document.getElementById(\'row_\'+id+\'\').remove()" style="background:none;border:none;color:var(--mid);cursor:pointer;font-size:16px;padding:2px 6px;flex-shrink:0;">✕</button>';
   if (type) { var sel = row.querySelector('select'); if(sel) sel.value = type; }
   if (text) { var inp = row.querySelector('input'); if(inp) inp.value = text; }
   document.getElementById('custom-restrictions-list').appendChild(row);
@@ -886,7 +899,7 @@ document.getElementById('detail-overlay').addEventListener('click', function(e){
 /* ── PDF IMPORT ── */
 .import-zone{border:2px dashed #e2e8f0;border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:4px;background:#fafafa;grid-column:1/-1;}
 .import-zone:hover,.import-zone.drag-over{border-color:#e91e8c;background:#fdf2f8;}
-.import-zone-text{font-size:12px;color:#64748b;}
+.import-zone-text{font-size:12px;color:var(--mid);}
 .import-zone-text strong{color:#e91e8c;}
 .import-status{margin-top:6px;font-size:11px;font-weight:700;}
 .import-status.extracting{color:#f59e0b;}
@@ -899,7 +912,7 @@ document.getElementById('detail-overlay').addEventListener('click', function(e){
 .rc-suggest-item:last-child{border-bottom:none;}
 .rc-suggest-item:hover{background:#dcfce7;border-radius:4px;padding-left:4px;}
 .rc-suggest-info{font-size:12px;color:#0f172a;font-weight:600;}
-.rc-suggest-sub{font-size:10px;color:#64748b;}
+.rc-suggest-sub{font-size:10px;color:var(--mid);}
 .rc-suggest-btn{font-size:10px;font-weight:700;color:#e91e8c;background:none;border:none;cursor:pointer;text-decoration:underline;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
 </body>

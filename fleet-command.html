@@ -6,7 +6,20 @@
 <title>Fleet Command Ã¢ÂÂ Carrier Nexus</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
+  :root {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
+  :root {
   --black: #f1f5f9;
   --gunmetal: #ffffff;
   --gunmetal-light: #f8fafc;
@@ -665,24 +678,24 @@ body {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
       
       <!-- Weather Widget -->
-      <div style="background:#131929;border:1px solid #1e2d45;border-radius:12px;padding:20px;">
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <div style="font-size:14px;font-weight:600;color:#e2e8f0;">🌦️ Route Weather</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text);">🌦️ Route Weather</div>
           <a href="route-compliance.html" style="font-size:11px;color:#3b82f6;text-decoration:none;">Full Forecast →</a>
         </div>
         <div id="dashboard-weather">
-          <div style="color:#64748b;font-size:13px;">Loading weather...</div>
+          <div style="color:var(--mid);font-size:13px;">Loading weather...</div>
         </div>
       </div>
 
       <!-- Scale Proximity Alert -->
-      <div style="background:#131929;border:1px solid #1e2d45;border-radius:12px;padding:20px;">
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <div style="font-size:14px;font-weight:600;color:#e2e8f0;">⚖️ Scale Proximity</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text);">⚖️ Scale Proximity</div>
           <a href="route-compliance.html" style="font-size:11px;color:#3b82f6;text-decoration:none;">Full View →</a>
         </div>
         <div id="dashboard-scales">
-          <div style="color:#64748b;font-size:13px;">Checking fleet positions...</div>
+          <div style="color:var(--mid);font-size:13px;">Checking fleet positions...</div>
         </div>
       </div>
 
@@ -1149,16 +1162,16 @@ async function loadDashboardWeather() {
       var wind = cw.windspeed || 0;
       var hi = dd.temperature_2m_max ? Math.round(dd.temperature_2m_max[0]) : '--';
       var lo = dd.temperature_2m_min ? Math.round(dd.temperature_2m_min[0]) : '--';
-      var windAlert = wind >= 40 ? 'color:#ef4444;font-weight:700;' : (wind >= 25 ? 'color:#f59e0b;' : 'color:#64748b;');
-      html += '<div style="background:#131929;border:1px solid #1e2d45;border-radius:8px;padding:12px 16px;min-width:160px;flex:1;">' +
-        '<div style="font-size:11px;color:#64748b;margin-bottom:4px;">' + city.name + '</div>' +
-        '<div style="font-size:18px;font-weight:700;color:#e2e8f0;">' + desc + '</div>' +
-        '<div style="font-size:13px;color:#e2e8f0;margin-top:2px;">' + hi + '° / ' + lo + '°F</div>' +
+      var windAlert = wind >= 40 ? 'color:#ef4444;font-weight:700;' : (wind >= 25 ? 'color:#f59e0b;' : 'color:var(--mid);');
+      html += '<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:160px;flex:1;">' +
+        '<div style="font-size:11px;color:var(--mid);margin-bottom:4px;">' + city.name + '</div>' +
+        '<div style="font-size:18px;font-weight:700;color:var(--text);">' + desc + '</div>' +
+        '<div style="font-size:13px;color:var(--text);margin-top:2px;">' + hi + '° / ' + lo + '°F</div>' +
         '<div style="font-size:12px;margin-top:2px;' + windAlert + '">💨 ' + wind + ' mph</div>' +
         (wind >= 35 ? '<div style="font-size:10px;color:#ef4444;margin-top:3px;font-weight:600;">⚠️ WIDE LOAD WIND ALERT</div>' : '') +
       '</div>';
     } catch(e) {
-      html += '<div style="background:#131929;border:1px solid #1e2d45;border-radius:8px;padding:12px 16px;min-width:160px;flex:1;"><div style="font-size:11px;color:#64748b;">' + city.name + '</div><div style="color:#64748b;font-size:12px;margin-top:8px;">Weather unavailable</div></div>';
+      html += '<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:160px;flex:1;"><div style="font-size:11px;color:var(--mid);">' + city.name + '</div><div style="color:var(--mid);font-size:12px;margin-top:8px;">Weather unavailable</div></div>';
     }
   }
   html += '</div>';
@@ -1201,13 +1214,13 @@ function loadScaleAlerts() {
   });
   
   if (alerts.length === 0) {
-    el.innerHTML = '<div style="color:#10b981;font-size:13px;">✅ No scales within 25 miles of active fleet</div><div style="color:#64748b;font-size:11px;margin-top:4px;">Units: ' + (vehicles.length) + ' tracked</div>';
+    el.innerHTML = '<div style="color:#10b981;font-size:13px;">✅ No scales within 25 miles of active fleet</div><div style="color:var(--mid);font-size:11px;margin-top:4px;">Units: ' + (vehicles.length) + ' tracked</div>';
   } else {
     el.innerHTML = alerts.map(function(a){
       return '<div style="background:' + (a.osow?'rgba(239,68,68,.1)':'rgba(245,158,11,.1)') + ';border:1px solid ' + (a.osow?'#ef4444':'#f59e0b') + ';border-radius:6px;padding:10px;margin-bottom:8px;">' +
         '<div style="font-weight:600;color:' + (a.osow?'#ef4444':'#f59e0b') + ';font-size:13px;">' + (a.osow?'⛔':'⚠️') + ' Unit ' + a.unit + ' — ' + a.dist + ' mi</div>' +
-        '<div style="font-size:12px;color:#e2e8f0;margin-top:2px;">' + a.station + '</div>' +
-        '<div style="font-size:11px;color:#64748b;margin-top:2px;">' + (a.osow?'OS/OW — MUST STOP':'PrePass eligible if legal') + '</div>' +
+        '<div style="font-size:12px;color:var(--text);margin-top:2px;">' + a.station + '</div>' +
+        '<div style="font-size:11px;color:var(--mid);margin-top:2px;">' + (a.osow?'OS/OW — MUST STOP':'PrePass eligible if legal') + '</div>' +
       '</div>';
     }).join('');
   }

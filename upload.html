@@ -7,7 +7,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0e1a;--surface:#111827;--surface2:#1a2235;--border:rgba(255,255,255,.07);--text:#e2e8f0;--muted:#6b7280;--accent:#e91e8c;--accent2:#3b7eff;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--sidebar-w:220px}
+:root {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px}
 
@@ -36,7 +48,7 @@ body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);disp
 .field-label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
 select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;padding:10px 14px;outline:none}
 select:focus{border-color:var(--accent2)}
-select option{background:#1a2235}
+select option{background:var(--panel2)}
 
 /* ── BIG Drop Zone ── */
 .dropzone{border:2px dashed rgba(255,255,255,.18);border-radius:14px;padding:0;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;background:rgba(255,255,255,.02)}
@@ -107,7 +119,7 @@ textarea:focus{border-color:var(--accent2)}
 .summary-links a:hover,.summary-links button:hover{border-color:var(--accent2);color:var(--accent2)}
 
 /* Toast */
-#toast{position:fixed;bottom:24px;right:24px;background:#1a2235;border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;font-weight:500;color:#fff;z-index:9999;transform:translateY(120%);transition:transform .3s;max-width:300px;box-shadow:0 4px 24px rgba(0,0,0,.5)}
+#toast{position:fixed;bottom:24px;right:24px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;font-weight:500;color:#fff;z-index:9999;transform:translateY(120%);transition:transform .3s;max-width:300px;box-shadow:0 4px 24px rgba(0,0,0,.5)}
 #toast.show{transform:translateY(0)}
 #toast.success{border-color:var(--green);color:var(--green)}
 #toast.error{border-color:var(--red);color:var(--red)}

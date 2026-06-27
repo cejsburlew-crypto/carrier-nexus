@@ -8,7 +8,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
 <style>
-:root{--bg:#0b0f1a;--panel:#131929;--panel2:#1a2235;--border:#1e2d45;--text:#e2e8f0;--mid:#64748b;--blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7;}
+:root {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;display:flex;min-height:100vh;overflow:hidden;}
 .main{margin-left:220px;flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
@@ -77,12 +89,12 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;disp
 .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
 .provider-instructions{background:var(--panel2);border-radius:6px;padding:12px;font-size:12px;color:var(--mid);line-height:1.6;margin-bottom:14px;}
 /* LEAFLET DARK OVERRIDES */
-.leaflet-container{background:#0b0f1a !important;}
-.leaflet-popup-content-wrapper{background:#131929;border:1px solid #1e2d45;color:#e2e8f0;border-radius:8px;}
-.leaflet-popup-tip{background:#131929;}
+.leaflet-container{background:var(--bg) !important;}
+.leaflet-popup-content-wrapper{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:8px;}
+.leaflet-popup-tip{background:var(--panel);}
 .leaflet-popup-content{font-family:'Barlow',sans-serif;font-size:13px;margin:8px 12px;}
-.leaflet-bar a{background:#131929;color:#e2e8f0;border-color:#1e2d45;}
-.leaflet-bar a:hover{background:#1a2235;}
+.leaflet-bar a{background:var(--panel);color:var(--text);border-color:var(--border);}
+.leaflet-bar a:hover{background:var(--panel2);}
 .popup-unit{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px;}
 .popup-row{display:flex;gap:8px;margin-top:3px;font-size:12px;color:#94a3b8;}
 </style>
@@ -317,7 +329,7 @@ function addMarkers(vehicles) {
     var icon = createMarkerIcon(v.status, v.unit.replace('Unit ',''));
     var speedStr = v.speed > 0 ? v.speed + ' mph' : 'Stopped';
     var popupHtml = '<div class="popup-unit">🚛 ' + v.unit + '</div>' +
-      '<div style="font-size:12px;font-weight:600;color:#e2e8f0;">' + v.driver + '</div>' +
+      '<div style="font-size:12px;font-weight:600;color:var(--text);">' + v.driver + '</div>' +
       '<div class="popup-row">📍 ' + v.lat.toFixed(4) + ', ' + v.lng.toFixed(4) + '</div>' +
       '<div class="popup-row">⚡ ' + speedStr + ' &nbsp;·&nbsp; Heading: ' + (v.heading || '—') + '</div>' +
       '<div class="popup-row">🕐 Last ping: ' + (v.lastPing || '—') + '</div>';

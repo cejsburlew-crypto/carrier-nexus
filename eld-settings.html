@@ -6,7 +6,20 @@
 <title>ELD Integration — Carrier Nexus</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
+  :root {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
+  :root {
   --black: #f1f5f9;
   --gunmetal: #ffffff;
   --gunmetal-light: #f8fafc;
@@ -135,7 +148,7 @@ body {
 .step-content a { color: #3b82f6; text-decoration: none; }
 .step-content a:hover { text-decoration: underline; }
 .step-content code {
-  background: #0f172a; color: #e2e8f0; font-family: 'JetBrains Mono', monospace;
+  background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace;
   font-size: 11px; padding: 2px 6px; border-radius: 3px;
 }
 /* ── FORM ── */
@@ -181,7 +194,7 @@ body {
 .badge-red { background: rgba(220,38,38,0.15); color: #dc2626; border: 1px solid rgba(220,38,38,0.25); }
 .badge-yellow { background: rgba(234,179,8,0.15); color: #ca8a04; border: 1px solid rgba(234,179,8,0.25); }
 .badge-blue { background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.25); }
-.badge-gray { background: rgba(100,116,139,0.15); color: #64748b; border: 1px solid rgba(100,116,139,0.25); }
+.badge-gray { background: rgba(100,116,139,0.15); color:var(--mid); border: 1px solid rgba(100,116,139,0.25); }
 /* ── ENDPOINTS ── */
 .endpoint-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
 .endpoint-item { background: var(--gunmetal-light); border: 1px solid var(--border); border-radius: 6px; padding: 14px; }
@@ -378,7 +391,7 @@ body {
                 <th>Unit</th><th>Plate</th><th>Year / Make / Model</th><th>VIN</th>
                 <th>Odometer</th><th>Last GPS</th><th>Status</th>
               </tr></thead>
-              <tbody id="vehicles-tbody"><tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px;">Loading...</td></tr></tbody>
+              <tbody id="vehicles-tbody"><tr><td colspan="7" style="text-align:center;color:var(--mid);padding:20px;">Loading...</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -390,7 +403,7 @@ body {
                 <th>Driver</th><th>Duty Status</th><th>Drive Left</th>
                 <th>On-Duty Left</th><th>Cycle Left</th><th>Violations</th>
               </tr></thead>
-              <tbody id="hos-tbody"><tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px;">Loading...</td></tr></tbody>
+              <tbody id="hos-tbody"><tr><td colspan="6" style="text-align:center;color:var(--mid);padding:20px;">Loading...</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -401,7 +414,7 @@ body {
               <thead><tr>
                 <th>Date</th><th>Driver</th><th>Vehicle</th><th>Defects</th><th>Status</th>
               </tr></thead>
-              <tbody id="dvir-tbody"><tr><td colspan="5" style="text-align:center;color:#64748b;padding:20px;">Loading...</td></tr></tbody>
+              <tbody id="dvir-tbody"><tr><td colspan="5" style="text-align:center;color:var(--mid);padding:20px;">Loading...</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -447,7 +460,7 @@ body {
             <div class="endpoint-desc">Driver ELD logs — duty status history and events.</div>
           </div>
         </div>
-        <div style="margin-top:16px; padding:12px 14px; background:#0f172a; border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:12px; color:#94a3b8; line-height:1.7;">
+        <div style="margin-top:16px; padding:12px 14px; background:var(--bg); border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:12px; color:#94a3b8; line-height:1.7;">
           <span style="color:#60a5fa;">Authorization:</span> Token token="YOUR_API_KEY"<br>
           <span style="color:#60a5fa;">Content-Type:</span> application/json<br>
           <span style="color:#60a5fa;">Base URL:</span> https://api.keeptruckin.com
@@ -611,7 +624,7 @@ function loadLiveData(vehicles, mode) {
   document.getElementById('kpi-row').innerHTML = `
     <div class="kpi-box"><div class="kpi-val">${vehicles.length}</div><div class="kpi-label">${NEXUS_LANG.t('Total Vehicles')}</div></div>
     <div class="kpi-box"><div class="kpi-val" style="color:#22c55e;">${driving}</div><div class="kpi-label">${NEXUS_LANG.t('Driving')}</div></div>
-    <div class="kpi-box"><div class="kpi-val" style="color:#64748b;">${offduty}</div><div class="kpi-label">${NEXUS_LANG.t('Off Duty')}</div></div>
+    <div class="kpi-box"><div class="kpi-val" style="color:var(--mid);">${offduty}</div><div class="kpi-label">${NEXUS_LANG.t('Off Duty')}</div></div>
     <div class="kpi-box"><div class="kpi-val" style="color:#fbbf24;">${vehicles.length - driving - offduty}</div><div class="kpi-label">${NEXUS_LANG.t('Other')}</div></div>
   `;
   // Vehicles table
