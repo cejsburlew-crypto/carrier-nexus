@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Driver Coaching Log — Carrier Nexus</title>
-<script src="nexus-config.js"></script>
+<script src="nexus-sidebar.js"></script>
+  <script src="nexus-config.js"></script>
 <script src="nexus-db.js"></script>
 <style>
 :root {
@@ -215,7 +216,6 @@ tr:hover td{background:rgba(255,255,255,.02);cursor:pointer;}
   </div>
 </div>
 
-<script src="nexus-sidebar.js"></script>
 <script>
 let editId=null;
 function getSessions(){ try{ return JSON.parse(localStorage.getItem('nexus_coaching')||'[]'); }catch(e){ return []; } }

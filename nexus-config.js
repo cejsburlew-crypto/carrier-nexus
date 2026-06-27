@@ -432,9 +432,28 @@ if (typeof window !== 'undefined') {
 (function NexusSeedDemo() {
   if (typeof window === 'undefined') return;
 
+  // Guard: ONLY seed Carrier Trucking (co_001) data — never contaminate other companies
+  var _seedActiveCo = (function(){
+    try {
+      return Storage.prototype._rawGet ?
+        Storage.prototype._rawGet.call(localStorage, 'nexus_active_company') :
+        localStorage.getItem('nexus_active_company');
+    } catch(e) { return null; }
+  })();
+  if (_seedActiveCo && _seedActiveCo !== 'co_001') return;
+
   function seedKey(key, data) {
-    if (!localStorage.getItem(key)) {
-      localStorage.setItem(key, typeof data === 'string' ? data : JSON.stringify(data));
+    // Always write to the raw unscoped key (co_001 legacy) AND the scoped co_001 key
+    var rawGet = Storage.prototype._rawGet || localStorage.getItem.bind(localStorage);
+    var rawSet = Storage.prototype._rawSet || localStorage.setItem.bind(localStorage);
+    // Write to raw unscoped key (for co_001 proxy fallback)
+    if (!rawGet.call(localStorage, key)) {
+      rawSet.call(localStorage, key, typeof data === 'string' ? data : JSON.stringify(data));
+    }
+    // Also write to co_001: scoped key so proxy reads it cleanly
+    var scopedKey = 'co_001:' + key;
+    if (!rawGet.call(localStorage, scopedKey)) {
+      rawSet.call(localStorage, scopedKey, typeof data === 'string' ? data : JSON.stringify(data));
     }
   }
 

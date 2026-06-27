@@ -46,6 +46,7 @@
 
   Storage.prototype._nexusProxied = true;
   Storage.prototype._rawGet = _get; // expose for internal use
+  Storage.prototype._rawSet = _set; // expose for internal use
 
   Storage.prototype.getItem = function(key) {
     if (!needsPrefix(key)) return _get.call(this, key);
@@ -785,6 +786,7 @@
 
   window.switchToCompany = function(id) {
     localStorage.setItem('nexus_active_company', id);
+    initializeCompanyIfNew(id);
     closeCompanySwitcher();
     var c = getCompanies().find(function(co) { return co.id === id; });
     var nameEl = document.getElementById('nexus-co-name');
@@ -795,7 +797,44 @@
     if (row) { row.style.background='#eef2ff'; setTimeout(function(){row.style.background='';},600); }
   };
 
-  document.addEventListener('DOMContentLoaded', function() {
+  // ── Company data isolation: initialize empty stores for new companies ──
+  function initializeCompanyIfNew(coId) {
+    if (!coId || coId === 'co_001') return; // never reinitialize CT, only new companies
+    var rawGet = Storage.prototype._rawGet;
+    var rawSet = Storage.prototype._rawSet;
+    if (!rawGet || !rawSet) return;
+    var initKey = coId + ':nexus_initialized_v1';
+    if (rawGet.call(localStorage, initKey)) return;
+    var emptyStores = [
+      'nexus_drivers','nexus_vehicles','nexus_dispatch_loads','nexus_documents',
+      'nexus_expenses','nexus_fuel_records','nexus_maintenance_records','nexus_settlements',
+      'nexus_permits','nexus_tires','nexus_pretrip_records','nexus_accident_register',
+      'nexus_drug_tests','nexus_customers','nexus_brokers','nexus_factoring_invoices',
+      'nexus_work_orders','nexus_scale_tickets','nexus_gps_vehicles','nexus_avail_drivers',
+      'nexus_equipment_units','nexus_pilot_companies','nexus_pilot_assignments',
+      'nexus_dispatch_drivers','nexus_gps_eld_config','nexus_my_usdot','nexus_my_mc',
+      'nexus_my_company_name','nexus_pay_settings'
+    ];
+    emptyStores.forEach(function(k) {
+      var sk = coId + ':' + k;
+      if (rawGet.call(localStorage, sk) === null) {
+        rawSet.call(localStorage, sk, '[]');
+      }
+    });
+    rawSet.call(localStorage, initKey, '1');
+  }
+
+  // Initialize new company data isolation on page load
+  (function() {
+    var rawGet = Storage.prototype._rawGet;
+    if (!rawGet) return;
+    var curCo = rawGet.call(localStorage, 'nexus_active_company');
+    if (curCo && curCo !== 'co_001') {
+      initializeCompanyIfNew(curCo);
+    }
+  })();
+
+    document.addEventListener('DOMContentLoaded', function() {
     var c = getActiveCompany();
     var nameEl = document.getElementById('nexus-co-name');
     if (nameEl && c) nameEl.textContent = c.name;

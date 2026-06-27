@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Insurance Claims — Carrier Nexus</title>
-<script src="nexus-config.js"></script>
+<script src="nexus-sidebar.js"></script>
+  <script src="nexus-config.js"></script>
 <script src="nexus-db.js"></script>
 <style>
 :root {
@@ -182,7 +183,6 @@ tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<script src="nexus-sidebar.js"></script>
 <script>
 let editId=null, activeFilter='all';
 function getClaims(){ try{ return JSON.parse(localStorage.getItem('nexus_claims')||'[]'); }catch(e){ return []; } }
