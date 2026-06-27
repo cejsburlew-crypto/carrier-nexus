@@ -43,6 +43,7 @@
   Storage.prototype._nexusProxied = true;
   Storage.prototype._rawGet = _get; // expose for internal use
   Storage.prototype._rawSet = _set; // expose for internal use
+  Storage.prototype._rawRemove = _del; // expose for internal use
 
   Storage.prototype.getItem = function(key) {
     if (!needsPrefix(key)) return _get.call(this, key);
@@ -50,7 +51,12 @@
     var scopedVal = _get.call(this, cid + ':' + key);
     // Graceful fallback for co_001: if no scoped key yet, return the
     // legacy unscoped value so existing Carrier Trucking data still appears.
-    if (scopedVal === null && cid === 'co_001') return _get.call(this, key);
+    // After migration, unscoped keys are deleted, so legacy will be null — return null.
+    // Guard against __migrated__ sentinel for defense in depth.
+    if (scopedVal === null && cid === 'co_001') {
+      var legacy = _get.call(this, key);
+      return (legacy === null || legacy === '__migrated__') ? null : legacy;
+    }
     return scopedVal;
   };
 
@@ -65,6 +71,33 @@
     var cid = _get.call(this, 'nexus_active_company') || 'co_001';
     _del.call(this, cid + ':' + key);
   };
+})();
+
+(function migrateUnscoped() {
+  var _rawGet = Storage.prototype._rawGet;
+  var _rawSet = Storage.prototype._rawSet;
+  var _rawRemove = Storage.prototype._rawRemove;
+  if (!_rawGet || !_rawSet || !_rawRemove) return;
+  if (_rawGet.call(localStorage, 'nexus_migration_v2_done')) return;
+  var keysToMigrate = [];
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (!k) continue;
+    if ((k.startsWith('nexus_') || k.startsWith('nexus-')) &&
+        !k.match(/^co_\d{3}:/)) {
+      keysToMigrate.push(k);
+    }
+  }
+  keysToMigrate.forEach(function(k) {
+    var val = _rawGet.call(localStorage, k);
+    if (val === null) return;
+    var scoped = 'co_001:' + k;
+    if (_rawGet.call(localStorage, scoped) === null) {
+      _rawSet.call(localStorage, scoped, val);
+    }
+    _rawRemove.call(localStorage, k);
+  });
+  _rawSet.call(localStorage, 'nexus_migration_v2_done', '1');
 })();
 
 (function() {
@@ -801,7 +834,9 @@
     if (!rawGet || !rawSet) return;
     var initKey = coId + ':nexus_initialized_v1';
     if (rawGet.call(localStorage, initKey)) return;
+    // Keys with their empty value type: '[]' for arrays, '{}' for objects, '' for strings/scalars
     var emptyStores = [
+      // --- original array keys ---
       'nexus_drivers','nexus_vehicles','nexus_dispatch_loads','nexus_documents',
       'nexus_expenses','nexus_fuel_records','nexus_maintenance_records','nexus_settlements',
       'nexus_permits','nexus_tires','nexus_pretrip_records','nexus_accident_register',
@@ -809,12 +844,59 @@
       'nexus_work_orders','nexus_scale_tickets','nexus_gps_vehicles','nexus_avail_drivers',
       'nexus_equipment_units','nexus_pilot_companies','nexus_pilot_assignments',
       'nexus_dispatch_drivers','nexus_gps_eld_config','nexus_my_usdot','nexus_my_mc',
-      'nexus_my_company_name','nexus_pay_settings'
+      'nexus_my_company_name','nexus_pay_settings',
+      // --- additional array keys (previously missing) ---
+      'nexus_accident_register_confirmed','nexus_active_loads','nexus_assign_log',
+      'nexus_assignments','nexus_avail_dispatchers','nexus_bols','nexus_camera_events',
+      'nexus_cfr_alert_log','nexus_cfr_last_check','nexus_cfr_rules_disabled','nexus_claims',
+      'nexus_coaching','nexus_cois','nexus_comms_skip_auth','nexus_company_members',
+      'nexus_contact_requests','nexus_current_user','nexus_custom_expirations',
+      'nexus_da_program_confirmed','nexus_da_program_date','nexus_dismissed',
+      'nexus_dispatcher_assignments','nexus_documents_v2','nexus_drive_token',
+      'nexus_driver_profiles','nexus_eld_confirmed','nexus_equipment','nexus_equipment_db_custom',
+      'nexus_flagged','nexus_fleet','nexus_gmail_client_id','nexus_gmail_token',
+      'nexus_google_token','nexus_incidents','nexus_intake_draft','nexus_intake_toured',
+      'nexus_job_saved','nexus_liked_','nexus_loadboard_saved','nexus_loads','nexus_loads_v2',
+      'nexus_marketplace','nexus_marketplace_followup','nexus_marketplace_saved',
+      'nexus_mcs150_date','nexus_member_profiles','nexus_messages','nexus_mig_pod_v1',
+      'nexus_ms_client_id','nexus_outlook_token','nexus_permits_v1','nexus_pilot_cois',
+      'nexus_pretrip_inspections','nexus_review_queue','nexus_rs_inspections',
+      'nexus_staged_files','nexus_ucr_year','nexus_users','nexus_wc_comparisons',
+      'nexus_wc_custom_eq','nexus_weight_calc_history','nexus_whatsapp_lines',
+      'nexus_whatsapp_messages'
+    ];
+    // Keys that default to object ({}) rather than array
+    var emptyObjectStores = [
+      'nexus_camera_config','nexus_community_likes','nexus_csa_scores','nexus_data_version',
+      'nexus_doc_privacy','nexus_driver_availability','nexus_driver_careers',
+      'nexus_gps_hw_config','nexus_sheets_url','nexus_sync_config','nexus_weekly_roles'
+    ];
+    // Keys that are plain strings/scalars
+    var emptyStringStores = [
+      'nexus_cfr_autoscan','nexus_clearinghouse_queries','nexus_community_feed',
+      'nexus_dot_cdl_','nexus_dot_ifta','nexus_dot_insurance','nexus_expiry_reminder_days',
+      'nexus_gmail_account','nexus_gmail_expiry','nexus_highway_company_id',
+      'nexus_highway_session','nexus_job_board','nexus_lang','nexus_motus_url',
+      'nexus_mypay_seeded_v2','nexus_random_pool','nexus_settlement_period',
+      'nexus_sheets_last_pull','nexus_sheets_last_push','nexus_temp_cid','nexus_tire_log',
+      'nexus_mcs150_last','nexus_mcs150_next','nexus_my_dot_pin','nexus_my_phone','nexus_my_state'
     ];
     emptyStores.forEach(function(k) {
       var sk = coId + ':' + k;
       if (rawGet.call(localStorage, sk) === null) {
         rawSet.call(localStorage, sk, '[]');
+      }
+    });
+    emptyObjectStores.forEach(function(k) {
+      var sk = coId + ':' + k;
+      if (rawGet.call(localStorage, sk) === null) {
+        rawSet.call(localStorage, sk, '{}');
+      }
+    });
+    emptyStringStores.forEach(function(k) {
+      var sk = coId + ':' + k;
+      if (rawGet.call(localStorage, sk) === null) {
+        rawSet.call(localStorage, sk, '');
       }
     });
     rawSet.call(localStorage, initKey, '1');
