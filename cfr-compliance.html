@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
 <style>
   :root {
       --bg: #f0f2f5;
@@ -471,7 +472,7 @@ var CFR_RULES = [
     severity: "CRITICAL",
     check: function() {
       var alerts = [];
-      var docs = JSON.parse(localStorage.getItem("nexus_documents") || "[]");
+      var docs = (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]'));
       var users = JSON.parse(localStorage.getItem("NEXUS_LOCAL_USERS") || "[]");
       var drivers = users.filter(function(u) { return u.role === "driver"; });
       var today = new Date();
@@ -497,7 +498,7 @@ var CFR_RULES = [
     severity: "CRITICAL",
     check: function() {
       var alerts = [];
-      var docs = JSON.parse(localStorage.getItem("nexus_documents") || "[]");
+      var docs = (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]'));
       var users = JSON.parse(localStorage.getItem("NEXUS_LOCAL_USERS") || "[]");
       var drivers = users.filter(function(u) { return u.role === "driver"; });
       var today = new Date();
@@ -525,7 +526,7 @@ var CFR_RULES = [
     severity: "CRITICAL",
     check: function() {
       var alerts = [];
-      var docs = JSON.parse(localStorage.getItem("nexus_documents") || "[]");
+      var docs = (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]'));
       var users = JSON.parse(localStorage.getItem("NEXUS_LOCAL_USERS") || "[]");
       var drivers = users.filter(function(u) { return u.role === "driver" && u.active === true; });
       drivers.forEach(function(driver) {
@@ -659,7 +660,7 @@ var CFR_RULES = [
     check: function() {
       var alerts = [];
       var confirmed = localStorage.getItem("nexus_accident_register_confirmed");
-      var incidents = JSON.parse(localStorage.getItem("nexus_incidents") || "[]");
+      var incidents = (window.NexusIsolation ? NexusIsolation.get('nexus_incidents') : JSON.parse(localStorage.getItem('nexus_incidents') || '[]'));
       var hasAccidents = incidents.some(function(i) { return i.type === "accident" || i.is_accident === true; });
       if (!confirmed || confirmed !== "true") {
         if (!hasAccidents) {
@@ -680,7 +681,7 @@ var CFR_RULES = [
     severity: "WARNING",
     check: function() {
       var alerts = [];
-      var docs = JSON.parse(localStorage.getItem("nexus_documents") || "[]");
+      var docs = (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]'));
       var users = JSON.parse(localStorage.getItem("NEXUS_LOCAL_USERS") || "[]");
       var drivers = users.filter(function(u) { return u.role === "driver" && u.active === true; });
       drivers.forEach(function(driver) {

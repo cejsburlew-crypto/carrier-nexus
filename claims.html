@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Insurance Claims — Carrier Nexus</title>
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
   <script src="nexus-config.js"></script>
 <script src="nexus-db.js"></script>
 <style>
@@ -185,9 +186,9 @@ tr:hover td{background:rgba(255,255,255,.02);}
 
 <script>
 let editId=null, activeFilter='all';
-function getClaims(){ try{ return JSON.parse(localStorage.getItem('nexus_claims')||'[]'); }catch(e){ return []; } }
+function getClaims(){ try{ return (window.NexusIsolation ? NexusIsolation.get('nexus_claims') : JSON.parse(localStorage.getItem('nexus_claims') || '[]')); }catch(e){ return []; } }
 function saveClaims(a){ localStorage.setItem('nexus_claims', JSON.stringify(a)); }
-function getIncs(){ try{ return JSON.parse(localStorage.getItem('nexus_incidents')||'[]'); }catch(e){ return []; } }
+function getIncs(){ try{ return (window.NexusIsolation ? NexusIsolation.get('nexus_incidents') : JSON.parse(localStorage.getItem('nexus_incidents') || '[]')); }catch(e){ return []; } }
 function genId(){ const d=new Date(); const n=getClaims().length+1; return 'CLM-'+d.getFullYear()+(d.getMonth()+1).toString().padStart(2,'0')+d.getDate().toString().padStart(2,'0')+'-'+String(n).padStart(3,'0'); }
 function fmtDate(s){ if(!s) return '—'; try{ return new Date(s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }catch(e){ return s; } }
 function fmtMoney(v){ return v?'$'+Number(v).toLocaleString():'—'; }

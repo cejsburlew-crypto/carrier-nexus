@@ -167,6 +167,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 </div>
 
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
   <script src="nexus-config.js"></script>
 <script>
 // ── DRIVERS ────────────────────────────────────────────────────────────────
@@ -221,7 +222,7 @@ var RIBBON_TIERS = [
 // ── STORAGE HELPERS ────────────────────────────────────────────────────────
 function getLoads()    { try{return JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]');}catch(e){return[];} }
 function getPretrips() { try{return JSON.parse(localStorage.getItem('nexus_pretrip_inspections')||'[]');}catch(e){return[];} }
-function getIncidents(){ try{return JSON.parse(localStorage.getItem('nexus_incidents')||'[]');}catch(e){return[];} }
+function getIncidents(){ try{return (window.NexusIsolation ? NexusIsolation.get('nexus_incidents') : JSON.parse(localStorage.getItem('nexus_incidents') || '[]'));}catch(e){return[];} }
 function getCareers()  { try{return JSON.parse(localStorage.getItem('nexus_driver_careers')||'{}');}catch(e){return{};} }
 
 // ── TIS (TIME IN SERVICE) ──────────────────────────────────────────────────

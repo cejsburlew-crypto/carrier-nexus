@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Weekly Settlements — Carrier Nexus</title>
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
   <script src="nexus-config.js"></script>
 <style>
 :root {
@@ -335,7 +336,7 @@ function ensureData(member,wloads){
   ML[member.id]=ml.length?ml.map(function(l,i){return{id:'s'+i,loadNum:l.loadNum||'',broker:l.broker||'',rate:+(l.rate||0)};}) :[];
   ME[member.id]=[];
   try{
-    var exps=JSON.parse(localStorage.getItem('nexus_expenses')||'[]');
+    var exps=(window.NexusIsolation ? NexusIsolation.get('nexus_expenses') : JSON.parse(localStorage.getItem('nexus_expenses') || '[]'));
     var mon=new Date(getWeekKey()+'T00:00:00');var sun=new Date(mon);sun.setDate(sun.getDate()+6);
     var me=exps.filter(function(e){var en=(e.person||'').toLowerCase();var mn=member.name.split(' ')[0].toLowerCase();var ed=new Date((e.date||'2000-01-01')+'T00:00:00');return en.indexOf(mn)>-1&&ed>=mon&&ed<=sun;});
     if(me.length){var tot=me.reduce(function(s,e){return s+parseFloat(e.amount||0);},0);ME[member.id]=[{id:'e0',desc:'Operating Expenses',amount:tot}];}

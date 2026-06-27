@@ -89,6 +89,7 @@
 </div>
 
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
   <script src="nexus-config.js"></script>
 <script src="nexus-db.js"></script>
 <script>
@@ -131,7 +132,7 @@ function checkStepCompletion(step) {
       return users.filter(function(u){ return u.role === 'driver' && u.active; }).length > 0;
     }
     case 4: return JSON.parse(localStorage.getItem('nexus_equipment_units') || '[]').length > 0;
-    case 5: return JSON.parse(localStorage.getItem('nexus_documents') || '[]').length > 0;
+    case 5: return (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]')).length > 0;
     case 6: {
       var users2 = JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS') || '[]');
       return users2.filter(function(u){ return u.role === 'dispatcher' && u.active; }).length > 0;
@@ -199,7 +200,7 @@ function buildStepContent(step) {
       + '<div id="s4-msg"></div>';
   }
   if (step === 5) {
-    var docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]');
+    var docs = (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]'));
     var hasCDL = docs.some(function(d) { return d.type === 'cdl'; });
     var hasMed = docs.some(function(d) { return d.type === 'medical'; });
     var hasIns = docs.some(function(d) { return d.type === 'insurance'; });

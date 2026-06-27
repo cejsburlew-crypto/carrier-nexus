@@ -127,6 +127,7 @@
 </head>
 <body>
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
 
 <nav>
   <div class="nav-brand">CARRIER <span>NEXUS</span></div>
@@ -356,7 +357,7 @@
 const EXP_TYPES = ['RGN','Heavy Haul','Super Heavy (>150k)','Flatbed','Step Deck','Lowboy','Reefer','Box Truck','Auto-Transport','Tanker','Dry Van','LTL','Conestoga','Curtain Side','Double Drop','Extendable RGN'];
 const TRANS_TYPES = ['Manual','9 Speed','10 Speed','13 Speed','15 Speed','18 Speed','Automatic','Automated Manual (AMT)'];
 
-let drivers = JSON.parse(localStorage.getItem('nexus_avail_drivers') || '[]');
+let drivers = (window.NexusIsolation ? NexusIsolation.get('nexus_avail_drivers') : JSON.parse(localStorage.getItem('nexus_avail_drivers') || '[]'));
 let editingId = null;
 
 // Merge in platform users who are Ready for Hire

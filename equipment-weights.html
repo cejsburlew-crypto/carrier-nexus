@@ -3,6 +3,7 @@
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Equipment Weights — Carrier Nexus</title>
   <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
   <script src="nexus-config.js"></script>
   <script src="nexus-db.js"></script>
   <style>
@@ -576,7 +577,7 @@ function saveScaleTicket() {
   var fb = document.getElementById("st-feedback");
   if (!name || !date || !weight || !location) { fb.innerHTML = "<span style=\"color:var(--red)\">Please fill in all required fields.</span>"; return; }
   var tickets = [];
-  try { tickets = JSON.parse(localStorage.getItem("nexus_scale_tickets") || "[]"); } catch(e) {}
+  try { tickets = (window.NexusIsolation ? NexusIsolation.get('nexus_scale_tickets') : JSON.parse(localStorage.getItem('nexus_scale_tickets') || '[]')); } catch(e) {}
   tickets.push({ id: "st_" + Date.now(), name: name, date: date, weight: weight, location: location, notes: notes });
   localStorage.setItem("nexus_scale_tickets", JSON.stringify(tickets));
   ["st-name","st-date","st-weight","st-location","st-notes"].forEach(function(id) { document.getElementById(id).value = ""; });
@@ -588,7 +589,7 @@ function saveScaleTicket() {
 
 function renderScaleTickets() {
   var tickets = [];
-  try { tickets = JSON.parse(localStorage.getItem("nexus_scale_tickets") || "[]"); } catch(e) {}
+  try { tickets = (window.NexusIsolation ? NexusIsolation.get('nexus_scale_tickets') : JSON.parse(localStorage.getItem('nexus_scale_tickets') || '[]')); } catch(e) {}
   var tbody = document.getElementById("st-tbody");
   if (tickets.length === 0) { tbody.innerHTML = "<tr><td colspan=\"6\" style=\"color:var(--mid);text-align:center\">No scale ticket records yet</td></tr>"; return; }
   tbody.innerHTML = tickets.map(function(t, idx) {
@@ -605,7 +606,7 @@ function renderScaleTickets() {
 
 function deleteScaleTicket(idx) {
   var tickets = [];
-  try { tickets = JSON.parse(localStorage.getItem("nexus_scale_tickets") || "[]"); } catch(e) {}
+  try { tickets = (window.NexusIsolation ? NexusIsolation.get('nexus_scale_tickets') : JSON.parse(localStorage.getItem('nexus_scale_tickets') || '[]')); } catch(e) {}
   tickets.splice(idx, 1);
   localStorage.setItem("nexus_scale_tickets", JSON.stringify(tickets));
   renderScaleTickets();

@@ -181,6 +181,7 @@ html,body{height:100%;background:var(--gunmetal);color:var(--white);font-family:
 </div>
 
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
 <script src="nexus-config.js"></script>
 <script>
 
@@ -198,7 +199,7 @@ const SEED_DISPATCHER_SETTLEMENTS = [
 function loadSettlements() {
   // Merge seed with any localStorage overrides
   try {
-    var stored = JSON.parse(localStorage.getItem('nexus_settlements') || '[]');
+    var stored = (window.NexusIsolation ? NexusIsolation.get('nexus_settlements') : JSON.parse(localStorage.getItem('nexus_settlements') || '[]'));
     var dispOnly = stored.filter(function(s){ return s.role === 'dispatcher'; });
     if (!dispOnly.length) return SEED_DISPATCHER_SETTLEMENTS;
     // Merge: stored takes precedence over seed

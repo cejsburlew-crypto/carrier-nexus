@@ -841,6 +841,9 @@
     if (dotEl && c && c.color) dotEl.style.background = c.color;
     var row = document.getElementById('nexus-co-selector');
     if (row) { row.style.background='#eef2ff'; setTimeout(function(){row.style.background='';},600); }
+    // Ensure NexusIsolation initializes the new company store, then reload for clean state
+    if (window.NexusIsolation) NexusIsolation.initCompany(id);
+    setTimeout(function() { window.location.reload(); }, 300);
   };
 
   // ── Company data isolation: initialize empty stores for new companies ──

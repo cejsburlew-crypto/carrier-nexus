@@ -119,6 +119,7 @@ tr:hover td{background:#f8fafc;}
 </style>
 </head>
 <body><script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
 <div class="main">
   <div class="topbar">
     <span class="topbar-title">FUEL TRACKING</span>
@@ -199,7 +200,7 @@ tr:hover td{background:#f8fafc;}
   function buildMPG() {
     let expenses = [];
     let loads = [];
-    try { expenses = JSON.parse(localStorage.getItem('nexus_expenses')||'[]'); } catch(e){}
+    try { expenses = (window.NexusIsolation ? NexusIsolation.get('nexus_expenses') : JSON.parse(localStorage.getItem('nexus_expenses') || '[]')); } catch(e){}
     try { loads = JSON.parse(localStorage.getItem('nexus_loads_v2')||'[]'); } catch(e){}
 
     const fuelExp = expenses.filter(e => (e.category||'').toLowerCase().includes('fuel'));

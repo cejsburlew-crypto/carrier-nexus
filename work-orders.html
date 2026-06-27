@@ -100,6 +100,7 @@
 </div>
 
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
   <script src="nexus-config.js"></script>
 <script src="nexus-db.js"></script>
 <script>
@@ -215,7 +216,7 @@ function seedWO() {
 }
 
 function getWOs() {
-  try { return JSON.parse(localStorage.getItem('nexus_work_orders') || '[]'); }
+  try { return (window.NexusIsolation ? NexusIsolation.get('nexus_work_orders') : JSON.parse(localStorage.getItem('nexus_work_orders') || '[]')); }
   catch(e) { return []; }
 }
 

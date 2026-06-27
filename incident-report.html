@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Incident Reports — Carrier Nexus</title>
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
   <script src="nexus-config.js"></script>
 <script src="nexus-db.js"></script>
 <style>
@@ -421,7 +422,7 @@ let photoData = {};
 let partyCount = 0;
 let witnessCount = 0;
 
-function getIncs(){ try{ return JSON.parse(localStorage.getItem('nexus_incidents')||'[]'); }catch(e){ return []; } }
+function getIncs(){ try{ return (window.NexusIsolation ? NexusIsolation.get('nexus_incidents') : JSON.parse(localStorage.getItem('nexus_incidents') || '[]')); }catch(e){ return []; } }
 function saveIncs(a){ localStorage.setItem('nexus_incidents', JSON.stringify(a)); }
 function genId(){ const d=new Date(); const n=getIncs().length+1; return 'INC-'+d.getFullYear()+(d.getMonth()+1).toString().padStart(2,'0')+d.getDate().toString().padStart(2,'0')+'-'+String(n).padStart(3,'0'); }
 function fmtDate(s){ if(!s) return '—'; try{ return new Date(s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }catch(e){ return s; } }

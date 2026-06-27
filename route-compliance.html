@@ -3,6 +3,7 @@
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Route Compliance — Carrier Nexus</title>
   <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
   <script src="nexus-config.js"></script>
   <script src="nexus-db.js"></script>
   <style>
@@ -610,8 +611,8 @@ function renderWeatherWidget(weatherResults, loadWidthFt) {
 }
 
 function checkScaleProximity() {
-  var vehicles = JSON.parse(localStorage.getItem('nexus_gps_vehicles') || '[]');
-  var loads = JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]');
+  var vehicles = (window.NexusIsolation ? NexusIsolation.get('nexus_gps_vehicles') : JSON.parse(localStorage.getItem('nexus_gps_vehicles') || '[]'));
+  var loads = (window.NexusIsolation ? NexusIsolation.get('nexus_dispatch_loads') : JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]'));
   var alerts = [];
   vehicles.forEach(function(vehicle) {
     if (!vehicle.lat || !vehicle.lng) return;

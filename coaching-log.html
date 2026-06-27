@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Driver Coaching Log — Carrier Nexus</title>
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
   <script src="nexus-config.js"></script>
 <script src="nexus-db.js"></script>
 <style>
@@ -221,7 +222,7 @@ let editId=null;
 function getSessions(){ try{ return JSON.parse(localStorage.getItem('nexus_coaching')||'[]'); }catch(e){ return []; } }
 function saveSessions(a){ localStorage.setItem('nexus_coaching', JSON.stringify(a)); }
 function getEvents(){ try{ return JSON.parse(localStorage.getItem('nexus_camera_events')||'[]'); }catch(e){ return []; } }
-function getIncs(){ try{ return JSON.parse(localStorage.getItem('nexus_incidents')||'[]'); }catch(e){ return []; } }
+function getIncs(){ try{ return (window.NexusIsolation ? NexusIsolation.get('nexus_incidents') : JSON.parse(localStorage.getItem('nexus_incidents') || '[]')); }catch(e){ return []; } }
 function genId(){ const d=new Date(); const n=getSessions().length+1; return 'CSH-'+d.getFullYear()+(d.getMonth()+1).toString().padStart(2,'0')+d.getDate().toString().padStart(2,'0')+'-'+String(n).padStart(3,'0'); }
 function fmtDate(s){ if(!s) return '—'; try{ return new Date(s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }catch(e){ return s; } }
 function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }

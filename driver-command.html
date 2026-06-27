@@ -488,6 +488,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 </head>
 <body>
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
 
 <!-- STATUS BAR -->
 <div class="status-bar">
@@ -997,7 +998,7 @@ document.querySelectorAll('.nav-tab').forEach(tab=>{
 async function loadDriverWeather() {
   var session = JSON.parse(localStorage.getItem('nexus_session') || '{}');
   var driverName = session.name || '';
-  var loads = JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]');
+  var loads = (window.NexusIsolation ? NexusIsolation.get('nexus_dispatch_loads') : JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]'));
   var myLoad = loads.find(function(l){ return (l.driver === driverName || l.driver_id === session.id) && l.status !== 'DELIVERED' && l.status !== 'CLOSED'; });
   
   var el = document.getElementById('driver-weather-content');
@@ -1055,8 +1056,8 @@ async function loadDriverWeather() {
 
 function loadDriverScaleAlert() {
   var session = JSON.parse(localStorage.getItem('nexus_session') || '{}');
-  var vehicles = JSON.parse(localStorage.getItem('nexus_gps_vehicles') || '[]');
-  var loads = JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]');
+  var vehicles = (window.NexusIsolation ? NexusIsolation.get('nexus_gps_vehicles') : JSON.parse(localStorage.getItem('nexus_gps_vehicles') || '[]'));
+  var loads = (window.NexusIsolation ? NexusIsolation.get('nexus_dispatch_loads') : JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]'));
   var myVehicle = vehicles.find(function(v){ return v.driver === session.name || v.driver_id === session.id; });
   var el = document.getElementById('driver-scale-content');
   if (!el) return;

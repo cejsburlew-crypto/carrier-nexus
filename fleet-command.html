@@ -635,6 +635,7 @@ body {
 
 <!-- SIDEBAR -->
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
 <!-- MAIN -->
 <div class="main">
   <!-- TOPBAR -->
@@ -1116,7 +1117,7 @@ body {
 
 <script>
 async function loadDashboardWeather() {
-  var loads = JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]');
+  var loads = (window.NexusIsolation ? NexusIsolation.get('nexus_dispatch_loads') : JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]'));
   var activeLoads = loads.filter(function(l){ return l.status === 'IN_TRANSIT' || l.status === 'LOADED'; });
   
   var CITY_COORDS = {
@@ -1182,8 +1183,8 @@ function loadScaleAlerts() {
   var el = document.getElementById('dashboard-scales');
   if (!el) return;
   
-  var vehicles = JSON.parse(localStorage.getItem('nexus_gps_vehicles') || '[]');
-  var loads = JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]');
+  var vehicles = (window.NexusIsolation ? NexusIsolation.get('nexus_gps_vehicles') : JSON.parse(localStorage.getItem('nexus_gps_vehicles') || '[]'));
+  var loads = (window.NexusIsolation ? NexusIsolation.get('nexus_dispatch_loads') : JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]'));
   
   var WEIGH_STATIONS = [
     { state:'TX', name:'I-35 N — Gainesville', lat:33.6151, lng:-97.1336 },

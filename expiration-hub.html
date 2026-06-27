@@ -73,6 +73,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 <body>
 <div id="sidebar"></div>
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
 <div class="main-content">
   <div class="page-header">
     <h1>&#x23F0; Expiration Hub</h1>
@@ -172,7 +173,7 @@ function scanAllExpirations() {
   }
 
   var docs = [];
-  try { docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e){}
+  try { docs = (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]')); } catch(e){}
   docs.forEach(function(d) {
     var expiry = d.expiry_date || d.expiration_date || d.expiry || d.expires || d.valid_until || d.valid_through;
     if (expiry) {
@@ -202,7 +203,7 @@ function scanAllExpirations() {
   });
 
   var permits = [];
-  try { permits = JSON.parse(localStorage.getItem('nexus_permits') || '[]'); } catch(e){}
+  try { permits = (window.NexusIsolation ? NexusIsolation.get('nexus_permits') : JSON.parse(localStorage.getItem('nexus_permits') || '[]')); } catch(e){}
   permits.forEach(function(p) {
     var exp = p.expiry_date || p.end_date;
     if (exp) addItem('Permit ' + (p.permit_number||'') + ' — ' + (p.state||''), 'Permits', exp, p.id, 'State DOT', 'permit');
@@ -371,7 +372,7 @@ function saveUpdateDate() {
     localStorage.setItem('nexus_custom_expirations', JSON.stringify(custom));
   } else if (item.source === 'doc') {
     var docs = [];
-    try { docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e){}
+    try { docs = (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]')); } catch(e){}
     docs = docs.map(function(d) { return d.id === item.docId ? Object.assign({},d,{expiry_date:expiry}) : d; });
     localStorage.setItem('nexus_documents', JSON.stringify(docs));
   }

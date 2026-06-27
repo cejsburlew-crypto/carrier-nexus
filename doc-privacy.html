@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
   <script src="nexus-config.js"></script>
   <style>
     :root {
@@ -173,7 +174,7 @@
   // Load doc list from nexus_documents localStorage
   function refreshDocList() {
     var docs = [];
-    try { docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e) {}
+    try { docs = (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]')); } catch(e) {}
     // Sort: CDL/driver docs first
     var priority = ['cdl', 'w9', 'insurance'];
     docs.sort(function(a, b) {

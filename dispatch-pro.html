@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Dispatch PRO — Carrier Nexus</title>
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
   <script src="nexus-config.js"></script>
 <style>
 :root {
@@ -446,13 +447,13 @@ var STATUS_COLORS={OPEN:'#f59e0b',ASSIGNED:'#3b82f6',PICKED_UP:'#f97316',EN_ROUT
 var STATUS_BC={OPEN:'sb-open',ASSIGNED:'sb-assigned',PICKED_UP:'sb-picked',EN_ROUTE:'sb-enroute',DELIVERED:'sb-delivered',CLOSED:'sb-closed'};
 var ACCS=[{key:'tonu',label:'TONU'},{key:'layover',label:'Layover/day'},{key:'extraStop',label:'Extra Stop'},{key:'lumper',label:'Lumper'},{key:'fuelSurcharge',label:'Fuel Surcharge'},{key:'overweight',label:'Overweight'},{key:'teamDriver',label:'Team Driver'},{key:'hazmat',label:'Hazmat'},{key:'other',label:'Other'}];
 
-function getLoads(){try{return JSON.parse(localStorage.getItem('nexus_dispatch_loads')||'[]')}catch(e){return[]}}
+function getLoads(){try{return (window.NexusIsolation ? NexusIsolation.get('nexus_dispatch_loads') : JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]'))}catch(e){return[]}}
 function saveLoads(a){localStorage.setItem('nexus_dispatch_loads',JSON.stringify(a))}
-function getBrokers(){try{return JSON.parse(localStorage.getItem('nexus_brokers')||'[]')}catch(e){return[]}}
+function getBrokers(){try{return (window.NexusIsolation ? NexusIsolation.get('nexus_brokers') : JSON.parse(localStorage.getItem('nexus_brokers') || '[]'))}catch(e){return[]}}
 function saveBrokers(a){localStorage.setItem('nexus_brokers',JSON.stringify(a))}
 function getPaySettings(){try{return JSON.parse(localStorage.getItem('nexus_pay_settings')||'{}')}catch(e){return{}}}
 function savePaySettingsStore(o){localStorage.setItem('nexus_pay_settings',JSON.stringify(o))}
-function getDocuments(){try{return JSON.parse(localStorage.getItem('nexus_documents')||'[]')}catch(e){return[]}}
+function getDocuments(){try{return (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]'))}catch(e){return[]}}
 function getFleet(){try{return JSON.parse(localStorage.getItem('nexus_fleet')||'[]')}catch(e){return[]}}
 
 function rpmClass(r){return r>=3?'rpm-green':r>=2?'rpm-yellow':'rpm-red'}
@@ -923,7 +924,7 @@ function loadDispatchWeather() {
   var strip = document.getElementById('dispatch-weather-strip');
   if (!strip) return;
   var COORDS = {'Houston,TX':{lat:29.7604,lng:-95.3698,tz:'America/Chicago'},'Oklahoma City,OK':{lat:35.4676,lng:-97.5164,tz:'America/Chicago'},'Corpus Christi,TX':{lat:27.8006,lng:-97.3964,tz:'America/Chicago'}};
-  var loads = JSON.parse(localStorage.getItem('nexus_dispatch_loads')||'[]');
+  var loads = (window.NexusIsolation ? NexusIsolation.get('nexus_dispatch_loads') : JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]'));
   var active = loads.filter(function(l){return l.status==='EN_ROUTE'||l.status==='PICKED_UP'});
   var cities = [['Home Base',29.7604,-95.3698,'America/Chicago']];
   active.slice(0,2).forEach(function(l){ var dest=(l.destination||'').trim(); var k=Object.keys(COORDS).find(function(c){return dest.toLowerCase().includes(c.toLowerCase().split(',')[0])}); if(k)cities.push([dest,COORDS[k].lat,COORDS[k].lng,COORDS[k].tz]); });

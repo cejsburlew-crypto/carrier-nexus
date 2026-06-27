@@ -78,6 +78,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 <body>
 <div id="sidebar"></div>
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
 
 <div class="main">
 
@@ -162,7 +163,7 @@ function getGreeting() {
 
 function countUrgentItems() {
   var docs = [];
-  try { docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e){}
+  try { docs = (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]')); } catch(e){}
   var today = new Date();
   var thirtyDays = new Date(today); thirtyDays.setDate(today.getDate() + 30);
   return docs.filter(function(d) {
@@ -175,7 +176,7 @@ function countUrgentItems() {
 
 function countActiveLoads() {
   var loads = [];
-  try { loads = JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]'); } catch(e){}
+  try { loads = (window.NexusIsolation ? NexusIsolation.get('nexus_dispatch_loads') : JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]')); } catch(e){}
   return loads.filter(function(l) { return l.status !== 'CLOSED' && l.status !== 'DELIVERED'; }).length;
 }
 
@@ -200,21 +201,21 @@ function loadRecentItems() {
   var items = [];
 
   var docs = [];
-  try { docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e){}
+  try { docs = (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]')); } catch(e){}
   docs.forEach(function(d) {
     var ts = d.added_at || d.created_at || d.date || '';
     items.push({name: d.name || d.filename || 'Document', type: 'Document', ts: ts});
   });
 
   var loads = [];
-  try { loads = JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]'); } catch(e){}
+  try { loads = (window.NexusIsolation ? NexusIsolation.get('nexus_dispatch_loads') : JSON.parse(localStorage.getItem('nexus_dispatch_loads') || '[]')); } catch(e){}
   loads.forEach(function(l) {
     var ts = l.created_at || l.date || '';
     items.push({name: 'Load #' + (l.load_number || l.id || ''), type: 'Load', ts: ts});
   });
 
   var expenses = [];
-  try { expenses = JSON.parse(localStorage.getItem('nexus_expenses') || '[]'); } catch(e){}
+  try { expenses = (window.NexusIsolation ? NexusIsolation.get('nexus_expenses') : JSON.parse(localStorage.getItem('nexus_expenses') || '[]')); } catch(e){}
   expenses.forEach(function(e) {
     var ts = e.created_at || e.date || '';
     items.push({name: e.description || e.vendor || 'Expense', type: 'Expense', ts: ts});

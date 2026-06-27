@@ -673,6 +673,7 @@
 
 
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
   <script src="nexus-config.js"></script>
 <script>
 
@@ -782,7 +783,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var recentEl = document.getElementById('home-recent-list');
     if (recentEl) {
       try {
-        var docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]');
+        var docs = (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]'));
         var recent = docs.slice(-3).reverse();
         if (recent.length) {
           recentEl.innerHTML = recent.map(function(d) {
@@ -1103,7 +1104,7 @@ function renderDocGrid() {
   const grid = document.getElementById('doc-grid');
   if (!grid) return;
   let docs = [];
-  try { docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e){}
+  try { docs = (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]')); } catch(e){}
   
   grid.innerHTML = DOC_TYPES.map(dt => {
     const count = docs.filter(d => d.docType === dt.key).length;
@@ -1221,7 +1222,7 @@ function saveDocFromSheet(typeKey) {
   }
   
   let docs = [];
-  try { docs = JSON.parse(localStorage.getItem('nexus_documents') || '[]'); } catch(e){}
+  try { docs = (window.NexusIsolation ? NexusIsolation.get('nexus_documents') : JSON.parse(localStorage.getItem('nexus_documents') || '[]')); } catch(e){}
   docs.unshift(doc);
   localStorage.setItem('nexus_documents', JSON.stringify(docs));
   
@@ -1259,7 +1260,7 @@ function saveExpense() {
     createdAt: new Date().toISOString()
   };
   let expenses = [];
-  try { expenses = JSON.parse(localStorage.getItem('nexus_expenses') || '[]'); } catch(e){}
+  try { expenses = (window.NexusIsolation ? NexusIsolation.get('nexus_expenses') : JSON.parse(localStorage.getItem('nexus_expenses') || '[]')); } catch(e){}
   expenses.unshift(exp);
   localStorage.setItem('nexus_expenses', JSON.stringify(expenses));
   closeSheet();
@@ -1270,7 +1271,7 @@ function renderExpenseList() {
   const container = document.getElementById('expense-list-container');
   if (!container) return;
   let expenses = [];
-  try { expenses = JSON.parse(localStorage.getItem('nexus_expenses') || '[]'); } catch(e){}
+  try { expenses = (window.NexusIsolation ? NexusIsolation.get('nexus_expenses') : JSON.parse(localStorage.getItem('nexus_expenses') || '[]')); } catch(e){}
   const recent = expenses.slice(0, 10);
   if (!recent.length) {
     container.innerHTML = '<div class="empty-state"><div class="e-icon">💰</div><div>No expenses yet</div></div>';

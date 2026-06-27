@@ -227,6 +227,7 @@ body {
 </head>
 <body>
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
   <script src="nexus-config.js"></script>
 
 <div class="main">
@@ -473,7 +474,7 @@ function buildSystemAlerts() {
 
   // nexus_drivers (alternate key)
   try {
-    var drivers = JSON.parse(localStorage.getItem('nexus_drivers') || '[]');
+    var drivers = (window.NexusIsolation ? NexusIsolation.get('nexus_drivers') : JSON.parse(localStorage.getItem('nexus_drivers') || '[]'));
     drivers.forEach(function(d) {
       var name = d.name || d.firstName + ' ' + (d.lastName||'');
       if (d.cdlExpiry || d.cdl_expiry) addAlert('CDL — ' + name, name, d.cdlExpiry || d.cdl_expiry, 'CDL', 'Drivers');

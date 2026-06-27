@@ -162,6 +162,7 @@ select.form-input{cursor:pointer;}
 </head>
 <body>
 <script src="nexus-sidebar.js"></script>
+    <script src="nexus-isolation.js"></script>
 <div class="main">
   <div class="topbar">
     <div class="topbar-title">EXPENSES & PAYMENTS</div>
@@ -403,7 +404,7 @@ function saveAll(arr) {
 function migrate() {
   if (localStorage.getItem(STORE_KEY)) return;
   try {
-    const old = JSON.parse(localStorage.getItem('nexus_expenses') || '[]');
+    const old = (window.NexusIsolation ? NexusIsolation.get('nexus_expenses') : JSON.parse(localStorage.getItem('nexus_expenses') || '[]'));
     if (!old.length) return;
     const now = new Date().toISOString();
     const sess = JSON.parse(localStorage.getItem('nexus_session') || '{}');
