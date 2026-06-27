@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Send Feedback — Carrier Nexus</title>
+<script src="nexus-sidebar.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Barlow', sans-serif; background: #f0f2f5; color: #111827; }
+  .main-content { margin-left: 240px; padding: 32px; max-width: 720px; }
+  h1 { font-size: 24px; font-weight: 700; color: #111827; margin: 0 0 6px; }
+  .subtitle { color: #6b7280; font-size: 14px; margin-bottom: 32px; }
+  .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .form-group { margin-bottom: 18px; }
+  label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+  input, select, textarea { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: 'Barlow', sans-serif; color: #111827; background: #fff; outline: none; transition: border-color .15s; }
+  input:focus, select:focus, textarea:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+  textarea { resize: vertical; min-height: 120px; }
+  .btn-submit { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 12px 28px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: 'Barlow', sans-serif; transition: background .15s; }
+  .btn-submit:hover { background: #1d4ed8; }
+  .success-msg { display: none; background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 16px 20px; color: #15803d; font-size: 14px; margin-top: 16px; }
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+  .badge { padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #e5e7eb; background: #f3f4f6; color: #374151; transition: all .15s; user-select: none; }
+  .badge:hover { border-color: #93c5fd; }
+  .badge.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+  .history-item { padding: 12px 16px; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 8px; font-size: 13px; }
+  .history-item .hi-meta { color: #6b7280; font-size: 11px; margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+  .status-new { display: inline-block; padding: 2px 8px; border-radius: 10px; background: #dbeafe; color: #1d4ed8; font-size: 10px; font-weight: 700; }
+  @media (max-width: 768px) { .main-content { margin-left: 0; padding: 16px; } }
+</style>
+</head>
+<body>
+<div class="main-content">
+  <h1>📝 Send Feedback</h1>
+  <p class="subtitle">Help improve Carrier Nexus. Your feedback goes directly to Jim Burlew.</p>
+
+  <div class="card">
+    <div class="form-group">
+      <label>Category</label>
+      <div class="badge-row">
+        <span class="badge" onclick="selectCategory('Bug Report', this)">🐛 Bug Report</span>
+        <span class="badge" onclick="selectCategory('Feature Request', this)">✨ Feature Request</span>
+        <span class="badge" onclick="selectCategory('Question', this)">❓ Question</span>
+        <span class="badge" onclick="selectCategory('Complaint', this)">😤 Complaint</span>
+        <span class="badge" onclick="selectCategory('Compliment', this)">👍 Compliment</span>
+      </div>
+      <input type="hidden" id="fb-category" value="">
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" id="fb-name" placeholder="Name">
+      </div>
+      <div class="form-group">
+        <label>Your Email</label>
+        <input type="email" id="fb-email" placeholder="email@example.com">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Subject</label>
+      <input type="text" id="fb-subject" placeholder="Brief description of issue or request">
+    </div>
+
+    <div class="form-group">
+      <label>Message</label>
+      <textarea id="fb-message" placeholder="Describe what you're seeing, what you expected, or what you'd like improved..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Screenshot (optional)</label>
+      <input type="file" id="fb-screenshot" accept="image/*" onchange="previewScreenshot(this)">
+      <div style="font-size:11px;color:#6b7280;margin-top:4px;">Attach a screenshot to help describe the issue</div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
+      <button class="btn-submit" onclick="submitFeedback()">Send Feedback</button>
+      <span style="font-size:12px;color:#6b7280;">Saves locally + opens email to Jim</span>
+    </div>
+
+    <div class="success-msg" id="fb-success">
+      Feedback saved! An email draft has been opened. Thank you for helping improve Carrier Nexus.
+    </div>
+  </div>
+
+  <div style="margin-top:28px;" id="feedback-history-section">
+    <h2 style="font-size:16px;font-weight:700;margin-bottom:14px;">Your Previous Feedback</h2>
+    <div id="feedback-history"></div>
+  </div>
+</div>
+
+<script>
+var selectedCategory = '';
+
+function selectCategory(cat, el) {
+  selectedCategory = cat;
+  document.getElementById('fb-category').value = cat;
+  document.querySelectorAll('.badge').forEach(function(b) { b.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+function previewScreenshot(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var note = input.parentElement.querySelector('div');
+  if (note) note.textContent = '📎 ' + file.name + ' attached';
+  // Store file name for the submission
+  window._fbScreenshotName = file.name;
+}
+
+function submitFeedback() {
+  var name = document.getElementById('fb-name').value.trim();
+  var email = document.getElementById('fb-email').value.trim();
+  var subject = document.getElementById('fb-subject').value.trim();
+  var message = document.getElementById('fb-message').value.trim();
+  var category = selectedCategory || 'General';
+
+  if (!message) { alert('Please enter a message.'); return; }
+
+  var session = JSON.parse(localStorage.getItem('nexus_session') || '{}');
+  var feedbacks = JSON.parse(localStorage.getItem('nexus_feedback') || '[]');
+  var entry = {
+    id: Date.now(),
+    from: email || session.email || 'anonymous',
+    name: name || session.name || '',
+    page: document.referrer ? document.referrer.split('/').pop() : 'feedback.html',
+    category: category,
+    subject: subject,
+    message: message,
+    ts: new Date().toISOString(),
+    status: 'new',
+    screenshot: window._fbScreenshotName || null
+  };
+  feedbacks.push(entry);
+  localStorage.setItem('nexus_feedback', JSON.stringify(feedbacks));
+
+  var mailBody = 'From: ' + (entry.name || entry.from) + ' <' + entry.from + '>\n' +
+    'Category: ' + category + '\n' +
+    'Subject: ' + subject + '\n\n' + message;
+  window.open('mailto:jim.burlew@jbca-inc.com?subject=' + encodeURIComponent('Carrier Nexus Feedback: ' + (subject || category)) + '&body=' + encodeURIComponent(mailBody), '_blank');
+
+  document.getElementById('fb-success').style.display = 'block';
+  document.getElementById('fb-message').value = '';
+  document.getElementById('fb-subject').value = '';
+  document.querySelectorAll('.badge').forEach(function(b) { b.classList.remove('active'); });
+  selectedCategory = '';
+  renderHistory();
+}
+
+function renderHistory() {
+  var session = JSON.parse(localStorage.getItem('nexus_session') || '{}');
+  var feedbacks = JSON.parse(localStorage.getItem('nexus_feedback') || '[]');
+  var myEmail = session.email || '';
+  var mine = feedbacks.filter(function(f) { return !myEmail || f.from === myEmail; }).reverse().slice(0, 10);
+  var el = document.getElementById('feedback-history');
+  var sec = document.getElementById('feedback-history-section');
+  if (!mine.length) { if (sec) sec.style.display = 'none'; return; }
+  if (sec) sec.style.display = '';
+  el.innerHTML = mine.map(function(f) {
+    return '<div class="history-item">' +
+      '<div><strong>' + (f.category || 'General') + '</strong>' + (f.subject ? ': ' + f.subject : '') +
+      ' <span class="status-new">' + (f.status || 'new') + '</span></div>' +
+      '<div style="color:#374151;margin-top:4px;font-size:13px;">' + f.message.substring(0, 120) + (f.message.length > 120 ? '...' : '') + '</div>' +
+      '<div class="hi-meta">' + new Date(f.ts).toLocaleString() + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var session = JSON.parse(localStorage.getItem('nexus_session') || '{}');
+  if (session.name) document.getElementById('fb-name').value = session.name;
+  if (session.email) document.getElementById('fb-email').value = session.email;
+  renderHistory();
+});
+</script>
+</body>
+</html>

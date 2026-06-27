@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOS / State Compliance — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="nexus-sidebar.js"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<style>
+:root {
+  --bg: #f0f2f5;
+  --panel: #ffffff;
+  --panel2: #f8f9fa;
+  --border: #d0d7de;
+  --text: #111827;
+  --mid: #4b5563;
+  --blue: #1d4ed8;
+  --green: #15803d;
+  --yellow: #a16207;
+  --red: #dc2626;
+  --orange: #c2410c;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;}
+.main-content{margin-left:220px;padding:28px 32px;min-height:100vh;}
+@media(max-width:768px){.main-content{margin-left:0;padding:16px;}}
+.page-header{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
+.shield-icon{font-size:36px;}
+h1{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:var(--text);letter-spacing:0.5px;}
+.subtitle{font-size:13px;color:var(--mid);margin-top:2px;}
+.tab-nav{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:0;}
+.tab-btn{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:8px 16px;border:none;background:none;cursor:pointer;color:var(--mid);border-bottom:2px solid transparent;transition:all .15s;}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
+.tab-btn:hover:not(.active){color:var(--text);background:var(--panel2);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.kpi-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+.kpi-label{font-size:10px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--text);}
+.kpi-sub{font-size:11px;color:var(--mid);margin-top:4px;}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);}
+.panel-body{padding:18px;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:10px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+td{padding:10px 14px;font-size:13px;color:var(--text);border-bottom:1px solid #f1f5f9;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f8f9fb;}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.04em;}
+.badge-green{background:#dcfce7;color:#15803d;}
+.badge-yellow{background:#fef9c3;color:#a16207;}
+.badge-red{background:#fee2e2;color:#dc2626;}
+.badge-blue{background:#dbeafe;color:#1d4ed8;}
+.badge-gray{background:#f3f4f6;color:#6b7280;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;letter-spacing:.04em;transition:all .15s;font-family:'Barlow',sans-serif;}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-primary:hover{background:#1e40af;}
+.btn-outline{background:var(--panel);border:1px solid var(--border);color:var(--text);}
+.btn-outline:hover{background:var(--panel2);}
+.state-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+.state-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;transition:all .15s;}
+.state-card:hover{border-color:var(--blue);box-shadow:0 2px 8px rgba(29,78,216,0.1);}
+.state-card-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.state-card-meta{font-size:11px;color:var(--mid);}
+.req-list{display:flex;flex-direction:column;gap:8px;}
+.req-item{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;}
+.req-item-icon{font-size:18px;flex-shrink:0;}
+.req-item-title{font-size:13px;font-weight:600;color:var(--text);}
+.req-item-desc{font-size:11px;color:var(--mid);margin-top:2px;}
+.req-item-status{margin-left:auto;flex-shrink:0;}
+.empty-state{text-align:center;padding:48px 24px;color:var(--mid);}
+.empty-state-icon{font-size:48px;margin-bottom:12px;}
+.empty-state p{font-size:13px;}
+</style>
+</head>
+<body>
+
+<div class="main-content">
+  <div class="page-header">
+    <span class="shield-icon">🏛️</span>
+    <div>
+      <h1>SOS / State Compliance</h1>
+      <div class="subtitle">Secretary of State filings, state permits, UCR, and per-state operating requirements</div>
+    </div>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('states')">States</button>
+    <button class="tab-btn" onclick="switchTab('ucr')">UCR / IRP</button>
+    <button class="tab-btn" onclick="switchTab('filings')">Filings Log</button>
+  </div>
+
+  <!-- TAB: Overview -->
+  <div id="tab-overview" class="tab-pane active">
+    <div class="kpi-row" id="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">States Active</div>
+        <div class="kpi-val" id="kpi-states-active">—</div>
+        <div class="kpi-sub">Operating authority</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">UCR Registered</div>
+        <div class="kpi-val" id="kpi-ucr">—</div>
+        <div class="kpi-sub">Current year</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">IRP Plates</div>
+        <div class="kpi-val" id="kpi-irp">—</div>
+        <div class="kpi-sub">Apportioned vehicles</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Pending Filings</div>
+        <div class="kpi-val" id="kpi-pending">0</div>
+        <div class="kpi-sub">Due within 30 days</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">⚠️ Compliance Checklist</div>
+        <button class="btn btn-primary" onclick="exportChecklist()">Export PDF</button>
+      </div>
+      <div class="panel-body">
+        <div class="req-list" id="req-list">
+          <div class="req-item">
+            <div class="req-item-icon">📋</div>
+            <div>
+              <div class="req-item-title">Unified Carrier Registration (UCR)</div>
+              <div class="req-item-desc">Annual federal registration for interstate motor carriers. Due by Dec 31 each year.</div>
+            </div>
+            <div class="req-item-status"><span class="badge badge-green">Current</span></div>
+          </div>
+          <div class="req-item">
+            <div class="req-item-icon">🚛</div>
+            <div>
+              <div class="req-item-title">International Registration Plan (IRP)</div>
+              <div class="req-item-desc">Apportioned license plates for vehicles operating in multiple jurisdictions.</div>
+            </div>
+            <div class="req-item-status"><span class="badge badge-green">Current</span></div>
+          </div>
+          <div class="req-item">
+            <div class="req-item-icon">⛽</div>
+            <div>
+              <div class="req-item-title">IFTA (Fuel Tax)</div>
+              <div class="req-item-desc">Quarterly fuel tax reporting for vehicles operating across jurisdictions.</div>
+            </div>
+            <div class="req-item-status"><span class="badge badge-yellow">Q2 Due Jul 31</span></div>
+          </div>
+          <div class="req-item">
+            <div class="req-item-icon">🏛️</div>
+            <div>
+              <div class="req-item-title">SOS / Business Entity Filing</div>
+              <div class="req-item-desc">Annual report to state Secretary of State. Maintains good standing.</div>
+            </div>
+            <div class="req-item-status"><span class="badge badge-green">Current</span></div>
+          </div>
+          <div class="req-item">
+            <div class="req-item-icon">💰</div>
+            <div>
+              <div class="req-item-title">Heavy Vehicle Use Tax (HVUT Form 2290)</div>
+              <div class="req-item-desc">Annual federal tax on vehicles over 55,000 lbs. Due Aug 31.</div>
+            </div>
+            <div class="req-item-status"><span class="badge badge-gray">Next Due Aug 2026</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: States -->
+  <div id="tab-states" class="tab-pane">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">State Operating Requirements</div>
+        <div style="display:flex;gap:8px;">
+          <input id="state-search" type="text" placeholder="Search state..." oninput="filterStates(this.value)"
+            style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;width:180px;">
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="state-grid" id="state-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: UCR / IRP -->
+  <div id="tab-ucr" class="tab-pane">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">UCR Registration History</div>
+        <button class="btn btn-primary" onclick="addUCR()">+ Add Registration</button>
+      </div>
+      <div class="panel-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Fleet Size</th>
+              <th>Fee Paid</th>
+              <th>Registered Date</th>
+              <th>Status</th>
+              <th>Confirmation #</th>
+            </tr>
+          </thead>
+          <tbody id="ucr-tbody">
+            <tr>
+              <td>2026</td>
+              <td>1–2 vehicles</td>
+              <td>$68</td>
+              <td>Jan 5, 2026</td>
+              <td><span class="badge badge-green">Current</span></td>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;">UCR-2026-XXXX</span></td>
+            </tr>
+            <tr>
+              <td>2025</td>
+              <td>1–2 vehicles</td>
+              <td>$68</td>
+              <td>Dec 10, 2024</td>
+              <td><span class="badge badge-gray">Expired</span></td>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;">UCR-2025-XXXX</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">IRP / Apportioned Plates</div>
+        <button class="btn btn-primary" onclick="addIRP()">+ Add Vehicle</button>
+      </div>
+      <div class="panel-body">
+        <div class="empty-state" id="irp-empty">
+          <div class="empty-state-icon">🚛</div>
+          <p>No IRP registrations on file. Add vehicles to track apportioned plate renewals.</p>
+          <button class="btn btn-outline" style="margin-top:12px;" onclick="addIRP()">Add First Vehicle</button>
+        </div>
+        <table id="irp-table" style="display:none;">
+          <thead>
+            <tr><th>Unit #</th><th>VIN</th><th>Plate</th><th>Base State</th><th>Expiry</th><th>Status</th></tr>
+          </thead>
+          <tbody id="irp-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Filings Log -->
+  <div id="tab-filings" class="tab-pane">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Filings Log</div>
+        <button class="btn btn-primary" onclick="addFiling()">+ Add Filing</button>
+      </div>
+      <div class="panel-body">
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Filing Type</th><th>State</th><th>Amount</th><th>Status</th><th>Notes</th></tr>
+          </thead>
+          <tbody id="filings-tbody">
+            <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--mid);">No filings logged yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Tab navigation ──
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    var tabs = ['overview','states','ucr','filings'];
+    b.classList.toggle('active', tabs[i] === id);
+  });
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  var el = document.getElementById('tab-' + id);
+  if (el) el.classList.add('active');
+}
+
+// ── State data ──
+var STATES = [
+  {name:'Alabama',abbr:'AL',notes:'State fuel tax + apportioned plates required'},
+  {name:'Arizona',abbr:'AZ',notes:'No additional state-specific permits for standard operations'},
+  {name:'Arkansas',abbr:'AR',notes:'Oversize/overweight requires state permit'},
+  {name:'California',abbr:'CA',notes:'CA DMV registration, CARB compliance for diesel vehicles'},
+  {name:'Colorado',abbr:'CO',notes:'Mountain corridor weight restrictions apply'},
+  {name:'Florida',abbr:'FL',notes:'Fuel tax reported via IFTA'},
+  {name:'Georgia',abbr:'GA',notes:'Fuel tax + port access permits available'},
+  {name:'Illinois',abbr:'IL',notes:'Chicago congestion zones; oversize permits via IDOT'},
+  {name:'Indiana',abbr:'IN',notes:'Annual Toll Road access via transponder'},
+  {name:'Kentucky',abbr:'KY',notes:'KYU weight distance tax required for vehicles >26,000 lbs'},
+  {name:'Louisiana',abbr:'LA',notes:'Port permits for petrochemical corridor'},
+  {name:'Mississippi',abbr:'MS',notes:'Standard IFTA/IRP applies'},
+  {name:'Missouri',abbr:'MO',notes:'Weight distance tax via Vitran for some routes'},
+  {name:'Nevada',abbr:'NV',notes:'Special fuel permits for some routes'},
+  {name:'New Mexico',abbr:'NM',notes:'NM Weight Distance Tax (WDT) required'},
+  {name:'New York',abbr:'NY',notes:'NY HUT (Highway Use Tax) required for vehicles >18,000 lbs'},
+  {name:'North Carolina',abbr:'NC',notes:'Oversize requires state permit'},
+  {name:'Ohio',abbr:'OH',notes:'Turnpike transponder recommended'},
+  {name:'Oklahoma',abbr:'OK',notes:'OTC Single State Registration; fuel tax via IFTA'},
+  {name:'Pennsylvania',abbr:'PA',notes:'PA Turnpike transponder + weight limit enforcement'},
+  {name:'Tennessee',abbr:'TN',notes:'Oversize/overweight permits via TDOT'},
+  {name:'Texas',abbr:'TX',notes:'TxDOT oversize permits; no state income tax'},
+  {name:'Virginia',abbr:'VA',notes:'VDOT oversize permits; 81 corridor weigh stations'},
+];
+
+var filteredStates = STATES.slice();
+
+function renderStates() {
+  var grid = document.getElementById('state-grid');
+  if (!grid) return;
+  if (filteredStates.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--mid);">No states match your search.</div>';
+    return;
+  }
+  grid.innerHTML = filteredStates.map(function(s) {
+    return '<div class="state-card" onclick="showState(\'' + s.abbr + '\')">' +
+      '<div class="state-card-name">' + s.abbr + ' · ' + s.name + '</div>' +
+      '<div class="state-card-meta">' + s.notes + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+function filterStates(q) {
+  q = q.toLowerCase();
+  filteredStates = STATES.filter(function(s) {
+    return s.name.toLowerCase().includes(q) || s.abbr.toLowerCase().includes(q);
+  });
+  renderStates();
+}
+
+function showState(abbr) {
+  var s = STATES.find(function(x){return x.abbr === abbr;});
+  if (!s) return;
+  alert(s.name + ' (' + s.abbr + ')\n\n' + s.notes);
+}
+
+// ── KPIs ──
+function loadKPIs() {
+  document.getElementById('kpi-states-active').textContent = '23';
+  document.getElementById('kpi-ucr').textContent = '✓';
+  document.getElementById('kpi-irp').textContent = '0';
+  document.getElementById('kpi-pending').textContent = '1';
+}
+
+// ── Stub actions ──
+function exportChecklist() { alert('PDF export — connect jsPDF to generate checklist.'); }
+function addUCR() { alert('Add UCR registration — form coming soon.'); }
+function addIRP() { alert('Add IRP vehicle — form coming soon.'); }
+function addFiling() { alert('Add filing entry — form coming soon.'); }
+
+// ── Init ──
+loadKPIs();
+renderStates();
+</script>
+</body>
+</html>

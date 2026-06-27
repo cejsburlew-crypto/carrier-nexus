@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entity Compliance — Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="nexus-sidebar.js"></script>
+<script src="nexus-config.js"></script>
+<script src="nexus-db.js"></script>
+<style>
+:root {
+  --bg: #f0f2f5;
+  --panel: #ffffff;
+  --panel2: #f8f9fa;
+  --border: #d0d7de;
+  --text: #111827;
+  --mid: #4b5563;
+  --blue: #1d4ed8;
+  --green: #15803d;
+  --yellow: #a16207;
+  --red: #dc2626;
+  --orange: #c2410c;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;}
+.main-content{margin-left:220px;padding:28px 32px;min-height:100vh;}
+@media(max-width:768px){.main-content{margin-left:0;padding:16px;}}
+.page-header{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
+.icon-lg{font-size:36px;}
+h1{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:var(--text);letter-spacing:0.5px;}
+.subtitle{font-size:13px;color:var(--mid);margin-top:2px;}
+.tab-nav{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--border);}
+.tab-btn{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:8px 16px;border:none;background:none;cursor:pointer;color:var(--mid);border-bottom:2px solid transparent;transition:all .15s;}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
+.tab-btn:hover:not(.active){color:var(--text);background:var(--panel2);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+@media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr);}}
+.kpi-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+.kpi-label{font-size:10px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--text);}
+.kpi-sub{font-size:11px;color:var(--mid);margin-top:4px;}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);}
+.panel-body{padding:18px;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:10px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+td{padding:10px 14px;font-size:13px;color:var(--text);border-bottom:1px solid #f1f5f9;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f8f9fb;}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.04em;}
+.badge-green{background:#dcfce7;color:#15803d;}
+.badge-yellow{background:#fef9c3;color:#a16207;}
+.badge-red{background:#fee2e2;color:#dc2626;}
+.badge-blue{background:#dbeafe;color:#1d4ed8;}
+.badge-gray{background:#f3f4f6;color:#6b7280;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;letter-spacing:.04em;transition:all .15s;font-family:'Barlow',sans-serif;}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-primary:hover{background:#1e40af;}
+.btn-outline{background:var(--panel);border:1px solid var(--border);color:var(--text);}
+.btn-outline:hover{background:var(--panel2);}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+@media(max-width:700px){.info-grid{grid-template-columns:1fr;}}
+.info-section{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:18px;}
+.info-section h3{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f1f5f9;gap:12px;}
+.info-row:last-child{border-bottom:none;}
+.info-label{font-size:12px;color:var(--mid);flex-shrink:0;}
+.info-val{font-size:13px;color:var(--text);font-weight:500;text-align:right;}
+.info-val.mono{font-family:'JetBrains Mono',monospace;font-size:11px;}
+.alert-banner{background:#fef9c3;border:1px solid #fcd34d;border-radius:8px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:flex-start;gap:10px;font-size:13px;color:#92400e;}
+.alert-banner-icon{font-size:18px;flex-shrink:0;}
+.doc-list{display:flex;flex-direction:column;gap:8px;}
+.doc-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;}
+.doc-icon{font-size:20px;flex-shrink:0;}
+.doc-name{font-size:13px;font-weight:600;color:var(--text);flex:1;}
+.doc-date{font-size:11px;color:var(--mid);}
+.doc-actions{display:flex;gap:6px;}
+</style>
+</head>
+<body>
+
+<div class="main-content">
+  <div class="page-header">
+    <span class="icon-lg">🏢</span>
+    <div>
+      <h1>Entity Compliance</h1>
+      <div class="subtitle">Business entity status, registered agent, annual reports, and good standing documents</div>
+    </div>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('filings')">Annual Filings</button>
+    <button class="tab-btn" onclick="switchTab('docs')">Documents</button>
+    <button class="tab-btn" onclick="switchTab('agent')">Registered Agent</button>
+  </div>
+
+  <!-- TAB: Overview -->
+  <div id="tab-overview" class="tab-pane active">
+    <div id="alert-area"></div>
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Entity Status</div>
+        <div class="kpi-val" id="kpi-status">Active</div>
+        <div class="kpi-sub">Good standing</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Entity Type</div>
+        <div class="kpi-val" id="kpi-type">LLC</div>
+        <div class="kpi-sub" id="kpi-state-formed">FL</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Annual Report</div>
+        <div class="kpi-val" id="kpi-report">2026</div>
+        <div class="kpi-sub" id="kpi-report-due">Filed</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">EIN</div>
+        <div class="kpi-val" style="font-size:18px;" id="kpi-ein">On File</div>
+        <div class="kpi-sub">Federal Tax ID</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-section">
+        <h3>Entity Details</h3>
+        <div class="info-row">
+          <span class="info-label">Legal Name</span>
+          <span class="info-val" id="ent-name">Carrier Trucking US LLC</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">DBA / Trade Name</span>
+          <span class="info-val" id="ent-dba">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Entity Type</span>
+          <span class="info-val" id="ent-type">Limited Liability Company</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">State of Formation</span>
+          <span class="info-val" id="ent-state">Florida</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Formation Date</span>
+          <span class="info-val mono" id="ent-formed">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Status</span>
+          <span class="info-val"><span class="badge badge-green" id="ent-status-badge">Active</span></span>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <h3>Federal Identifiers</h3>
+        <div class="info-row">
+          <span class="info-label">EIN</span>
+          <span class="info-val mono" id="fed-ein">•••–••–••••</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">USDOT Number</span>
+          <span class="info-val mono" id="fed-usdot">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">MC Number</span>
+          <span class="info-val mono" id="fed-mc">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">SCAC Code</span>
+          <span class="info-val mono" id="fed-scac">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">UCR Year</span>
+          <span class="info-val" id="fed-ucr">2026</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Compliance Timeline</div>
+        <button class="btn btn-outline" onclick="switchTab('filings')">View All Filings</button>
+      </div>
+      <div class="panel-body">
+        <table>
+          <thead>
+            <tr><th>Item</th><th>Frequency</th><th>Next Due</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Annual Report (FL SOS)</td>
+              <td>Annual</td>
+              <td>May 1, 2027</td>
+              <td><span class="badge badge-green">Filed 2026</span></td>
+            </tr>
+            <tr>
+              <td>UCR Registration</td>
+              <td>Annual</td>
+              <td>Dec 31, 2026</td>
+              <td><span class="badge badge-green">Current</span></td>
+            </tr>
+            <tr>
+              <td>IFTA Quarterly Return</td>
+              <td>Quarterly</td>
+              <td>Jul 31, 2026</td>
+              <td><span class="badge badge-yellow">Q2 Pending</span></td>
+            </tr>
+            <tr>
+              <td>2290 HVUT</td>
+              <td>Annual</td>
+              <td>Aug 31, 2026</td>
+              <td><span class="badge badge-gray">Not Yet Due</span></td>
+            </tr>
+            <tr>
+              <td>Operating Authority Renewal</td>
+              <td>Biennial</td>
+              <td>—</td>
+              <td><span class="badge badge-green">Active</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Annual Filings -->
+  <div id="tab-filings" class="tab-pane">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Annual Report History</div>
+        <button class="btn btn-primary" onclick="addFiling()">+ Log Filing</button>
+      </div>
+      <div class="panel-body">
+        <table>
+          <thead>
+            <tr><th>Year</th><th>Jurisdiction</th><th>Filed Date</th><th>Fee</th><th>Confirmation</th><th>Status</th></tr>
+          </thead>
+          <tbody id="filings-tbody">
+            <tr>
+              <td>2026</td>
+              <td>Florida SOS</td>
+              <td>—</td>
+              <td>$138.75</td>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;">—</span></td>
+              <td><span class="badge badge-green">Filed</span></td>
+            </tr>
+            <tr>
+              <td>2025</td>
+              <td>Florida SOS</td>
+              <td>—</td>
+              <td>$138.75</td>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;">—</span></td>
+              <td><span class="badge badge-gray">Archived</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Documents -->
+  <div id="tab-docs" class="tab-pane">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Entity Documents</div>
+        <button class="btn btn-primary" onclick="uploadDoc()">+ Upload</button>
+      </div>
+      <div class="panel-body">
+        <div class="doc-list">
+          <div class="doc-row">
+            <div class="doc-icon">📄</div>
+            <div class="doc-name">Articles of Organization</div>
+            <div class="doc-date">Formation document</div>
+            <div class="doc-actions">
+              <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="alert('Upload the Articles of Organization PDF to view.')">View</button>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon">📄</div>
+            <div class="doc-name">Operating Agreement</div>
+            <div class="doc-date">Member agreement</div>
+            <div class="doc-actions">
+              <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="alert('Upload the Operating Agreement PDF to view.')">View</button>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon">🏛️</div>
+            <div class="doc-name">EIN Assignment Letter (IRS CP575)</div>
+            <div class="doc-date">Federal Tax ID</div>
+            <div class="doc-actions">
+              <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="alert('Upload the CP575 PDF to view.')">View</button>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon">✅</div>
+            <div class="doc-name">Certificate of Good Standing</div>
+            <div class="doc-date">Latest annual report</div>
+            <div class="doc-actions">
+              <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="window.open('https://dos.fl.gov/sunbiz/','_blank')">FL SOS</button>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon">🚛</div>
+            <div class="doc-name">MC Operating Authority Certificate</div>
+            <div class="doc-date">FMCSA issued</div>
+            <div class="doc-actions">
+              <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="window.open('https://safer.fmcsa.dot.gov/','_blank')">SAFER</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Registered Agent -->
+  <div id="tab-agent" class="tab-pane">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Registered Agent Information</div>
+        <button class="btn btn-outline" onclick="editAgent()">Edit</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-section" style="margin-bottom:16px;">
+          <h3>Current Registered Agent</h3>
+          <div class="info-row">
+            <span class="info-label">Agent Name</span>
+            <span class="info-val" id="ra-name">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Address</span>
+            <span class="info-val" id="ra-addr">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">City, State, ZIP</span>
+            <span class="info-val" id="ra-city">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Phone</span>
+            <span class="info-val" id="ra-phone">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-val" id="ra-email">—</span>
+          </div>
+        </div>
+        <div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:12px;color:var(--mid);">
+          <strong style="color:var(--text);">Note:</strong> The registered agent must be available during business hours to receive legal documents and service of process. Changes must be filed with the Florida Division of Corporations within a timely manner.
+          <br><br>
+          <a href="https://dos.fl.gov/sunbiz/manage-e-file/online-services/change-registered-agent/" target="_blank" style="color:var(--blue);">File a change of registered agent with FL SOS →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Tab navigation ──
+function switchTab(id) {
+  var tabs = ['overview','filings','docs','agent'];
+  document.querySelectorAll('.tab-btn').forEach(function(b,i) {
+    b.classList.toggle('active', tabs[i] === id);
+  });
+  document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('active'); });
+  var el = document.getElementById('tab-' + id);
+  if (el) el.classList.add('active');
+}
+
+// ── Load data from nexus-db / localStorage ──
+function loadEntityData() {
+  // Pull USDOT / MC from stored config if available
+  var usdot = localStorage.getItem('nexus_my_usdot') || '—';
+  var mc = localStorage.getItem('nexus_my_mc') || '—';
+  var el;
+
+  el = document.getElementById('fed-usdot'); if (el) el.textContent = usdot;
+  el = document.getElementById('fed-mc'); if (el) el.textContent = mc ? 'MC-' + mc : '—';
+
+  // Check for upcoming deadlines
+  var alertArea = document.getElementById('alert-area');
+  var today = new Date();
+  var ifta = new Date('2026-07-31');
+  var days = Math.ceil((ifta - today) / (1000 * 60 * 60 * 24));
+  if (days >= 0 && days <= 45) {
+    alertArea.innerHTML = '<div class="alert-banner">' +
+      '<div class="alert-banner-icon">⚠️</div>' +
+      '<div><strong>IFTA Q2 Return due in ' + days + ' days</strong> — File by July 31, 2026 to avoid penalties.</div>' +
+      '</div>';
+  }
+}
+
+// ── Stub actions ──
+function addFiling() { alert('Log annual filing — form coming soon.'); }
+function uploadDoc() { alert('Upload entity document — connect Google Drive to store securely.'); }
+function editAgent() { alert('Edit registered agent — form coming soon.'); }
+
+// ── Init ──
+loadEntityData();
+</script>
+</body>
+</html>

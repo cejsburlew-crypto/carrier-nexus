@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Road Alerts — Carrier Nexus</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="nexus-sidebar.js"></script>
+<style>
+  body { margin: 0; padding: 0; font-family: 'Barlow', sans-serif; background: #f0f2f5; }
+  #map { position: fixed; top: 0; left: 240px; right: 0; bottom: 60px; }
+  #report-panel { position: fixed; top: 80px; right: 16px; z-index: 1000; background: #fff; border-radius: 12px; padding: 16px; width: 260px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: 1px solid #e5e7eb; }
+  #alerts-ticker { position: fixed; bottom: 0; left: 240px; right: 0; background: #111827; color: #fff; padding: 10px 16px; font-size: 13px; z-index: 1000; overflow: hidden; white-space: nowrap; }
+  .report-btn { display: block; width: 100%; margin: 6px 0; padding: 10px 14px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; }
+  .btn-police { background: #1e3a8a; color: #fff; }
+  .btn-dot { background: #b45309; color: #fff; }
+  .btn-weigh-open { background: #dc2626; color: #fff; }
+  .btn-weigh-closed { background: #16a34a; color: #fff; }
+  .btn-hazard { background: #d97706; color: #000; }
+  .btn-construction { background: #f59e0b; color: #000; }
+  .btn-clear { background: #6b7280; color: #fff; }
+  #report-count { font-size: 12px; color: #6b7280; margin-top: 8px; text-align: center; }
+  h3 { margin: 0 0 12px; font-size: 15px; color: #111827; }
+  @media (max-width: 768px) { #map { left: 0; } #alerts-ticker { left: 0; } }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div id="report-panel">
+  <h3>🚨 Report a Hazard</h3>
+  <button class="report-btn btn-police" onclick="reportHazard('police')">👮 Police / Trooper</button>
+  <button class="report-btn btn-dot" onclick="reportHazard('dot_officer')">🔍 DOT Officer</button>
+  <button class="report-btn btn-weigh-open" onclick="reportHazard('weigh_open')">⚖️ Weigh Station — OPEN</button>
+  <button class="report-btn btn-weigh-closed" onclick="reportHazard('weigh_closed')">✅ Weigh Station — Closed</button>
+  <button class="report-btn btn-hazard" onclick="reportHazard('hazard')">⚠️ Road Hazard / Debris</button>
+  <button class="report-btn btn-construction" onclick="reportHazard('construction')">🚧 Construction</button>
+  <button class="report-btn btn-clear" onclick="reportHazard('all_clear')">✅ All Clear</button>
+  <div id="report-count">Loading reports...</div>
+</div>
+<div id="alerts-ticker">📡 Loading live alerts...</div>
+
+<script>
+var HAZARD_LABELS = {
+  police: '👮 Police',
+  dot_officer: '🔍 DOT Officer',
+  weigh_open: '⚖️ Weigh Station OPEN',
+  weigh_closed: '✅ Weigh Station Closed',
+  hazard: '⚠️ Hazard',
+  construction: '🚧 Construction',
+  all_clear: '✅ All Clear'
+};
+
+var HAZARD_COLORS = {
+  police: '#1e3a8a', dot_officer: '#b45309', weigh_open: '#dc2626',
+  weigh_closed: '#16a34a', hazard: '#d97706', construction: '#f59e0b', all_clear: '#6b7280'
+};
+
+var map = L.map('map').setView([37.5, -96], 5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors', maxZoom: 18
+}).addTo(map);
+
+var markers = [];
+
+function getReports() {
+  var raw = localStorage.getItem('nexus_hazard_reports');
+  var reports = raw ? JSON.parse(raw) : [];
+  var now = Date.now();
+  reports = reports.filter(function(r) { return (now - r.ts) < 7200000; });
+  localStorage.setItem('nexus_hazard_reports', JSON.stringify(reports));
+  return reports;
+}
+
+function renderMarkers() {
+  markers.forEach(function(m) { map.removeLayer(m); });
+  markers = [];
+  var reports = getReports();
+  var ticker = [];
+
+  reports.forEach(function(r) {
+    var color = HAZARD_COLORS[r.type] || '#6b7280';
+    var emoji = (HAZARD_LABELS[r.type] || '⚠️').split(' ')[0];
+    var icon = L.divIcon({
+      html: '<div style="background:' + color + ';color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.4);">' + emoji + '</div>',
+      className: '', iconSize: [32,32], iconAnchor: [16,16]
+    });
+    var minsAgo = Math.round((Date.now() - r.ts) / 60000);
+    var m = L.marker([r.lat, r.lng], {icon: icon})
+      .addTo(map)
+      .bindPopup('<b>' + (HAZARD_LABELS[r.type] || r.type) + '</b><br>Reported ' + minsAgo + ' min ago<br>By: ' + (r.user || 'Driver') + (r.note ? '<br><small>' + r.note + '</small>' : ''));
+    markers.push(m);
+    ticker.push((HAZARD_LABELS[r.type] || r.type) + ' — ' + minsAgo + 'm ago');
+  });
+
+  document.getElementById('report-count').textContent = reports.length + ' active report' + (reports.length !== 1 ? 's' : '') + ' (2hr window)';
+  document.getElementById('alerts-ticker').textContent = ticker.length ? ('📡 LIVE: ' + ticker.join('   |   ')) : '📡 No active reports — roads clear';
+}
+
+function reportHazard(type) {
+  if (!navigator.geolocation) {
+    alert('Geolocation not available. Click the map where you want to place the report.');
+    map.once('click', function(e) { saveReport(type, e.latlng.lat, e.latlng.lng); });
+    return;
+  }
+  var btn = event.target;
+  var origText = btn.textContent;
+  btn.textContent = 'Getting location...';
+  btn.disabled = true;
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      saveReport(type, pos.coords.latitude, pos.coords.longitude);
+      btn.textContent = origText;
+      btn.disabled = false;
+    },
+    function() {
+      btn.textContent = origText;
+      btn.disabled = false;
+      alert('Location denied. Click anywhere on the map to place your report.');
+      map.once('click', function(e) { saveReport(type, e.latlng.lat, e.latlng.lng); });
+    },
+    {timeout: 8000, enableHighAccuracy: true}
+  );
+}
+
+function saveReport(type, lat, lng) {
+  var session = JSON.parse(localStorage.getItem('nexus_session') || '{}');
+  var reports = getReports();
+  reports.push({
+    id: Date.now() + '_' + Math.random().toString(36).substr(2,5),
+    type: type, lat: lat, lng: lng,
+    ts: Date.now(),
+    user: session.name || session.email || 'Driver',
+    note: ''
+  });
+  localStorage.setItem('nexus_hazard_reports', JSON.stringify(reports));
+  renderMarkers();
+  var el = document.getElementById('alerts-ticker');
+  el.style.background = '#16a34a';
+  el.textContent = 'Report submitted! Thank you — helps keep everyone safe.';
+  setTimeout(function() { el.style.background = '#111827'; renderMarkers(); }, 3000);
+}
+
+map.on('contextmenu', function(e) {
+  var type = prompt('Right-click report type:\npolice | dot_officer | weigh_open | weigh_closed | hazard | construction | all_clear');
+  if (type && HAZARD_LABELS[type]) saveReport(type, e.latlng.lat, e.latlng.lng);
+});
+
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(function(p) {
+    map.setView([p.coords.latitude, p.coords.longitude], 10);
+  });
+}
+
+renderMarkers();
+setInterval(renderMarkers, 60000);
+</script>
+</body>
+</html>

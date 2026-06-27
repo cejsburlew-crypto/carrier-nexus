@@ -28,6 +28,8 @@
     'NEXUS_LOCAL_USERS': 1,
     'nexus_eld_config': 1,
     'nexus_driver_hire_status': 1,
+    'nexus_hazard_reports': 1,
+    'nexus_feedback': 1,
   };
 
   function needsPrefix(key) {
@@ -170,7 +172,7 @@
     { key:'dispatch',   label:'Dispatch',            pages:['dispatch-pro.html','dispatcher-hub.html','commissions.html','pilot-escorts.html','available-dispatchers.html','available-drivers.html'] },
     { key:'driver',     label:'Driver Portal',       pages:['driver-command.html','driver-availability.html','driver-intake.html','driver-profile.html','my-pay.html','equipment-marketplace.html','social-recruiting.html'] },
     { key:'finance',    label:'Finance',             pages:['invoicing.html','expenses.html','financials.html','factoring.html','fuel-cards.html','ifta.html','whatsapp-import.html','analysis.html'] },
-    { key:'compliance', label:'Compliance',          pages:['cfr-compliance.html','fmcsa-compliance.html','fmcsa-resources.html','dot-view.html','drug-alcohol.html','accident-register.html','boc3.html','expiration-hub.html','incident-report.html','coaching-log.html','alerts.html'] },
+    { key:'compliance', label:'Compliance',          pages:['cfr-compliance.html','fmcsa-compliance.html','fmcsa-resources.html','dot-view.html','drug-alcohol.html','accident-register.html','boc3.html','expiration-hub.html','incident-report.html','coaching-log.html','alerts.html','sos-compliance.html','entity-compliance.html'] },
     { key:'insurance',  label:'Insurance',           pages:['insurance-kpi.html','insurance-planner.html','coi-management.html','claims.html'] },
     { key:'fleet',      label:'Fleet & Equipment',   pages:['equipment.html','equipment-weights.html','maintenance.html','pm-schedule.html','tires.html','fuel.html','dvir.html','pretrip.html','scale-tickets.html','weight-calculator.html','dot-compliance.html'] },
     { key:'routewx',    label:'Route Intelligence',  pages:['route-compliance.html','gps-tracker.html','pilot-escorts.html','driver-services.html'] },
@@ -370,7 +372,9 @@
       lnk('expiration-hub.html',       I.clock,   '⏰ Expiration Hub') +
       lnk('alerts.html',               I.clock,   '🔔 Expiration Alerts') +
       lnk('incident-report.html',      I.dot,     'Incident Reports') +
-      lnk('coaching-log.html',         I.dvir,    'Driver Coaching')
+      lnk('coaching-log.html',         I.dvir,    'Driver Coaching') +
+      lnk('sos-compliance.html',         I.doc,     '🏛️ SOS / State Compliance') +
+      lnk('entity-compliance.html',      I.doc,     '🏢 Entity Compliance')
     ) +
 
     // 6. INSURANCE
@@ -451,7 +455,8 @@
       lnk('company-management.html',   I.truck,   '🏢 Company Management') +
       lnk('public-profile.html?type=company&id=co_001', I.person, '👤 Public Profiles') +
       lnk('onboarding.html',           I.rocket,  '🚀 Setup Wizard') +
-      lnk('data-import.html',          I.upload,  '📥 Data Import')
+      lnk('data-import.html',          I.upload,  '📥 Data Import') +
+      lnk('feedback.html',             I.email,   '📝 Send Feedback')
     );
 
   const html = `

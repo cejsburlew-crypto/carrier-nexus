@@ -40,7 +40,7 @@
   --pink: #e91e8c;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:#f8f9fa;color:var(--white);font-family:'Barlow',sans-serif;min-height:100vh}
+body{background:#f8f9fa;color:var(--white);font-family:'Barlow',sans-serif;min-height:100vh;padding-left:220px}
 
 /* TOPBAR */
 .topbar{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,0.5)}
@@ -171,6 +171,7 @@ input[type="file"]{display:none}
 /* REFRESH BTN */
 .refresh-btn{background:none;border:1px solid var(--border);color:var(--text-muted);width:26px;height:26px;cursor:pointer;font-size:12px;transition:all .2s;display:flex;align-items:center;justify-content:center}
 .refresh-btn:hover{border-color:var(--steel-blue-light);color:var(--white)}
+@media(max-width:768px){body{padding-left:0!important}}
 </style>
 </head>
 <body>

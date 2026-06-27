@@ -21,7 +21,7 @@
     }
   :root{--black:#090a0c;--gunmetal:#1a1f2e;--gunmetal-light:#232a3a;--steel:#2a3a52;--steel-blue:#2e6da4;--steel-blue-light:#3d87c8;--orange:#e8640a;--orange-bright:#ff7518;--white:#f0f4f8;--white-pure:#ffffff;--text-muted:#6b7a99;--text-mid:#8a9bbf;--border:rgba(46,109,164,0.18);--border-bright:rgba(46,109,164,0.4);--error:#ef4444;--green:#22c55e;--yellow:#f59e0b;--pink:#e91e8c}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:#f8f9fa;color:var(--white);font-family:'Barlow',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+body{background:#f8f9fa;color:var(--white);font-family:'Barlow',sans-serif;min-height:100vh;display:flex;flex-direction:column;padding-left:220px}
 
 /* TOPBAR */
 .topbar{background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-shrink:0}
@@ -148,6 +148,7 @@ body{background:#f8f9fa;color:var(--white);font-family:'Barlow',sans-serif;min-h
 .refresh-btn{background:none;border:1px solid var(--border);color:var(--text-muted);width:26px;height:26px;cursor:pointer;font-size:12px;transition:all .2s;display:flex;align-items:center;justify-content:center}
 .refresh-btn:hover{border-color:var(--steel-blue-light);color:var(--white)}
 @keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:768px){body{padding-left:0!important}}
 </style>
 </head>
 <body>
