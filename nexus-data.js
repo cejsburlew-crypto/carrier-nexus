@@ -1,12 +1,12 @@
 // ─────────────────────────────────────────────────────────────
 //  CARRIER NEXUS — Real Data Layer
-//  Carrier Trucking US, LLC · MC 1688495-C · DOT 4326039
+//  Carrier Trucking US, LLC · MC 1688495 · DOT 4326039
 // ─────────────────────────────────────────────────────────────
 
 const NEXUS = {
   company: {
     name: "Carrier Trucking US, LLC",
-    mc: "MC 1688495-C",
+    mc: "MC 1688495",
     dot: "DOT 4326039",
     address: "2001 NW 107th Ave Suite 450, Doral FL 33172",
     email: "crtruckus@gmail.com",

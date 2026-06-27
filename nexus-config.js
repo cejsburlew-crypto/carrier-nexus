@@ -250,8 +250,8 @@ window.NEXUS_SEED_MEMBERS = [
   { id:'mem_002', memberId:'LM26165.0', firstName:'Laura', lastName:'Moreno', email:'lbmoreno92@gmail.com', phone:'', type:'approver', mc:'', dot:'', createdAt:'2026-06-14' },
   { id:'mem_003', memberId:'AA26148.0', firstName:'Amet', lastName:'Abreu', email:'', phone:'', type:'dispatcher', mc:'', dot:'', createdAt:'2026-05-28' },
   { id:'mem_004', memberId:'BG26148.0', firstName:'Betty', lastName:'Gutierrez', email:'', phone:'', type:'dispatcher', mc:'', dot:'', createdAt:'2026-05-28' },
-  { id:'mem_005', memberId:'DF26148.0', firstName:'David', lastName:'Fonseca', email:'', phone:'', type:'owner_operator', mc:'MC 1688495-C', dot:'US DOT 4326039', createdAt:'2026-05-28' },
-  { id:'mem_006', memberId:'GP26148.0', firstName:'Guillermo', lastName:'Pinera', email:'', phone:'', type:'owner_operator', mc:'MC 1688495-C', dot:'US DOT 4326039', createdAt:'2026-05-28' },
+  { id:'mem_005', memberId:'DF26148.0', firstName:'David', lastName:'Fonseca', email:'', phone:'', type:'owner_operator', mc:'MC 1688495', dot:'US DOT 4326039', createdAt:'2026-05-28' },
+  { id:'mem_006', memberId:'GP26148.0', firstName:'Guillermo', lastName:'Pinera', email:'', phone:'', type:'owner_operator', mc:'MC 1688495', dot:'US DOT 4326039', createdAt:'2026-05-28' },
   { id:'mem_007', memberId:'MF26148.0', firstName:'Miguel', lastName:'Fonseca', email:'', phone:'', type:'driver', mc:'', dot:'', createdAt:'2026-05-28' },
   { id:'mem_008', memberId:'NV26148.0', firstName:'Nelson', lastName:'Veliz', email:'', phone:'', type:'driver', mc:'', dot:'', createdAt:'2026-05-28' },
   { id:'mem_009', memberId:'YP26148.0', firstName:'Yosviel', lastName:'Pinera', email:'', phone:'', type:'driver', mc:'', dot:'', createdAt:'2026-05-28' },
@@ -331,11 +331,13 @@ window.NexusMembers = {
 const NEXUS_COMPANY_PROFILES = [
   {
     id: 'co_001',
-    name: 'Carrier Trucking US',
+    name: 'Carrier Trucking US, LLC',
     dba: 'Carrier Trucking',
     slug: 'carrier-trucking-us',
-    usdot: '4521893',
-    mc: '1678234',
+    usdot: '4326039',
+    mc: '1688495',
+    scac: 'CTUN',
+    fein: '33-1925253',
     duns: '',
     founded: '2024',
     hq: 'Miami, FL',
@@ -363,6 +365,8 @@ const NEXUS_COMPANY_PROFILES = [
     slug: 'heavy-hauling-heavy-haulers',
     usdot: '1150193',
     mc: '529493',
+    scac: '',
+    fein: '',
     duns: '045434921',
     founded: '2003',
     hq: 'Cashion, OK 73016',
@@ -459,8 +463,8 @@ if (typeof window !== 'undefined') {
   }
 
   // Company info
-  seedKey('nexus_my_usdot', '4521893');
-  seedKey('nexus_my_mc', '1678234');
+  seedKey('nexus_my_usdot', '4326039');
+  seedKey('nexus_my_mc', '1688495');
   seedKey('nexus_my_company_name', 'Carrier Trucking US');
   seedKey('nexus_my_dot_pin', '7823');
   seedKey('nexus_mcs150_last', '2025-03-15');

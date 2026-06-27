@@ -221,6 +221,18 @@
         <input class="form-input" id="co_mc" placeholder="e.g. 987654">
       </div>
     </div>
+    <div class="form-row-2">
+      <div class="form-group">
+        <label class="form-label">SCAC Code</label>
+        <input class="form-input" id="co_scac" maxlength="4" placeholder="e.g. CTUN" oninput="this.value=this.value.toUpperCase()" style="text-transform:uppercase;">
+        <div style="font-size:11px;color:var(--mid);margin-top:4px;">2-4 letter code from <a href="https://www.nmfta.org/pages/scac" target="_blank" style="color:var(--blue);">NMFTA</a></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">FEIN / EIN</label>
+        <input class="form-input" id="co_fein" maxlength="10" placeholder="XX-XXXXXXX" oninput="formatFEIN(this)">
+        <div style="font-size:11px;color:var(--mid);margin-top:4px;">Format: 12-3456789</div>
+      </div>
+    </div>
     <div class="form-group">
       <label class="form-label">HQ (City, State) *</label>
       <input class="form-input" id="co_hq" placeholder="e.g. Miami, FL">
@@ -268,6 +280,12 @@
 
 <script>
   var BASE_URL = 'https://cejsburlew-crypto.github.io/carrier-nexus/set-password.html';
+
+  function formatFEIN(input) {
+    var v = input.value.replace(/[^0-9]/g, '');
+    if (v.length >= 2) v = v.substring(0,2) + '-' + v.substring(2,9);
+    input.value = v;
+  }
 
   function showToast(msg, color) {
     var t = document.createElement('div');
@@ -340,12 +358,16 @@
         '<div class="co-mid">' +
           (co.usdot ? '<div class="co-row"><span class="co-key">USDOT</span><span class="co-val">' + co.usdot + '</span></div>' : '') +
           (co.mc ? '<div class="co-row"><span class="co-key">MC#</span><span class="co-val">' + co.mc + '</span></div>' : '') +
+          (co.scac ? '<div class="co-row"><span class="co-key">SCAC</span><span class="co-val">' + co.scac + '</span></div>' : '') +
+          (co.fein ? '<div class="co-row"><span class="co-key">FEIN</span><span class="co-val">' + co.fein.substring(0,2) + '-XXXXX</span></div>' : '') +
           '<div class="co-row"><span class="co-key">HQ</span><span class="co-val">' + (co.hq || '—') + '</span></div>' +
           '<div class="co-row"><span class="co-key">Fleet Size</span><span class="co-val">' + (co.fleet_size || '—') + ' units</span></div>' +
         '</div>' +
         (co.usdot || co.mc ? (function(){
-          var dotBadge = co.usdot ? '<span class="fmcsa-badge fmcsa-badge-dot">USDOT ' + co.usdot + '</span>' : '';
-          var mcBadge  = co.mc    ? '<span class="fmcsa-badge fmcsa-badge-mc">MC ' + co.mc + '</span>'       : '';
+          var dotBadge  = co.usdot ? '<span class="fmcsa-badge fmcsa-badge-dot">USDOT ' + co.usdot + '</span>' : '';
+          var mcBadge   = co.mc    ? '<span class="fmcsa-badge fmcsa-badge-mc">MC ' + co.mc + '</span>'       : '';
+          var scacBadge = co.scac  ? '<span class="fmcsa-badge" style="background:rgba(194,65,12,.1);border:1px solid rgba(194,65,12,.3);color:#c2410c;">SCAC ' + co.scac + '</span>' : '';
+          var feinBadge = co.fein  ? '<span class="fmcsa-badge" style="background:rgba(126,34,206,.1);border:1px solid rgba(126,34,206,.3);color:#7e22ce;">FEIN ' + co.fein.substring(0,2) + '-XXXXX</span>' : '';
           var saferUrl = co.usdot ? 'https://safer.fmcsa.dot.gov/query.asp?searchtype=ANY&query_type=queryCarrierSnapshot&query_param=USDOT&query_string=' + co.usdot : '';
           var liUrl    = co.mc    ? 'https://li-public.fmcsa.dot.gov/LIVIEW/pkg_carrquery.prc_carrlist?pv_nmbr=' + co.mc + '&pv_type=MC&pv_a_submit=Search' : '';
           var verifiedTs = localStorage.getItem('nexus_fmcsa_verified_' + co.id);
@@ -354,7 +376,7 @@
           var liLink    = liUrl    ? '<a class="fmcsa-link" href="' + liUrl    + '" target="_blank" rel="noopener" onclick="markFmcsaVerified(\'' + co.id + '\')">&#128279; L&amp;I Lookup</a>' : '';
           return '<div class="fmcsa-section">' +
             '<div class="fmcsa-title">&#9989; FMCSA Registration</div>' +
-            '<div class="fmcsa-badges">' + dotBadge + mcBadge + '</div>' +
+            '<div class="fmcsa-badges">' + dotBadge + mcBadge + scacBadge + feinBadge + '</div>' +
             '<div class="fmcsa-links">' + saferLink + liLink + '</div>' +
             '<div class="fmcsa-verified">' + verifiedLabel + '</div>' +
           '</div>';
@@ -398,7 +420,7 @@
   function openAddModal() {
     document.getElementById('editCoId').value = '';
     document.getElementById('modalTitle').textContent = 'Add Company';
-    ['name','dba','usdot','mc','hq','phone','email','website'].forEach(function(f) {
+    ['name','dba','usdot','mc','scac','fein','hq','phone','email','website'].forEach(function(f) {
       document.getElementById('co_' + f).value = '';
     });
     document.getElementById('companyModal').classList.add('open');
@@ -418,6 +440,8 @@
     document.getElementById('co_phone').value = co.phone || '';
     document.getElementById('co_email').value = co.email || '';
     document.getElementById('co_website').value = co.website || '';
+    document.getElementById('co_scac').value = co.scac || '';
+    document.getElementById('co_fein').value = co.fein || '';
     document.getElementById('companyModal').classList.add('open');
   }
 
@@ -446,6 +470,8 @@
         co.phone = document.getElementById('co_phone').value.trim();
         co.email = email;
         co.website = document.getElementById('co_website').value.trim();
+        co.scac = document.getElementById('co_scac').value.trim().toUpperCase();
+        co.fein = document.getElementById('co_fein').value.trim();
       }
       showToast('Company updated');
     } else {
@@ -460,6 +486,8 @@
         phone: document.getElementById('co_phone').value.trim(),
         email: email,
         website: document.getElementById('co_website').value.trim(),
+        scac: document.getElementById('co_scac').value.trim().toUpperCase(),
+        fein: document.getElementById('co_fein').value.trim(),
         public: true,
         active: true,
         fleet_size: 0,

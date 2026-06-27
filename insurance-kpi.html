@@ -164,7 +164,7 @@ tr:hover td{background:var(--panel2);}
 <!-- PRINT HEADER -->
 <div class="print-only" style="text-align:center;padding:16px 0 24px;border-bottom:2px solid #333;margin-bottom:20px;">
   <div style="font-size:22px;font-weight:800;">Carrier Trucking US, LLC</div>
-  <div style="font-size:14px;color:#555;margin-top:4px;">US DOT 4326039 · MC 1688495-C · Fleet Safety & Compliance Report</div>
+  <div style="font-size:14px;color:#555;margin-top:4px;">US DOT 4326039 · MC 1688495 · Fleet Safety & Compliance Report</div>
   <div style="font-size:12px;color:#777;margin-top:4px;" id="print-date"></div>
 </div>
 
@@ -187,7 +187,7 @@ tr:hover td{background:var(--panel2);}
   </div>
   <div class="fleet-info">
     <h2>Carrier Trucking US, LLC</h2>
-    <p>US DOT 4326039 · MC 1688495-C · Fleet safety metrics for insurance underwriting</p>
+    <p>US DOT 4326039 · MC 1688495 · Fleet safety metrics for insurance underwriting</p>
     <div class="fleet-meta" id="fleet-meta"></div>
   </div>
   <div class="score-grade-badge" id="grade-badge"></div>
@@ -559,7 +559,7 @@ function renderHero(fleet){
     <div class="fleet-meta-item"><strong>${todayRecs.length > 0 ? '✅ '+todayRecs.length : '⚠️ 0'}</strong>Today's DVIRs</div>
     <div class="fleet-meta-item"><strong>${dvirs.filter(r=>r.date>=d30).length}</strong>Inspections (30d)</div>
     <div class="fleet-meta-item"><strong>US DOT 4326039</strong>DOT Number</div>
-    <div class="fleet-meta-item"><strong>MC 1688495-C</strong>MC Number</div>
+    <div class="fleet-meta-item"><strong>MC 1688495</strong>MC Number</div>
     <div class="fleet-meta-item"><strong>${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</strong>Report Date</div>
   `;
 }
@@ -940,7 +940,7 @@ function exportTelematicsJSON(){
   const csa   = getCSA();
   const report = {
     generatedAt: new Date().toISOString(),
-    carrier: { name:'Carrier Trucking US, LLC', dot:'4326039', mc:'1688495-C' },
+    carrier: { name:'Carrier Trucking US, LLC', dot:'4326039', mc:'1688495' },
     fleetSafetyScore: fleet.avg, fleetGrade: fleet.grade,
     driverCount: fleet.drivers.length,
     dvirCompletionRate30d: Math.round(getDVIRs().filter(r=>r.date>=daysAgo(30)).length / (fleet.drivers.length*20)*100),
