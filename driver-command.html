@@ -10,25 +10,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --black:#090a0c;
-  --bg:#0d1017;
-  --panel:#131820;
-  --panel2:#1a2030;
-  --border:rgba(46,109,164,0.18);
-  --border2:rgba(46,109,164,0.35);
-  --steel:#2e6da4;
-  --steel-l:#3d87c8;
-  --orange:#e8640a;
-  --orange-l:#ff7518;
-  --white:#f0f4f8;
-  --white2:#c8d4e8;
-  --muted:#6b7a99;
-  --mid:#8a9bbf;
-  --green:#4ade80;
-  --yellow:#fbbf24;
-  --red:#ef4444;
-}
+:root {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{height:100%;-webkit-text-size-adjust:100%;}
 body{
@@ -552,15 +546,58 @@ body{
 
 
 <!-- Weather Card -->
-<div id="driver-weather-card" style="background:#131929;border:1px solid #1e2d45;border-radius:12px;padding:20px;margin:14px 16px 0;">
-  <div style="font-size:14px;font-weight:600;color:#e2e8f0;margin-bottom:12px;">🌦️ My Route Weather</div>
-  <div id="driver-weather-content"><div style="color:#64748b;font-size:13px;">Loading...</div></div>
+<!-- Hire Status Card -->
+<div id="hire-status-card" style="background:#fff;border:1px solid #d0d7de;border-radius:12px;padding:20px;margin:14px 16px 0;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+    <div style="font-size:14px;font-weight:700;color:#111827;">My Employment Status</div>
+    <button onclick="viewHireLog()" style="background:none;border:none;color:#6b7280;font-size:12px;cursor:pointer;text-decoration:underline;">View Log</button>
+  </div>
+  <div id="hire-status-display" style="margin-bottom:14px;"></div>
+  <div style="display:flex;gap:8px;">
+    <button id="btn-not-available" onclick="setHireStatus('not_available')" style="flex:1;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid transparent;transition:all .15s;">
+      🔒 Not Available
+    </button>
+    <button id="btn-ready-for-hire" onclick="confirmReadyForHire()" style="flex:1;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid transparent;transition:all .15s;">
+      🟢 Ready for Hire
+    </button>
+  </div>
+</div>
+
+<!-- Ready for Hire Confirmation Modal -->
+<div id="hire-confirm-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:28px;max-width:400px;width:92%;margin:auto;">
+    <div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:12px;">⚠️ Make Profile Public?</div>
+    <div style="font-size:14px;color:#374151;line-height:1.6;margin-bottom:20px;">
+      You are not working for a single company and are publicly putting your information out for employment consideration.<br><br>
+      Your name, CDL class, endorsements, and experience will be visible to all companies on the platform. <strong>Your current employer will NOT be shown.</strong>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeHireModal()" style="flex:1;padding:10px;border-radius:8px;border:1px solid #d0d7de;background:#f8f9fa;color:#374151;font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
+      <button onclick="setHireStatus('ready_for_hire')" style="flex:1;padding:10px;border-radius:8px;border:none;background:#15803d;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">Yes, I'm Ready for Hire</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hire Activity Log Modal -->
+<div id="hire-log-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:28px;max-width:440px;width:92%;margin:auto;max-height:70vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-size:16px;font-weight:700;color:#111827;">Status Activity Log</div>
+      <button onclick="document.getElementById('hire-log-modal').style.display='none'" style="background:none;border:none;font-size:20px;color:#6b7280;cursor:pointer;">&times;</button>
+    </div>
+    <div id="hire-log-content"></div>
+  </div>
+</div>
+
+<div id="driver-weather-card" style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 16px 0;">
+  <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px;">🌦️ My Route Weather</div>
+  <div id="driver-weather-content"><div style="color:var(--mid);font-size:13px;">Loading...</div></div>
 </div>
 
 <!-- Scale Alert Card -->
-<div id="driver-scale-card" style="background:#131929;border:1px solid #1e2d45;border-radius:12px;padding:20px;margin:12px 16px 0;">
-  <div style="font-size:14px;font-weight:600;color:#e2e8f0;margin-bottom:12px;">⚖️ Scale Alert</div>
-  <div id="driver-scale-content"><div style="color:#64748b;font-size:13px;">Checking nearby scales...</div></div>
+<div id="driver-scale-card" style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin:12px 16px 0;">
+  <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px;">⚖️ Scale Alert</div>
+  <div id="driver-scale-content"><div style="color:var(--mid);font-size:13px;">Checking nearby scales...</div></div>
 </div>
 
 <!-- QUICK ACTIONS -->
@@ -954,7 +991,7 @@ async function loadDriverWeather() {
   var el = document.getElementById('driver-weather-content');
   if (!el) return;
   
-  if (!myLoad) { el.innerHTML = '<div style="color:#64748b;font-size:13px;">No active load assigned</div>'; return; }
+  if (!myLoad) { el.innerHTML = '<div style="color:var(--mid);font-size:13px;">No active load assigned</div>'; return; }
   
   var CITY_COORDS = {
     'houston':{lat:29.7604,lng:-95.3698,tz:'America/Chicago'},
@@ -979,7 +1016,7 @@ async function loadDriverWeather() {
     var loadWidth = myLoad.total_width ? parseFloat(myLoad.total_width) : 8.5;
     var windDanger = wind >= 40 && loadWidth > 8.5;
     
-    var html = '<div style="font-size:12px;color:#64748b;margin-bottom:8px;">Load ' + (myLoad.load_number||myLoad.id) + ' to ' + myLoad.destination + '</div>';
+    var html = '<div style="font-size:12px;color:var(--mid);margin-bottom:8px;">Load ' + (myLoad.load_number||myLoad.id) + ' to ' + myLoad.destination + '</div>';
     if (windDanger) html += '<div style="background:rgba(239,68,68,.15);border:1px solid #ef4444;border-radius:6px;padding:8px;margin-bottom:10px;font-size:12px;color:#ef4444;font-weight:600;">Wind ' + wind + 'mph - Wide load ops may be suspended. Contact dispatcher.</div>';
     
     html += '<div style="display:flex;gap:8px;">';
@@ -991,17 +1028,17 @@ async function loadDriverWeather() {
       var lo = Math.round(((dd.temperature_2m_min||[])[i])||0);
       var w = Math.round(((dd.windspeed_10m_max||[])[i])||0);
       var prob = Math.round(((dd.precipitation_probability_max||[])[i])||0);
-      html += '<div style="flex:1;background:#0b0f1a;border:1px solid #1e2d45;border-radius:6px;padding:10px;text-align:center;">' +
-        '<div style="font-size:10px;color:#64748b;">' + days[i] + '</div>' +
-        '<div style="font-size:12px;color:#e2e8f0;margin-top:4px;">' + (WMO[code]||'clear') + '</div>' +
-        '<div style="font-size:12px;color:#e2e8f0;">' + hi + '/' + lo + '</div>' +
-        '<div style="font-size:10px;color:#64748b;">' + w + 'mph</div>' +
+      html += '<div style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px;text-align:center;">' +
+        '<div style="font-size:10px;color:var(--mid);">' + days[i] + '</div>' +
+        '<div style="font-size:12px;color:var(--text);margin-top:4px;">' + (WMO[code]||'clear') + '</div>' +
+        '<div style="font-size:12px;color:var(--text);">' + hi + '/' + lo + '</div>' +
+        '<div style="font-size:10px;color:var(--mid);">' + w + 'mph</div>' +
         (prob>50 ? '<div style="font-size:10px;color:#3b82f6;">' + prob + '%rain</div>' : '') +
       '</div>';
     }
     html += '</div>';
     el.innerHTML = html;
-  } catch(e) { el.innerHTML = '<div style="color:#64748b;font-size:13px;">Weather temporarily unavailable</div>'; }
+  } catch(e) { el.innerHTML = '<div style="color:var(--mid);font-size:13px;">Weather temporarily unavailable</div>'; }
 }
 
 function loadDriverScaleAlert() {
@@ -1011,7 +1048,7 @@ function loadDriverScaleAlert() {
   var myVehicle = vehicles.find(function(v){ return v.driver === session.name || v.driver_id === session.id; });
   var el = document.getElementById('driver-scale-content');
   if (!el) return;
-  if (!myVehicle || !myVehicle.lat) { el.innerHTML = '<div style="color:#64748b;font-size:13px;">GPS position not available</div>'; return; }
+  if (!myVehicle || !myVehicle.lat) { el.innerHTML = '<div style="color:var(--mid);font-size:13px;">GPS position not available</div>'; return; }
   
   var myLoad = loads.find(function(l){ return (l.unit===myVehicle.unit) && l.status!=='DELIVERED'&&l.status!=='CLOSED'; });
   var isOSOW = myLoad && (myLoad.os_ow || (myLoad.commodity_weight||0) > 80000);
@@ -1036,20 +1073,132 @@ function loadDriverScaleAlert() {
   
   var nearby = SCALES.map(function(s){ return {state:s.state,name:s.name,dist:hd(myVehicle.lat,myVehicle.lng,s.lat,s.lng)}; }).filter(function(s){ return s.dist<=30; }).sort(function(a,b){ return a.dist-b.dist; });
   
-  if (!nearby.length) { el.innerHTML = '<div style="color:#10b981;font-size:14px;font-weight:600;">No scales within 30 miles</div><div style="font-size:12px;color:#64748b;margin-top:4px;">Drive safe</div>'; return; }
+  if (!nearby.length) { el.innerHTML = '<div style="color:#10b981;font-size:14px;font-weight:600;">No scales within 30 miles</div><div style="font-size:12px;color:var(--mid);margin-top:4px;">Drive safe</div>'; return; }
   
   var closest = nearby[0];
   var color = isOSOW ? '#ef4444' : (closest.dist < 5 ? '#ef4444' : '#f59e0b');
   el.innerHTML = '<div style="border:2px solid ' + color + ';border-radius:8px;padding:12px;">' +
     '<div style="font-weight:700;color:' + color + ';font-size:14px;">' + (closest.dist < 5 ? 'SCALE IMMINENT' : 'SCALE AHEAD') + ' - ' + closest.dist.toFixed(1) + ' miles</div>' +
-    '<div style="font-size:13px;color:#e2e8f0;margin-top:6px;">' + closest.name + '</div>' +
-    '<div style="font-size:12px;color:#64748b;margin-top:4px;">' + (isOSOW ? 'OS/OW load - YOU MUST STOP. Have permits ready.' : 'Legal load - PrePass bypass may apply') + '</div>' +
+    '<div style="font-size:13px;color:var(--text);margin-top:6px;">' + closest.name + '</div>' +
+    '<div style="font-size:12px;color:var(--mid);margin-top:4px;">' + (isOSOW ? 'OS/OW load - YOU MUST STOP. Have permits ready.' : 'Legal load - PrePass bypass may apply') + '</div>' +
     (isOSOW ? '<div style="margin-top:8px;font-size:11px;color:#ef4444;">Have ready: Permit packet, BOL, Rate Con, CDL, Medical cert</div>' : '') +
   '</div>' +
   '<a href="route-compliance.html" style="display:block;text-align:center;margin-top:10px;font-size:12px;color:#3b82f6;text-decoration:none;">View Full Route Compliance</a>';
 }
 
+
+// ── Hire Status System ──
+var HIRE_STATUS_KEY = 'nexus_driver_hire_status';
+
+function getHireStatusRecord() {
+  var session = JSON.parse(localStorage.getItem('nexus_session') || '{}');
+  var driverId = session.id || 'unknown';
+  var all = JSON.parse(localStorage.getItem(HIRE_STATUS_KEY) || '{}');
+  return all[driverId] || { status: 'not_available', log: [] };
+}
+
+function saveHireStatusRecord(record) {
+  var session = JSON.parse(localStorage.getItem('nexus_session') || '{}');
+  var driverId = session.id || 'unknown';
+  var all = JSON.parse(localStorage.getItem(HIRE_STATUS_KEY) || '{}');
+  all[driverId] = record;
+  localStorage.setItem(HIRE_STATUS_KEY, JSON.stringify(all));
+}
+
+function renderHireStatus() {
+  var record = getHireStatusRecord();
+  var el = document.getElementById('hire-status-display');
+  if (!el) return;
+  var isReady = record.status === 'ready_for_hire';
+  el.innerHTML = '<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:8px;background:' +
+    (isReady ? '#f0fdf4' : '#f8f9fa') + ';border:1px solid ' + (isReady ? '#86efac' : '#e5e7eb') + ';">' +
+    '<span style="font-size:20px;">' + (isReady ? '\u{1F7E2}' : '\u{1F512}') + '</span>' +
+    '<div>' +
+      '<div style="font-size:14px;font-weight:700;color:' + (isReady ? '#15803d' : '#374151') + ';">' +
+        (isReady ? 'Ready for Hire' : 'Not Available') +
+      '</div>' +
+      '<div style="font-size:12px;color:#6b7280;margin-top:2px;">' +
+        (isReady ? 'Your profile is visible to companies for employment consideration. Employer is hidden.' : 'Your profile is private. No other company can see your information.') +
+      '</div>' +
+    '</div>' +
+  '</div>';
+
+  var btnNA = document.getElementById('btn-not-available');
+  var btnRH = document.getElementById('btn-ready-for-hire');
+  if (btnNA) {
+    btnNA.style.background = !isReady ? '#111827' : '#f8f9fa';
+    btnNA.style.color = !isReady ? '#fff' : '#374151';
+    btnNA.style.borderColor = !isReady ? '#111827' : '#d0d7de';
+  }
+  if (btnRH) {
+    btnRH.style.background = isReady ? '#15803d' : '#f8f9fa';
+    btnRH.style.color = isReady ? '#fff' : '#374151';
+    btnRH.style.borderColor = isReady ? '#15803d' : '#d0d7de';
+  }
+}
+
+function confirmReadyForHire() {
+  var record = getHireStatusRecord();
+  if (record.status === 'ready_for_hire') return;
+  document.getElementById('hire-confirm-modal').style.display = 'flex';
+}
+
+function closeHireModal() {
+  document.getElementById('hire-confirm-modal').style.display = 'none';
+}
+
+function setHireStatus(status) {
+  closeHireModal();
+  var record = getHireStatusRecord();
+  var label = status === 'ready_for_hire' ? 'Ready for Hire' : 'Not Available';
+  record.status = status;
+  record.updatedAt = new Date().toISOString();
+  record.log = record.log || [];
+  record.log.unshift({
+    status: label,
+    timestamp: new Date().toISOString(),
+    note: status === 'ready_for_hire'
+      ? 'Profile made public for employment consideration. Employer hidden from view.'
+      : 'Profile set to private. Not visible to other companies.'
+  });
+  if (record.log.length > 50) record.log = record.log.slice(0, 50);
+  saveHireStatusRecord(record);
+  renderHireStatus();
+}
+
+function viewHireLog() {
+  var record = getHireStatusRecord();
+  var el = document.getElementById('hire-log-content');
+  if (el) {
+    if (!record.log || record.log.length === 0) {
+      el.innerHTML = '<div style="color:#6b7280;font-size:13px;text-align:center;padding:20px;">No status changes recorded yet.</div>';
+    } else {
+      el.innerHTML = record.log.map(function(entry) {
+        var d = new Date(entry.timestamp);
+        var dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+        var timeStr = d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
+        var isReady = entry.status === 'Ready for Hire';
+        return '<div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #f0f2f5;">' +
+          '<span style="font-size:18px;flex-shrink:0;">' + (isReady ? '\u{1F7E2}' : '\u{1F512}') + '</span>' +
+          '<div>' +
+            '<div style="font-size:13px;font-weight:600;color:#111827;">' + entry.status + '</div>' +
+            '<div style="font-size:11px;color:#6b7280;margin-top:2px;">' + dateStr + ' at ' + timeStr + '</div>' +
+            '<div style="font-size:12px;color:#4b5563;margin-top:4px;">' + (entry.note || '') + '</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+  }
+  document.getElementById('hire-log-modal').style.display = 'flex';
+}
+
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'hire-confirm-modal') closeHireModal();
+  if (e.target.id === 'hire-log-modal') document.getElementById('hire-log-modal').style.display = 'none';
+});
+
 document.addEventListener('DOMContentLoaded', function() {
+  renderHireStatus();
   loadDriverWeather();
   loadDriverScaleAlert();
   setInterval(loadDriverScaleAlert, 60000);

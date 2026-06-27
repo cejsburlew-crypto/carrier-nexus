@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Driver Pool — Carrier Nexus</title>
+<title>Hiring Pool — Carrier Nexus</title>
 <style>
   :root {
-    --bg: #0d0f14;
-    --surface: #161a24;
-    --surface2: #1e2435;
-    --border: #2a3150;
-    --accent: #3b7eff;
-    --accent2: #00d4aa;
-    --warn: #f59e0b;
-    --danger: #ef4444;
-    --text: #e2e8f0;
-    --muted: #8892a4;
-    --green: #22c55e;
-  }
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel2: #f8f9fa;
+      --border: #d0d7de;
+      --text: #111827;
+      --mid: #4b5563;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --yellow: #a16207;
+      --red: #dc2626;
+      --orange: #c2410c;
+    }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
 
@@ -138,8 +138,8 @@
 
 <div class="page-header">
   <div>
-    <div class="page-title">Driver Pool</div>
-    <div class="page-sub">External CDL-A drivers — not company employees. Manage availability and experience.</div>
+    <div class="page-title">Hiring Pool</div>
+    <div class="page-sub">CDL-A drivers who have set their status to Ready for Hire. Employer information is never shown.</div>
   </div>
   <div class="header-actions">
     <button class="btn-primary" onclick="openModal()">+ Add Driver</button>
@@ -147,6 +147,12 @@
 </div>
 
 <div class="container">
+  <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+    <span style="font-size:18px;">🔒</span>
+    <div style="font-size:13px;color:#92400e;">
+      <strong>Privacy Protected:</strong> Only drivers who have voluntarily set their status to &ldquo;Ready for Hire&rdquo; appear here. Employer information is never displayed. Contact details are hidden for platform-linked drivers.
+    </div>
+  </div>
   <div class="stats-row" id="statsRow"></div>
 
   <div class="filter-bar">
@@ -352,6 +358,44 @@ const TRANS_TYPES = ['Manual','9 Speed','10 Speed','13 Speed','15 Speed','18 Spe
 
 let drivers = JSON.parse(localStorage.getItem('nexus_avail_drivers') || '[]');
 let editingId = null;
+
+// Merge in platform users who are Ready for Hire
+(function mergeReadyForHireUsers() {
+  var hireStatusMap = JSON.parse(localStorage.getItem('nexus_driver_hire_status') || '{}');
+  var users = JSON.parse(localStorage.getItem('NEXUS_LOCAL_USERS') || '[]');
+  users.forEach(function(u) {
+    if (u.role !== 'driver') return;
+    var record = hireStatusMap[u.id];
+    if (!record || record.status !== 'ready_for_hire') return;
+    if (drivers.some(function(d) { return d._userId === u.id; })) return;
+    drivers.push({
+      id: 'user_' + u.id,
+      _userId: u.id,
+      _fromPlatform: true,
+      name: u.name || 'Unknown Driver',
+      phone: '',
+      email: '',
+      avail: 'available',
+      driverType: 'company-driver',
+      cdlClass: u.cdl_class || 'Class A',
+      endorsements: u.endorsements || '',
+      cdlState: u.cdl ? u.cdl.split('-')[0] : '',
+      expTypes: u.endorsements ? u.endorsements.split(',').map(function(e){return e.trim();}) : [],
+      transTypes: [],
+      languages: [],
+      expYears: {},
+      homeState: '',
+      otr: 'yes',
+      _hireStatus: 'ready_for_hire'
+    });
+  });
+})();
+
+// Filter: only show drivers with avail='available' or _hireStatus='ready_for_hire'
+// Never show unavailable drivers
+drivers = drivers.filter(function(d) {
+  return d.avail === 'available' || d._hireStatus === 'ready_for_hire';
+});
 
 // Build checkboxes
 document.getElementById('expCheckboxes').innerHTML = EXP_TYPES.map(t =>
@@ -578,11 +622,13 @@ function renderCards() {
             <span style="font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:20px;background:${d.driverType==='owner-operator'?'rgba(232,100,10,0.15)':d.driverType==='lease-operator'?'rgba(59,130,246,0.12)':'rgba(255,255,255,0.07)'};color:${d.driverType==='owner-operator'?'#fb923c':d.driverType==='lease-operator'?'#93c5fd':'#94a3b8'};letter-spacing:.4px;text-transform:uppercase;">${(d.driverType||'company-driver').replace(/-/g,' ')}</span>
             ${d.cdlState?`<span style="font-size:.68rem;color:var(--muted);font-family:monospace;">CDL: ${d.cdlState}</span>`:''}
           </div>
-          <div class="d-contact">${escHtml(d.phone)}${d.email?' · '+escHtml(d.email):''}</div>
+          <div class="d-contact">${(function(){ const showContact = !d._fromPlatform; return showContact ? escHtml(d.phone)+(d.email?' · '+escHtml(d.email):'') : '<em style=\"color:#9ca3af;font-size:11px;\">Contact via platform</em>'; })()}</div>
           ${d.homeState ? `<div class="d-contact" style="margin-top:2px">📍 ${d.homeState}${d.otr==='yes'?' · OTR Ready':d.otr==='local'?' · Local/Regional':''}</div>` : ''}
         </div>
         <div>
-          <div class="avail-badge ${ac}" style="cursor:pointer" onclick="cycleAvail('${d.id}')" title="Click to change availability">${al}</div>
+          \${d._fromPlatform
+            ? '<div class=\"avail-badge avail-available\">Ready for Hire</div>'
+            : '<div class=\"avail-badge ' + ac + '\" style=\"cursor:pointer\" onclick=\"cycleAvail(\\'' + d.id + '\\')\" title=\"Click to change availability\">' + al + '</div>'}
         </div>
       </div>
       <div class="card-body">

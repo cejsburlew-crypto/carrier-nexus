@@ -31,6 +31,7 @@
     'NEXUS_LOCAL_USERS': 1,
     'nexus_eld_config': 1,
     'nexus_pay_settings': 1,
+    'nexus_driver_hire_status': 1,
   };
 
   function needsPrefix(key) {
