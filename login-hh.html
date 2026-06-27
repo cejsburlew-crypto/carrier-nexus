@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heavy Hauling Heavy Haulers LLC | Carrier Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #090a0c;
+    --gunmetal: #1a1a0e;
+    --gunmetal-light: #2a2a18;
+    --steel: #3a2a0a;
+    --amber: #d97706;
+    --amber-bright: #f59e0b;
+    --amber-dark: #b45309;
+    --amber-glow: rgba(217, 119, 6, 0.18);
+    --ice: #1e2a0f;
+    --white: #f0f4e8;
+    --white-pure: #ffffff;
+    --text-muted: #8a7a55;
+    --text-mid: #b8a060;
+    --border: rgba(217, 119, 6, 0.18);
+    --border-bright: rgba(217, 119, 6, 0.45);
+    --error: #ef4444;
+    --bg: #f5f0e8;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: #111827;
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* ─── NOISE ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.35;
+  }
+
+  /* ─── LEFT PANEL ─── */
+  .left-panel {
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px;
+    overflow: hidden;
+    min-height: 100vh;
+    background: #faf5eb;
+    border-right: 1px solid rgba(217,119,6,0.2);
+  }
+
+  .left-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(217, 119, 6, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(217, 119, 6, 0.07) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 90% 90% at 40% 50%, black 20%, transparent 80%);
+  }
+
+  .left-glow {
+    position: absolute;
+    top: 20%;
+    left: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(217, 119, 6, 0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .left-glow-orange {
+    position: absolute;
+    bottom: 10%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(180, 83, 9, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .left-brand {
+    position: relative;
+    z-index: 2;
+  }
+
+  .brand-link {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    text-decoration: none;
+    margin-bottom: 64px;
+  }
+
+  .brand-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #d97706 0%, #92400e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 20px rgba(217,119,6,0.3);
+  }
+
+  .brand-text-block { display: flex; flex-direction: column; }
+
+  .brand-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 44px;
+    letter-spacing: 0.04em;
+    color: #1a1200;
+    text-transform: uppercase;
+    line-height: 0.9;
+  }
+
+  .brand-text span { color: var(--amber); }
+
+  .brand-tagline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  .left-headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 52px;
+    line-height: 0.93;
+    text-transform: uppercase;
+    color: #1a1200;
+    margin-bottom: 24px;
+  }
+
+  .left-headline em {
+    font-style: normal;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--amber);
+  }
+
+  .left-subtext {
+    font-size: 15px;
+    font-weight: 300;
+    color: #6b5a2a;
+    line-height: 1.7;
+    max-width: 380px;
+  }
+
+  /* Stats strip */
+  .hh-stats {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    gap: 0;
+    margin-top: 40px;
+    border: 1px solid rgba(217,119,6,0.2);
+  }
+
+  .hh-stat {
+    flex: 1;
+    padding: 16px 20px;
+    border-right: 1px solid rgba(217,119,6,0.15);
+    background: rgba(255,255,255,0.6);
+  }
+
+  .hh-stat:last-child { border-right: none; }
+
+  .hh-stat-val {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    color: var(--amber);
+    line-height: 1;
+  }
+
+  .hh-stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+  }
+
+  /* Status indicators */
+  .left-status {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .status-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid var(--border);
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .status-dot.green {
+    background: #4ade80;
+    box-shadow: 0 0 8px #4ade80;
+    animation: pulse 2.5s infinite;
+  }
+
+  .status-dot.amber {
+    background: var(--amber);
+    box-shadow: 0 0 8px var(--amber);
+    animation: pulse 2.5s 0.5s infinite;
+  }
+
+  .status-dot.blue {
+    background: #60a5fa;
+    box-shadow: 0 0 8px #60a5fa;
+    animation: pulse 2.5s 1s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .status-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+
+  .status-text strong {
+    color: #1a1200;
+    display: block;
+    font-size: 12px;
+    margin-bottom: 1px;
+  }
+
+  .left-footer {
+    position: relative;
+    z-index: 2;
+  }
+
+  .left-footer-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ─── RIGHT PANEL (LOGIN FORM) ─── */
+  .right-panel {
+    width: 480px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 56px;
+    background: linear-gradient(160deg, #0a0700 0%, #3d2000 30%, #8b4500 55%, #c27000 78%, #d97706 100%);
+    position: relative;
+    overflow-y: auto;
+  }
+
+  /* Company badge on right panel */
+  .hh-company-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.3);
+    margin-bottom: 32px;
+    width: fit-content;
+  }
+
+  .hh-company-badge-dot {
+    width: 8px;
+    height: 8px;
+    background: #fcd34d;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #fcd34d;
+    animation: pulse 2.5s infinite;
+  }
+
+  .hh-company-badge-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #fef3c7;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .form-header {
+    margin-bottom: 40px;
+  }
+
+  .form-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #fcd34d;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .form-eyebrow::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: #fcd34d;
+  }
+
+  .form-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 36px;
+    text-transform: uppercase;
+    color: var(--white-pure);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .form-company-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    text-transform: uppercase;
+    color: #fcd34d;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .form-subtitle {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 300;
+  }
+
+  .form-nexus-credit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* Google Button */
+  .btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 20px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: var(--white-pure);
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-google:hover {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.5);
+    transform: translateY(-1px);
+  }
+
+  .google-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  .divider-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  /* Form Fields */
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 13px 16px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: var(--white-pure);
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    outline: none;
+    transition: all 0.2s;
+    appearance: none;
+    border-radius: 4px;
+  }
+
+  .form-input::placeholder { color: rgba(255,255,255,0.35); }
+
+  .form-input:focus {
+    border-color: #fcd34d;
+    background: rgba(255,255,255,0.18);
+    box-shadow: 0 0 0 3px rgba(252, 211, 77, 0.12);
+  }
+
+  .form-input.error {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  }
+
+  .input-wrapper {
+    position: relative;
+  }
+
+  .form-error {
+    font-size: 12px;
+    color: #fca5a5;
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    display: none;
+  }
+
+  .form-error.visible { display: block; }
+
+  /* Forgot password */
+  .form-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    margin-top: -8px;
+  }
+
+  .remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  .remember-me input {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--amber);
+    cursor: pointer;
+  }
+
+  .remember-me span {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 400;
+  }
+
+  .forgot-link {
+    font-size: 12px;
+    color: #fcd34d;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .forgot-link:hover { color: #fff; text-decoration: underline; }
+
+  /* Submit Button */
+  .btn-login {
+    width: 100%;
+    padding: 15px 20px;
+    background: rgba(255,255,255,0.18);
+    border: 2px solid rgba(255,255,255,0.6);
+    color: var(--white-pure);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  }
+
+  .btn-login:hover {
+    background: rgba(255,255,255,0.28);
+    border-color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+
+  .btn-login:active { transform: translateY(0); }
+
+  .btn-login.loading {
+    pointer-events: none;
+    opacity: 0.8;
+  }
+
+  .btn-login .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  .btn-login.loading .btn-text { display: none; }
+  .btn-login.loading .spinner { display: block; }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Role indicator */
+  .role-indicator {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.1);
+  }
+
+  .role-indicator.visible { display: flex; }
+
+  .role-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: 1px solid;
+    flex-shrink: 0;
+  }
+
+  .role-badge.admin {
+    color: #fcd34d;
+    border-color: rgba(252, 211, 77, 0.5);
+    background: rgba(252, 211, 77, 0.1);
+  }
+
+  .role-badge.driver {
+    color: #93c5fd;
+    border-color: rgba(147, 197, 253, 0.4);
+    background: rgba(147, 197, 253, 0.08);
+  }
+
+  .role-info {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  /* Form footer */
+  .form-footer {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .form-footer-text {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .form-footer-text a {
+    color: #fcd34d;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .form-footer-text a:hover { text-decoration: underline; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .left-panel { display: none; }
+    .right-panel {
+      width: 100%;
+      padding: 40px 28px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .right-panel { padding: 32px 20px; }
+    .form-title { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LEFT PANEL — Heavy Haulers branding -->
+<div class="left-panel">
+  <div class="left-grid"></div>
+  <div class="left-glow"></div>
+  <div class="left-glow-orange"></div>
+
+  <div class="left-brand">
+    <a href="landing.html" class="brand-link">
+      <!-- Heavy Haulers truck icon -->
+      <div class="brand-icon">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <rect x="4" y="22" width="28" height="16" rx="2" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+          <rect x="32" y="26" width="12" height="12" rx="1" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
+          <rect x="8" y="14" width="18" height="10" rx="1" fill="rgba(255,255,255,0.25)" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
+          <circle cx="12" cy="40" r="3.5" fill="#fcd34d" stroke="rgba(0,0,0,0.3)" stroke-width="1"/>
+          <circle cx="24" cy="40" r="3.5" fill="#fcd34d" stroke="rgba(0,0,0,0.3)" stroke-width="1"/>
+          <circle cx="38" cy="40" r="3.5" fill="#fcd34d" stroke="rgba(0,0,0,0.3)" stroke-width="1"/>
+          <line x1="4" y1="30" x2="44" y2="30" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="brand-text-block">
+        <span class="brand-text">HEAVY <span>HAULERS</span></span>
+        <span class="brand-tagline">Leading the Way in Heavy Haul</span>
+      </div>
+    </a>
+
+    <div class="left-headline">
+      Heavy<br>
+      <em>Hauling</em><br>
+      Command
+    </div>
+
+    <p class="left-subtext">
+      Fleet management platform for Heavy Hauling Heavy Haulers LLC — tracking loads, drivers, permits, and documents for oversize and superload operations.
+    </p>
+
+    <!-- Stats from co_002 profile -->
+    <div class="hh-stats">
+      <div class="hh-stat">
+        <div class="hh-stat-val">10,543</div>
+        <div class="hh-stat-label">Loads Completed</div>
+      </div>
+      <div class="hh-stat">
+        <div class="hh-stat-val">31 YRS</div>
+        <div class="hh-stat-label">Experience</div>
+      </div>
+      <div class="hh-stat">
+        <div class="hh-stat-val">0</div>
+        <div class="hh-stat-label">Violations</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="left-status">
+    <div class="status-row">
+      <div class="status-dot green"></div>
+      <div class="status-text">
+        <strong>Systems Operational</strong>
+        All integrations online
+      </div>
+    </div>
+    <div class="status-row">
+      <div class="status-dot amber"></div>
+      <div class="status-text">
+        <strong>Nexus Intelligence</strong>
+        Processing operational data
+      </div>
+    </div>
+    <div class="status-row">
+      <div class="status-dot blue"></div>
+      <div class="status-text">
+        <strong>USDOT 1150193 · MC-529493</strong>
+        Cashion, OK 73016
+      </div>
+    </div>
+  </div>
+
+  <div class="left-footer">
+    <div class="left-footer-text">Heavy Hauling Heavy Haulers LLC · Cashion, OK</div>
+    <div class="left-footer-text" style="margin-top: 4px; opacity: 0.5;">Powered by Carrier Nexus · © 2025</div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL: LOGIN FORM -->
+<div class="right-panel">
+
+  <!-- Company badge -->
+  <div class="hh-company-badge">
+    <div class="hh-company-badge-dot"></div>
+    <div class="hh-company-badge-text">Heavy Hauling Heavy Haulers LLC</div>
+  </div>
+
+  <div class="form-header">
+    <div class="form-eyebrow">Secure Fleet Access</div>
+    <div class="form-title">Sign In</div>
+    <div class="form-company-name">Heavy Haulers</div>
+    <div class="form-subtitle">Access your fleet command center</div>
+    <div class="form-nexus-credit">Powered by Carrier Nexus</div>
+  </div>
+
+  <!-- Google Login -->
+  <a href="#" class="btn-google" id="googleBtn">
+    <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+    </svg>
+    Continue with Google
+  </a>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-text">or email</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- Login Form -->
+  <form id="loginForm" novalidate>
+    <div class="form-group">
+      <label class="form-label" for="email">Email Address</label>
+      <div class="input-wrapper">
+        <input
+          type="email"
+          id="email"
+          class="form-input"
+          placeholder="you@heavyhaulers.com"
+          autocomplete="email"
+        />
+        <svg style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.35);pointer-events:none;" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 4l6 5 6-5M2 4h12v8H2V4z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="form-error" id="emailError">Please enter a valid email address</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="password">Password</label>
+      <div class="input-wrapper">
+        <input
+          type="password"
+          id="password"
+          class="form-input"
+          placeholder="••••••••••••"
+          autocomplete="current-password"
+          style="padding-right: 44px;"
+        />
+        <button type="button" id="togglePwd" title="Show/hide password" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.45);padding:6px;display:flex;align-items:center;justify-content:center;z-index:10;" onclick="var f=document.getElementById('password');if(f.type==='password'){f.type='text';this.style.color='rgba(255,255,255,0.9)';}else{f.type='password';this.style.color='rgba(255,255,255,0.45)';}"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+      </div>
+      <div class="form-error" id="passwordError">Password is required</div>
+    </div>
+
+    <div class="form-row">
+      <label class="remember-me">
+        <input type="checkbox" id="rememberMe"/>
+        <span>Keep me signed in</span>
+      </label>
+      <a href="#" class="forgot-link">Forgot password?</a>
+    </div>
+
+    <!-- Role Indicator (shows after email recognized) -->
+    <div class="role-indicator" id="roleIndicator">
+      <div class="role-badge admin" id="roleBadge">Admin</div>
+      <div class="role-info" id="roleInfo">You'll be directed to Fleet Command</div>
+    </div>
+
+    <button type="submit" class="btn-login" id="loginBtn">
+      <span class="btn-text">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;">
+          <path d="M9 3l5 5-5 5M14 8H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        Access Fleet Command
+      </span>
+      <div class="spinner"></div>
+    </button>
+  </form>
+
+  <div class="form-footer">
+    <div class="form-footer-text">
+      Need access? <a href="#">Contact your fleet administrator</a>
+    </div>
+    <div class="form-footer-text" style="margin-top: 8px;">
+      <a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a>
+    </div>
+    <div class="form-footer-text" style="margin-top: 12px; font-size: 10px; opacity: 0.5;">
+      Heavy Hauling Heavy Haulers LLC · USDOT 1150193 · MC-529493
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="nexus-config.js?v=5"></script>
+<script src="nexus-db.js?v=3"></script>
+<script src="nexus-lang.js"></script>
+<script>
+  // ── CRITICAL: Set Heavy Haulers as active company BEFORE anything else ──
+  localStorage.setItem('nexus_active_company', 'co_002');
+
+  // Password toggle
+  const togglePwd = document.getElementById('togglePwd');
+  const pwdInput = document.getElementById('password');
+  let pwdVisible = false;
+
+  togglePwd.addEventListener('click', () => {
+    pwdVisible = !pwdVisible;
+    pwdInput.type = pwdVisible ? 'text' : 'password';
+    togglePwd.innerHTML = pwdVisible
+      ? `<path d="M2 2l12 12M6.5 6.7A2.5 2.5 0 009.3 9.5M4.2 4.4C2.8 5.5 1 8 1 8s2.5 5 7 5c1.4 0 2.6-.4 3.6-1M7 3c.3 0 .7 0 1 .1C11 3.5 13.2 5.8 15 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`
+      : `<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.2"/><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.2"/>`;
+  });
+
+  // If already authenticated, skip login
+  (async () => {
+    const local = localStorage.getItem('nexus_session');
+    if (local) {
+      const _lr = JSON.parse(local).role || 'staff';
+      window.location.href = _lr === 'driver' ? 'driver-portal.html' : _lr === 'dispatcher' ? 'dispatcher-hub.html' : 'index.html';
+      return;
+    }
+  })();
+
+  // Email field — detect role
+  const emailInput = document.getElementById('email');
+  const roleIndicator = document.getElementById('roleIndicator');
+  const roleBadge = document.getElementById('roleBadge');
+  const roleInfo = document.getElementById('roleInfo');
+  const loginBtn = document.getElementById('loginBtn');
+
+  const driverEmails = ['driver', 'trucker', 'operator'];
+
+  emailInput.addEventListener('blur', () => {
+    const val = emailInput.value.toLowerCase();
+    if (val.includes('@')) {
+      const isDriver = driverEmails.some(d => val.includes(d));
+      roleIndicator.classList.add('visible');
+      if (isDriver) {
+        roleBadge.className = 'role-badge driver';
+        roleBadge.textContent = 'Driver';
+        roleInfo.textContent = "You'll be directed to Driver Command";
+        loginBtn.querySelector('.btn-text').innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;">
+            <path d="M9 3l5 5-5 5M14 8H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          Access Driver Command`;
+      } else {
+        roleBadge.className = 'role-badge admin';
+        roleBadge.textContent = 'Admin';
+        roleInfo.textContent = "You'll be directed to Fleet Command";
+        loginBtn.querySelector('.btn-text').innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;">
+            <path d="M9 3l5 5-5 5M14 8H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          Access Fleet Command`;
+      }
+    }
+  });
+
+  emailInput.addEventListener('input', () => {
+    if (!emailInput.value) {
+      roleIndicator.classList.remove('visible');
+    }
+  });
+
+  // Form submit — SHA-256 local auth (same logic as login.html, no shortcuts)
+  const loginForm = document.getElementById('loginForm');
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = emailInput.value.trim();
+    const password = pwdInput.value;
+    let valid = true;
+
+    if (!email || !email.includes('@')) {
+      document.getElementById('emailError').classList.add('visible');
+      emailInput.classList.add('error');
+      valid = false;
+    } else {
+      document.getElementById('emailError').classList.remove('visible');
+      emailInput.classList.remove('error');
+    }
+
+    if (!password) {
+      document.getElementById('passwordError').classList.add('visible');
+      pwdInput.classList.add('error');
+      valid = false;
+    } else {
+      document.getElementById('passwordError').classList.remove('visible');
+      pwdInput.classList.remove('error');
+    }
+
+    if (!valid) return;
+
+    loginBtn.classList.add('loading');
+    try {
+      // Local auth: validate against NEXUS_LOCAL_USERS (SHA-256 hashed passwords)
+      const users = window.NEXUS_LOCAL_USERS || [];
+      const msgBuf = new TextEncoder().encode(password);
+      const hashBuf = await crypto.subtle.digest('SHA-256', msgBuf);
+      const hash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+      const match = users.find(u =>
+        u.email.toLowerCase() === email.toLowerCase() &&
+        u.passwordHash === hash &&
+        u.active !== false
+      );
+      if (!match) throw new Error('Invalid email or password');
+      const localSession = { email: match.email, role: match.role, name: match.name || 'User', ts: Date.now() };
+      localStorage.setItem('nexus_session', JSON.stringify(localSession));
+      // Re-affirm company context after login
+      localStorage.setItem('nexus_active_company', 'co_002');
+      await new Promise(r => setTimeout(r, 400));
+      loginBtn.classList.remove('loading');
+      const _sess = JSON.parse(localStorage.getItem('nexus_session') || '{}');
+      const _role = _sess.role || 'staff';
+      window.location.href = _role === 'driver' ? 'driver-portal.html' : _role === 'dispatcher' ? 'dispatcher-hub.html' : 'index.html';
+    } catch (err) {
+      loginBtn.classList.remove('loading');
+      const errEl = document.getElementById('passwordError');
+      errEl.textContent = err.message || 'Invalid email or password';
+      errEl.classList.add('visible');
+      pwdInput.classList.add('error');
+    }
+  });
+
+  // Google button demo
+  document.getElementById('googleBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    const btn = e.currentTarget;
+    btn.style.opacity = '0.7';
+    btn.style.pointerEvents = 'none';
+    btn.innerHTML = `<svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="#fcd34d" stroke-width="2" fill="none" stroke-dasharray="40" stroke-dashoffset="40" style="animation:dashAnim 0.8s ease forwards;"/></svg> Connecting to Google...`;
+    btn.style.color = '#fff';
+    setTimeout(() => {
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    }, 1400);
+  });
+</script>
+</body>
+</html>
