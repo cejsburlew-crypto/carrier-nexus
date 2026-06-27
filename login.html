@@ -1140,6 +1140,30 @@
       : `<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.2"/><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.2"/>`;
   });
 
+  // ── ?co= param: pre-select company context ──────────────────────────────
+  (function() {
+    var coParam = new URLSearchParams(window.location.search).get('co');
+    if (coParam) {
+      localStorage.setItem('nexus_active_company', coParam);
+      var coNames = {
+        'co_001': 'Carrier Trucking US LLC',
+        'co_002': 'Heavy Hauling Heavy Haulers LLC'
+      };
+      var coName = coNames[coParam] || coParam;
+      var eyebrow = document.querySelector('.form-eyebrow');
+      if (eyebrow) eyebrow.textContent = coName + ' — Secure Access';
+      var subtitle = document.querySelector('.form-subtitle');
+      if (subtitle) subtitle.textContent = 'Signing into ' + coName;
+      var formHeader = document.querySelector('.form-header');
+      if (formHeader) {
+        var badge = document.createElement('div');
+        badge.style.cssText = 'display:inline-block;padding:4px 10px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:4px;font-family:JetBrains Mono,monospace;font-size:10px;color:#fff;letter-spacing:.1em;text-transform:uppercase;margin-top:10px;';
+        badge.textContent = 'co: ' + coName;
+        formHeader.appendChild(badge);
+      }
+    }
+  })();
+
   // Email field — detect role
   const emailInput = document.getElementById('email');
   const roleIndicator = document.getElementById('roleIndicator');
