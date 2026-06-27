@@ -188,7 +188,7 @@
   function sectionLabel(key, label) {
     return '<button class="sb-sec-btn" data-sec="' + key + '" ' +
       'style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 16px 4px;background:none;border:none;cursor:pointer;text-align:left;">' +
-      '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:700;color:#6b7280;letter-spacing:1.5px;text-transform:uppercase;">' + label + '</span>' +
+      '<span style="font-family:\'Barlow\',\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:800;color:#111827;letter-spacing:0.1px;">' + label + '</span>' +
       chevron(key) +
       '</button>';
   }
@@ -496,7 +496,7 @@
       .sb-sec-btn:hover{background:#f3f4f6!important;}
       .sb-sec-btn:hover .sb-chevron{opacity:.7!important;}
       .sb-sec-links{overflow:hidden;}
-      .sidebar-link{display:flex!important;align-items:center!important;gap:10px!important;padding:7px 16px!important;text-decoration:none!important;color:#374151!important;font-size:13px!important;border-left:3px solid transparent!important;transition:all .15s!important;white-space:nowrap!important;}
+      .sidebar-link{display:flex!important;align-items:center!important;gap:10px!important;padding:8px 16px!important;text-decoration:none!important;color:#374151!important;font-size:13.5px!important;font-weight:500!important;border-left:3px solid transparent!important;transition:all .15s!important;white-space:nowrap!important;}
       .sidebar-link:hover{background:#f0f4ff!important;border-left-color:#4f46e5!important;color:#111827!important;}
       .sidebar-link.active{background:#eef2ff!important;border-left:3px solid #4f46e5!important;color:#4f46e5!important;font-weight:600!important;}
       .sidebar-link svg{width:14px!important;height:14px!important;flex-shrink:0!important;opacity:.7!important;}
@@ -640,7 +640,7 @@
       '[data-nexus-theme="light"] .progress-bar-bg,[data-nexus-theme="light"] .progress-track{background:#e5e7eb!important}',
       /* Sidebar stays dark regardless of theme — overrides prevent bleed */
       '[data-nexus-theme="light"] #nexus-sidebar{background:#ffffff!important;border-right-color:#e5e7eb!important}',
-      '[data-nexus-theme="light"] #nexus-sidebar .sidebar-section .sb-sec-btn{color:#6b7280!important;font-weight:600!important}',
+      '[data-nexus-theme="light"] #nexus-sidebar .sidebar-section .sb-sec-btn{color:#111827!important;font-weight:800!important}',
       '[data-nexus-theme="light"] #nexus-sidebar .sidebar-link{color:#374151!important}',
       '[data-nexus-theme="light"] #nexus-sidebar .sidebar-link:hover{background:#f0f4ff!important;color:#111827!important}',
       '[data-nexus-theme="light"] #nexus-sidebar .sidebar-link.active{background:#eef2ff!important;color:#4f46e5!important;border-left-color:#4f46e5!important;font-weight:600!important}',
