@@ -22,15 +22,11 @@
     'nexus_sidebar_sections': 1,
     'nexus_companies': 1,
     'nexus_onboarding_complete': 1,
-    'nexus_my_usdot': 1,
-    'nexus_my_mc': 1,
-    'nexus_company_name': 1,
     'nexus_fmcsa_webkey': 1,
     'nexus_search_history': 1,
     'nexus_route_prefill': 1,
     'NEXUS_LOCAL_USERS': 1,
     'nexus_eld_config': 1,
-    'nexus_pay_settings': 1,
     'nexus_driver_hire_status': 1,
   };
 
