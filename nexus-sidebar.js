@@ -104,25 +104,14 @@
       '</button>';
   }).join('');
 
-  var companySelectorHtml = companies.length > 1
-    ? ('<div id="nexus-co-selector" style="position:relative;">' +
-        '<button onclick="document.getElementById(\'nexus-co-dd\').style.display=document.getElementById(\'nexus-co-dd\').style.display===\'block\'?\'none\':\'block\'" ' +
-        'style="width:100%;display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(255,255,255,.04);border:none;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer;text-align:left;">' +
-          '<span style="width:8px;height:8px;border-radius:50%;background:' + companyColor + ';flex-shrink:0;"></span>' +
-          '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:12px;font-weight:700;color:#fff;letter-spacing:.04em;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + activeCompany.name + '</span>' +
-          '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>' +
-        '</button>' +
-        '<div id="nexus-co-dd" style="display:none;position:absolute;left:0;right:0;background:#111827;border:1px solid rgba(255,255,255,.1);border-top:none;z-index:200;padding:4px;">' +
-          companyOptions +
-          '<div style="padding:6px 14px;border-top:1px solid rgba(255,255,255,.06);margin-top:4px;">' +
-            '<button onclick="alert(\'To add a company: edit NEXUS_COMPANIES in nexus-config.js\')" style="width:100%;background:transparent;border:1px dashed rgba(255,255,255,.15);color:#6b7280;padding:6px 10px;font-size:11px;border-radius:4px;cursor:pointer;font-family:\'Barlow\',sans-serif;">+ Add Company</button>' +
-          '</div>' +
-        '</div>' +
-      '</div>')
-    : ('<div style="padding:8px 16px 6px;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:8px;">' +
-        '<span style="width:7px;height:7px;border-radius:50%;background:' + companyColor + ';flex-shrink:0;"></span>' +
-        '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:12px;font-weight:700;color:#c9d1d9;letter-spacing:.04em;">' + activeCompany.name + '</span>' +
-      '</div>');
+  // Single unified company row — always clickable to open switcher
+  var companySelectorHtml = '<div id="nexus-co-selector" onclick="openCompanySwitcher()" ' +
+    'style="padding:10px 16px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;cursor:pointer;transition:background .15s;" ' +
+    'onmouseover="this.style.background=\'#f5f7ff\'" onmouseout="this.style.background=\'\'">' +
+      '<span id="nexus-co-dot" style="width:9px;height:9px;border-radius:50%;background:' + companyColor + ';flex-shrink:0;display:inline-block;"></span>' +
+      '<span id="nexus-co-name" style="font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:700;color:#111827;letter-spacing:.02em;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + activeCompany.name + '</span>' +
+      (companies.length > 1 ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>' : '') +
+    '</div>';
 
   // ── Build section HTML ──
   function chevron(key) {
@@ -361,16 +350,7 @@
 
   const html = `
 <nav class="sidebar" id="nexus-sidebar">
-  <div id="companySwitcherBar" style="background:var(--panel2);border-bottom:1px solid var(--border);padding:10px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;" onclick="openCompanySwitcher()">
-    <div style="display:flex;align-items:center;gap:8px;min-width:0;">
-      <span style="font-size:18px;">🏢</span>
-      <div style="min-width:0;">
-        <div style="font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;">Active Company</div>
-        <div id="activeCompanyName" style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;">Loading...</div>
-      </div>
-    </div>
-    <span style="color:var(--mid);font-size:12px;">⇅</span>
-  </div>
+
   <a href="landing.html" class="sidebar-logo">
     <div class="logo-hex">
       <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -395,9 +375,9 @@
     </div>
 
     <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:6px 12px 2px;">
-      <button id="sb-collapse-all" title="Collapse all sections" style="background:none;border:none;color:rgba(255,255,255,.3);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.5px;cursor:pointer;padding:3px 6px;border-radius:3px;text-transform:uppercase;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Collapse all</button>
-      <span style="color:rgba(255,255,255,.15);font-size:9px;">|</span>
-      <button id="sb-expand-all" title="Expand all sections" style="background:none;border:none;color:rgba(255,255,255,.3);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.5px;cursor:pointer;padding:3px 6px;border-radius:3px;text-transform:uppercase;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Expand all</button>
+      <button id="sb-collapse-all" title="Collapse all sections" style="background:none;border:none;color:#9ca3af;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.5px;cursor:pointer;padding:3px 6px;border-radius:3px;text-transform:uppercase;" onmouseover="this.style.color='#374151'" onmouseout="this.style.color='#9ca3af'">Collapse all</button>
+      <span style="color:#d1d5db;font-size:9px;">|</span>
+      <button id="sb-expand-all" title="Expand all sections" style="background:none;border:none;color:#9ca3af;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.5px;cursor:pointer;padding:3px 6px;border-radius:3px;text-transform:uppercase;" onmouseover="this.style.color='#374151'" onmouseout="this.style.color='#9ca3af'">Expand all</button>
     </div>
 
     ${navHtml}
@@ -405,13 +385,13 @@
 
   <div class="sidebar-footer" style="border-top:1px solid #e5e7eb;padding:10px 16px;display:flex;align-items:center;gap:10px;">
     <div style="flex:1;min-width:0;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.55);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="nexus-user-label">Jim Burlew · ADMIN</div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.25);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="nexus-company-footer">${activeCompany.name}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#374151;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="nexus-user-label">Jim Burlew · ADMIN</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#9ca3af;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="nexus-company-footer">${activeCompany.name}</div>
     </div>
-    <button id="nexus-theme-btn" onclick="window.NEXUS_TOGGLE_THEME()" title="Toggle dark / light mode" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.3);flex-shrink:0;padding:3px;line-height:0;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.3)'">
+    <button id="nexus-theme-btn" onclick="window.NEXUS_TOGGLE_THEME()" title="Toggle dark / light mode" style="background:none;border:none;cursor:pointer;color:#9ca3af;flex-shrink:0;padding:3px;line-height:0;" onmouseover="this.style.color='#374151'" onmouseout="this.style.color='#9ca3af'">
       <svg id="nexus-theme-icon" viewBox="0 0 16 16" fill="currentColor" width="13" height="13"></svg>
     </button>
-    <a href="admin-users.html" title="Admin" style="color:rgba(255,255,255,.3);text-decoration:none;flex-shrink:0;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.3)'">
+    <a href="admin-users.html" title="Admin" style="color:#9ca3af;text-decoration:none;flex-shrink:0;" onmouseover="this.style.color='#374151'" onmouseout="this.style.color='#9ca3af'">
       <svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13"><path d="M8 1a3 3 0 110 6A3 3 0 018 1zm5 11c0-2.21-2.24-4-5-4S3 9.79 3 12v1h10v-1z"/></svg>
     </a>
   </div>
@@ -741,16 +721,20 @@
     localStorage.setItem('nexus_active_company', id);
     closeCompanySwitcher();
     var c = getCompanies().find(function(co) { return co.id === id; });
-    var nameEl = document.getElementById('activeCompanyName');
+    var nameEl = document.getElementById('nexus-co-name');
     if (nameEl && c) nameEl.textContent = c.name;
-    var bar = document.getElementById('companySwitcherBar');
-    if (bar) { bar.style.background='rgba(59,130,246,.2)'; setTimeout(function(){bar.style.background='';},500); }
+    var dotEl = document.getElementById('nexus-co-dot');
+    if (dotEl && c && c.color) dotEl.style.background = c.color;
+    var row = document.getElementById('nexus-co-selector');
+    if (row) { row.style.background='#eef2ff'; setTimeout(function(){row.style.background='';},600); }
   };
 
   document.addEventListener('DOMContentLoaded', function() {
     var c = getActiveCompany();
-    var nameEl = document.getElementById('activeCompanyName');
+    var nameEl = document.getElementById('nexus-co-name');
     if (nameEl && c) nameEl.textContent = c.name;
+    var dotEl = document.getElementById('nexus-co-dot');
+    if (dotEl && c && c.color) dotEl.style.background = c.color;
     var modal = document.getElementById('companySwitcherModal');
     if (modal) modal.addEventListener('click', function(e) { if(e.target===modal) closeCompanySwitcher(); });
   });
