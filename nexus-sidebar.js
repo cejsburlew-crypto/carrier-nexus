@@ -403,9 +403,11 @@
     // 8. ROUTE INTELLIGENCE
     sec('routewx', 'Route Intelligence',
       lnk('route-compliance.html',     I.map,     '⚖️ Route Compliance') +
+      lnk('hazard-map.html',           I.map,     '🚨 Live Road Alerts') +
       lnk('gps-tracker.html',          I.gps,     '📡 GPS Tracker') +
       lnk('permits.html',              I.permit,  'Permits') +
       lnk('pilot-escorts.html',        I.truck,   '🚁 Pilot Escorts') +
+      lnk('pilot-compliance.html',     I.doc,     '🚗 Pilot Car Compliance') +
       lnk('driver-services.html',      I.service, 'Driver Services')
     ) +
 
@@ -936,4 +938,119 @@
     var modal = document.getElementById('companySwitcherModal');
     if (modal) modal.addEventListener('click', function(e) { if(e.target===modal) closeCompanySwitcher(); });
   });
+})();
+
+// ═══════════════════════════════════════════════════════
+// AI ASSISTANT PANEL — injected on every page via sidebar
+// ═══════════════════════════════════════════════════════
+(function installNexusAIPanel() {
+  if (document.getElementById('nexus-ai-panel')) return;
+
+  var KNOWLEDGE_BASE = [
+    { q: /driver|add driver|new driver/i, a: 'To add a driver, go to <a href="drivers.html">Drivers</a> and click "Add Driver". Fill in their CDL, DOT medical card, and contact info.' },
+    { q: /load|active load|add load/i, a: 'Manage loads at <a href="active-loads.html">Active Loads</a>. Import rate cons via PDF or enter manually.' },
+    { q: /settlement|pay|payroll/i, a: 'Settlements are in <a href="weekly-settlements.html">Weekly Settlements</a>. Weeks run Mon-Sun by pickup date.' },
+    { q: /fuel|ifta/i, a: 'Log fuel at <a href="fuel.html">Fuel Log</a>. IFTA reports auto-populate from fuel + loads at <a href="ifta.html">IFTA</a>.' },
+    { q: /document|upload|file/i, a: 'Upload documents at <a href="upload.html">Upload Docs</a>. View all docs at <a href="documents.html">Documents</a>.' },
+    { q: /tire|tread|cfr/i, a: 'Tire tracking with CFR 393.75 compliance is at <a href="tires.html">Tire Intelligence</a>.' },
+    { q: /weather|route|compliance/i, a: 'Check route weather and compliance at <a href="route-compliance.html">Route Compliance</a>.' },
+    { q: /police|dot officer|hazard|alert/i, a: 'Report and view live road hazards at <a href="hazard-map.html">Live Road Alerts</a>.' },
+    { q: /permit/i, a: 'Manage permits at <a href="permits.html">Permits</a>. State-by-state requirements and restrictions.' },
+    { q: /expense/i, a: 'Log expenses at <a href="expenses.html">Expenses</a>. Supports Zelle payments and audit trail.' },
+    { q: /invoice|billing/i, a: 'Manage invoices at <a href="invoicing.html">Invoicing</a> with AR aging tracker.' },
+    { q: /company|switch company/i, a: 'Click the company name in the top-left sidebar to switch between companies.' },
+    { q: /fmcsa|dot number|mc number/i, a: 'Verify FMCSA credentials at <a href="fmcsa-compliance.html">FMCSA Compliance</a>.' },
+    { q: /pilot|escort/i, a: 'Pilot escorts at <a href="pilot-escorts.html">Pilot Escorts</a>. State compliance at <a href="pilot-compliance.html">Pilot Car Compliance</a>.' },
+    { q: /dispatch/i, a: 'Dispatch operations at <a href="dispatch-pro.html">Dispatch Pro</a> — loads, assignments, and driver status.' },
+    { q: /login|password|user/i, a: 'Manage users at <a href="admin-users.html">User Management</a>.' },
+    { q: /feedback|bug|issue/i, a: 'Submit feedback at <a href="feedback.html">Send Feedback</a> — goes directly to Jim.' },
+  ];
+
+  var panel = document.createElement('div');
+  panel.id = 'nexus-ai-panel';
+  panel.innerHTML =
+    '<div id="nexus-ai-toggle" onclick="window.toggleNexusAI()" title="Nexus Assistant" ' +
+    'style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:9999;' +
+    'background:#2563eb;color:#fff;writing-mode:vertical-lr;padding:12px 8px;' +
+    'cursor:pointer;border-radius:8px 0 0 8px;font-size:12px;font-weight:700;' +
+    'letter-spacing:1px;box-shadow:-2px 0 12px rgba(0,0,0,0.2);transition:background .2s;">AI</div>' +
+
+    '<div id="nexus-ai-drawer" style="position:fixed;right:-380px;top:0;bottom:0;width:380px;' +
+    'background:#fff;z-index:9998;box-shadow:-4px 0 24px rgba(0,0,0,0.15);' +
+    'display:flex;flex-direction:column;transition:right .3s ease;border-left:1px solid #e5e7eb;">' +
+
+    '<div style="background:#2563eb;color:#fff;padding:16px;display:flex;justify-content:space-between;align-items:center;">' +
+    '<div><div style="font-weight:700;font-size:15px;">Nexus Assistant</div>' +
+    '<div style="font-size:11px;opacity:.8;">Ask anything or describe what you see</div></div>' +
+    '<button onclick="window.toggleNexusAI()" style="background:rgba(255,255,255,.2);border:none;color:#fff;' +
+    'cursor:pointer;padding:6px 10px;border-radius:6px;font-size:14px;">X</button></div>' +
+
+    '<div style="padding:12px;background:#f0f4ff;border-bottom:1px solid #dbeafe;">' +
+    '<div style="font-size:11px;color:#3b82f6;font-weight:600;margin-bottom:6px;">QUICK ACTIONS</div>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:6px;">' +
+    '<button onclick="window.nexusAIQuick(\'How do I add a driver?\')" style="font-size:11px;padding:4px 8px;border:1px solid #93c5fd;border-radius:20px;background:#fff;cursor:pointer;color:#2563eb;">Add Driver</button>' +
+    '<button onclick="window.nexusAIQuick(\'Where are settlements?\')" style="font-size:11px;padding:4px 8px;border:1px solid #93c5fd;border-radius:20px;background:#fff;cursor:pointer;color:#2563eb;">Settlements</button>' +
+    '<button onclick="window.nexusAIQuick(\'How do I report a police sighting?\')" style="font-size:11px;padding:4px 8px;border:1px solid #93c5fd;border-radius:20px;background:#fff;cursor:pointer;color:#2563eb;">Report Hazard</button>' +
+    '<button onclick="window.nexusAIQuick(\'Route compliance check\')" style="font-size:11px;padding:4px 8px;border:1px solid #93c5fd;border-radius:20px;background:#fff;cursor:pointer;color:#2563eb;">Route Check</button>' +
+    '<button onclick="window.location.href=\'feedback.html\'" style="font-size:11px;padding:4px 8px;border:1px solid #f59e0b;border-radius:20px;background:#fffbeb;cursor:pointer;color:#b45309;">Send Feedback</button>' +
+    '</div></div>' +
+
+    '<div id="nexus-ai-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;">' +
+    '<div style="background:#f0f4ff;border-radius:12px 12px 12px 0;padding:12px;font-size:13px;color:#1e3a8a;max-width:90%;">' +
+    'Hi! I\'m your Nexus Assistant. Ask me anything about the platform, or <a href="feedback.html" style="color:#2563eb;">send feedback to Jim</a>.' +
+    '</div></div>' +
+
+    '<div style="padding:12px;border-top:1px solid #e5e7eb;display:flex;gap:8px;">' +
+    '<input id="nexus-ai-input" type="text" placeholder="Ask me anything..." ' +
+    'style="flex:1;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;color:#111827;outline:none;" ' +
+    'onkeydown="if(event.key===\'Enter\')window.nexusAISend()">' +
+    '<button onclick="window.nexusAISend()" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:14px;">&gt;</button>' +
+    '</div></div>';
+
+  document.body.appendChild(panel);
+
+  window.toggleNexusAI = function() {
+    var drawer = document.getElementById('nexus-ai-drawer');
+    var toggle = document.getElementById('nexus-ai-toggle');
+    var open = drawer.style.right === '0px';
+    drawer.style.right = open ? '-380px' : '0px';
+    if (toggle) toggle.style.display = open ? '' : 'none';
+  };
+
+  window.nexusAIQuick = function(text) {
+    var input = document.getElementById('nexus-ai-input');
+    if (input) input.value = text;
+    window.nexusAISend();
+  };
+
+  window.nexusAISend = function() {
+    var input = document.getElementById('nexus-ai-input');
+    var msg = input ? (input.value || '').trim() : '';
+    if (!msg) return;
+    input.value = '';
+    var msgs = document.getElementById('nexus-ai-messages');
+    if (!msgs) return;
+
+    var userDiv = document.createElement('div');
+    userDiv.style.cssText = 'background:#2563eb;color:#fff;border-radius:12px 12px 0 12px;padding:10px 12px;font-size:13px;max-width:85%;align-self:flex-end;margin-left:auto;';
+    userDiv.textContent = msg;
+    msgs.appendChild(userDiv);
+
+    var answer = null;
+    for (var i = 0; i < KNOWLEDGE_BASE.length; i++) {
+      if (KNOWLEDGE_BASE[i].q.test(msg)) { answer = KNOWLEDGE_BASE[i].a; break; }
+    }
+    if (!answer) {
+      answer = 'I don\'t have a specific answer for that. <a href="feedback.html" style="color:#2563eb;">Send feedback to Jim</a> or visit <a href="nexus-ai.html" style="color:#2563eb;">Nexus AI</a> for deeper questions.';
+    }
+
+    setTimeout(function() {
+      var botDiv = document.createElement('div');
+      botDiv.style.cssText = 'background:#f0f4ff;border-radius:12px 12px 12px 0;padding:12px;font-size:13px;color:#1e3a8a;max-width:90%;';
+      botDiv.innerHTML = answer;
+      msgs.appendChild(botDiv);
+      msgs.scrollTop = msgs.scrollHeight;
+    }, 300);
+    msgs.scrollTop = msgs.scrollHeight;
+  };
 })();

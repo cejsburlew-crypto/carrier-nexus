@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pilot Car State Compliance — Carrier Nexus</title>
+<script src="nexus-sidebar.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :root { --bg:#f0f2f5;--panel:#fff;--border:#e5e7eb;--text:#111827;--mid:#6b7280;--blue:#2563eb;--green:#16a34a;--red:#dc2626;--amber:#d97706; }
+  body { margin:0;font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text); }
+  .main { margin-left:240px;padding:28px 28px 60px; }
+  h1 { font-size:22px;font-weight:700;margin:0 0 4px; }
+  .subtitle { color:var(--mid);font-size:13px;margin-bottom:24px; }
+  .tab-row { display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap; }
+  .tab { padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--panel);color:var(--mid);transition:all .15s; }
+  .tab.active { background:var(--blue);color:#fff;border-color:var(--blue); }
+  .section { display:none; }
+  .section.active { display:block; }
+  .state-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:24px; }
+  .state-card { background:var(--panel);border:2px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;text-align:center;transition:all .15s; }
+  .state-card:hover { border-color:var(--blue);box-shadow:0 2px 8px rgba(37,99,235,0.15); }
+  .state-card.cert-required { border-color:#fbbf24;background:#fffbeb; }
+  .state-card.no-cert { border-color:#86efac;background:#f0fdf4; }
+  .state-card.selected { border-color:var(--blue);background:#eff6ff; }
+  .state-abbr { font-size:20px;font-weight:700;font-family:'Barlow Condensed',sans-serif; }
+  .state-name { font-size:10px;color:var(--mid);margin-top:2px; }
+  .state-status { font-size:10px;font-weight:600;margin-top:4px; }
+  .detail-panel { background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px; }
+  .detail-panel h2 { font-size:18px;font-weight:700;margin:0 0 16px;display:flex;align-items:center;gap:10px; }
+  .req-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px; }
+  .req-box { background:var(--bg);border-radius:8px;padding:14px; }
+  .req-label { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--mid);margin-bottom:6px; }
+  .req-value { font-size:13px;color:var(--text);line-height:1.5; }
+  .btn-permit { display:inline-block;background:var(--blue);color:#fff;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:600;text-decoration:none;margin-right:8px;margin-top:8px; }
+  .cert-card { background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px; }
+  .cert-card h3 { font-size:14px;font-weight:700;margin:0 0 10px; }
+  .exp-badge { font-size:11px;padding:3px 8px;border-radius:12px;font-weight:600; }
+  .exp-ok { background:#f0fdf4;color:var(--green); }
+  .exp-warn { background:#fffbeb;color:var(--amber); }
+  .exp-expired { background:#fee2e2;color:var(--red); }
+  .legend { display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap; }
+  .legend-item { display:flex;align-items:center;gap:6px;font-size:12px; }
+  .legend-dot { width:12px;height:12px;border-radius:3px;border:2px solid; }
+  .modal-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center; }
+  .modal-box { background:#fff;border-radius:12px;padding:24px;width:420px;max-width:95vw; }
+  .form-row { margin-bottom:12px; }
+  .form-row label { display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px; }
+  .form-row input, .form-row select { width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:7px;font-size:14px;font-family:'Barlow',sans-serif; }
+  @media (max-width:768px) { .main { margin-left:0;padding:16px; } .req-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="main">
+  <h1>🚗 Pilot Car State Compliance</h1>
+  <p class="subtitle">State-by-state requirements for pilot/escort vehicles. Track certifications and expiration dates.</p>
+
+  <div class="tab-row">
+    <div class="tab active" onclick="switchTab('map')">🗺️ State Requirements</div>
+    <div class="tab" onclick="switchTab('certs')">📋 My Certifications</div>
+    <div class="tab" onclick="switchTab('equip')">🔧 Equipment Checklist</div>
+  </div>
+
+  <div class="section active" id="tab-map">
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#fef9c3;border-color:#fbbf24;"></div> Certification Required</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f0fdf4;border-color:#86efac;"></div> No State Cert Required</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fff;border-color:#d1d5db;"></div> General Requirements Apply</div>
+    </div>
+    <div class="state-grid" id="state-grid"></div>
+    <div class="detail-panel" id="state-detail" style="display:none;">
+      <h2 id="detail-title"></h2>
+      <div class="req-grid">
+        <div class="req-box"><div class="req-label">Training / Certification</div><div class="req-value" id="detail-training"></div></div>
+        <div class="req-box"><div class="req-label">Equipment Required</div><div class="req-value" id="detail-equipment"></div></div>
+        <div class="req-box"><div class="req-label">Insurance Minimum</div><div class="req-value" id="detail-insurance"></div></div>
+        <div class="req-box"><div class="req-label">Notes / Statutes</div><div class="req-value" id="detail-notes"></div></div>
+      </div>
+      <a class="btn-permit" id="detail-permit-link" href="#" target="_blank" rel="noopener">State Permit Office</a>
+      <button style="padding:8px 14px;border:1px solid var(--blue);border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;background:#eff6ff;color:var(--blue);margin-top:8px;" onclick="addCertForSelected()">+ Track My Certification</button>
+    </div>
+  </div>
+
+  <div class="section" id="tab-certs">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h2 style="font-size:16px;font-weight:700;margin:0;">My State Pilot Car Certifications</h2>
+      <button onclick="showAddCertModal()" style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;">+ Add Certification</button>
+    </div>
+    <div id="cert-list"></div>
+    <div id="cert-empty" style="text-align:center;padding:40px;color:var(--mid);font-size:14px;">No certifications tracked yet. Add your state certifications above.</div>
+  </div>
+
+  <div class="section" id="tab-equip">
+    <div class="detail-panel">
+      <h2>🔧 Standard Pilot Car Equipment Checklist</h2>
+      <p style="font-size:13px;color:var(--mid);margin-top:-8px;">Most states require this baseline equipment. Check state-specific requirements on the State Map tab.</p>
+      <div id="equip-list"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="add-cert-modal">
+  <div class="modal-box">
+    <h3 style="margin:0 0 16px;font-size:16px;">Add State Certification</h3>
+    <div class="form-row"><label>State</label><select id="cert-state-sel"><option value="">Select state...</option></select></div>
+    <div class="form-row"><label>Cert / License Number</label><input type="text" id="cert-number" placeholder="e.g. PC-12345"></div>
+    <div class="form-row"><label>Issued Date</label><input type="date" id="cert-issued"></div>
+    <div class="form-row"><label>Expiration Date</label><input type="date" id="cert-expiry"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
+      <button onclick="closeAddCertModal()" style="padding:9px 16px;border:1px solid #d1d5db;border-radius:7px;font-size:13px;cursor:pointer;background:#fff;">Cancel</button>
+      <button onclick="saveCert()" style="padding:9px 16px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var PILOT_STATE_REQS = {
+  AL:{name:'Alabama',cert:'No state certification required',equipment:'Amber lights, oversize load signs',insurance:'$1M recommended',permit_office:'https://www.dot.state.al.us/bureausoffice/maint/permits/',notes:'Standard FHWA guidelines apply'},
+  AK:{name:'Alaska',cert:'No formal certification',equipment:'Flashing amber lights, oversize signs, CB radio',insurance:'$1M',permit_office:'https://dot.alaska.gov/permits/',notes:'Remote roads require additional precautions'},
+  AZ:{name:'Arizona',cert:'No state certification required',equipment:'Amber lights, oversized load signs, 2-way radio',insurance:'$1M',permit_office:'https://www.azdot.gov/motor-vehicles/vehicle-services/commercial-vehicles/permits',notes:'ARS 28-1103 governs oversized loads'},
+  AR:{name:'Arkansas',cert:'No state certification',equipment:'Amber warning lights, oversize signs',insurance:'$1M recommended',permit_office:'https://www.ardot.gov/traffic/permits/',notes:'Escort required for loads over 14\'6" wide'},
+  CA:{name:'California',cert:'Pilot Car Operator Certification REQUIRED (CA DMV)',equipment:'Rotating/flashing amber lights, 18" "OVERSIZE LOAD" sign, 2-way radio, CB radio, height pole',insurance:'$1M liability required',permit_office:'https://www.dot.ca.gov/programs/traffic-operations/pms',notes:'Certification through Caltrans-approved course required. CVC 35780',certRequired:true},
+  CO:{name:'Colorado',cert:'State certification course required',equipment:'Amber lights, oversize sign, two-way communications',insurance:'$500K minimum',permit_office:'https://www.codot.gov/business/permits/',notes:'Colorado Revised Statutes 42-4-509',certRequired:true},
+  CT:{name:'Connecticut',cert:'Training recommended',equipment:'Flashing amber lights, signs',insurance:'$1M',permit_office:'https://portal.ct.gov/DOT/Pages/Permits',notes:'CGS 14-270a governs oversize vehicles'},
+  DE:{name:'Delaware',cert:'No formal certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://deldot.gov/Business/permits/',notes:'DE Code Title 21 governs'},
+  FL:{name:'Florida',cert:'Pilot vehicle escort training required (FLHSMV)',equipment:'Amber lights front and rear, oversize load sign, height measuring device',insurance:'$300K minimum',permit_office:'https://www.fdot.gov/maintenance/permits',notes:'F.S. 316.515 governs escort requirements',certRequired:true},
+  GA:{name:'Georgia',cert:'No state certification',equipment:'Flashing amber lights, oversize signs',insurance:'$1M',permit_office:'https://www.dot.ga.gov/PartnerSmart/Permits/',notes:'OCGA 32-6-27 governs'},
+  HI:{name:'Hawaii',cert:'No formal requirement',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://hidot.hawaii.gov/',notes:'Limited trucking routes'},
+  ID:{name:'Idaho',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://itd.idaho.gov/dmv/permits/',notes:'ITD governs oversize loads'},
+  IL:{name:'Illinois',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.idot.illinois.gov/transportation-system/Network-Map-and-Permits/',notes:'IVC 15-301 governs escort requirements'},
+  IN:{name:'Indiana',cert:'Training recommended',equipment:'Amber lights, signs, radio',insurance:'$1M',permit_office:'https://www.in.gov/indot/motor-carrier/',notes:'IC 9-20 governs oversize loads'},
+  IA:{name:'Iowa',cert:'No state certification',equipment:'Amber lights, oversize signs',insurance:'$1M',permit_office:'https://iowadot.gov/mvd/commercialvehicle/permits',notes:'IA Code 321E governs'},
+  KS:{name:'Kansas',cert:'No formal certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.ksdot.org/bureaus/burtransplan/special-permits/',notes:'KSA 8-1911 governs'},
+  KY:{name:'Kentucky',cert:'Training recommended',equipment:'Flashing amber lights, signs, radio',insurance:'$1M',permit_office:'https://transportation.ky.gov/Permits/',notes:'KRS 189.221 governs'},
+  LA:{name:'Louisiana',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.dotd.la.gov/Pages/Permits.aspx',notes:'LA RS 32:387 governs'},
+  ME:{name:'Maine',cert:'No formal certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.maine.gov/mdot/contractor/permits/',notes:'29-A MRS governs'},
+  MD:{name:'Maryland',cert:'Training recommended',equipment:'Amber lights, signs, radio',insurance:'$1M',permit_office:'https://mdot.maryland.gov/Office_of_Permits/',notes:'TR 24-101 governs'},
+  MA:{name:'Massachusetts',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.mass.gov/guides/oversized-load-permits',notes:'MGL c.85 s.19A governs'},
+  MI:{name:'Michigan',cert:'No state certification',equipment:'Flashing amber lights, signs',insurance:'$1M',permit_office:'https://www.michigan.gov/sos/commercial-vehicle-permits',notes:'MCL 257.724 governs'},
+  MN:{name:'Minnesota',cert:'Training recommended',equipment:'Amber lights, signs, radio',insurance:'$1M',permit_office:'https://www.dot.state.mn.us/cvo/osow/permits.html',notes:'MN Stat 169.86 governs'},
+  MS:{name:'Mississippi',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.mdot.ms.gov/MSPermits/',notes:'MS Code 63-5-51 governs'},
+  MO:{name:'Missouri',cert:'No specific certification but experience required',equipment:'Amber rotating light, oversize load sign',insurance:'$1M recommended',permit_office:'https://www.modot.org/permits',notes:'OAC 7CSR10-4. Contact: 660-888-5773 (local pilot cars in Boonville MO)'},
+  MT:{name:'Montana',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.mdt.mt.gov/business/permits/',notes:'MCA 61-10-102 governs'},
+  NE:{name:'Nebraska',cert:'No formal certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://dot.nebraska.gov/travel/permits/',notes:'NRS 60-6,295 governs'},
+  NV:{name:'Nevada',cert:'Training required for certain loads',equipment:'Amber lights, signs, radio',insurance:'$1M',permit_office:'https://ndot.nv.gov/Highways/Traffic/Permits/',notes:'NRS 484D.455 governs'},
+  NH:{name:'New Hampshire',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.dot.nh.gov/operations/permits.htm',notes:'RSA 265:128 governs'},
+  NJ:{name:'New Jersey',cert:'Training recommended',equipment:'Amber lights, signs, radio',insurance:'$1M',permit_office:'https://www.state.nj.us/transportation/freight/commercial/permits/',notes:'NJSA 39:3-84 governs'},
+  NM:{name:'New Mexico',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.dot.nm.gov/content/dot/en/public/vehicle-licensing-and-traffic/permits.html',notes:'NMSA 66-7-410 governs'},
+  NY:{name:'New York',cert:'Training recommended',equipment:'Flashing amber lights, signs, CB radio',insurance:'$1M',permit_office:'https://www.dot.ny.gov/divisions/operating/oom/transportation-systems/trucks/permits',notes:'VTL 385 governs oversize loads'},
+  NC:{name:'North Carolina',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://connect.ncdot.gov/business/trucking/Pages/Permits.aspx',notes:'GS 20-119 governs'},
+  ND:{name:'North Dakota',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.dot.nd.gov/divisions/maintenance/oversizeoverwt.htm',notes:'NDCC 39-12 governs'},
+  OH:{name:'Ohio',cert:'Training recommended',equipment:'Amber lights, signs, radio',insurance:'$1M',permit_office:'https://www.ohiobmv.com/vehicle-registration/commercial-vehicles/oversize-overweight-permits/',notes:'ORC 5513.04 governs'},
+  OK:{name:'Oklahoma',cert:'No formal certification but must comply with OAC 595:30',equipment:'Amber lights, oversize sign',insurance:'$1M',permit_office:'https://www.ok.gov/odot/',notes:'OAC 595:30 governs escort requirements'},
+  OR:{name:'Oregon',cert:'Pilot Car Certification REQUIRED (Oregon DMV)',equipment:'Amber lights, oversize sign, height pole, radio',insurance:'$1M CSL',permit_office:'https://www.oregon.gov/odot/Permits/',notes:'ORS 818.200. Certification through CPCOA or OIDA',certRequired:true},
+  PA:{name:'Pennsylvania',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.penndot.pa.gov/TravelInPA/Bridges-Roads/Pages/Permits.aspx',notes:'75 Pa.C.S. 4911 governs'},
+  RI:{name:'Rhode Island',cert:'No formal certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.dot.ri.gov/business/trucking.php',notes:'RIGL 31-25-21 governs'},
+  SC:{name:'South Carolina',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.scdot.org/business/permits.aspx',notes:'SC Code 56-5-4100 governs'},
+  SD:{name:'South Dakota',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://dot.sd.gov/transportation/permits',notes:'SDCL 32-22 governs'},
+  TN:{name:'Tennessee',cert:'TN training program recommended',equipment:'Flashing amber lights, signs',insurance:'$1M',permit_office:'https://www.tn.gov/tdot/traffic-operations/oversize-overweight.html',notes:'TCA 55-7-203 governs'},
+  TX:{name:'Texas',cert:'No state certification required (OOIDA or OSHA training recommended)',equipment:'Amber lights, oversize signs, height pole for loads > 14\'',insurance:'$1M liability recommended',permit_office:'https://www.txdmv.gov/motor-carriers/oversize-overweight-permits',notes:'TxDMV permit required for escorted load. Tx Transportation Code 623'},
+  UT:{name:'Utah',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.udot.utah.gov/connect/business/trucking/permits/',notes:'UCA 72-7-404 governs'},
+  VT:{name:'Vermont',cert:'No formal certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://vtrans.vermont.gov/highway/permits',notes:'23 VSA 1432 governs'},
+  VA:{name:'Virginia',cert:'Training recommended',equipment:'Amber lights, signs, radio',insurance:'$1M',permit_office:'https://www.virginiadot.org/business/bu-specialpermits.asp',notes:'VA Code 46.2-1139 governs'},
+  WA:{name:'Washington',cert:'WA State Certified Pilot Car Operator REQUIRED',equipment:'Flashing amber light visible 500ft, oversize sign, height pole, 2-way radio',insurance:'$1M CSL',permit_office:'https://www.wsdot.wa.gov/business/permits/',notes:'WAC 468-38 governs all pilot car operations',certRequired:true},
+  WV:{name:'West Virginia',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://transportation.wv.gov/highways/permits/',notes:'WVC 17C-17-8 governs'},
+  WI:{name:'Wisconsin',cert:'No state certification',equipment:'Amber lights, signs, radio',insurance:'$1M',permit_office:'https://wisconsindot.gov/Pages/doing-bus/large-truck-bus/trucking/over-dimen-wt/default.aspx',notes:'WI Stat 348.09 governs'},
+  WY:{name:'Wyoming',cert:'No state certification',equipment:'Amber lights, signs',insurance:'$1M',permit_office:'https://www.dot.state.wy.us/home/engineering_technical_programs/permits.html',notes:'WS 31-18-701 governs'}
+};
+
+var EQUIPMENT_LIST = [
+  {item:'Flashing / rotating amber light bar',note:'Visible minimum 500ft per most states',required:true},
+  {item:'"OVERSIZE LOAD" sign — front and rear',note:'Yellow background, black letters, min 5"H x 7"W',required:true},
+  {item:'2-way radio / CB radio (Channel 19)',note:'Communication with driver and flag persons',required:true},
+  {item:'Height measuring pole',note:'Required for loads over 14\'6" in most states',required:true},
+  {item:'Fluorescent safety vest',note:'For flag persons and pilot operators on foot',required:true},
+  {item:'Safety flags — orange/red, 18"x18"',note:'For hand signals when radio not available',required:true},
+  {item:'Emergency flares or road triangles',note:'For breakdowns and emergencies',required:true},
+  {item:'First aid kit',note:'Standard OSHA kit recommended',required:false},
+  {item:'Fire extinguisher',note:'ABC-rated, vehicle mounted',required:false},
+  {item:'Copies of all permits',note:'Including load permit and any route-specific permits',required:true},
+  {item:'Pilot car certification (where required by state)',note:'CA, CO, FL, OR, WA require certification',required:false},
+  {item:'Insurance certificate',note:'Minimum $1M liability — some states require $300K-$1M CSL',required:true},
+  {item:'Vehicle registration',note:'Pilot vehicle must be properly registered and inspected',required:true},
+  {item:'Hazard light system (4-way flashers)',note:'Vehicle 4-way flashers functional',required:true},
+  {item:'Amber strobe light bars — all four sides visible',note:'LED preferred for visibility',required:false}
+];
+
+var selectedState = null;
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  var tabEl = document.querySelector('.tab[onclick="switchTab(\'' + tab + '\')"]');
+  if (tabEl) tabEl.classList.add('active');
+  var sec = document.getElementById('tab-' + tab);
+  if (sec) sec.classList.add('active');
+}
+
+function renderStateGrid() {
+  var certs = JSON.parse(localStorage.getItem('nexus_pilot_certs') || '{}');
+  var grid = document.getElementById('state-grid');
+  if (!grid) return;
+  var sel = document.getElementById('cert-state-sel');
+  grid.innerHTML = Object.keys(PILOT_STATE_REQS).map(function(abbr) {
+    var s = PILOT_STATE_REQS[abbr];
+    var hasCert = certs[abbr];
+    var cls = 'state-card ' + (s.certRequired ? 'cert-required' : 'no-cert');
+    if (abbr === selectedState) cls += ' selected';
+    return '<div class="' + cls + '" onclick="showState(\'' + abbr + '\')">' +
+      '<div class="state-abbr">' + abbr + '</div>' +
+      '<div class="state-name">' + s.name + '</div>' +
+      '<div class="state-status">' + (s.certRequired ? 'Cert Req.' : 'No Cert') + '</div>' +
+      (hasCert ? '<div style="font-size:9px;color:#2563eb;margin-top:3px;">Tracked</div>' : '') +
+      '</div>';
+  }).join('');
+  if (sel && sel.options.length <= 1) {
+    Object.keys(PILOT_STATE_REQS).forEach(function(abbr) {
+      var opt = document.createElement('option');
+      opt.value = abbr;
+      opt.textContent = abbr + ' - ' + PILOT_STATE_REQS[abbr].name;
+      sel.appendChild(opt);
+    });
+  }
+}
+
+function showState(abbr) {
+  selectedState = abbr;
+  var s = PILOT_STATE_REQS[abbr];
+  document.getElementById('detail-title').textContent = s.name + (s.certRequired ? ' - Certification Required' : '');
+  document.getElementById('detail-training').textContent = s.cert;
+  document.getElementById('detail-equipment').textContent = s.equipment;
+  document.getElementById('detail-insurance').textContent = s.insurance;
+  document.getElementById('detail-notes').textContent = s.notes || 'Standard FHWA guidelines apply';
+  var link = document.getElementById('detail-permit-link');
+  if (link) link.href = s.permit_office || '#';
+  var detail = document.getElementById('state-detail');
+  if (detail) { detail.style.display = 'block'; detail.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  renderStateGrid();
+}
+
+function addCertForSelected() {
+  if (selectedState) document.getElementById('cert-state-sel').value = selectedState;
+  showAddCertModal();
+}
+
+function showAddCertModal() {
+  document.getElementById('add-cert-modal').style.display = 'flex';
+}
+
+function closeAddCertModal() {
+  document.getElementById('add-cert-modal').style.display = 'none';
+}
+
+function saveCert() {
+  var state = document.getElementById('cert-state-sel').value;
+  if (!state) { alert('Please select a state.'); return; }
+  var certs = JSON.parse(localStorage.getItem('nexus_pilot_certs') || '{}');
+  certs[state] = {
+    number: document.getElementById('cert-number').value.trim(),
+    issued: document.getElementById('cert-issued').value,
+    expiry: document.getElementById('cert-expiry').value,
+    ts: Date.now()
+  };
+  localStorage.setItem('nexus_pilot_certs', JSON.stringify(certs));
+  closeAddCertModal();
+  renderStateGrid();
+  renderCertList();
+  switchTab('certs');
+}
+
+function deleteCert(state) {
+  if (!confirm('Delete certification for ' + state + '?')) return;
+  var certs = JSON.parse(localStorage.getItem('nexus_pilot_certs') || '{}');
+  delete certs[state];
+  localStorage.setItem('nexus_pilot_certs', JSON.stringify(certs));
+  renderStateGrid();
+  renderCertList();
+}
+
+function renderCertList() {
+  var certs = JSON.parse(localStorage.getItem('nexus_pilot_certs') || '{}');
+  var list = document.getElementById('cert-list');
+  var empty = document.getElementById('cert-empty');
+  var keys = Object.keys(certs);
+  if (!keys.length) { if (list) list.innerHTML = ''; if (empty) empty.style.display = ''; return; }
+  if (empty) empty.style.display = 'none';
+  var now = Date.now();
+  if (list) list.innerHTML = keys.map(function(abbr) {
+    var c = certs[abbr];
+    var s = PILOT_STATE_REQS[abbr] || {};
+    var expBadge = '';
+    if (c.expiry) {
+      var expMs = new Date(c.expiry).getTime();
+      var daysLeft = Math.ceil((expMs - now) / 86400000);
+      if (daysLeft < 0) expBadge = '<span class="exp-badge exp-expired">EXPIRED ' + Math.abs(daysLeft) + 'd ago</span>';
+      else if (daysLeft <= 30) expBadge = '<span class="exp-badge exp-warn">Expires in ' + daysLeft + 'd</span>';
+      else expBadge = '<span class="exp-badge exp-ok">Valid - ' + daysLeft + 'd left</span>';
+    }
+    return '<div class="cert-card">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+      '<h3>' + abbr + ' - ' + (s.name || abbr) + ' ' + expBadge + '</h3>' +
+      '<button onclick="deleteCert(\'' + abbr + '\')" style="padding:5px 10px;border:none;border-radius:6px;font-size:11px;background:#fee2e2;color:#dc2626;cursor:pointer;">Remove</button>' +
+      '</div>' +
+      '<div style="font-size:12px;color:var(--mid);display:flex;gap:20px;flex-wrap:wrap;">' +
+      (c.number ? '<span>Cert #: <strong style="color:var(--text);">' + c.number + '</strong></span>' : '') +
+      (c.issued ? '<span>Issued: <strong style="color:var(--text);">' + c.issued + '</strong></span>' : '') +
+      (c.expiry ? '<span>Expires: <strong style="color:var(--text);">' + c.expiry + '</strong></span>' : '') +
+      '</div></div>';
+  }).join('');
+}
+
+function renderEquipmentList() {
+  var saved = JSON.parse(localStorage.getItem('nexus_pilot_equip') || '{}');
+  var el = document.getElementById('equip-list');
+  if (!el) return;
+  el.innerHTML = EQUIPMENT_LIST.map(function(item, i) {
+    var checked = saved[i] || false;
+    return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">' +
+      '<input type="checkbox" id="eq-' + i + '" ' + (checked ? 'checked' : '') + ' onchange="saveEquipCheck(' + i + ',this.checked)" style="margin-top:3px;cursor:pointer;width:16px;height:16px;">' +
+      '<div><label for="eq-' + i + '" style="font-size:13px;font-weight:600;cursor:pointer;">' +
+      '<span style="font-size:10px;font-weight:700;margin-right:6px;' + (item.required ? 'color:#dc2626;' : 'color:#6b7280;') + '">' + (item.required ? 'REQUIRED' : 'RECOMMENDED') + '</span>' +
+      item.item + '</label>' +
+      '<div style="font-size:11px;color:var(--mid);margin-top:2px;">' + item.note + '</div>' +
+      '</div></div>';
+  }).join('');
+}
+
+function saveEquipCheck(idx, val) {
+  var saved = JSON.parse(localStorage.getItem('nexus_pilot_equip') || '{}');
+  saved[idx] = val;
+  localStorage.setItem('nexus_pilot_equip', JSON.stringify(saved));
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderStateGrid();
+  renderCertList();
+  renderEquipmentList();
+  document.getElementById('add-cert-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeAddCertModal();
+  });
+});
+</script>
+</body>
+</html>

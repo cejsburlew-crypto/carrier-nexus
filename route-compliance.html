@@ -197,7 +197,18 @@
       </div>
     </div>
 
-    <!-- Tab 2: State Weight Limits -->
+      <!-- Live Road Alerts Card -->
+      <div class="card" style="margin-top:8px">
+        <div class="card-title">🚨 Live Road Alerts <span style="font-size:11px;font-weight:400;color:var(--mid);">Crowdsourced · expires 2h</span></div>
+        <div id="rc-hazard-content" style="min-height:60px;"><div style="color:var(--mid);font-size:13px;">Loading nearby alerts...</div></div>
+        <div style="margin-top:10px;">
+          <a href="hazard-map.html" style="background:#2563eb;color:#fff;border:none;border-radius:7px;padding:8px 14px;font-size:12px;text-decoration:none;display:inline-block;font-weight:600;">Open Road Alerts Map</a>
+          <button onclick="window.location.href='hazard-map.html'" style="margin-left:8px;background:#dc2626;color:#fff;border:none;border-radius:7px;padding:8px 14px;font-size:12px;cursor:pointer;font-weight:600;">🚨 Report Hazard</button>
+        </div>
+      </div>
+    </div>
+
+        <!-- Tab 2: State Weight Limits -->
     <div class="tab-panel" id="tab-limits">
       <div class="search-bar">
         <input type="text" id="limits-search" placeholder="Search state..." oninput="filterLimits()" style="flex:1;min-width:200px">
@@ -994,5 +1005,41 @@ document.addEventListener("DOMContentLoaded", function() {
   renderScaleAlerts();
   setInterval(renderScaleAlerts, 60000);
 });
+</script>
+<script>
+
+// ── Road Hazard Widget ──
+function rcLoadNearbyHazards(lat, lng) {
+  var reports = JSON.parse(localStorage.getItem('nexus_hazard_reports') || '[]');
+  var now = Date.now();
+  reports = reports.filter(function(r) { return (now - r.ts) < 7200000; });
+  function dist(lat1, lon1, lat2, lon2) {
+    var R = 3958.8, dLat = (lat2-lat1)*Math.PI/180, dLon = (lon2-lon1)*Math.PI/180;
+    var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+  var nearby = reports.filter(function(r) { return dist(lat, lng, r.lat, r.lng) <= 50; })
+    .sort(function(a,b) { return b.ts - a.ts; }).slice(0,5);
+  var LABELS = { police:'👮 Police', dot_officer:'🔍 DOT Officer', weigh_open:'⚖️ Weigh Station OPEN', weigh_closed:'✅ Weigh Station Closed', hazard:'⚠️ Hazard', construction:'🚧 Construction', all_clear:'✅ All Clear' };
+  var el = document.getElementById('rc-hazard-content');
+  if (!el) return;
+  if (!nearby.length) {
+    el.innerHTML = '<div style="color:#16a34a;font-size:13px;padding:8px 0;">✅ No hazards reported within 50 miles of your location</div>';
+    return;
+  }
+  el.innerHTML = nearby.map(function(r) {
+    var mins = Math.round((now - r.ts) / 60000);
+    return '<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;"><span style="font-weight:600;">' + (LABELS[r.type]||r.type) + '</span><span style="color:var(--mid);font-size:11px;margin-left:8px;">' + mins + 'm ago - ' + (r.user||'Driver') + '</span></div>';
+  }).join('');
+}
+
+function rcInitHazardWidget() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(p) { rcLoadNearbyHazards(p.coords.latitude, p.coords.longitude); }, function() { rcLoadNearbyHazards(37.5, -96); });
+  } else { rcLoadNearbyHazards(37.5, -96); }
+}
+
+document.addEventListener('DOMContentLoaded', function() { rcInitHazardWidget(); setInterval(rcInitHazardWidget, 120000); });
+
 </script>
 </body></html>
