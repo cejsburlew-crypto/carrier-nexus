@@ -1258,8 +1258,15 @@
           u.active !== false
         );
         if (!match) throw new Error('Invalid email or password');
-        const localSession = { email: match.email, role: match.role, name: match.name || 'User', ts: Date.now() };
+        const _co = match.company || 'co_001';
+        const localSession = { email: match.email, role: match.role, name: match.name || 'User', company: _co, ts: Date.now() };
         localStorage.setItem('nexus_session', JSON.stringify(localSession));
+        // Set active company — use raw bypass to survive storage proxy
+        if (Storage.prototype._rawSet) {
+          Storage.prototype._rawSet.call(localStorage, 'nexus_active_company', _co);
+        } else {
+          localStorage.setItem('nexus_active_company', _co);
+        }
         await new Promise(r => setTimeout(r, 400));
       loginBtn.classList.remove('loading');
       const _sess = JSON.parse(localStorage.getItem('nexus_session')||'{}');

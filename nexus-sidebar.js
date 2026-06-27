@@ -100,6 +100,16 @@
   _rawSet.call(localStorage, 'nexus_migration_v2_done', '1');
 })();
 
+// ── Session company restore: re-confirm nexus_active_company from session on every page load ──
+(function() {
+  var _raw = Storage.prototype._rawGet ? function(k){ return Storage.prototype._rawGet.call(localStorage,k); } : function(k){ return localStorage.getItem(k); };
+  var _rawSet = Storage.prototype._rawSet ? function(k,v){ Storage.prototype._rawSet.call(localStorage,k,v); } : function(k,v){ localStorage.setItem(k,v); };
+  var _sess = JSON.parse(_raw('nexus_session') || 'null');
+  if (_sess && _sess.company) {
+    _rawSet('nexus_active_company', _sess.company);
+  }
+})();
+
 (function() {
   const page = location.pathname.split('/').pop() || 'index.html';
 
