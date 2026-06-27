@@ -1,5 +1,5 @@
 // ============================================================
-// CARRIER NEXUS — CONFIG (nexus-config.js)
+// CARRIER NEXUS â CONFIG (nexus-config.js)
 // ============================================================
 
 window.NEXUS_SUPABASE_URL = 'https://pzjfbjsntgdzbwtqhfqj.supabase.co';
@@ -60,7 +60,7 @@ window.NEXUS_VAULT_ROOT_ID = (function() {
 
 // ============================================================
 // LOCAL USER STORE (used when Supabase is not configured)
-// Passwords are stored as SHA-256 hashes — NEVER plaintext.
+// Passwords are stored as SHA-256 hashes â NEVER plaintext.
 // Manage users via Admin > Users in the app.
 // ============================================================
 window.NEXUS_LOCAL_USERS = (function () {
@@ -78,7 +78,7 @@ window.NEXUS_LOCAL_USERS = (function () {
     { id:'usr_009', email:'yosviel@carriertuckingus.com', passwordHash:'',                                                                                role:'driver',         name:'Yosviel Pinera',   memberId:'YP26007.0', active:false, createdAt:'2026-06-14' },
     { id:'usr_010', email:'avis@carriertuckingus.com',   passwordHash:'',                                                                                 role:'driver',         name:'Avis Modesto',     memberId:'AM26008.0', active:false, createdAt:'2026-06-14' },
     { id:'usr_011', email:'jayler@carriertuckingus.com', passwordHash:'',                                                                                role:'driver',         name:'Jayler Labrada',   memberId:'JL26009.0', active:false, createdAt:'2026-06-20' },
-    { id:'usr_hh_001', email:'admin@heavyhaulers.com',           passwordHash:'',                                                                                 role:'admin',          name:'HH Admin',         company:'co_002',     active:false, createdAt:'2026-06-26' }
+    { id:'usr_hh_001', email:'admin@heavyhaulers.com',           passwordHash:'136dca28b583ddfbcb59986ae70c709fe32a4f93284dc94da12cfc3b9e400d64',                                                                                 role:'admin',          name:'HH Admin',         company:'co_002',     active:true, createdAt:'2026-06-26' }
   ];
   // Merge: SEED is source-of-truth for passwordHash (cross-device);
   // localStorage overrides name/role/active changes made via admin-users.html
@@ -155,7 +155,7 @@ window.NEXUS_SEED_LOADS = [
 ];
 window.NEXUS_SEED_SETTLEMENTS = [{"id":"AMT-2026-04","driver":"Amet Abreu","short":"AMET","role":"dispatcher","dispatcher_rate":0.05,"service_adj":0,"start":"2026-01-20","end":"2026-01-26","loads":9,"total_adds":29600,"overhead":0,"permits":0,"expenses":0,"net_pay":1480,"status":"draft"},{"id":"AMT-2026-03","driver":"Amet Abreu","short":"AMET","role":"dispatcher","dispatcher_rate":0.05,"service_adj":0,"start":"2026-01-13","end":"2026-01-19","loads":4,"total_adds":20400,"overhead":0,"permits":0,"expenses":0,"net_pay":1020,"status":"draft"},{"id":"AMT-2026-02","driver":"Amet Abreu","short":"AMET","role":"dispatcher","dispatcher_rate":0.05,"service_adj":0,"start":"2026-01-06","end":"2026-01-12","loads":6,"total_adds":32500,"overhead":0,"permits":0,"expenses":0,"net_pay":1625,"status":"draft"},{"id":"AMT-2026-01","driver":"Amet Abreu","short":"AMET","role":"dispatcher","dispatcher_rate":0.05,"service_adj":126.5,"start":"2025-12-30","end":"2026-01-05","loads":4,"total_adds":26100,"overhead":0,"permits":0,"expenses":126.5,"net_pay":1305,"status":"draft"},{"id":"AVI-2026-01","driver":"Avis Modesto","short":"AVIS","role":"driver","start":"2026-01-20","end":"2026-01-26","loads":1,"total_adds":4300,"overhead":0,"permits":0,"expenses":0,"net_pay":4300,"status":"draft"},{"id":"DAV-2026-04","driver":"David Fonseca","short":"DAVID","role":"driver","start":"2026-01-20","end":"2026-01-26","loads":3,"total_adds":7600,"overhead":9972.3,"permits":0,"expenses":4304.37,"net_pay":-6676.67,"status":"draft"},{"id":"DAV-2026-03","driver":"David Fonseca","short":"DAVID","role":"driver","start":"2026-01-13","end":"2026-01-19","loads":1,"total_adds":3600,"overhead":6959.93,"permits":0,"expenses":3265.04,"net_pay":-6624.97,"status":"draft"},{"id":"DAV-2026-02","driver":"David Fonseca","short":"DAVID","role":"driver","start":"2026-01-06","end":"2026-01-12","loads":1,"total_adds":7000,"overhead":9876.67,"permits":0,"expenses":1879.26,"net_pay":-4755.93,"status":"draft"},{"id":"DAV-2026-01","driver":"David Fonseca","short":"DAVID","role":"driver","start":"2025-12-30","end":"2026-01-05","loads":1,"total_adds":7000,"overhead":10111.04,"permits":0,"expenses":4342.3,"net_pay":-7453.34,"status":"draft"},{"id":"GUI-2026-03","driver":"Guillermo Pinera","short":"GUILLERMO","role":"driver","start":"2026-01-20","end":"2026-01-26","loads":1,"total_adds":4500,"overhead":0,"permits":0,"expenses":0,"net_pay":4500,"status":"draft"},{"id":"GUI-2026-02","driver":"Guillermo Pinera","short":"GUILLERMO","role":"driver","start":"2026-01-06","end":"2026-01-12","loads":2,"total_adds":11000,"overhead":8093.02,"permits":0,"expenses":3252.23,"net_pay":-345.25,"status":"draft"},{"id":"GUI-2026-01","driver":"Guillermo Pinera","short":"GUILLERMO","role":"driver","start":"2025-12-30","end":"2026-01-05","loads":1,"total_adds":7000,"overhead":8599.0,"permits":0,"expenses":2564.02,"net_pay":-4163.02,"status":"draft"},{"id":"MIG-2026-03","driver":"Miguel Fonseca","short":"MIGUEL","role":"driver","start":"2026-01-13","end":"2026-01-19","loads":1,"total_adds":5500,"overhead":0,"permits":0,"expenses":0,"net_pay":5500,"status":"draft"},{"id":"MIG-2026-02","driver":"Miguel Fonseca","short":"MIGUEL","role":"driver","start":"2026-01-06","end":"2026-01-12","loads":2,"total_adds":10000,"overhead":0,"permits":0,"expenses":0,"net_pay":10000,"status":"draft"},{"id":"MIG-2026-01","driver":"Miguel Fonseca","short":"MIGUEL","role":"driver","start":"2025-12-30","end":"2026-01-05","loads":1,"total_adds":7000,"overhead":0,"permits":0,"expenses":0,"net_pay":7000,"status":"draft"},{"id":"NEL-2026-04","driver":"Nelson Veliz","short":"NELSON","role":"driver","start":"2026-01-20","end":"2026-01-26","loads":1,"total_adds":6000,"overhead":0,"permits":0,"expenses":0,"net_pay":6000,"status":"draft"},{"id":"NEL-2026-03","driver":"Nelson Veliz","short":"NELSON","role":"driver","start":"2026-01-13","end":"2026-01-19","loads":1,"total_adds":3300,"overhead":0,"permits":0,"expenses":0,"net_pay":3300,"status":"draft"},{"id":"NEL-2026-02","driver":"Nelson Veliz","short":"NELSON","role":"driver","start":"2026-01-06","end":"2026-01-12","loads":1,"total_adds":4500,"overhead":0,"permits":0,"expenses":0,"net_pay":4500,"status":"draft"},{"id":"NEL-2026-01","driver":"Nelson Veliz","short":"NELSON","role":"driver","start":"2025-12-30","end":"2026-01-05","loads":1,"total_adds":5100,"overhead":0,"permits":0,"expenses":0,"net_pay":5100,"status":"draft"},{"id":"YOS-2026-02","driver":"Yosviel Pinera","short":"YOSVIEL","role":"driver","start":"2026-01-20","end":"2026-01-26","loads":2,"total_adds":3200,"overhead":0,"permits":0,"expenses":0,"net_pay":3200,"status":"draft"},{"id":"YOS-2026-01","driver":"Yosviel Pinera","short":"YOSVIEL","role":"driver","start":"2026-01-13","end":"2026-01-19","loads":1,"total_adds":8000,"overhead":0,"permits":0,"expenses":0,"net_pay":8000,"status":"draft"}];
 
-// DATA MIGRATION v20260614: Fix "0.14" dispatch descriptions → "Dispatch Fee"
+// DATA MIGRATION v20260614: Fix "0.14" dispatch descriptions â "Dispatch Fee"
 (function patchExpenseDescriptions(){
   try {
     const MIGRATION_KEY = 'nexus_migration_dispatch_desc_v1';
@@ -171,7 +171,7 @@ window.NEXUS_SEED_SETTLEMENTS = [{"id":"AMT-2026-04","driver":"Amet Abreu","shor
     });
     if(patched > 0) {
       localStorage.setItem('nexus_expenses', JSON.stringify(fixed));
-      console.log('[Nexus Migration] Patched ' + patched + ' dispatch descriptions from "0.14" → "Dispatch Fee"');
+      console.log('[Nexus Migration] Patched ' + patched + ' dispatch descriptions from "0.14" â "Dispatch Fee"');
     }
     localStorage.setItem(MIGRATION_KEY, '1');
   } catch(err) { console.warn('[Nexus Migration] dispatch_desc failed:', err); }
@@ -243,7 +243,7 @@ window.nexusMemberId = function(firstName, lastName, loginDate) {
 
 // ============================================================
 // SEEDED MEMBER PROFILES (universal person directory)
-// One record per human — never deleted. Company memberships are separate.
+// One record per human â never deleted. Company memberships are separate.
 // ============================================================
 window.NEXUS_SEED_MEMBERS = [
   { id:'mem_001', memberId:'JB26148.0', firstName:'Jim', lastName:'Burlew', email:'jim.burlew@jbca-inc.com', phone:'', type:'admin', mc:'', dot:'', createdAt:'2026-05-28' },
@@ -262,7 +262,7 @@ window.NEXUS_SEED_MEMBERS = [
 // ============================================================
 // SEEDED COMPANY MEMBERSHIPS
 // status: active | inactive | terminated | pending_rejoin
-// roles: array — admin, dispatcher, driver, owner_operator, preparer, viewer
+// roles: array â admin, dispatcher, driver, owner_operator, preparer, viewer
 // ============================================================
 window.NEXUS_SEED_COMPANY_MEMBERS = [
   { id:'cm_001', memberId:'JB26148.0', companyId:'carrier-trucking-us', roles:['admin'], status:'active', joinedAt:'2026-05-28', deactivatedAt:null, terminatedAt:null, approvedBy:null, notes:'' },
@@ -302,7 +302,7 @@ window.NEXUS_SEED_COMPANY_MEMBERS = [
   } catch(e) { console.warn('[Nexus] Member seed failed:', e); }
 })();
 
-// Member helpers — used across the app
+// Member helpers â used across the app
 window.NexusMembers = {
   all: function() {
     try { return JSON.parse(localStorage.getItem('nexus_member_profiles')||'[]'); } catch(e){ return []; }
@@ -394,8 +394,8 @@ const NEXUS_COMPANY_PROFILES = [
       '10,543 loads completed with zero out-of-service days',
       '31 years of combined trucking experience',
       '26 industry awards won',
-      '4 FMCSA roadside inspections — all passed, zero violations (as of Sept 2023)',
-      '3 Level 1 and 1 Level 2 inspections — all clean',
+      '4 FMCSA roadside inspections â all passed, zero violations (as of Sept 2023)',
+      '3 Level 1 and 1 Level 2 inspections â all clean',
       'Specializes in oversize and superloads requiring pre-trip engineering',
       'Oklahoma-based, serving all 48 contiguous states'
     ],
@@ -426,14 +426,14 @@ if (typeof window !== 'undefined') {
 
 
 // ============================================================
-// NEXUS DEMO SEED DATA — Heavy Haul Focus
+// NEXUS DEMO SEED DATA â Heavy Haul Focus
 // Seeds localStorage on first load only. Real data always wins.
 // Each key is only written if it doesn't already exist.
 // ============================================================
 (function NexusSeedDemo() {
   if (typeof window === 'undefined') return;
 
-  // Guard: ONLY seed Carrier Trucking (co_001) data — never contaminate other companies
+  // Guard: ONLY seed Carrier Trucking (co_001) data â never contaminate other companies
   var _seedActiveCo = (function(){
     try {
       return Storage.prototype._rawGet ?
