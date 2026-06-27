@@ -52,7 +52,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .prog-cnt{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
 .pbar-wrap{background:rgba(255,255,255,.06);border-radius:4px;height:6px;margin-bottom:12px;}
 .pbar-fill{height:6px;border-radius:4px;background:var(--pink);transition:width .3s;}
-.log{background:rgba(0,0,0,.4);border-radius:6px;padding:10px;max-height:150px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mid);}
+.log{background:rgba(248, 249, 250, 1),.4);border-radius:6px;padding:10px;max-height:150px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mid);}
 .ll{padding:2px 0;line-height:1.5;}.ll.ok{color:var(--green);}.ll.warn{color:var(--yellow);}.ll.err{color:var(--red);}
 /* STAGING */
 .stg-panel{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;display:none;}
@@ -88,7 +88,7 @@ tr:hover>td{background:rgba(255,255,255,.015);}
 /* SELECTS */
 select.asel{background:var(--steel);border:1px solid rgba(255,255,255,.12);color:var(--white);font-size:12px;font-family:'Barlow',sans-serif;padding:5px 7px;border-radius:5px;cursor:pointer;width:100%;min-width:130px;}
 select.asel:focus{outline:none;border-color:var(--pink);}
-select.asel option{background:#1c2535;}
+select.asel option{background:#f8f9fa;}
 .dc{min-width:140px;}.dc .drv{display:none;}.dc .drv.on{display:block;}
 .drv-note{font-size:10px;color:var(--yellow);font-family:'JetBrains Mono',monospace;display:none;margin-top:3px;}.drv-note.on{display:block;}
 .type-cell{min-width:125px;}
@@ -122,7 +122,7 @@ select.asel option{background:#1c2535;}
 .empty-icon{width:44px;height:44px;margin:0 auto 12px;color:var(--muted);}
 .empty-msg{font-size:14px;color:var(--muted);}
 /* MODAL */
-.moverlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.moverlay{position:fixed;inset:0;background:rgba(248, 249, 250, 1),.82);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;}
 .moverlay.hidden{display:none;}
 .mbox{background:var(--gunmetal);border:1px solid var(--border);border-radius:14px;width:min(920px,96vw);max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.6);}
 .mhdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
@@ -132,7 +132,7 @@ select.asel option{background:#1c2535;}
 .mbody{flex:1;overflow:auto;display:flex;flex-direction:column;}
 .mprev{flex:1;min-height:380px;}
 .mprev iframe{width:100%;height:100%;min-height:440px;border:none;background:#fff;}
-.mprev .img-wrap{display:flex;align-items:center;justify-content:center;padding:16px;background:#1a1a1a;}
+.mprev .img-wrap{display:flex;align-items:center;justify-content:center;padding:16px;background:#f8f9fa;}
 .mprev .img-wrap img{max-width:100%;max-height:480px;object-fit:contain;}
 .mprev .no-prev{display:flex;align-items:center;justify-content:center;min-height:180px;flex-direction:column;gap:10px;color:var(--muted);}
 .massign{padding:16px 18px;border-top:1px solid var(--border);background:var(--gl);flex-shrink:0;}
@@ -142,7 +142,7 @@ select.asel option{background:#1c2535;}
 .mfield label{font-size:11px;color:var(--muted);}
 .mfield select{background:var(--steel);border:1px solid rgba(255,255,255,.12);color:var(--white);font-size:13px;font-family:'Barlow',sans-serif;padding:7px 9px;border-radius:6px;width:100%;cursor:pointer;}
 .mfield select:focus{outline:none;border-color:var(--pink);}
-.mfield select option{background:#1c2535;}
+.mfield select option{background:#f8f9fa;}
 .mdrv-wrap{display:none;flex-direction:column;gap:4px;flex:1;min-width:125px;}
 .mdrv-wrap.on{display:flex;}
 /* EDIT RESULTS MODAL */
@@ -151,7 +151,7 @@ select.asel option{background:#1c2535;}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 </style>
 
-<style id="nexus-responsive-fix">
+<style>
 *{box-sizing:border-box;}
 body{overflow-x:hidden;}
 @media(max-width:768px){

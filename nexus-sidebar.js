@@ -434,7 +434,7 @@
   <div class="sidebar-nav" style="flex:1;overflow-y:auto;">
 
     <div style="padding:8px 12px 4px;">
-      <button id="nexus-search-trigger" onclick="if(window.NexusSearchUI)NexusSearchUI.open()" style="width:100%;background:#1f2937;border:1px solid #374151;color:#9ca3af;padding:8px 12px;border-radius:8px;text-align:left;cursor:pointer;font-size:13px;display:flex;justify-content:space-between;align-items:center;font-family:'Barlow',sans-serif;transition:background .15s;" onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#1f2937'">
+      <button id="nexus-search-trigger" onclick="if(window.NexusSearchUI)NexusSearchUI.open()" style="width:100%;background:#f3f4f6;border:1px solid #374151;color:#9ca3af;padding:8px 12px;border-radius:8px;text-align:left;cursor:pointer;font-size:13px;display:flex;justify-content:space-between;align-items:center;font-family:'Barlow',sans-serif;transition:background .15s;" onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#1f2937'">
         <span>🔍 Search everything…</span>
         <span style="font-size:11px;background:#374151;padding:2px 6px;border-radius:4px;color:#6b7280;font-family:'JetBrains Mono',monospace;">⌘K</span>
       </button>
