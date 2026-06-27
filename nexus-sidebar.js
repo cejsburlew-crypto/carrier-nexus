@@ -4,6 +4,71 @@
  *     Collapsible sections, Collapse All / Expand All, state persisted in localStorage,
  *     active section always auto-expanded. nexus-core.js + nexus-search.js injection.
  */
+
+// ═══════════════════════════════════════════════════════════════════
+// COMPANY-SCOPED STORAGE PROXY
+// Automatically prefixes all nexus_ data keys with the active
+// company ID so each company sees its own clean data.
+// Requires ZERO changes to any page — transparent to all callers.
+// ═══════════════════════════════════════════════════════════════════
+(function installNexusStorageProxy() {
+  if (Storage.prototype._nexusProxied) return; // only install once
+
+  // Keys that are GLOBAL — shared across all companies
+  var GLOBAL_KEYS = {
+    'nexus_active_company': 1,
+    'nexus_session': 1,
+    'nexus_theme': 1,
+    'nexus_sidebar_sections': 1,
+    'nexus_companies': 1,
+    'nexus_onboarding_complete': 1,
+    'nexus_my_usdot': 1,
+    'nexus_my_mc': 1,
+    'nexus_company_name': 1,
+    'nexus_fmcsa_webkey': 1,
+    'nexus_search_history': 1,
+    'nexus_route_prefill': 1,
+    'NEXUS_LOCAL_USERS': 1,
+    'nexus_eld_config': 1,
+    'nexus_pay_settings': 1,
+  };
+
+  function needsPrefix(key) {
+    if (typeof key !== 'string') return false;
+    if (GLOBAL_KEYS[key]) return false;
+    return key.startsWith('nexus_') || key.startsWith('nexus-');
+  }
+
+  var _get = Storage.prototype.getItem;
+  var _set = Storage.prototype.setItem;
+  var _del = Storage.prototype.removeItem;
+
+  Storage.prototype._nexusProxied = true;
+  Storage.prototype._rawGet = _get; // expose for internal use
+
+  Storage.prototype.getItem = function(key) {
+    if (!needsPrefix(key)) return _get.call(this, key);
+    var cid = _get.call(this, 'nexus_active_company') || 'co_001';
+    var scopedVal = _get.call(this, cid + ':' + key);
+    // Graceful fallback for co_001: if no scoped key yet, return the
+    // legacy unscoped value so existing Carrier Trucking data still appears.
+    if (scopedVal === null && cid === 'co_001') return _get.call(this, key);
+    return scopedVal;
+  };
+
+  Storage.prototype.setItem = function(key, value) {
+    if (!needsPrefix(key)) { _set.call(this, key, value); return; }
+    var cid = _get.call(this, 'nexus_active_company') || 'co_001';
+    _set.call(this, cid + ':' + key, value);
+  };
+
+  Storage.prototype.removeItem = function(key) {
+    if (!needsPrefix(key)) { _del.call(this, key); return; }
+    var cid = _get.call(this, 'nexus_active_company') || 'co_001';
+    _del.call(this, cid + ':' + key);
+  };
+})();
+
 (function() {
   const page = location.pathname.split('/').pop() || 'index.html';
 
