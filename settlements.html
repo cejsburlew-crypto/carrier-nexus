@@ -718,7 +718,12 @@ function renderTable(){
 
 function finalizeRow(id){
   const s = settlements.find(x=>x.id===id);
-  if(s){ s.status='approved'; applyFilters(); }
+  if(s){
+    s.status='approved';
+    stampSettlementWithCompany(s);
+    if(typeof NexusDB!=='undefined') NexusDB.Settlements.update(id, s).catch(()=>{});
+    applyFilters();
+  }
 }
 function viewPDF(id){
   const s = settlements.find(x=>x.id===id);
@@ -953,11 +958,60 @@ function emailSettlement(){
   window.location.href='mailto:?subject='+subject+'&body='+body;
 }
 
+
+/* ── MC/DOT company isolation helpers ──────────────────────────── */
+function getActiveCompany() {
+  var companies = (typeof NEXUS_COMPANY_PROFILES !== 'undefined') ? NEXUS_COMPANY_PROFILES :
+                  (typeof window.NEXUS_COMPANY_PROFILES !== 'undefined') ? window.NEXUS_COMPANY_PROFILES : [];
+  var activeId = localStorage.getItem('nexus_active_company') || 'co_001';
+  return companies.find(function(c){ return c.id === activeId; }) || companies[0] || null;
+}
+
+function verifySettlementCompanyIntegrity(settlement, activeCompany) {
+  if (!settlement.companyMC || !settlement.companyDOT) return true; // legacy — no MC/DOT stored
+  if (!activeCompany) return true;
+  if (settlement.companyMC !== String(activeCompany.mc)) return false;
+  if (settlement.companyDOT !== String(activeCompany.usdot)) return false;
+  return true;
+}
+
+function stampSettlementWithCompany(settlement) {
+  var ac = getActiveCompany();
+  if (ac) {
+    settlement.companyMC = ac.mc;
+    settlement.companyDOT = ac.usdot;
+    settlement.companyId = ac.id;
+  }
+  return settlement;
+}
+
+function checkSettlementsIntegrity() {
+  var ac = getActiveCompany();
+  if (!ac || !ac.mc) return;
+  var mismatches = settlements.filter(function(s){ return !verifySettlementCompanyIntegrity(s, ac); });
+  if (mismatches.length) {
+    var banner = document.getElementById('integrity-banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'integrity-banner';
+      banner.style.cssText = 'background:#7f1d1d;color:#fca5a5;border:1px solid #dc2626;border-radius:6px;padding:10px 16px;margin:0 28px 12px;font-size:12px;font-weight:600;';
+      var kpiBar = document.querySelector('.kpi-bar');
+      if (kpiBar) kpiBar.parentNode.insertBefore(banner, kpiBar.nextSibling);
+      else document.querySelector('.main').insertBefore(banner, document.querySelector('.filter-bar'));
+    }
+    banner.innerHTML = '&#9888; MC/DOT Integrity Warning: ' + mismatches.length + ' settlement record(s) belong to a different company (MC: ' + (mismatches[0].companyMC||'unknown') + '). Records are shown but may not apply to the active company.';
+  }
+}
+/* ── End MC/DOT helpers ─────────────────────────────────────────── */
+
 (async()=>{
   if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
   settlements = await loadSettlements();
+  // Stamp any un-stamped seed settlements with active company
+  settlements.forEach(function(s){ if(!s.companyMC) stampSettlementWithCompany(s); });
   filteredData = [...settlements];
   populateWeeks();
+  checkSettlementsIntegrity();
   renderTable();
 })();
 </script>

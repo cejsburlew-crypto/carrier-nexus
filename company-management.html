@@ -89,6 +89,19 @@
     .toast{position:fixed;bottom:24px;right:24px;background:#f8f9fa;border:1px solid var(--green);color:var(--green);padding:12px 20px;border-radius:8px;font-size:13px;z-index:9999;animation:slideIn .2s ease;font-family:'JetBrains Mono',monospace;}
     @keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
     .filter-select{background:#f8f9fa;border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:6px;font-size:13px;font-family:'Barlow',sans-serif;}
+
+    /* FMCSA VERIFICATION */
+    .fmcsa-section{padding:12px 16px;border-top:1px solid var(--border);background:#f8fffe;}
+    .fmcsa-title{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--mid);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+    .fmcsa-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+    .fmcsa-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:5px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+    .fmcsa-badge-dot{background:rgba(29,78,216,.12);border:1px solid rgba(29,78,216,.3);color:#1d4ed8;}
+    .fmcsa-badge-mc{background:rgba(21,128,61,.12);border:1px solid rgba(21,128,61,.3);color:#15803d;}
+    .fmcsa-badge-none{background:rgba(156,163,175,.1);border:1px solid rgba(156,163,175,.25);color:var(--mid);}
+    .fmcsa-links{display:flex;gap:8px;flex-wrap:wrap;}
+    .fmcsa-link{font-size:11px;color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border:1px solid rgba(29,78,216,.2);border-radius:4px;background:rgba(29,78,216,.04);transition:all .15s;}
+    .fmcsa-link:hover{background:rgba(29,78,216,.1);border-color:var(--blue);}
+    .fmcsa-verified{font-size:10px;color:var(--mid);margin-top:6px;font-style:italic;}
   </style>
 </head>
 <body>
@@ -330,6 +343,22 @@
           '<div class="co-row"><span class="co-key">HQ</span><span class="co-val">' + (co.hq || '—') + '</span></div>' +
           '<div class="co-row"><span class="co-key">Fleet Size</span><span class="co-val">' + (co.fleet_size || '—') + ' units</span></div>' +
         '</div>' +
+        (co.usdot || co.mc ? (function(){
+          var dotBadge = co.usdot ? '<span class="fmcsa-badge fmcsa-badge-dot">USDOT ' + co.usdot + '</span>' : '';
+          var mcBadge  = co.mc    ? '<span class="fmcsa-badge fmcsa-badge-mc">MC ' + co.mc + '</span>'       : '';
+          var saferUrl = co.usdot ? 'https://safer.fmcsa.dot.gov/query.asp?searchtype=ANY&query_type=queryCarrierSnapshot&query_param=USDOT&query_string=' + co.usdot : '';
+          var liUrl    = co.mc    ? 'https://li-public.fmcsa.dot.gov/LIVIEW/pkg_carrquery.prc_carrlist?pv_nmbr=' + co.mc + '&pv_type=MC&pv_a_submit=Search' : '';
+          var verifiedTs = localStorage.getItem('nexus_fmcsa_verified_' + co.id);
+          var verifiedLabel = verifiedTs ? 'Last verified ' + new Date(verifiedTs).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : 'Not yet verified';
+          var saferLink = saferUrl ? '<a class="fmcsa-link" href="' + saferUrl + '" target="_blank" rel="noopener" onclick="markFmcsaVerified(\'' + co.id + '\')">&#128279; FMCSA SAFER</a>' : '';
+          var liLink    = liUrl    ? '<a class="fmcsa-link" href="' + liUrl    + '" target="_blank" rel="noopener" onclick="markFmcsaVerified(\'' + co.id + '\')">&#128279; L&amp;I Lookup</a>' : '';
+          return '<div class="fmcsa-section">' +
+            '<div class="fmcsa-title">&#9989; FMCSA Registration</div>' +
+            '<div class="fmcsa-badges">' + dotBadge + mcBadge + '</div>' +
+            '<div class="fmcsa-links">' + saferLink + liLink + '</div>' +
+            '<div class="fmcsa-verified">' + verifiedLabel + '</div>' +
+          '</div>';
+        })() : '') +
         '<div class="co-actions">' +
           '<button class="btn btn-sm btn-secondary" onclick="window.open(\'' + profileUrl + '\',\'_blank\')">View Profile</button>' +
           '<button class="btn btn-sm btn-secondary" onclick="copyInviteLink(\'' + co.id + '\')">Invite</button>' +
@@ -580,6 +609,12 @@
       showToast('Switched to ' + co.name);
       renderIsolationTab();
     }
+  }
+
+  // ── FMCSA Verification ──
+  function markFmcsaVerified(coId) {
+    localStorage.setItem('nexus_fmcsa_verified_' + coId, new Date().toISOString());
+    setTimeout(function(){ renderCompaniesTab(); }, 800);
   }
 
   // ── Init ──

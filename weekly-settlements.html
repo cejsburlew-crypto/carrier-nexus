@@ -215,6 +215,8 @@ function saveRate(memberId, field, val, wk){
   var r = loadRates(wk);
   if(!r[memberId]) r[memberId]={};
   r[memberId][field] = val;
+  var _ac = getActiveCompany();
+  if (_ac) { r._companyMC = _ac.mc; r._companyDOT = _ac.usdot; r._companyId = _ac.id; }
   localStorage.setItem(rateKey(wk), JSON.stringify(r));
 }
 function getRate(m, field, wk){
@@ -263,8 +265,8 @@ var DED_TYPES = [
   {val:'layover',       label:'Layover Pay',           sign:+1},
 ];
 function dedKey(wk,mid){return 'nexus_weekly_ded_'+wk+'_'+mid;}
-function loadDeds(wk,mid){try{return JSON.parse(localStorage.getItem(dedKey(wk,mid))||'[]');}catch(e){return[];}}
-function saveDeds(wk,mid,arr){localStorage.setItem(dedKey(wk,mid),JSON.stringify(arr));}
+function loadDeds(wk,mid){try{var raw=JSON.parse(localStorage.getItem(dedKey(wk,mid))||'[]');if(Array.isArray(raw))return raw;if(raw.deds)return raw.deds;return[];}catch(e){return[];}}
+function saveDeds(wk,mid,arr){var _acd=getActiveCompany();var _meta={};if(_acd){_meta._companyMC=_acd.mc;_meta._companyDOT=_acd.usdot;_meta._companyId=_acd.id;}localStorage.setItem(dedKey(wk,mid),JSON.stringify({_meta:_meta,deds:arr}));}
 function addDed(mid){
   var wk=getWeekKey();var arr=loadDeds(wk,mid);
   arr.push({id:'d'+(Date.now()),type:'fuel_advance',label:'Fuel Advance',amount:0});
@@ -529,7 +531,51 @@ function generateAllPDFs(){alert('PDF generation coming soon.\n\nIndividual sett
 function fmt(v){if(v===undefined||v===null||isNaN(v))return'$0.00';var a=Math.abs(v);var s='$'+a.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});return v<0?'('+s+')':s;}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+
+/* ── MC/DOT company isolation helpers ──────────────────────────── */
+function getActiveCompany() {
+  var companies = (typeof NEXUS_COMPANY_PROFILES !== 'undefined') ? NEXUS_COMPANY_PROFILES :
+                  (typeof window.NEXUS_COMPANY_PROFILES !== 'undefined') ? window.NEXUS_COMPANY_PROFILES : [];
+  var activeId = localStorage.getItem('nexus_active_company') || 'co_001';
+  return companies.find(function(c){ return c.id === activeId; }) || companies[0] || null;
+}
+
+function verifySettlementCompanyIntegrity(settlement, activeCompany) {
+  if (!settlement.companyMC || !settlement.companyDOT) return true; // legacy — no MC/DOT stored
+  if (!activeCompany) return true;
+  if (settlement.companyMC !== activeCompany.mc) return false;
+  if (settlement.companyDOT !== activeCompany.dot) return false;
+  return true;
+}
+
+function checkWeeklyIntegrity() {
+  var ac = getActiveCompany();
+  if (!ac || !ac.mc) return; // no MC set yet — skip
+  var mismatches = [];
+  // Check all rate records across known weeks
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (!k || k.indexOf('nexus_weekly_rates_') !== 0) continue;
+    try {
+      var rec = JSON.parse(localStorage.getItem(k) || '{}');
+      if (rec._companyMC && rec._companyMC !== ac.mc) {
+        mismatches.push(k.replace('nexus_weekly_rates_', 'week '));
+      }
+    } catch(e) {}
+  }
+  if (mismatches.length) {
+    var banner = document.createElement('div');
+    banner.id = 'integrity-banner';
+    banner.style.cssText = 'background:#7f1d1d;color:#fca5a5;border:1px solid #dc2626;border-radius:6px;padding:10px 16px;margin-bottom:14px;font-size:12px;font-weight:600;';
+    banner.innerHTML = '&#9888; MC/DOT Integrity Warning: ' + mismatches.length + ' week record(s) belong to a different company (' + mismatches.join(', ') + '). Displaying current company data only.';
+    var content = document.querySelector('.content');
+    if (content) content.insertBefore(banner, content.firstChild);
+  }
+}
+/* ── End MC/DOT helpers ─────────────────────────────────────────── */
+
 render();
+checkWeeklyIntegrity();
 </script>
 </body>
 </html>
