@@ -287,6 +287,49 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .psi-save-btn{background:#1d4ed8;border:none;color:#fff;padding:12px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.06em;cursor:pointer;width:100%;margin-bottom:8px;}
 .psi-secondary-btn{background:#21262d;border:none;color:#e4e6ea;padding:10px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;cursor:pointer;}
 
+
+/* ─── COMPANY + CLOCK STRIP ─── */
+.company-strip{
+  background:#080b10;border-bottom:1px solid #1a2030;
+  padding:7px 16px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:60px;z-index:195;
+}
+.company-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.06em;color:#e4e6ea;}
+.company-name span{color:var(--accent);}
+.company-ids{font-size:10px;color:var(--muted);margin-top:1px;letter-spacing:.03em;}
+.live-clock-wrap{text-align:right;}
+.live-clock{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;letter-spacing:.05em;color:#e4e6ea;line-height:1;}
+.live-date{font-size:9px;color:var(--muted);margin-top:1px;letter-spacing:.04em;}
+
+/* ─── HOS DASHBOARD STRIP ─── */
+.hos-strip{
+  background:#060810;border-bottom:2px solid #1a2030;
+  display:flex;align-items:stretch;
+  position:sticky;top:88px;z-index:190;
+}
+.hos-cell{
+  flex:1;padding:9px 8px;border-right:1px solid #1a2030;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  cursor:default;
+}
+.hos-cell:last-child{border-right:none;}
+.hos-lbl{font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.hos-timer{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:19px;line-height:1;letter-spacing:.02em;}
+.hos-timer.safe{color:#4ade80;}
+.hos-timer.warn{color:#fb923c;}
+.hos-timer.crit{color:#f87171;}
+.hos-timer.alert{color:#f87171;animation:pulse-red 1s infinite;}
+@keyframes pulse-red{0%,100%{opacity:1;}50%{opacity:.45;}}
+.hos-sub{font-size:8px;color:#4b5563;margin-top:2px;}
+.hos-bar-track{width:100%;height:3px;background:#1a2030;border-radius:2px;margin-top:4px;}
+.hos-bar-fill{height:3px;border-radius:2px;transition:width .5s;}
+.hos-bar-fill.safe{background:#22c55e;}
+.hos-bar-fill.warn{background:#f97316;}
+.hos-bar-fill.crit{background:#ef4444;}
+
+/* ─── TOPBAR ADJUSTMENTS ─── */
+.topbar-company{font-size:10px;color:var(--accent);margin-top:1px;font-weight:600;letter-spacing:.04em;}
+
 </style>
 </head>
 <body>
@@ -295,13 +338,64 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 <div class="topbar">
   <div>
     <div class="topbar-brand">CARRIER <span>NEXUS</span></div>
-    <div class="topbar-sub">Driver Command</div>
+    <div class="topbar-sub">Driver Command · <span class="topbar-company">David Hernandez</span></div>
   </div>
   <div class="topbar-notif" onclick="openModal('alertModal')">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a5 5 0 00-5 5v3H2v1h12v-1h-1V7a5 5 0 00-5-5zM6 13a2 2 0 004 0H6z" fill="rgba(255,255,255,.7)"/></svg>
     <div class="notif-badge"></div>
   </div>
 </div>
+
+<!-- ══ COMPANY + CLOCK STRIP ══ -->
+<div class="company-strip">
+  <div>
+    <div class="company-name">CARRIER <span>TRUCKING US</span></div>
+    <div class="company-ids">USDOT 4326039 · MC 1688495 · Truck #104 · On Duty</div>
+  </div>
+  <div class="live-clock-wrap">
+    <div class="live-clock" id="liveClock">--:--:--</div>
+    <div class="live-date" id="liveDate">---</div>
+  </div>
+</div>
+
+<!-- ══ HOS DASHBOARD STRIP ══ -->
+<div class="hos-strip">
+
+  <!-- 14-Hour Window -->
+  <div class="hos-cell">
+    <div class="hos-lbl">14-HR WINDOW</div>
+    <div class="hos-timer safe" id="hos14">6:28:00</div>
+    <div class="hos-sub" id="hos14sub">remaining</div>
+    <div class="hos-bar-track"><div class="hos-bar-fill safe" id="bar14" style="width:46%"></div></div>
+  </div>
+
+  <!-- 11-Hour Drive -->
+  <div class="hos-cell">
+    <div class="hos-lbl">11-HR DRIVE</div>
+    <div class="hos-timer safe" id="hos11">6:38:00</div>
+    <div class="hos-sub" id="hos11sub">drive left</div>
+    <div class="hos-bar-track"><div class="hos-bar-fill safe" id="bar11" style="width:60%"></div></div>
+  </div>
+
+  <!-- 30-Min Break -->
+  <div class="hos-cell">
+    <div class="hos-lbl">30-MIN BREAK</div>
+    <div class="hos-timer safe" id="hos30">1:23:00</div>
+    <div class="hos-sub" id="hos30sub">to required break</div>
+    <div class="hos-bar-track"><div class="hos-bar-fill safe" id="bar30" style="width:83%"></div></div>
+  </div>
+
+  <!-- 70-Hour / 8-Day Cycle -->
+  <div class="hos-cell">
+    <div class="hos-lbl">70-HR CYCLE</div>
+    <div class="hos-timer safe" id="hos70">24:15</div>
+    <div class="hos-sub">hrs remaining</div>
+    <div class="hos-bar-track"><div class="hos-bar-fill warn" id="bar70" style="width:35%"></div></div>
+  </div>
+
+</div>
+
+
 
 
 <!-- ══════════════════════════════════════════════════════
@@ -1279,6 +1373,138 @@ function closeTireModalDirect(){ document.getElementById('tirePressureModal').cl
     drawTrailerSVG();
     renderPsiSummary('truck');
   }, 120);
+})();
+
+
+/* ═══════════════════════════════════════════════════════
+   LIVE CLOCK + HOS DASHBOARD
+   Seeded from simulated ELD state — in production these
+   values come from the ELD API / nexus-db.js
+══════════════════════════════════════════════════════ */
+
+(function(){
+  // ── Simulated ELD state ─────────────────────────────
+  var now = new Date();
+  var todayAt = function(h, m, s){
+    var d = new Date(now);
+    d.setHours(h, m, s||0, 0);
+    return d;
+  };
+
+  // On-duty start: 08:00 AM today
+  var onDutyStart = todayAt(8, 0, 0);
+  // 14-hour window ends at onDutyStart + 14hr
+  var win14end = new Date(onDutyStart.getTime() + 14 * 3600000);
+  // Drive time already used (would come from ELD): 4h 22m = 15720 sec
+  var driveSecsUsed = 4 * 3600 + 22 * 60;
+  // Max drive: 11 hours = 39600 sec
+  var maxDriveSecs = 11 * 3600;
+  // Last break ended: 11:15 AM (simulated)
+  var lastBreakEnd = todayAt(11, 15, 0);
+  // Break required after 8 consecutive hours: breakRequired at lastBreakEnd + 8hr
+  var breakRequiredAt = new Date(lastBreakEnd.getTime() + 8 * 3600000);
+  // Cycle used: 45h 45m = 164700 sec of 70-hour cycle
+  var cycleSecsUsed = 45 * 3600 + 45 * 60;
+  var maxCycleSecs = 70 * 3600;
+
+  function pad2(n){ return n < 10 ? '0' + n : '' + n; }
+  function secsToHMS(s){
+    s = Math.max(0, Math.floor(s));
+    var h = Math.floor(s / 3600);
+    var m = Math.floor((s % 3600) / 60);
+    var sc = s % 60;
+    return h + ':' + pad2(m) + ':' + pad2(sc);
+  }
+
+  function applyStatus(el, barEl, pct, secs, threshWarn, threshCrit){
+    var cls = secs <= threshCrit ? 'crit' : secs <= threshWarn ? 'warn' : 'safe';
+    el.className = 'hos-timer ' + (secs <= threshCrit ? 'alert' : cls);
+    if(barEl){
+      barEl.style.width = Math.max(0, Math.min(100, pct)) + '%';
+      barEl.className = 'hos-bar-fill ' + cls;
+    }
+  }
+
+  function tick(){
+    var n = new Date();
+
+    // ── Live clock ──────────────────────────────────────
+    var days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+    var months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    document.getElementById('liveClock').textContent =
+      pad2(n.getHours()) + ':' + pad2(n.getMinutes()) + ':' + pad2(n.getSeconds());
+    document.getElementById('liveDate').textContent =
+      days[n.getDay()] + ', ' + months[n.getMonth()] + ' ' + n.getDate() + ', ' + n.getFullYear();
+
+    // ── 14-hour window ──────────────────────────────────
+    var rem14 = (win14end.getTime() - n.getTime()) / 1000;
+    var pct14 = (rem14 / (14 * 3600)) * 100;
+    var el14 = document.getElementById('hos14');
+    var b14 = document.getElementById('bar14');
+    var s14 = document.getElementById('hos14sub');
+    if(el14){
+      if(rem14 <= 0){
+        el14.textContent = 'EXPIRED';
+        el14.className = 'hos-timer alert';
+        if(s14) s14.textContent = 'MUST REST';
+      } else {
+        el14.textContent = secsToHMS(rem14);
+        applyStatus(el14, b14, pct14, rem14, 2*3600, 3600);
+        if(s14) s14.textContent = rem14 < 3600 ? '⚠ < 1 HR LEFT' : 'remaining';
+      }
+    }
+
+    // ── 11-hour drive (drive secs don't tick unless driving — static delta) ─
+    var rem11 = maxDriveSecs - driveSecsUsed;
+    var pct11 = (rem11 / maxDriveSecs) * 100;
+    var el11 = document.getElementById('hos11');
+    var b11 = document.getElementById('bar11');
+    var s11 = document.getElementById('hos11sub');
+    if(el11){
+      if(rem11 <= 0){
+        el11.textContent = 'LIMIT HIT';
+        el11.className = 'hos-timer alert';
+        if(s11) s11.textContent = 'STOP DRIVING';
+      } else {
+        el11.textContent = secsToHMS(rem11);
+        applyStatus(el11, b11, pct11, rem11, 2*3600, 3600);
+        if(s11) s11.textContent = rem11 < 3600 ? '⚠ < 1 HR LEFT' : 'drive left';
+      }
+    }
+
+    // ── 30-min break (counts down to when break is REQUIRED) ────────────────
+    var remBreak = (breakRequiredAt.getTime() - n.getTime()) / 1000;
+    var pctBreak = (remBreak / (8 * 3600)) * 100;
+    var el30 = document.getElementById('hos30');
+    var b30 = document.getElementById('bar30');
+    var s30 = document.getElementById('hos30sub');
+    if(el30){
+      if(remBreak <= 0){
+        el30.textContent = 'BREAK NOW';
+        el30.className = 'hos-timer alert';
+        if(s30) s30.textContent = '30-MIN REQUIRED';
+      } else {
+        el30.textContent = secsToHMS(remBreak);
+        applyStatus(el30, b30, pctBreak, remBreak, 30*60, 10*60);
+        if(s30) s30.textContent = remBreak < 1800 ? '⚠ BREAK SOON' : 'to required break';
+      }
+    }
+
+    // ── 70-hour / 8-day cycle (static — doesn't change per second) ──────────
+    var rem70 = maxCycleSecs - cycleSecsUsed;
+    var pct70 = (rem70 / maxCycleSecs) * 100;
+    var el70 = document.getElementById('hos70');
+    var b70 = document.getElementById('bar70');
+    if(el70){
+      var h70 = Math.floor(rem70 / 3600);
+      var m70 = Math.floor((rem70 % 3600) / 60);
+      el70.textContent = h70 + ':' + pad2(m70);
+      applyStatus(el70, b70, pct70, rem70, 15*3600, 5*3600);
+    }
+  }
+
+  tick();
+  setInterval(tick, 1000);
 })();
 
 </script>
