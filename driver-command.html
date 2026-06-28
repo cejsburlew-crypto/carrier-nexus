@@ -218,6 +218,75 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 
 #toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transition:opacity .25s;white-space:nowrap;z-index:999;pointer-events:none;}
 #toast.show{opacity:1;}
+
+/* ─── EQUIPMENT SECTION ─── */
+.equip-hdr{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:14px 14px 6px;border-bottom:1px solid #1a2030;margin-bottom:10px;}
+.equip-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 10px;}
+.equip-card{background:#111820;border:1.5px solid #21262d;border-radius:12px;padding:12px;cursor:pointer;transition:border-color .18s;}
+.equip-card:active{filter:brightness(1.1);}
+.equip-card.active-equip{border-color:#3b82f6;background:#0e1828;}
+.equip-icon{font-size:22px;margin-bottom:6px;}
+.equip-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.04em;color:#e4e6ea;}
+.equip-detail{font-size:10px;color:var(--muted);margin-top:2px;}
+.equip-chip{display:inline-block;margin-top:6px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
+.equip-chip.ok{background:rgba(21,128,61,.18);color:#4ade80;border:1px solid rgba(34,197,94,.3);}
+.equip-chip.attached{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3);}
+.equip-tire-btn{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;font-weight:700;color:#3b82f6;cursor:pointer;padding:5px 0 0;}
+.equip-tire-btn span{font-size:14px;}
+
+/* ─── TIRE PLAN VIEW CARD ─── */
+.tire-plan-card{background:#0d1117;border:1.5px solid #21262d;border-radius:14px;overflow:hidden;margin:0 14px 10px;}
+.tire-plan-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#111820;border-bottom:1px solid #1a2030;}
+.tire-plan-bar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#e4e6ea;flex:1;}
+.tire-legend{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted);}
+.tlg{display:flex;align-items:center;gap:3px;}
+.tlg-dot{width:8px;height:8px;border-radius:50%;}
+.tlg-dot.ok{background:#4ade80;}
+.tlg-dot.warn{background:#fb923c;}
+.tlg-dot.fail{background:#f87171;}
+
+.tire-view-tabs{display:flex;border-bottom:1px solid #1a2030;}
+.tire-tab{flex:1;text-align:center;padding:9px 0;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
+.tire-tab.active{color:#3b82f6;border-bottom-color:#3b82f6;}
+
+.tire-svg-wrap{padding:14px;display:flex;flex-direction:column;align-items:center;gap:14px;}
+.tire-svg-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;}
+
+/* tire pressure summary row */
+.psi-summary{display:flex;gap:6px;padding:0 14px 12px;flex-wrap:wrap;}
+.psi-chip{background:#111820;border:1px solid #21262d;border-radius:8px;padding:5px 9px;font-size:11px;font-weight:600;min-width:56px;text-align:center;cursor:pointer;}
+.psi-chip .psi-pos{font-size:9px;color:var(--muted);display:block;margin-bottom:1px;}
+.psi-chip .psi-val{color:#4ade80;}
+.psi-chip .psi-val.warn{color:#fb923c;}
+.psi-chip .psi-val.fail{color:#f87171;}
+
+/* ─── SECTION DIVIDER ─── */
+.equip-section-divider{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:10px 14px 4px;border-top:1px solid #1a2030;margin-top:4px;}
+
+/* ─── TIRE PRESSURE MODAL ─── */
+.tire-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:600;display:none;align-items:flex-end;justify-content:center;}
+.tire-modal-overlay.open{display:flex;}
+.tire-modal-box{width:100%;max-width:480px;background:#161c24;border-radius:20px 20px 0 0;border-top:2px solid #21262d;padding-bottom:env(safe-area-inset-bottom,16px);}
+.tire-modal-handle{width:40px;height:4px;background:#30363d;border-radius:2px;margin:14px auto 0;}
+.tire-modal-hdr{display:flex;align-items:center;gap:10px;padding:14px 18px 10px;border-bottom:1px solid #1a2030;}
+.tire-modal-icon{font-size:22px;}
+.tire-modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;flex:1;}
+.tire-modal-close{background:#21262d;border:none;color:#e4e6ea;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.tire-modal-body{padding:16px 18px 20px;}
+.tire-current-psi{text-align:center;padding:16px 0 12px;}
+.tcp-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:54px;line-height:1;}
+.tcp-num.ok{color:#4ade80;}
+.tcp-num.warn{color:#fb923c;}
+.tcp-num.fail{color:#f87171;}
+.tcp-unit{font-size:14px;color:var(--muted);}
+.tcp-target{font-size:12px;color:var(--muted);margin-top:4px;}
+.psi-input-row{display:flex;gap:8px;align-items:center;margin-bottom:14px;}
+.psi-input{flex:1;background:#0d1117;border:1.5px solid #30363d;border-radius:10px;color:#e4e6ea;font-size:22px;font-family:'Barlow Condensed',sans-serif;font-weight:700;padding:10px 14px;text-align:center;outline:none;}
+.psi-input:focus{border-color:#3b82f6;}
+.psi-btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.psi-save-btn{background:#1d4ed8;border:none;color:#fff;padding:12px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.06em;cursor:pointer;width:100%;margin-bottom:8px;}
+.psi-secondary-btn{background:#21262d;border:none;color:#e4e6ea;padding:10px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;cursor:pointer;}
+
 </style>
 </head>
 <body>
@@ -354,6 +423,65 @@ nav.sidebar#nexus-sidebar{display:none!important;}
   <div class="sec-chevron" id="chev-equipment">▾</div>
 </div>
 <div class="sec-body" id="sec-equipment">
+
+  <!-- MY EQUIPMENT -->
+  <div class="equip-hdr">🚛 MY EQUIPMENT — CURRENTLY ASSIGNED</div>
+  <div class="equip-cards">
+    <!-- Truck -->
+    <div class="equip-card active-equip" id="equip-truck" onclick="selectEquipView('truck')">
+      <div class="equip-icon">🚛</div>
+      <div class="equip-name">Truck #104</div>
+      <div class="equip-detail">2021 Peterbilt 579</div>
+      <div class="equip-detail">FL · LPL 12345</div>
+      <div><span class="equip-chip ok">✓ Active</span></div>
+      <div class="equip-tire-btn"><span>🛞</span> View Tires</div>
+    </div>
+    <!-- Trailer -->
+    <div class="equip-card" id="equip-trailer" onclick="selectEquipView('trailer')">
+      <div class="equip-icon">🚋</div>
+      <div class="equip-name">Trailer #T-231</div>
+      <div class="equip-detail">2019 Utility 53' Dry Van</div>
+      <div class="equip-detail">VIN: 1UYVS2532K2012231</div>
+      <div><span class="equip-chip attached">⛓ Attached</span></div>
+      <div class="equip-tire-btn"><span>🛞</span> View Tires</div>
+    </div>
+  </div>
+
+  <!-- TIRE PLAN VIEW -->
+  <div class="tire-plan-card">
+    <div class="tire-plan-bar">
+      <div style="font-size:18px;">🛞</div>
+      <div class="tire-plan-bar-title" id="tirePlanTitle">TIRE DIAGRAM — TRUCK #104</div>
+      <div class="tire-legend">
+        <span class="tlg"><span class="tlg-dot ok"></span>OK</span>
+        <span class="tlg"><span class="tlg-dot warn"></span>Low</span>
+        <span class="tlg"><span class="tlg-dot fail"></span>Critical</span>
+      </div>
+    </div>
+    <div class="tire-view-tabs">
+      <div class="tire-tab active" id="tab-truck" onclick="switchTireView('truck')">🚛 TRUCK</div>
+      <div class="tire-tab" id="tab-trailer" onclick="switchTireView('trailer')">🚋 TRAILER</div>
+    </div>
+
+    <div class="tire-svg-wrap">
+      <!-- TRUCK SVG -->
+      <div id="plan-truck">
+        <div class="tire-svg-label">TOP-DOWN VIEW — TAP TIRE TO LOG PRESSURE</div>
+        <svg id="svgTruck" viewBox="0 0 200 290" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:240px;display:block;margin:0 auto;"></svg>
+      </div>
+      <!-- TRAILER SVG -->
+      <div id="plan-trailer" style="display:none">
+        <div class="tire-svg-label">TOP-DOWN VIEW — TAP TIRE TO LOG PRESSURE</div>
+        <svg id="svgTrailer" viewBox="0 0 200 270" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:240px;display:block;margin:0 auto;"></svg>
+      </div>
+    </div>
+
+    <!-- PSI Summary Chips -->
+    <div class="psi-summary" id="psiSummary"></div>
+  </div>
+
+  <!-- ROUTE & ROAD SECTION DIVIDER -->
+  <div class="equip-section-divider">🗺️ ROUTE & ROAD</div>
   <div class="tile-grid">
     <a class="tile c-blue" href="route-planner.html"><div class="tile-icon">🗺️</div><div class="tile-lbl">Route Planner</div></a>
     <a class="tile" href="hazard-map.html"><div class="tile-icon">🚨</div><div class="tile-lbl">Road Alerts</div></a>
@@ -367,11 +495,13 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     <a class="tile" href="parking.html"><div class="tile-icon">🅿️</div><div class="tile-lbl">Parking / Rest</div></a>
     <div class="tile" onclick="capturePhoto('Toll Receipt')"><div class="tile-icon">🛤️</div><div class="tile-lbl">Toll Receipt</div></div>
     <div class="tile" onclick="capturePhoto('Cargo Securement')"><div class="tile-icon">⛓️</div><div class="tile-lbl">Cargo Securement</div></div>
-    <div class="tile" onclick="capturePhoto('Tire Condition')"><div class="tile-icon">🛞</div><div class="tile-lbl">Tire Check Photo</div></div>
+    <div class="tile" onclick="capturePhoto('Tire Condition')"><div class="tile-icon">🛞</div><div class="tile-lbl">Tire Photo</div></div>
+    <a class="tile" href="tires.html"><div class="tile-icon">🏷️</div><div class="tile-lbl">Tire Warranty</div></a>
+    <a class="tile" href="maintenance.html"><div class="tile-icon">🔧</div><div class="tile-lbl">Maintenance</div></a>
     <div class="tile" onclick="capturePhoto('Truck Damage')"><div class="tile-icon">🚚</div><div class="tile-lbl">Truck Damage</div></div>
-    <div class="tile" onclick="capturePhoto('Trailer Damage')"><div class="tile-icon">🚋</div><div class="tile-lbl">Trailer Damage</div></div>
   </div>
 </div>
+
 
 
 <!-- ══════════════════════════════════════════════════════
@@ -899,6 +1029,287 @@ function capturePhoto(type){
     '<button onclick="openModal(\'pretripModal\')" style="margin-top:10px;width:100%;padding:10px;border:none;border-radius:8px;background:var(--green);color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:14px;letter-spacing:.05em;cursor:pointer;">Full Pre-Trip DVIR →</button>';
   }
 })();
+
+/* ═══════════════════════════════════════════════════════
+   EQUIPMENT & TIRE PLAN VIEW
+══════════════════════════════════════════════════════ */
+
+// Tire data store: psi, target, min, position label
+var TIRE_DATA = {
+  truck: {
+    'FL':  {pos:'Front Left Steer',    psi:108, target:110, min:90},
+    'FR':  {pos:'Front Right Steer',   psi:105, target:110, min:90},
+    'D1LO':{pos:'Drive 1 Left Outer',  psi:98,  target:100, min:80},
+    'D1LI':{pos:'Drive 1 Left Inner',  psi:95,  target:100, min:80},
+    'D1RI':{pos:'Drive 1 Right Inner', psi:101, target:100, min:80},
+    'D1RO':{pos:'Drive 1 Right Outer', psi:99,  target:100, min:80},
+    'D2LO':{pos:'Drive 2 Left Outer',  psi:97,  target:100, min:80},
+    'D2LI':{pos:'Drive 2 Left Inner',  psi:100, target:100, min:80},
+    'D2RI':{pos:'Drive 2 Right Inner', psi:96,  target:100, min:80},
+    'D2RO':{pos:'Drive 2 Right Outer', psi:76,  target:100, min:80}  // warn example
+  },
+  trailer: {
+    'T1LO':{pos:'Axle 1 Left Outer',   psi:100, target:105, min:85},
+    'T1LI':{pos:'Axle 1 Left Inner',   psi:103, target:105, min:85},
+    'T1RI':{pos:'Axle 1 Right Inner',  psi:101, target:105, min:85},
+    'T1RO':{pos:'Axle 1 Right Outer',  psi:98,  target:105, min:85},
+    'T2LO':{pos:'Axle 2 Left Outer',   psi:102, target:105, min:85},
+    'T2LI':{pos:'Axle 2 Left Inner',   psi:104, target:105, min:85},
+    'T2RI':{pos:'Axle 2 Right Inner',  psi:103, target:105, min:85},
+    'T2RO':{pos:'Axle 2 Right Outer',  psi:45,  target:105, min:85}  // fail example
+  }
+};
+
+function getTireStatus(t){
+  if(t.psi >= t.target * 0.93) return 'ok';
+  if(t.psi >= t.min) return 'warn';
+  return 'fail';
+}
+function tireColor(st){ return st==='ok'?'#22c55e':st==='warn'?'#f97316':'#ef4444'; }
+function tireStroke(st){ return st==='ok'?'#16a34a':st==='warn'?'#c2410c':'#b91c1c'; }
+
+var ACTIVE_TIRE_VIEW = 'truck';
+var ACTIVE_TIRE_KEY = null;
+
+/* Draw tractor top-down SVG */
+function drawTruckSVG(){
+  var svg = document.getElementById('svgTruck');
+  if(!svg) return;
+  var d = TIRE_DATA.truck;
+
+  // Colors
+  var bodyFill='#1a2332', bodyStroke='#30363d';
+
+  var out = '';
+  // Cab
+  out += '<rect x="40" y="15" width="120" height="95" rx="12" fill="'+bodyFill+'" stroke="'+bodyStroke+'" stroke-width="1.5"/>';
+  // Cab windshield strip
+  out += '<rect x="52" y="22" width="96" height="24" rx="4" fill="#0d2040" stroke="#1e3a5f" stroke-width="1"/>';
+  // Cab grill
+  out += '<rect x="50" y="90" width="100" height="14" rx="3" fill="#111820" stroke="#30363d" stroke-width="1"/>';
+  // Frame/chassis
+  out += '<rect x="75" y="110" width="50" height="155" rx="4" fill="'+bodyFill+'" stroke="'+bodyStroke+'" stroke-width="1.5"/>';
+  // 5th wheel circle
+  out += '<circle cx="100" cy="150" r="18" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>';
+  out += '<circle cx="100" cy="150" r="8" fill="#30363d"/>';
+
+  // Axle lines
+  out += '<line x1="18" y1="68" x2="182" y2="68" stroke="#30363d" stroke-width="2"/>'; // steer
+  out += '<line x1="14" y1="192" x2="186" y2="192" stroke="#30363d" stroke-width="2"/>'; // drive1
+  out += '<line x1="14" y1="222" x2="186" y2="222" stroke="#30363d" stroke-width="2"/>'; // drive2
+
+  // Helper: draw tire rect
+  function tire(key, x, y, w, h){
+    var t = d[key]; if(!t) return;
+    var st = getTireStatus(t);
+    var col = tireColor(st);
+    var str = tireStroke(st);
+    // glow rect
+    out += '<rect x="'+(x-1)+'" y="'+(y-1)+'" width="'+(w+2)+'" height="'+(h+2)+'" rx="3" fill="'+col+'" opacity="0.18"/>';
+    // tire body
+    out += '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="2.5" fill="'+col+'" stroke="'+str+'" stroke-width="1.5" style="cursor:pointer" onclick="openTireDetail('truck',''+key+'')" />';
+    // PSI label
+    var cx = x + w/2, cy = y + h/2;
+    out += '<text x="'+cx+'" y="'+(cy+1)+'" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#fff" font-family="Barlow Condensed,sans-serif" style="pointer-events:none">'+t.psi+'</text>';
+    // alert dot if warn/fail
+    if(st !== 'ok'){
+      out += '<circle cx="'+(x+w)+'" cy="'+y+'" r="4" fill="'+(st==='fail'?'#ef4444':'#f97316')+'" stroke="#0d1117" stroke-width="1"/>';
+    }
+  }
+
+  var tw=16, th=28, dtw=13, dth=26;
+  // Steer axle
+  tire('FL',  8, 54, tw, th);
+  tire('FR', 176, 54, tw, th);
+  // Drive axle 1
+  tire('D1LO', 4,  179, dtw, dth);
+  tire('D1LI', 19, 179, dtw, dth);
+  tire('D1RI', 168, 179, dtw, dth);
+  tire('D1RO', 183, 179, dtw, dth);
+  // Drive axle 2
+  tire('D2LO', 4,  209, dtw, dth);
+  tire('D2LI', 19, 209, dtw, dth);
+  tire('D2RI', 168, 209, dtw, dth);
+  tire('D2RO', 183, 209, dtw, dth);
+
+  // Direction arrow
+  out += '<polygon points="100,4 106,14 94,14" fill="#3b82f6" opacity="0.7"/>';
+  out += '<text x="100" y="284" text-anchor="middle" font-size="9" fill="#4b5563" font-family="Barlow,sans-serif">Tap tire to log pressure</text>';
+
+  svg.innerHTML = out;
+}
+
+/* Draw trailer top-down SVG */
+function drawTrailerSVG(){
+  var svg = document.getElementById('svgTrailer');
+  if(!svg) return;
+  var d = TIRE_DATA.trailer;
+  var bodyFill='#1a2332', bodyStroke='#30363d';
+
+  var out = '';
+  // Trailer box
+  out += '<rect x="40" y="10" width="120" height="240" rx="6" fill="'+bodyFill+'" stroke="'+bodyStroke+'" stroke-width="1.5"/>';
+  // Kingpin/coupling at top
+  out += '<circle cx="100" cy="20" r="10" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>';
+  // Door lines at bottom
+  out += '<line x1="40" y1="240" x2="160" y2="240" stroke="#30363d" stroke-width="1.5"/>';
+  out += '<line x1="100" y1="225" x2="100" y2="250" stroke="#30363d" stroke-width="1"/>';
+
+  // Axle lines
+  out += '<line x1="14" y1="193" x2="186" y2="193" stroke="#30363d" stroke-width="2"/>'; // axle1
+  out += '<line x1="14" y1="223" x2="186" y2="223" stroke="#30363d" stroke-width="2"/>'; // axle2
+
+  function tire(key, x, y, w, h){
+    var t = d[key]; if(!t) return;
+    var st = getTireStatus(t);
+    var col = tireColor(st);
+    var str = tireStroke(st);
+    out += '<rect x="'+(x-1)+'" y="'+(y-1)+'" width="'+(w+2)+'" height="'+(h+2)+'" rx="3" fill="'+col+'" opacity="0.18"/>';
+    out += '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="2.5" fill="'+col+'" stroke="'+str+'" stroke-width="1.5" style="cursor:pointer" onclick="openTireDetail('trailer',''+key+'')" />';
+    var cx = x + w/2, cy = y + h/2;
+    out += '<text x="'+cx+'" y="'+(cy+1)+'" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#fff" font-family="Barlow Condensed,sans-serif" style="pointer-events:none">'+t.psi+'</text>';
+    if(st !== 'ok'){
+      out += '<circle cx="'+(x+w)+'" cy="'+y+'" r="4" fill="'+(st==='fail'?'#ef4444':'#f97316')+'" stroke="#0d1117" stroke-width="1"/>';
+    }
+  }
+
+  var dtw=13, dth=26;
+  // Trailer axle 1
+  tire('T1LO', 4,  180, dtw, dth);
+  tire('T1LI', 19, 180, dtw, dth);
+  tire('T1RI', 168, 180, dtw, dth);
+  tire('T1RO', 183, 180, dtw, dth);
+  // Trailer axle 2
+  tire('T2LO', 4,  210, dtw, dth);
+  tire('T2LI', 19, 210, dtw, dth);
+  tire('T2RI', 168, 210, dtw, dth);
+  tire('T2RO', 183, 210, dtw, dth);
+
+  out += '<text x="100" y="262" text-anchor="middle" font-size="9" fill="#4b5563" font-family="Barlow,sans-serif">Tap tire to log pressure</text>';
+  svg.innerHTML = out;
+}
+
+/* PSI Summary Chips */
+function renderPsiSummary(unit){
+  var data = TIRE_DATA[unit];
+  var container = document.getElementById('psiSummary');
+  if(!container) return;
+  var h = '';
+  Object.keys(data).forEach(function(k){
+    var t = data[k];
+    var st = getTireStatus(t);
+    var shortLbl = k.replace('D1','D1-').replace('D2','D2-').replace('T1','A1-').replace('T2','A2-');
+    h += '<div class="psi-chip" onclick="openTireDetail(''+unit+'',''+k+'')">'
+        +'<span class="psi-pos">'+shortLbl+'</span>'
+        +'<span class="psi-val '+st+'">'+t.psi+'</span>'
+        +'</div>';
+  });
+  container.innerHTML = h;
+}
+
+function switchTireView(unit){
+  ACTIVE_TIRE_VIEW = unit;
+  document.getElementById('plan-truck').style.display = unit==='truck'?'block':'none';
+  document.getElementById('plan-trailer').style.display = unit==='trailer'?'block':'none';
+  document.getElementById('tab-truck').className = 'tire-tab'+(unit==='truck'?' active':'');
+  document.getElementById('tab-trailer').className = 'tire-tab'+(unit==='trailer'?' active':'');
+  var lbl = document.getElementById('tirePlanTitle');
+  if(lbl) lbl.textContent = unit==='truck'?'TIRE DIAGRAM — TRUCK #104':'TIRE DIAGRAM — TRAILER #T-231';
+  renderPsiSummary(unit);
+}
+
+function selectEquipView(unit){
+  document.getElementById('equip-truck').className = 'equip-card'+(unit==='truck'?' active-equip':'');
+  document.getElementById('equip-trailer').className = 'equip-card'+(unit==='trailer'?' active-equip':'');
+  switchTireView(unit);
+}
+
+/* Tire detail modal */
+function openTireDetail(unit, key){
+  ACTIVE_TIRE_VIEW = unit;
+  ACTIVE_TIRE_KEY = key;
+  var t = TIRE_DATA[unit][key];
+  if(!t) return;
+  var st = getTireStatus(t);
+  var el = document.getElementById('tcpNum');
+  el.textContent = t.psi;
+  el.className = 'tcp-num '+st;
+  document.getElementById('tireModalTitle').textContent = t.pos;
+  document.getElementById('tcpTarget').textContent = 'Target: '+t.target+' PSI  ·  Min: '+t.min+' PSI';
+  document.getElementById('psiInput').value = t.psi;
+  document.getElementById('tireLastLog').textContent = 'Last logged: Pre-trip today — '+t.psi+' PSI';
+  document.getElementById('tirePressureModal').classList.add('open');
+}
+
+function previewPsi(val){
+  var key = ACTIVE_TIRE_KEY;
+  var unit = ACTIVE_TIRE_VIEW;
+  if(!key || !TIRE_DATA[unit][key]) return;
+  var t = TIRE_DATA[unit][key];
+  var psi = parseInt(val, 10);
+  if(isNaN(psi)) return;
+  var st = psi >= t.target*0.93 ? 'ok' : (psi >= t.min ? 'warn' : 'fail');
+  var el = document.getElementById('tcpNum');
+  el.textContent = psi;
+  el.className = 'tcp-num '+st;
+}
+
+function saveTirePressure(){
+  var key = ACTIVE_TIRE_KEY;
+  var unit = ACTIVE_TIRE_VIEW;
+  var val = parseInt(document.getElementById('psiInput').value, 10);
+  if(isNaN(val) || val < 0 || val > 200){ alert('Enter a valid PSI between 0 and 200.'); return; }
+  TIRE_DATA[unit][key].psi = val;
+  // Redraw
+  if(unit==='truck') drawTruckSVG(); else drawTrailerSVG();
+  renderPsiSummary(unit);
+  closeTireModalDirect();
+}
+
+function openTireWarranty(){ closeTireModalDirect(); window.location.href='tires.html'; }
+function captureTirePhoto(){ closeTireModalDirect(); capturePhoto('Tire Condition — '+ACTIVE_TIRE_KEY); }
+
+function closeTireModal(e){ if(e.target===document.getElementById('tirePressureModal')) closeTireModalDirect(); }
+function closeTireModalDirect(){ document.getElementById('tirePressureModal').classList.remove('open'); }
+
+/* Init on load */
+(function initEquip(){
+  setTimeout(function(){
+    drawTruckSVG();
+    drawTrailerSVG();
+    renderPsiSummary('truck');
+  }, 120);
+})();
+
 </script>
+
+<!-- TIRE PRESSURE MODAL -->
+<div class="tire-modal-overlay" id="tirePressureModal" onclick="closeTireModal(event)">
+  <div class="tire-modal-box">
+    <div class="tire-modal-handle"></div>
+    <div class="tire-modal-hdr">
+      <div class="tire-modal-icon">🛞</div>
+      <div class="tire-modal-title" id="tireModalTitle">Tire Pressure</div>
+      <button class="tire-modal-close" onclick="closeTireModalDirect()">✕</button>
+    </div>
+    <div class="tire-modal-body">
+      <div class="tire-current-psi">
+        <div class="tcp-num" id="tcpNum">105</div>
+        <div class="tcp-unit">PSI — Current Reading</div>
+        <div class="tcp-target" id="tcpTarget">Target: 110 PSI · Min: 90 PSI</div>
+      </div>
+      <div class="psi-input-row">
+        <input class="psi-input" type="number" id="psiInput" placeholder="Enter PSI" min="0" max="200" oninput="previewPsi(this.value)">
+      </div>
+      <button class="psi-save-btn" onclick="saveTirePressure()">💾 SAVE PRESSURE READING</button>
+      <div class="psi-btn-row">
+        <button class="psi-secondary-btn" onclick="openTireWarranty()">🏷️ View Warranty</button>
+        <button class="psi-secondary-btn" onclick="captureTirePhoto()">📷 Take Tire Photo</button>
+      </div>
+      <div style="font-size:10px;color:#4b5563;text-align:center;margin-top:4px;" id="tireLastLog">Last logged: Not yet recorded</div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
