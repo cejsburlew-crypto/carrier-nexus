@@ -1,0 +1,37 @@
+<nav class="sidebar" [class.collapsed]="collapsed">
+  <div class="sidebar-brand">
+    <span class="brand-icon">⬡</span>
+    <span class="brand-name" *ngIf="!collapsed">CARRIER<span class="brand-nexus">NEXUS</span></span>
+    <button class="collapse-btn" (click)="collapsed=!collapsed">{{ collapsed ? '→' : '←' }}</button>
+  </div>
+
+  <app-company-switcher *ngIf="!collapsed"></app-company-switcher>
+
+  <div class="nav-scroll">
+    <div *ngFor="let section of nav" class="nav-section" [class.hidden]="!canSee(section.roles)">
+      <button class="nav-section-header" (click)="toggle(section.label)">
+        <span class="section-icon">{{ section.icon }}</span>
+        <span class="section-label" *ngIf="!collapsed">{{ section.label }}</span>
+        <span class="section-chevron" *ngIf="!collapsed">{{ openSection===section.label ? '▾' : '▸' }}</span>
+      </button>
+      <div class="nav-items" *ngIf="openSection===section.label || collapsed">
+        <a *ngFor="let item of section.items"
+           [routerLink]="item.route"
+           routerLinkActive="active"
+           class="nav-item"
+           [class.hidden]="!canSee(item.roles)">
+          <span class="item-icon">{{ item.icon }}</span>
+          <span class="item-label" *ngIf="!collapsed">{{ item.label }}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-chip" *ngIf="!collapsed">
+      <span class="user-name">{{ auth.currentUser?.name }}</span>
+      <span class="user-role">{{ auth.currentUser?.role }}</span>
+    </div>
+    <button class="logout-btn" (click)="logout()">{{ collapsed ? '⏻' : '⏻ Logout' }}</button>
+  </div>
+</nav>

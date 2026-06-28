@@ -1,0 +1,13 @@
+<?php require_once __DIR__.'/../../config/config.php';
+$p = require_auth(); $co = company_scope($p); $db = DB::conn();
+$week_start = date('Y-m-d', strtotime('monday this week'));
+$week_end   = date('Y-m-d', strtotime('sunday this week'));
+$active_loads       = $db->prepare('SELECT COUNT(*) FROM loads WHERE company_id=? AND status IN ("assigned","in_transit")'); $active_loads->execute([$co]);
+$avail_drivers      = $db->prepare('SELECT COUNT(*) FROM drivers WHERE company_id=? AND status IN ("active","available")'); $avail_drivers->execute([$co]);
+$settle_pending     = $db->prepare('SELECT COUNT(*) FROM settlements WHERE company_id=? AND status IN ("draft","pending")'); $settle_pending->execute([$co]);
+$revenue            = $db->prepare('SELECT COALESCE(SUM(rate+fuel_surcharge+accessorials),0) FROM loads WHERE company_id=? AND week_start=?'); $revenue->execute([$co,$week_start]);
+$expenses           = $db->prepare('SELECT COALESCE(SUM(amount),0) FROM expenses WHERE company_id=? AND date BETWEEN ? AND ?'); $expenses->execute([$co,$week_start,$week_end]);
+$expiring           = $db->prepare('SELECT COUNT(*) FROM drivers WHERE company_id=? AND (cdl_expiry BETWEEN NOW() AND DATE_ADD(NOW(),INTERVAL 30 DAY) OR medical_expiry BETWEEN NOW() AND DATE_ADD(NOW(),INTERVAL 30 DAY))'); $expiring->execute([$co]);
+$open_wo            = $db->prepare('SELECT COUNT(*) FROM work_orders WHERE company_id=? AND status IN ("open","in_progress")'); $open_wo->execute([$co]);
+$rev = (float)$revenue->fetchColumn(); $exp = (float)$expenses->fetchColumn();
+ok(['active_loads'=>(int)$active_loads->fetchColumn(),'available_drivers'=>(int)$avail_drivers->fetchColumn(),'settlements_pending'=>(int)$settle_pending->fetchColumn(),'revenue_week'=>$rev,'expenses_week'=>$exp,'net_week'=>$rev-$exp,'expiring_docs'=>(int)$expiring->fetchColumn(),'open_work_orders'=>(int)$open_wo->fetchColumn()]);

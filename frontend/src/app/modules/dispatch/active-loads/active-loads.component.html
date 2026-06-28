@@ -1,0 +1,78 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1>🚛 Active Loads</h1>
+    <div class="header-actions">
+      <select [(ngModel)]="statusFilter" (change)="load()" class="filter-select">
+        <option value="">All Statuses</option>
+        <option value="pending">Pending</option>
+        <option value="assigned">Assigned</option>
+        <option value="in_transit">In Transit</option>
+        <option value="delivered">Delivered</option>
+        <option value="invoiced">Invoiced</option>
+        <option value="paid">Paid</option>
+      </select>
+      <button class="btn-primary" (click)="showForm=!showForm">+ New Load</button>
+    </div>
+  </div>
+
+  <div class="form-card" *ngIf="showForm" [formGroup]="newLoad">
+    <h3>New Rate Confirmation</h3>
+    <div class="form-grid">
+      <div class="field"><label>Rate Con #</label><input formControlName="rate_con_number"></div>
+      <div class="field"><label>Broker</label><input formControlName="broker_name"></div>
+      <div class="field"><label>Origin City</label><input formControlName="origin_city"></div>
+      <div class="field"><label>Origin State</label><input formControlName="origin_state" maxlength="2"></div>
+      <div class="field"><label>Dest City</label><input formControlName="dest_city"></div>
+      <div class="field"><label>Dest State</label><input formControlName="dest_state" maxlength="2"></div>
+      <div class="field"><label>Pickup Date</label><input type="date" formControlName="pickup_date"></div>
+      <div class="field"><label>Delivery Date</label><input type="date" formControlName="delivery_date"></div>
+      <div class="field"><label>Commodity</label><input formControlName="commodity"></div>
+      <div class="field"><label>Weight (lbs)</label><input type="number" formControlName="weight"></div>
+      <div class="field"><label>Rate ($)</label><input type="number" formControlName="rate"></div>
+    </div>
+    <div class="field full"><label>Notes</label><textarea formControlName="notes" rows="2"></textarea></div>
+    <div class="form-actions">
+      <button class="btn-secondary" (click)="showForm=false">Cancel</button>
+      <button class="btn-primary" (click)="save()">Save Load</button>
+    </div>
+  </div>
+
+  <div class="data-table-wrap">
+    <div class="loading-state" *ngIf="loading">Loading loads…</div>
+    <table class="data-table" *ngIf="!loading">
+      <thead><tr>
+        <th>Rate Con</th><th>Broker</th><th>Driver</th>
+        <th>Origin</th><th>Destination</th><th>Pickup</th>
+        <th>Rate</th><th>Status</th><th>Actions</th>
+      </tr></thead>
+      <tbody>
+        <tr *ngFor="let l of loads">
+          <td class="mono">{{ l.rate_con_number || '—' }}</td>
+          <td>{{ l.broker_name || '—' }}</td>
+          <td>{{ l.driver_id || '—' }}</td>
+          <td>{{ l.origin_city }}, {{ l.origin_state }}</td>
+          <td>{{ l.dest_city }}, {{ l.dest_state }}</td>
+          <td>{{ l.pickup_date | date:'MM/dd/yy' }}</td>
+          <td class="money">{{ l.rate | currency }}</td>
+          <td><span class="pill" [class]="l.status">{{ l.status }}</span></td>
+          <td>
+            <select (change)="updateStatus(l.id, $any($event.target).value)" [value]="l.status" class="status-select">
+              <option value="pending">Pending</option>
+              <option value="assigned">Assigned</option>
+              <option value="in_transit">In Transit</option>
+              <option value="delivered">Delivered</option>
+              <option value="invoiced">Invoiced</option>
+              <option value="paid">Paid</option>
+            </select>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="empty" *ngIf="!loading && loads.length===0">No loads found.</div>
+  </div>
+  <div class="pagination">
+    <button [disabled]="page===1" (click)="page=page-1;load()">← Prev</button>
+    <span>Page {{ page }} of {{ Math.ceil(total/perPage) }}</span>
+    <button [disabled]="page*perPage>=total" (click)="page=page+1;load()">Next →</button>
+  </div>
+</div>

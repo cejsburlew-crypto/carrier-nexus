@@ -1,0 +1,60 @@
+<div class="dashboard">
+  <div class="page-header">
+    <h1>Dashboard</h1>
+    <span class="dot-badge">DOT {{ auth.currentCompany?.dot }} &nbsp;|&nbsp; MC {{ auth.currentCompany?.mc }}</span>
+  </div>
+
+  <div class="kpi-grid" *ngIf="stats">
+    <div class="kpi-card blue">
+      <div class="kpi-label">Active Loads</div>
+      <div class="kpi-val">{{ stats.active_loads }}</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Available Drivers</div>
+      <div class="kpi-val">{{ stats.available_drivers }}</div>
+    </div>
+    <div class="kpi-card yellow">
+      <div class="kpi-label">Settlements Pending</div>
+      <div class="kpi-val">{{ stats.settlements_pending }}</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Revenue This Week</div>
+      <div class="kpi-val">{{ stats.revenue_week | currency }}</div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-label">Expenses This Week</div>
+      <div class="kpi-val">{{ stats.expenses_week | currency }}</div>
+    </div>
+    <div class="kpi-card" [class.green]="stats.net_week >= 0" [class.red]="stats.net_week < 0">
+      <div class="kpi-label">Net This Week</div>
+      <div class="kpi-val">{{ stats.net_week | currency }}</div>
+    </div>
+    <div class="kpi-card" [class.red]="stats.expiring_docs > 0" [class.green]="stats.expiring_docs === 0">
+      <div class="kpi-label">Expiring Docs (30d)</div>
+      <div class="kpi-val">{{ stats.expiring_docs }}</div>
+    </div>
+    <div class="kpi-card yellow">
+      <div class="kpi-label">Open Work Orders</div>
+      <div class="kpi-val">{{ stats.open_work_orders }}</div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-title">Active Loads In Transit</div>
+    <div class="load-skeleton" *ngIf="loading">Loading…</div>
+    <table class="data-table" *ngIf="!loading && recentLoads.length">
+      <thead><tr><th>Rate Con</th><th>Driver</th><th>Origin → Dest</th><th>Pickup</th><th>Rate</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let load of recentLoads">
+          <td>{{ load.rate_con_number }}</td>
+          <td>{{ load.driver_name }}</td>
+          <td>{{ load.origin_city }}, {{ load.origin_state }} → {{ load.dest_city }}, {{ load.dest_state }}</td>
+          <td>{{ load.pickup_date | date:'MM/dd' }}</td>
+          <td>{{ load.rate | currency }}</td>
+          <td><span class="status-pill" [class]="load.status">{{ load.status }}</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="empty" *ngIf="!loading && !recentLoads.length">No active loads in transit.</div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<div class="login-page" [class.hh-brand]="brand==='hh'">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="logo-hex">⬡</span>
+      <span class="logo-text">CARRIER<span class="logo-nexus">NEXUS</span></span>
+    </div>
+    <p class="login-sub">{{ brand==='hh' ? 'Heavy Haulers LLC' : 'Fleet Command Login' }}</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="field">
+        <label>Email</label>
+        <input formControlName="email" type="email" placeholder="you@company.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input formControlName="password" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div class="error" *ngIf="error">{{ error }}</div>
+      <button type="submit" class="btn-login" [disabled]="loading">
+        {{ loading ? 'Signing in…' : 'Sign In' }}
+      </button>
+    </form>
+  </div>
+</div>

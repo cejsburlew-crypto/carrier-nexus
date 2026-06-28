@@ -1,0 +1,39 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1>👥 Driver Roster</h1>
+    <button class="btn-primary" (click)="showForm=!showForm">+ Add Driver</button>
+  </div>
+
+  <div class="form-card" *ngIf="showForm">
+    <h3>New Driver</h3>
+    <div class="form-grid">
+      <div class="field"><label>Full Name</label><input [(ngModel)]="newDriver.name"></div>
+      <div class="field"><label>Email</label><input [(ngModel)]="newDriver.email" type="email"></div>
+      <div class="field"><label>Phone</label><input [(ngModel)]="newDriver.phone"></div>
+      <div class="field"><label>CDL Number</label><input [(ngModel)]="newDriver.cdl_number"></div>
+      <div class="field"><label>CDL State</label><input [(ngModel)]="newDriver.cdl_state" maxlength="2"></div>
+      <div class="field"><label>CDL Expiry</label><input [(ngModel)]="newDriver.cdl_expiry" type="date"></div>
+      <div class="field"><label>Medical Card Expiry</label><input [(ngModel)]="newDriver.medical_expiry" type="date"></div>
+      <div class="field"><label>Hire Date</label><input [(ngModel)]="newDriver.hire_date" type="date"></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-secondary" (click)="showForm=false">Cancel</button>
+      <button class="btn-primary" (click)="save()">Save Driver</button>
+    </div>
+  </div>
+
+  <div class="driver-grid">
+    <div class="driver-card" *ngFor="let d of drivers" (click)="view(d.id)">
+      <div class="driver-avatar">{{ d.name.charAt(0) }}</div>
+      <div class="driver-info">
+        <div class="driver-name">{{ d.name }}</div>
+        <div class="driver-meta">{{ d.email }}</div>
+        <div class="driver-meta">CDL: {{ d.cdl_number }} ({{ d.cdl_state }})</div>
+        <div class="driver-badges">
+          <span class="badge" [class]="statusColor(d.status)">{{ d.status }}</span>
+          <span class="badge warn" *ngIf="d.cdl_expiry">CDL exp {{ d.cdl_expiry | date:'MM/yy' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

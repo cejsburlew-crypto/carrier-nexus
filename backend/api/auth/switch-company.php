@@ -1,0 +1,10 @@
+<?php require_once __DIR__.'/../../config/config.php';
+$p = require_auth(); require_role($p, 'admin');
+$b = body(); $companyId = (int)($b['company_id'] ?? 0);
+if (!$companyId) err('company_id required');
+$co = DB::conn()->prepare('SELECT * FROM companies WHERE id=? AND active=1');
+$co->execute([$companyId]); $row = $co->fetch();
+if (!$row) err('Company not found', 404);
+$exp = time() + JWT_TTL;
+$token = jwt_encode(['user_id'=>$p['user_id'],'company_id'=>$companyId,'role'=>$p['role'],'exp'=>$exp]);
+ok(['token'=>$token,'expires_at'=>date('c',$exp),'company'=>$row]);

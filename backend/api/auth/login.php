@@ -1,0 +1,14 @@
+<?php require_once __DIR__.'/../../config/config.php';
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') err('Method not allowed', 405);
+$b = body(); $email = trim($b['email'] ?? ''); $password = $b['password'] ?? '';
+if (!$email || !$password) err('Email and password required');
+$db = DB::conn();
+$user = $db->prepare('SELECT u.*, c.id as cid, c.name as cname, c.dot, c.mc, c.scac FROM users u JOIN companies c ON c.id=u.company_id WHERE u.email=? AND u.active=1');
+$user->execute([$email]);
+$row = $user->fetch();
+if (!$row || !password_verify($password, $row['password'])) err('Invalid credentials', 401);
+$exp = time() + JWT_TTL;
+$token = jwt_encode(['user_id'=>$row['id'],'company_id'=>$row['company_id'],'role'=>$row['role'],'exp'=>$exp]);
+$db->prepare('INSERT INTO auth_tokens (user_id,token,expires_at) VALUES (?,?,FROM_UNIXTIME(?))')->execute([$row['id'],$token,$exp]);
+$db->prepare('UPDATE users SET last_login=NOW() WHERE id=?')->execute([$row['id']]);
+ok(['token'=>$token,'expires_at'=>date('c',$exp),'user'=>['id'=>$row['id'],'name'=>$row['name'],'email'=>$row['email'],'role'=>$row['role'],'member_id'=>$row['member_id']],'company'=>['id'=>$row['company_id'],'name'=>$row['cname'],'dot'=>$row['dot'],'mc'=>$row['mc'],'scac'=>$row['scac']]]);
