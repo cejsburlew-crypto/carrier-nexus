@@ -480,6 +480,31 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 
 <script>
 var filteredDocs = [];
+
+/* ── Company isolation (DOT/MC scoping) ─────────────────────────── */
+function _getActiveDocCompany() {
+  var profiles = (typeof window.NEXUS_COMPANY_PROFILES !== 'undefined') ? window.NEXUS_COMPANY_PROFILES : [];
+  var id = localStorage.getItem('nexus_active_company') || 'co_001';
+  return profiles.find(function(c){ return c.id === id; }) || profiles[0] || null;
+}
+function _docBelongsToActiveCompany(doc) {
+  var ac = _getActiveDocCompany();
+  if (!ac) return true;
+  // Legacy records without a stamp default to Carrier Trucking (co_001)
+  var recMC  = doc.companyMC  || '1688495';
+  var recDOT = doc.companyDOT || '4326039';
+  return recMC === String(ac.mc) && recDOT === String(ac.usdot);
+}
+function _stampDocWithCarrierTrucking(doc) {
+  if (!doc.companyMC || !doc.companyDOT) {
+    doc.companyMC  = '1688495';
+    doc.companyDOT = '4326039';
+    doc.companyId  = 'co_001';
+  }
+  return doc;
+}
+/* ── End company isolation ──────────────────────────────────────── */
+
 var documents = [
   {date:"2026-05-22",filename:"AVIS - ALLQUIP LOAD CONFIRMATION 36159.pdf",driver:"AVIS",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
   {date:"2026-05-22",filename:"AVIS - ALLQUIP LOAD CONFIRMATION 36158.pdf",driver:"AVIS",type:"Load Confirmation",add_deduct:"ADD",driveId:""},
@@ -631,13 +656,16 @@ function restrictByRole(docs){
 /* ── End access control ─────────────────────────────────────── */
 
 function applyFilters(){
+  // Company isolation — stamp then filter before any other filtering
+  documents = documents.map(_stampDocWithCarrierTrucking);
+  var allDocs = documents.filter(_docBelongsToActiveCompany);
   const search = document.getElementById('search-input').value.toLowerCase();
   const dv = document.getElementById('f-driver').value;
   const tv = document.getElementById('f-type').value;
   const from = document.getElementById('f-date-from').value;
   const to = document.getElementById('f-date-to').value;
 
-  var _roleDocs = restrictByRole(documents);
+  var _roleDocs = restrictByRole(allDocs);
   filteredDocs = _roleDocs;
   const filtered = _roleDocs.filter(d=>{
     if(search && !d.filename.toLowerCase().includes(search)) return false;

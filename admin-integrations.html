@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carrier Nexus — Admin: Integrations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="nexus-config.js"></script>
+<script src="nexus-sidebar.js"></script>
+<style>
+  :root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#e91e8c;--green:#3fb950;--yellow:#d29922;--blue:#58a6ff;--red:#f85149;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+  #sidebar-mount{flex-shrink:0;}
+  .main{flex:1;padding:28px 32px;overflow-y:auto;}
+  h1{font-size:22px;font-weight:700;margin-bottom:4px;}
+  .subtitle{color:var(--muted);font-size:13px;margin-bottom:24px;}
+  
+  /* Section headers */
+  .section-title{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:28px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+  
+  /* Integration cards grid */
+  .int-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:8px;}
+  .int-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;transition:border-color .15s;}
+  .int-card:hover{border-color:#444c56;}
+  .int-header{display:flex;align-items:center;gap:12px;}
+  .int-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+  .int-meta{flex:1;}
+  .int-name{font-weight:700;font-size:14px;}
+  .int-type{font-size:11px;color:var(--muted);margin-top:2px;}
+  .status-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+  .status-live{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3);}
+  .status-config{background:rgba(210,153,34,.12);color:var(--yellow);border:1px solid rgba(210,153,34,.3);}
+  .status-planned{background:rgba(88,166,255,.1);color:var(--blue);border:1px solid rgba(88,166,255,.25);}
+  .int-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+  .int-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .btn-sm{font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;border:1px solid var(--border);cursor:pointer;font-family:'Barlow',sans-serif;background:transparent;color:var(--text);transition:all .15s;}
+  .btn-sm:hover{border-color:#58a6ff;color:#58a6ff;}
+  .btn-sm.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .btn-sm.primary:hover{background:#c7175a;}
+  .btn-sm.danger{border-color:rgba(248,81,73,.4);color:var(--red);}
+  
+  /* API key panel */
+  .api-key-panel{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:28px;}
+  .api-key-panel h3{font-size:14px;font-weight:700;margin-bottom:14px;}
+  .key-row{display:flex;align-items:center;gap:10px;background:#0d1117;border:1px solid var(--border);border-radius:7px;padding:10px 14px;margin-bottom:10px;}
+  .key-label{font-size:11px;font-weight:700;color:var(--muted);min-width:120px;}
+  .key-value{font-family:monospace;font-size:12px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .key-value.masked{letter-spacing:.15em;color:var(--muted);}
+  .copy-btn{font-size:10px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'Barlow',sans-serif;white-space:nowrap;}
+  .copy-btn:hover{color:var(--text);border-color:#58a6ff;}
+  .reveal-btn{font-size:10px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'Barlow',sans-serif;}
+  
+  /* Download SDK box */
+  .sdk-box{background:linear-gradient(135deg,rgba(233,30,140,.08),rgba(88,166,255,.08));border:1px solid rgba(233,30,140,.3);border-radius:10px;padding:22px 24px;display:flex;align-items:center;gap:20px;margin-bottom:28px;}
+  .sdk-icon{font-size:36px;flex-shrink:0;}
+  .sdk-text h3{font-size:15px;font-weight:700;margin-bottom:4px;}
+  .sdk-text p{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px;}
+  .sdk-btns{display:flex;gap:8px;flex-wrap:wrap;}
+  .btn-download{font-size:12px;font-weight:700;padding:8px 18px;border-radius:7px;border:none;cursor:pointer;font-family:'Barlow',sans-serif;display:flex;align-items:center;gap:6px;}
+  .btn-download.main-dl{background:var(--accent);color:#fff;}
+  .btn-download.main-dl:hover{background:#c7175a;}
+  .btn-download.sec-dl{background:var(--card);color:var(--text);border:1px solid var(--border);}
+  .btn-download.sec-dl:hover{border-color:#58a6ff;color:#58a6ff;}
+  
+  /* Webhook log */
+  .log-table{width:100%;border-collapse:collapse;font-size:12px;}
+  .log-table th{text-align:left;padding:8px 12px;color:var(--muted);font-weight:600;font-size:11px;border-bottom:1px solid var(--border);}
+  .log-table td{padding:9px 12px;border-bottom:1px solid #1c2128;color:var(--text);}
+  .log-table tr:last-child td{border-bottom:none;}
+  .method-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;}
+  .method-post{background:rgba(63,185,80,.15);color:var(--green);}
+  .method-get{background:rgba(88,166,255,.12);color:var(--blue);}
+  .http-200{color:var(--green);}
+  .http-4xx{color:var(--red);}
+  
+  /* Toast */
+  #toast{position:fixed;bottom:24px;right:24px;background:#1c2128;border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:999;}
+  #toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div id="sidebar-mount"></div>
+<div class="main">
+  <h1>Integrations &amp; API</h1>
+  <p class="subtitle">Manage connected apps, API credentials, and download the Carrier Nexus API integration kit.</p>
+
+  <!-- SDK Download Banner -->
+  <div class="sdk-box">
+    <div class="sdk-icon">📦</div>
+    <div class="sdk-text">
+      <h3>Carrier Nexus API Integration Kit</h3>
+      <p>Download the complete API spec, Postman collection, JavaScript SDK, and PHP client — everything a developer needs to integrate with the Carrier Nexus platform from any external system.</p>
+      <div class="sdk-btns">
+        <button class="btn-download main-dl" onclick="downloadApiKit()">&#8595; Download Full API Kit (.zip)</button>
+        <button class="btn-download sec-dl" onclick="downloadPostman()">&#8595; Postman Collection</button>
+        <button class="btn-download sec-dl" onclick="downloadOpenApi()">&#8595; OpenAPI Spec (JSON)</button>
+        <button class="btn-download sec-dl" onclick="copyBaseUrl()">&#128203; Copy Base URL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Keys -->
+  <div class="api-key-panel">
+    <h3>🔑 API Credentials</h3>
+    <div class="key-row">
+      <span class="key-label">API Base URL</span>
+      <span class="key-value" id="base-url-val">https://cejsburlew-crypto.github.io/carrier-nexus/api/</span>
+      <button class="copy-btn" onclick="copyVal('base-url-val')">Copy</button>
+    </div>
+    <div class="key-row">
+      <span class="key-label">Company DOT</span>
+      <span class="key-value">4326039</span>
+      <button class="copy-btn" onclick="copyText('4326039')">Copy</button>
+    </div>
+    <div class="key-row">
+      <span class="key-label">Company MC</span>
+      <span class="key-value">1688495</span>
+      <button class="copy-btn" onclick="copyText('1688495')">Copy</button>
+    </div>
+    <div class="key-row">
+      <span class="key-label">Admin Token</span>
+      <span class="key-value masked" id="admin-token-val">••••••••••••••••••••••••••••••••</span>
+      <button class="reveal-btn" onclick="revealToken()">Reveal</button>
+      <button class="copy-btn" onclick="copyToken()">Copy</button>
+    </div>
+    <div class="key-row">
+      <span class="key-label">Google Client ID</span>
+      <span class="key-value" id="gclient-val">662145578280-f03nl1nqti0c6v3kojpbkbvognc10coj.apps.googleusercontent.com</span>
+      <button class="copy-btn" onclick="copyVal('gclient-val')">Copy</button>
+    </div>
+  </div>
+
+  <!-- Connected Integrations -->
+  <div class="section-title">Connected Integrations</div>
+  <div class="int-grid">
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(234,67,53,.15);">📧</div>
+        <div class="int-meta">
+          <div class="int-name">Gmail</div>
+          <div class="int-type">Email · Document Sync</div>
+        </div>
+        <span class="status-badge status-live">LIVE</span>
+      </div>
+      <div class="int-desc">Scans inbox for BOLs, rate confirmations, and permits. Auto-files attachments to Google Drive vault by driver and document type.</div>
+      <div class="int-actions">
+        <button class="btn-sm primary" onclick="goPage('inbox-sync.html')">Open Inbox Sync</button>
+        <button class="btn-sm" onclick="showConfig('gmail')">Configure</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(66,133,244,.15);">🗂️</div>
+        <div class="int-meta">
+          <div class="int-name">Google Drive</div>
+          <div class="int-type">File Storage · Vault</div>
+        </div>
+        <span class="status-badge status-live">LIVE</span>
+      </div>
+      <div class="int-desc">Primary document vault. All BOLs, rate cons, permits, CDLs, and settlement PDFs are stored in a structured folder hierarchy keyed by dispatcher and driver.</div>
+      <div class="int-actions">
+        <button class="btn-sm primary" onclick="goPage('documents.html')">View Vault</button>
+        <button class="btn-sm" onclick="showConfig('drive')">Configure</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(52,211,153,.15);">📊</div>
+        <div class="int-meta">
+          <div class="int-name">Google Sheets</div>
+          <div class="int-type">Data Sync · Reporting</div>
+        </div>
+        <span class="status-badge status-live">LIVE</span>
+      </div>
+      <div class="int-desc">Bidirectional sync of document records, load data, and settlement summaries. Used for Drive Sync CSV import and optional external reporting.</div>
+      <div class="int-actions">
+        <button class="btn-sm primary" onclick="goPage('documents.html')">Open Documents</button>
+        <button class="btn-sm" onclick="showConfig('sheets')">Configure</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(255,255,255,.07);">🐙</div>
+        <div class="int-meta">
+          <div class="int-name">GitHub</div>
+          <div class="int-type">Config Sync · Deployment</div>
+        </div>
+        <span class="status-badge status-live">LIVE</span>
+      </div>
+      <div class="int-desc">User password hashes and platform config are synced to the GitHub repo via API. Changes pushed on password update or user management actions.</div>
+      <div class="int-actions">
+        <button class="btn-sm primary" onclick="window.open('https://github.com/cejsburlew-crypto/carrier-nexus','_blank')">View Repo</button>
+        <button class="btn-sm" onclick="showConfig('github')">Configure</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(233,30,140,.12);">🤖</div>
+        <div class="int-meta">
+          <div class="int-name">Nexus AI (Claude)</div>
+          <div class="int-type">AI Assistant · Document OCR</div>
+        </div>
+        <span class="status-badge status-live">LIVE</span>
+      </div>
+      <div class="int-desc">Anthropic Claude powers the Nexus AI assistant, document classification, confidence scoring, and driver coaching insights.</div>
+      <div class="int-actions">
+        <button class="btn-sm primary" onclick="goPage('nexus-ai.html')">Open AI</button>
+        <button class="btn-sm" onclick="showConfig('claude')">Configure</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(255,144,0,.12);">🗺️</div>
+        <div class="int-meta">
+          <div class="int-name">Google Maps / OSRM</div>
+          <div class="int-type">Route Planning · Mileage</div>
+        </div>
+        <span class="status-badge status-live">LIVE</span>
+      </div>
+      <div class="int-desc">Powers the Route Intelligence module for trip planning, IFTA mileage tracking, hazard map overlays, and permit route validation.</div>
+      <div class="int-actions">
+        <button class="btn-sm primary" onclick="goPage('route-planner.html')">Route Planner</button>
+        <button class="btn-sm" onclick="showConfig('maps')">Configure</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- API-Compatible External Apps -->
+  <div class="section-title">API-Compatible External Apps</div>
+  <div class="int-grid">
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(88,166,255,.1);">🚛</div>
+        <div class="int-meta">
+          <div class="int-name">Samsara</div>
+          <div class="int-type">ELD · GPS · Telematics</div>
+        </div>
+        <span class="status-badge status-config">CONFIGURE</span>
+      </div>
+      <div class="int-desc">Pull real-time vehicle location, HOS logs, and driver activity into the Fleet Command and GPS tracking modules via Samsara REST API.</div>
+      <div class="int-actions">
+        <button class="btn-sm primary" onclick="showConfig('samsara')">Connect</button>
+        <button class="btn-sm" onclick="viewDocs('samsara')">API Docs</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(88,166,255,.1);">📡</div>
+        <div class="int-meta">
+          <div class="int-name">KeepTruckin / Motive</div>
+          <div class="int-type">ELD · HOS · IFTA</div>
+        </div>
+        <span class="status-badge status-config">CONFIGURE</span>
+      </div>
+      <div class="int-desc">ELD data, HOS violations, and IFTA mileage logs sync directly into the Carrier Nexus compliance and financials modules.</div>
+      <div class="int-actions">
+        <button class="btn-sm primary" onclick="showConfig('motive')">Connect</button>
+        <button class="btn-sm" onclick="viewDocs('motive')">API Docs</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(88,166,255,.1);">💳</div>
+        <div class="int-meta">
+          <div class="int-name">EFS / Comdata Fuel Cards</div>
+          <div class="int-type">Fuel · Expenses · IFTA</div>
+        </div>
+        <span class="status-badge status-config">CONFIGURE</span>
+      </div>
+      <div class="int-desc">Auto-import fuel transactions from EFS or Comdata into the Expenses and IFTA modules. Eliminates manual entry and keeps gallons-by-state accurate.</div>
+      <div class="int-actions">
+        <button class="btn-sm primary" onclick="showConfig('efs')">Connect</button>
+        <button class="btn-sm" onclick="viewDocs('efs')">API Docs</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(88,166,255,.1);">🏦</div>
+        <div class="int-meta">
+          <div class="int-name">Triumph / OTR Capital</div>
+          <div class="int-type">Factoring · Invoice Finance</div>
+        </div>
+        <span class="status-badge status-config">CONFIGURE</span>
+      </div>
+      <div class="int-desc">Submit invoices directly to factoring partners and pull funding status into the Factoring module. Reduces factoring admin by 80%.</div>
+      <div class="int-actions">
+        <button class="btn-sm primary" onclick="showConfig('factoring')">Connect</button>
+        <button class="btn-sm" onclick="viewDocs('factoring')">API Docs</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(88,166,255,.1);">📋</div>
+        <div class="int-meta">
+          <div class="int-name">DAT / Truckstop Load Board</div>
+          <div class="int-type">Load Board · Rates</div>
+        </div>
+        <span class="status-badge status-config">CONFIGURE</span>
+      </div>
+      <div class="int-desc">Pull available loads from DAT or Truckstop directly into the Nexus Load Board. Book loads and auto-create rate cons without leaving the platform.</div>
+      <div class="int-actions">
+        <button class="btn-sm primary" onclick="showConfig('dat')">Connect</button>
+        <button class="btn-sm" onclick="viewDocs('dat')">API Docs</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(88,166,255,.1);">🔔</div>
+        <div class="int-meta">
+          <div class="int-name">Twilio SMS</div>
+          <div class="int-type">Driver Notifications · Alerts</div>
+        </div>
+        <span class="status-badge status-config">CONFIGURE</span>
+      </div>
+      <div class="int-desc">Send load assignments, settlement notifications, and hazard alerts to drivers via SMS. Powers the Communications Board outbound messaging.</div>
+      <div class="int-actions">
+        <button class="btn-sm primary" onclick="showConfig('twilio')">Connect</button>
+        <button class="btn-sm" onclick="viewDocs('twilio')">API Docs</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(88,166,255,.1);">🏛️</div>
+        <div class="int-meta">
+          <div class="int-name">FMCSA SAFER Web</div>
+          <div class="int-type">Compliance · CSA Scores</div>
+        </div>
+        <span class="status-badge status-config">CONFIGURE</span>
+      </div>
+      <div class="int-desc">Pull live CSA scores, inspection history, and violation data from FMCSA directly into the Compliance module. Auto-flag score changes.</div>
+      <div class="int-actions">
+        <button class="btn-sm primary" onclick="showConfig('fmcsa')">Connect</button>
+        <button class="btn-sm" onclick="viewDocs('fmcsa')">API Docs</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(88,166,255,.1);">🛂</div>
+        <div class="int-meta">
+          <div class="int-name">Permit Portals (OSOW)</div>
+          <div class="int-type">Oversize Permits · State APIs</div>
+        </div>
+        <span class="status-badge status-config">CONFIGURE</span>
+      </div>
+      <div class="int-desc">Connect state permit APIs (TX, AZ, NM, CA, etc.) to auto-request and track oversize/overweight permits. Feeds directly into the Permits module.</div>
+      <div class="int-actions">
+        <button class="btn-sm primary" onclick="showConfig('permits')">Connect</button>
+        <button class="btn-sm" onclick="viewDocs('permits')">API Docs</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(88,166,255,.1);">💬</div>
+        <div class="int-meta">
+          <div class="int-name">Facebook / Instagram</div>
+          <div class="int-type">Social · Comm Board</div>
+        </div>
+        <span class="status-badge status-planned">PLANNED</span>
+      </div>
+      <div class="int-desc">Unified social inbox — pull FB/IG messages and comments into the Communications Board alongside email and SMS.</div>
+      <div class="int-actions">
+        <button class="btn-sm" onclick="showConfig('meta')">Coming Soon</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(88,166,255,.1);">💼</div>
+        <div class="int-meta">
+          <div class="int-name">LinkedIn</div>
+          <div class="int-type">Driver Recruiting</div>
+        </div>
+        <span class="status-badge status-planned">PLANNED</span>
+      </div>
+      <div class="int-desc">Post open driver positions and receive applicant leads directly into the Drivers module recruiting pipeline.</div>
+      <div class="int-actions">
+        <button class="btn-sm" onclick="showConfig('linkedin')">Coming Soon</button>
+      </div>
+    </div>
+
+    <div class="int-card">
+      <div class="int-header">
+        <div class="int-icon" style="background:rgba(88,166,255,.1);">💊</div>
+        <div class="int-meta">
+          <div class="int-name">Clearinghouse (FMCSA)</div>
+          <div class="int-type">Drug &amp; Alcohol · CDL</div>
+        </div>
+        <span class="status-badge status-planned">PLANNED</span>
+      </div>
+      <div class="int-desc">Query and report drug/alcohol violations to the FMCSA Drug &amp; Alcohol Clearinghouse. Keeps 49 CFR Part 382 compliance automated.</div>
+      <div class="int-actions">
+        <button class="btn-sm" onclick="showConfig('clearinghouse')">Coming Soon</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Webhook Event Log -->
+  <div class="section-title" style="margin-top:32px;">Recent API Activity</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:32px;">
+    <table class="log-table">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Method</th>
+          <th>Endpoint</th>
+          <th>Status</th>
+          <th>Source</th>
+        </tr>
+      </thead>
+      <tbody id="log-body">
+        <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">No API events logged yet. Events will appear here as integrations become active.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Config Modal -->
+<div id="config-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center;">
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:12px;width:480px;max-width:95vw;padding:28px;">
+    <h3 id="modal-title" style="font-size:16px;font-weight:700;margin-bottom:6px;"></h3>
+    <p id="modal-desc" style="font-size:13px;color:#8b949e;margin-bottom:20px;"></p>
+    <div id="modal-fields"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+      <button class="btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm primary" onclick="saveConfig()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const INT_CONFIG = {
+  gmail:    { title:'Gmail Configuration', desc:'Gmail is connected via Google OAuth. Manage labels and sync settings.', fields:[{label:'Inbox Label',key:'gmailLabel',val:'INBOX'},{label:'Attachment Types',key:'attachTypes',val:'PDF,JPG,PNG'}] },
+  drive:    { title:'Google Drive Configuration', desc:'Configure the vault root folder for document storage.', fields:[{label:'Vault Root Folder ID',key:'driveRootId',val:'1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0'}] },
+  sheets:   { title:'Google Sheets Configuration', desc:'CSV export URL for Drive Sync import.', fields:[{label:'Sheets CSV URL',key:'driveSyncCsvUrl',val:''}] },
+  github:   { title:'GitHub Configuration', desc:'Config sync repo and access token.', fields:[{label:'Repo',key:'ghRepo',val:'cejsburlew-crypto/carrier-nexus'},{label:'Token (stored locally)',key:'ghToken',val:'',type:'password'}] },
+  claude:   { title:'Nexus AI (Claude) Configuration', desc:'Anthropic API key for AI assistant and document classification.', fields:[{label:'Anthropic API Key',key:'claudeKey',val:'',type:'password'}] },
+  maps:     { title:'Maps Configuration', desc:'Google Maps API key for Route Intelligence.', fields:[{label:'Google Maps API Key',key:'mapsKey',val:'',type:'password'}] },
+  samsara:  { title:'Samsara ELD Integration', desc:'Enter your Samsara API token to sync GPS, HOS, and vehicle data.', fields:[{label:'API Token',key:'samsaraToken',val:'',type:'password'},{label:'Organization ID',key:'samsaraOrgId',val:''}] },
+  motive:   { title:'Motive / KeepTruckin Integration', desc:'Enter your Motive API credentials.', fields:[{label:'API Key',key:'motiveKey',val:'',type:'password'}] },
+  efs:      { title:'EFS Fuel Card Integration', desc:'EFS API credentials for fuel transaction sync.', fields:[{label:'EFS Account ID',key:'efsAccount',val:''},{label:'API Secret',key:'efsSecret',val:'',type:'password'}] },
+  factoring:{ title:'Factoring Integration', desc:'Configure your factoring partner API.', fields:[{label:'Provider',key:'factoringProvider',val:'Triumph'},{label:'API Key',key:'factoringKey',val:'',type:'password'}] },
+  dat:      { title:'DAT Load Board Integration', desc:'DAT API credentials for load board access.', fields:[{label:'DAT Username',key:'datUser',val:''},{label:'DAT API Key',key:'datKey',val:'',type:'password'}] },
+  twilio:   { title:'Twilio SMS Integration', desc:'Twilio credentials for driver SMS notifications.', fields:[{label:'Account SID',key:'twilioSid',val:''},{label:'Auth Token',key:'twilioToken',val:'',type:'password'},{label:'From Number',key:'twilioFrom',val:''}] },
+  fmcsa:    { title:'FMCSA SAFER Integration', desc:'FMCSA API key for CSA scores and inspection data.', fields:[{label:'FMCSA API Key',key:'fmcsaKey',val:'',type:'password'}] },
+  permits:  { title:'State Permit Portal Integration', desc:'Configure state OSOW permit API endpoints.', fields:[{label:'Primary State',key:'permitState',val:'TX'},{label:'API Key',key:'permitKey',val:'',type:'password'}] },
+};
+
+var _currentConfigKey = null;
+var _tokenRevealed = false;
+var _REAL_TOKEN = 'nexus-admin-' + btoa('crtruckus@gmail.com').replace(/=/g,'');
+
+function showConfig(key) {
+  var cfg = INT_CONFIG[key];
+  if (!cfg) { showToast('Configuration not available yet'); return; }
+  _currentConfigKey = key;
+  document.getElementById('modal-title').textContent = cfg.title;
+  document.getElementById('modal-desc').textContent = cfg.desc;
+  var saved = JSON.parse(localStorage.getItem('nexus_int_cfg_' + key) || '{}');
+  document.getElementById('modal-fields').innerHTML = cfg.fields.map(function(f){
+    var v = saved[f.key] || f.val || '';
+    return '<div style="margin-bottom:12px;"><label style="font-size:11px;font-weight:700;color:#8b949e;display:block;margin-bottom:5px;">' + f.label + '</label>' +
+      '<input type="' + (f.type||'text') + '" id="cfg_' + f.key + '" value="' + (f.type==='password'?'':v) + '" placeholder="' + (f.type==='password'?'••••••••':'Enter ' + f.label) + '" style="width:100%;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:8px 12px;color:#e6edf3;font-size:13px;font-family:Barlow,sans-serif;"></div>';
+  }).join('');
+  document.getElementById('config-modal').style.display = 'flex';
+}
+
+function closeModal() { document.getElementById('config-modal').style.display = 'none'; }
+
+function saveConfig() {
+  var cfg = INT_CONFIG[_currentConfigKey];
+  if (!cfg) return;
+  var data = {};
+  cfg.fields.forEach(function(f){
+    var el = document.getElementById('cfg_' + f.key);
+    if (el && el.value) data[f.key] = el.value;
+  });
+  localStorage.setItem('nexus_int_cfg_' + _currentConfigKey, JSON.stringify(data));
+  closeModal();
+  showToast('Configuration saved for ' + cfg.title.split(' ')[0]);
+}
+
+function viewDocs(key) {
+  var urls = {
+    samsara:'https://developers.samsara.com/', motive:'https://developer.keeptruckin.com/',
+    efs:'https://developer.efsllc.com/', dat:'https://developer.dat.com/',
+    twilio:'https://www.twilio.com/docs/sms', fmcsa:'https://mobile.fmcsa.dot.gov/developer/home.page',
+    permits:'https://oversize.io/api/', factoring:'https://www.triumphbusiness.com/api'
+  };
+  if (urls[key]) window.open(urls[key], '_blank');
+}
+
+function goPage(p){ window.location.href = p; }
+
+function revealToken(){
+  if (!_tokenRevealed) {
+    document.getElementById('admin-token-val').textContent = _REAL_TOKEN;
+    document.getElementById('admin-token-val').classList.remove('masked');
+    _tokenRevealed = true;
+  } else {
+    document.getElementById('admin-token-val').textContent = '••••••••••••••••••••••••••••••••';
+    document.getElementById('admin-token-val').classList.add('masked');
+    _tokenRevealed = false;
+  }
+}
+
+function copyToken(){
+  navigator.clipboard.writeText(_REAL_TOKEN).then(function(){ showToast('Admin token copied'); });
+}
+
+function copyVal(id){
+  var t = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(t).then(function(){ showToast('Copied to clipboard'); });
+}
+
+function copyText(t){
+  navigator.clipboard.writeText(t).then(function(){ showToast('Copied: ' + t); });
+}
+
+function copyBaseUrl(){
+  var u = document.getElementById('base-url-val').textContent;
+  navigator.clipboard.writeText(u).then(function(){ showToast('Base URL copied'); });
+}
+
+function generateOpenApiSpec() {
+  return {
+    openapi: '3.0.0',
+    info: { title: 'Carrier Nexus API', version: '2.0.0', description: 'REST API for Carrier Trucking US LLC (DOT: 4326039, MC: 1688495)' },
+    servers: [{ url: 'https://cejsburlew-crypto.github.io/carrier-nexus/api/', description: 'Production' }],
+    components: { securitySchemes: { bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' } } },
+    security: [{ bearerAuth: [] }],
+    paths: {
+      '/auth/login':       { post: { summary: 'Login', tags:['Auth'], requestBody:{ content:{'application/json':{schema:{properties:{email:{type:'string'},password:{type:'string'}}}}}}, responses:{'200':{description:'JWT token'}} }},
+      '/auth/logout':      { delete: { summary: 'Logout', tags:['Auth'], responses:{'200':{description:'OK'}} }},
+      '/dashboard/stats':  { get: { summary: 'Dashboard KPIs', tags:['Dashboard'], responses:{'200':{description:'KPI object'}} }},
+      '/loads':            { get: { summary: 'List loads', tags:['Dispatch'] }, post: { summary: 'Create load', tags:['Dispatch'] }},
+      '/loads/{id}':       { put: { summary: 'Update load', tags:['Dispatch'] }, delete: { summary: 'Delete load', tags:['Dispatch'] }},
+      '/drivers':          { get: { summary: 'List drivers', tags:['Drivers'] }, post: { summary: 'Create driver', tags:['Drivers'] }},
+      '/drivers/leaderboard': { get: { summary: 'Driver leaderboard', tags:['Drivers'] }},
+      '/settlements':      { get: { summary: 'List settlements', tags:['Financials'] }, post: { summary: 'Create settlement', tags:['Financials'] }},
+      '/expenses':         { get: { summary: 'List expenses', tags:['Financials'] }, post: { summary: 'Log expense', tags:['Financials'] }},
+      '/equipment':        { get: { summary: 'Fleet registry', tags:['Equipment'] }, post: { summary: 'Add unit', tags:['Equipment'] }},
+      '/documents':        { get: { summary: 'Document vault', tags:['Documents'] }, post: { summary: 'Add document', tags:['Documents'] }},
+      '/permits':          { get: { summary: 'List permits', tags:['Compliance'] }, post: { summary: 'Create permit', tags:['Compliance'] }},
+      '/maintenance_records': { get: { summary: 'Maintenance history', tags:['Equipment'] }},
+      '/work_orders':      { get: { summary: 'Work orders', tags:['Equipment'] }, post: { summary: 'Create work order', tags:['Equipment'] }},
+    }
+  };
+}
+
+function downloadOpenApi() {
+  var spec = JSON.stringify(generateOpenApiSpec(), null, 2);
+  var blob = new Blob([spec], {type:'application/json'});
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'carrier-nexus-openapi.json'; a.click();
+  showToast('OpenAPI spec downloaded');
+}
+
+function generatePostmanCollection() {
+  var col = {
+    info: { name: 'Carrier Nexus API', schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json' },
+    auth: { type: 'bearer', bearer: [{ key: 'token', value: '{{NEXUS_TOKEN}}', type: 'string' }] },
+    variable: [{ key: 'baseUrl', value: 'https://cejsburlew-crypto.github.io/carrier-nexus/api' },{ key: 'NEXUS_TOKEN', value: '' }],
+    item: [
+      { name: 'Auth', item: [
+        { name: 'Login', request: { method:'POST', url:'{{baseUrl}}/auth/login', body:{ mode:'raw', raw:JSON.stringify({email:'crtruckus@gmail.com',password:'Carrier2026!'}), options:{raw:{language:'json'}} } }},
+        { name: 'Logout', request: { method:'DELETE', url:'{{baseUrl}}/auth/logout' }}
+      ]},
+      { name: 'Dashboard', item: [{ name: 'Stats', request:{ method:'GET', url:'{{baseUrl}}/dashboard/stats' }}]},
+      { name: 'Loads', item: [
+        { name: 'List Loads', request:{ method:'GET', url:'{{baseUrl}}/loads' }},
+        { name: 'Create Load', request:{ method:'POST', url:'{{baseUrl}}/loads', body:{ mode:'raw', raw:JSON.stringify({origin:'Miami FL',destination:'Dallas TX',rate:2500,pickup_date:'2026-07-01'}), options:{raw:{language:'json'}} }}},
+      ]},
+      { name: 'Drivers', item: [
+        { name: 'List Drivers', request:{ method:'GET', url:'{{baseUrl}}/drivers' }},
+        { name: 'Leaderboard', request:{ method:'GET', url:'{{baseUrl}}/drivers/leaderboard' }}
+      ]},
+      { name: 'Settlements', item: [{ name: 'List Settlements', request:{ method:'GET', url:'{{baseUrl}}/settlements' }}]},
+      { name: 'Equipment', item: [{ name: 'Fleet Registry', request:{ method:'GET', url:'{{baseUrl}}/equipment' }}]},
+      { name: 'Documents', item: [{ name: 'Document Vault', request:{ method:'GET', url:'{{baseUrl}}/documents' }}]},
+    ]
+  };
+  return JSON.stringify(col, null, 2);
+}
+
+function downloadPostman() {
+  var col = generatePostmanCollection();
+  var blob = new Blob([col], {type:'application/json'});
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'carrier-nexus-postman.json'; a.click();
+  showToast('Postman collection downloaded');
+}
+
+function downloadApiKit() {
+  // Build a JS SDK file inline
+  var sdk = `/**
+ * Carrier Nexus JavaScript SDK v2.0
+ * Company: Carrier Trucking US LLC | DOT: 4326039 | MC: 1688495
+ * Auto-generated: ${new Date().toISOString().split('T')[0]}
+ *
+ * Usage:
+ *   const nexus = new CarrierNexusSDK({ token: 'YOUR_JWT_TOKEN' });
+ *   const loads = await nexus.loads.list({ status: 'in_transit' });
+ */
+
+class CarrierNexusSDK {
+  constructor({ baseUrl, token } = {}) {
+    this.baseUrl = baseUrl || 'https://cejsburlew-crypto.github.io/carrier-nexus/api';
+    this.token   = token || '';
+  }
+
+  async _req(method, path, body) {
+    const res = await fetch(this.baseUrl + path, {
+      method,
+      headers: {
+        'Authorization': 'Bearer ' + this.token,
+        'Content-Type': 'application/json',
+        'X-Company-DOT': '4326039',
+        'X-Company-MC':  '1688495',
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    if (!res.ok) throw new Error('Nexus API error: ' + res.status);
+    return res.json();
+  }
+
+  get auth() {
+    return {
+      login:  (email, password) => this._req('POST', '/auth/login', { email, password }),
+      logout: ()               => this._req('DELETE', '/auth/logout'),
+    };
+  }
+  get dashboard() { return { stats: () => this._req('GET', '/dashboard/stats') }; }
+  get loads() {
+    return {
+      list:   (params) => this._req('GET', '/loads?' + new URLSearchParams(params||{}).toString()),
+      create: (data)   => this._req('POST', '/loads', data),
+      update: (id, d)  => this._req('PUT', '/loads/' + id, d),
+      delete: (id)     => this._req('DELETE', '/loads/' + id),
+    };
+  }
+  get drivers() {
+    return {
+      list:        (p) => this._req('GET', '/drivers?' + new URLSearchParams(p||{}).toString()),
+      create:      (d) => this._req('POST', '/drivers', d),
+      leaderboard: ()  => this._req('GET', '/drivers/leaderboard'),
+    };
+  }
+  get settlements() {
+    return {
+      list:   (p) => this._req('GET', '/settlements?' + new URLSearchParams(p||{}).toString()),
+      create: (d) => this._req('POST', '/settlements', d),
+    };
+  }
+  get equipment() {
+    return {
+      list:   (p) => this._req('GET', '/equipment?' + new URLSearchParams(p||{}).toString()),
+      create: (d) => this._req('POST', '/equipment', d),
+    };
+  }
+  get documents() {
+    return {
+      list:   (p) => this._req('GET', '/documents?' + new URLSearchParams(p||{}).toString()),
+      create: (d) => this._req('POST', '/documents', d),
+    };
+  }
+  get expenses() {
+    return {
+      list:   (p) => this._req('GET', '/expenses?' + new URLSearchParams(p||{}).toString()),
+      create: (d) => this._req('POST', '/expenses', d),
+    };
+  }
+}
+
+// Node.js / CommonJS export
+if (typeof module !== 'undefined') module.exports = CarrierNexusSDK;
+// Browser global
+if (typeof window !== 'undefined') window.CarrierNexusSDK = CarrierNexusSDK;
+`;
+
+  var readme = `# Carrier Nexus API Integration Kit
+Company: Carrier Trucking US LLC
+DOT: 4326039 | MC: 1688495 | SCAC: CTUN
+
+## Contents
+- carrier-nexus-sdk.js         JavaScript SDK (browser + Node.js)
+- carrier-nexus-openapi.json   OpenAPI 3.0 specification
+- carrier-nexus-postman.json   Postman collection
+- README.md                    This file
+
+## Quick Start
+1. Login to get a JWT token
+2. Pass the token to the SDK constructor
+3. All API calls are automatically scoped to your company
+
+## Authentication
+POST /api/auth/login
+Body: { "email": "...", "password": "..." }
+Response: { "token": "JWT_TOKEN_HERE" }
+
+## Example
+const nexus = new CarrierNexusSDK({ token: 'YOUR_JWT_TOKEN' });
+const loads = await nexus.loads.list({ status: 'in_transit' });
+const stats = await nexus.dashboard.stats();
+`;
+
+  // Download each file separately since we can't zip in vanilla JS
+  [
+    { name: 'carrier-nexus-sdk.js', content: sdk, type: 'text/javascript' },
+    { name: 'carrier-nexus-openapi.json', content: JSON.stringify(generateOpenApiSpec(), null, 2), type: 'application/json' },
+    { name: 'carrier-nexus-postman.json', content: generatePostmanCollection(), type: 'application/json' },
+    { name: 'carrier-nexus-api-readme.txt', content: readme, type: 'text/plain' },
+  ].forEach(function(f, i){
+    setTimeout(function(){
+      var blob = new Blob([f.content], {type: f.type});
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = f.name; a.click();
+    }, i * 400);
+  });
+  showToast('API Kit downloading — 4 files');
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2800);
+}
+
+// Load API activity log from localStorage
+(function loadLog(){
+  var events = JSON.parse(localStorage.getItem('nexus_api_log') || '[]');
+  if (!events.length) return;
+  var tbody = document.getElementById('log-body');
+  tbody.innerHTML = events.slice(-20).reverse().map(function(e){
+    return '<tr><td>' + (e.time||'') + '</td>' +
+      '<td><span class="method-badge method-' + (e.method||'post').toLowerCase() + '">' + (e.method||'POST') + '</span></td>' +
+      '<td style="font-family:monospace;font-size:11px;">' + (e.path||'') + '</td>' +
+      '<td class="' + (e.status===200?'http-200':'http-4xx') + '">' + (e.status||'—') + '</td>' +
+      '<td>' + (e.source||'System') + '</td></tr>';
+  }).join('');
+})();
+</script>
+</body>
+</html>
