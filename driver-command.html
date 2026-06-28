@@ -6,228 +6,195 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0d1117">
 <title>Driver Command — Carrier Nexus</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="nexus-config.js"></script>
 <script src="nexus-sidebar.js"></script>
 <style>
 :root{
-  --bg:#f0f2f5;--card:#fff;--border:#d0d7de;
-  --text:#111827;--mid:#6b7280;--muted:#9ca3af;
-  --accent:#e91e8c;--orange:#e8640a;--green:#15803d;--blue:#1d4ed8;--red:#dc2626;
-  --tile-size: 100px; /* auto-fill minmax base */
+  --bg:#f0f2f5; --card:#fff; --border:#d0d7de;
+  --text:#111827; --mid:#6b7280; --muted:#9ca3af;
+  --accent:#e91e8c; --orange:#e8640a; --green:#15803d;
+  --blue:#1d4ed8; --red:#dc2626; --purple:#7c3aed;
+  --bar:#0d1117; --bar2:#13181f;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{background:#1a1f2e;-webkit-text-size-adjust:100%;}
-body{
-  font-family:'Barlow',sans-serif;
-  background:var(--bg);color:var(--text);
-  max-width:1400px;margin:0 auto;
-  min-height:100vh;overflow-x:hidden;
-  padding-bottom:80px;
-}
+html{background:#0d1117;}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);max-width:1400px;margin:0 auto;min-height:100vh;overflow-x:hidden;padding-bottom:80px;}
 nav.sidebar#nexus-sidebar{display:none!important;}
 
 /* ── TOP BAR ── */
-.topbar{
-  background:#0d1117;
-  padding:14px 20px 12px;
-  display:flex;align-items:center;justify-content:space-between;
-  position:sticky;top:0;z-index:100;
-}
+.topbar{background:var(--bar);padding:14px 18px 12px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
 .topbar-brand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:.06em;color:#fff;}
 .topbar-brand span{color:var(--accent);}
-.topbar-driver{font-size:11px;color:#8b949e;margin-top:1px;}
-.topbar-right{display:flex;align-items:center;gap:10px;}
-.topbar-notif{width:36px;height:36px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent;}
-.notif-dot{position:absolute;top:7px;right:7px;width:7px;height:7px;background:var(--orange);border-radius:50%;border:1.5px solid #0d1117;}
+.topbar-sub{font-size:11px;color:#8b949e;margin-top:1px;}
+.topbar-notif{width:36px;height:36px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;}
+.notif-badge{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--orange);border-radius:50%;border:1.5px solid var(--bar);}
 
-/* ── ACTIVE LOAD STRIP ── */
-.load-strip{
-  background:linear-gradient(135deg,#0d1117,#1a1f2e);
-  border-bottom:2px solid var(--accent);
-  padding:13px 20px;
-  display:flex;align-items:center;gap:14px;
-  cursor:pointer;-webkit-tap-highlight-color:transparent;
-}
-.load-strip.no-load{border-bottom-color:#444;}
-.load-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.8);}}
-.load-id{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;color:#fff;letter-spacing:.04em;}
-.load-route{font-size:11px;color:#8b949e;margin-top:2px;}
-.load-meta{margin-left:auto;display:flex;gap:24px;flex-shrink:0;}
-.load-meta-item{text-align:right;}
-.load-meta-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;}
-.load-meta-lbl{font-size:10px;color:#8b949e;}
-
-/* ── SECTION HEADER ── */
-.sec-header{
-  display:flex;align-items:center;gap:10px;
-  padding:20px 20px 10px;
-}
-.sec-header-icon{font-size:16px;}
-.sec-header-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
-.sec-header-rule{flex:1;height:1px;background:var(--border);}
-
-/* ── ICON GRID — responsive auto-fill ── */
-.icon-grid{
-  display:grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--tile-size), 1fr));
-  gap:10px;
-  padding:0 14px;
-}
-/* Narrow phone: 3 min */
-@media(max-width:359px){ .icon-grid{grid-template-columns:repeat(3,1fr);} }
-/* Standard phone: 4 cols */
-@media(min-width:420px){ :root{--tile-size:105px;} }
-/* Large phone / small tablet: 5 cols */
-@media(min-width:560px){ :root{--tile-size:108px;} }
-/* Tablet portrait: 6 cols */
-@media(min-width:700px){ :root{--tile-size:110px;} }
-/* Tablet landscape: 7 cols */
-@media(min-width:840px){ :root{--tile-size:112px;} }
-/* Desktop: 8+ cols */
-@media(min-width:1000px){ :root{--tile-size:115px;} }
-
-.icon-btn{
-  display:flex;flex-direction:column;align-items:center;
-  gap:6px;padding:14px 6px 12px;
-  background:var(--card);border:1.5px solid var(--border);border-radius:14px;
-  cursor:pointer;text-decoration:none;color:var(--text);
+/* ══════════════════════════════════════════
+   SECTION BAR — the clickable header strip
+══════════════════════════════════════════ */
+.sec-bar{
+  background:linear-gradient(135deg, var(--bar), var(--bar2));
+  border-bottom:2px solid #21262d;
+  padding:13px 18px;
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;
   -webkit-tap-highlight-color:transparent;
-  transition:transform .1s, box-shadow .1s;
-  position:relative;overflow:hidden;min-width:0;
+  user-select:none;
+  position:relative;
 }
-.icon-btn:active{transform:scale(.93);}
-@media(hover:hover){.icon-btn:hover{box-shadow:0 2px 12px rgba(0,0,0,.08);transform:translateY(-1px);}}
+.sec-bar:active{filter:brightness(1.15);}
+.sec-bar.accent-border{border-bottom-color:var(--accent);}
+.sec-bar.green-border{border-bottom-color:#22c55e;}
+.sec-bar.orange-border{border-bottom-color:var(--orange);}
+.sec-bar.blue-border{border-bottom-color:#3b82f6;}
+.sec-bar.red-border{border-bottom-color:var(--red);}
 
-/* Color variants */
-.c-pink{border-color:rgba(233,30,140,.3);background:rgba(233,30,140,.05);}
-.c-orange{border-color:rgba(232,100,10,.3);background:rgba(232,100,10,.05);}
-.c-green{border-color:rgba(21,128,61,.28);background:rgba(21,128,61,.05);}
-.c-blue{border-color:rgba(29,78,216,.25);background:rgba(29,78,216,.05);}
-.c-red{border-color:rgba(220,38,38,.25);background:rgba(220,38,38,.05);}
-.c-purple{border-color:rgba(109,40,217,.25);background:rgba(109,40,217,.05);}
-
-/* Locked state */
-.icon-btn.locked{opacity:.34;filter:grayscale(.6);cursor:pointer;}
-.rep-btn.locked{opacity:.34;filter:grayscale(.6);}
-
-.icon-emoji{font-size:26px;line-height:1;}
-@media(min-width:600px){.icon-emoji{font-size:28px;}}
-@media(min-width:900px){.icon-emoji{font-size:30px;}}
-
-.icon-label{
-  font-family:'Barlow Condensed',sans-serif;font-weight:700;
-  font-size:12px;letter-spacing:.01em;
-  text-align:center;line-height:1.25;color:var(--text);
-  word-break:break-word;width:100%;
-}
-@media(min-width:600px){.icon-label{font-size:13px;}}
-
-.icon-badge{
-  position:absolute;top:7px;right:7px;
-  font-size:9px;font-weight:700;padding:1px 5px;border-radius:20px;
-  background:var(--accent);color:#fff;white-space:nowrap;
-}
-.icon-badge.og{background:var(--orange);}
-.icon-badge.gn{background:var(--green);}
-.icon-badge.rd{background:var(--red);}
-
-/* ── WIDE PHOTO TILE ── */
-.photo-tile-wide{
-  display:flex;align-items:center;gap:14px;
-  padding:14px 18px;background:var(--card);
-  border:1.5px solid var(--border);border-radius:14px;
-  cursor:pointer;-webkit-tap-highlight-color:transparent;
-  transition:transform .1s;margin:0 14px 4px;
-}
-.photo-tile-wide:active{transform:scale(.98);}
-.photo-tile-wide-icon{font-size:28px;flex-shrink:0;}
-.photo-tile-wide-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--text);}
-.photo-tile-wide-sub{font-size:11px;color:var(--mid);margin-top:2px;font-weight:400;}
-
-/* ── REPORT BUTTONS ── */
-.report-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:10px;padding:0 14px;
-}
-.rep-btn{
+/* sub-section bars (slightly lighter) */
+.sub-bar{
+  background:linear-gradient(135deg,#161b22,#1c2230);
+  border-bottom:1.5px solid #30363d;
+  border-top:1px solid #30363d;
+  padding:10px 18px 10px 28px;
   display:flex;align-items:center;gap:10px;
-  padding:13px 14px;border-radius:12px;border:1.5px solid;
-  cursor:pointer;-webkit-tap-highlight-color:transparent;
-  transition:transform .1s;position:relative;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;
 }
-.rep-btn:active{transform:scale(.96);}
-.rep-btn.danger{background:rgba(220,38,38,.06);border-color:rgba(220,38,38,.3);}
-.rep-btn.warn{background:rgba(232,100,10,.06);border-color:rgba(232,100,10,.3);}
-.rep-btn.neutral{background:#f8f9fa;border-color:var(--border);}
+.sub-bar:active{filter:brightness(1.2);}
+
+.sec-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sec-dot.pink{background:var(--accent);animation:pulse 2s infinite;}
+.sec-dot.green{background:#22c55e;}
+.sec-dot.orange{background:var(--orange);}
+.sec-dot.blue{background:#3b82f6;}
+.sec-dot.gray{background:#6b7280;}
+.sec-dot.red{background:var(--red);}
+.sec-dot.purple{background:var(--purple);}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+
+.sec-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.04em;color:#fff;flex:1;}
+.sec-sub{font-size:11px;color:#8b949e;margin-top:2px;}
+.sec-meta{text-align:right;flex-shrink:0;}
+.sec-meta-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;}
+.sec-meta-lbl{font-size:10px;color:#8b949e;}
+.sec-chevron{font-size:16px;color:#6b7280;flex-shrink:0;transition:transform .25s;line-height:1;}
+.sec-chevron.open{transform:rotate(180deg);}
+
+.sub-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.05em;color:#8b949e;flex:1;}
+.sub-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+/* ── ACCORDION CONTENT ── */
+.sec-body{
+  max-height:0;overflow:hidden;
+  transition:max-height .32s cubic-bezier(.4,0,.2,1);
+  background:var(--bg);
+}
+.sec-body.open{max-height:4000px;}
+
+/* ── RATE CON DETAIL CARD ── */
+.rc-card{
+  margin:14px 14px 0;
+  background:#fff;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;
+}
+.rc-row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 14px;border-bottom:1px solid var(--border);}
+.rc-row:last-child{border-bottom:none;}
+.rc-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;margin-right:12px;}
+.rc-val{font-size:13px;font-weight:600;color:var(--text);text-align:right;}
+.rc-val.green{color:var(--green);}
+.rc-val.orange{color:var(--orange);}
+.rc-actions{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border);}
+.rc-btn{flex:1;padding:9px 6px;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.rc-btn.sign{background:var(--accent);color:#fff;}
+.rc-btn.call{background:#1d4ed8;color:#fff;}
+.rc-btn.detail{background:#f0f2f5;color:var(--mid);border:1px solid var(--border);}
+
+/* ── ICON GRID — responsive ── */
+.tile-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(92px,1fr));
+  gap:8px;padding:12px 14px;
+}
+.tile{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:13px 6px 11px;background:#fff;
+  border:1.5px solid var(--border);border-radius:12px;
+  cursor:pointer;text-decoration:none;color:var(--text);
+  -webkit-tap-highlight-color:transparent;transition:transform .1s;position:relative;
+}
+.tile:active{transform:scale(.92);}
+@media(hover:hover){.tile:hover{transform:translateY(-1px);box-shadow:0 3px 12px rgba(0,0,0,.1);}}
+.tile.c-pink{border-color:rgba(233,30,140,.3);background:rgba(233,30,140,.04);}
+.tile.c-green{border-color:rgba(21,128,61,.28);background:rgba(21,128,61,.04);}
+.tile.c-blue{border-color:rgba(29,78,216,.25);background:rgba(29,78,216,.04);}
+.tile.c-orange{border-color:rgba(232,100,10,.28);background:rgba(232,100,10,.04);}
+.tile.c-red{border-color:rgba(220,38,38,.25);background:rgba(220,38,38,.04);}
+.tile.c-purple{border-color:rgba(124,58,237,.22);background:rgba(124,58,237,.04);}
+.tile.locked{opacity:.3;filter:grayscale(.7);}
+.tile-icon{font-size:24px;line-height:1;}
+.tile-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-align:center;line-height:1.2;color:var(--text);}
+.tile-badge{position:absolute;top:6px;right:6px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:20px;background:var(--accent);color:#fff;white-space:nowrap;}
+.tile-badge.og{background:var(--orange);}
+.tile-badge.gn{background:var(--green);}
+.tile-badge.rd{background:var(--red);}
+
+/* ── REPORT TILES (2-col wide) ── */
+.rep-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px;padding:12px 14px;}
+.rep-tile{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:11px;border:1.5px solid;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .1s;}
+.rep-tile:active{transform:scale(.95);}
+.rep-tile.danger{background:rgba(220,38,38,.06);border-color:rgba(220,38,38,.28);}
+.rep-tile.warn{background:rgba(232,100,10,.06);border-color:rgba(232,100,10,.28);}
+.rep-tile.neutral{background:#f8f9fa;border-color:var(--border);}
+.rep-tile.locked{opacity:.3;filter:grayscale(.7);}
 .rep-icon{font-size:20px;flex-shrink:0;}
-.rep-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;line-height:1.2;}
-.rep-label.red{color:var(--red);}
-.rep-label.og{color:var(--orange);}
+.rep-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;line-height:1.2;}
+.rep-lbl.red{color:var(--red);}
+.rep-lbl.og{color:var(--orange);}
+.rep-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* ── DVIR CHECKLIST ── */
+.dvir-list{padding:0 14px 12px;}
+.dvir-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f2f5;}
+.dvir-item:last-child{border-bottom:none;}
+.dvir-name{font-size:13px;color:#374151;}
+.dvir-radios{display:flex;gap:10px;}
+.dvir-radios label{display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;}
 
 /* ── BOTTOM NAV ── */
-.bottom-nav{
-  position:fixed;bottom:0;left:0;right:0;
-  height:64px;background:#0d1117;border-top:1px solid #21262d;
-  display:flex;align-items:stretch;z-index:200;
-  padding-bottom:env(safe-area-inset-bottom,0px);
-  max-width:1400px;margin:0 auto;
-}
-.nav-tab{
-  flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:3px;
-  color:#6b7280;font-family:'Barlow',sans-serif;
-  text-decoration:none;font-size:10px;font-weight:500;
-  -webkit-tap-highlight-color:transparent;
-}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;max-width:1400px;margin:0 auto;height:64px;background:var(--bar);border-top:1px solid #21262d;display:flex;align-items:stretch;z-index:300;padding-bottom:env(safe-area-inset-bottom,0px);}
+.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#6b7280;font-family:'Barlow',sans-serif;text-decoration:none;font-size:10px;font-weight:500;-webkit-tap-highlight-color:transparent;}
 .nav-tab.active{color:var(--accent);}
-.nav-center{flex:1.4;position:relative;}
-.nav-center-btn{
-  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
-  width:50px;height:50px;background:var(--accent);border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 18px rgba(233,30,140,.45);
-  border:3px solid #0d1117;cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-}
-.nav-center-btn:active{transform:translateX(-50%) scale(.9);}
-.nav-center-lbl{font-size:10px;color:#6b7280;position:absolute;bottom:4px;left:50%;transform:translateX(-50%);white-space:nowrap;}
+.nav-cam{flex:1.4;position:relative;}
+.nav-cam-btn{position:absolute;top:-13px;left:50%;transform:translateX(-50%);width:50px;height:50px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(233,30,140,.5);border:3px solid var(--bar);cursor:pointer;}
+.nav-cam-btn:active{transform:translateX(-50%) scale(.9);}
+.nav-cam-lbl{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-size:10px;color:#6b7280;white-space:nowrap;}
 
 /* ── MODALS ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
 .modal-overlay.open{display:flex;}
-.modal-sheet{
-  background:#fff;width:100%;max-width:520px;
-  border-radius:18px 18px 0 0;padding:20px 20px 40px;
-  animation:slideUp .22s ease;max-height:90vh;overflow-y:auto;
-}
+.modal-sheet{background:#fff;width:100%;max-width:520px;border-radius:18px 18px 0 0;padding:18px 18px 38px;animation:slideUp .22s ease;max-height:90vh;overflow-y:auto;}
 @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
-.modal-handle{width:36px;height:3px;background:#d0d7de;border-radius:2px;margin:0 auto 16px;}
-.modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:var(--text);margin-bottom:3px;}
-.modal-sub{font-size:13px;color:var(--mid);margin-bottom:16px;}
-.modal-input{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:'Barlow',sans-serif;font-size:15px;color:var(--text);background:#f8f9fa;outline:none;margin-bottom:10px;}
-.modal-input:focus{border-color:var(--accent);background:#fff;}
-.modal-input.big{font-size:28px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-align:center;}
-.modal-lbl{font-size:11px;font-weight:600;color:var(--mid);margin-bottom:5px;display:block;letter-spacing:.04em;text-transform:uppercase;}
-.modal-btn{width:100%;padding:14px;border:none;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;margin-top:8px;}
-.modal-btn.primary{background:var(--accent);color:#fff;}
-.modal-btn.sec{background:#f0f2f5;color:var(--mid);border:1px solid var(--border);}
-.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:18px;text-align:center;margin-bottom:10px;cursor:pointer;background:#f8f9fa;}
-.upload-zone:active{border-color:var(--accent);}
+.mhandle{width:36px;height:3px;background:#d0d7de;border-radius:2px;margin:0 auto 16px;}
+.mtitle{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:var(--text);margin-bottom:3px;}
+.msub{font-size:13px;color:var(--mid);margin-bottom:14px;}
+.minput{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:'Barlow',sans-serif;font-size:15px;color:var(--text);background:#f8f9fa;outline:none;margin-bottom:10px;}
+.minput:focus{border-color:var(--accent);background:#fff;}
+.minput.big{font-size:28px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-align:center;}
+.mlbl{font-size:11px;font-weight:600;color:var(--mid);margin-bottom:5px;display:block;letter-spacing:.04em;text-transform:uppercase;}
+.mbtn{width:100%;padding:14px;border:none;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;margin-top:8px;}
+.mbtn.primary{background:var(--accent);color:#fff;}
+.mbtn.danger{background:var(--red);color:#fff;}
+.mbtn.sec{background:#f0f2f5;color:var(--mid);border:1px solid var(--border);}
+.upzone{border:2px dashed var(--border);border-radius:10px;padding:18px;text-align:center;margin-bottom:10px;cursor:pointer;background:#f8f9fa;}
+.upzone:active{border-color:var(--accent);}
 
-/* PHOTO PICKER */
-.photo-sec-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px;}
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:2px;}
-.photo-pick{display:flex;align-items:center;gap:9px;padding:10px 12px;background:#f8f9fa;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .1s;-webkit-tap-highlight-color:transparent;}
-.photo-pick:active,.photo-pick:hover{background:#ffe4f1;border-color:var(--accent);}
-.photo-pick.load-type{border-color:rgba(233,30,140,.22);background:rgba(233,30,140,.03);}
-.photo-pick-icon{font-size:18px;flex-shrink:0;}
-.photo-pick-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--text);line-height:1.2;}
+/* photo picker */
+.phsec{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:12px 0 7px;}
+.phgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:7px;margin-bottom:2px;}
+.phtile{display:flex;align-items:center;gap:8px;padding:9px 11px;background:#f8f9fa;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .1s;}
+.phtile:active,.phtile:hover{background:#ffe4f1;border-color:var(--accent);}
+.phtile.load-type{border-color:rgba(233,30,140,.22);background:rgba(233,30,140,.03);}
+.phicon{font-size:17px;flex-shrink:0;}
+.phlbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--text);line-height:1.2;}
 
-/* TOAST */
 #toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transition:opacity .25s;white-space:nowrap;z-index:999;pointer-events:none;}
 #toast.show{opacity:1;}
 </style>
@@ -238,529 +205,224 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 <div class="topbar">
   <div>
     <div class="topbar-brand">CARRIER <span>NEXUS</span></div>
-    <div class="topbar-driver">Driver Command</div>
+    <div class="topbar-sub">Driver Command</div>
   </div>
-  <div class="topbar-right">
-    <div class="topbar-notif" onclick="openModal('alertModal')">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a5 5 0 00-5 5v3H2v1h12v-1h-1V7a5 5 0 00-5-5zM6 13a2 2 0 004 0H6z" fill="rgba(255,255,255,.7)"/></svg>
-      <div class="notif-dot"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ ACTIVE LOAD STRIP ══ -->
-<div class="load-strip" id="loadStrip" onclick="openModal('loadDetailModal')">
-  <div class="load-dot"></div>
-  <div style="min-width:0;">
-    <div class="load-id" id="stripLoadId">LDX-2841 · Coyote Logistics</div>
-    <div class="load-route" id="stripRoute">Miami, FL → Atlanta, GA · Delivery 2:00 PM today</div>
-  </div>
-  <div class="load-meta">
-    <div class="load-meta-item">
-      <div class="load-meta-val" style="color:#4ade80;" id="stripRate">$3,400</div>
-      <div class="load-meta-lbl">Rate</div>
-    </div>
-    <div class="load-meta-item" id="stripTruckWrap">
-      <div class="load-meta-val" style="color:#e4e6ea;">Truck #104</div>
-      <div class="load-meta-lbl">Unit</div>
-    </div>
+  <div class="topbar-notif" onclick="openModal('alertModal')">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a5 5 0 00-5 5v3H2v1h12v-1h-1V7a5 5 0 00-5-5zM6 13a2 2 0 004 0H6z" fill="rgba(255,255,255,.7)"/></svg>
+    <div class="notif-badge"></div>
   </div>
 </div>
 
 
 <!-- ══════════════════════════════════════════════════════
-     SECTION 1 — START OF DAY
-     Check your schedule, hours, messages before anything else
+     1 · PERSONAL
 ══════════════════════════════════════════════════════ -->
-<div class="sec-header">
-  <span class="sec-header-icon">🌅</span>
-  <span class="sec-header-label">Start of Day</span>
-  <div class="sec-header-rule"></div>
+<div class="sec-bar green-border" onclick="toggle('personal')">
+  <div class="sec-dot green"></div>
+  <div style="flex:1">
+    <div class="sec-title">DAVID HERNANDEZ</div>
+    <div class="sec-sub">Driver · Truck #104 · On Duty</div>
+  </div>
+  <div class="sec-chevron open" id="chev-personal">▾</div>
 </div>
-<div class="icon-grid">
-
-  <a class="icon-btn c-blue" href="eld-hours.html">
-    <div class="icon-emoji">🕐</div>
-    <div class="icon-label">ELD / Hours</div>
-  </a>
-
-  <a class="icon-btn" href="messages.html">
-    <div class="icon-emoji">💬</div>
-    <div class="icon-label">Messages</div>
-    <div class="icon-badge">2</div>
-  </a>
-
-  <a class="icon-btn" href="active-loads.html">
-    <div class="icon-emoji">📋</div>
-    <div class="icon-label">My Loads</div>
-    <div class="icon-badge og">1 Active</div>
-  </a>
-
-  <a class="icon-btn" href="driver-availability.html">
-    <div class="icon-emoji">🟢</div>
-    <div class="icon-label">My Availability</div>
-  </a>
-
-  <a class="icon-btn c-green" href="my-pay.html">
-    <div class="icon-emoji">💵</div>
-    <div class="icon-label">My Pay</div>
-    <div class="icon-badge gn">$3,360</div>
-  </a>
-
-  <a class="icon-btn" href="notifications.html">
-    <div class="icon-emoji">🔔</div>
-    <div class="icon-label">Alerts</div>
-    <div class="icon-badge rd">3</div>
-  </a>
-
+<div class="sec-body open" id="sec-personal">
+  <div class="tile-grid">
+    <a class="tile c-blue" href="eld-hours.html"><div class="tile-icon">🕐</div><div class="tile-lbl">ELD / Hours</div></a>
+    <a class="tile" href="messages.html"><div class="tile-icon">💬</div><div class="tile-lbl">Messages</div><div class="tile-badge">2</div></a>
+    <a class="tile c-green" href="my-pay.html"><div class="tile-icon">💵</div><div class="tile-lbl">My Pay</div><div class="tile-badge gn">$3,360</div></a>
+    <a class="tile" href="settlements.html"><div class="tile-icon">🧾</div><div class="tile-lbl">Settlements</div></a>
+    <a class="tile" href="driver-availability.html"><div class="tile-icon">🟢</div><div class="tile-lbl">Availability</div></a>
+    <a class="tile" href="active-loads.html"><div class="tile-icon">📋</div><div class="tile-lbl">My Loads</div><div class="tile-badge og">1</div></a>
+    <a class="tile" href="driver-profile.html"><div class="tile-icon">👤</div><div class="tile-lbl">My Profile</div></a>
+    <a class="tile" href="my-documents.html"><div class="tile-icon">📄</div><div class="tile-lbl">My Documents</div></a>
+    <a class="tile c-orange" href="expiration-hub.html"><div class="tile-icon">📅</div><div class="tile-lbl">CDL & Expiry</div><div class="tile-badge og">1 Due</div></a>
+    <a class="tile" href="drug-alcohol.html"><div class="tile-icon">🧪</div><div class="tile-lbl">Drug & Alcohol</div></a>
+    <a class="tile c-purple" href="coaching-log.html"><div class="tile-icon">🏋️</div><div class="tile-lbl">Coaching</div></a>
+    <a class="tile c-orange" href="driver-trophies.html"><div class="tile-icon">🏆</div><div class="tile-lbl">Hall of Bragging</div></a>
+    <a class="tile" href="tax-forms.html"><div class="tile-icon">🗂️</div><div class="tile-lbl">Tax Forms</div></a>
+    <a class="tile c-blue" href="nexus-ai.html"><div class="tile-icon">🤖</div><div class="tile-lbl">Nexus AI</div></a>
+  </div>
 </div>
 
 
 <!-- ══════════════════════════════════════════════════════
-     SECTION 2 — PRE-TRIP
-     Inspection, permits, route planning before wheels roll
+     2 · ACTIVE LOAD / RATE CON
 ══════════════════════════════════════════════════════ -->
-<div class="sec-header">
-  <span class="sec-header-icon">🔍</span>
-  <span class="sec-header-label">Pre-Trip</span>
-  <div class="sec-header-rule"></div>
+<div class="sec-bar accent-border" id="loadBar" onclick="toggle('load')">
+  <div class="sec-dot pink" id="loadDot"></div>
+  <div style="flex:1;min-width:0;">
+    <div class="sec-title" id="loadTitle">LDX-2841 · COYOTE LOGISTICS</div>
+    <div class="sec-sub" id="loadSub">Miami, FL → Atlanta, GA · Delivery 2:00 PM</div>
+  </div>
+  <div class="sec-meta" style="margin-right:10px;" id="loadMeta">
+    <div class="sec-meta-val" style="color:#4ade80;">$3,400</div>
+    <div class="sec-meta-lbl">Truck #104</div>
+  </div>
+  <div class="sec-chevron open" id="chev-load">▾</div>
 </div>
-<div class="icon-grid">
-
-  <div class="icon-btn c-green" onclick="openModal('pretripModal')">
-    <div class="icon-emoji">✅</div>
-    <div class="icon-label">Pre-Trip DVIR</div>
-  </div>
-
-  <a class="icon-btn" href="dvir.html">
-    <div class="icon-emoji">🚛</div>
-    <div class="icon-label">DVIR History</div>
-  </a>
-
-  <a class="icon-btn" href="permits.html">
-    <div class="icon-emoji">📜</div>
-    <div class="icon-label">Permits</div>
-  </a>
-
-  <a class="icon-btn c-blue" href="route-planner.html">
-    <div class="icon-emoji">🗺️</div>
-    <div class="icon-label">Route Planner</div>
-  </a>
-
-  <a class="icon-btn" href="weight-calculator.html">
-    <div class="icon-emoji">🔢</div>
-    <div class="icon-label">Weight / Axle Calc</div>
-  </a>
-
-  <a class="icon-btn" href="weather.html">
-    <div class="icon-emoji">🌦️</div>
-    <div class="icon-label">Weather</div>
-  </a>
-
-  <a class="icon-btn" href="hazard-map.html">
-    <div class="icon-emoji">🚨</div>
-    <div class="icon-label">Road Alerts</div>
-  </a>
-
-  <a class="icon-btn" href="parking.html">
-    <div class="icon-emoji">🅿️</div>
-    <div class="icon-label">Parking Finder</div>
-  </a>
-
-</div>
-
-
-<!-- ══════════════════════════════════════════════════════
-     SECTION 3 — LOAD ACCEPTANCE
-     Sign rate con, confirm load details before pickup
-══════════════════════════════════════════════════════ -->
-<div class="sec-header">
-  <span class="sec-header-icon">📑</span>
-  <span class="sec-header-label">Load Acceptance</span>
-  <div class="sec-header-rule"></div>
-</div>
-<div class="icon-grid">
-
-  <div class="icon-btn c-pink" data-load-req onclick="guardedModal('signModal')">
-    <div class="icon-emoji">✍️</div>
-    <div class="icon-label">Sign Rate Con</div>
-    <div class="icon-badge og">Pending</div>
-  </div>
-
-  <div class="icon-btn" data-load-req onclick="guardedModal('loadDetailModal')">
-    <div class="icon-emoji">📦</div>
-    <div class="icon-label">Load Details</div>
-  </div>
-
-  <div class="icon-btn" data-load-req onclick="guardedModal('contactModal')">
-    <div class="icon-emoji">📞</div>
-    <div class="icon-label">Broker / Shipper Contact</div>
-  </div>
-
-</div>
-
-
-<!-- ══════════════════════════════════════════════════════
-     SECTION 4 — PICKUP
-     Document cargo condition before you leave the shipper
-══════════════════════════════════════════════════════ -->
-<div class="sec-header">
-  <span class="sec-header-icon">🏭</span>
-  <span class="sec-header-label">At Pickup</span>
-  <div class="sec-header-rule"></div>
-</div>
-<div class="icon-grid">
-
-  <div class="icon-btn c-pink" data-load-req onclick="guardedModal('bolModal')">
-    <div class="icon-emoji">📑</div>
-    <div class="icon-label">Scan BOL</div>
-  </div>
-
-  <div class="icon-btn" data-load-req onclick="capturePhoto('Cargo — Before Pickup')">
-    <div class="icon-emoji">🏭</div>
-    <div class="icon-label">Cargo Before Pickup</div>
-  </div>
-
-  <div class="icon-btn" data-load-req onclick="capturePhoto('Seal Number')">
-    <div class="icon-emoji">🔒</div>
-    <div class="icon-label">Seal Number</div>
-  </div>
-
-  <div class="icon-btn" data-load-req onclick="capturePhoto('OS&D — Damage or Shortage')">
-    <div class="icon-emoji">⚠️</div>
-    <div class="icon-label">OS&amp;D / Damage</div>
-  </div>
-
-  <div class="icon-btn c-orange" data-load-req onclick="guardedModal('detentionModal')">
-    <div class="icon-emoji">⏱️</div>
-    <div class="icon-label">Detention Timer</div>
-  </div>
-
-  <div class="icon-btn" data-load-req onclick="guardedModal('lumperModal')">
-    <div class="icon-emoji">🏗️</div>
-    <div class="icon-label">Lumper Request</div>
-  </div>
-
-</div>
-
-
-<!-- ══════════════════════════════════════════════════════
-     SECTION 5 — EN ROUTE
-     Fuel, scales, miles, position while rolling
-══════════════════════════════════════════════════════ -->
-<div class="sec-header">
-  <span class="sec-header-icon">🛣️</span>
-  <span class="sec-header-label">En Route</span>
-  <div class="sec-header-rule"></div>
-</div>
-<div class="icon-grid">
-
-  <a class="icon-btn c-orange" href="fuel.html">
-    <div class="icon-emoji">⛽</div>
-    <div class="icon-label">Fuel Log</div>
-  </a>
-
-  <div class="icon-btn" onclick="capturePhoto('Fuel Receipt')">
-    <div class="icon-emoji">🧾</div>
-    <div class="icon-label">Fuel Receipt</div>
-  </div>
-
-  <a class="icon-btn" href="scale-tickets.html">
-    <div class="icon-emoji">⚖️</div>
-    <div class="icon-label">Scale / Weigh Station</div>
-  </a>
-
-  <div class="icon-btn" onclick="capturePhoto('Scale / Weight Ticket')">
-    <div class="icon-emoji">🎫</div>
-    <div class="icon-label">Scale Ticket Photo</div>
-  </div>
-
-  <div class="icon-btn" data-load-req onclick="guardedModal('mileageModal')">
-    <div class="icon-emoji">🛣️</div>
-    <div class="icon-label">Enter Mileage</div>
-  </div>
-
-  <div class="icon-btn" onclick="capturePhoto('Toll Receipt')">
-    <div class="icon-emoji">🛤️</div>
-    <div class="icon-label">Toll Receipt</div>
-  </div>
-
-  <a class="icon-btn" href="parking.html">
-    <div class="icon-emoji">🅿️</div>
-    <div class="icon-label">Parking / Rest Stop</div>
-  </a>
-
-  <a class="icon-btn c-blue" href="route-planner.html">
-    <div class="icon-emoji">📡</div>
-    <div class="icon-label">Live Route</div>
-  </a>
-
-</div>
-
-
-<!-- ══════════════════════════════════════════════════════
-     SECTION 6 — DELIVERY
-     POD, cargo condition, lumper, detention at receiver
-══════════════════════════════════════════════════════ -->
-<div class="sec-header">
-  <span class="sec-header-icon">🏠</span>
-  <span class="sec-header-label">At Delivery</span>
-  <div class="sec-header-rule"></div>
-</div>
-<div class="icon-grid">
-
-  <div class="icon-btn c-pink" data-load-req onclick="guardedModal('podModal')">
-    <div class="icon-emoji">📸</div>
-    <div class="icon-label">Upload POD</div>
-  </div>
-
-  <div class="icon-btn" data-load-req onclick="capturePhoto('Cargo — After Delivery')">
-    <div class="icon-emoji">📦</div>
-    <div class="icon-label">Cargo After Delivery</div>
-  </div>
-
-  <div class="icon-btn" data-load-req onclick="capturePhoto('Detention Proof')">
-    <div class="icon-emoji">⏱️</div>
-    <div class="icon-label">Detention Proof</div>
-  </div>
-
-  <div class="icon-btn" data-load-req onclick="guardedModal('lumperModal')">
-    <div class="icon-emoji">🏗️</div>
-    <div class="icon-label">Lumper Request</div>
-  </div>
-
-  <div class="icon-btn" data-load-req onclick="capturePhoto('Lumper Receipt')">
-    <div class="icon-emoji">🧾</div>
-    <div class="icon-label">Lumper Receipt</div>
-  </div>
-
-  <div class="icon-btn" data-load-req onclick="guardedModal('mileageModal')">
-    <div class="icon-emoji">🛣️</div>
-    <div class="icon-label">Final Mileage</div>
-  </div>
-
-</div>
-
-
-<!-- ══════════════════════════════════════════════════════
-     SECTION 7 — POST-TRIP & WRAP-UP
-     End of day inspection, DVIR, close out the load
-══════════════════════════════════════════════════════ -->
-<div class="sec-header">
-  <span class="sec-header-icon">🌙</span>
-  <span class="sec-header-label">Post-Trip & Wrap-Up</span>
-  <div class="sec-header-rule"></div>
-</div>
-<div class="icon-grid">
-
-  <div class="icon-btn c-green" onclick="openModal('posttripModal')">
-    <div class="icon-emoji">🔎</div>
-    <div class="icon-label">Post-Trip DVIR</div>
-  </div>
-
-  <a class="icon-btn" href="dvir.html">
-    <div class="icon-emoji">📂</div>
-    <div class="icon-label">DVIR History</div>
-  </a>
-
-  <a class="icon-btn c-blue" href="eld-hours.html">
-    <div class="icon-emoji">📊</div>
-    <div class="icon-label">HOS Log</div>
-  </a>
-
-  <a class="icon-btn" href="my-pay.html">
-    <div class="icon-emoji">💵</div>
-    <div class="icon-label">Check Pay</div>
-  </a>
-
-  <a class="icon-btn" href="settlements.html">
-    <div class="icon-emoji">🧾</div>
-    <div class="icon-label">Settlements</div>
-  </a>
-
-</div>
-
-
-<!-- ══════════════════════════════════════════════════════
-     SECTION 8 — PHOTOS (UNIVERSAL — no load required)
-══════════════════════════════════════════════════════ -->
-<div class="sec-header">
-  <span class="sec-header-icon">📷</span>
-  <span class="sec-header-label">Photos & Documents</span>
-  <div class="sec-header-rule"></div>
-</div>
-
-<div class="photo-tile-wide" onclick="openModal('photosModal')">
-  <div class="photo-tile-wide-icon">📷</div>
-  <div>
-    <div class="photo-tile-wide-label">Take / Upload Photo</div>
-    <div class="photo-tile-wide-sub">POD · BOL · Damage · Fuel · Scale · CDL · Permits · Incidents · 20+ categories</div>
-  </div>
-  <div style="margin-left:auto;font-size:22px;color:var(--muted);">›</div>
-</div>
-
-<div class="icon-grid" style="margin-top:10px;">
-
-  <div class="icon-btn" onclick="capturePhoto('Cargo — Before Pickup')">
-    <div class="icon-emoji">🏭</div>
-    <div class="icon-label">Cargo Before</div>
-  </div>
-
-  <div class="icon-btn" onclick="capturePhoto('Cargo — After Delivery')">
-    <div class="icon-emoji">📦</div>
-    <div class="icon-label">Cargo After</div>
-  </div>
-
-  <div class="icon-btn" onclick="capturePhoto('Truck Damage')">
-    <div class="icon-emoji">🚚</div>
-    <div class="icon-label">Truck Damage</div>
-  </div>
-
-  <div class="icon-btn" onclick="capturePhoto('Trailer Damage')">
-    <div class="icon-emoji">🚋</div>
-    <div class="icon-label">Trailer Damage</div>
-  </div>
-
-  <div class="icon-btn" onclick="capturePhoto('Cargo Securement')">
-    <div class="icon-emoji">⛓️</div>
-    <div class="icon-label">Cargo Securement</div>
-  </div>
-
-  <div class="icon-btn" onclick="capturePhoto('CDL Scan')">
-    <div class="icon-emoji">🪪</div>
-    <div class="icon-label">CDL Scan</div>
-  </div>
-
-  <div class="icon-btn" onclick="capturePhoto('Medical Card')">
-    <div class="icon-emoji">💊</div>
-    <div class="icon-label">Medical Card</div>
-  </div>
-
-  <div class="icon-btn" onclick="capturePhoto('Insurance Card')">
-    <div class="icon-emoji">📋</div>
-    <div class="icon-label">Insurance Card</div>
-  </div>
-
-  <div class="icon-btn" onclick="capturePhoto('Other Document')">
-    <div class="icon-emoji">📄</div>
-    <div class="icon-label">Other Document</div>
-  </div>
-
-</div>
-
-
-<!-- ══════════════════════════════════════════════════════
-     SECTION 9 — REPORT INCIDENTS
-══════════════════════════════════════════════════════ -->
-<div class="sec-header">
-  <span class="sec-header-icon">🚨</span>
-  <span class="sec-header-label">Report an Incident</span>
-  <div class="sec-header-rule"></div>
-</div>
-<div class="report-grid">
-
-  <div class="rep-btn danger" data-load-req onclick="guardedModal('blowoutModal')">
-    <div class="rep-icon">💥</div>
-    <div>
-      <div class="rep-label red">Tire Blowout</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:2px;">Alerts dispatch now</div>
+<div class="sec-body open" id="sec-load">
+
+  <!-- Rate Con Detail Card -->
+  <div class="rc-card">
+    <div class="rc-row"><span class="rc-label">Load #</span><span class="rc-val">LDX-2841</span></div>
+    <div class="rc-row"><span class="rc-label">Broker</span><span class="rc-val">Coyote Logistics — Sarah M.</span></div>
+    <div class="rc-row"><span class="rc-label">Rate</span><span class="rc-val green">$3,400.00</span></div>
+    <div class="rc-row"><span class="rc-label">Origin</span><span class="rc-val">Miami Auto Parts, Miami FL</span></div>
+    <div class="rc-row"><span class="rc-label">Pickup</span><span class="rc-val orange">Today — 08:00 AM</span></div>
+    <div class="rc-row"><span class="rc-label">Destination</span><span class="rc-val">Atlanta Distribution Center, Atlanta GA</span></div>
+    <div class="rc-row"><span class="rc-label">Delivery</span><span class="rc-val">Today — 2:00 PM</span></div>
+    <div class="rc-row"><span class="rc-label">Commodity</span><span class="rc-val">Auto Parts — 42,000 lbs</span></div>
+    <div class="rc-row"><span class="rc-label">Miles</span><span class="rc-val">662 loaded · 18 DH</span></div>
+    <div class="rc-row"><span class="rc-label">Equipment</span><span class="rc-val">Dry Van 53'</span></div>
+    <div class="rc-row"><span class="rc-label">Special Instr.</span><span class="rc-val">No touch freight · Dock 7</span></div>
+    <div class="rc-row"><span class="rc-label">Status</span><span class="rc-val" style="color:var(--accent);">● In Transit</span></div>
+    <div class="rc-actions">
+      <button class="rc-btn sign" onclick="openModal('signModal')">✍️ Sign RC</button>
+      <button class="rc-btn call" onclick="openModal('contactModal')">📞 Broker</button>
+      <button class="rc-btn detail" onclick="openModal('mileageModal')">🛣️ Miles</button>
     </div>
   </div>
 
-  <div class="rep-btn danger" data-load-req onclick="guardedModal('accidentModal')">
-    <div class="rep-icon">🚗</div>
-    <div>
-      <div class="rep-label red">Accident / Collision</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:2px;">Scene photos + info</div>
+  <!-- Load Action Tiles -->
+  <div class="tile-grid">
+    <div class="tile c-pink" data-load-req onclick="guardedModal('podModal')"><div class="tile-icon">📸</div><div class="tile-lbl">Upload POD</div></div>
+    <div class="tile c-pink" data-load-req onclick="guardedModal('bolModal')"><div class="tile-icon">📑</div><div class="tile-lbl">Scan BOL</div></div>
+    <div class="tile" data-load-req onclick="capturePhoto('Cargo — Before Pickup')"><div class="tile-icon">🏭</div><div class="tile-lbl">Cargo Before</div></div>
+    <div class="tile" data-load-req onclick="capturePhoto('Cargo — After Delivery')"><div class="tile-icon">📦</div><div class="tile-lbl">Cargo After</div></div>
+    <div class="tile" data-load-req onclick="capturePhoto('Seal Number')"><div class="tile-icon">🔒</div><div class="tile-lbl">Seal Number</div></div>
+    <div class="tile" data-load-req onclick="capturePhoto('OS&D — Damage or Shortage')"><div class="tile-icon">⚠️</div><div class="tile-lbl">OS&amp;D / Damage</div></div>
+    <div class="tile c-orange" data-load-req onclick="guardedModal('detentionModal')"><div class="tile-icon">⏱️</div><div class="tile-lbl">Detention Timer</div></div>
+    <div class="tile" data-load-req onclick="guardedModal('lumperModal')"><div class="tile-icon">🏗️</div><div class="tile-lbl">Lumper Request</div></div>
+    <div class="tile" data-load-req onclick="capturePhoto('Lumper Receipt')"><div class="tile-icon">🧾</div><div class="tile-lbl">Lumper Receipt</div></div>
+    <div class="tile" data-load-req onclick="guardedModal('mileageModal')"><div class="tile-icon">🛣️</div><div class="tile-lbl">Enter Mileage</div></div>
+    <div class="tile" data-load-req onclick="capturePhoto('Detention Proof')"><div class="tile-icon">📷</div><div class="tile-lbl">Detention Proof</div></div>
+    <div class="tile" data-load-req onclick="guardedModal('contactModal')"><div class="tile-icon">📞</div><div class="tile-lbl">Broker / Shipper</div></div>
+  </div>
+
+  <!-- Sub: INSPECTIONS (under this load) -->
+  <div class="sub-bar" onclick="toggle('inspections')">
+    <div class="sub-dot" style="background:#22c55e;"></div>
+    <div class="sub-title">INSPECTIONS — TRUCK #104</div>
+    <div class="sec-chevron open" id="chev-inspections" style="font-size:13px;">▾</div>
+  </div>
+  <div class="sec-body open" id="sec-inspections">
+    <div class="tile-grid">
+      <div class="tile c-green" onclick="openModal('pretripModal')"><div class="tile-icon">✅</div><div class="tile-lbl">Pre-Trip DVIR</div></div>
+      <div class="tile" onclick="openModal('posttripModal')"><div class="tile-icon">🔎</div><div class="tile-lbl">Post-Trip DVIR</div></div>
+      <a class="tile" href="dvir.html"><div class="tile-icon">📂</div><div class="tile-lbl">DVIR History</div></a>
+      <div class="tile" onclick="capturePhoto('Pre-Trip Defect')"><div class="tile-icon">📷</div><div class="tile-lbl">Defect Photo</div></div>
+    </div>
+    <div class="dvir-list" id="quick-dvir">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding-bottom:8px;">Quick Status Check</div>
     </div>
   </div>
 
-  <div class="rep-btn warn" onclick="openModal('repairModal')">
-    <div class="rep-icon">🔧</div>
-    <div>
-      <div class="rep-label og">Repair Needed</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:2px;">Receipt + vendor</div>
-    </div>
-  </div>
+</div><!-- /sec-load -->
 
-  <div class="rep-btn neutral" onclick="capturePhoto('Road Hazard')">
-    <div class="rep-icon">🚧</div>
-    <div>
-      <div class="rep-label">Road Hazard</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:2px;">Photo + location</div>
-    </div>
-  </div>
 
-  <div class="rep-btn neutral" onclick="capturePhoto('Police / DOT Stop')">
-    <div class="rep-icon">🚔</div>
-    <div>
-      <div class="rep-label">DOT / Police Stop</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:2px;">Document the stop</div>
-    </div>
+<!-- ══════════════════════════════════════════════════════
+     3 · EQUIPMENT & ROUTE
+══════════════════════════════════════════════════════ -->
+<div class="sec-bar blue-border" onclick="toggle('equipment')">
+  <div class="sec-dot blue"></div>
+  <div style="flex:1">
+    <div class="sec-title">EQUIPMENT & ROUTE</div>
+    <div class="sec-sub">Truck #104 · Dry Van 53' · I-75 N</div>
   </div>
-
-  <div class="rep-btn neutral" onclick="openModal('issueModal')">
-    <div class="rep-icon">⚠️</div>
-    <div>
-      <div class="rep-label">Report Issue</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:2px;">General / other</div>
-    </div>
+  <div class="sec-chevron" id="chev-equipment">▾</div>
+</div>
+<div class="sec-body" id="sec-equipment">
+  <div class="tile-grid">
+    <a class="tile c-blue" href="route-planner.html"><div class="tile-icon">🗺️</div><div class="tile-lbl">Route Planner</div></a>
+    <a class="tile" href="hazard-map.html"><div class="tile-icon">🚨</div><div class="tile-lbl">Road Alerts</div></a>
+    <a class="tile" href="weather.html"><div class="tile-icon">🌦️</div><div class="tile-lbl">Weather</div></a>
+    <a class="tile c-orange" href="fuel.html"><div class="tile-icon">⛽</div><div class="tile-lbl">Fuel Log</div></a>
+    <div class="tile" onclick="capturePhoto('Fuel Receipt')"><div class="tile-icon">🧾</div><div class="tile-lbl">Fuel Receipt</div></div>
+    <a class="tile" href="scale-tickets.html"><div class="tile-icon">⚖️</div><div class="tile-lbl">Scale / Weigh</div></a>
+    <div class="tile" onclick="capturePhoto('Scale / Weight Ticket')"><div class="tile-icon">🎫</div><div class="tile-lbl">Scale Ticket Photo</div></div>
+    <a class="tile" href="weight-calculator.html"><div class="tile-icon">🔢</div><div class="tile-lbl">Weight / Axle Calc</div></a>
+    <a class="tile" href="permits.html"><div class="tile-icon">📜</div><div class="tile-lbl">Permits</div></a>
+    <a class="tile" href="parking.html"><div class="tile-icon">🅿️</div><div class="tile-lbl">Parking / Rest</div></a>
+    <div class="tile" onclick="capturePhoto('Toll Receipt')"><div class="tile-icon">🛤️</div><div class="tile-lbl">Toll Receipt</div></div>
+    <div class="tile" onclick="capturePhoto('Cargo Securement')"><div class="tile-icon">⛓️</div><div class="tile-lbl">Cargo Securement</div></div>
+    <div class="tile" onclick="capturePhoto('Tire Condition')"><div class="tile-icon">🛞</div><div class="tile-lbl">Tire Check Photo</div></div>
+    <div class="tile" onclick="capturePhoto('Truck Damage')"><div class="tile-icon">🚚</div><div class="tile-lbl">Truck Damage</div></div>
+    <div class="tile" onclick="capturePhoto('Trailer Damage')"><div class="tile-icon">🚋</div><div class="tile-lbl">Trailer Damage</div></div>
   </div>
-
 </div>
 
 
 <!-- ══════════════════════════════════════════════════════
-     SECTION 10 — MY PROFILE & COMPLIANCE
+     4 · DOCUMENTS & PHOTOS (universal, no load req)
 ══════════════════════════════════════════════════════ -->
-<div class="sec-header">
-  <span class="sec-header-icon">👤</span>
-  <span class="sec-header-label">My Profile & Compliance</span>
-  <div class="sec-header-rule"></div>
+<div class="sec-bar" style="border-bottom-color:#8b5cf6;" onclick="toggle('photos')">
+  <div class="sec-dot purple"></div>
+  <div style="flex:1">
+    <div class="sec-title">DOCUMENTS & PHOTOS</div>
+    <div class="sec-sub">Universal — CDL · Receipts · Permits · All categories</div>
+  </div>
+  <div class="sec-chevron" id="chev-photos">▾</div>
 </div>
-<div class="icon-grid">
+<div class="sec-body" id="sec-photos">
+  <div style="padding:12px 14px 0;">
+    <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:#fff;border:1.5px solid var(--border);border-radius:12px;cursor:pointer;" onclick="openModal('photosModal')">
+      <div style="font-size:26px;">📷</div>
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;">Take / Upload Photo</div>
+        <div style="font-size:11px;color:var(--mid);margin-top:2px;">20+ categories — tap to choose type</div>
+      </div>
+      <div style="margin-left:auto;font-size:20px;color:var(--muted);">›</div>
+    </div>
+  </div>
+  <div class="tile-grid">
+    <div class="tile" onclick="capturePhoto('CDL Scan')"><div class="tile-icon">🪪</div><div class="tile-lbl">CDL Scan</div></div>
+    <div class="tile" onclick="capturePhoto('Medical Card')"><div class="tile-icon">💊</div><div class="tile-lbl">Medical Card</div></div>
+    <div class="tile" onclick="capturePhoto('Insurance Card')"><div class="tile-icon">📋</div><div class="tile-lbl">Insurance Card</div></div>
+    <div class="tile" onclick="capturePhoto('Permit')"><div class="tile-icon">📜</div><div class="tile-lbl">Permit</div></div>
+    <div class="tile" onclick="capturePhoto('Other Document')"><div class="tile-icon">📄</div><div class="tile-lbl">Other Document</div></div>
+    <div class="tile" onclick="capturePhoto('Other Receipt')"><div class="tile-icon">🧾</div><div class="tile-lbl">Other Receipt</div></div>
+  </div>
+</div>
 
-  <a class="icon-btn" href="driver-profile.html">
-    <div class="icon-emoji">👤</div>
-    <div class="icon-label">My Profile</div>
-  </a>
 
-  <a class="icon-btn" href="my-documents.html">
-    <div class="icon-emoji">📄</div>
-    <div class="icon-label">My Documents</div>
-  </a>
-
-  <a class="icon-btn c-orange" href="expiration-hub.html">
-    <div class="icon-emoji">📅</div>
-    <div class="icon-label">CDL & Expiry</div>
-    <div class="icon-badge og">1 Due</div>
-  </a>
-
-  <a class="icon-btn" href="drug-alcohol.html">
-    <div class="icon-emoji">🧪</div>
-    <div class="icon-label">Drug & Alcohol</div>
-  </a>
-
-  <a class="icon-btn c-purple" href="coaching-log.html">
-    <div class="icon-emoji">🏋️</div>
-    <div class="icon-label">Coaching Log</div>
-  </a>
-
-  <a class="icon-btn c-orange" href="driver-trophies.html">
-    <div class="icon-emoji">🏆</div>
-    <div class="icon-label">Hall of Bragging</div>
-  </a>
-
-  <a class="icon-btn" href="tax-forms.html">
-    <div class="icon-emoji">🗂️</div>
-    <div class="icon-label">Tax Forms</div>
-  </a>
-
-  <a class="icon-btn c-blue" href="nexus-ai.html">
-    <div class="icon-emoji">🤖</div>
-    <div class="icon-label">Nexus AI</div>
-  </a>
-
+<!-- ══════════════════════════════════════════════════════
+     5 · REPORT AN INCIDENT
+══════════════════════════════════════════════════════ -->
+<div class="sec-bar red-border" onclick="toggle('report')">
+  <div class="sec-dot red"></div>
+  <div style="flex:1">
+    <div class="sec-title">REPORT AN INCIDENT</div>
+    <div class="sec-sub">Blowout · Accident · Repair · DOT Stop · Issues</div>
+  </div>
+  <div class="sec-chevron" id="chev-report">▾</div>
+</div>
+<div class="sec-body" id="sec-report">
+  <div class="rep-grid">
+    <div class="rep-tile danger" data-load-req onclick="guardedModal('blowoutModal')">
+      <div class="rep-icon">💥</div>
+      <div><div class="rep-lbl red">Tire Blowout</div><div class="rep-sub">Alerts dispatch now</div></div>
+    </div>
+    <div class="rep-tile danger" data-load-req onclick="guardedModal('accidentModal')">
+      <div class="rep-icon">🚗</div>
+      <div><div class="rep-lbl red">Accident</div><div class="rep-sub">Scene + info</div></div>
+    </div>
+    <div class="rep-tile warn" onclick="openModal('repairModal')">
+      <div class="rep-icon">🔧</div>
+      <div><div class="rep-lbl og">Repair Needed</div><div class="rep-sub">Receipt + vendor</div></div>
+    </div>
+    <div class="rep-tile neutral" onclick="capturePhoto('Road Hazard')">
+      <div class="rep-icon">🚧</div>
+      <div><div class="rep-lbl">Road Hazard</div><div class="rep-sub">Photo + location</div></div>
+    </div>
+    <div class="rep-tile neutral" onclick="capturePhoto('Police / DOT Stop')">
+      <div class="rep-icon">🚔</div>
+      <div><div class="rep-lbl">DOT / Police Stop</div><div class="rep-sub">Document the stop</div></div>
+    </div>
+    <div class="rep-tile neutral" onclick="openModal('issueModal')">
+      <div class="rep-icon">⚠️</div>
+      <div><div class="rep-lbl">Report Issue</div><div class="rep-sub">General / other</div></div>
+    </div>
+  </div>
 </div>
 
 <div style="height:16px;"></div>
@@ -775,11 +437,11 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 5h12M3 9h12M3 13h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
     Loads
   </a>
-  <div class="nav-center">
-    <div class="nav-center-btn" onclick="openModal('photosModal')">
+  <div class="nav-cam">
+    <div class="nav-cam-btn" onclick="openModal('photosModal')">
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="12" r="4" stroke="white" stroke-width="1.8"/><path d="M3 8h2l2-3h8l2 3h2a1 1 0 011 1v9a1 1 0 01-1 1H3a1 1 0 01-1-1V9a1 1 0 011-1z" stroke="white" stroke-width="1.8"/></svg>
     </div>
-    <span class="nav-center-lbl">Photo</span>
+    <span class="nav-cam-lbl">Photo</span>
   </div>
   <a class="nav-tab" href="my-pay.html">
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2 8h14" stroke="currentColor" stroke-width="1.5"/></svg>
@@ -792,360 +454,336 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 </nav>
 
 
-<!-- ══════════════════════════════════════════════════════
-     MODALS
-══════════════════════════════════════════════════════ -->
+<!-- ═══════════ MODALS ═══════════ -->
 
-<!-- NO LOAD GUARD -->
+<!-- NO LOAD -->
 <div class="modal-overlay" id="noLoadModal" onclick="closeModal('noLoadModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()" style="text-align:center;">
-    <div class="modal-handle"></div>
+    <div class="mhandle"></div>
     <div style="font-size:44px;margin-bottom:10px;">🚛</div>
-    <div class="modal-title" style="text-align:center;">No Active Load</div>
-    <div class="modal-sub" style="text-align:center;margin-bottom:20px;">This action requires an active load. Accept a load first.</div>
-    <a class="modal-btn primary" href="active-loads.html" style="display:block;text-align:center;text-decoration:none;padding:14px;border-radius:10px;background:var(--accent);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;">View My Loads</a>
-    <button class="modal-btn sec" onclick="closeModal('noLoadModal')" style="margin-top:8px;">Cancel</button>
+    <div class="mtitle" style="text-align:center;">No Active Load</div>
+    <div class="msub" style="text-align:center;margin-bottom:18px;">Accept a load first to use this feature.</div>
+    <a class="mbtn primary" href="active-loads.html" style="display:block;text-align:center;text-decoration:none;padding:14px;border-radius:10px;background:var(--accent);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;">View My Loads</a>
+    <button class="mbtn sec" onclick="closeModal('noLoadModal')" style="margin-top:8px;">Cancel</button>
   </div>
 </div>
 
 <!-- UNIVERSAL PHOTO PICKER -->
 <div class="modal-overlay" id="photosModal" onclick="closeModal('photosModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">📷 Take / Upload Photo</div>
-    <div class="modal-sub">Choose a category — photo files to the right folder automatically.</div>
-
-    <div class="photo-sec-lbl" id="photoLoadLabel">🔴 For This Load (LDX-2841)</div>
-    <div class="photo-grid">
-      <div class="photo-pick load-type" onclick="capturePhoto('POD / Delivery Receipt')"><div class="photo-pick-icon">📦</div><div class="photo-pick-lbl">POD / Delivery Receipt</div></div>
-      <div class="photo-pick load-type" onclick="capturePhoto('Bill of Lading (BOL)')"><div class="photo-pick-icon">📑</div><div class="photo-pick-lbl">Bill of Lading (BOL)</div></div>
-      <div class="photo-pick load-type" onclick="capturePhoto('Cargo — Before Pickup')"><div class="photo-pick-icon">🏭</div><div class="photo-pick-lbl">Cargo Before Pickup</div></div>
-      <div class="photo-pick load-type" onclick="capturePhoto('Cargo — After Delivery')"><div class="photo-pick-icon">🏠</div><div class="photo-pick-lbl">Cargo After Delivery</div></div>
-      <div class="photo-pick load-type" onclick="capturePhoto('Seal Number')"><div class="photo-pick-icon">🔒</div><div class="photo-pick-lbl">Seal Number</div></div>
-      <div class="photo-pick load-type" onclick="capturePhoto('OS&D — Damage or Shortage')"><div class="photo-pick-icon">⚠️</div><div class="photo-pick-lbl">OS&amp;D / Damage</div></div>
-      <div class="photo-pick load-type" onclick="capturePhoto('Lumper Receipt')"><div class="photo-pick-icon">🧾</div><div class="photo-pick-lbl">Lumper Receipt</div></div>
-      <div class="photo-pick load-type" onclick="capturePhoto('Detention Proof')"><div class="photo-pick-icon">⏱️</div><div class="photo-pick-lbl">Detention Proof</div></div>
+    <div class="mhandle"></div>
+    <div class="mtitle">📷 Take / Upload Photo</div>
+    <div class="msub">Choose a category — saved to the right folder automatically.</div>
+    <div class="phsec" id="photoLoadLabel">🔴 For This Load (LDX-2841)</div>
+    <div class="phgrid">
+      <div class="phtile load-type" onclick="capturePhoto('POD / Delivery Receipt')"><div class="phicon">📦</div><div class="phlbl">POD / Delivery Receipt</div></div>
+      <div class="phtile load-type" onclick="capturePhoto('Bill of Lading (BOL)')"><div class="phicon">📑</div><div class="phlbl">Bill of Lading (BOL)</div></div>
+      <div class="phtile load-type" onclick="capturePhoto('Cargo — Before Pickup')"><div class="phicon">🏭</div><div class="phlbl">Cargo Before Pickup</div></div>
+      <div class="phtile load-type" onclick="capturePhoto('Cargo — After Delivery')"><div class="phicon">🏠</div><div class="phlbl">Cargo After Delivery</div></div>
+      <div class="phtile load-type" onclick="capturePhoto('Seal Number')"><div class="phicon">🔒</div><div class="phlbl">Seal Number</div></div>
+      <div class="phtile load-type" onclick="capturePhoto('OS&D — Damage or Shortage')"><div class="phicon">⚠️</div><div class="phlbl">OS&amp;D / Damage</div></div>
+      <div class="phtile load-type" onclick="capturePhoto('Lumper Receipt')"><div class="phicon">🧾</div><div class="phlbl">Lumper Receipt</div></div>
+      <div class="phtile load-type" onclick="capturePhoto('Detention Proof')"><div class="phicon">⏱️</div><div class="phlbl">Detention Proof</div></div>
     </div>
-
-    <div class="photo-sec-lbl">🚛 Vehicle & Equipment</div>
-    <div class="photo-grid">
-      <div class="photo-pick" onclick="capturePhoto('Pre-Trip Defect')"><div class="photo-pick-icon">🔍</div><div class="photo-pick-lbl">Pre-Trip Defect</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Post-Trip Defect')"><div class="photo-pick-icon">🔎</div><div class="photo-pick-lbl">Post-Trip Defect</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Tire Condition')"><div class="photo-pick-icon">🛞</div><div class="photo-pick-lbl">Tire Condition</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Truck Damage')"><div class="photo-pick-icon">🚚</div><div class="photo-pick-lbl">Truck Damage</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Trailer Damage')"><div class="photo-pick-icon">🚋</div><div class="photo-pick-lbl">Trailer Damage</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Cargo Securement')"><div class="photo-pick-icon">⛓️</div><div class="photo-pick-lbl">Cargo Securement</div></div>
+    <div class="phsec">🚛 Vehicle & Equipment</div>
+    <div class="phgrid">
+      <div class="phtile" onclick="capturePhoto('Pre-Trip Defect')"><div class="phicon">🔍</div><div class="phlbl">Pre-Trip Defect</div></div>
+      <div class="phtile" onclick="capturePhoto('Post-Trip Defect')"><div class="phicon">🔎</div><div class="phlbl">Post-Trip Defect</div></div>
+      <div class="phtile" onclick="capturePhoto('Tire Condition')"><div class="phicon">🛞</div><div class="phlbl">Tire Condition</div></div>
+      <div class="phtile" onclick="capturePhoto('Truck Damage')"><div class="phicon">🚚</div><div class="phlbl">Truck Damage</div></div>
+      <div class="phtile" onclick="capturePhoto('Trailer Damage')"><div class="phicon">🚋</div><div class="phlbl">Trailer Damage</div></div>
+      <div class="phtile" onclick="capturePhoto('Cargo Securement')"><div class="phicon">⛓️</div><div class="phlbl">Cargo Securement</div></div>
     </div>
-
-    <div class="photo-sec-lbl">🧾 Receipts & Tickets</div>
-    <div class="photo-grid">
-      <div class="photo-pick" onclick="capturePhoto('Fuel Receipt')"><div class="photo-pick-icon">⛽</div><div class="photo-pick-lbl">Fuel Receipt</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Scale / Weight Ticket')"><div class="photo-pick-icon">⚖️</div><div class="photo-pick-lbl">Scale / Weight Ticket</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Toll Receipt')"><div class="photo-pick-icon">🛣️</div><div class="photo-pick-lbl">Toll Receipt</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Repair Receipt')"><div class="photo-pick-icon">🔧</div><div class="photo-pick-lbl">Repair Receipt</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Hotel / Layover Receipt')"><div class="photo-pick-icon">🏨</div><div class="photo-pick-lbl">Hotel Receipt</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Other Receipt')"><div class="photo-pick-icon">🧾</div><div class="photo-pick-lbl">Other Receipt</div></div>
+    <div class="phsec">🧾 Receipts & Tickets</div>
+    <div class="phgrid">
+      <div class="phtile" onclick="capturePhoto('Fuel Receipt')"><div class="phicon">⛽</div><div class="phlbl">Fuel Receipt</div></div>
+      <div class="phtile" onclick="capturePhoto('Scale / Weight Ticket')"><div class="phicon">⚖️</div><div class="phlbl">Scale / Weight Ticket</div></div>
+      <div class="phtile" onclick="capturePhoto('Toll Receipt')"><div class="phicon">🛣️</div><div class="phlbl">Toll Receipt</div></div>
+      <div class="phtile" onclick="capturePhoto('Repair Receipt')"><div class="phicon">🔧</div><div class="phlbl">Repair Receipt</div></div>
+      <div class="phtile" onclick="capturePhoto('Hotel / Layover Receipt')"><div class="phicon">🏨</div><div class="phlbl">Hotel Receipt</div></div>
+      <div class="phtile" onclick="capturePhoto('Other Receipt')"><div class="phicon">🧾</div><div class="phlbl">Other Receipt</div></div>
     </div>
-
-    <div class="photo-sec-lbl">📋 Documents</div>
-    <div class="photo-grid">
-      <div class="photo-pick" onclick="capturePhoto('CDL Scan')"><div class="photo-pick-icon">🪪</div><div class="photo-pick-lbl">CDL Scan</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Medical Card')"><div class="photo-pick-icon">💊</div><div class="photo-pick-lbl">Medical Card</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Insurance Card')"><div class="photo-pick-icon">📋</div><div class="photo-pick-lbl">Insurance Card</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Permit')"><div class="photo-pick-icon">📜</div><div class="photo-pick-lbl">Permit</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Rate Confirmation')"><div class="photo-pick-icon">📃</div><div class="photo-pick-lbl">Rate Confirmation</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Other Document')"><div class="photo-pick-icon">📄</div><div class="photo-pick-lbl">Other Document</div></div>
+    <div class="phsec">📋 Documents</div>
+    <div class="phgrid">
+      <div class="phtile" onclick="capturePhoto('CDL Scan')"><div class="phicon">🪪</div><div class="phlbl">CDL Scan</div></div>
+      <div class="phtile" onclick="capturePhoto('Medical Card')"><div class="phicon">💊</div><div class="phlbl">Medical Card</div></div>
+      <div class="phtile" onclick="capturePhoto('Insurance Card')"><div class="phicon">📋</div><div class="phlbl">Insurance Card</div></div>
+      <div class="phtile" onclick="capturePhoto('Permit')"><div class="phicon">📜</div><div class="phlbl">Permit</div></div>
+      <div class="phtile" onclick="capturePhoto('Rate Confirmation')"><div class="phicon">📃</div><div class="phlbl">Rate Confirmation</div></div>
+      <div class="phtile" onclick="capturePhoto('Other Document')"><div class="phicon">📄</div><div class="phlbl">Other Document</div></div>
     </div>
-
-    <div class="photo-sec-lbl">🚨 Incidents</div>
-    <div class="photo-grid">
-      <div class="photo-pick" onclick="capturePhoto('Accident Scene')"><div class="photo-pick-icon">🚗</div><div class="photo-pick-lbl">Accident Scene</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Blowout / Tire')"><div class="photo-pick-icon">💥</div><div class="photo-pick-lbl">Blowout / Tire</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Road Hazard')"><div class="photo-pick-icon">🚧</div><div class="photo-pick-lbl">Road Hazard</div></div>
-      <div class="photo-pick" onclick="capturePhoto('Police / DOT Stop')"><div class="photo-pick-icon">🚔</div><div class="photo-pick-lbl">Police / DOT Stop</div></div>
+    <div class="phsec">🚨 Incidents</div>
+    <div class="phgrid">
+      <div class="phtile" onclick="capturePhoto('Accident Scene')"><div class="phicon">🚗</div><div class="phlbl">Accident Scene</div></div>
+      <div class="phtile" onclick="capturePhoto('Blowout / Tire')"><div class="phicon">💥</div><div class="phlbl">Blowout / Tire</div></div>
+      <div class="phtile" onclick="capturePhoto('Road Hazard')"><div class="phicon">🚧</div><div class="phlbl">Road Hazard</div></div>
+      <div class="phtile" onclick="capturePhoto('Police / DOT Stop')"><div class="phicon">🚔</div><div class="phlbl">Police / DOT Stop</div></div>
     </div>
-
-    <button class="modal-btn sec" onclick="closeModal('photosModal')" style="margin-top:14px;">Cancel</button>
+    <button class="mbtn sec" onclick="closeModal('photosModal')" style="margin-top:12px;">Cancel</button>
   </div>
 </div>
 
-<!-- PHOTO CAPTURE SHEET -->
+<!-- PHOTO CAPTURE -->
 <div class="modal-overlay" id="captureModal" onclick="closeModal('captureModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="captureTitle">Take Photo</div>
-    <div class="modal-sub" id="captureSub">Saved to your vault</div>
-    <div class="upload-zone" style="padding:28px;">
-      <div style="font-size:36px;margin-bottom:8px;">📷</div>
-      <div style="font-weight:700;font-size:15px;">Open Camera</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px;">Tap to take photo</div>
-    </div>
-    <div class="upload-zone" style="display:flex;align-items:center;gap:14px;text-align:left;padding:13px 16px;">
-      <div style="font-size:22px;">📁</div>
-      <div><div style="font-weight:600;font-size:14px;">Choose from Library</div><div style="font-size:11px;color:var(--muted);">PDF, JPG, PNG</div></div>
-    </div>
-    <label class="modal-lbl" style="margin-top:6px;">Notes (optional)</label>
-    <input class="modal-input" type="text" id="captureNote" placeholder="Add a note...">
-    <button class="modal-btn primary" id="captureSubmit">✓ Submit Photo</button>
-    <button class="modal-btn sec" onclick="closeModal('captureModal');openModal('photosModal')" style="margin-top:8px;">← Back to Categories</button>
+    <div class="mhandle"></div>
+    <div class="mtitle" id="captureTitle">Take Photo</div>
+    <div class="msub" id="captureSub">Saved to your vault</div>
+    <div class="upzone" style="padding:26px;"><div style="font-size:34px;margin-bottom:8px;">📷</div><div style="font-weight:700;font-size:15px;">Open Camera</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">Tap to take photo</div></div>
+    <div class="upzone" style="display:flex;align-items:center;gap:14px;text-align:left;padding:13px 16px;"><div style="font-size:22px;">📁</div><div><div style="font-weight:600;font-size:14px;">Choose from Library</div><div style="font-size:11px;color:var(--muted);">PDF, JPG, PNG</div></div></div>
+    <label class="mlbl" style="margin-top:6px;">Notes (optional)</label>
+    <input class="minput" type="text" id="captureNote" placeholder="Add a note...">
+    <button class="mbtn primary" id="captureSubmit">✓ Submit Photo</button>
+    <button class="mbtn sec" onclick="closeModal('captureModal');openModal('photosModal')" style="margin-top:8px;">← Back to Categories</button>
   </div>
 </div>
 
 <!-- POD -->
 <div class="modal-overlay" id="podModal" onclick="closeModal('podModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Upload POD / BOL</div>
-    <div class="modal-sub">Load LDX-2841 · Coyote Logistics</div>
-    <div class="upload-zone"><div style="font-size:28px;margin-bottom:6px;">📷</div><div style="font-weight:600;font-size:14px;">Take Photo</div></div>
-    <div class="upload-zone" style="display:flex;align-items:center;gap:14px;text-align:left;padding:13px 16px;"><div style="font-size:22px;">📁</div><div><div style="font-weight:600;font-size:14px;">Choose File</div><div style="font-size:11px;color:var(--muted);">PDF, JPG, PNG</div></div></div>
-    <button class="modal-btn primary" onclick="closeModal('podModal');toast('POD uploaded — LDX-2841')">✓ Submit POD</button>
-    <button class="modal-btn sec" onclick="closeModal('podModal')">Cancel</button>
+    <div class="mhandle"></div>
+    <div class="mtitle">Upload POD / BOL</div>
+    <div class="msub">Load LDX-2841 · Coyote Logistics</div>
+    <div class="upzone"><div style="font-size:28px;margin-bottom:6px;">📷</div><div style="font-weight:600;font-size:14px;">Take Photo</div></div>
+    <div class="upzone" style="display:flex;align-items:center;gap:14px;text-align:left;padding:13px 16px;"><div style="font-size:22px;">📁</div><div><div style="font-weight:600;font-size:14px;">Choose File</div><div style="font-size:11px;color:var(--muted);">PDF, JPG, PNG</div></div></div>
+    <button class="mbtn primary" onclick="closeModal('podModal');toast('POD uploaded — LDX-2841')">✓ Submit POD</button>
+    <button class="mbtn sec" onclick="closeModal('podModal')">Cancel</button>
   </div>
 </div>
 
-<!-- BOL SCAN -->
+<!-- BOL -->
 <div class="modal-overlay" id="bolModal" onclick="closeModal('bolModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Scan Bill of Lading</div>
-    <div class="modal-sub">Load LDX-2841</div>
-    <div class="upload-zone" style="padding:28px;"><div style="font-size:36px;margin-bottom:8px;">📷</div><div style="font-weight:700;font-size:15px;">Scan / Photo BOL</div></div>
-    <button class="modal-btn primary" onclick="closeModal('bolModal');toast('BOL saved — LDX-2841')">✓ Save BOL</button>
-    <button class="modal-btn sec" onclick="closeModal('bolModal')">Cancel</button>
-  </div>
-</div>
-
-<!-- MILEAGE -->
-<div class="modal-overlay" id="mileageModal" onclick="closeModal('mileageModal')">
-  <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Enter Mileage</div>
-    <div class="modal-sub">LDX-2841 · Miami → Atlanta</div>
-    <label class="modal-lbl">Loaded Miles</label>
-    <input class="modal-input big" type="number" placeholder="000" inputmode="numeric">
-    <label class="modal-lbl">Deadhead Miles</label>
-    <input class="modal-input big" type="number" placeholder="000" inputmode="numeric">
-    <button class="modal-btn primary" onclick="closeModal('mileageModal');toast('Mileage saved — LDX-2841')">✓ Save Mileage</button>
-    <button class="modal-btn sec" onclick="closeModal('mileageModal')">Cancel</button>
+    <div class="mhandle"></div>
+    <div class="mtitle">Scan Bill of Lading</div>
+    <div class="msub">Load LDX-2841</div>
+    <div class="upzone" style="padding:26px;"><div style="font-size:34px;margin-bottom:8px;">📷</div><div style="font-weight:700;font-size:15px;">Scan / Photo BOL</div></div>
+    <button class="mbtn primary" onclick="closeModal('bolModal');toast('BOL saved — LDX-2841')">✓ Save BOL</button>
+    <button class="mbtn sec" onclick="closeModal('bolModal')">Cancel</button>
   </div>
 </div>
 
 <!-- SIGN RATE CON -->
 <div class="modal-overlay" id="signModal" onclick="closeModal('signModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Sign Rate Con</div>
-    <div class="modal-sub">LDX-2841 · Coyote Logistics · $3,400</div>
-    <div style="background:#f8f9fa;border:1px solid var(--border);border-radius:8px;padding:13px;margin-bottom:14px;font-size:13px;color:var(--mid);line-height:1.7;">Rate: <strong style="color:var(--text);">$3,400</strong> · Miami, FL → Atlanta, GA<br>Pickup: <strong style="color:var(--text);">Today 8AM</strong> · Delivery: <strong style="color:var(--text);">Today 2PM</strong></div>
-    <label class="modal-lbl">Full Name (signature)</label>
-    <input class="modal-input" type="text" placeholder="Type your full name">
-    <button class="modal-btn primary" onclick="closeModal('signModal');toast('Rate con signed — LDX-2841')">✓ Sign & Submit</button>
-    <button class="modal-btn sec" onclick="closeModal('signModal')">Cancel</button>
+    <div class="mhandle"></div>
+    <div class="mtitle">Sign Rate Confirmation</div>
+    <div class="msub">LDX-2841 · Coyote Logistics · $3,400</div>
+    <div style="background:#f8f9fa;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px;color:var(--mid);line-height:1.8;">Rate: <strong style="color:var(--text);">$3,400</strong> · Miami, FL → Atlanta, GA<br>Pickup: <strong style="color:var(--text);">Today 8:00 AM</strong> · Delivery: <strong style="color:var(--text);">Today 2:00 PM</strong><br>Commodity: <strong style="color:var(--text);">Auto Parts · 42,000 lbs</strong></div>
+    <label class="mlbl">Full Name (acts as signature)</label>
+    <input class="minput" type="text" placeholder="Type your full legal name">
+    <button class="mbtn primary" onclick="closeModal('signModal');toast('Rate con signed — LDX-2841')">✓ Sign & Submit</button>
+    <button class="mbtn sec" onclick="closeModal('signModal')">Cancel</button>
+  </div>
+</div>
+
+<!-- MILEAGE -->
+<div class="modal-overlay" id="mileageModal" onclick="closeModal('mileageModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="mhandle"></div>
+    <div class="mtitle">Enter Mileage</div>
+    <div class="msub">LDX-2841 · Miami → Atlanta</div>
+    <label class="mlbl">Loaded Miles</label>
+    <input class="minput big" type="number" placeholder="000" inputmode="numeric">
+    <label class="mlbl">Deadhead Miles</label>
+    <input class="minput big" type="number" placeholder="000" inputmode="numeric">
+    <button class="mbtn primary" onclick="closeModal('mileageModal');toast('Mileage saved — LDX-2841')">✓ Save Mileage</button>
+    <button class="mbtn sec" onclick="closeModal('mileageModal')">Cancel</button>
   </div>
 </div>
 
 <!-- BROKER CONTACT -->
 <div class="modal-overlay" id="contactModal" onclick="closeModal('contactModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Broker / Shipper Contact</div>
-    <div class="modal-sub">LDX-2841 · Coyote Logistics</div>
+    <div class="mhandle"></div>
+    <div class="mtitle">Broker / Shipper Contact</div>
+    <div class="msub">LDX-2841 · Coyote Logistics</div>
     <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;">
       <div style="padding:13px 16px;border-bottom:1px solid var(--border);">
         <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;">Broker</div>
-        <div style="font-size:15px;font-weight:600;margin-top:2px;">Coyote Logistics — Sarah M.</div>
-        <a href="tel:+13125550100" style="display:inline-block;margin-top:8px;padding:8px 16px;background:var(--green);color:#fff;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;">📞 Call Broker</a>
+        <div style="font-size:15px;font-weight:600;margin-top:3px;">Coyote Logistics — Sarah M.</div>
+        <a href="tel:+13125550100" style="display:inline-block;margin-top:8px;padding:8px 18px;background:var(--green);color:#fff;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;">📞 Call Broker</a>
       </div>
       <div style="padding:13px 16px;">
         <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;">Shipper</div>
-        <div style="font-size:15px;font-weight:600;margin-top:2px;">Miami Auto Parts Distribution</div>
-        <a href="tel:+13055550200" style="display:inline-block;margin-top:8px;padding:8px 16px;background:var(--blue);color:#fff;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;">📞 Call Shipper</a>
+        <div style="font-size:15px;font-weight:600;margin-top:3px;">Miami Auto Parts Distribution</div>
+        <a href="tel:+13055550200" style="display:inline-block;margin-top:8px;padding:8px 18px;background:var(--blue);color:#fff;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;">📞 Call Shipper</a>
       </div>
     </div>
-    <button class="modal-btn sec" onclick="closeModal('contactModal')">Close</button>
-  </div>
-</div>
-
-<!-- PRE-TRIP DVIR -->
-<div class="modal-overlay" id="pretripModal" onclick="closeModal('pretripModal')">
-  <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Pre-Trip Inspection</div>
-    <div class="modal-sub">DVIR · Truck #104</div>
-    <div id="pretrip-items"></div>
-    <label class="modal-lbl" style="margin-top:10px;">Defects / Notes</label>
-    <textarea class="modal-input" rows="3" placeholder="None — or describe defects" style="resize:none;"></textarea>
-    <div class="upload-zone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Photo of Any Defect</div></div>
-    <button class="modal-btn primary" onclick="closeModal('pretripModal');toast('Pre-trip DVIR submitted — Truck #104')">✓ Submit Inspection</button>
-    <button class="modal-btn sec" onclick="closeModal('pretripModal')">Cancel</button>
-  </div>
-</div>
-
-<!-- POST-TRIP DVIR -->
-<div class="modal-overlay" id="posttripModal" onclick="closeModal('posttripModal')">
-  <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Post-Trip Inspection</div>
-    <div class="modal-sub">DVIR · Truck #104</div>
-    <div id="posttrip-items"></div>
-    <label class="modal-lbl" style="margin-top:10px;">Defects / Notes</label>
-    <textarea class="modal-input" rows="3" placeholder="None — or describe defects" style="resize:none;"></textarea>
-    <div class="upload-zone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Photo of Any Defect</div></div>
-    <button class="modal-btn primary" onclick="closeModal('posttripModal');toast('Post-trip DVIR submitted — Truck #104')">✓ Submit Inspection</button>
-    <button class="modal-btn sec" onclick="closeModal('posttripModal')">Cancel</button>
+    <button class="mbtn sec" onclick="closeModal('contactModal')">Close</button>
   </div>
 </div>
 
 <!-- DETENTION TIMER -->
 <div class="modal-overlay" id="detentionModal" onclick="closeModal('detentionModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Detention Timer</div>
-    <div class="modal-sub">LDX-2841 · Free time: 2 hrs after arrival</div>
-    <div style="text-align:center;padding:20px 0;">
+    <div class="mhandle"></div>
+    <div class="mtitle">Detention Timer</div>
+    <div class="msub">LDX-2841 · Free time: 2 hrs after arrival</div>
+    <div style="text-align:center;padding:18px 0;">
       <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:52px;color:var(--orange);">00:00:00</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px;">Detention clock</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">Detention clock</div>
     </div>
-    <label class="modal-lbl">Arrival Time</label>
-    <input class="modal-input" type="time">
-    <button class="modal-btn primary" onclick="closeModal('detentionModal');toast('Detention timer started — dispatch notified')">▶ Start Timer & Notify Dispatch</button>
-    <button class="modal-btn sec" onclick="closeModal('detentionModal')">Cancel</button>
+    <label class="mlbl">Arrival Time</label>
+    <input class="minput" type="time">
+    <button class="mbtn primary" onclick="closeModal('detentionModal');toast('Detention timer started — dispatch notified')">▶ Start Timer & Notify Dispatch</button>
+    <button class="mbtn sec" onclick="closeModal('detentionModal')">Cancel</button>
   </div>
 </div>
 
-<!-- LUMPER REQUEST -->
+<!-- LUMPER -->
 <div class="modal-overlay" id="lumperModal" onclick="closeModal('lumperModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Lumper Request</div>
-    <div class="modal-sub">LDX-2841 — requires dispatch approval</div>
-    <label class="modal-lbl">Lumper Company / Name</label>
-    <input class="modal-input" type="text" placeholder="e.g. TFORCE Lumper Services">
-    <label class="modal-lbl">Amount ($)</label>
-    <input class="modal-input big" type="number" placeholder="0.00" inputmode="decimal">
-    <div class="upload-zone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Receipt Photo</div></div>
-    <button class="modal-btn primary" onclick="closeModal('lumperModal');toast('Lumper request sent — pending approval')">✓ Request Approval</button>
-    <button class="modal-btn sec" onclick="closeModal('lumperModal')">Cancel</button>
+    <div class="mhandle"></div>
+    <div class="mtitle">Lumper Request</div>
+    <div class="msub">LDX-2841 — requires dispatch approval</div>
+    <label class="mlbl">Lumper Company / Name</label>
+    <input class="minput" type="text" placeholder="e.g. TFORCE Lumper Services">
+    <label class="mlbl">Amount ($)</label>
+    <input class="minput big" type="number" placeholder="0.00" inputmode="decimal">
+    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Receipt Photo</div></div>
+    <button class="mbtn primary" onclick="closeModal('lumperModal');toast('Lumper request sent — pending approval')">✓ Request Approval</button>
+    <button class="mbtn sec" onclick="closeModal('lumperModal')">Cancel</button>
+  </div>
+</div>
+
+<!-- PRE-TRIP DVIR -->
+<div class="modal-overlay" id="pretripModal" onclick="closeModal('pretripModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="mhandle"></div>
+    <div class="mtitle">Pre-Trip Inspection</div>
+    <div class="msub">DVIR · Truck #104 · LDX-2841</div>
+    <div id="pretrip-items"></div>
+    <label class="mlbl" style="margin-top:10px;">Defects / Notes</label>
+    <textarea class="minput" rows="3" placeholder="None — or describe defects" style="resize:none;"></textarea>
+    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Photo of Any Defect</div></div>
+    <button class="mbtn primary" onclick="closeModal('pretripModal');toast('Pre-trip DVIR submitted')">✓ Submit Inspection</button>
+    <button class="mbtn sec" onclick="closeModal('pretripModal')">Cancel</button>
+  </div>
+</div>
+
+<!-- POST-TRIP DVIR -->
+<div class="modal-overlay" id="posttripModal" onclick="closeModal('posttripModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="mhandle"></div>
+    <div class="mtitle">Post-Trip Inspection</div>
+    <div class="msub">DVIR · Truck #104</div>
+    <div id="posttrip-items"></div>
+    <label class="mlbl" style="margin-top:10px;">Defects / Notes</label>
+    <textarea class="minput" rows="3" placeholder="None — or describe defects" style="resize:none;"></textarea>
+    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Photo of Any Defect</div></div>
+    <button class="mbtn primary" onclick="closeModal('posttripModal');toast('Post-trip DVIR submitted')">✓ Submit Inspection</button>
+    <button class="mbtn sec" onclick="closeModal('posttripModal')">Cancel</button>
   </div>
 </div>
 
 <!-- BLOWOUT -->
 <div class="modal-overlay" id="blowoutModal" onclick="closeModal('blowoutModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Tire Blowout</div>
-    <div class="modal-sub">Dispatch alerted immediately</div>
-    <label class="modal-lbl">Wheel Position</label>
-    <select class="modal-input"><option>Select...</option><option>Steer Left</option><option>Steer Right</option><option>Drive Left Inner</option><option>Drive Left Outer</option><option>Drive Right Inner</option><option>Drive Right Outer</option><option>Trailer Axle</option></select>
-    <label class="modal-lbl">Location</label>
-    <input class="modal-input" type="text" placeholder="e.g. I-75 MM 142, Gainesville FL">
-    <div class="upload-zone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Photo of Tire</div></div>
-    <button class="modal-btn primary" style="background:var(--red);" onclick="closeModal('blowoutModal');toast('Blowout reported — dispatch alerted')">🚨 Report Now</button>
-    <button class="modal-btn sec" onclick="closeModal('blowoutModal')">Cancel</button>
+    <div class="mhandle"></div>
+    <div class="mtitle">Tire Blowout</div>
+    <div class="msub">Dispatch alerted immediately</div>
+    <label class="mlbl">Wheel Position</label>
+    <select class="minput"><option>Select...</option><option>Steer Left</option><option>Steer Right</option><option>Drive Left Inner</option><option>Drive Left Outer</option><option>Drive Right Inner</option><option>Drive Right Outer</option><option>Trailer Axle</option></select>
+    <label class="mlbl">Location</label>
+    <input class="minput" type="text" placeholder="e.g. I-75 MM 142, Gainesville FL">
+    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Photo of Tire</div></div>
+    <button class="mbtn danger" onclick="closeModal('blowoutModal');toast('Blowout reported — dispatch alerted')">🚨 Report Now</button>
+    <button class="mbtn sec" onclick="closeModal('blowoutModal')">Cancel</button>
   </div>
 </div>
 
 <!-- REPAIR -->
 <div class="modal-overlay" id="repairModal" onclick="closeModal('repairModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Report Repair</div>
-    <div class="modal-sub">Requires dispatch approval</div>
-    <label class="modal-lbl">Description</label>
-    <input class="modal-input" type="text" placeholder="e.g. Replace left steer tire">
-    <label class="modal-lbl">Vendor / Shop</label>
-    <input class="modal-input" type="text" placeholder="e.g. Pilot Flying J — Valdosta GA">
-    <label class="modal-lbl">Amount ($)</label>
-    <input class="modal-input big" type="number" placeholder="0.00" inputmode="decimal">
-    <div class="upload-zone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Receipt Photo</div></div>
-    <button class="modal-btn primary" onclick="closeModal('repairModal');toast('Repair submitted — pending approval')">✓ Submit Repair</button>
-    <button class="modal-btn sec" onclick="closeModal('repairModal')">Cancel</button>
+    <div class="mhandle"></div>
+    <div class="mtitle">Report Repair</div>
+    <div class="msub">Requires dispatch approval</div>
+    <label class="mlbl">Description</label>
+    <input class="minput" type="text" placeholder="e.g. Replace left steer tire">
+    <label class="mlbl">Vendor / Shop</label>
+    <input class="minput" type="text" placeholder="e.g. Pilot Flying J — Valdosta GA">
+    <label class="mlbl">Amount ($)</label>
+    <input class="minput big" type="number" placeholder="0.00" inputmode="decimal">
+    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Receipt Photo</div></div>
+    <button class="mbtn primary" onclick="closeModal('repairModal');toast('Repair submitted — pending approval')">✓ Submit Repair</button>
+    <button class="mbtn sec" onclick="closeModal('repairModal')">Cancel</button>
   </div>
 </div>
 
 <!-- ACCIDENT -->
 <div class="modal-overlay" id="accidentModal" onclick="closeModal('accidentModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Accident / Incident</div>
-    <div class="modal-sub">Call 911 first if needed</div>
-    <label class="modal-lbl">What happened?</label>
-    <textarea class="modal-input" rows="3" placeholder="Brief description" style="resize:none;"></textarea>
-    <label class="modal-lbl">Location</label>
-    <input class="modal-input" type="text" placeholder="Street, city, state">
-    <label class="modal-lbl">Other Party Info</label>
-    <input class="modal-input" type="text" placeholder="Name, plate, insurance (if applicable)">
-    <div class="upload-zone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Scene Photos</div></div>
-    <button class="modal-btn primary" style="background:var(--red);" onclick="closeModal('accidentModal');toast('Incident reported — dispatch alerted')">🚨 Report Incident</button>
-    <button class="modal-btn sec" onclick="closeModal('accidentModal')">Cancel</button>
+    <div class="mhandle"></div>
+    <div class="mtitle">Accident / Incident</div>
+    <div class="msub">Call 911 first if needed</div>
+    <label class="mlbl">What happened?</label>
+    <textarea class="minput" rows="3" placeholder="Brief description" style="resize:none;"></textarea>
+    <label class="mlbl">Location</label>
+    <input class="minput" type="text" placeholder="Street, city, state">
+    <label class="mlbl">Other Party Info</label>
+    <input class="minput" type="text" placeholder="Name, plate, insurance (if applicable)">
+    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Scene Photos</div></div>
+    <button class="mbtn danger" onclick="closeModal('accidentModal');toast('Incident reported — dispatch alerted')">🚨 Report Incident</button>
+    <button class="mbtn sec" onclick="closeModal('accidentModal')">Cancel</button>
   </div>
 </div>
 
 <!-- ISSUE -->
 <div class="modal-overlay" id="issueModal" onclick="closeModal('issueModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Report an Issue</div>
-    <div class="modal-sub">Send a note to your dispatcher</div>
-    <label class="modal-lbl">Category</label>
-    <select class="modal-input"><option>Select...</option><option>Load Problem</option><option>Customer Issue</option><option>Equipment</option><option>Road / Weather</option><option>Personal</option><option>Other</option></select>
-    <label class="modal-lbl">Details</label>
-    <textarea class="modal-input" rows="4" placeholder="Describe the issue" style="resize:none;"></textarea>
-    <button class="modal-btn primary" onclick="closeModal('issueModal');toast('Issue reported — dispatcher notified')">✓ Submit</button>
-    <button class="modal-btn sec" onclick="closeModal('issueModal')">Cancel</button>
-  </div>
-</div>
-
-<!-- LOAD DETAIL -->
-<div class="modal-overlay" id="loadDetailModal" onclick="closeModal('loadDetailModal')">
-  <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">LDX-2841</div>
-    <div class="modal-sub">Coyote Logistics · Truck #104</div>
-    <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px;">
-      <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;color:var(--mid);">Origin</span><span style="font-size:13px;font-weight:600;">Miami, FL</span></div>
-      <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;color:var(--mid);">Destination</span><span style="font-size:13px;font-weight:600;">Atlanta, GA</span></div>
-      <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;color:var(--mid);">Delivery</span><span style="font-size:13px;font-weight:600;">Today 2:00 PM</span></div>
-      <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;color:var(--mid);">Rate</span><span style="font-size:13px;font-weight:700;color:var(--green);">$3,400</span></div>
-      <div style="display:flex;justify-content:space-between;padding:10px 14px;"><span style="font-size:13px;color:var(--mid);">Commodity</span><span style="font-size:13px;font-weight:600;">Auto Parts · 42,000 lbs</span></div>
-    </div>
-    <button class="modal-btn primary" onclick="closeModal('loadDetailModal');openModal('podModal')">📸 Upload POD</button>
-    <button class="modal-btn sec" onclick="closeModal('loadDetailModal')">Close</button>
+    <div class="mhandle"></div>
+    <div class="mtitle">Report an Issue</div>
+    <div class="msub">Send a note to your dispatcher</div>
+    <label class="mlbl">Category</label>
+    <select class="minput"><option>Select...</option><option>Load Problem</option><option>Customer Issue</option><option>Equipment</option><option>Road / Weather</option><option>Personal</option><option>Other</option></select>
+    <label class="mlbl">Details</label>
+    <textarea class="minput" rows="4" placeholder="Describe the issue" style="resize:none;"></textarea>
+    <button class="mbtn primary" onclick="closeModal('issueModal');toast('Issue reported — dispatcher notified')">✓ Submit</button>
+    <button class="mbtn sec" onclick="closeModal('issueModal')">Cancel</button>
   </div>
 </div>
 
 <!-- ALERTS -->
 <div class="modal-overlay" id="alertModal" onclick="closeModal('alertModal')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Notifications</div>
-    <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;">🔴 Rate con ready to sign — LDX-2841</span><span style="font-size:11px;color:var(--muted);">9:04 AM</span></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;">🟡 POD reminder — LDX-2826</span><span style="font-size:11px;color:var(--muted);">Yesterday</span></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;">✅ Settlement paid — LDX-2810</span><span style="font-size:11px;color:var(--muted);">Jun 21</span></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;"><span style="font-size:13px;">⚠️ CDL expires in 30 days</span><span style="font-size:11px;color:var(--muted);">Jun 20</span></div>
+    <div class="mhandle"></div>
+    <div class="mtitle">Notifications</div>
+    <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;">🔴 Rate con ready to sign — LDX-2841</span><span style="font-size:11px;color:var(--muted);">9:04 AM</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;">🟡 POD reminder — LDX-2826</span><span style="font-size:11px;color:var(--muted);">Yesterday</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;">✅ Settlement paid — LDX-2810</span><span style="font-size:11px;color:var(--muted);">Jun 21</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;"><span style="font-size:13px;">⚠️ CDL expires in 30 days</span><span style="font-size:11px;color:var(--muted);">Jun 20</span></div>
     </div>
-    <button class="modal-btn sec" onclick="closeModal('alertModal')">Dismiss All</button>
+    <button class="mbtn sec" onclick="closeModal('alertModal')">Dismiss All</button>
   </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-// ── MODAL ENGINE ──
+// ── MODAL ──
 function openModal(id){var el=document.getElementById(id);if(el)el.classList.add('open');}
 function closeModal(id){var el=document.getElementById(id);if(el)el.classList.remove('open');}
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2800);}
 
-// ── LOAD STATE (reads localStorage, falls back to demo active load) ──
-var HAS_ACTIVE_LOAD = true;
-var ACTIVE_LOAD_ID  = 'LDX-2841';
+// ── ACCORDION ──
+function toggle(key){
+  var body=document.getElementById('sec-'+key);
+  var chev=document.getElementById('chev-'+key);
+  if(!body) return;
+  body.classList.toggle('open');
+  if(chev) chev.classList.toggle('open');
+}
+
+// ── LOAD STATE ──
+var HAS_ACTIVE_LOAD=true;
+var ACTIVE_LOAD_ID='LDX-2841';
 (function(){
   try{
     var loads=JSON.parse(localStorage.getItem('nexus_active_loads')||'[]');
     var found=loads.find(function(l){return l.status==='active'||l.status==='in_transit';});
-    if(loads.length > 0){ HAS_ACTIVE_LOAD = !!found; if(found) ACTIVE_LOAD_ID=found.id||'LDX-2841'; }
+    if(loads.length>0){HAS_ACTIVE_LOAD=!!found;if(found)ACTIVE_LOAD_ID=found.id||'LDX-2841';}
   }catch(e){}
 })();
 
@@ -1155,64 +793,71 @@ function guardedModal(id){
 }
 
 function applyLoadLocks(){
-  var locked=!HAS_ACTIVE_LOAD;
   document.querySelectorAll('[data-load-req]').forEach(function(el){
-    locked ? el.classList.add('locked') : el.classList.remove('locked');
+    !HAS_ACTIVE_LOAD ? el.classList.add('locked') : el.classList.remove('locked');
   });
-  if(locked){
-    var strip=document.getElementById('loadStrip');
-    if(strip){
-      strip.classList.add('no-load');
-      document.getElementById('stripLoadId').textContent='No Active Load';
-      document.getElementById('stripRoute').textContent='Tap to view available loads';
-      document.getElementById('stripRate').textContent='—';
-      strip.onclick=function(){window.location='active-loads.html';};
+  if(!HAS_ACTIVE_LOAD){
+    var bar=document.querySelector('.sec-bar.accent-border');
+    if(bar){
+      bar.querySelector('.sec-title').textContent='NO ACTIVE LOAD';
+      bar.querySelector('.sec-sub').textContent='Tap to view available loads';
+      bar.querySelector('#loadMeta').innerHTML='<div class="sec-meta-val" style="color:#6b7280;">—</div>';
+      bar.onclick=function(){window.location='active-loads.html';};
     }
     var lbl=document.getElementById('photoLoadLabel');
-    if(lbl) lbl.textContent='🔴 For Load (no active load — sections below still available)';
-    document.querySelectorAll('.photo-pick.load-type').forEach(function(el){el.style.opacity='.35';el.style.filter='grayscale(.6)';el.onclick=function(){openModal('noLoadModal');};});
+    if(lbl) lbl.textContent='🔴 For Load (no active load)';
+    document.querySelectorAll('.phtile.load-type').forEach(function(el){
+      el.style.opacity='.3';el.style.filter='grayscale(.7)';
+      el.onclick=function(){openModal('noLoadModal');};
+    });
   }
 }
-
 document.addEventListener('DOMContentLoaded', applyLoadLocks);
 
-// ── UNIVERSAL PHOTO CAPTURE ──
-var currentPhotoType='';
+// ── UNIVERSAL PHOTO ──
 var LOAD_TYPES=['POD / Delivery Receipt','Bill of Lading (BOL)','Cargo — Before Pickup','Cargo — After Delivery','Seal Number','OS&D — Damage or Shortage','Lumper Receipt','Detention Proof'];
-
 function capturePhoto(type){
-  if(LOAD_TYPES.indexOf(type)>=0 && !HAS_ACTIVE_LOAD){ openModal('noLoadModal'); return; }
-  currentPhotoType=type;
+  if(LOAD_TYPES.indexOf(type)>=0 && !HAS_ACTIVE_LOAD){openModal('noLoadModal');return;}
   closeModal('photosModal');
   document.getElementById('captureTitle').textContent=type;
-  document.getElementById('captureSub').textContent=
-    LOAD_TYPES.indexOf(type)>=0 ? 'Saved to load '+ACTIVE_LOAD_ID : 'Saved to your document vault';
+  document.getElementById('captureSub').textContent=LOAD_TYPES.indexOf(type)>=0?'Saved to load '+ACTIVE_LOAD_ID:'Saved to your document vault';
   document.getElementById('captureNote').value='';
-  document.getElementById('captureSubmit').onclick=function(){
-    closeModal('captureModal');
-    toast(type+' uploaded ✓');
-  };
+  document.getElementById('captureSubmit').onclick=function(){closeModal('captureModal');toast(type+' uploaded ✓');};
   openModal('captureModal');
 }
 
-// ── DVIR CHECKLIST (shared for pre & post trip) ──
+// ── DVIR CHECKLIST ──
 (function(){
   var items=['Brakes','Headlights','Brake / Turn Lights','Tires — Steer','Tires — Drive','Tires — Trailer','Windshield / Wipers','Mirrors','Horn','Fuel Level','Fluid Levels','Fire Extinguisher','Trailer Connection','Cargo Secured','Emergency Kit'];
-  function buildChecklist(prefix){
+  function build(prefix){
     return items.map(function(item,i){
       var n=prefix+i;
-      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f2f5;">'+
-        '<span style="font-size:13px;color:#374151;">'+item+'</span>'+
-        '<div style="display:flex;gap:12px;">'+
-          '<label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--green);cursor:pointer;"><input type="radio" name="'+n+'" value="pass" style="accent-color:var(--green);"> Pass</label>'+
-          '<label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--red);cursor:pointer;"><input type="radio" name="'+n+'" value="fail" style="accent-color:var(--red);"> Defect</label>'+
+      return '<div class="dvir-item"><span class="dvir-name">'+item+'</span>'+
+        '<div class="dvir-radios">'+
+        '<label><input type="radio" name="'+n+'" value="pass" style="accent-color:var(--green);"> <span style="color:var(--green);">Pass</span></label>'+
+        '<label><input type="radio" name="'+n+'" value="fail" style="accent-color:var(--red);"> <span style="color:var(--red);">Defect</span></label>'+
         '</div></div>';
     }).join('');
   }
   var pre=document.getElementById('pretrip-items');
   var post=document.getElementById('posttrip-items');
-  if(pre) pre.innerHTML=buildChecklist('pre');
-  if(post) post.innerHTML=buildChecklist('pst');
+  if(pre) pre.innerHTML='<div class="dvir-list">'+build('pre')+'</div>';
+  if(post) post.innerHTML='<div class="dvir-list">'+build('pst')+'</div>';
+
+  // Quick status in the card
+  var quick=document.getElementById('quick-dvir');
+  if(quick){
+    var qhtml=['Brakes','Headlights','Tires — Steer','Fire Extinguisher'].map(function(item,i){
+      var n='q'+i;
+      return '<div class="dvir-item"><span class="dvir-name">'+item+'</span>'+
+        '<div class="dvir-radios">'+
+        '<label><input type="radio" name="'+n+'" value="pass" style="accent-color:var(--green);"> <span style="color:var(--green);">OK</span></label>'+
+        '<label><input type="radio" name="'+n+'" value="fail" style="accent-color:var(--red);"> <span style="color:var(--red);">Defect</span></label>'+
+        '</div></div>';
+    }).join('');
+    quick.innerHTML+='<div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding-bottom:8px;">Quick Status Check</div>'+qhtml+
+    '<button onclick="openModal(\'pretripModal\')" style="margin-top:10px;width:100%;padding:10px;border:none;border-radius:8px;background:var(--green);color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:14px;letter-spacing:.05em;cursor:pointer;">Full Pre-Trip DVIR →</button>';
+  }
 })();
 </script>
 </body>
