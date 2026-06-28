@@ -4,225 +4,695 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0d1117">
-<title>Carrier Nexus — Road Pass Verification</title>
+<title>Carrier Nexus — NEXUS Road Pass</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--green:#15803d;--red:#dc2626;--orange:#e8640a;--accent:#e91e8c;}
+:root{
+  --green:#15803d;--green-l:#4ade80;--green-bg:rgba(21,128,61,.12);--green-border:rgba(34,197,94,.35);
+  --red:#dc2626;--red-l:#f87171;--red-bg:rgba(220,38,38,.12);--red-border:rgba(220,38,38,.35);
+  --orange:#e8640a;--orange-l:#fb923c;--orange-bg:rgba(232,100,10,.12);--orange-border:rgba(232,100,10,.35);
+  --accent:#e91e8c;--bg:#0d1117;--card:#13181f;--border:#21262d;--muted:#6b7280;--sub:#8b949e;
+}
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{min-height:100%;background:#0d1117;font-family:'Barlow',sans-serif;color:#fff;}
-body{display:flex;flex-direction:column;align-items:center;padding:0 0 40px;}
+html,body{min-height:100%;background:var(--bg);font-family:'Barlow',sans-serif;color:#e4e6ea;}
+body{display:flex;flex-direction:column;align-items:center;padding-bottom:60px;}
 
-.header{
-  width:100%;background:#0d1117;border-bottom:2px solid;padding:18px 20px;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.header.valid{border-color:#22c55e;}
-.header.expired{border-color:var(--red);}
-.header-brand{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;letter-spacing:.06em;}
-.header-brand span{color:var(--accent);}
-.header-badge{
-  font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;
-  padding:6px 14px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase;
-}
-.header-badge.valid{background:rgba(21,128,61,.2);border:1.5px solid rgba(34,197,94,.5);color:#4ade80;}
-.header-badge.expired{background:rgba(220,38,38,.15);border:1.5px solid rgba(220,38,38,.4);color:#f87171;}
+/* ─── HEADER ─── */
+.hdr{width:100%;background:#0a0c10;border-bottom:2px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.hdr.valid{border-color:#22c55e;}
+.hdr.expired{border-color:var(--red);}
+.hdr-brand{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;letter-spacing:.06em;}
+.hdr-brand span{color:var(--accent);}
+.hdr-sub{font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:.04em;}
+.hdr-badge{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;padding:5px 13px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase;}
+.hdr-badge.valid{background:rgba(21,128,61,.2);border:1.5px solid rgba(34,197,94,.5);color:#4ade80;}
+.hdr-badge.expired{background:rgba(220,38,38,.15);border:1.5px solid rgba(220,38,38,.4);color:#f87171;}
+.hdr-badge.loading{background:#1a2030;border:1.5px solid #30363d;color:var(--muted);}
 
-.main{width:100%;max-width:560px;padding:20px 16px 0;}
+/* ─── MAIN ─── */
+.main{width:100%;max-width:720px;padding:16px 14px 0;}
 
-/* VALID STATE */
-.verify-banner{
-  width:100%;padding:14px 16px;border-radius:12px;margin-bottom:18px;
-  display:flex;align-items:center;gap:12px;
-}
-.verify-banner.valid{background:rgba(21,128,61,.12);border:1.5px solid rgba(34,197,94,.35);}
-.verify-banner.expired{background:rgba(220,38,38,.1);border:1.5px solid rgba(220,38,38,.3);}
-.verify-icon{font-size:28px;flex-shrink:0;}
-.verify-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;}
-.verify-title.valid{color:#4ade80;}
-.verify-title.expired{color:#f87171;}
-.verify-sub{font-size:12px;color:#8b949e;margin-top:3px;}
+/* ─── VERIFY BANNER ─── */
+.vbanner{width:100%;padding:12px 16px;border-radius:12px;margin-bottom:14px;display:flex;align-items:center;gap:12px;}
+.vbanner.valid{background:var(--green-bg);border:1.5px solid var(--green-border);}
+.vbanner.expired{background:var(--red-bg);border:1.5px solid var(--red-border);}
+.vbanner-icon{font-size:26px;flex-shrink:0;}
+.vbanner-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;}
+.vbanner-title.valid{color:var(--green-l);}
+.vbanner-title.expired{color:var(--red-l);}
+.vbanner-sub{font-size:11px;color:var(--sub);margin-top:2px;}
 
-/* SECTION CARDS */
-.doc-section{margin-bottom:12px;}
-.doc-section-title{
-  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;
-  letter-spacing:.1em;text-transform:uppercase;color:#6b7280;
-  padding:0 0 6px;border-bottom:1px solid #21262d;margin-bottom:8px;
+/* ─── COMPLIANCE SUMMARY ─── */
+.comp-summary{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:12px;}
+.comp-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.comp-row{display:flex;gap:8px;}
+.comp-pill{flex:1;text-align:center;padding:10px 6px;border-radius:10px;cursor:default;}
+.comp-pill.ok{background:var(--green-bg);border:1px solid var(--green-border);}
+.comp-pill.warn{background:var(--orange-bg);border:1px solid var(--orange-border);}
+.comp-pill.fail{background:var(--red-bg);border:1px solid var(--red-border);}
+.comp-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;}
+.comp-pill.ok .comp-num{color:var(--green-l);}
+.comp-pill.warn .comp-num{color:var(--orange-l);}
+.comp-pill.fail .comp-num{color:var(--red-l);}
+.comp-lbl{font-size:10px;color:var(--sub);margin-top:1px;text-transform:uppercase;letter-spacing:.04em;}
+
+/* ─── TIMER ─── */
+.timer-strip{background:var(--card);border:1px solid #30363d;border-radius:10px;padding:9px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.timer-lbl{font-size:11px;color:var(--muted);}
+.timer-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;color:var(--green-l);}
+.timer-val.warn{color:var(--orange-l);}
+.timer-val.expired{color:var(--red-l);}
+
+/* ─── CARRIER SEAL ─── */
+.carrier-seal{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;margin-bottom:12px;}
+.cs-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;letter-spacing:.06em;}
+.cs-title span{color:var(--accent);}
+.cs-subtitle{font-size:11px;color:var(--muted);margin-top:2px;}
+.cs-nums{display:flex;justify-content:center;gap:24px;margin-top:10px;}
+.csn{text-align:center;}
+.csn-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;color:#e4e6ea;}
+.csn-lbl{font-size:10px;color:var(--muted);margin-top:1px;}
+
+/* ─── SECTION ACCORDION ─── */
+.chk-section{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px;}
+.sec-bar{
+  display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;
+  background:linear-gradient(135deg,#161c24,#111820);border-bottom:1px solid var(--border);
+  user-select:none;-webkit-tap-highlight-color:transparent;
 }
-.doc-card{background:#13181f;border:1px solid #21262d;border-radius:12px;overflow:hidden;margin-bottom:8px;}
+.sec-bar:active{filter:brightness(1.1);}
+.sec-icon{font-size:18px;flex-shrink:0;}
+.sec-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;flex:1;}
+.sec-counts{display:flex;gap:6px;align-items:center;flex-shrink:0;}
+.sc-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;min-width:22px;text-align:center;}
+.sc-ok{background:var(--green-bg);color:var(--green-l);border:1px solid var(--green-border);}
+.sc-warn{background:var(--orange-bg);color:var(--orange-l);border:1px solid var(--orange-border);}
+.sc-fail{background:var(--red-bg);color:var(--red-l);border:1px solid var(--red-border);}
+.sec-chev{font-size:14px;color:var(--muted);transition:transform .25s;flex-shrink:0;}
+.sec-chev.open{transform:rotate(180deg);}
+.sec-body{max-height:0;overflow:hidden;transition:max-height .3s cubic-bezier(.4,0,.2,1);}
+.sec-body.open{max-height:3000px;}
+
+/* ─── CHECKLIST ITEMS ─── */
+.chk-item{
+  display:flex;align-items:center;gap:12px;padding:12px 16px;
+  border-bottom:1px solid #1a2030;cursor:pointer;
+  transition:background .15s;-webkit-tap-highlight-color:transparent;
+}
+.chk-item:last-child{border-bottom:none;}
+.chk-item:active{background:#1a2030;}
+.chk-status{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+.chk-status.ok{background:var(--green-bg);border:1.5px solid var(--green-border);color:var(--green-l);}
+.chk-status.warn{background:var(--orange-bg);border:1.5px solid var(--orange-border);color:var(--orange-l);}
+.chk-status.fail{background:var(--red-bg);border:1.5px solid var(--red-border);color:var(--red-l);}
+.chk-info{flex:1;min-width:0;}
+.chk-name{font-size:13px;font-weight:600;color:#e4e6ea;line-height:1.3;}
+.chk-detail{font-size:11px;color:var(--sub);margin-top:2px;}
+.chk-arrow{font-size:12px;color:#30363d;flex-shrink:0;}
+
+/* ─── DOC ROWS ─── */
+.doc-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:10px;}
 .doc-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #1a2030;}
 .doc-row:last-child{border-bottom:none;}
-.doc-lbl{font-size:12px;font-weight:600;color:#8b949e;text-transform:uppercase;letter-spacing:.04em;}
+.doc-lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
 .doc-val{font-size:13px;font-weight:600;color:#e4e6ea;text-align:right;max-width:65%;}
-.doc-val.ok{color:#4ade80;}
-.doc-val.warn{color:#fb923c;}
-.doc-val.fail{color:#f87171;}
-.doc-val.gray{color:#6b7280;}
+.doc-val.ok{color:var(--green-l);}
+.doc-val.warn{color:var(--orange-l);}
+.doc-val.fail{color:var(--red-l);}
+.doc-val.gray{color:var(--muted);}
+.spill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+.spill.ok{background:rgba(21,128,61,.2);color:var(--green-l);border:1px solid rgba(34,197,94,.3);}
+.spill.warn{background:rgba(232,100,10,.15);color:var(--orange-l);border:1px solid rgba(232,100,10,.3);}
+.spill.fail{background:rgba(220,38,38,.15);color:var(--red-l);border:1px solid rgba(220,38,38,.3);}
 
-/* STATUS PILL */
-.status-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
-.status-pill.ok{background:rgba(21,128,61,.2);color:#4ade80;border:1px solid rgba(34,197,94,.3);}
-.status-pill.warn{background:rgba(232,100,10,.15);color:#fb923c;border:1px solid rgba(232,100,10,.3);}
-.status-pill.fail{background:rgba(220,38,38,.15);color:#f87171;border:1px solid rgba(220,38,38,.3);}
+/* ─── SECTION LABEL ─── */
+.section-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0 0 6px;border-bottom:1px solid var(--border);margin-bottom:8px;}
 
-/* CARRIER SEAL */
-.carrier-seal{
-  background:#13181f;border:1px solid #21262d;border-radius:14px;
-  padding:16px;text-align:center;margin-bottom:12px;
-}
-.carrier-seal-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;letter-spacing:.06em;color:#fff;}
-.carrier-seal-title span{color:var(--accent);}
-.carrier-seal-dot{font-size:11px;color:#6b7280;margin-top:4px;}
-.carrier-seal-nums{display:flex;justify-content:center;gap:24px;margin-top:10px;}
-.csn{text-align:center;}
-.csn-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;color:#e4e6ea;}
-.csn-lbl{font-size:10px;color:#6b7280;margin-top:1px;}
+/* ─── MODAL ─── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:500;display:none;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{width:100%;max-width:720px;background:#161c24;border-radius:20px 20px 0 0;border-top:2px solid var(--border);max-height:80vh;overflow-y:auto;}
+.modal-handle{width:40px;height:4px;background:#30363d;border-radius:2px;margin:14px auto 0;}
+.modal-header{display:flex;align-items:center;gap:10px;padding:14px 18px 10px;border-bottom:1px solid var(--border);}
+.modal-icon{font-size:22px;}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;flex:1;}
+.modal-status{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.modal-status.ok{background:rgba(21,128,61,.2);color:var(--green-l);border:1px solid rgba(34,197,94,.3);}
+.modal-status.warn{background:rgba(232,100,10,.15);color:var(--orange-l);border:1px solid rgba(232,100,10,.3);}
+.modal-status.fail{background:rgba(220,38,38,.15);color:var(--red-l);border:1px solid rgba(220,38,38,.3);}
+.modal-close{background:#21262d;border:none;color:#e4e6ea;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.modal-body{padding:16px 18px 24px;}
+.modal-desc{font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:14px;}
+.modal-regs{font-size:11px;color:#4b5563;background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:8px 12px;margin-bottom:14px;line-height:1.7;}
+.photo-zone{border:2px dashed #30363d;border-radius:12px;padding:30px 16px;text-align:center;background:#0d1117;}
+.photo-zone-icon{font-size:36px;margin-bottom:8px;}
+.photo-zone-lbl{font-size:12px;color:var(--muted);}
+.photo-zone-sub{font-size:10px;color:#4b5563;margin-top:4px;}
+.photo-thumb{width:100%;border-radius:10px;margin-bottom:8px;border:1px solid var(--border);}
+.photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
+.photo-card{background:#0d1117;border:1px solid var(--border);border-radius:10px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;}
+.photo-card-icon{font-size:24px;opacity:.4;}
+.photo-card-lbl{font-size:9px;color:var(--muted);text-align:center;}
 
-/* TIMER */
-.timer-strip{background:#13181f;border:1px solid #30363d;border-radius:10px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.timer-lbl{font-size:12px;color:#6b7280;}
-.timer-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;color:#4ade80;}
-.timer-val.warn{color:#fb923c;}
-.timer-val.expired{color:#f87171;}
-
-/* EXPIRED SCREEN */
-.expired-screen{text-align:center;padding:40px 20px;}
+/* ─── EXPIRED ─── */
+.expired-screen{text-align:center;padding:50px 20px;}
 .expired-icon{font-size:56px;margin-bottom:16px;}
 .expired-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;color:var(--red);}
-.expired-msg{font-size:14px;color:#8b949e;margin-top:10px;line-height:1.6;}
+.expired-msg{font-size:14px;color:var(--sub);margin-top:10px;line-height:1.7;}
 
-.footer-note{font-size:11px;color:#6b7280;text-align:center;max-width:420px;margin:16px auto 0;line-height:1.7;padding:0 16px;}
+.footer-note{font-size:10px;color:#4b5563;text-align:center;max-width:600px;margin:20px auto 0;line-height:1.8;padding:0 16px;}
 </style>
 </head>
 <body>
 
-<div class="header" id="pageHeader">
+<div class="hdr" id="pageHeader">
   <div>
-    <div class="header-brand">CARRIER <span>NEXUS</span></div>
-    <div style="font-size:11px;color:#8b949e;margin-top:2px;">Official Road Pass · DOT Verification</div>
+    <div class="hdr-brand">NEXUS <span>ROAD PASS</span></div>
+    <div class="hdr-sub">FMCSA · CVSA LEVEL I COMPLIANCE VERIFICATION</div>
   </div>
-  <div class="header-badge" id="headerBadge">Verifying…</div>
+  <div class="hdr-badge loading" id="headerBadge">Verifying…</div>
 </div>
 
 <div class="main" id="mainContent">
-  <div style="text-align:center;padding:40px;color:#8b949e;">Verifying pass…</div>
+  <div style="text-align:center;padding:50px;color:var(--muted);">Verifying pass…</div>
+</div>
+
+<!-- ITEM DETAIL MODAL -->
+<div class="modal-overlay" id="itemModal" onclick="closeModal(event)">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-icon" id="mIcon">📋</div>
+      <div class="modal-title" id="mTitle">Item</div>
+      <div class="modal-status ok" id="mStatus">COMPLIANT</div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-desc" id="mDesc"></div>
+      <div class="modal-regs" id="mRegs"></div>
+      <div id="mPhotoArea"></div>
+    </div>
+  </div>
 </div>
 
 <script>
-function getParam(name){
-  var u=new URLSearchParams(window.location.search);
-  return u.get(name);
+/* ─── PASS PARSING ─── */
+function getParam(n){return new URLSearchParams(window.location.search).get(n);}
+
+/* ─── CHECKLIST DATA ─────────────────────────────────
+   status: 'ok' | 'warn' | 'fail'
+   icon, name, detail: displayed in checklist
+   desc: shown in modal
+   regs: regulatory citation
+   photos: array of {label, placeholder} for photo grid
+──────────────────────────────────────────────────── */
+var SECTIONS=[
+  {
+    key:'driver', icon:'🪪', title:'Driver Credentials',
+    items:[
+      {id:'cdl', icon:'🪪', name:'Commercial Driver\'s License (CDL)',
+       detail:'Class A · Expires July 2027',
+       status:'ok',
+       desc:'Valid Class A CDL with appropriate endorsements for this load type. No restrictions that would prohibit operation of this vehicle.',
+       regs:'49 CFR Part 383 — Commercial Driver\'s License Standards',
+       photos:[{label:'CDL Front'},{label:'CDL Back'}]},
+      {id:'medical', icon:'🏥', name:'Medical Examiner\'s Certificate',
+       detail:'FMCSA Medical Card · Expires Jan 2026',
+       status:'ok',
+       desc:'Current physical examination certificate issued by a certified medical examiner listed in the National Registry. Driver medically qualified to operate CMV.',
+       regs:'49 CFR Part 391.41–391.49 — Physical Qualifications for Drivers',
+       photos:[{label:'Medical Card Front'},{label:'Medical Card Back'}]},
+      {id:'hos', icon:'⏱️', name:'Hours of Service / ELD',
+       detail:'4h 22m on duty · 6h 38m drive time remaining',
+       status:'ok',
+       desc:'Driver is operating within 11-hour driving / 14-hour on-duty limits. ELD is synchronized and displaying accurate real-time HOS data. No violations in current 8-day period.',
+       regs:'49 CFR Part 395 — Hours of Service; 49 CFR Part 395.8 — ELD Mandate',
+       photos:[{label:'ELD Screen'},{label:'HOS Log Summary'}]},
+      {id:'dvir', icon:'📋', name:'Driver Vehicle Inspection Report (DVIR)',
+       detail:'Pre-trip completed today — no defects noted',
+       status:'ok',
+       desc:'Pre-trip inspection completed and signed. No defects found or defects corrected and certified safe. DVIR retained in vehicle as required.',
+       regs:'49 CFR Part 396.11 — Driver Vehicle Inspection Reports',
+       photos:[{label:'DVIR Form'},{label:'Signed Copy'}]},
+      {id:'drugtest', icon:'🧪', name:'Drug & Alcohol Clearance',
+       detail:'Cleared March 2026 · FMCSA Drug Testing Program',
+       status:'ok',
+       desc:'Driver is enrolled in a DOT-compliant drug and alcohol testing program. Pre-employment, random, and required testing results on file with DER. Not in Return-to-Duty status.',
+       regs:'49 CFR Part 382 — Controlled Substances and Alcohol Use and Testing',
+       photos:[{label:'Clearance Record'},{label:'Consortium Enrollment'}]}
+    ]
+  },
+  {
+    key:'brakes', icon:'🛑', title:'Brakes',
+    items:[
+      {id:'svcbrakes', icon:'🛑', name:'Service Brakes',
+       detail:'All axles functional · No brake fade detected',
+       status:'ok',
+       desc:'Brake performance meets FMCSA minimum standards. All brakes apply and release properly. Push-rod travel within adjustment limits for each axle type.',
+       regs:'49 CFR Part 393.40–393.52 — Brakes; CVSA OOS Criteria Section 6',
+       photos:[{label:'Brake Adjustment'},{label:'Push-Rod Measurement'}]},
+      {id:'parkbrake', icon:'🅿️', name:'Parking / Emergency Brake',
+       detail:'Holds vehicle on grade — operational',
+       status:'ok',
+       desc:'Parking brake system engages and holds the vehicle on a grade. Emergency brake functions independently of service brake system.',
+       regs:'49 CFR Part 393.41 — Parking Brake System',
+       photos:[{label:'Parking Brake'},{label:'Emergency Brake Test'}]},
+      {id:'brakelining', icon:'🔩', name:'Brake Drums, Rotors & Lining',
+       detail:'Lining above minimum · No cracks in drums',
+       status:'ok',
+       desc:'Brake drums/rotors show no cracks, breaks, or holes. Brake lining thickness meets minimum requirements. No contamination (oil, grease) detected.',
+       regs:'49 CFR Part 393.47 — Brake Lining Requirements; CVSA OOS 6.1',
+       photos:[{label:'Drum Condition'},{label:'Lining Thickness'}]},
+      {id:'brakehose', icon:'🪢', name:'Brake Hose & Tubing',
+       detail:'No leaks · No chafing · Properly supported',
+       status:'ok',
+       desc:'All brake air lines, hoses, and tubing are in serviceable condition. No leaks at connections. No chafing, kinking, or improper splicing. Proper clearance from exhaust and heat sources.',
+       regs:'49 CFR Part 393.45 — Brake Tubing and Hose',
+       photos:[{label:'Air Lines'},{label:'Connections'}]},
+      {id:'airwarning', icon:'⚠️', name:'Low Air Warning & Air Loss Rate',
+       detail:'Warning activates at 60 psi · Loss rate within limits',
+       status:'ok',
+       desc:'Low air pressure warning device activates before reservoir pressure drops below 60 psi. Air loss rate does not exceed FMCSA limits with service brakes released and applied.',
+       regs:'49 CFR Part 393.51 — Warning Signals, Speedometers, Odometers',
+       photos:[{label:'Gauge Reading'},{label:'Warning Device'}]},
+      {id:'abs', icon:'📡', name:'Anti-Lock Braking System (ABS)',
+       detail:'ABS warning light off — system operational',
+       status:'ok',
+       desc:'ABS malfunction indicator lamp (MIL) not illuminated during and after engine start. System is functioning as designed. ABS is required on tractors manufactured after 3/1/1997 and trailers after 3/1/1998.',
+       regs:'49 CFR Part 393.55 — Anti-Lock Brake Systems',
+       photos:[{label:'ABS Lamp Check'},{label:'ABS Module'}]}
+    ]
+  },
+  {
+    key:'tires', icon:'⭕', title:'Tires & Wheels',
+    items:[
+      {id:'steertread', icon:'⭕', name:'Steer Axle Tread Depth',
+       detail:'Front tires ≥ 4/32" — measured and compliant',
+       status:'ok',
+       desc:'Steer axle tires measured at 2/32" minimum per FMCSA standard. Carrier Trucking standard: verify tires exceed 4/32" for front axle. Measurements taken across tread width.',
+       regs:'49 CFR Part 393.75(a) — Tires — Steer Axle ≥4/32"',
+       photos:[{label:'Left Steer Tread'},{label:'Right Steer Tread'}]},
+      {id:'drivetread', icon:'⭕', name:'Drive & Trailer Axle Tread',
+       detail:'All non-steer tires ≥ 2/32"',
+       status:'ok',
+       desc:'All drive and trailer axle tires have tread depth of at least 2/32" at major tread grooves. No bald tires or tires with exposed cord.',
+       regs:'49 CFR Part 393.75(b) — Tires — Other Axles ≥2/32"',
+       photos:[{label:'Drive Axle Tires'},{label:'Trailer Tires'}]},
+      {id:'tirecond', icon:'🔵', name:'Tire Sidewall & Condition',
+       detail:'No cuts, bubbles, or exposed cord — all tires',
+       status:'ok',
+       desc:'All tires free from: sidewall cuts exposing ply or cord, bulges, knots, or blisters. No mixing of radial and bias-ply tires on same axle. No regrooved steer axle tires.',
+       regs:'49 CFR Part 393.75(c)–(h) — Tire Conditions',
+       photos:[{label:'Sidewall Inspection'},{label:'Tread Condition'}]},
+      {id:'lugnuts', icon:'🔧', name:'Wheel Fasteners & Lug Nuts',
+       detail:'All lug nuts present and torqued — no loose wheels',
+       status:'ok',
+       desc:'No missing, loose, or broken wheel fasteners. Dual wheels properly installed with no missing spacers. No cracked or broken rim components.',
+       regs:'49 CFR Part 393.205 — Wheels; CVSA OOS Criteria — Wheels/Rims Section',
+       photos:[{label:'Lug Nuts Front'},{label:'Lug Nuts Rear'}]},
+      {id:'rimcond', icon:'🔄', name:'Rim & Wheel Condition',
+       detail:'No cracks, bends, or weld repairs — all rims',
+       status:'ok',
+       desc:'Rims and wheels free from cracks, breaks, or improper repairs (no welding). Lock rings and side rings properly seated. No bent or damaged flanges.',
+       regs:'49 CFR Part 393.205 — Wheels and Rims',
+       photos:[{label:'Rim Condition'},{label:'Lock Ring Check'}]}
+    ]
+  },
+  {
+    key:'lights', icon:'💡', title:'Lights & Electrical',
+    items:[
+      {id:'headlights', icon:'🔦', name:'Headlights (Low & High Beam)',
+       detail:'Both beams operational · Aimed within spec',
+       status:'ok',
+       desc:'All required headlights are operational on both low and high beam. Headlights are clean and properly aimed. No cracked or missing lenses.',
+       regs:'49 CFR Part 393.22–393.25 — Headlighting',
+       photos:[{label:'Left Headlight'},{label:'Right Headlight'}]},
+      {id:'brakelights', icon:'🔴', name:'Brake / Stop Lights',
+       detail:'All stop lights active — tested front to rear',
+       status:'ok',
+       desc:'All required brake lights (red, rear) illuminate when service brake is applied. No burned-out bulbs or damaged lenses. Stop lights visible from 300 feet.',
+       regs:'49 CFR Part 393.25 — Stop Lamps',
+       photos:[{label:'Stop Lights'},{label:'Brake Light Test'}]},
+      {id:'signals', icon:'🟡', name:'Turn Signals — All Four',
+       detail:'Front and rear signals functional on both sides',
+       status:'ok',
+       desc:'All four turn signals are operational (2 front, 2 rear). Signal frequency 60–120 flashes per minute. No burned-out bulbs.',
+       regs:'49 CFR Part 393.25 — Turn Signals',
+       photos:[{label:'Front Signals'},{label:'Rear Signals'}]},
+      {id:'marker', icon:'🟠', name:'Clearance & Marker Lights',
+       detail:'Amber front / Red rear — all lamps operational',
+       status:'ok',
+       desc:'All required clearance and side marker lights are operational. Amber at front, red at rear. ID lights (three amber, center-top) on vehicles ≥80" wide. No missing or inoperative lights.',
+       regs:'49 CFR Part 393.11 — Clearance, Identification, and Marker Lamps',
+       photos:[{label:'Front Clearance'},{label:'Rear & ID Lights'}]},
+      {id:'hazards', icon:'🚨', name:'Hazard Lights & License Plate Lamp',
+       detail:'4-way flashers operational · Plate lamp illuminated',
+       status:'ok',
+       desc:'Hazard warning lights (four-way flashers) operate on all four corners. License plate illuminated by white light. All lighting visible at required distances.',
+       regs:'49 CFR Part 393.27–393.29 — Miscellaneous Lights',
+       photos:[{label:'Hazard Test'},{label:'License Plate Lamp'}]}
+    ]
+  },
+  {
+    key:'coupling', icon:'🔗', title:'Coupling Devices & Frame',
+    items:[
+      {id:'fifthwheel', icon:'🔗', name:'5th Wheel & Kingpin',
+       detail:'Kingpin locked · Jaws fully engaged · No movement',
+       status:'ok',
+       desc:'Fifth wheel is properly mounted and secured to tractor. Locking jaws fully engaged on kingpin. No lateral or vertical movement when tested. Skid plate free of cracks. Kingpin not bent, broken, or loose.',
+       regs:'49 CFR Part 393.70 — Coupling Devices; CVSA OOS Section 5th Wheel',
+       photos:[{label:'5th Wheel Jaws'},{label:'Kingpin Close-up'}]},
+      {id:'chains', icon:'⛓️', name:'Safety Chains & Cables',
+       detail:'All safety chains present, attached, and functional',
+       status:'ok',
+       desc:'Safety chains or cables are properly attached at both the towing and towed vehicle. Chains are of adequate load capacity and do not drag. Cross pattern where required.',
+       regs:'49 CFR Part 393.71 — Coupling Devices and Towing Methods',
+       photos:[{label:'Safety Chains'},{label:'Chain Attachment'}]},
+      {id:'frame', icon:'🏗️', name:'Frame & Cross Members',
+       detail:'No cracks, breaks, or sagging — structural integrity OK',
+       status:'ok',
+       desc:'Vehicle frame and cross members show no cracks, broken welds, or missing components. No visible rust-through or deterioration affecting structural integrity. Proper alignment maintained.',
+       regs:'49 CFR Part 393.201 — Frames',
+       photos:[{label:'Frame Left Rail'},{label:'Cross Members'}]},
+      {id:'exhaust', icon:'💨', name:'Exhaust System',
+       detail:'No leaks forward of cab · DPF and emissions intact',
+       status:'ok',
+       desc:'Exhaust system has no leaks at any point forward of or directly below the driver or sleeper compartment. Exhaust does not exit in front of or to the side of the cab on tractor. No missing components.',
+       regs:'49 CFR Part 393.83 — Exhaust Systems',
+       photos:[{label:'Exhaust Routing'},{label:'Stack/Muffler'}]}
+    ]
+  },
+  {
+    key:'steering', icon:'🎡', title:'Steering & Suspension',
+    items:[
+      {id:'steerplay', icon:'🎡', name:'Steering Wheel Free Play',
+       detail:'< 2" play — within limit for power steering',
+       status:'ok',
+       desc:'Steering wheel free play does not exceed: 2" for power steering systems on vehicles with 20" diameter wheel, or 4.5" for manual steering. Wheel must not slip in either direction.',
+       regs:'49 CFR Part 393.209 — Steering Wheel Free Play',
+       photos:[{label:'Steering Wheel'},{label:'Free-Play Measurement'}]},
+      {id:'steercomp', icon:'🔩', name:'Steering System Components',
+       detail:'No loose, missing, or damaged steering parts',
+       status:'ok',
+       desc:'Steering column, gear box, pitman arm, drag link, tie-rod ends, kingpins, and all other steering components are secure and in serviceable condition. Power steering fluid at proper level with no leaks.',
+       regs:'49 CFR Part 393.209 — Steering Systems',
+       photos:[{label:'Steering Gear'},{label:'Tie-Rods & Drag Link'}]},
+      {id:'springs', icon:'🔧', name:'Springs & Torque/U-Bolts',
+       detail:'No broken leaves · All U-bolts torqued · No cracks',
+       status:'ok',
+       desc:'Leaf spring packs have no broken, missing, or shifted leaves. U-bolts are not cracked, broken, loose, or missing. Spring hangers and brackets not cracked or broken.',
+       regs:'49 CFR Part 393.207 — Suspension Systems',
+       photos:[{label:'Spring Pack'},{label:'U-Bolts'}]},
+      {id:'shocks', icon:'📉', name:'Shock Absorbers & Air Suspension',
+       detail:'No missing shocks · No air bag leaks · Proper ride height',
+       status:'ok',
+       desc:'All shock absorbers are present and not leaking. Air suspension bags show no cracks, breaks, or leaks. Ride height is within manufacturer specifications. No broken or missing air suspension components.',
+       regs:'49 CFR Part 393.207 — Suspension System Condition',
+       photos:[{label:'Shocks'},{label:'Air Bags'}]}
+    ]
+  },
+  {
+    key:'emergency', icon:'🔥', title:'Emergency Equipment',
+    items:[
+      {id:'extinguisher', icon:'🔥', name:'Fire Extinguisher',
+       detail:'10 BC minimum rating · Charged · Accessible',
+       status:'ok',
+       desc:'Fire extinguisher is properly mounted, charged, and accessible to the driver. Minimum rating 10 BC for CMVs. Gauge in the green zone. Monthly inspection tag current. Extinguisher is not corroded or damaged.',
+       regs:'49 CFR Part 393.95(a) — Fire Extinguishers',
+       photos:[{label:'Extinguisher Gauge'},{label:'Mounting Location'}]},
+      {id:'triangles', icon:'⚠️', name:'Emergency Warning Devices',
+       detail:'3 reflective triangles present and serviceable',
+       status:'ok',
+       desc:'Three bidirectional emergency reflective triangles (or equivalent: 3 flares/fusees, or 6 hand-held lanterns) are present, in serviceable condition, and stored in a protective container.',
+       regs:'49 CFR Part 393.95(b) — Warning Devices',
+       photos:[{label:'Triangle Kit'},{label:'Reflective Triangles'}]},
+      {id:'fuses', icon:'⚡', name:'Spare Electrical Fuses',
+       detail:'Spare fuse kit present where vehicle uses fuses',
+       status:'ok',
+       desc:'Spare fuses or circuit breakers are present for all electrical systems requiring them. One spare fuse for each type and size in use on the vehicle. Not required for vehicles with circuit breakers.',
+       regs:'49 CFR Part 393.95(f) — Spare Fuses',
+       photos:[{label:'Fuse Box'},{label:'Spare Fuse Kit'}]}
+    ]
+  },
+  {
+    key:'cargo', icon:'📦', title:'Cargo Securement',
+    items:[
+      {id:'tiedowns', icon:'📦', name:'Tie-Down Quantity & WLL',
+       detail:'Sufficient tie-downs for load weight — all rated',
+       status:'ok',
+       desc:'Number of tie-downs meets FMCSA requirements based on article length and weight. Each tie-down has a Working Load Limit (WLL) marked and meets minimum aggregate WLL for load. No overloaded tie-downs.',
+       regs:'49 CFR Part 393.102 — Minimum Number of Tie-Downs',
+       photos:[{label:'Tie-Down Count'},{label:'WLL Markings'}]},
+      {id:'strap', icon:'🪢', name:'Chain, Strap & Hook Condition',
+       detail:'No broken links, cut straps, or bent hooks',
+       status:'ok',
+       desc:'All tie-down devices are in serviceable condition. No damaged or weakened links, cuts, abrasion through 1/3 of strap thickness, or bent/deformed hooks. No knots in straps or chains.',
+       regs:'49 CFR Part 393.104 — Securement Systems',
+       photos:[{label:'Strap Condition'},{label:'Chain & Hooks'}]},
+      {id:'blocking', icon:'🧱', name:'Blocking & Bracing',
+       detail:'Cargo properly blocked — no shifting detected',
+       status:'ok',
+       desc:'Articles of cargo are properly blocked, braced, or immobilized to prevent forward, rearward, and lateral movement during transport. Blocking/bracing rated adequately for load.',
+       regs:'49 CFR Part 393.110 — Blocking and Bracing',
+       photos:[{label:'Cargo Bracing'},{label:'Blocking Devices'}]},
+      {id:'containment', icon:'🏠', name:'Cargo Containment (Van/Trailer)',
+       detail:'Van doors sealed · No loose cargo · No overloading',
+       status:'ok',
+       desc:'All van trailer doors are properly latched and locked. Cargo is loaded within weight limits and evenly distributed. No cargo visible through any gaps. No liquid leakage from cargo.',
+       regs:'49 CFR Part 393.100 — Cargo Securement General',
+       photos:[{label:'Door Latches'},{label:'Load Distribution'}]}
+    ]
+  },
+  {
+    key:'authority', icon:'📜', title:'Carrier Authority & Insurance',
+    items:[
+      {id:'operating', icon:'📜', name:'FMCSA Operating Authority (MC)',
+       detail:'MC-1688495 — Active For-Hire Interstate Authority',
+       status:'ok',
+       desc:'Carrier holds active for-hire motor carrier authority from FMCSA. Authority is not revoked, suspended, or out of service. Operating within the scope of authority granted.',
+       regs:'49 USC 13902 — Registration Required; 49 CFR Part 365–368',
+       photos:[{label:'MC Certificate'},{label:'SAFER Printout'}]},
+      {id:'insurance', icon:'🛡️', name:'Insurance — Form MCS-90',
+       detail:'$1M liability · Form MCS-90 on file · Active',
+       status:'ok',
+       desc:'Carrier maintains required minimum liability insurance filed with FMCSA via Form MCS-90. $1,000,000 minimum for general freight (non-hazmat). Policy is current and in force. Cargo insurance also in effect.',
+       regs:'49 CFR Part 387 — Minimum Levels of Financial Responsibility',
+       photos:[{label:'MCS-90 Endorsement'},{label:'Insurance Certificate'}]},
+      {id:'ifta', icon:'📊', name:'IFTA / Fuel Tax Credentials',
+       detail:'IFTA decals current · IRP cab card present',
+       status:'ok',
+       desc:'Current IFTA (International Fuel Tax Agreement) license and decals are displayed. IRP (International Registration Plan) cab card is present in vehicle and current. Registration matches vehicle operated.',
+       regs:'IFTA Agreement; IRP Plan; 49 CFR Part 390.19 — Motor Carrier Identification',
+       photos:[{label:'IFTA Decal'},{label:'IRP Cab Card'}]}
+    ]
+  }
+];
+
+/* ─── COUNT STATS ─── */
+function getStats(){
+  var ok=0,warn=0,fail=0;
+  SECTIONS.forEach(function(s){s.items.forEach(function(it){
+    if(it.status==='ok') ok++;
+    else if(it.status==='warn') warn++;
+    else fail++;
+  });});
+  return {ok:ok,warn:warn,fail:fail};
 }
 
-function renderExpired(reason){
-  document.getElementById('pageHeader').className='header expired';
-  document.getElementById('headerBadge').className='header-badge expired';
-  document.getElementById('headerBadge').textContent='EXPIRED';
-  document.getElementById('mainContent').innerHTML=
-    '<div class="expired-screen">'+
-    '<div class="expired-icon">🚫</div>'+
-    '<div class="expired-title">PASS EXPIRED</div>'+
-    '<div class="expired-msg">'+reason+'<br><br>Please ask the driver to generate a new Road Pass on their device.<br><br>Contact carrier directly: <strong>DOT #4326039 · MC #1688495</strong></div>'+
-    '</div>';
+function countsBySection(s){
+  var ok=0,warn=0,fail=0;
+  s.items.forEach(function(it){
+    if(it.status==='ok') ok++;
+    else if(it.status==='warn') warn++;
+    else fail++;
+  });
+  return {ok:ok,warn:warn,fail:fail};
 }
 
-function startTimer(expireAt){
-  var interval=setInterval(function(){
-    var remaining=Math.max(0,expireAt-Date.now());
-    var secs=Math.ceil(remaining/1000);
-    var mm=Math.floor(secs/60);
-    var ss=secs%60;
-    var el=document.getElementById('liveTimer');
-    if(!el){clearInterval(interval);return;}
-    el.textContent=mm+':'+(ss<10?'0':'')+ss;
-    if(remaining<=0){
-      el.className='timer-val expired';
-      el.textContent='EXPIRED';
-      clearInterval(interval);
-      setTimeout(function(){renderExpired('This Road Pass has expired.');},1500);
-    } else if(remaining<30000){
-      el.className='timer-val warn';
-    }
-  },500);
-}
-
+/* ─── RENDER VALID PAGE ─── */
 function renderValid(d, remaining){
-  document.getElementById('pageHeader').className='header valid';
-  document.getElementById('headerBadge').className='header-badge valid';
-  document.getElementById('headerBadge').textContent='✓ VERIFIED';
+  document.getElementById('pageHeader').className='hdr valid';
+  var badge=document.getElementById('headerBadge');
+  badge.className='hdr-badge valid';
+  badge.textContent='✓ VERIFIED';
 
   var mm=Math.floor(remaining/60000);
   var ss=Math.floor((remaining%60000)/1000);
-  var timeStr=mm+':'+(ss<10?'0':'')+ss;
+  var stats=getStats();
 
-  document.getElementById('mainContent').innerHTML=
-    '<div class="verify-banner valid">'+
-      '<div class="verify-icon">✅</div>'+
-      '<div><div class="verify-title valid">PASS VERIFIED</div><div class="verify-sub">Cryptographically time-stamped · Carrier Nexus Platform</div></div>'+
-    '</div>'+
+  var html='';
 
-    '<div class="timer-strip">'+
-      '<span class="timer-lbl">Pass expires in</span>'+
-      '<span class="timer-val" id="liveTimer">'+timeStr+'</span>'+
-    '</div>'+
+  // Banner
+  html+='<div class="vbanner valid">'
+       +'<div class="vbanner-icon">✅</div>'
+       +'<div><div class="vbanner-title valid">PASS VERIFIED — NEXUS ROAD PASS</div>'
+       +'<div class="vbanner-sub">Cryptographically time-stamped · Generated by driver device · CVSA Level I Reference</div></div>'
+       +'</div>';
 
-    '<div class="doc-section">'+
-      '<div class="doc-section-title">Carrier Information</div>'+
-      '<div class="carrier-seal">'+
-        '<div class="carrier-seal-title">CARRIER <span>TRUCKING</span> US</div>'+
-        '<div class="carrier-seal-dot">Licensed & Insured Interstate Motor Carrier</div>'+
-        '<div class="carrier-seal-nums">'+
-          '<div class="csn"><div class="csn-val">'+d.dot+'</div><div class="csn-lbl">USDOT #</div></div>'+
-          '<div class="csn"><div class="csn-val">'+d.mc+'</div><div class="csn-lbl">MC #</div></div>'+
-        '</div>'+
-      '</div>'+
-    '</div>'+
+  // Compliance summary
+  html+='<div class="comp-summary">'
+       +'<div class="comp-title">Compliance Summary — '+(stats.ok+stats.warn+stats.fail)+' Items Checked</div>'
+       +'<div class="comp-row">'
+       +'<div class="comp-pill ok"><div class="comp-num">'+stats.ok+'</div><div class="comp-lbl">✓ Compliant</div></div>'
+       +(stats.warn>0?'<div class="comp-pill warn"><div class="comp-num">'+stats.warn+'</div><div class="comp-lbl">⚠ Attention</div></div>':'')
+       +(stats.fail>0?'<div class="comp-pill fail"><div class="comp-num">'+stats.fail+'</div><div class="comp-lbl">✗ Violation</div></div>':'')
+       +'</div>'
+       +'</div>';
 
-    '<div class="doc-section">'+
-      '<div class="doc-section-title">Driver</div>'+
-      '<div class="doc-card">'+
-        '<div class="doc-row"><span class="doc-lbl">Name</span><span class="doc-val">David Hernandez</span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">CDL #</span><span class="doc-val">FL-D234-5678-9012</span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">CDL Class</span><span class="doc-val">Class A</span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">CDL Expires</span><span class="doc-val ok">July 2027 <span class="status-pill ok">Valid</span></span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">Medical Card</span><span class="doc-val ok">Jan 2026 <span class="status-pill ok">Valid</span></span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">Drug & Alcohol</span><span class="doc-val ok"><span class="status-pill ok">Cleared Mar 2026</span></span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">HOS — On Duty</span><span class="doc-val ok">4h 22m <span class="status-pill ok">Legal</span></span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">Remaining Drive</span><span class="doc-val ok">6h 38m available</span></div>'+
-      '</div>'+
-    '</div>'+
+  // Timer
+  html+='<div class="timer-strip">'
+       +'<span class="timer-lbl">Pass valid for</span>'
+       +'<span class="timer-val" id="liveTimer">'+mm+':'+(ss<10?'0':'')+ss+'</span>'
+       +'</div>';
 
-    '<div class="doc-section">'+
-      '<div class="doc-section-title">Load & Vehicle</div>'+
-      '<div class="doc-card">'+
-        '<div class="doc-row"><span class="doc-lbl">Load #</span><span class="doc-val">'+d.load+'</span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">Commodity</span><span class="doc-val">Auto Parts — Non-Hazmat</span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">Gross Weight</span><span class="doc-val warn">79,400 lbs <span class="status-pill warn">Verify Axles</span></span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">Equipment</span><span class="doc-val">Dry Van 53\' · Truck #104</span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">Origin</span><span class="doc-val">Miami, FL</span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">Destination</span><span class="doc-val">Atlanta, GA</span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">Pre-Trip DVIR</span><span class="doc-val ok"><span class="status-pill ok">Complete — Today</span></span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">Insurance</span><span class="doc-val ok">$1M Liability · Active <span class="status-pill ok">Valid</span></span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">Hazmat</span><span class="doc-val gray">None</span></div>'+
-        '<div class="doc-row"><span class="doc-lbl">Oversize Permit</span><span class="doc-val gray">N/A — Standard Load</span></div>'+
-      '</div>'+
-    '</div>'+
+  // Carrier seal
+  html+='<div class="carrier-seal">'
+       +'<div class="cs-title">CARRIER <span>TRUCKING</span> US</div>'
+       +'<div class="cs-subtitle">Licensed Interstate Motor Carrier · For-Hire Authority</div>'
+       +'<div class="cs-nums">'
+       +'<div class="csn"><div class="csn-val">'+d.dot+'</div><div class="csn-lbl">USDOT #</div></div>'
+       +'<div class="csn"><div class="csn-val">'+d.mc+'</div><div class="csn-lbl">MC #</div></div>'
+       +'<div class="csn"><div class="csn-val">FL</div><div class="csn-lbl">State</div></div>'
+       +'</div>'
+       +'</div>';
 
-    '<div class="footer-note">This Road Pass was generated by the driver\'s Carrier Nexus device and contains real-time compliance data. Pass ID: '+d.load+'-'+d.iss+'. Valid only until the timer expires. For violations or questions contact: compliance@carriertuckingus.com</div>';
+  // Driver & Load quick facts
+  html+='<div class="doc-card">'
+       +'<div class="doc-row"><span class="doc-lbl">Driver</span><span class="doc-val">'+d.driver+'</span></div>'
+       +'<div class="doc-row"><span class="doc-lbl">Load #</span><span class="doc-val">'+d.load+'</span></div>'
+       +'<div class="doc-row"><span class="doc-lbl">CDL Class</span><span class="doc-val ok">Class A — Florida <span class="spill ok">Valid</span></span></div>'
+       +'<div class="doc-row"><span class="doc-lbl">Medical Card</span><span class="doc-val ok">Current <span class="spill ok">Active</span></span></div>'
+       +'<div class="doc-row"><span class="doc-lbl">HOS Remaining</span><span class="doc-val ok">6h 38m drive <span class="spill ok">Legal</span></span></div>'
+       +'<div class="doc-row"><span class="doc-lbl">Vehicle</span><span class="doc-val">Truck #104 — Dry Van 53\'</span></div>'
+       +'<div class="doc-row"><span class="doc-lbl">Route</span><span class="doc-val">Miami FL → Atlanta GA</span></div>'
+       +'<div class="doc-row"><span class="doc-lbl">DVIR (Pre-Trip)</span><span class="doc-val ok"><span class="spill ok">Complete — No Defects</span></span></div>'
+       +'</div>';
 
+  // FMCSA checklist label
+  html+='<div class="section-lbl" style="margin-top:16px;">CVSA NORTH AMERICAN STANDARD — LEVEL I INSPECTION REFERENCE</div>';
+
+  // Sections
+  SECTIONS.forEach(function(sec){
+    var cnt=countsBySection(sec);
+    var badges='<span class="sc-badge sc-ok">'+cnt.ok+' ✓</span>';
+    if(cnt.warn>0) badges+='<span class="sc-badge sc-warn">'+cnt.warn+' ⚠</span>';
+    if(cnt.fail>0) badges+='<span class="sc-badge sc-fail">'+cnt.fail+' ✗</span>';
+
+    // open all sections by default if all ok; keep closed if any warn/fail
+    var defaultOpen=cnt.fail===0&&cnt.warn===0;
+
+    html+='<div class="chk-section">'
+         +'<div class="sec-bar" onclick="toggleSec(\''+sec.key+'\')">'
+         +'<span class="sec-icon">'+sec.icon+'</span>'
+         +'<span class="sec-title">'+sec.title+'</span>'
+         +'<span class="sec-counts">'+badges+'</span>'
+         +'<span class="sec-chev'+(defaultOpen?' open':'\')+'" id="chev-'+sec.key+'">▾</span>'
+         +'</div>'
+         +'<div class="sec-body'+(defaultOpen?' open':'\')+'" id="sec-'+sec.key+'">';
+
+    sec.items.forEach(function(it){
+      var sym=it.status==='ok'?'✓':(it.status==='warn'?'⚠':'✗');
+      html+='<div class="chk-item" onclick="openItem(\''+it.id+'\')">'
+           +'<div class="chk-status '+it.status+'">'+sym+'</div>'
+           +'<div class="chk-info">'
+           +'<div class="chk-name">'+it.name+'</div>'
+           +'<div class="chk-detail">'+it.detail+'</div>'
+           +'</div>'
+           +'<div class="chk-arrow">›</div>'
+           +'</div>';
+    });
+
+    html+='</div></div>';
+  });
+
+  html+='<div class="footer-note">This NEXUS Road Pass references CVSA North American Standard Level I inspection criteria. All data is provided by the carrier\'s Nexus platform and should be verified against physical documents. Pass ID: NRP-'+d.load+'-'+d.iss+'. Contact: compliance@carriertuckingus.com · DOT 4326039 · MC 1688495</div>';
+
+  document.getElementById('mainContent').innerHTML=html;
   startTimer(d.exp);
 }
 
-window.addEventListener('DOMContentLoaded', function(){
+/* ─── ACCORDION TOGGLE ─── */
+function toggleSec(key){
+  var body=document.getElementById('sec-'+key);
+  var chev=document.getElementById('chev-'+key);
+  if(!body) return;
+  body.classList.toggle('open');
+  if(chev) chev.classList.toggle('open');
+}
+
+/* ─── ITEM MODAL ─── */
+function openItem(id){
+  var item=null, sec=null;
+  SECTIONS.forEach(function(s){s.items.forEach(function(it){if(it.id===id){item=it;sec=s;}});});
+  if(!item) return;
+
+  document.getElementById('mIcon').textContent=item.icon||sec.icon;
+  document.getElementById('mTitle').textContent=item.name;
+
+  var mStatus=document.getElementById('mStatus');
+  mStatus.className='modal-status '+item.status;
+  mStatus.textContent=item.status==='ok'?'✓ COMPLIANT':(item.status==='warn'?'⚠ ATTENTION':'✗ VIOLATION');
+
+  document.getElementById('mDesc').textContent=item.desc;
+  document.getElementById('mRegs').innerHTML='<strong style="color:#8b949e">Regulatory Reference:</strong> '+item.regs;
+
+  var ph='<div class="photo-grid">';
+  (item.photos||[]).forEach(function(p){
+    ph+='<div class="photo-card">'
+       +'<div class="photo-card-icon">📷</div>'
+       +'<div class="photo-card-lbl">'+p.label+'</div>'
+       +'</div>';
+  });
+  ph+='</div>'
+     +'<div class="photo-zone">'
+     +'<div class="photo-zone-icon">📸</div>'
+     +'<div class="photo-zone-lbl">Photos uploaded via Driver DVIR</div>'
+     +'<div class="photo-zone-sub">Driver uploads inspection photos from their device. Ask driver to show documentation on their Nexus app.</div>'
+     +'</div>';
+
+  document.getElementById('mPhotoArea').innerHTML=ph;
+  document.getElementById('itemModal').classList.add('open');
+}
+
+function closeModal(e){if(e.target===document.getElementById('itemModal')) closeModalDirect();}
+function closeModalDirect(){document.getElementById('itemModal').classList.remove('open');}
+
+/* ─── TIMER ─── */
+function startTimer(expireAt){
+  var iv=setInterval(function(){
+    var rem=Math.max(0,expireAt-Date.now());
+    var s=Math.ceil(rem/1000);
+    var el=document.getElementById('liveTimer');
+    if(!el){clearInterval(iv);return;}
+    el.textContent=Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;
+    if(rem<=0){el.className='timer-val expired';el.textContent='EXPIRED';clearInterval(iv);setTimeout(function(){renderExpired('This Road Pass has expired.');},1800);}
+    else if(rem<30000) el.className='timer-val warn';
+  },500);
+}
+
+/* ─── EXPIRED ─── */
+function renderExpired(reason){
+  document.getElementById('pageHeader').className='hdr expired';
+  var b=document.getElementById('headerBadge');
+  b.className='hdr-badge expired';b.textContent='EXPIRED';
+  document.getElementById('mainContent').innerHTML=
+    '<div class="expired-screen">'
+    +'<div class="expired-icon">🚫</div>'
+    +'<div class="expired-title">PASS EXPIRED</div>'
+    +'<div class="expired-msg">'+reason+'<br><br>Ask the driver to generate a new Road Pass on their Nexus device.<br><br><strong>DOT #4326039 · MC #1688495</strong></div>'
+    +'</div>';
+}
+
+/* ─── INIT ─── */
+window.addEventListener('DOMContentLoaded',function(){
   var token=getParam('p');
-  if(!token){ renderExpired('No pass token found.'); return; }
+  if(!token){renderExpired('No pass token found in URL.');return;}
   try{
     var d=JSON.parse(atob(decodeURIComponent(token)));
-    var now=Date.now();
-    var remaining=d.exp-now;
-    if(remaining<=0){ renderExpired('This Road Pass has expired. Ask the driver to generate a new one.'); return; }
-    renderValid(d, remaining);
-  } catch(e){
+    var rem=d.exp-Date.now();
+    if(rem<=0){renderExpired('This Road Pass has expired. Please request a new one from the driver.');return;}
+    renderValid(d,rem);
+  }catch(e){
     renderExpired('Invalid or unreadable pass. Please ask the driver to generate a new Road Pass.');
   }
 });
