@@ -533,7 +533,7 @@
     const style = document.createElement('style');
     style.id = 'nexus-sidebar-styles';
     style.textContent = `
-      nav.sidebar{width:220px;min-height:100vh;background:#ffffff!important;border-right:1px solid #d0d7de!important;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;}
+      nav.sidebar{width:220px;height:100vh;background:#ffffff!important;border-right:1px solid #d0d7de!important;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;overflow:hidden;}
       .sidebar-logo{padding:16px!important;display:flex!important;align-items:center!important;gap:10px!important;text-decoration:none!important;border-bottom:1px solid #e5e7eb!important;}
       .sidebar-logo .logo-hex svg{width:36px!important;height:36px!important;display:block!important;}
       .sidebar-logo .logo-text{display:flex!important;flex-direction:column!important;gap:2px!important;}
@@ -549,7 +549,7 @@
       .sidebar-link.active{background:#eef2ff!important;border-left:3px solid #4f46e5!important;color:#4f46e5!important;font-weight:600!important;}
       .sidebar-link svg{width:14px!important;height:14px!important;flex-shrink:0!important;opacity:.7!important;}
       .sidebar-link.active svg{opacity:1!important;}
-      #nexus-sidebar .sidebar-nav{overflow-y:auto;scrollbar-width:thin;scrollbar-color:#d1d5db transparent;}
+      #nexus-sidebar .sidebar-nav{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#d1d5db transparent;}
     `;
     document.head.appendChild(style);
   }
@@ -570,35 +570,44 @@
     if (chev)  chev.style.transform  = collapsed ? 'rotate(0deg)' : 'rotate(90deg)';
   }
 
-  // Wire section label clicks
-  setTimeout(function() {
-    document.querySelectorAll('.sb-sec-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
+  // Wire section label clicks via event delegation — reliable regardless of render timing
+  (function wireCollapseEvents() {
+    var sidebar = document.getElementById('nexus-sidebar');
+    if (!sidebar) {
+      // Sidebar not in DOM yet — try again on DOMContentLoaded
+      document.addEventListener('DOMContentLoaded', wireCollapseEvents);
+      return;
+    }
+
+    sidebar.addEventListener('click', function(e) {
+      // Section header toggle
+      var btn = e.target.closest('.sb-sec-btn');
+      if (btn) {
+        e.stopPropagation();
         toggleSection(btn.getAttribute('data-sec'));
-      });
+        return;
+      }
+      // Collapse All
+      if (e.target.closest('#sb-collapse-all')) {
+        var s = getCollapseState();
+        SECTIONS.forEach(function(sec) {
+          if (sec.key !== activeSection) s[sec.key] = true;
+        });
+        setCollapseState(s);
+        SECTIONS.forEach(function(sec) {
+          applyCollapseState(sec.key, sec.key !== activeSection);
+        });
+        return;
+      }
+      // Expand All
+      if (e.target.closest('#sb-expand-all')) {
+        var s = {};
+        setCollapseState(s);
+        SECTIONS.forEach(function(sec) { applyCollapseState(sec.key, false); });
+        return;
+      }
     });
-
-    // Collapse All
-    var colBtn = document.getElementById('sb-collapse-all');
-    if (colBtn) colBtn.addEventListener('click', function() {
-      var s = getCollapseState();
-      SECTIONS.forEach(function(sec) {
-        if (sec.key !== activeSection) s[sec.key] = true;
-      });
-      setCollapseState(s);
-      SECTIONS.forEach(function(sec) {
-        applyCollapseState(sec.key, sec.key !== activeSection);
-      });
-    });
-
-    // Expand All
-    var expBtn = document.getElementById('sb-expand-all');
-    if (expBtn) expBtn.addEventListener('click', function() {
-      var s = {};
-      setCollapseState(s);
-      SECTIONS.forEach(function(sec) { applyCollapseState(sec.key, false); });
-    });
-  }, 0);
+  })();
 
   // ── Theme system ──
   if (!document.getElementById('nexus-theme-styles')) {
