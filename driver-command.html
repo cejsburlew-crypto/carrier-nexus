@@ -100,6 +100,10 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .icon-btn.hg{border-color:rgba(21,128,61,.25);background:rgba(21,128,61,.04);}
 .icon-btn.hb{border-color:rgba(29,78,216,.22);background:rgba(29,78,216,.04);}
 .icon-btn.hr{border-color:rgba(220,38,38,.22);background:rgba(220,38,38,.04);}
+.icon-btn.locked{opacity:.38;filter:grayscale(.5);cursor:pointer;}
+.icon-btn.locked .icon-emoji::after{content:'🔒';font-size:10px;position:absolute;top:8px;right:8px;}
+.rep-btn.locked{opacity:.38;filter:grayscale(.5);}
+.load-strip.no-load{background:linear-gradient(135deg,#1a1112,#1f1a1e);border-bottom-color:#555;}
 .icon-emoji{font-size:28px;line-height:1;}
 .icon-label{
   font-family:'Barlow Condensed',sans-serif;
@@ -222,17 +226,17 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 <div class="sec-label">Quick Actions</div>
 <div class="icon-grid">
 
-  <div class="icon-btn hi" onclick="openModal('podModal')">
+  <div class="icon-btn hi" data-load-req onclick="guardedModal('podModal')">
     <div class="icon-emoji">📸</div>
     <div class="icon-label">Upload POD</div>
   </div>
 
-  <div class="icon-btn ho" onclick="openModal('mileageModal')">
+  <div class="icon-btn ho" data-load-req onclick="guardedModal('mileageModal')">
     <div class="icon-emoji">🛣️</div>
     <div class="icon-label">Enter Mileage</div>
   </div>
 
-  <div class="icon-btn hg" onclick="openModal('signModal')">
+  <div class="icon-btn hg" data-load-req onclick="guardedModal('signModal')">
     <div class="icon-emoji">✍️</div>
     <div class="icon-label">Sign Rate Con</div>
     <div class="icon-badge orange">Pending</div>
@@ -333,7 +337,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 <!-- REPORT QUICK BUTTONS -->
 <div class="sec-label" style="margin-top:4px;">Report</div>
 <div class="report-row">
-  <div class="rep-btn danger" onclick="openModal('blowoutModal')">
+  <div class="rep-btn danger" data-load-req onclick="guardedModal('blowoutModal')">
     <div class="rep-icon">💥</div>
     <div>
       <div class="rep-label red">Tire Blowout</div>
@@ -349,14 +353,14 @@ nav.sidebar#nexus-sidebar{display:none!important;}
   </div>
 </div>
 <div class="report-row" style="margin-top:0;">
-  <div class="rep-btn danger" onclick="openModal('accidentModal')">
+  <div class="rep-btn danger" data-load-req onclick="guardedModal('accidentModal')">
     <div class="rep-icon">🚗</div>
     <div>
       <div class="rep-label red">Accident</div>
       <div style="font-size:10px;color:var(--muted);margin-top:2px;">Scene photos + info</div>
     </div>
   </div>
-  <div class="rep-btn" style="background:#f8f9fa;border-color:var(--border);" onclick="openModal('photosModal')">
+  <div class="rep-btn" data-load-req style="background:#f8f9fa;border-color:var(--border);" onclick="guardedModal('photosModal')">
     <div class="rep-icon">📷</div>
     <div>
       <div class="rep-label">Photos</div>
@@ -378,7 +382,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     Loads
   </a>
   <div class="nav-center">
-    <div class="nav-center-btn" onclick="openModal('podModal')">
+    <div class="nav-center-btn" onclick="guardedModal('podModal')">
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 4v14M4 11h14" stroke="white" stroke-width="2.2" stroke-linecap="round"/></svg>
     </div>
     <span class="nav-center-label">Upload</span>
@@ -392,6 +396,18 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     Profile
   </a>
 </nav>
+
+<!-- NO LOAD MODAL -->
+<div class="modal-overlay" id="noLoadModal" onclick="closeModal('noLoadModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()" style="text-align:center;">
+    <div class="modal-handle"></div>
+    <div style="font-size:44px;margin-bottom:10px;">🚛</div>
+    <div class="modal-title" style="text-align:center;">No Active Load</div>
+    <div class="modal-sub" style="text-align:center;margin-bottom:20px;">This action requires an active load assignment. Select or accept a load first.</div>
+    <a class="modal-btn primary" href="active-loads.html" style="display:block;text-align:center;text-decoration:none;padding:15px;border-radius:10px;background:var(--accent);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;">View My Loads</a>
+    <button class="modal-btn sec" onclick="closeModal('noLoadModal')" style="margin-top:10px;">Cancel</button>
+  </div>
+</div>
 
 <!-- MODALS -->
 <div class="modal-overlay" id="podModal" onclick="closeModal('podModal')">
@@ -546,6 +562,52 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 function openModal(id){var el=document.getElementById(id);if(el)el.classList.add('open');}
 function closeModal(id){var el=document.getElementById(id);if(el)el.classList.remove('open');}
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2800);}
+
+// ── LOAD GUARD ──
+var ACTIVE_LOAD = (function(){
+  // Check localStorage for an active load from active-loads page
+  try {
+    var loads = JSON.parse(localStorage.getItem('nexus_active_loads') || '[]');
+    var active = loads.find(function(l){ return l.status === 'active' || l.status === 'in_transit'; });
+    return active || null;
+  } catch(e){ return null; }
+})();
+
+// Simulate active load from the strip (LDX-2841 demo data hardcoded)
+// In production this comes from localStorage. For now treat strip as truth.
+var HAS_ACTIVE_LOAD = true; // strip shows LDX-2841 — set false to test locked state
+
+function guardedModal(id) {
+  if (!HAS_ACTIVE_LOAD) { openModal('noLoadModal'); return; }
+  openModal(id);
+}
+
+function applyLoadLocks() {
+  var locked = !HAS_ACTIVE_LOAD;
+  document.querySelectorAll('[data-load-req]').forEach(function(el){
+    if(locked) { el.classList.add('locked'); } else { el.classList.remove('locked'); }
+  });
+  var strip = document.querySelector('.load-strip');
+  if(strip) {
+    if(locked) {
+      strip.classList.add('no-load');
+      strip.querySelector('.load-id').textContent = 'No Active Load';
+      strip.querySelector('.load-route').textContent = 'Tap to view available loads';
+      strip.querySelector('.load-rate-num').textContent = '—';
+      strip.querySelector('.load-rate-sub').textContent = '';
+      strip.onclick = function(){ window.location='active-loads.html'; };
+    }
+  }
+}
+
+// Toggle for testing — remove in production
+function toggleLoadState() {
+  HAS_ACTIVE_LOAD = !HAS_ACTIVE_LOAD;
+  applyLoadLocks();
+  toast(HAS_ACTIVE_LOAD ? 'Load active — all features unlocked' : 'No load — restricted mode');
+}
+
+document.addEventListener('DOMContentLoaded', applyLoadLocks);
 
 // Pre-trip DVIR checklist
 (function(){
