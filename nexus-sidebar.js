@@ -181,7 +181,7 @@
     { key:'contacts',   label:'Contacts',            pages:['contacts.html'] },
     { key:'intel',      label:'Intelligence',        pages:['nexus-ai.html','search.html','eld-settings.html','drive-settings.html'] },
     { key:'comms',      label:'Communications',      pages:['comms.html','nexus-connect.html'] },
-    { key:'admin',      label:'Admin',               pages:['admin-users.html','company-management.html','public-profile.html','onboarding.html','data-import.html'] },
+    { key:'admin',      label:'Admin',               pages:['admin-users.html','company-management.html','admin-integrations.html','public-profile.html','onboarding.html','data-import.html'] },
   ];
 
   // Determine which section the current page lives in (first match wins)
@@ -455,6 +455,7 @@
     sec('admin', 'Admin',
       lnk('admin-users.html',          I.admin,   'User Accounts') +
       lnk('company-management.html',   I.truck,   '🏢 Company Management') +
+      lnk('admin-integrations.html',   I.upload,  '🔌 Integrations & API') +
       lnk('public-profile.html?type=company&id=co_001', I.person, '👤 Public Profiles') +
       lnk('onboarding.html',           I.rocket,  '🚀 Setup Wizard') +
       lnk('data-import.html',          I.upload,  '📥 Data Import') +

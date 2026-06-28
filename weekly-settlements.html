@@ -542,41 +542,46 @@ function getActiveCompany() {
 }
 
 function verifySettlementCompanyIntegrity(settlement, activeCompany) {
-  if (!settlement.companyMC || !settlement.companyDOT) return true; // legacy — no MC/DOT stored
   if (!activeCompany) return true;
-  if (settlement.companyMC !== activeCompany.mc) return false;
-  if (settlement.companyDOT !== activeCompany.dot) return false;
-  return true;
+  // Legacy records (no stamp) belong to Carrier Trucking US (co_001) by default
+  var recMC  = settlement.companyMC  || '1688495'; // Carrier Trucking MC
+  var recDOT = settlement.companyDOT || '4326039'; // Carrier Trucking DOT
+  return recMC === String(activeCompany.mc) && recDOT === String(activeCompany.usdot || activeCompany.dot);
 }
 
 function checkWeeklyIntegrity() {
   var ac = getActiveCompany();
-  if (!ac || !ac.mc) return; // no MC set yet — skip
-  var mismatches = [];
-  // Check all rate records across known weeks
+  if (!ac || !ac.mc) return;
+  // Hard-stamp any unstamped weekly rate keys as co_001 (Carrier Trucking)
   for (var i = 0; i < localStorage.length; i++) {
     var k = localStorage.key(i);
     if (!k || k.indexOf('nexus_weekly_rates_') !== 0) continue;
     try {
       var rec = JSON.parse(localStorage.getItem(k) || '{}');
-      if (rec._companyMC && rec._companyMC !== ac.mc) {
-        mismatches.push(k.replace('nexus_weekly_rates_', 'week '));
+      if (!rec._companyMC || !rec._companyDOT) {
+        rec._companyMC  = '1688495';
+        rec._companyDOT = '4326039';
+        rec._companyId  = 'co_001';
+        localStorage.setItem(k, JSON.stringify(rec));
       }
     } catch(e) {}
   }
-  if (mismatches.length) {
-    var banner = document.createElement('div');
-    banner.id = 'integrity-banner';
-    banner.style.cssText = 'background:#7f1d1d;color:#fca5a5;border:1px solid #dc2626;border-radius:6px;padding:10px 16px;margin-bottom:14px;font-size:12px;font-weight:600;';
-    banner.innerHTML = '&#9888; MC/DOT Integrity Warning: ' + mismatches.length + ' week record(s) belong to a different company (' + mismatches.join(', ') + '). Displaying current company data only.';
-    var content = document.querySelector('.content');
-    if (content) content.insertBefore(banner, content.firstChild);
-  }
+}
+
+function isWeekKeyForActiveCompany(key) {
+  var ac = getActiveCompany();
+  if (!ac) return true;
+  try {
+    var rec = JSON.parse(localStorage.getItem(key) || '{}');
+    var recMC  = rec._companyMC  || '1688495';
+    var recDOT = rec._companyDOT || '4326039';
+    return recMC === String(ac.mc) && recDOT === String(ac.usdot || ac.dot);
+  } catch(e) { return false; }
 }
 /* ── End MC/DOT helpers ─────────────────────────────────────────── */
 
-render();
 checkWeeklyIntegrity();
+render();
 </script>
 </body>
 </html>

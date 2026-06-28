@@ -969,11 +969,11 @@ function getActiveCompany() {
 }
 
 function verifySettlementCompanyIntegrity(settlement, activeCompany) {
-  if (!settlement.companyMC || !settlement.companyDOT) return true; // legacy — no MC/DOT stored
   if (!activeCompany) return true;
-  if (settlement.companyMC !== String(activeCompany.mc)) return false;
-  if (settlement.companyDOT !== String(activeCompany.usdot)) return false;
-  return true;
+  // Legacy records (no stamp) are owned by Carrier Trucking US (co_001) — never pass to other companies
+  var recMC  = settlement.companyMC  || '1688495'; // Carrier Trucking MC default
+  var recDOT = settlement.companyDOT || '4326039'; // Carrier Trucking DOT default
+  return recMC === String(activeCompany.mc) && recDOT === String(activeCompany.usdot);
 }
 
 function stampSettlementWithCompany(settlement) {
@@ -989,18 +989,12 @@ function stampSettlementWithCompany(settlement) {
 function checkSettlementsIntegrity() {
   var ac = getActiveCompany();
   if (!ac || !ac.mc) return;
-  var mismatches = settlements.filter(function(s){ return !verifySettlementCompanyIntegrity(s, ac); });
-  if (mismatches.length) {
-    var banner = document.getElementById('integrity-banner');
-    if (!banner) {
-      banner = document.createElement('div');
-      banner.id = 'integrity-banner';
-      banner.style.cssText = 'background:#7f1d1d;color:#fca5a5;border:1px solid #dc2626;border-radius:6px;padding:10px 16px;margin:0 28px 12px;font-size:12px;font-weight:600;';
-      var kpiBar = document.querySelector('.kpi-bar');
-      if (kpiBar) kpiBar.parentNode.insertBefore(banner, kpiBar.nextSibling);
-      else document.querySelector('.main').insertBefore(banner, document.querySelector('.filter-bar'));
-    }
-    banner.innerHTML = '&#9888; MC/DOT Integrity Warning: ' + mismatches.length + ' settlement record(s) belong to a different company (MC: ' + (mismatches[0].companyMC||'unknown') + '). Records are shown but may not apply to the active company.';
+  // Hard-filter: remove any settlements that do not belong to the active company
+  var before = settlements.length;
+  settlements = settlements.filter(function(s){ return verifySettlementCompanyIntegrity(s, ac); });
+  filteredData = [...settlements];
+  if (settlements.length < before) {
+    console.info('[Nexus] Company isolation: ' + (before - settlements.length) + ' settlement(s) from another company hidden.');
   }
 }
 /* ── End MC/DOT helpers ─────────────────────────────────────────── */
@@ -1008,8 +1002,14 @@ function checkSettlementsIntegrity() {
 (async()=>{
   if(typeof NexusDB!=='undefined') await NexusDB.Auth.requireAuth().catch(()=>{});
   settlements = await loadSettlements();
-  // Stamp any un-stamped seed settlements with active company
-  settlements.forEach(function(s){ if(!s.companyMC) stampSettlementWithCompany(s); });
+  // Stamp un-stamped records with Carrier Trucking (co_001) DOT/MC — they have always been CT records
+  settlements.forEach(function(s){
+    if(!s.companyMC || !s.companyDOT) {
+      s.companyMC  = '1688495';
+      s.companyDOT = '4326039';
+      s.companyId  = 'co_001';
+    }
+  });
   filteredData = [...settlements];
   populateWeeks();
   checkSettlementsIntegrity();
