@@ -19,7 +19,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{background:#0d1117;}
-body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);max-width:1400px;margin:0 auto;min-height:100vh;overflow-x:hidden;padding-bottom:80px;}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);max-width:1400px;margin:0 auto;min-height:100vh;overflow-x:hidden;padding-bottom:76px;}
 nav.sidebar#nexus-sidebar{display:none!important;}
 
 /* ── TOP BAR ── */
@@ -158,14 +158,35 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .dvir-radios{display:flex;gap:10px;}
 .dvir-radios label{display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;}
 
-/* ── BOTTOM NAV ── */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;max-width:1400px;margin:0 auto;height:64px;background:var(--bar);border-top:1px solid #21262d;display:flex;align-items:stretch;z-index:300;padding-bottom:env(safe-area-inset-bottom,0px);}
-.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#6b7280;font-family:'Barlow',sans-serif;text-decoration:none;font-size:10px;font-weight:500;-webkit-tap-highlight-color:transparent;}
-.nav-tab.active{color:var(--accent);}
-.nav-cam{flex:1.4;position:relative;}
-.nav-cam-btn{position:absolute;top:-13px;left:50%;transform:translateX(-50%);width:50px;height:50px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(233,30,140,.5);border:3px solid var(--bar);cursor:pointer;}
-.nav-cam-btn:active{transform:translateX(-50%) scale(.9);}
-.nav-cam-lbl{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-size:10px;color:#6b7280;white-space:nowrap;}
+/* ── EMERGENCY BAR ── */
+.emg-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  max-width:1400px;margin:0 auto;
+  height:72px;background:#0a0c10;
+  border-top:2px solid #3d1212;
+  display:flex;align-items:stretch;z-index:300;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.emg-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;border:none;background:none;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .1s;position:relative;
+}
+.emg-btn:active{background:rgba(255,255,255,.05);}
+.emg-btn::after{content:'';position:absolute;top:8px;bottom:8px;right:0;width:1px;background:#1a1a1a;}
+.emg-btn:last-child::after{display:none;}
+.emg-btn.blowout:active{background:rgba(220,38,38,.12);}
+.emg-btn.accident:active{background:rgba(220,38,38,.12);}
+.emg-btn.breakdown:active{background:rgba(232,100,10,.1);}
+.emg-btn.alert:active{background:rgba(255,255,255,.05);}
+.emg-btn.sos{background:#1a0505;border-left:1px solid #3d1212;border-right:1px solid #3d1212;flex:1.3;}
+.emg-btn.sos:active{background:#2a0808;}
+.emg-icon{font-size:20px;line-height:1;}
+.emg-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#9ca3af;}
+.emg-btn.blowout .emg-lbl,.emg-btn.accident .emg-lbl{color:#f87171;}
+.emg-btn.breakdown .emg-lbl{color:#fb923c;}
+.emg-btn.sos .emg-lbl{color:#f87171;}
 
 /* ── MODALS ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
@@ -297,6 +318,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     <div class="tile" data-load-req onclick="guardedModal('mileageModal')"><div class="tile-icon">🛣️</div><div class="tile-lbl">Enter Mileage</div></div>
     <div class="tile" data-load-req onclick="capturePhoto('Detention Proof')"><div class="tile-icon">📷</div><div class="tile-lbl">Detention Proof</div></div>
     <div class="tile" data-load-req onclick="guardedModal('contactModal')"><div class="tile-icon">📞</div><div class="tile-lbl">Broker / Shipper</div></div>
+    <a class="tile c-blue" data-load-req href="dot-pass.html"><div class="tile-icon">🪪</div><div class="tile-lbl">NEXUS Road Pass</div><div class="tile-badge" style="background:#1d4ed8;">DOT</div></a>
   </div>
 
   <!-- Sub: INSPECTIONS (under this load) -->
@@ -427,31 +449,29 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 
 <div style="height:16px;"></div>
 
-<!-- ══ BOTTOM NAV ══ -->
-<nav class="bottom-nav">
-  <a class="nav-tab active" href="driver-command.html">
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" stroke="currentColor" stroke-width="1.5" rx="1"/><rect x="10" y="2" width="6" height="6" stroke="currentColor" stroke-width="1.5" rx="1"/><rect x="2" y="10" width="6" height="6" stroke="currentColor" stroke-width="1.5" rx="1"/><rect x="10" y="10" width="6" height="6" stroke="currentColor" stroke-width="1.5" rx="1"/></svg>
-    Home
-  </a>
-  <a class="nav-tab" href="active-loads.html">
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 5h12M3 9h12M3 13h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-    Loads
-  </a>
-  <div class="nav-cam">
-    <div class="nav-cam-btn" onclick="openModal('photosModal')">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="12" r="4" stroke="white" stroke-width="1.8"/><path d="M3 8h2l2-3h8l2 3h2a1 1 0 011 1v9a1 1 0 01-1 1H3a1 1 0 01-1-1V9a1 1 0 011-1z" stroke="white" stroke-width="1.8"/></svg>
-    </div>
-    <span class="nav-cam-lbl">Photo</span>
-  </div>
-  <a class="nav-tab" href="my-pay.html">
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2 8h14" stroke="currentColor" stroke-width="1.5"/></svg>
-    Pay
-  </a>
-  <a class="nav-tab" href="driver-profile.html">
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="7" r="3.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 16c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" stroke-width="1.5"/></svg>
-    Profile
-  </a>
-</nav>
+<!-- ══ EMERGENCY BAR ══ -->
+<div class="emg-bar" id="emgBar">
+  <button class="emg-btn blowout" data-load-req onclick="guardedEmg('blowoutModal')">
+    <span class="emg-icon">💥</span>
+    <span class="emg-lbl">Blowout</span>
+  </button>
+  <button class="emg-btn accident" data-load-req onclick="guardedEmg('accidentModal')">
+    <span class="emg-icon">🚗</span>
+    <span class="emg-lbl">Accident</span>
+  </button>
+  <button class="emg-btn sos" onclick="openModal('sosModal')">
+    <span class="emg-icon" style="font-size:22px;">🆘</span>
+    <span class="emg-lbl" style="font-size:11px;font-weight:900;">SOS</span>
+  </button>
+  <button class="emg-btn breakdown" onclick="openModal('repairModal')">
+    <span class="emg-icon">🔧</span>
+    <span class="emg-lbl">Breakdown</span>
+  </button>
+  <button class="emg-btn alert" onclick="openModal('alertModal')">
+    <span class="emg-icon">🔔</span>
+    <span class="emg-lbl">Alerts</span>
+  </button>
+</div>
 
 
 <!-- ═══════════ MODALS ═══════════ -->
@@ -759,6 +779,25 @@ nav.sidebar#nexus-sidebar{display:none!important;}
   </div>
 </div>
 
+
+<!-- SOS EMERGENCY -->
+<div class="modal-overlay" id="sosModal" onclick="closeModal('sosModal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()" style="text-align:center;">
+    <div class="mhandle"></div>
+    <div style="font-size:50px;margin-bottom:10px;">🆘</div>
+    <div class="mtitle" style="text-align:center;color:var(--red);">EMERGENCY SOS</div>
+    <div class="msub" style="text-align:center;margin-bottom:20px;">What do you need right now?</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="mbtn danger" onclick="closeModal('sosModal');openModal('accidentModal')">🚗 Report Accident / Collision</button>
+      <button class="mbtn danger" onclick="closeModal('sosModal');openModal('blowoutModal')">💥 Tire Blowout</button>
+      <button class="mbtn" style="background:rgba(232,100,10,.12);color:#fb923c;border:1.5px solid rgba(232,100,10,.3);" onclick="closeModal('sosModal');openModal('repairModal')">🔧 Vehicle Breakdown</button>
+      <a class="mbtn danger" href="tel:911" style="display:block;text-align:center;text-decoration:none;padding:14px;border-radius:10px;background:var(--red);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;">📞 CALL 911</a>
+      <a class="mbtn" href="tel:+13055550100" style="display:block;text-align:center;text-decoration:none;padding:14px;border-radius:10px;background:#13181f;color:#e4e6ea;border:1px solid #30363d;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;">📞 Call Dispatch</a>
+    </div>
+    <button class="mbtn sec" onclick="closeModal('sosModal')" style="margin-top:10px;">Cancel</button>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -787,6 +826,7 @@ var ACTIVE_LOAD_ID='LDX-2841';
   }catch(e){}
 })();
 
+function guardedEmg(id){if(!HAS_ACTIVE_LOAD){openModal('sosModal');return;}openModal(id);}
 function guardedModal(id){
   if(!HAS_ACTIVE_LOAD){openModal('noLoadModal');return;}
   openModal(id);

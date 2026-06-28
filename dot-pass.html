@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0d1117">
+<title>NEXUS Road Pass</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--accent:#e91e8c;--green:#15803d;--orange:#e8640a;--red:#dc2626;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:#0d1117;font-family:'Barlow',sans-serif;color:#fff;overflow-x:hidden;}
+body{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:0 0 20px;}
+
+.topbar{width:100%;background:#0d1117;border-bottom:1px solid #21262d;padding:14px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10;}
+.back-btn{width:34px;height:34px;border:1px solid #30363d;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;color:#8b949e;font-size:16px;flex-shrink:0;}
+.topbar-info{flex:1;}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;letter-spacing:.04em;}
+.topbar-title span{color:var(--accent);}
+.topbar-sub{font-size:11px;color:#8b949e;margin-top:1px;}
+
+.main{width:100%;max-width:480px;padding:20px 18px 0;display:flex;flex-direction:column;align-items:center;gap:0;}
+
+/* STATUS BANNER */
+.status-banner{
+  width:100%;text-align:center;padding:10px 16px;border-radius:10px;
+  margin-bottom:18px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;
+}
+.status-banner.active{background:rgba(21,128,61,.15);border:1.5px solid rgba(21,128,61,.4);color:#4ade80;}
+.status-banner.expiring{background:rgba(232,100,10,.15);border:1.5px solid rgba(232,100,10,.4);color:#fb923c;}
+.status-banner.expired{background:rgba(220,38,38,.15);border:1.5px solid rgba(220,38,38,.4);color:#f87171;}
+
+/* QR FRAME */
+.qr-frame{
+  background:#fff;border-radius:20px;padding:22px;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  width:100%;max-width:340px;position:relative;overflow:hidden;
+}
+.qr-frame.expired-overlay::after{
+  content:'EXPIRED\AGenerate New Pass';white-space:pre;
+  position:absolute;inset:0;background:rgba(0,0,0,.82);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;
+  color:var(--red);text-align:center;border-radius:20px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.qr-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;letter-spacing:.08em;color:#0d1117;text-align:center;}
+.qr-logo span{color:var(--accent);}
+#qrcode{width:220px;height:220px;}
+#qrcode canvas,#qrcode img{width:220px!important;height:220px!important;}
+.qr-load-id{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:#374151;letter-spacing:.04em;}
+
+/* COUNTDOWN */
+.countdown-wrap{width:100%;max-width:340px;margin-top:14px;}
+.countdown-bar-bg{width:100%;height:8px;background:#21262d;border-radius:4px;overflow:hidden;}
+.countdown-bar-fill{height:100%;border-radius:4px;transition:width .5s linear, background .5s;}
+.countdown-time{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:36px;text-align:center;margin-top:8px;}
+.countdown-lbl{font-size:11px;color:#8b949e;text-align:center;margin-top:2px;}
+
+/* DRIVER INFO CARD */
+.info-card{
+  width:100%;max-width:340px;margin-top:18px;
+  background:#13181f;border:1px solid #21262d;border-radius:14px;overflow:hidden;
+}
+.info-row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 14px;border-bottom:1px solid #21262d;}
+.info-row:last-child{border-bottom:none;}
+.info-lbl{font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.04em;}
+.info-val{font-size:13px;font-weight:600;color:#e4e6ea;text-align:right;max-width:60%;}
+.info-val.green{color:#4ade80;}
+.info-val.orange{color:#fb923c;}
+.info-val.red{color:#f87171;}
+
+/* ACTIONS */
+.action-row{width:100%;max-width:340px;margin-top:14px;display:flex;gap:10px;}
+.action-btn{flex:1;padding:14px 8px;border:none;border-radius:12px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.action-btn.primary{background:var(--accent);color:#fff;}
+.action-btn.primary:active{background:#c7175a;}
+.action-btn.sec{background:#13181f;color:#8b949e;border:1px solid #30363d;}
+.action-btn.sec:active{background:#1c2230;}
+
+.dot-note{font-size:11px;color:#6b7280;text-align:center;max-width:300px;margin-top:12px;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back-btn" href="driver-command.html">←</a>
+  <div class="topbar-info">
+    <div class="topbar-title">NEXUS <span>ROAD PASS</span></div>
+    <div class="topbar-sub">DOT Quick Access · Load LDX-2841</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="status-banner active" id="statusBanner">
+    ● PASS ACTIVE — SHOW TO DOT OFFICER
+  </div>
+
+  <div class="qr-frame" id="qrFrame">
+    <div class="qr-logo">CARRIER <span>NEXUS</span> ROAD PASS</div>
+    <div id="qrcode"></div>
+    <div class="qr-load-id" id="qrLoadId">LDX-2841 · COYOTE LOGISTICS</div>
+  </div>
+
+  <div class="countdown-wrap">
+    <div class="countdown-bar-bg"><div class="countdown-bar-fill" id="barFill" style="width:100%;background:#4ade80;"></div></div>
+    <div class="countdown-time" id="countdownTime">2:00</div>
+    <div class="countdown-lbl">This pass expires automatically for security</div>
+  </div>
+
+  <div class="info-card">
+    <div class="info-row"><span class="info-lbl">Driver</span><span class="info-val">David Hernandez</span></div>
+    <div class="info-row"><span class="info-lbl">CDL #</span><span class="info-val">FL-D234-5678-9012</span></div>
+    <div class="info-row"><span class="info-lbl">CDL Expires</span><span class="info-val green">Jul 2027</span></div>
+    <div class="info-row"><span class="info-lbl">Medical Card</span><span class="info-val green">Valid — Jan 2026</span></div>
+    <div class="info-row"><span class="info-lbl">Drug Test</span><span class="info-val green">Cleared — Mar 2026</span></div>
+    <div class="info-row"><span class="info-lbl">HOS Status</span><span class="info-val green">On Duty — 4h 22m</span></div>
+    <div class="info-row"><span class="info-lbl">Load #</span><span class="info-val">LDX-2841</span></div>
+    <div class="info-row"><span class="info-lbl">Commodity</span><span class="info-val">Auto Parts</span></div>
+    <div class="info-row"><span class="info-lbl">Gross Weight</span><span class="info-val orange">79,400 lbs</span></div>
+    <div class="info-row"><span class="info-lbl">Origin</span><span class="info-val">Miami, FL</span></div>
+    <div class="info-row"><span class="info-lbl">Destination</span><span class="info-val">Atlanta, GA</span></div>
+    <div class="info-row"><span class="info-lbl">Carrier</span><span class="info-val">Carrier Trucking US</span></div>
+    <div class="info-row"><span class="info-lbl">DOT #</span><span class="info-val">4326039</span></div>
+    <div class="info-row"><span class="info-lbl">MC #</span><span class="info-val">1688495</span></div>
+    <div class="info-row"><span class="info-lbl">Insurance</span><span class="info-val green">Active — $1M</span></div>
+    <div class="info-row"><span class="info-lbl">DVIR</span><span class="info-val green">Pre-trip complete</span></div>
+  </div>
+
+  <div class="action-row">
+    <button class="action-btn primary" id="refreshBtn" onclick="generatePass()">↻ New Pass</button>
+    <button class="action-btn sec" onclick="window.location='driver-command.html'">← Back</button>
+  </div>
+
+  <div class="dot-note">
+    This pass is time-limited and tamper-evident. The QR code links DOT officers directly to verified carrier documents. Pass expires automatically — tap "New Pass" to regenerate.
+  </div>
+
+</div>
+
+<script>
+var PASS_DURATION = 120; // seconds
+var expireAt = 0;
+var timerInterval = null;
+var qrInstance = null;
+
+function generatePass() {
+  // Build token: base64 of JSON payload
+  expireAt = Date.now() + (PASS_DURATION * 1000);
+  var payload = {
+    load: 'LDX-2841',
+    driver: 'David Hernandez',
+    carrier: 'Carrier Trucking US',
+    dot: '4326039',
+    mc: '1688495',
+    exp: expireAt,
+    iss: Date.now()
+  };
+  var token = btoa(JSON.stringify(payload));
+  var url = window.location.origin + window.location.pathname.replace('dot-pass.html','') + 'dot-view.html?p=' + encodeURIComponent(token);
+
+  // Regenerate QR
+  var container = document.getElementById('qrcode');
+  container.innerHTML = '';
+  qrInstance = new QRCode(container, {
+    text: url,
+    width: 220,
+    height: 220,
+    colorDark: '#0d1117',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+
+  // Reset UI
+  document.getElementById('qrFrame').classList.remove('expired-overlay');
+  document.getElementById('statusBanner').className = 'status-banner active';
+  document.getElementById('statusBanner').textContent = '● PASS ACTIVE — SHOW TO DOT OFFICER';
+
+  // Start countdown
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(tick, 500);
+  tick();
+}
+
+function tick() {
+  var remaining = Math.max(0, expireAt - Date.now());
+  var secs = Math.ceil(remaining / 1000);
+  var pct = (remaining / (PASS_DURATION * 1000)) * 100;
+
+  var mm = Math.floor(secs / 60);
+  var ss = secs % 60;
+  document.getElementById('countdownTime').textContent = mm + ':' + (ss < 10 ? '0' : '') + ss;
+
+  var fill = document.getElementById('barFill');
+  fill.style.width = pct + '%';
+  if(pct > 40) fill.style.background = '#4ade80';
+  else if(pct > 15) fill.style.background = '#fb923c';
+  else fill.style.background = '#f87171';
+
+  var banner = document.getElementById('statusBanner');
+  if(remaining <= 0) {
+    clearInterval(timerInterval);
+    document.getElementById('countdownTime').textContent = '0:00';
+    document.getElementById('qrFrame').classList.add('expired-overlay');
+    banner.className = 'status-banner expired';
+    banner.textContent = '✕ PASS EXPIRED — TAP NEW PASS';
+  } else if(remaining < 30000) {
+    banner.className = 'status-banner expiring';
+    banner.textContent = '⚠ EXPIRING SOON — ' + secs + ' SECONDS';
+  }
+}
+
+// Auto-generate on load
+window.addEventListener('DOMContentLoaded', generatePass);
+</script>
+</body>
+</html>

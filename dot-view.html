@@ -2,1104 +2,230 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DOT Inspection View — Carrier Nexus</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d1117">
+<title>Carrier Nexus — Road Pass Verification</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-      --bg: #f0f2f5;
-      --panel: #ffffff;
-      --panel2: #f8f9fa;
-      --border: #d0d7de;
-      --text: #111827;
-      --mid: #4b5563;
-      --blue: #1d4ed8;
-      --green: #15803d;
-      --yellow: #a16207;
-      --red: #dc2626;
-      --orange: #c2410c;
-    }
+:root{--green:#15803d;--red:#dc2626;--orange:#e8640a;--accent:#e91e8c;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;}
-header{background:var(--bg);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;}
-.hdr-left{display:flex;align-items:center;gap:12px;}
-.hdr-title{font-size:18px;font-weight:700;color:var(--text);}
-.hdr-sub{font-size:11px;color:var(--mid);}
-.hdr-right{font-size:11px;color:var(--mid);text-align:right;}
-.privacy-banner{background:var(--panel2);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mid);}
-.page-wrap{max-width:860px;margin:0 auto;padding:24px 16px 60px;}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:20px;}
-.card-title{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:.06em;color:var(--text);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
-.form-label{font-size:12px;font-weight:600;color:var(--mid);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;display:block;}
-.form-input{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;}
-.form-input:focus{outline:none;border-color:var(--blue);}
-.form-row{margin-bottom:16px;}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.role-row{display:flex;gap:16px;align-items:stretch;margin:16px 0;}
-.role-opt{display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:12px 16px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);flex:1;}
-.role-opt input[type=radio]{accent-color:var(--blue);width:16px;height:16px;flex-shrink:0;margin-top:2px;}
-.role-opt.selected{border-color:var(--blue);background:rgba(59,130,246,.08);}
-.role-opt-label{font-size:14px;font-weight:600;color:var(--text);}
-.role-opt-sub{font-size:11px;color:var(--mid);margin-top:2px;}
-.role-hint{font-size:12px;color:var(--mid);padding:10px 14px;background:rgba(100,116,139,.07);border-radius:6px;border-left:3px solid var(--border);margin-bottom:16px;}
-.role-hint.dot-hint{border-color:var(--blue);}
-.role-hint.carrier-hint{border-color:var(--green);}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:7px;font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .15s;letter-spacing:.02em;}
-.btn-blue{background:var(--blue);color:#fff;}
-.btn-blue:hover{background:#2563eb;}
-.btn-green{background:var(--green);color:#fff;}
-.btn-green:hover{background:#059669;}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--mid);}
-.btn-ghost:hover{border-color:var(--blue);color:var(--text);}
-.btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;}
-.divider{border:none;border-top:1px solid var(--border);margin:20px 0;}
-.gps-status{text-align:center;padding:32px 24px;}
-.gps-pulse{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--blue);animation:pulse 1.2s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(1.4);}}
-.gps-icon{font-size:40px;margin-bottom:12px;}
-.gps-msg{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px;}
-.gps-sub{font-size:13px;color:var(--mid);}
-.gps-result-ok{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:20px 24px;text-align:center;}
-.gps-result-ok .rmsg{font-size:17px;font-weight:700;color:var(--green);}
-.gps-result-ok .rsub{font-size:13px;color:var(--mid);margin-top:4px;}
-.gps-result-fail{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:20px 24px;}
-.gps-result-fail .rmsg{font-size:17px;font-weight:700;color:var(--red);margin-bottom:8px;text-align:center;}
-.gps-result-fail .rsub{font-size:13px;color:var(--mid);line-height:1.6;}
-.gps-result-fail ul{margin:10px 0 0 20px;font-size:13px;color:var(--mid);}
-.gps-result-denied{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:20px 24px;}
-.gps-result-denied .rmsg{font-size:17px;font-weight:700;color:var(--yellow);margin-bottom:8px;text-align:center;}
-.gps-result-denied .rsub{font-size:13px;color:var(--mid);line-height:1.6;}
-.gps-result-denied ul{margin:10px 0 0 20px;font-size:13px;color:var(--mid);}
-.unit-header{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:20px;}
-.unit-name{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;letter-spacing:.04em;margin-bottom:6px;}
-.unit-meta{font-size:13px;color:var(--mid);display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
-.compliance-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:7px;font-size:15px;font-weight:700;}
-.compliance-badge.green{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3);}
-.compliance-badge.yellow{background:rgba(245,158,11,.15);color:var(--yellow);border:1px solid rgba(245,158,11,.3);}
-.compliance-badge.red{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3);}
-.unit-footer{font-size:11px;color:var(--mid);margin-top:10px;}
-.section{background:var(--panel);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;overflow:hidden;}
-.section-head{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
-.section-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
-.section-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;}
-.section-badge.green{background:rgba(16,185,129,.15);color:var(--green);}
-.section-badge.yellow{background:rgba(245,158,11,.15);color:var(--yellow);}
-.section-badge.red{background:rgba(239,68,68,.15);color:var(--red);}
-.section-badge.gray{background:rgba(100,116,139,.15);color:var(--mid);}
-.check-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);}
-.check-row:last-child{border-bottom:none;}
-.check-icon{font-size:20px;flex-shrink:0;width:26px;text-align:center;}
-.check-info{flex:1;min-width:0;}
-.check-name{font-weight:600;color:var(--text);font-size:14px;}
-.check-detail{font-size:12px;color:var(--mid);margin-top:2px;}
-.check-status{text-align:right;flex-shrink:0;}
-.status-pill{display:inline-block;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:700;letter-spacing:.04em;}
-.status-pill.ok{background:rgba(16,185,129,.15);color:var(--green);}
-.status-pill.missing{background:rgba(239,68,68,.15);color:var(--red);}
-.status-pill.expired{background:rgba(239,68,68,.15);color:var(--red);}
-.status-pill.expiring{background:rgba(245,158,11,.15);color:var(--yellow);}
-.status-pill.na{background:rgba(100,116,139,.12);color:var(--mid);}
-.status-pill.unverified{background:rgba(168,85,247,.15);color:var(--purple);}
-.hos-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:16px 20px;}
-.hos-item{padding:8px 0;}
-.hos-label{font-size:11px;color:var(--mid);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}
-.hos-val{font-size:14px;color:var(--text);}
-.hos-note{grid-column:1/-1;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:7px;padding:12px 16px;font-size:12px;color:var(--mid);line-height:1.6;margin-top:8px;}
-.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
-.summary-kpi{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;text-align:center;}
-.summary-kpi .val{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;}
-.summary-kpi .lbl{font-size:11px;color:var(--mid);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
-.summary-kpi.ok .val{color:var(--green);}
-.summary-kpi.miss .val{color:var(--red);}
-.summary-kpi.unver .val{color:var(--purple);}
-.summary-footer{font-size:12px;color:var(--mid);text-align:center;line-height:1.6;border-top:1px solid var(--border);padding-top:14px;margin-top:4px;}
-.print-btn-row{display:flex;justify-content:flex-end;margin-bottom:16px;}
-.hidden{display:none!important;}
-.mono{font-family:'JetBrains Mono',monospace;font-size:12px;}
-.crit-tag{font-size:10px;color:var(--red);font-weight:700;vertical-align:middle;margin-left:4px;}
-@media(max-width:600px){.form-grid{grid-template-columns:1fr;}.role-row{flex-direction:column;}.hos-grid{grid-template-columns:1fr;}.summary-grid{grid-template-columns:1fr;}}
-@media print{
-  header,.privacy-banner,.print-btn-row,#step1,#step2,#errorBanner{display:none!important;}
-  body{background:#fff!important;color:#0f172a!important;}
-  .page-wrap{max-width:100%;padding:8px;}
-  .card,.section,.unit-header{background:#fff!important;border:1px solid #ddd!important;break-inside:avoid;}
-  .check-name,.section-title,.unit-name,.card-title{color:#0f172a!important;}
-  .check-detail,.unit-meta,.hos-val,.hos-label,.summary-footer{color:#334155!important;}
-  .status-pill.ok{background:#d1fae5!important;color:#065f46!important;}
-  .status-pill.missing,.status-pill.expired{background:#fee2e2!important;color:#991b1b!important;}
-  .status-pill.na{background:#f1f5f9!important;color:#475569!important;}
-  .status-pill.expiring{background:#fef9c3!important;color:#854d0e!important;}
-  .status-pill.unverified{background:#f3e8ff!important;color:#6b21a8!important;}
-  .summary-kpi{background:#f8fafc!important;border:1px solid #ddd!important;}
-  .summary-kpi .val{color:#0f172a!important;}
-  .print-ts{display:block!important;}
+html,body{min-height:100%;background:#0d1117;font-family:'Barlow',sans-serif;color:#fff;}
+body{display:flex;flex-direction:column;align-items:center;padding:0 0 40px;}
+
+.header{
+  width:100%;background:#0d1117;border-bottom:2px solid;padding:18px 20px;
+  display:flex;align-items:center;justify-content:space-between;
 }
-.print-ts{display:none;font-size:11px;color:var(--mid);text-align:center;margin-top:20px;padding-top:12px;border-top:1px solid #ddd;}
+.header.valid{border-color:#22c55e;}
+.header.expired{border-color:var(--red);}
+.header-brand{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;letter-spacing:.06em;}
+.header-brand span{color:var(--accent);}
+.header-badge{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;
+  padding:6px 14px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase;
+}
+.header-badge.valid{background:rgba(21,128,61,.2);border:1.5px solid rgba(34,197,94,.5);color:#4ade80;}
+.header-badge.expired{background:rgba(220,38,38,.15);border:1.5px solid rgba(220,38,38,.4);color:#f87171;}
+
+.main{width:100%;max-width:560px;padding:20px 16px 0;}
+
+/* VALID STATE */
+.verify-banner{
+  width:100%;padding:14px 16px;border-radius:12px;margin-bottom:18px;
+  display:flex;align-items:center;gap:12px;
+}
+.verify-banner.valid{background:rgba(21,128,61,.12);border:1.5px solid rgba(34,197,94,.35);}
+.verify-banner.expired{background:rgba(220,38,38,.1);border:1.5px solid rgba(220,38,38,.3);}
+.verify-icon{font-size:28px;flex-shrink:0;}
+.verify-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;}
+.verify-title.valid{color:#4ade80;}
+.verify-title.expired{color:#f87171;}
+.verify-sub{font-size:12px;color:#8b949e;margin-top:3px;}
+
+/* SECTION CARDS */
+.doc-section{margin-bottom:12px;}
+.doc-section-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;color:#6b7280;
+  padding:0 0 6px;border-bottom:1px solid #21262d;margin-bottom:8px;
+}
+.doc-card{background:#13181f;border:1px solid #21262d;border-radius:12px;overflow:hidden;margin-bottom:8px;}
+.doc-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #1a2030;}
+.doc-row:last-child{border-bottom:none;}
+.doc-lbl{font-size:12px;font-weight:600;color:#8b949e;text-transform:uppercase;letter-spacing:.04em;}
+.doc-val{font-size:13px;font-weight:600;color:#e4e6ea;text-align:right;max-width:65%;}
+.doc-val.ok{color:#4ade80;}
+.doc-val.warn{color:#fb923c;}
+.doc-val.fail{color:#f87171;}
+.doc-val.gray{color:#6b7280;}
+
+/* STATUS PILL */
+.status-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
+.status-pill.ok{background:rgba(21,128,61,.2);color:#4ade80;border:1px solid rgba(34,197,94,.3);}
+.status-pill.warn{background:rgba(232,100,10,.15);color:#fb923c;border:1px solid rgba(232,100,10,.3);}
+.status-pill.fail{background:rgba(220,38,38,.15);color:#f87171;border:1px solid rgba(220,38,38,.3);}
+
+/* CARRIER SEAL */
+.carrier-seal{
+  background:#13181f;border:1px solid #21262d;border-radius:14px;
+  padding:16px;text-align:center;margin-bottom:12px;
+}
+.carrier-seal-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;letter-spacing:.06em;color:#fff;}
+.carrier-seal-title span{color:var(--accent);}
+.carrier-seal-dot{font-size:11px;color:#6b7280;margin-top:4px;}
+.carrier-seal-nums{display:flex;justify-content:center;gap:24px;margin-top:10px;}
+.csn{text-align:center;}
+.csn-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;color:#e4e6ea;}
+.csn-lbl{font-size:10px;color:#6b7280;margin-top:1px;}
+
+/* TIMER */
+.timer-strip{background:#13181f;border:1px solid #30363d;border-radius:10px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.timer-lbl{font-size:12px;color:#6b7280;}
+.timer-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;color:#4ade80;}
+.timer-val.warn{color:#fb923c;}
+.timer-val.expired{color:#f87171;}
+
+/* EXPIRED SCREEN */
+.expired-screen{text-align:center;padding:40px 20px;}
+.expired-icon{font-size:56px;margin-bottom:16px;}
+.expired-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;color:var(--red);}
+.expired-msg{font-size:14px;color:#8b949e;margin-top:10px;line-height:1.6;}
+
+.footer-note{font-size:11px;color:#6b7280;text-align:center;max-width:420px;margin:16px auto 0;line-height:1.7;padding:0 16px;}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="hdr-left">
-    <span style="font-size:28px;">&#128667;</span>
-    <div>
-      <div class="hdr-title">Carrier Nexus</div>
-      <div class="hdr-sub">DOT Inspection View</div>
-    </div>
+<div class="header" id="pageHeader">
+  <div>
+    <div class="header-brand">CARRIER <span>NEXUS</span></div>
+    <div style="font-size:11px;color:#8b949e;margin-top:2px;">Official Road Pass · DOT Verification</div>
   </div>
-  <div class="hdr-right">
-    <div id="headerDate"></div>
-    <div style="color:#3b82f6;">Powered by Carrier Nexus</div>
-  </div>
-</header>
-
-<div class="privacy-banner">
-  <span>&#128274;</span>
-  <span>Your location is used <strong style="color:var(--text);">only</strong> to verify you are physically near this vehicle. It is never stored, logged, or shared.</span>
+  <div class="header-badge" id="headerBadge">Verifying…</div>
 </div>
 
-<div class="page-wrap">
-
-  <div id="errorBanner" class="hidden" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--red);margin-bottom:16px;display:flex;align-items:center;gap:10px;">
-    <span>&#9888;&#65039;</span><span id="errorMsg"></span>
-  </div>
-
-  <!-- STEP 1: SEARCH FORM -->
-  <div id="step1">
-    <div class="card">
-      <div class="card-title">&#128269; Enter Vehicle Information</div>
-
-      <div id="dotInputBlock">
-        <div class="form-grid">
-          <div class="form-row">
-            <label class="form-label" for="inpUSDOT">DOT Number</label>
-            <input class="form-input" id="inpUSDOT" type="text" placeholder="e.g. 4326039" autocomplete="off">
-          </div>
-          <div class="form-row">
-            <label class="form-label" for="inpUnit">Unit / Truck Number</label>
-            <input class="form-input" id="inpUnit" type="text" placeholder="e.g. 101, T-45" autocomplete="off">
-          </div>
-        </div>
-      </div>
-
-      <hr class="divider">
-
-      <div class="form-label" style="margin-bottom:10px;">Your Role</div>
-      <div class="role-row">
-        <label class="role-opt selected" id="roleOptDot" onclick="selectRole('dot')">
-          <input type="radio" name="role" value="dot" checked>
-          <div>
-            <div class="role-opt-label">&#128268; DOT Officer</div>
-            <div class="role-opt-sub">GPS proximity check required (330 ft)</div>
-          </div>
-        </label>
-        <label class="role-opt" id="roleOptCarrier" onclick="selectRole('carrier')">
-          <input type="radio" name="role" value="carrier">
-          <div>
-            <div class="role-opt-label">&#127970; Carrier / Company</div>
-            <div class="role-opt-sub">No proximity check needed</div>
-          </div>
-        </label>
-      </div>
-
-      <div class="role-hint dot-hint" id="dotHint">
-        &#128225; <strong style="color:var(--text);">DOT Officer mode:</strong> GPS proximity check required. You must be within 330 ft (1/16 mile) of the vehicle. Your browser will request location permission &mdash; it is used only for this check and immediately discarded.
-      </div>
-
-      <div class="role-hint carrier-hint hidden" id="carrierHint">
-        &#10003; <strong style="color:var(--text);">Carrier mode:</strong> No proximity check. You manage this fleet. Select a unit below.
-      </div>
-
-      <div id="carrierUnitRow" class="hidden form-row">
-        <label class="form-label" for="selUnit">Select Unit</label>
-        <select class="form-input" id="selUnit">
-          <option value="">&#8212; choose a unit &#8212;</option>
-        </select>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-blue" id="btnDotVerify" onclick="startDotFlow()">&#128506;&#65039; Locate &amp; Verify</button>
-        <button class="btn btn-green hidden" id="btnCarrierView" onclick="startCarrierFlow()">&#128203; View My Fleet</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- STEP 2: GPS CHECK -->
-  <div id="step2" class="hidden">
-    <div class="card">
-
-      <div id="gpsChecking" class="gps-status">
-        <div style="display:flex;justify-content:center;margin-bottom:20px;gap:8px;align-items:center;">
-          <span class="gps-pulse"></span>
-          <span class="gps-pulse" style="animation-delay:.35s;opacity:.7;"></span>
-          <span class="gps-pulse" style="animation-delay:.7s;opacity:.4;"></span>
-        </div>
-        <div class="gps-icon">&#128225;</div>
-        <div class="gps-msg">Requesting your location&hellip;</div>
-        <div class="gps-sub" style="margin-top:8px;">This requires your browser&#8217;s location permission.<br>Your location is used only for this check.</div>
-      </div>
-
-      <div id="gpsOk" class="hidden gps-result-ok">
-        <div style="font-size:36px;margin-bottom:10px;">&#9989;</div>
-        <div class="rmsg" id="gpsOkMsg">VERIFIED</div>
-        <div class="rsub" style="margin-top:6px;">Advancing to inspection view&hellip;</div>
-      </div>
-
-      <div id="gpsFail" class="hidden gps-result-fail">
-        <div style="font-size:36px;text-align:center;margin-bottom:10px;">&#10060;</div>
-        <div class="rmsg">No vehicle matching that Unit Number is within 330 feet of your location.</div>
-        <div class="rsub" style="margin-top:8px;" id="gpsFailDetail"></div>
-        <div class="rsub" style="margin-top:12px;">If you believe this is an error:
-          <ul>
-            <li>Ask the carrier to verify GPS tracking is active</li>
-            <li>Try entering a different unit number</li>
-            <li>Request Emergency Access Code from Carrier</li>
-          </ul>
-        </div>
-        <div class="btn-row" style="margin-top:16px;"><button class="btn btn-ghost" onclick="resetToStep1()">&#8592; Try Again</button></div>
-      </div>
-
-      <div id="gpsDenied" class="hidden gps-result-denied">
-        <div style="font-size:36px;text-align:center;margin-bottom:10px;">&#9888;&#65039;</div>
-        <div class="rmsg">Location access was denied.</div>
-        <div class="rsub" style="margin-top:8px;">To use the DOT Officer inspection view, you must allow location access.
-          <ul style="margin-top:10px;">
-            <li>Ask the carrier to access this page as Carrier mode</li>
-            <li>Or provide you with the unit&#8217;s compliance code</li>
-          </ul>
-        </div>
-        <div class="btn-row" style="margin-top:16px;"><button class="btn btn-ghost" onclick="resetToStep1()">&#8592; Try Again</button></div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- STEP 3: COMPLIANCE DASHBOARD -->
-  <div id="step3" class="hidden">
-
-    <div class="print-btn-row">
-      <button class="btn btn-ghost" onclick="window.print()">&#128424;&#65039; Print / Save PDF</button>
-    </div>
-
-    <div class="unit-header" id="unitHeaderCard"></div>
-
-    <div class="section">
-      <div class="section-head">
-        <div class="section-title">&#128100; Driver Documents</div>
-        <span class="section-badge gray" id="secDriverBadge">&#8212;</span>
-      </div>
-      <div id="secDriverRows"></div>
-    </div>
-
-    <div class="section">
-      <div class="section-head">
-        <div class="section-title">&#128295; Vehicle Documents</div>
-        <span class="section-badge gray" id="secVehicleBadge">&#8212;</span>
-      </div>
-      <div id="secVehicleRows"></div>
-    </div>
-
-    <div class="section">
-      <div class="section-head">
-        <div class="section-title">&#128230; Load Documents</div>
-        <span class="section-badge gray" id="secLoadBadge">&#8212;</span>
-      </div>
-      <div id="secLoadRows"></div>
-    </div>
-
-    <div class="section">
-      <div class="section-head">
-        <div class="section-title">&#9201;&#65039; Hours of Service</div>
-        <span class="section-badge gray" id="secHOSBadge">&#8212;</span>
-      </div>
-      <div id="secHOSContent"></div>
-    </div>
-
-    <div class="section hidden" id="secPermits">
-      <div class="section-head">
-        <div class="section-title">&#128203; Permits</div>
-        <span class="section-badge gray" id="secPermitsBadge">&#8212;</span>
-      </div>
-      <div id="secPermitsRows"></div>
-    </div>
-
-    <div class="card" id="secSummary">
-      <div class="card-title">&#128202; Inspection Summary</div>
-      <div class="summary-grid">
-        <div class="summary-kpi ok"><div class="val" id="sumOk">0</div><div class="lbl">&#9989; Compliant</div></div>
-        <div class="summary-kpi miss"><div class="val" id="sumMiss">0</div><div class="lbl">&#10060; Missing / Expired</div></div>
-        <div class="summary-kpi unver"><div class="val" id="sumUnver">0</div><div class="lbl">&#9888;&#65039; Unverified</div></div>
-      </div>
-      <div class="summary-footer" id="sumFooter"></div>
-    </div>
-
-    <div class="print-ts" id="printTs"></div>
-
-    <div class="print-btn-row">
-      <button class="btn btn-ghost" onclick="resetToStep1()">&#8592; New Inspection</button>
-    </div>
-
-  </div><!-- /step3 -->
-
-</div><!-- /page-wrap -->
+<div class="main" id="mainContent">
+  <div style="text-align:center;padding:40px;color:#8b949e;">Verifying pass…</div>
+</div>
 
 <script>
-// ================================================================
-//  CARRIER NEXUS — dot-view.html
-//  Public DOT Roadside Inspection View
-//  PRIVACY: GPS coordinates are used ONCE for proximity check only.
-//  They are never stored, never logged, never transmitted anywhere.
-// ================================================================
-
-// Date header
-(function() {
-  var el = document.getElementById('headerDate');
-  if (!el) return;
-  var d = new Date();
-  var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  el.textContent = DAYS[d.getDay()] + ', ' + MONTHS[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
-})();
-
-// ── Haversine distance in miles ──────────────────────────────────
-function haversineDistance(lat1, lon1, lat2, lon2) {
-  var R = 3958.8;
-  var toRad = function(x) { return x * Math.PI / 180; };
-  var dLat = toRad(lat2 - lat1);
-  var dLon = toRad(lon2 - lon1);
-  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-          Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-var ONE_SIXTEENTH_MILE = 0.0625; // 330 feet = 1/16 mile
-
-// ── Seed GPS positions (mirrors gps-tracker.html) ────────────────
-var SEED_POSITIONS = {
-  '101': { lat: 32.7767, lng: -96.7970 },
-  '102': { lat: 34.0522, lng: -118.2437 },
-  '103': { lat: 29.7604, lng: -95.3698 },
-  '104': { lat: 41.8781, lng: -87.6298 },
-  '105': { lat: 33.4484, lng: -112.0740 },
-  '106': { lat: 25.7617, lng: -80.1918 }
-};
-
-// ── Demo unit fallback ───────────────────────────────────────────
-var DEMO_UNIT = {
-  id: '101', unit_number: '101', year: '2016', make: 'Peterbilt', model: '389',
-  vin: '1XPWD40X1ED215307', license_plate: 'TX-CMV-101',
-  last_annual_inspection: '2025-12-01',
-  next_pm_date: '2026-07-15',
-  registration_expiry: '2026-12-31',
-  driver: 'David Hernandez',
-  lat: 32.7767, lng: -96.7970
-};
-
-// ── Page state ───────────────────────────────────────────────────
-var currentRole = 'dot';
-var resolvedUnit = null;
-var resolvedDriver = null;
-var inspectionTimestamp = null;
-var dashboardStats = { ok: 0, missing: 0, unverified: 0 };
-
-// ── Role toggle ──────────────────────────────────────────────────
-function selectRole(role) {
-  currentRole = role;
-  var dotOpt = document.getElementById('roleOptDot');
-  var carrierOpt = document.getElementById('roleOptCarrier');
-  var dotHint = document.getElementById('dotHint');
-  var carrierHint = document.getElementById('carrierHint');
-  var carrierRow = document.getElementById('carrierUnitRow');
-  var btnDot = document.getElementById('btnDotVerify');
-  var btnCarrier = document.getElementById('btnCarrierView');
-  var dotBlock = document.getElementById('dotInputBlock');
-  if (role === 'dot') {
-    dotOpt.classList.add('selected'); carrierOpt.classList.remove('selected');
-    dotHint.classList.remove('hidden'); carrierHint.classList.add('hidden');
-    carrierRow.classList.add('hidden');
-    btnDot.classList.remove('hidden'); btnCarrier.classList.add('hidden');
-    dotBlock.classList.remove('hidden');
-  } else {
-    dotOpt.classList.remove('selected'); carrierOpt.classList.add('selected');
-    dotHint.classList.add('hidden'); carrierHint.classList.remove('hidden');
-    carrierRow.classList.remove('hidden');
-    btnDot.classList.add('hidden'); btnCarrier.classList.remove('hidden');
-    dotBlock.classList.add('hidden');
-    populateCarrierDropdown();
-  }
+function getParam(name){
+  var u=new URLSearchParams(window.location.search);
+  return u.get(name);
 }
 
-function populateCarrierDropdown() {
-  var sel = document.getElementById('selUnit');
-  var units = getEquipmentUnits();
-  sel.innerHTML = '<option value="">&#8212; choose a unit &#8212;</option>';
-  units.forEach(function(u) {
-    var num = u.unit_number || u.id || '';
-    var desc = [u.year, u.make, u.model].filter(Boolean).join(' ');
-    var opt = document.createElement('option');
-    opt.value = num;
-    opt.textContent = 'Unit ' + num + (desc ? ' — ' + desc : '');
-    sel.appendChild(opt);
-  });
-}
-
-// ── Error banner ─────────────────────────────────────────────────
-function showError(msg) {
-  var el = document.getElementById('errorBanner');
-  document.getElementById('errorMsg').textContent = msg;
-  el.classList.remove('hidden');
-  el.style.display = 'flex';
-}
-function hideError() {
-  var el = document.getElementById('errorBanner');
-  el.classList.add('hidden');
-}
-
-// ── Reset to step 1 ──────────────────────────────────────────────
-function resetToStep1() {
-  document.getElementById('step1').classList.remove('hidden');
-  document.getElementById('step2').classList.add('hidden');
-  document.getElementById('step3').classList.add('hidden');
-  document.getElementById('gpsChecking').classList.remove('hidden');
-  document.getElementById('gpsOk').classList.add('hidden');
-  document.getElementById('gpsFail').classList.add('hidden');
-  document.getElementById('gpsDenied').classList.add('hidden');
-  hideError();
-  resolvedUnit = null; resolvedDriver = null;
-}
-
-// ================================================================
-//  DATA HELPERS
-// ================================================================
-
-function safeLS(key) {
-  try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch(e) { return null; }
-}
-
-function getEquipmentUnits() {
-  var units = safeLS('nexus_equipment_units');
-  if (!Array.isArray(units) || units.length === 0) return [DEMO_UNIT];
-  return units;
-}
-
-function getVehicleData(unitId) {
-  var uid = String(unitId).trim().toLowerCase().replace(/^unit\s*/i, '');
-  return getEquipmentUnits().find(function(u) {
-    var a = String(u.unit_number || '').toLowerCase().replace(/^unit\s*/i, '');
-    var b = String(u.id || '').toLowerCase().replace(/^unit_/, '');
-    return a === uid || b === uid;
-  }) || null;
-}
-
-function getDriverForUnit(unitId) {
-  var loads = safeLS('nexus_dispatch_loads') || safeLS('nexus_loads') || [];
-  if (!Array.isArray(loads)) return null;
-  var uid = String(unitId).toLowerCase().replace(/^unit\s*/i, '');
-  var activeLoad = loads.find(function(l) {
-    var lu = String(l.unit || l.truck || l.unit_number || '').toLowerCase().replace(/^unit\s*/i, '');
-    return lu === uid && l.status !== 'CLOSED' && l.status !== 'DELIVERED';
-  });
-  if (!activeLoad) return null;
-  var users = safeLS('NEXUS_LOCAL_USERS') || [];
-  return users.find(function(u) {
-    return u.name === activeLoad.driver || u.id === activeLoad.driver_id;
-  }) || (activeLoad.driver ? { name: activeLoad.driver } : null);
-}
-
-function getDocumentsForEntity(name) {
-  var docs = safeLS('nexus_documents') || [];
-  if (!Array.isArray(docs)) return [];
-  var n = String(name || '').toLowerCase();
-  return docs.filter(function(d) {
-    return String(d.driver || '').toLowerCase() === n ||
-           String(d.unit || '').toLowerCase() === n ||
-           String(d.entity || '').toLowerCase() === n;
-  });
-}
-
-function checkDocCompliance(docs, types) {
-  var typeArr = Array.isArray(types) ? types : [types];
-  var found = null;
-  for (var i = 0; i < typeArr.length && !found; i++) {
-    var t = String(typeArr[i]).toLowerCase();
-    found = docs.find(function(d) {
-      return String(d.type || '').toLowerCase().indexOf(t) >= 0 ||
-             String(d.category || '').toLowerCase().indexOf(t) >= 0 ||
-             String(d.name || '').toLowerCase().indexOf(t) >= 0;
-    }) || null;
-  }
-  if (!found) return { status: 'MISSING', doc: null };
-  var expDate = found.expiry_date || found.expiration_date || found.expiry || null;
-  if (expDate) {
-    var exp = new Date(expDate);
-    var now = new Date();
-    if (exp < now) return { status: 'EXPIRED', doc: found, expiry: expDate };
-    var soon = new Date(now.getTime() + 30 * 86400000);
-    if (exp < soon) return { status: 'EXPIRING', doc: found, expiry: expDate };
-  }
-  return { status: 'OK', doc: found, expiry: expDate };
-}
-
-function getPermitsForUnit(unitId) {
-  var permits = safeLS('nexus_permits') || safeLS('nexus_permits_v1') || [];
-  if (!Array.isArray(permits)) return [];
-  var uid = String(unitId).toLowerCase().replace(/^unit\s*/i, '');
-  return permits.filter(function(p) {
-    var pu = String(p.unit || p.unit_number || p.truck || '').toLowerCase().replace(/^unit\s*/i, '');
-    return pu === uid;
-  });
-}
-
-function fmtDate(dateStr) {
-  if (!dateStr) return null;
-  var d = new Date(dateStr);
-  if (isNaN(d.getTime())) return String(dateStr);
-  var M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return M[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
-}
-
-function fmtTs(d) {
-  var M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var h = d.getHours(); var m = d.getMinutes();
-  var ap = h >= 12 ? 'PM' : 'AM';
-  h = h % 12 || 12;
-  return M[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() +
-    ' at ' + h + ':' + (m < 10 ? '0' : '') + m + ' ' + ap;
-}
-
-function escH(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ================================================================
-//  GPS PROXIMITY CHECK
-//  officerLat / officerLon are used once here and nowhere else.
-//  They are not assigned to any persistent variable.
-// ================================================================
-
-function checkProximityToVehicle(officerLat, officerLon, unitId) {
-  var uid = String(unitId).replace(/^unit\s*/i, '');
-  var vehiclePos = null;
-
-  // 1. Try live GPS vehicles
-  var vehicles = safeLS('nexus_gps_vehicles') || [];
-  vehiclePos = (Array.isArray(vehicles) ? vehicles : []).find(function(v) {
-    var vu = String(v.unit || v.id || '').replace(/^unit_?/i, '');
-    return vu === uid;
-  }) || null;
-
-  // 2. Seed positions
-  if (!vehiclePos && SEED_POSITIONS[uid]) {
-    vehiclePos = SEED_POSITIONS[uid];
-  }
-
-  // 3. Equipment units with embedded lat/lng
-  if (!vehiclePos) {
-    var units = getEquipmentUnits();
-    var eq = units.find(function(u) {
-      var un = String(u.unit_number || u.id || '').replace(/^unit_?/i, '');
-      return un === uid;
-    });
-    if (eq && eq.lat && eq.lng) vehiclePos = { lat: eq.lat, lng: eq.lng };
-  }
-
-  if (!vehiclePos || !vehiclePos.lat) return { found: false, distance: null, distanceFt: null };
-
-  // Use coordinates ONCE — compute distance and return result only
-  var dist = haversineDistance(officerLat, officerLon, vehiclePos.lat, vehiclePos.lng);
-  // officerLat / officerLon are not stored or referenced again after this line
-  return {
-    found: dist <= ONE_SIXTEENTH_MILE,
-    distance: dist,
-    distanceFt: Math.round(dist * 5280)
-  };
-}
-
-// ================================================================
-//  FLOWS
-// ================================================================
-
-function startDotFlow() {
-  hideError();
-  var unitInput = document.getElementById('inpUnit').value.trim();
-  if (!unitInput) { showError('Please enter a Unit / Truck Number.'); return; }
-
-  resolvedUnit = getVehicleData(unitInput);
-  if (!resolvedUnit) {
-    resolvedUnit = Object.assign({}, DEMO_UNIT, { unit_number: unitInput, id: unitInput });
-  }
-  document.getElementById('step1').classList.add('hidden');
-  document.getElementById('step2').classList.remove('hidden');
-  requestGPSAndCheck(unitInput);
-}
-
-function startCarrierFlow() {
-  hideError();
-  var sel = document.getElementById('selUnit');
-  var unitId = sel.value;
-  if (!unitId) { showError('Please select a unit from the dropdown.'); return; }
-  resolvedUnit = getVehicleData(unitId) || Object.assign({}, DEMO_UNIT, { unit_number: unitId, id: unitId });
-  resolvedDriver = getDriverForUnit(unitId);
-  inspectionTimestamp = new Date();
-  showComplianceDashboard('carrier');
-}
-
-function requestGPSAndCheck(unitId) {
-  if (!navigator.geolocation) { showGPSDenied(); return; }
-  navigator.geolocation.getCurrentPosition(
-    function(pos) {
-      // Extract coords, use immediately for proximity check, then let them go out of scope
-      var result = checkProximityToVehicle(pos.coords.latitude, pos.coords.longitude, unitId);
-      // pos.coords are not stored — they go out of scope with this callback
-      if (result.found) {
-        var dm = result.distance !== null ? result.distance.toFixed(3) : '< 0.001';
-        var df = result.distanceFt || 0;
-        showGPSOk('You are ' + dm + ' mi (' + df + ' ft) from Unit ' + unitId);
-      } else {
-        var detail = result.distance !== null
-          ? 'Unit ' + unitId + ' is approximately ' + result.distance.toFixed(2) +
-            ' miles (' + (result.distanceFt || '—') + ' ft) from your current location. Required: within 330 ft (1/16 mile).'
-          : 'No GPS position found for Unit ' + unitId + '. The carrier may not have GPS tracking active.';
-        showGPSFail(unitId, detail);
-      }
-    },
-    function() { showGPSDenied(); },
-    { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
-  );
-}
-
-function showGPSOk(msg) {
-  document.getElementById('gpsChecking').classList.add('hidden');
-  document.getElementById('gpsOkMsg').textContent = 'VERIFIED — ' + msg;
-  document.getElementById('gpsOk').classList.remove('hidden');
-  resolvedDriver = getDriverForUnit(resolvedUnit.unit_number || resolvedUnit.id);
-  inspectionTimestamp = new Date();
-  setTimeout(function() { showComplianceDashboard('dot'); }, 1500);
-}
-
-function showGPSFail(unitId, detail) {
-  document.getElementById('gpsChecking').classList.add('hidden');
-  document.getElementById('gpsFailDetail').textContent = detail;
-  document.getElementById('gpsFail').classList.remove('hidden');
-}
-
-function showGPSDenied() {
-  document.getElementById('gpsChecking').classList.add('hidden');
-  document.getElementById('gpsDenied').classList.remove('hidden');
-}
-
-// ================================================================
-//  COMPLIANCE DASHBOARD
-// ================================================================
-
-function showComplianceDashboard(mode) {
-  document.getElementById('step1').classList.add('hidden');
-  document.getElementById('step2').classList.add('hidden');
-  document.getElementById('step3').classList.remove('hidden');
-  dashboardStats = { ok: 0, missing: 0, unverified: 0 };
-
-  var unit = resolvedUnit;
-  var unitNum = String(unit.unit_number || unit.id || '101');
-  var driverName = (resolvedDriver && resolvedDriver.name) || unit.driver || null;
-  var usdot = localStorage.getItem('nexus_my_usdot') || '4326039';
-  var mc = localStorage.getItem('nexus_my_mc') || '1688495';
-  var company = 'Carrier Trucking US, LLC';
-  try { if (window.NEXUS_COMPANIES && window.NEXUS_COMPANIES[0]) company = window.NEXUS_COMPANIES[0].name; } catch(e) {}
-  var ts = inspectionTimestamp || new Date();
-
-  var driverDocs = driverName ? getDocumentsForEntity(driverName) : [];
-  var unitDocs = getDocumentsForEntity(unitNum);
-  var allDocs = driverDocs.concat(unitDocs);
-
-  // Build sections
-  var driverItems = buildDriverSection(driverName, allDocs);
-  var vehicleItems = buildVehicleSection(unit, allDocs);
-  var loadItems = buildLoadSection(unitNum, allDocs);
-
-  renderSectionRows('secDriverRows', driverItems);
-  renderSectionRows('secVehicleRows', vehicleItems);
-  renderSectionRows('secLoadRows', loadItems);
-  renderBadge('secDriverBadge', getSectionBadge(driverItems));
-  renderBadge('secVehicleBadge', getSectionBadge(vehicleItems));
-  renderBadge('secLoadBadge', getSectionBadge(loadItems));
-
-  buildHOSSection(unit);
-
-  var permits = getPermitsForUnit(unitNum);
-  if (permits.length > 0) {
-    document.getElementById('secPermits').classList.remove('hidden');
-    var permitItems = buildPermitItems(permits);
-    renderSectionRows('secPermitsRows', permitItems);
-    renderBadge('secPermitsBadge', getSectionBadge(permitItems));
-  }
-
-  // Overall compliance
-  var allItems = driverItems.concat(vehicleItems).concat(loadItems);
-  var critMiss = allItems.filter(function(i) {
-    return i.critical && (i.result.status === 'MISSING' || i.result.status === 'EXPIRED');
-  }).length;
-  var imptMiss = allItems.filter(function(i) {
-    return i.important && !i.critical && (i.result.status === 'MISSING' || i.result.status === 'EXPIRED');
-  }).length;
-  var overallCls = critMiss > 0 ? 'red' : imptMiss > 0 ? 'yellow' : 'green';
-  var overallTxt = critMiss > 0 ? '&#128308; NOT COMPLIANT' : imptMiss > 0 ? '&#128993; PARTIAL COMPLIANCE' : '&#128994; COMPLIANT';
-
-  var unitDesc = [unit.year, unit.make, unit.model].filter(Boolean).join(' ') || 'Unit';
-  document.getElementById('unitHeaderCard').innerHTML =
-    '<div class="unit-name">&#128667; UNIT ' + escH(unitNum) + ' &mdash; ' + escH(unitDesc) + '</div>' +
-    '<div class="unit-meta">' +
-    (usdot ? '<span>DOT# ' + escH(usdot) + '</span>' : '') +
-    (mc ? '<span>&nbsp;&middot;&nbsp;MC# ' + escH(mc) + '</span>' : '') +
-    (unit.vin ? '<span>&nbsp;&middot;&nbsp;VIN: <span class="mono">' + escH(unit.vin) + '</span></span>' : '') +
-    (unit.license_plate ? '<span>&nbsp;&middot;&nbsp;Plate: ' + escH(unit.license_plate) + '</span>' : '') +
-    '</div>' +
-    '<div style="margin-bottom:12px;font-size:13px;color:var(--mid);">Company: <strong style="color:var(--text);">' + escH(company) + '</strong></div>' +
-    '<span class="compliance-badge ' + overallCls + '">' + overallTxt + '</span>' +
-    '<div class="unit-footer" style="margin-top:10px;">Checked: ' + fmtTs(ts) +
-    ' &nbsp;&middot;&nbsp; Role: ' + (mode === 'dot' ? 'DOT Officer' : 'Carrier') +
-    (driverName ? ' &nbsp;&middot;&nbsp; Driver on file: ' + escH(driverName) : ' &nbsp;&middot;&nbsp; <em>No active driver assigned</em>') +
+function renderExpired(reason){
+  document.getElementById('pageHeader').className='header expired';
+  document.getElementById('headerBadge').className='header-badge expired';
+  document.getElementById('headerBadge').textContent='EXPIRED';
+  document.getElementById('mainContent').innerHTML=
+    '<div class="expired-screen">'+
+    '<div class="expired-icon">🚫</div>'+
+    '<div class="expired-title">PASS EXPIRED</div>'+
+    '<div class="expired-msg">'+reason+'<br><br>Please ask the driver to generate a new Road Pass on their device.<br><br>Contact carrier directly: <strong>DOT #4326039 · MC #1688495</strong></div>'+
     '</div>';
-
-  document.getElementById('sumOk').textContent = dashboardStats.ok;
-  document.getElementById('sumMiss').textContent = dashboardStats.missing;
-  document.getElementById('sumUnver').textContent = dashboardStats.unverified;
-  document.getElementById('sumFooter').innerHTML =
-    '<strong style="color:' + (critMiss === 0 ? 'var(--green)' : 'var(--red)') + ';">' +
-    'CRITICAL items: ' + (critMiss === 0 ? 'ALL OK' : critMiss + ' MISSING / EXPIRED') +
-    '</strong><br><span style="display:block;margin-top:6px;">This record was generated by Carrier Nexus at ' +
-    fmtTs(ts) + '.<br>Official compliance determination is made by the inspecting officer.</span>';
-
-  document.getElementById('printTs').textContent = 'Printed from Carrier Nexus DOT Inspection View — ' + fmtTs(ts);
 }
 
-function renderSectionRows(containerId, items) {
-  var el = document.getElementById(containerId);
-  if (!el) return;
-  var html = '';
-  items.forEach(function(item) {
-    var st = item.result.status;
-    var icon = st === 'OK' || st === 'EXPIRING' ? (st === 'EXPIRING' ? '&#128993;' : '&#128994;') :
-               (st === 'MISSING' || st === 'EXPIRED') ? '&#128308;' : '&#9898;';
-    var pillCls = st === 'OK' ? 'ok' : st === 'EXPIRING' ? 'expiring' :
-                  (st === 'MISSING' || st === 'EXPIRED') ? (st === 'EXPIRED' ? 'expired' : 'missing') :
-                  st === 'N/A' ? 'na' : 'unverified';
-    var pillTxt = st === 'OK' ? 'VALID' : st === 'EXPIRING' ? 'EXPIRING SOON' :
-                  st === 'MISSING' ? 'MISSING' : st === 'EXPIRED' ? 'EXPIRED' :
-                  st === 'N/A' ? 'N/A' : 'UNVERIFIED';
-    html +=
-      '<div class="check-row">' +
-        '<span class="check-icon">' + icon + '</span>' +
-        '<div class="check-info">' +
-          '<div class="check-name">' + escH(item.name) +
-            (item.critical ? '<span class="crit-tag">CRITICAL</span>' : '') +
-          '</div>' +
-          '<div class="check-detail">' + escH(item.detail) + '</div>' +
-        '</div>' +
-        '<div class="check-status"><span class="status-pill ' + pillCls + '">' + pillTxt + '</span></div>' +
-      '</div>';
-    if (st !== 'N/A') {
-      if (st === 'OK' || st === 'EXPIRING') dashboardStats.ok++;
-      else if (st === 'MISSING' || st === 'EXPIRED') dashboardStats.missing++;
-      else dashboardStats.unverified++;
+function startTimer(expireAt){
+  var interval=setInterval(function(){
+    var remaining=Math.max(0,expireAt-Date.now());
+    var secs=Math.ceil(remaining/1000);
+    var mm=Math.floor(secs/60);
+    var ss=secs%60;
+    var el=document.getElementById('liveTimer');
+    if(!el){clearInterval(interval);return;}
+    el.textContent=mm+':'+(ss<10?'0':'')+ss;
+    if(remaining<=0){
+      el.className='timer-val expired';
+      el.textContent='EXPIRED';
+      clearInterval(interval);
+      setTimeout(function(){renderExpired('This Road Pass has expired.');},1500);
+    } else if(remaining<30000){
+      el.className='timer-val warn';
     }
-  });
-  el.innerHTML = html;
+  },500);
 }
 
-function renderBadge(id, level) {
-  var el = document.getElementById(id);
-  if (!el) return;
-  var cls = level === 'GREEN' ? 'green' : level === 'YELLOW' ? 'yellow' : level === 'RED' ? 'red' : 'gray';
-  var txt = level === 'GREEN' ? '&#128994; OK' : level === 'YELLOW' ? '&#128993; PARTIAL' :
-            level === 'RED' ? '&#128308; ACTION REQUIRED' : '&#9898; N/A';
-  el.className = 'section-badge ' + cls;
-  el.innerHTML = txt;
+function renderValid(d, remaining){
+  document.getElementById('pageHeader').className='header valid';
+  document.getElementById('headerBadge').className='header-badge valid';
+  document.getElementById('headerBadge').textContent='✓ VERIFIED';
+
+  var mm=Math.floor(remaining/60000);
+  var ss=Math.floor((remaining%60000)/1000);
+  var timeStr=mm+':'+(ss<10?'0':'')+ss;
+
+  document.getElementById('mainContent').innerHTML=
+    '<div class="verify-banner valid">'+
+      '<div class="verify-icon">✅</div>'+
+      '<div><div class="verify-title valid">PASS VERIFIED</div><div class="verify-sub">Cryptographically time-stamped · Carrier Nexus Platform</div></div>'+
+    '</div>'+
+
+    '<div class="timer-strip">'+
+      '<span class="timer-lbl">Pass expires in</span>'+
+      '<span class="timer-val" id="liveTimer">'+timeStr+'</span>'+
+    '</div>'+
+
+    '<div class="doc-section">'+
+      '<div class="doc-section-title">Carrier Information</div>'+
+      '<div class="carrier-seal">'+
+        '<div class="carrier-seal-title">CARRIER <span>TRUCKING</span> US</div>'+
+        '<div class="carrier-seal-dot">Licensed & Insured Interstate Motor Carrier</div>'+
+        '<div class="carrier-seal-nums">'+
+          '<div class="csn"><div class="csn-val">'+d.dot+'</div><div class="csn-lbl">USDOT #</div></div>'+
+          '<div class="csn"><div class="csn-val">'+d.mc+'</div><div class="csn-lbl">MC #</div></div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+
+    '<div class="doc-section">'+
+      '<div class="doc-section-title">Driver</div>'+
+      '<div class="doc-card">'+
+        '<div class="doc-row"><span class="doc-lbl">Name</span><span class="doc-val">David Hernandez</span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">CDL #</span><span class="doc-val">FL-D234-5678-9012</span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">CDL Class</span><span class="doc-val">Class A</span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">CDL Expires</span><span class="doc-val ok">July 2027 <span class="status-pill ok">Valid</span></span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">Medical Card</span><span class="doc-val ok">Jan 2026 <span class="status-pill ok">Valid</span></span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">Drug & Alcohol</span><span class="doc-val ok"><span class="status-pill ok">Cleared Mar 2026</span></span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">HOS — On Duty</span><span class="doc-val ok">4h 22m <span class="status-pill ok">Legal</span></span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">Remaining Drive</span><span class="doc-val ok">6h 38m available</span></div>'+
+      '</div>'+
+    '</div>'+
+
+    '<div class="doc-section">'+
+      '<div class="doc-section-title">Load & Vehicle</div>'+
+      '<div class="doc-card">'+
+        '<div class="doc-row"><span class="doc-lbl">Load #</span><span class="doc-val">'+d.load+'</span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">Commodity</span><span class="doc-val">Auto Parts — Non-Hazmat</span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">Gross Weight</span><span class="doc-val warn">79,400 lbs <span class="status-pill warn">Verify Axles</span></span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">Equipment</span><span class="doc-val">Dry Van 53\' · Truck #104</span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">Origin</span><span class="doc-val">Miami, FL</span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">Destination</span><span class="doc-val">Atlanta, GA</span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">Pre-Trip DVIR</span><span class="doc-val ok"><span class="status-pill ok">Complete — Today</span></span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">Insurance</span><span class="doc-val ok">$1M Liability · Active <span class="status-pill ok">Valid</span></span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">Hazmat</span><span class="doc-val gray">None</span></div>'+
+        '<div class="doc-row"><span class="doc-lbl">Oversize Permit</span><span class="doc-val gray">N/A — Standard Load</span></div>'+
+      '</div>'+
+    '</div>'+
+
+    '<div class="footer-note">This Road Pass was generated by the driver\'s Carrier Nexus device and contains real-time compliance data. Pass ID: '+d.load+'-'+d.iss+'. Valid only until the timer expires. For violations or questions contact: compliance@carriertuckingus.com</div>';
+
+  startTimer(d.exp);
 }
 
-function getSectionBadge(items) {
-  if (items.some(function(i) { return i.critical && (i.result.status === 'MISSING' || i.result.status === 'EXPIRED'); })) return 'RED';
-  if (items.some(function(i) { return !i.critical && (i.result.status === 'MISSING' || i.result.status === 'EXPIRED'); })) return 'YELLOW';
-  return 'GREEN';
-}
-
-// ================================================================
-//  SECTION BUILDERS
-// ================================================================
-
-function buildDriverSection(driverName, allDocs) {
-  var items = [];
-  var today = new Date();
-  var todayStr = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-  // CDL
-  var cdlR = checkDocCompliance(allDocs, ['cdl', 'commercial driver']);
-  items.push({
-    name: 'Commercial Driver\'s License (CDL)',
-    detail: (cdlR.status === 'OK' || cdlR.status === 'EXPIRING')
-      ? 'Class A \xb7 Number: [ON FILE — NUMBER REDACTED]' + (cdlR.expiry ? ' \xb7 Expires: ' + fmtDate(cdlR.expiry) : '')
-      : (driverName ? 'No CDL on file for ' + driverName : 'No driver assigned — cannot verify'),
-    critical: true, important: true, result: cdlR
-  });
-
-  // Medical Certificate
-  var medR = checkDocCompliance(allDocs, ['medical', 'med cert', 'dot physical', 'examiner']);
-  items.push({
-    name: 'Medical Examiner\'s Certificate',
-    detail: (medR.status === 'OK' || medR.status === 'EXPIRING')
-      ? 'FMCSA Registered Examiner' + (medR.expiry ? ' \xb7 Expires: ' + fmtDate(medR.expiry) : '')
-      : (driverName ? 'No medical certificate on file for ' + driverName : 'No driver assigned'),
-    critical: true, important: true, result: medR
-  });
-
-  // Pre-Trip / DVIR
-  var ptR = checkDocCompliance(allDocs, ['pretrip', 'pre-trip', 'pre trip', 'dvir']);
-  items.push({
-    name: 'Pre-Trip Inspection Report (DVIR)',
-    detail: ptR.status === 'OK'
-      ? 'DVIR on file \xb7 ' + todayStr
-      : 'No pre-trip inspection on file for today (' + todayStr + ')',
-    critical: true, important: true,
-    result: ptR.status === 'MISSING' ? { status: 'UNVERIFIED', doc: null } : ptR
-  });
-
-  // ELD / HOS
-  var eldR = checkDocCompliance(allDocs, ['eld', 'hours of service', 'hos log']);
-  items.push({
-    name: 'ELD / Hours of Service Records',
-    detail: eldR.status === 'OK'
-      ? 'ELD logs on file \xb7 Last 8 days confirmed'
-      : 'HOS records not verified in this system \xb7 Check ELD device directly',
-    critical: false, important: true,
-    result: eldR.status === 'MISSING' ? { status: 'UNVERIFIED', doc: null } : eldR
-  });
-
-  // Drug Test
-  var drugR = checkDocCompliance(allDocs, ['drug test', 'drug screen', 'clearinghouse']);
-  items.push({
-    name: 'Drug Test Record',
-    detail: drugR.status === 'OK'
-      ? 'Pre-employment drug test on file'
-      : (driverName ? 'Drug test record not found for ' + driverName : 'No driver assigned'),
-    critical: false, important: false,
-    result: drugR.status === 'MISSING' ? { status: 'UNVERIFIED', doc: null } : drugR
-  });
-
-  // DQ File
-  var dqR = checkDocCompliance(allDocs, ['driver qualification', 'dq file', 'mvr', 'road test']);
-  items.push({
-    name: 'Driver Qualification File',
-    detail: dqR.status === 'OK'
-      ? 'Application, MVR, and road test on file'
-      : (driverName ? 'DQ file not found for ' + driverName : 'No driver assigned'),
-    critical: false, important: false,
-    result: dqR.status === 'MISSING' ? { status: 'UNVERIFIED', doc: null } : dqR
-  });
-
-  return items;
-}
-
-function buildVehicleSection(unit, allDocs) {
-  var items = [];
-  var now = new Date();
-  var soon = new Date(now.getTime() + 30 * 86400000);
-
-  // Registration
-  var regExpiry = unit.registration_expiry || unit.reg_expiry || null;
-  var regStatus;
-  if (regExpiry) {
-    var re = new Date(regExpiry);
-    regStatus = re < now ? { status: 'EXPIRED', doc: unit, expiry: regExpiry }
-      : re < soon ? { status: 'EXPIRING', doc: unit, expiry: regExpiry }
-      : { status: 'OK', doc: unit, expiry: regExpiry };
-  } else {
-    var rr = checkDocCompliance(allDocs, ['registration', 'cab card']);
-    regStatus = rr.status !== 'MISSING' ? rr : { status: 'MISSING', doc: null };
+window.addEventListener('DOMContentLoaded', function(){
+  var token=getParam('p');
+  if(!token){ renderExpired('No pass token found.'); return; }
+  try{
+    var d=JSON.parse(atob(decodeURIComponent(token)));
+    var now=Date.now();
+    var remaining=d.exp-now;
+    if(remaining<=0){ renderExpired('This Road Pass has expired. Ask the driver to generate a new one.'); return; }
+    renderValid(d, remaining);
+  } catch(e){
+    renderExpired('Invalid or unreadable pass. Please ask the driver to generate a new Road Pass.');
   }
-  items.push({
-    name: 'Vehicle Registration / Cab Card',
-    detail: (regStatus.status === 'OK' || regStatus.status === 'EXPIRING')
-      ? 'Plate: ' + (unit.license_plate || '—') + (regExpiry ? ' \xb7 Expires: ' + fmtDate(regExpiry) : '')
-      : 'Registration not on file or expired',
-    critical: true, important: true, result: regStatus
-  });
-
-  // Annual Inspection
-  var annDate = unit.last_annual_inspection || unit.last_inspection || null;
-  var annStatus;
-  if (annDate) {
-    var ad = new Date(annDate);
-    var nd = new Date(ad.getTime() + 365 * 86400000);
-    annStatus = nd < now ? { status: 'EXPIRED', doc: unit }
-      : nd < soon ? { status: 'EXPIRING', doc: unit, expiry: nd.toISOString() }
-      : { status: 'OK', doc: unit, expiry: nd.toISOString() };
-  } else {
-    var ar = checkDocCompliance(allDocs, ['annual inspection', 'dot inspection']);
-    annStatus = ar.status !== 'MISSING' ? ar : { status: 'MISSING', doc: null };
-  }
-  var nextDueStr = annDate ? fmtDate(new Date(new Date(annDate).getTime() + 365 * 86400000).toISOString()) : null;
-  items.push({
-    name: 'Annual Inspection Report',
-    detail: (annStatus.status === 'OK' || annStatus.status === 'EXPIRING')
-      ? 'Last Inspection: ' + fmtDate(annDate) + (nextDueStr ? ' \xb7 Next Due: ' + nextDueStr : '')
-      : 'Annual inspection not found or expired (required annually, 49 CFR \xa7396.17)',
-    critical: true, important: true, result: annStatus
-  });
-
-  // IFTA
-  var iftaR = checkDocCompliance(allDocs, ['ifta', 'ifta decal', 'fuel tax']);
-  items.push({
-    name: 'IFTA Decals',
-    detail: iftaR.status === 'OK'
-      ? new Date().getFullYear() + ' IFTA sticker on file'
-      : 'IFTA decal not verified in system \xb7 Check physical sticker on cab',
-    critical: false, important: true,
-    result: iftaR.status === 'MISSING' ? { status: 'UNVERIFIED', doc: null } : iftaR
-  });
-
-  // Insurance
-  var insR = checkDocCompliance(allDocs, ['insurance', 'bmc-91', 'bmc91', 'certificate of insurance', 'coi']);
-  items.push({
-    name: 'Insurance Certificate (BMC-91/91X)',
-    detail: insR.status === 'OK' ? 'On file \xb7 Policy #: [REDACTED]' : 'Insurance certificate not found in document vault',
-    critical: false, important: true, result: insR
-  });
-
-  // Lease
-  var leaseR = checkDocCompliance(allDocs, ['lease', 'lease agreement', 'owner operator agreement']);
-  items.push({
-    name: 'Lease Agreement',
-    detail: leaseR.status === 'OK' ? 'Lease agreement on file' : 'N/A — Direct employee or not applicable',
-    critical: false, important: false,
-    result: { status: leaseR.status === 'OK' ? 'OK' : 'N/A', doc: leaseR.doc }
-  });
-
-  return items;
-}
-
-function buildLoadSection(unitNum, allDocs) {
-  var items = [];
-
-  var bolR = checkDocCompliance(allDocs, ['bol', 'bill of lading']);
-  items.push({
-    name: 'Bill of Lading',
-    detail: bolR.status === 'OK'
-      ? (bolR.doc && bolR.doc.name ? bolR.doc.name : 'On file')
-      : 'No Bill of Lading found for this unit in active loads',
-    critical: false, important: true,
-    result: bolR.status === 'MISSING' ? { status: 'UNVERIFIED', doc: null } : bolR
-  });
-
-  var rateR = checkDocCompliance(allDocs, ['ratecon', 'rate con', 'rate confirmation']);
-  items.push({
-    name: 'Rate Confirmation',
-    detail: rateR.status === 'OK'
-      ? (rateR.doc && rateR.doc.name ? rateR.doc.name : 'On file')
-      : 'No Rate Confirmation found for this unit in active loads',
-    critical: false, important: true,
-    result: rateR.status === 'MISSING' ? { status: 'UNVERIFIED', doc: null } : rateR
-  });
-
-  var hazR = checkDocCompliance(allDocs, ['hazmat', 'hazardous', 'shipping paper']);
-  items.push({
-    name: 'Hazmat Placard & Shipping Papers',
-    detail: hazR.status === 'OK' ? 'Hazmat documents on file' : 'N/A — No hazmat cargo on this load',
-    critical: false, important: false,
-    result: { status: hazR.status === 'OK' ? 'OK' : 'N/A', doc: hazR.doc }
-  });
-
-  var osowR = checkDocCompliance(allDocs, ['oversize', 'overweight', 'os/ow', 'osow', 'oversized']);
-  items.push({
-    name: 'Oversize / Overweight Permit',
-    detail: osowR.status === 'OK' ? 'OS/OW permit on file' : 'N/A — Standard legal weight and dimensions',
-    critical: false, important: false,
-    result: { status: osowR.status === 'OK' ? 'OK' : 'N/A', doc: osowR.doc }
-  });
-
-  return items;
-}
-
-function buildHOSSection(unit) {
-  var eldCfg = null;
-  try {
-    var raw = localStorage.getItem('nexus_gps_eld_config');
-    if (raw) {
-      var obj = JSON.parse(raw);
-      var uid = unit.unit_number || unit.id;
-      eldCfg = obj['unit_' + uid] || obj[uid] || null;
-    }
-  } catch(e) {}
-
-  var provider = (eldCfg && eldCfg.provider) ? eldCfg.provider : null;
-  var badge = document.getElementById('secHOSBadge');
-  badge.className = 'section-badge ' + (provider ? 'green' : 'yellow');
-  badge.innerHTML = provider ? '&#128994; ELD Configured' : '&#128993; Unverified';
-
-  document.getElementById('secHOSContent').innerHTML =
-    '<div class="hos-grid">' +
-      '<div class="hos-item"><div class="hos-label">ELD Confirmed</div><div class="hos-val">' +
-        (provider ? '&#9989; Yes' : '&#9888;&#65039; Not configured in system') + '</div></div>' +
-      '<div class="hos-item"><div class="hos-label">ELD Provider</div><div class="hos-val">' +
-        escH(provider || '— not set —') + '</div></div>' +
-      '<div class="hos-item"><div class="hos-label">HOS Compliance</div><div class="hos-val">' +
-        (provider ? '&#9989; ELD program active' : '&#9888;&#65039; Verify with driver') + '</div></div>' +
-      '<div class="hos-item"><div class="hos-label">Log Period</div><div class="hos-val">Last 8 days</div></div>' +
-      '<div class="hos-note">' +
-        '<strong style="color:var(--yellow);">&#9888;&#65039; Note:</strong> Actual Hours of Service data is stored on the ELD device. ' +
-        'This system confirms ELD configuration and program compliance only. ' +
-        'Request the driver\'s ELD display or printout for actual HOS records.' +
-      '</div>' +
-    '</div>';
-
-  if (provider) dashboardStats.ok++; else dashboardStats.unverified++;
-}
-
-function buildPermitItems(permits) {
-  var items = [];
-  var now = new Date();
-  var soon = new Date(now.getTime() + 30 * 86400000);
-  permits.forEach(function(p) {
-    var expDate = p.expiry_date || p.expiration_date || p.expiry || null;
-    var st = { status: 'OK', doc: p, expiry: expDate };
-    if (expDate) {
-      var exp = new Date(expDate);
-      if (exp < now) st = { status: 'EXPIRED', doc: p, expiry: expDate };
-      else if (exp < soon) st = { status: 'EXPIRING', doc: p, expiry: expDate };
-    }
-    items.push({
-      name: p.permit_type || p.type || p.name || 'Permit',
-      detail: [
-        p.permit_number ? 'Permit #: ' + p.permit_number : '',
-        p.state ? 'State: ' + p.state : '',
-        expDate ? 'Expires: ' + fmtDate(expDate) : ''
-      ].filter(Boolean).join(' \xb7 '),
-      critical: false, important: true, result: st
-    });
-  });
-  return items;
-}
-
-// ================================================================
-//  EXPORTED: window.getUnitComplianceLevel(unitId)
-//  Returns 'RED', 'YELLOW', 'GREEN', or 'UNKNOWN'
-//  Can be called from index.html or any other page
-// ================================================================
-window.getUnitComplianceLevel = function(unitId) {
-  var unit = getVehicleData(unitId);
-  if (!unit) return 'UNKNOWN';
-  var dName = (getDriverForUnit(unitId) || {}).name || unit.driver || null;
-  var dDocs = dName ? getDocumentsForEntity(dName) : [];
-  var uDocs = getDocumentsForEntity(String(unit.unit_number || unit.id));
-  var all = dDocs.concat(uDocs);
-  var dItems = buildDriverSection(dName, all);
-  var vItems = buildVehicleSection(unit, all);
-  var combined = dItems.concat(vItems);
-  if (combined.some(function(i) { return i.critical && (i.result.status === 'MISSING' || i.result.status === 'EXPIRED'); })) return 'RED';
-  if (combined.some(function(i) { return i.important && !i.critical && (i.result.status === 'MISSING' || i.result.status === 'EXPIRED'); })) return 'YELLOW';
-  return 'GREEN';
-};
+});
 </script>
 </body>
 </html>
