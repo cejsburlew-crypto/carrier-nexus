@@ -269,7 +269,7 @@ body{
   display:flex;align-items:stretch;z-index:200;
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
-.nav-tab{
+.nav-tab{text-decoration:none;
   flex:1;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:4px;
   cursor:pointer;border:none;background:none;
@@ -418,7 +418,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 </div>
 
 <!-- 2. REPORT AN ISSUE -->
-<div class="section-wrap">
+<div class="section-wrap" style="margin-bottom:14px;">
   <div class="section-hdr" onclick="toggleSec('report')">
     <div class="section-hdr-icon" style="background:#fff7ed;">🚨</div>
     <div class="section-hdr-title">Report an Issue</div>
@@ -462,179 +462,38 @@ nav.sidebar#nexus-sidebar{display:none!important;}
   </div>
 </div>
 
-<!-- 3. MY STATUS -->
-<div class="section-wrap">
-  <div class="section-hdr" onclick="toggleSec('status')">
-    <div class="section-hdr-icon" style="background:#f0fdf4;">🟢</div>
-    <div class="section-hdr-title">My Status</div>
-    <span class="section-hdr-badge green" id="status-badge">On Load</span>
-    <svg class="section-chevron" id="chev-status" width="16" height="16" viewBox="0 0 16 16" fill="none"><polyline points="6 4 10 8 6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </div>
-  <div class="section-body" id="body-status">
-    <div class="status-row">
-      <span class="status-row-label">Employment</span>
-      <span class="status-row-val orange" id="hire-display">On Load</span>
-    </div>
-    <div class="status-row">
-      <span class="status-row-label">HOS Status</span>
-      <span class="status-row-val green">8h 42m remaining</span>
-    </div>
-    <div class="status-row">
-      <span class="status-row-label">Last Check-In</span>
-      <span class="status-row-val">Today 7:30 AM</span>
-    </div>
-    <div class="status-toggle">
-      <button id="btn-not-avail" class="toggle-btn active-red" onclick="setHireStatus('not_available')">🔒 Not Available</button>
-      <button id="btn-ready" class="toggle-btn" onclick="confirmReadyForHire()">🟢 Ready for Hire</button>
-    </div>
-  </div>
-</div>
 
-<!-- 4. MY PAY -->
-<div class="section-wrap">
-  <div class="section-hdr" onclick="toggleSec('pay')">
-    <div class="section-hdr-icon" style="background:#f0fdf4;">💵</div>
-    <div class="section-hdr-title">My Pay</div>
-    <span class="section-hdr-badge green">This Week</span>
-    <svg class="section-chevron" id="chev-pay" width="16" height="16" viewBox="0 0 16 16" fill="none"><polyline points="6 4 10 8 6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </div>
-  <div class="section-body" id="body-pay">
-    <div class="pay-row">
-      <div class="pay-cell">
-        <div class="pay-label">Gross</div>
-        <div class="pay-value">$4,200</div>
-      </div>
-      <div class="pay-cell">
-        <div class="pay-label">Deductions</div>
-        <div class="pay-value red" style="color:var(--red);">−$840</div>
-      </div>
-      <div class="pay-cell">
-        <div class="pay-label">Net Pay</div>
-        <div class="pay-value green">$3,360</div>
-      </div>
-    </div>
-    <a href="my-pay.html" class="pay-link">View Full Settlement →</a>
-  </div>
-</div>
 
-<!-- 5. ROUTE INFO -->
-<div class="section-wrap">
-  <div class="section-hdr" onclick="toggleSec('route')">
-    <div class="section-hdr-icon" style="background:#eff6ff;">🗺️</div>
-    <div class="section-hdr-title">Route Info</div>
-    <svg class="section-chevron" id="chev-route" width="16" height="16" viewBox="0 0 16 16" fill="none"><polyline points="6 4 10 8 6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </div>
-  <div class="section-body" id="body-route">
-    <div class="info-body">
-      <div class="info-row">
-        <div class="info-icon">🌦️</div>
-        <div>
-          <div class="info-text">Partly cloudy · 78°F along I-75</div>
-          <div class="info-sub">Light rain expected near Gainesville</div>
-        </div>
-      </div>
-      <div class="info-row">
-        <div class="info-icon">⚖️</div>
-        <div>
-          <div class="info-text">No open scales on current route</div>
-          <div class="info-sub">Next weigh station: GA 38mi ahead</div>
-        </div>
-      </div>
-      <div class="info-row">
-        <div class="info-icon">🚨</div>
-        <div>
-          <div class="info-text">Construction zone on I-75 near Gainesville</div>
-          <div class="info-sub">Expect 20min delay · MPH reduced</div>
-        </div>
-      </div>
-      <div class="info-row">
-        <div class="info-icon">⛽</div>
-        <div>
-          <div class="info-text">Pilot Travel Center · Valdosta, GA · 4.2mi</div>
-          <div class="info-sub">$3.89/gal diesel · EFS accepted</div>
-        </div>
-      </div>
-    </div>
-    <div style="padding:0 16px 14px;">
-      <a href="route-planner.html" class="qa-btn full blue" style="text-decoration:none;">
-        <div class="qa-icon" style="font-size:18px;">🗺️</div>
-        <div class="qa-label" style="font-size:14px;">Open Route Planner</div>
-        <div class="qa-arrow">›</div>
-      </a>
-    </div>
-  </div>
-</div>
 
-<!-- 6. MY LOADS -->
-<div class="section-wrap" style="margin-bottom:14px;">
-  <div class="section-hdr" onclick="toggleSec('loads')">
-    <div class="section-hdr-icon" style="background:#eff6ff;">📋</div>
-    <div class="section-hdr-title">My Loads</div>
-    <span class="section-hdr-badge">4 Loads</span>
-    <svg class="section-chevron" id="chev-loads" width="16" height="16" viewBox="0 0 16 16" fill="none"><polyline points="6 4 10 8 6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </div>
-  <div class="section-body" id="body-loads">
-    <div class="load-list">
-      <div class="load-item">
-        <div class="load-num">LDX-2841</div>
-        <div class="load-body">
-          <div class="load-route">Miami → Atlanta</div>
-          <div class="load-date">Today · In progress</div>
-        </div>
-        <span class="pill active">● Active</span>
-      </div>
-      <div class="load-item">
-        <div class="load-num">LDX-2826</div>
-        <div class="load-body">
-          <div class="load-route">Tampa → Nashville</div>
-          <div class="load-date">May 24 · POD submitted</div>
-        </div>
-        <span class="pill billing">Billing</span>
-      </div>
-      <div class="load-item">
-        <div class="load-num">LDX-2810</div>
-        <div class="load-body">
-          <div class="load-route">Jacksonville → Memphis</div>
-          <div class="load-date">May 21 · Paid</div>
-        </div>
-        <span class="pill closed">Closed</span>
-      </div>
-      <div class="load-item">
-        <div class="load-num">LDX-2798</div>
-        <div class="load-body">
-          <div class="load-route">Orlando → Charlotte</div>
-          <div class="load-date">May 18 · Paid</div>
-        </div>
-        <span class="pill closed">Closed</span>
-      </div>
-    </div>
-  </div>
-</div>
+
+
+
+
 
 <!-- ══ BOTTOM NAV ══ -->
 <nav class="bottom-nav">
-  <button class="nav-tab active" onclick="">
+  <a class="nav-tab active" href="driver-command.html">
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" stroke="currentColor" stroke-width="1.5" rx="1"/><rect x="10" y="2" width="6" height="6" stroke="currentColor" stroke-width="1.5" rx="1"/><rect x="2" y="10" width="6" height="6" stroke="currentColor" stroke-width="1.5" rx="1"/><rect x="10" y="10" width="6" height="6" stroke="currentColor" stroke-width="1.5" rx="1"/></svg>
     <span class="nav-tab-label">Home</span>
-  </button>
-  <button class="nav-tab" onclick="toggleSec('loads');document.getElementById('body-loads').scrollIntoView({behavior:'smooth'})">
+  </a>
+  <a class="nav-tab" href="active-loads.html">
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 5h12M3 9h12M3 13h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
     <span class="nav-tab-label">Loads</span>
-  </button>
+  </a>
   <div class="nav-center">
     <div class="nav-center-btn" onclick="openModal('podModal')">
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 4v14M4 11h14" stroke="white" stroke-width="2.2" stroke-linecap="round"/></svg>
     </div>
     <span class="nav-center-label">Upload</span>
   </div>
-  <button class="nav-tab" onclick="toggleSec('pay');document.getElementById('body-pay').scrollIntoView({behavior:'smooth'})">
+  <a class="nav-tab" href="my-pay.html">
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2 8h14" stroke="currentColor" stroke-width="1.5"/></svg>
     <span class="nav-tab-label">Pay</span>
-  </button>
-  <button class="nav-tab" onclick="toggleSec('status');document.getElementById('body-status').scrollIntoView({behavior:'smooth'})">
+  </a>
+  <a class="nav-tab" href="driver-profile.html">
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="7" r="3.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 16c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" stroke-width="1.5"/></svg>
-    <span class="nav-tab-label">Status</span>
-  </button>
+    <span class="nav-tab-label">Profile</span>
+  </a>
 </nav>
 
 <!-- ══ MODALS ══ -->
