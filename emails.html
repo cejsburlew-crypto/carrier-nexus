@@ -284,7 +284,7 @@ body{overflow-x:hidden;}
 <script>
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 // Paste your Google OAuth Client ID into the input field above, or hardcode here:
-let CLIENT_ID = localStorage.getItem('nexus_gmail_client_id') || '';
+let CLIENT_ID = localStorage.getItem('nexus_gmail_client_id') || window.NEXUS_GOOGLE_CLIENT_ID || '';
 const SCOPES = 'https://www.googleapis.com/auth/gmail.modify';
 const GMAIL_API = 'https://gmail.googleapis.com/gmail/v1/users/me';
 

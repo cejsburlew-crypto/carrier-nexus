@@ -5,6 +5,8 @@
 window.NEXUS_SUPABASE_URL = 'https://pzjfbjsntgdzbwtqhfqj.supabase.co';
 window.NEXUS_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6amZianNudGdkemJ3dHFoZnFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMDEyMjEsImV4cCI6MjA5NTU3NzIyMX0.9TRVm-geOXdwuWB828fOrfCKwuKWvlvN4Sv_cLIBXw8'; // disabled;
 window.NEXUS_GOOGLE_CLIENT_ID = '662145578280-f03nl1nqti0c6v3kojpbkbvognc10coj.apps.googleusercontent.com';
+window.NEXUS_GMAIL_ACCOUNT    = 'crtruckus@gmail.com';  // Carrier Trucking US, LLC — only Gmail/Drive account
+window.NEXUS_DRIVE_VAULT_ROOT = '1aqguIB-nNJOkSfFnzc_-m3LZnlSOgBv0'; // Google Drive Vault root folder ID
 
 // ============================================================
 // MULTI-COMPANY SUPPORT

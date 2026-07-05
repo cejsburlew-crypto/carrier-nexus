@@ -84,6 +84,7 @@
     }
     _client = google.accounts.oauth2.initTokenClient({
       client_id : clientId,
+      login_hint : (window.NEXUS_GMAIL_ACCOUNT || 'crtruckus@gmail.com'),
       scope     : SCOPES,
       callback  : _onToken
     });
