@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -628,7 +633,7 @@ function renderCards() {
             <span style="font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:20px;background:${d.driverType==='owner-operator'?'rgba(232,100,10,0.15)':d.driverType==='lease-operator'?'rgba(59,130,246,0.12)':'rgba(255,255,255,0.07)'};color:${d.driverType==='owner-operator'?'#fb923c':d.driverType==='lease-operator'?'#93c5fd':'#94a3b8'};letter-spacing:.4px;text-transform:uppercase;">${(d.driverType||'company-driver').replace(/-/g,' ')}</span>
             ${d.cdlState?`<span style="font-size:.68rem;color:var(--muted);font-family:monospace;">CDL: ${d.cdlState}</span>`:''}
           </div>
-          <div class="d-contact">${(function(){ const showContact = !d._fromPlatform; return showContact ? escHtml(d.phone)+(d.email?' · '+escHtml(d.email):'') : '<em style=\"color:#9ca3af;font-size:11px;\">Contact via platform</em>'; })()}</div>
+          <div class="d-contact">${(function(){ const showContact = !d._fromPlatform; return showContact ? escHtml(d.phone)+(d.email?' · '+escHtml(d.email):'') : '<em style=\"color:#9ca3af;font-size:13px;\">Contact via platform</em>'; })()}</div>
           ${d.homeState ? `<div class="d-contact" style="margin-top:2px">📍 ${d.homeState}${d.otr==='yes'?' · OTR Ready':d.otr==='local'?' · Local/Regional':''}</div>` : ''}
         </div>
         <div>

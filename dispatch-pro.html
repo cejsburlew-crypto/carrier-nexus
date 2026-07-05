@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -41,7 +46,7 @@ body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,san
 .tab-content.active{display:block}
 .kpi-strip{display:flex;gap:12px;padding:14px 20px;flex-wrap:wrap;align-items:center}
 .kpi-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 18px;min-width:140px}
-.kpi-card .label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.kpi-card .label{font-size:13px;color:var(--mid);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
 .kpi-card .value{font-size:22px;font-weight:700}
 .kpi-card .value.green{color:var(--green)}
 .kpi-card .value.yellow{color:var(--yellow)}
@@ -49,23 +54,23 @@ body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,san
 .btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
 .btn-primary{background:var(--blue);color:#fff}
 .btn-primary:hover{background:#2563eb}
-.btn-sm{padding:5px 10px;font-size:12px;border-radius:5px}
+.btn-sm{padding:5px 10px;font-size:13px;border-radius:5px}
 .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--mid)}
 .btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
 .btn-green{background:var(--green);color:#fff}
 .btn-red{background:var(--red);color:#fff}
 .filter-bar{padding:10px 20px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.filter-bar select,.filter-bar input{background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:5px;font-size:12px}
+.filter-bar select,.filter-bar input{background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:5px;font-size:13px}
 .kanban-wrap{overflow-x:auto;padding:16px 20px 20px}
 .kanban{display:flex;gap:14px;min-width:max-content}
 .kanban-col{width:260px;flex-shrink:0;background:var(--panel);border-radius:10px;overflow:hidden}
-.kanban-col-header{padding:10px 14px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border)}
+.kanban-col-header{padding:10px 14px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border)}
 .kanban-col-body{padding:10px;display:flex;flex-direction:column;gap:8px;min-height:80px;max-height:calc(100vh - 320px);overflow-y:auto}
 .load-card{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:default}
 .load-card:hover{border-color:var(--blue)}
 .load-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.load-id{font-size:11px;font-weight:700;color:var(--blue)}
-.status-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:12px;text-transform:uppercase;letter-spacing:.5px}
+.load-id{font-size:13px;font-weight:700;color:var(--blue)}
+.status-badge{font-size:13px;font-weight:700;padding:2px 7px;border-radius:12px;text-transform:uppercase;letter-spacing:.5px}
 .sb-open{background:#f59e0b22;color:#f59e0b}
 .sb-assigned{background:#3b82f622;color:#3b82f6}
 .sb-picked{background:#f9731622;color:#f97316}
@@ -73,20 +78,20 @@ body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,san
 .sb-delivered{background:#10b98122;color:#10b981}
 .sb-closed{background:#64748b22;color:var(--mid)}
 .load-route{font-size:13px;font-weight:600;margin-bottom:4px}
-.load-meta{font-size:11px;color:var(--mid);margin-bottom:4px}
-.load-rpm{display:inline-block;font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px}
+.load-meta{font-size:13px;color:var(--mid);margin-bottom:4px}
+.load-rpm{display:inline-block;font-size:13px;font-weight:700;padding:2px 6px;border-radius:4px}
 .rpm-green{background:#10b98122;color:#10b981}
 .rpm-yellow{background:#f59e0b22;color:#f59e0b}
 .rpm-red{background:#ef444422;color:#ef4444}
 .load-revenue{font-size:15px;font-weight:700;color:var(--green);margin:4px 0}
-.detention-badge{background:#ef444422;color:#ef4444;border:1px solid #ef444444;font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;margin:4px 0;display:inline-block;animation:pulse 2s infinite}
+.detention-badge{background:#ef444422;color:#ef4444;border:1px solid #ef444444;font-size:13px;font-weight:700;padding:3px 8px;border-radius:5px;margin:4px 0;display:inline-block;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
 .load-actions{display:flex;gap:6px;margin-top:8px}
-.load-actions button{flex:1;padding:5px;font-size:12px;border:1px solid var(--border);background:var(--panel);color:var(--mid);border-radius:5px;cursor:pointer;transition:all .15s}
+.load-actions button{flex:1;padding:5px;font-size:13px;border:1px solid var(--border);background:var(--panel);color:var(--mid);border-radius:5px;cursor:pointer;transition:all .15s}
 .load-actions button:hover{border-color:var(--blue);color:var(--blue)}
 .table-wrap{padding:16px 20px;overflow-x:auto}
 table{width:100%;border-collapse:collapse}
-th{background:var(--panel2);padding:10px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--mid);border-bottom:2px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+th{background:var(--panel2);padding:10px 12px;text-align:left;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--mid);border-bottom:2px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
 th:hover{color:var(--text)}
 td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px}
 tr:hover td{background:rgba(59,130,246,.04)}
@@ -105,16 +110,16 @@ tr:hover td{background:rgba(59,130,246,.04)}
 .broker-item:hover{background:var(--panel2)}
 .broker-item.active{background:rgba(59,130,246,.1);border-left:3px solid var(--blue)}
 .broker-name{font-size:13px;font-weight:600}
-.broker-count{font-size:11px;color:var(--mid);margin-top:2px}
+.broker-count{font-size:13px;color:var(--mid);margin-top:2px}
 .broker-detail{flex:1;overflow-y:auto;padding:20px}
 .broker-detail h2{font-size:18px;font-weight:700;margin-bottom:16px}
 .broker-section{margin-bottom:20px}
-.broker-section h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--mid);margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.broker-section h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--mid);margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px}
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
 .stat-box{background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center}
 .stat-box .sv{font-size:18px;font-weight:700}
-.stat-box .sl{font-size:10px;color:var(--mid);margin-top:2px}
-.lane-table td,.lane-table th{padding:8px 10px;font-size:12px}
+.stat-box .sl{font-size:13px;color:var(--mid);margin-top:2px}
+.lane-table td,.lane-table th{padding:8px 10px;font-size:13px}
 .detention-wrap{padding:16px 20px}
 .detention-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px}
 .detention-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
@@ -127,9 +132,9 @@ tr:hover td{background:rgba(59,130,246,.04)}
 .driver-selector{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
 .driver-selector select{background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:13px}
 .pay-config{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px}
-.pay-config h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--mid);margin-bottom:12px}
+.pay-config h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--mid);margin-bottom:12px}
 .config-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-.config-grid label{font-size:11px;color:var(--mid);display:block;margin-bottom:4px}
+.config-grid label{font-size:13px;color:var(--mid);display:block;margin-bottom:4px}
 .config-grid input,.config-grid select{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:5px;font-size:13px}
 tfoot td{font-weight:700;background:var(--panel2);color:var(--text)}
 .hw-wrap{padding:20px}
@@ -140,7 +145,7 @@ tfoot td{font-weight:700;background:var(--panel2);color:var(--text)}
 .hw-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;overflow:hidden}
 .hw-card h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--mid);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
 .vps-gauge{text-align:center;padding:10px 0}
-.vps-label{font-size:11px;color:var(--mid);margin-top:6px}
+.vps-label{font-size:13px;color:var(--mid);margin-top:6px}
 .offer-card{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:8px}
 .offer-actions{display:flex;gap:8px;margin-top:10px}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(248, 249, 250, 1),.7);z-index:1000;overflow-y:auto}
@@ -155,7 +160,7 @@ tfoot td{font-weight:700;background:var(--panel2);color:var(--text)}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:600px){.form-grid{grid-template-columns:1fr}}
 .form-group{margin-bottom:14px}
-.form-group label{display:block;font-size:12px;color:var(--mid);margin-bottom:5px;font-weight:600}
+.form-group label{display:block;font-size:13px;color:var(--mid);margin-bottom:5px;font-weight:600}
 .form-group input,.form-group select,.form-group textarea{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:13px}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--blue)}
 .section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--mid);padding:8px 0;margin:16px 0 12px;border-bottom:1px solid var(--border)}
@@ -164,14 +169,14 @@ tfoot td{font-weight:700;background:var(--panel2);color:var(--text)}
 .accessorial-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
 .acc-item{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:8px 10px}
 .acc-item input[type=checkbox]{width:16px;height:16px;cursor:pointer}
-.acc-item .acc-label{flex:1;font-size:12px}
-.acc-item input[type=number]{width:80px;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:4px 6px;border-radius:4px;font-size:12px}
+.acc-item .acc-label{flex:1;font-size:13px}
+.acc-item input[type=number]{width:80px;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:4px 6px;border-radius:4px;font-size:13px}
 .pay-preview{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:8px;padding:14px;margin-top:10px}
 .pay-preview .pp-amount{font-size:22px;font-weight:700;color:var(--blue)}
 .gross-total{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:8px;padding:10px 14px;font-size:16px;font-weight:700;color:var(--green);margin:12px 0}
 .empty-state{text-align:center;padding:48px 20px;color:var(--mid)}
 .empty-state .icon{font-size:48px;margin-bottom:12px}
-.badge{font-size:11px;padding:2px 7px;border-radius:10px;font-weight:700}
+.badge{font-size:13px;padding:2px 7px;border-radius:10px;font-weight:700}
 .badge-connected{background:#10b98122;color:#10b981}
 .badge-disconnected{background:#ef444422;color:#ef4444}
 </style>
@@ -193,7 +198,7 @@ tfoot td{font-weight:700;background:var(--panel2);color:var(--text)}
 <!-- TAB: HOT SHEET -->
 <div id="tab-hotsheet" class="tab-content active">
   <div id="dispatch-weather-strip" style="display:flex;gap:8px;margin:12px 20px 0;flex-wrap:wrap;">
-    <div style="color:var(--mid);font-size:12px;padding:8px;">Loading weather...</div>
+    <div style="color:var(--mid);font-size:13px;padding:8px;">Loading weather...</div>
   </div>
   <div class="kpi-strip" id="kpi-strip"></div>
   <div class="filter-bar">
@@ -293,7 +298,7 @@ tfoot td{font-weight:700;background:var(--panel2);color:var(--text)}
     <div class="hw-status-bar">
       <div id="hw-status-label" class="hw-disconnected">&#x26A0; Not Connected to Highway.com</div>
       <div style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:12px;color:var(--mid)">Company ID: <strong style="color:var(--text)">300823</strong></span>
+        <span style="font-size:13px;color:var(--mid)">Company ID: <strong style="color:var(--text)">300823</strong></span>
         <button class="btn btn-primary btn-sm" onclick="openHWModal()">Connect / Refresh</button>
       </div>
     </div>
@@ -315,19 +320,19 @@ tfoot td{font-weight:700;background:var(--panel2);color:var(--text)}
       </div>
       <div class="hw-card">
         <h3>Fleet ELD Status <button class="btn btn-ghost btn-sm" onclick="syncHighway('equipment')">Sync</button></h3>
-        <div id="hw-eld-table"><div style="color:var(--mid);font-size:12px;padding:10px 0">Connect Highway to view ELD status</div></div>
+        <div id="hw-eld-table"><div style="color:var(--mid);font-size:13px;padding:10px 0">Connect Highway to view ELD status</div></div>
       </div>
       <div class="hw-card">
         <h3>Pending Offers <span id="hw-offer-count" class="badge" style="background:var(--blue)22;color:var(--blue)">--</span></h3>
-        <div id="hw-offers"><div style="color:var(--mid);font-size:12px;padding:10px 0">No offers loaded</div></div>
+        <div id="hw-offers"><div style="color:var(--mid);font-size:13px;padding:10px 0">No offers loaded</div></div>
       </div>
       <div class="hw-card">
         <h3>Rate Confirmations</h3>
-        <div id="hw-ratecons"><div style="color:var(--mid);font-size:12px;padding:10px 0">Connect Highway to view</div></div>
+        <div id="hw-ratecons"><div style="color:var(--mid);font-size:13px;padding:10px 0">Connect Highway to view</div></div>
       </div>
       <div class="hw-card">
         <h3>Connected Brokers <span id="hw-broker-count" class="badge" style="background:var(--green)22;color:var(--green)">--</span></h3>
-        <div id="hw-brokers-list"><div style="color:var(--mid);font-size:12px;padding:10px 0">Connect Highway to view brokers</div></div>
+        <div id="hw-brokers-list"><div style="color:var(--mid);font-size:13px;padding:10px 0">Connect Highway to view brokers</div></div>
       </div>
     </div>
   </div>
@@ -381,7 +386,7 @@ tfoot td{font-weight:700;background:var(--panel2);color:var(--text)}
         <div class="form-group"><label>Pay Type</label><select id="m-pay-type" onchange="recalcModal()"><option value="percent">% of Gross</option><option value="per_mile">Per Mile</option><option value="flat">Flat</option></select></div>
         <div class="form-group"><label>Rate</label><input type="number" id="m-pay-rate" placeholder="e.g. 86" oninput="recalcModal()"></div>
       </div>
-      <div class="pay-preview" id="m-pay-preview"><div style="font-size:11px;color:var(--mid);margin-bottom:4px">Driver Pay Preview</div><div class="pp-amount">$0.00</div></div>
+      <div class="pay-preview" id="m-pay-preview"><div style="font-size:13px;color:var(--mid);margin-bottom:4px">Driver Pay Preview</div><div class="pp-amount">$0.00</div></div>
       <div class="section-title">Notes</div>
       <div class="form-group"><label>Special Instructions</label><textarea id="m-special" rows="2" style="resize:vertical"></textarea></div>
       <div class="form-group"><label>Internal Notes</label><textarea id="m-notes" rows="2" style="resize:vertical"></textarea></div>
@@ -427,14 +432,14 @@ tfoot td{font-weight:700;background:var(--panel2);color:var(--text)}
     <div class="modal-head"><h2>Connect Highway.com</h2><button class="modal-close" onclick="document.getElementById('hw-modal').classList.remove('open')">x</button></div>
     <div class="modal-body">
       <p style="color:var(--mid);font-size:13px;margin-bottom:16px">Paste your Highway session cookie to enable live sync.</p>
-      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--mid);line-height:1.6">
+      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px;color:var(--mid);line-height:1.6">
         <strong style="color:var(--text)">How to get your session cookie:</strong><br>
         1. Log into highway.com in Chrome<br>
         2. Press F12 &rarr; Application &rarr; Cookies &rarr; highway.com<br>
         3. Copy the value of <code style="background:var(--bg);padding:2px 5px;border-radius:3px">_highway_session</code><br>
         4. Paste it below
       </div>
-      <div class="form-group"><label>Session Cookie</label><input id="hw-cookie-input" placeholder="Paste _highway_session value..." style="font-family:monospace;font-size:11px"></div>
+      <div class="form-group"><label>Session Cookie</label><input id="hw-cookie-input" placeholder="Paste _highway_session value..." style="font-family:monospace;font-size:13px"></div>
       <div class="form-group"><label>Company ID</label><input id="hw-company-input" value="300823"></div>
     </div>
     <div class="modal-footer">
@@ -558,7 +563,7 @@ function renderKanban(){
   var html='';
   STATUS_ORDER.forEach(function(st){
     var col=loads.filter(function(l){return l.status===st});
-    html+='<div class="kanban-col"><div class="kanban-col-header" style="border-top:3px solid '+STATUS_COLORS[st]+';color:'+STATUS_COLORS[st]+'">'+STATUS_LABELS[st]+' <span style="color:var(--mid);font-size:11px">('+col.length+')</span></div><div class="kanban-col-body">';
+    html+='<div class="kanban-col"><div class="kanban-col-header" style="border-top:3px solid '+STATUS_COLORS[st]+';color:'+STATUS_COLORS[st]+'">'+STATUS_LABELS[st]+' <span style="color:var(--mid);font-size:13px">('+col.length+')</span></div><div class="kanban-col-body">';
     col.forEach(function(load){
       var rpm=load.miles?load.grossRate/load.miles:0;
       var profit=calcProfit(load);
@@ -576,10 +581,10 @@ function renderKanban(){
       html+='<div class="load-card-head"><span class="load-id">'+load.id+'</span><span class="status-badge '+STATUS_BC[st]+'">'+STATUS_LABELS[st]+'</span></div>';
       html+='<div class="load-route">'+(load.origin||'?')+' &rarr; '+(load.destination||'?')+'</div>';
       if(load.driverName)html+='<div class="load-meta">&#x1F464; '+load.driverName+(load.truckId?' &middot; '+load.truckId:'')+'</div>';
-      html+='<div style="margin:4px 0;display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--mid)">'+(load.miles||0)+' mi</span><span class="load-rpm '+rpmClass(rpm)+'">'+fmtRPM(load.grossRate,load.miles)+'</span></div>';
+      html+='<div style="margin:4px 0;display:flex;align-items:center;gap:8px"><span style="font-size:13px;color:var(--mid)">'+(load.miles||0)+' mi</span><span class="load-rpm '+rpmClass(rpm)+'">'+fmtRPM(load.grossRate,load.miles)+'</span></div>';
       html+='<div class="load-revenue">'+fmtMoney(load.grossRate)+'</div>';
-      html+='<div style="font-size:11px;color:var(--mid)">Net: '+fmtMoney(profit.net)+'</div>';
-      if(load.pickupDate)html+='<div style="font-size:11px;color:var(--mid);margin-top:4px">&#x1F4C5; '+load.pickupDate+'</div>';
+      html+='<div style="font-size:13px;color:var(--mid)">Net: '+fmtMoney(profit.net)+'</div>';
+      if(load.pickupDate)html+='<div style="font-size:13px;color:var(--mid);margin-top:4px">&#x1F4C5; '+load.pickupDate+'</div>';
       html+=detBadge;
       html+='<div class="load-actions"><button onclick="event.stopPropagation();openLoadModal(\''+load.id+'\')">&#x270F;</button><button onclick="event.stopPropagation();advanceStatus(\''+load.id+'\')" title="Advance">&#x27A1;</button></div></div>';
     });
@@ -632,7 +637,7 @@ function showDetail(id){
   if(!load)return;
   var profit=calcProfit(load);
   var rows=[['Load #',load.id],['Status',STATUS_LABELS[load.status]||load.status],['Broker',load.brokerName||'--'],['Equipment',load.equipmentType||'--'],['Driver',load.driverName||'Unassigned'],['Truck',load.truckId||'--'],['Origin',load.origin||'--'],['Destination',load.destination||'--'],['Miles',load.miles||0],['Gross Rate',fmtMoney(load.grossRate)],['RPM',fmtRPM(load.grossRate,load.miles)],['Driver Pay',fmtMoney(profit.driverPay)],['Fuel Est',fmtMoney(profit.fuel)],['Net Profit',fmtMoney(profit.net)],['Pickup',load.pickupDate||'--'],['Notes',load.internalNotes||'--']].map(function(r){return'<div class="detail-row"><span class="lbl">'+r[0]+'</span><span>'+r[1]+'</span></div>'}).join('');
-  document.getElementById('detail-content').innerHTML=rows+'<div style="margin-top:16px"><button class="btn btn-primary btn-sm" onclick="openLoadModal(\''+load.id+'\')" style="width:100%;margin-bottom:8px">Edit Load</button><button class="btn btn-ghost btn-sm" onclick="advanceStatus(\''+load.id+'\');showDetail(\''+load.id+'\')" style="width:100%;margin-bottom:8px">Advance Status &rarr;</button><a href="#" onclick="return openRouteFromDispatch(\''+load.id+'\')" style="display:block;text-align:center;background:rgba(59,130,246,.15);color:#3b82f6;border:1px solid rgba(59,130,246,.3);border-radius:6px;padding:6px 14px;font-size:12px;text-decoration:none;cursor:pointer;margin-top:6px">&#x1F5FA; Route Compliance</a></div>';
+  document.getElementById('detail-content').innerHTML=rows+'<div style="margin-top:16px"><button class="btn btn-primary btn-sm" onclick="openLoadModal(\''+load.id+'\')" style="width:100%;margin-bottom:8px">Edit Load</button><button class="btn btn-ghost btn-sm" onclick="advanceStatus(\''+load.id+'\');showDetail(\''+load.id+'\')" style="width:100%;margin-bottom:8px">Advance Status &rarr;</button><a href="#" onclick="return openRouteFromDispatch(\''+load.id+'\')" style="display:block;text-align:center;background:rgba(59,130,246,.15);color:#3b82f6;border:1px solid rgba(59,130,246,.3);border-radius:6px;padding:6px 14px;font-size:13px;text-decoration:none;cursor:pointer;margin-top:6px">&#x1F5FA; Route Compliance</a></div>';
   document.getElementById('detail-panel').classList.add('open');
 }
 
@@ -644,7 +649,7 @@ function renderBrokerList(){
   document.getElementById('broker-list-items').innerHTML=brokers.map(function(b){
     var cnt=loads.filter(function(l){return l.brokerId===b.id||l.brokerName===b.name}).length;
     return'<div class="broker-item '+(b.id===selectedBrokerId?'active':'')+'" onclick="selectBroker(\''+b.id+'\')"><div class="broker-name">'+b.name+'</div><div class="broker-count">'+cnt+' loads'+(b.highwayConnected?' &middot; <span class="badge badge-connected">HW</span>':'')+' </div></div>';
-  }).join('')||'<div style="padding:16px;color:var(--mid);font-size:12px">No brokers found</div>';
+  }).join('')||'<div style="padding:16px;color:var(--mid);font-size:13px">No brokers found</div>';
 }
 
 function selectBroker(id){
@@ -671,11 +676,11 @@ function selectBroker(id){
     var rpmV=avgMi?avgR/avgMi:0;
     return'<tr><td>'+lane+'</td><td>'+d.count+'</td><td>'+fmtMoney(avgR)+'</td><td><span class="load-rpm '+rpmClass(rpmV)+'">'+( rpmV>0?'$'+rpmV.toFixed(2)+'/mi':'--')+'</span></td><td>'+fmtMoney(bestR)+'</td><td>'+(d.lastDate||'--')+'</td></tr>';
   }).join('');
-  var contacts=(b.contacts||[]).map(function(c){return'<div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;flex-wrap:wrap"><span style="width:70px;color:var(--mid);text-transform:capitalize">'+c.role+'</span><span style="flex:1">'+(c.name||'--')+'</span><span style="flex:1;color:var(--mid)">'+(c.email||'')+'</span><span style="color:var(--mid)">'+(c.phone||'')+'</span></div>'}).join('');
+  var contacts=(b.contacts||[]).map(function(c){return'<div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;flex-wrap:wrap"><span style="width:70px;color:var(--mid);text-transform:capitalize">'+c.role+'</span><span style="flex:1">'+(c.name||'--')+'</span><span style="flex:1;color:var(--mid)">'+(c.email||'')+'</span><span style="color:var(--mid)">'+(c.phone||'')+'</span></div>'}).join('');
   document.getElementById('broker-detail').innerHTML='<h2>'+b.name+' <span class="badge '+(b.highwayConnected?'badge-connected':'badge-disconnected')+'">'+(b.highwayConnected?'HW Connected':'Not Connected')+'</span></h2>'+
     '<div class="broker-section"><div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;margin-bottom:12px;color:var(--mid)">'+(b.mc?'<span>MC: <strong style="color:var(--text)">'+b.mc+'</strong></span>':'')+(b.dot?'<span>DOT: <strong style="color:var(--text)">'+b.dot+'</strong></span>':'')+(b.phone?'<span>&#x1F4DE; '+b.phone+'</span>':'')+( b.website?'<a href="'+b.website+'" target="_blank" style="color:var(--blue)">'+b.website+'</a>':'')+'</div>'+
     '<div class="stats-grid"><div class="stat-box"><div class="sv blue">'+loads.length+'</div><div class="sl">Loads</div></div><div class="stat-box"><div class="sv green">'+fmtMoney(totalRev)+'</div><div class="sl">Revenue</div></div><div class="stat-box"><div class="sv '+(rpmClass(avgRpm))+'">$'+avgRpm.toFixed(2)+'</div><div class="sl">Avg RPM</div></div><div class="stat-box"><div class="sv">'+(b.paymentNetDays||'?')+'</div><div class="sl">Net Days</div></div><div class="stat-box"><div class="sv">'+(b.quickPayPercent||'?')+'%</div><div class="sl">Quick Pay</div></div><div class="stat-box"><div class="sv">'+(b.avgDaysToPay||'?')+'</div><div class="sl">Avg Days</div></div></div></div>'+
-    '<div class="broker-section"><h4>Contacts</h4>'+(contacts||'<div style="color:var(--mid);font-size:12px">No contacts</div>')+'</div>'+
+    '<div class="broker-section"><h4>Contacts</h4>'+(contacts||'<div style="color:var(--mid);font-size:13px">No contacts</div>')+'</div>'+
     (laneRows?'<div class="broker-section"><h4>Lane Intelligence</h4><table class="lane-table" style="width:100%"><thead><tr><th>Lane</th><th>#</th><th>Avg Rate</th><th>Avg RPM</th><th>Best Rate</th><th>Last Used</th></tr></thead><tbody>'+laneRows+'</tbody></table></div>':'')+
     (b.notes?'<div class="broker-section"><h4>Notes</h4><div style="font-size:13px;color:var(--mid)">'+b.notes+'</div></div>':'')+
     '<button class="btn btn-ghost btn-sm" onclick="openBrokerModal(false,\''+b.id+'\')" style="margin-top:10px">Edit Broker</button>';
@@ -693,8 +698,8 @@ function renderDetentionCards(){
     var over=elapsedHrs>freeHrs;
     var statusLabel=!over?'FREE TIME':l.detentionNotified?'NOTIFIED':'DETENTION STARTED';
     var statusColor=!over?'var(--green)':l.detentionNotified?'var(--yellow)':'var(--red)';
-    html+='<div class="detention-card"><div class="detention-card-head"><div><div style="font-size:13px;font-weight:700">'+l.id+' &mdash; '+(l.origin||'?')+' &rarr; '+(l.destination||'?')+'</div><div style="font-size:12px;color:var(--mid);margin-top:3px">Driver: '+(l.driverName||'--')+' &middot; Broker: '+(l.brokerName||'--')+'</div></div><div style="text-align:right"><div class="det-clock '+(over?'over':'free')+'">'+h+'h '+m+'m '+s+'s</div><div style="font-size:11px;color:'+statusColor+';font-weight:700;margin-top:2px">'+statusLabel+'</div></div></div>';
-    html+='<div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap"><div><span style="font-size:11px;color:var(--mid)">Free time: </span><strong>'+freeHrs+'h</strong></div><div><span style="font-size:11px;color:var(--mid)">Elapsed: </span><strong>'+elapsedHrs.toFixed(1)+'h</strong></div><div><span style="font-size:11px;color:var(--mid)">Owed: </span><span class="det-owed">'+fmtMoney(owed)+'</span></div><div style="margin-left:auto;display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="markDeparted(\''+l.id+'\')">Mark Departed</button><button class="btn btn-ghost btn-sm" onclick="notifyDetention(\''+l.id+'\')">Send Notice</button><button class="btn btn-red btn-sm" onclick="waiveDetention(\''+l.id+'\')">Waive</button></div></div></div>';
+    html+='<div class="detention-card"><div class="detention-card-head"><div><div style="font-size:13px;font-weight:700">'+l.id+' &mdash; '+(l.origin||'?')+' &rarr; '+(l.destination||'?')+'</div><div style="font-size:13px;color:var(--mid);margin-top:3px">Driver: '+(l.driverName||'--')+' &middot; Broker: '+(l.brokerName||'--')+'</div></div><div style="text-align:right"><div class="det-clock '+(over?'over':'free')+'">'+h+'h '+m+'m '+s+'s</div><div style="font-size:13px;color:'+statusColor+';font-weight:700;margin-top:2px">'+statusLabel+'</div></div></div>';
+    html+='<div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap"><div><span style="font-size:13px;color:var(--mid)">Free time: </span><strong>'+freeHrs+'h</strong></div><div><span style="font-size:13px;color:var(--mid)">Elapsed: </span><strong>'+elapsedHrs.toFixed(1)+'h</strong></div><div><span style="font-size:13px;color:var(--mid)">Owed: </span><span class="det-owed">'+fmtMoney(owed)+'</span></div><div style="margin-left:auto;display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="markDeparted(\''+l.id+'\')">Mark Departed</button><button class="btn btn-ghost btn-sm" onclick="notifyDetention(\''+l.id+'\')">Send Notice</button><button class="btn btn-red btn-sm" onclick="waiveDetention(\''+l.id+'\')">Waive</button></div></div></div>';
   });
   if(!loads.length)html='<div class="empty-state"><div class="icon" style="color:var(--green)">&#x2713;</div><div style="font-size:16px;font-weight:600;color:var(--green)">All loads clear &mdash; no active detention</div></div>';
   document.getElementById('detention-cards').innerHTML=html;
@@ -818,7 +823,7 @@ function closeLoadModal(){document.getElementById('load-modal').classList.remove
 function addStop(type,data){
   stopCount++;var sc=stopCount;data=data||{};
   var div=document.createElement('div');div.className='stop-block';div.id='stop-block-'+sc;
-  div.innerHTML='<div class="stop-hd"><select style="background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:5px;font-size:12px;font-weight:700" id="stop-type-'+sc+'"><option'+(( type||data.type)==='Pickup'?' selected':'')+'>Pickup</option><option'+((type||data.type)==='Delivery'?' selected':'')+'>Delivery</option></select><button onclick="document.getElementById(\'stop-block-'+sc+'\').remove()" style="background:none;border:none;color:var(--mid);cursor:pointer;font-size:16px">x</button></div>'+
+  div.innerHTML='<div class="stop-hd"><select style="background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:5px;font-size:13px;font-weight:700" id="stop-type-'+sc+'"><option'+(( type||data.type)==='Pickup'?' selected':'')+'>Pickup</option><option'+((type||data.type)==='Delivery'?' selected':'')+'>Delivery</option></select><button onclick="document.getElementById(\'stop-block-'+sc+'\').remove()" style="background:none;border:none;color:var(--mid);cursor:pointer;font-size:16px">x</button></div>'+
     '<div class="form-grid"><div class="form-group"><label>Business Name</label><input id="stop-biz-'+sc+'" value="'+(data.businessName||'')+'"></div><div class="form-group"><label>Phone</label><input id="stop-phone-'+sc+'" value="'+(data.phone||'')+'"></div><div class="form-group"><label>City</label><input id="stop-city-'+sc+'" value="'+(data.city||'')+'"></div><div class="form-group"><label>State</label><input id="stop-state-'+sc+'" value="'+(data.state||'')+'"></div><div class="form-group"><label>Appt Date</label><input type="date" id="stop-date-'+sc+'" value="'+(data.apptDate||'')+'"></div><div class="form-group"><label>Notes</label><input id="stop-notes-'+sc+'" value="'+(data.notes||'')+'"></div></div>';
   document.getElementById('stops-container').appendChild(div);
 }
@@ -832,7 +837,7 @@ function recalcModal(){
   var payType=document.getElementById('m-pay-type').value,payRate=+document.getElementById('m-pay-rate').value||0;
   var driverPay=payType==='percent'?gross*(payRate/100):payType==='per_mile'?miles*payRate:payRate;
   var pctStr=gross>0&&driverPay>0?' ('+(driverPay/gross*100).toFixed(1)+'% of gross)':'';
-  document.getElementById('m-pay-preview').innerHTML='<div style="font-size:11px;color:var(--mid);margin-bottom:4px">Driver Pay Preview</div><div class="pp-amount">'+fmtMoney(driverPay)+'<span style="font-size:13px;color:var(--mid)">'+pctStr+'</span></div>';
+  document.getElementById('m-pay-preview').innerHTML='<div style="font-size:13px;color:var(--mid);margin-bottom:4px">Driver Pay Preview</div><div class="pp-amount">'+fmtMoney(driverPay)+'<span style="font-size:13px;color:var(--mid)">'+pctStr+'</span></div>';
 }
 
 function saveLoad(){
@@ -865,7 +870,7 @@ function saveLoad(){
 var editingBrokerId=null,brokerModalReturnToLoad=false;
 function buildBrokerContactsForm(){
   var roles=['dispatch','billing','claims'];
-  document.getElementById('broker-contacts-form').innerHTML=roles.map(function(r){return'<div style="background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:8px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--mid);margin-bottom:8px">'+r+'</div><div class="form-grid"><div class="form-group"><label>Name</label><input id="bc-'+r+'-name"></div><div class="form-group"><label>Email</label><input type="email" id="bc-'+r+'-email"></div><div class="form-group"><label>Phone</label><input id="bc-'+r+'-phone"></div></div></div>'}).join('');
+  document.getElementById('broker-contacts-form').innerHTML=roles.map(function(r){return'<div style="background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:8px"><div style="font-size:13px;font-weight:700;text-transform:uppercase;color:var(--mid);margin-bottom:8px">'+r+'</div><div class="form-grid"><div class="form-group"><label>Name</label><input id="bc-'+r+'-name"></div><div class="form-group"><label>Email</label><input type="email" id="bc-'+r+'-email"></div><div class="form-group"><label>Phone</label><input id="bc-'+r+'-phone"></div></div></div>'}).join('');
 }
 function openBrokerModal(returnToLoad,id){
   brokerModalReturnToLoad=!!returnToLoad;editingBrokerId=id||null;buildBrokerContactsForm();
@@ -938,11 +943,11 @@ function loadDispatchWeather() {
     var name=city[0],lat=city[1],lng=city[2],tz=city[3];
     return fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lng+'&current_weather=true&wind_speed_unit=mph&temperature_unit=fahrenheit&timezone='+encodeURIComponent(tz)+'&forecast_days=1')
       .then(function(r){return r.json();})
-      .then(function(d){var cw=d.current_weather||{};var w=Math.round(cw.windspeed||0);var temp=Math.round(cw.temperature||0);var em=WMO[cw.weathercode||0]||'&#9728;';return '<div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:12px;white-space:nowrap;">'+em+' <strong style="color:var(--text);">'+name.split(',')[0]+'</strong> <span style="color:var(--mid);">'+temp+'&#176;F</span> <span style="'+(w>=35?'color:#ef4444;font-weight:700;':'color:var(--mid);')+'">&#128168;'+w+'mph'+(w>=35?' &#9888;':'')+' </span></div>';})
-      .catch(function(){return '<div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--mid);">'+name.split(',')[0]+': N/A</div>';});
+      .then(function(d){var cw=d.current_weather||{};var w=Math.round(cw.windspeed||0);var temp=Math.round(cw.temperature||0);var em=WMO[cw.weathercode||0]||'&#9728;';return '<div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:13px;white-space:nowrap;">'+em+' <strong style="color:var(--text);">'+name.split(',')[0]+'</strong> <span style="color:var(--mid);">'+temp+'&#176;F</span> <span style="'+(w>=35?'color:#ef4444;font-weight:700;':'color:var(--mid);')+'">&#128168;'+w+'mph'+(w>=35?' &#9888;':'')+' </span></div>';})
+      .catch(function(){return '<div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:13px;color:var(--mid);">'+name.split(',')[0]+': N/A</div>';});
   });
   Promise.all(promises).then(function(parts){
-    strip.innerHTML = parts.join('') || '<div style="color:var(--mid);font-size:12px;">Weather unavailable</div>';
+    strip.innerHTML = parts.join('') || '<div style="color:var(--mid);font-size:13px;">Weather unavailable</div>';
   });
 }
 </script>

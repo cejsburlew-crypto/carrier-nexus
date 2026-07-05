@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -38,32 +43,32 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 h1{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:var(--text);letter-spacing:0.5px;}
 .subtitle{font-size:13px;color:var(--mid);margin-top:2px;}
 .tab-nav{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:0;}
-.tab-btn{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:8px 16px;border:none;background:none;cursor:pointer;color:var(--mid);border-bottom:2px solid transparent;transition:all .15s;}
+.tab-btn{font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;padding:8px 16px;border:none;background:none;cursor:pointer;color:var(--mid);border-bottom:2px solid transparent;transition:all .15s;}
 .tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
 .tab-btn:hover:not(.active){color:var(--text);background:var(--panel2);}
 .tab-pane{display:none;}
 .tab-pane.active{display:block;}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
 .kpi-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
-.kpi-label{font-size:10px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.kpi-label{font-size:13px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
 .kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--text);}
-.kpi-sub{font-size:11px;color:var(--mid);margin-top:4px;}
+.kpi-sub{font-size:13px;color:var(--mid);margin-top:4px;}
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;}
 .panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .panel-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);}
 .panel-body{padding:18px;}
 table{width:100%;border-collapse:collapse;}
-th{font-size:10px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+th{font-size:13px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
 td{padding:10px 14px;font-size:13px;color:var(--text);border-bottom:1px solid #f1f5f9;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:#f8f9fb;}
-.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.04em;}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:13px;font-weight:700;letter-spacing:.04em;}
 .badge-green{background:#dcfce7;color:#15803d;}
 .badge-yellow{background:#fef9c3;color:#a16207;}
 .badge-red{background:#fee2e2;color:#dc2626;}
 .badge-blue{background:#dbeafe;color:#1d4ed8;}
 .badge-gray{background:#f3f4f6;color:#6b7280;}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;letter-spacing:.04em;transition:all .15s;font-family:'Barlow',sans-serif;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none;letter-spacing:.04em;transition:all .15s;font-family:'Barlow',sans-serif;}
 .btn-primary{background:var(--blue);color:#fff;}
 .btn-primary:hover{background:#1e40af;}
 .btn-outline{background:var(--panel);border:1px solid var(--border);color:var(--text);}
@@ -72,12 +77,12 @@ tr:hover td{background:#f8f9fb;}
 .state-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;transition:all .15s;}
 .state-card:hover{border-color:var(--blue);box-shadow:0 2px 8px rgba(29,78,216,0.1);}
 .state-card-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;}
-.state-card-meta{font-size:11px;color:var(--mid);}
+.state-card-meta{font-size:13px;color:var(--mid);}
 .req-list{display:flex;flex-direction:column;gap:8px;}
 .req-item{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;}
 .req-item-icon{font-size:18px;flex-shrink:0;}
 .req-item-title{font-size:13px;font-weight:600;color:var(--text);}
-.req-item-desc{font-size:11px;color:var(--mid);margin-top:2px;}
+.req-item-desc{font-size:13px;color:var(--mid);margin-top:2px;}
 .req-item-status{margin-left:auto;flex-shrink:0;}
 .empty-state{text-align:center;padding:48px 24px;color:var(--mid);}
 .empty-state-icon{font-size:48px;margin-bottom:12px;}
@@ -186,7 +191,7 @@ tr:hover td{background:#f8f9fb;}
         <div class="panel-title">State Operating Requirements</div>
         <div style="display:flex;gap:8px;">
           <input id="state-search" type="text" placeholder="Search state..." oninput="filterStates(this.value)"
-            style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;width:180px;">
+            style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;width:180px;">
         </div>
       </div>
       <div class="panel-body">
@@ -221,7 +226,7 @@ tr:hover td{background:#f8f9fb;}
               <td>$68</td>
               <td>Jan 5, 2026</td>
               <td><span class="badge badge-green">Current</span></td>
-              <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;">UCR-2026-XXXX</span></td>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:13px;">UCR-2026-XXXX</span></td>
             </tr>
             <tr>
               <td>2025</td>
@@ -229,7 +234,7 @@ tr:hover td{background:#f8f9fb;}
               <td>$68</td>
               <td>Dec 10, 2024</td>
               <td><span class="badge badge-gray">Expired</span></td>
-              <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;">UCR-2025-XXXX</span></td>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:13px;">UCR-2025-XXXX</span></td>
             </tr>
           </tbody>
         </table>

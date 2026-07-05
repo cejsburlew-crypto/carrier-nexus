@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -52,7 +57,7 @@ body{background:#f8f9fa;color:var(--white);font-family:'Barlow',sans-serif;min-h
 .topbar-brand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;letter-spacing:.1em;color:#fff;display:flex;align-items:center;gap:10px}
 .topbar-brand .dot{color:var(--orange);font-size:20px}
 .topbar-right{display:flex;align-items:center;gap:12px}
-.driver-badge{font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);padding:4px 10px;letter-spacing:.08em;color:#fff}
+.driver-badge{font-family:'JetBrains Mono',monospace;font-size:13px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);padding:4px 10px;letter-spacing:.08em;color:#fff}
 .btn-logout{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:6px 14px;cursor:pointer;transition:all .2s}
 .btn-logout:hover{background:rgba(255,255,255,0.2)}
 
@@ -79,20 +84,20 @@ body{background:#f8f9fa;color:var(--white);font-family:'Barlow',sans-serif;min-h
 
 /* PROFILE */
 .profile-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:24px;color:var(--white-pure);margin-bottom:4px}
-.profile-email{font-size:13px;color:var(--text-mid);margin-bottom:12px;font-family:'JetBrains Mono',monospace;font-size:11px}
+.profile-email{font-size:13px;color:var(--text-mid);margin-bottom:12px;font-family:'JetBrains Mono',monospace;font-size:13px}
 .profile-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:13px;color:var(--text-mid)}
 .profile-row strong{color:var(--white)}
-.role-pill{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border:1px solid;display:inline-block}
+.role-pill{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border:1px solid;display:inline-block}
 .role-driver{color:var(--steel-blue-light);border-color:var(--steel-blue)}
 
 /* TRUCK CARD */
 .truck-unit{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:48px;color:var(--orange);line-height:1}
-.truck-unit-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px}
-.truck-detail-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.truck-unit-label{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px}
+.truck-detail-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
 .truck-detail-row:last-child{border-bottom:none}
-.truck-detail-label{color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.truck-detail-label{color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em}
 .truck-detail-val{color:var(--white);font-weight:600}
-.eld-badge{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 7px;border:1px solid}
+.eld-badge{font-family:'JetBrains Mono',monospace;font-size:13px;padding:2px 7px;border:1px solid}
 .eld-on{color:var(--green);border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.08)}
 .eld-off{color:var(--text-muted);border-color:rgba(107,122,153,0.3)}
 .eld-exempt{color:var(--yellow);border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.08)}
@@ -107,8 +112,8 @@ body{background:#f8f9fa;color:var(--white);font-family:'Barlow',sans-serif;min-h
 .rc-arrow{color:var(--orange);font-size:16px}
 .rc-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .rc-detail-item{background:rgba(248, 249, 250, 1),0.3);padding:8px 10px;border:1px solid var(--border)}
-.rc-detail-item .lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px}
-.rc-detail-item .val{font-size:12px;font-weight:600;color:var(--white)}
+.rc-detail-item .lbl{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px}
+.rc-detail-item .val{font-size:13px;font-weight:600;color:var(--white)}
 
 /* BOL UPLOAD */
 .upload-zone{border:2px dashed var(--border-bright);padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;margin-bottom:12px}
@@ -116,15 +121,15 @@ body{background:#f8f9fa;color:var(--white);font-family:'Barlow',sans-serif;min-h
 .upload-zone.verified-zone:hover,.upload-zone.verified-zone.drag-over{border-color:var(--green);background:rgba(34,197,94,0.05)}
 .upload-ico{font-size:32px;margin-bottom:8px;opacity:.7}
 .upload-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.05em;color:var(--white);margin-bottom:4px}
-.upload-sub{font-size:12px;color:var(--text-muted)}
+.upload-sub{font-size:13px;color:var(--text-muted)}
 input[type="file"]{display:none}
 .bol-thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-top:8px}
 .bol-thumb{position:relative;aspect-ratio:3/4;overflow:hidden;border:1px solid var(--border);cursor:pointer}
 .bol-thumb img{width:100%;height:100%;object-fit:cover}
-.bol-thumb .thumb-ts{position:absolute;bottom:0;left:0;right:0;background:rgba(248, 249, 250, 1),0.7);font-size:9px;color:var(--text-mid);padding:3px 5px;font-family:'JetBrains Mono',monospace}
-.bol-thumb .thumb-del{position:absolute;top:3px;right:3px;width:18px;height:18px;background:rgba(239,68,68,0.85);border:none;color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s}
+.bol-thumb .thumb-ts{position:absolute;bottom:0;left:0;right:0;background:rgba(248, 249, 250, 1),0.7);font-size:13px;color:var(--text-mid);padding:3px 5px;font-family:'JetBrains Mono',monospace}
+.bol-thumb .thumb-del{position:absolute;top:3px;right:3px;width:18px;height:18px;background:rgba(239,68,68,0.85);border:none;color:#fff;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s}
 .bol-thumb:hover .thumb-del{opacity:1}
-.verified-badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green);background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);padding:4px 10px;margin-bottom:12px}
+.verified-badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green);background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);padding:4px 10px;margin-bottom:12px}
 
 /* MESSAGES */
 .messages-card{display:flex;flex-direction:column;height:480px;grid-column:1/-1}
@@ -133,7 +138,7 @@ input[type="file"]{display:none}
 .msg-bubble{max-width:80%;display:flex;flex-direction:column}
 .msg-bubble.mine{align-self:flex-end;align-items:flex-end}
 .msg-bubble.theirs{align-self:flex-start;align-items:flex-start}
-.msg-meta{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.msg-meta{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);margin-bottom:4px;display:flex;align-items:center;gap:6px}
 .msg-from{color:var(--steel-blue-light)}
 .msg-mine-from{color:var(--orange)}
 .msg-text{padding:10px 13px;font-size:13px;line-height:1.5}
@@ -144,7 +149,7 @@ input[type="file"]{display:none}
 .compose-attachments{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
 .attach-preview{position:relative;width:56px;height:56px;border:1px solid var(--border);overflow:hidden}
 .attach-preview img{width:100%;height:100%;object-fit:cover}
-.attach-preview .del{position:absolute;top:0;right:0;width:16px;height:16px;background:rgba(239,68,68,0.9);border:none;color:#fff;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.attach-preview .del{position:absolute;top:0;right:0;width:16px;height:16px;background:rgba(239,68,68,0.9);border:none;color:#fff;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .compose-row{display:flex;gap:8px;align-items:flex-end}
 .compose-input{flex:1;background:rgba(248, 249, 250, 1),0.3);border:1px solid var(--border);color:var(--white);padding:10px 12px;font-family:'Barlow',sans-serif;font-size:13px;resize:none;min-height:40px;max-height:100px;outline:none;transition:border .2s}
 .compose-input:focus{border-color:var(--steel-blue-light)}
@@ -154,7 +159,7 @@ input[type="file"]{display:none}
 .btn-send{height:40px;padding:0 18px;background:var(--orange);border:none;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;flex-shrink:0}
 .btn-send:hover{background:var(--orange-bright)}
 .btn-send:disabled{opacity:.4;pointer-events:none}
-.unread-pill{background:var(--pink);color:#fff;font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center}
+.unread-pill{background:var(--pink);color:#fff;font-size:13px;font-family:'JetBrains Mono',monospace;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center}
 .empty-messages{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px}
 
 /* LIGHTBOX */
@@ -164,17 +169,17 @@ input[type="file"]{display:none}
 .lightbox-close{position:fixed;top:20px;right:20px;width:36px;height:36px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 
 /* SECTION SEPARATOR */
-.section-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:.15em;text-transform:uppercase;padding:8px 0 4px;margin-top:4px;border-top:1px solid var(--border)}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);letter-spacing:.15em;text-transform:uppercase;padding:8px 0 4px;margin-top:4px;border-top:1px solid var(--border)}
 
 /* LOADING */
 .loading-overlay{position:fixed;inset:0;background:#f8f9fa;z-index:9998;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
 .loading-overlay.hidden{display:none}
 .loading-spinner{width:32px;height:32px;border:3px solid rgba(46,109,164,0.2);border-top-color:var(--orange);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:.1em}
+.loading-text{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);letter-spacing:.1em}
 
 /* REFRESH BTN */
-.refresh-btn{background:none;border:1px solid var(--border);color:var(--text-muted);width:26px;height:26px;cursor:pointer;font-size:12px;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.refresh-btn{background:none;border:1px solid var(--border);color:var(--text-muted);width:26px;height:26px;cursor:pointer;font-size:13px;transition:all .2s;display:flex;align-items:center;justify-content:center}
 .refresh-btn:hover{border-color:var(--steel-blue-light);color:var(--white)}
 @media(max-width:768px){body{padding-left:0!important}}
 </style>
@@ -319,7 +324,7 @@ function renderTruckCard() {
         <div class="no-assignment">
           <div class="big">ð</div>
           <div>No truck assigned yet</div>
-          <div style="font-size:11px;margin-top:4px">Contact dispatch</div>
+          <div style="font-size:13px;margin-top:4px">Contact dispatch</div>
         </div>
       </div>
     </div>`;
@@ -340,13 +345,13 @@ function renderTruckCard() {
       </div>
       <div class="truck-detail-row">
         <span class="truck-detail-label">VIN</span>
-        <span class="truck-detail-val" style="font-family:'JetBrains Mono',monospace;font-size:11px">${escHtml(t.vin || 'â')}</span>
+        <span class="truck-detail-val" style="font-family:'JetBrains Mono',monospace;font-size:13px">${escHtml(t.vin || 'â')}</span>
       </div>
       <div class="truck-detail-row">
         <span class="truck-detail-label">ELD</span>
         <span>${eldBadge(t.eld)}</span>
       </div>
-      ${t.eldSource ? `<div class="truck-detail-row"><span class="truck-detail-label">Source</span><span class="truck-detail-val" style="font-size:11px">${escHtml(t.eldSource)}</span></div>` : ''}
+      ${t.eldSource ? `<div class="truck-detail-row"><span class="truck-detail-label">Source</span><span class="truck-detail-val" style="font-size:13px">${escHtml(t.eldSource)}</span></div>` : ''}
     </div>
   </div>`;
 }
@@ -359,7 +364,7 @@ function renderRateConCard() {
         <div class="no-assignment">
           <div class="big">ð</div>
           <div>No load assigned</div>
-          <div style="font-size:11px;margin-top:4px">Contact dispatch for your next load</div>
+          <div style="font-size:13px;margin-top:4px">Contact dispatch for your next load</div>
         </div>
       </div>
     </div>`;
@@ -367,7 +372,7 @@ function renderRateConCard() {
   const l = assignedLoad;
   const rate = l.rate ? '$' + Number(l.rate).toLocaleString() : 'â';
   return `<div class="card">
-    <div class="card-head"><div class="card-title"><span class="ico">ð</span> MY RATE CON</div>${l.id ? `<span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted)">#${escHtml(l.id)}</span>` : ''}</div>
+    <div class="card-head"><div class="card-title"><span class="ico">ð</span> MY RATE CON</div>${l.id ? `<span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted)">#${escHtml(l.id)}</span>` : ''}</div>
     <div class="card-body">
       <div class="rc-load-num">Load ${escHtml(l.loadNumber || l.id || 'â')}</div>
       <div class="rc-rate">${rate}</div>
@@ -383,7 +388,7 @@ function renderRateConCard() {
         <div class="rc-detail-item"><div class="lbl">Delivery</div><div class="val">${escHtml(l.deliveryDate || 'â')}</div></div>
         ${l.broker ? `<div class="rc-detail-item" style="grid-column:span 2"><div class="lbl">Broker</div><div class="val">${escHtml(l.broker)}</div></div>` : ''}
       </div>
-      ${l.rateConUrl ? `<a href="${l.rateConUrl}" target="_blank" style="display:inline-block;margin-top:12px;font-size:12px;color:var(--steel-blue-light);text-decoration:none">ð View Rate Con PDF</a>` : ''}
+      ${l.rateConUrl ? `<a href="${l.rateConUrl}" target="_blank" style="display:inline-block;margin-top:12px;font-size:13px;color:var(--steel-blue-light);text-decoration:none">ð View Rate Con PDF</a>` : ''}
     </div>
   </div>`;
 }
@@ -494,8 +499,8 @@ function renderBOLThumbs() {
       <button class="thumb-del" onclick="deleteBOL('${b.id}',event)">â</button>
     </div>`;
   }
-  bolEl.innerHTML  = bols.filter(b=>b.type==='bol').map(thumbHtml).join('') || '<div style="font-size:11px;color:var(--text-muted);padding:4px 0">No BOLs uploaded yet</div>';
-  vbolEl.innerHTML = bols.filter(b=>b.type==='verified').map(thumbHtml).join('') || '<div style="font-size:11px;color:var(--text-muted);padding:4px 0">No verified BOLs yet</div>';
+  bolEl.innerHTML  = bols.filter(b=>b.type==='bol').map(thumbHtml).join('') || '<div style="font-size:13px;color:var(--text-muted);padding:4px 0">No BOLs uploaded yet</div>';
+  vbolEl.innerHTML = bols.filter(b=>b.type==='verified').map(thumbHtml).join('') || '<div style="font-size:13px;color:var(--text-muted);padding:4px 0">No verified BOLs yet</div>';
 }
 
 function deleteBOL(id, e) {
@@ -521,7 +526,7 @@ function renderMessages() {
   const msgs = allMsgs.filter(m => m.threadId === driverProfile.email);
 
   if (!msgs.length) {
-    thread.innerHTML = `<div class="empty-messages">ð¡ No messages yet<br><span style="font-size:11px;margin-top:4px;display:block">Your conversation with dispatch will appear here</span></div>`;
+    thread.innerHTML = `<div class="empty-messages">ð¡ No messages yet<br><span style="font-size:13px;margin-top:4px;display:block">Your conversation with dispatch will appear here</span></div>`;
     return;
   }
 

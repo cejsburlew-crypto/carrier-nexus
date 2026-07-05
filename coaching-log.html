@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -31,25 +36,25 @@
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
 .layout{display:flex;min-height:100vh;}.main{flex:1;overflow-x:hidden;margin-left:220px;}
 .topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
-.topbar-title{font-size:17px;font-weight:700;}.topbar-sub{font-size:11px;color:var(--mid);margin-top:2px;}
+.topbar-title{font-size:17px;font-weight:700;}.topbar-sub{font-size:13px;color:var(--mid);margin-top:2px;}
 .btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
 .btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:#2563eb;}
 .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}.btn-outline:hover{background:var(--panel2);}
-.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-sm{padding:6px 12px;font-size:13px;}
 .content{padding:20px;max-width:1100px;margin:0 auto;}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
 .kpi{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;}
-.kpi-label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
-.kpi-value{font-size:26px;font-weight:800;line-height:1;}.kpi-sub{font-size:11px;color:var(--mid);margin-top:3px;}
+.kpi-label{font-size:13px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.kpi-value{font-size:26px;font-weight:800;line-height:1;}.kpi-sub{font-size:13px;color:var(--mid);margin-top:3px;}
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
 .panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.panel-title{font-size:14px;font-weight:700;}.panel-sub{font-size:12px;color:var(--mid);}
+.panel-title{font-size:14px;font-weight:700;}.panel-sub{font-size:13px;color:var(--mid);}
 table{width:100%;border-collapse:collapse;}
-th{padding:9px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+th{padding:9px 14px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
 td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:rgba(255,255,255,.02);cursor:pointer;}
-.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:13px;font-weight:700;}
 .badge-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
 .badge-yellow{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25);}
 .badge-green{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);}
@@ -64,12 +69,12 @@ tr:hover td{background:rgba(255,255,255,.02);cursor:pointer;}
 .modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
 .modal-body{padding:20px;max-height:75vh;overflow-y:auto;}.modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
 .field-group{margin-bottom:14px;}
-.field-label{font-size:12px;color:var(--mid);margin-bottom:5px;display:block;}
+.field-label{font-size:13px;color:var(--mid);margin-bottom:5px;display:block;}
 .form-input,.form-select,.form-textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;}
 .form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--blue);}
 .form-textarea{resize:vertical;min-height:72px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.section-divider{font-size:12px;font-weight:700;color:var(--blue);padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:12px;}
+.section-divider{font-size:13px;font-weight:700;color:var(--blue);padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:12px;}
 .detail-row{display:flex;gap:8px;margin-bottom:8px;font-size:13px;}
 .detail-key{color:var(--mid);min-width:160px;flex-shrink:0;}
 .sig-box{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:14px;}
@@ -108,7 +113,7 @@ tr:hover td{background:rgba(255,255,255,.02);cursor:pointer;}
 <!-- DETAIL MODAL -->
 <div id="detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;overflow-y:auto;padding:20px;">
   <div class="modal-box" style="max-width:740px;">
-    <div class="modal-head"><div><div id="detail-title" style="font-size:16px;font-weight:700;"></div><div id="detail-sub" style="font-size:12px;color:var(--mid);"></div></div>
+    <div class="modal-head"><div><div id="detail-title" style="font-size:16px;font-weight:700;"></div><div id="detail-sub" style="font-size:13px;color:var(--mid);"></div></div>
     <div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm no-print" onclick="window.print()">🖨</button><button class="btn btn-outline btn-sm" onclick="closeDetail()">✕</button></div></div>
     <div id="detail-body" style="padding:20px;"></div>
   </div>
@@ -210,12 +215,12 @@ tr:hover td{background:rgba(255,255,255,.02);cursor:pointer;}
 
       <div class="section-divider">Acknowledgment & Signatures</div>
       <div class="sig-box">
-        <div style="font-size:12px;color:var(--mid);margin-bottom:10px;font-style:italic;">By signing, the driver acknowledges this coaching session occurred. Signature does not necessarily indicate agreement with the assessment.</div>
+        <div style="font-size:13px;color:var(--mid);margin-bottom:10px;font-style:italic;">By signing, the driver acknowledges this coaching session occurred. Signature does not necessarily indicate agreement with the assessment.</div>
         <div class="form-row">
           <div class="field-group"><label class="field-label">Driver Signature (type full name)</label><input class="form-input" id="cs-driver-sig" placeholder="Type full name" oninput="if(this.value)document.getElementById('cs-dsig-ts').textContent=new Date().toLocaleString()"></div>
           <div class="field-group"><label class="field-label">Supervisor Signature</label><input class="form-input" id="cs-admin-sig" placeholder="e.g. Jim Burlew" oninput="if(this.value)document.getElementById('cs-asig-ts').textContent=new Date().toLocaleString()"></div>
         </div>
-        <div style="font-size:11px;color:var(--mid);">Driver: <span id="cs-dsig-ts">—</span> &nbsp;·&nbsp; Supervisor: <span id="cs-asig-ts">—</span></div>
+        <div style="font-size:13px;color:var(--mid);">Driver: <span id="cs-dsig-ts">—</span> &nbsp;·&nbsp; Supervisor: <span id="cs-asig-ts">—</span></div>
       </div>
     </div>
     <div class="modal-foot"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveSession()">Save Session</button></div>
@@ -282,14 +287,14 @@ function renderTable(){
     const sm=SEV_META[x.severity]||{label:x.severity,badge:'badge-gray'};
     const ack=x.status==='acknowledged';
     return `<tr onclick="viewSession('${x.id}')">
-      <td style="font-family:monospace;font-size:12px;">${x.id}</td>
+      <td style="font-family:monospace;font-size:13px;">${x.id}</td>
       <td>${fmtDate(x.date)}</td>
       <td style="font-weight:600;">${x.driverName||'—'}</td>
       <td>${ISSUE_LABELS[x.issueType]||x.issueType||'—'}</td>
-      <td style="font-size:12px;">${TRIGGER_LABELS[x.triggeredBy]||x.triggeredBy||'—'}${x.triggerRef?`<div style="font-size:11px;color:var(--blue);">${x.triggerRef}</div>`:''}</td>
+      <td style="font-size:13px;">${TRIGGER_LABELS[x.triggeredBy]||x.triggeredBy||'—'}${x.triggerRef?`<div style="font-size:13px;color:var(--blue);">${x.triggerRef}</div>`:''}</td>
       <td><span class="badge ${sm.badge}">${sm.label}</span></td>
-      <td style="font-size:12px;">${x.coachName||'—'}</td>
-      <td>${ack?`<span style="color:var(--green);font-size:12px;">✅ ${fmtDate(x.driverSignedAt?.slice(0,10))}</span>`:'<span style="color:var(--yellow);font-size:12px;">⏳ Pending</span>'}</td>
+      <td style="font-size:13px;">${x.coachName||'—'}</td>
+      <td>${ack?`<span style="color:var(--green);font-size:13px;">✅ ${fmtDate(x.driverSignedAt?.slice(0,10))}</span>`:'<span style="color:var(--yellow);font-size:13px;">⏳ Pending</span>'}</td>
       <td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();editSession('${x.id}')">Edit</button></td>
     </tr>`;
   }).join('');
@@ -309,20 +314,20 @@ function viewSession(id){
     <div class="detail-row"><span class="detail-key">Issue Type</span><span>${ISSUE_LABELS[x.issueType]||x.issueType||'—'}</span></div>
     <div class="detail-row"><span class="detail-key">Severity</span><span><span class="badge ${SEV_META[x.severity]?.badge||'badge-gray'}">${SEV_META[x.severity]?.label||x.severity}</span></span></div>
     <div style="margin:12px 0;padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;">
-      <div style="font-size:11px;color:var(--mid);margin-bottom:4px;">ISSUE DESCRIPTION</div>
+      <div style="font-size:13px;color:var(--mid);margin-bottom:4px;">ISSUE DESCRIPTION</div>
       <div style="font-size:13px;white-space:pre-wrap;">${x.issueDesc||'—'}</div>
     </div>
     <div style="margin:12px 0;padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;">
-      <div style="font-size:11px;color:var(--mid);margin-bottom:4px;">DISCUSSION SUMMARY</div>
+      <div style="font-size:13px;color:var(--mid);margin-bottom:4px;">DISCUSSION SUMMARY</div>
       <div style="font-size:13px;white-space:pre-wrap;">${x.discussion||'—'}</div>
     </div>
     <div style="margin:12px 0;padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;">
-      <div style="font-size:11px;color:var(--mid);margin-bottom:4px;">CORRECTIVE ACTION PLAN</div>
+      <div style="font-size:13px;color:var(--mid);margin-bottom:4px;">CORRECTIVE ACTION PLAN</div>
       <div style="font-size:13px;white-space:pre-wrap;">${x.correctiveAction||'—'}</div>
     </div>
-    ${x.driverResponse?`<div style="margin:12px 0;padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;"><div style="font-size:11px;color:var(--mid);margin-bottom:4px;">DRIVER RESPONSE</div><div style="font-size:13px;white-space:pre-wrap;">${x.driverResponse}</div><div style="font-size:11px;color:var(--mid);margin-top:4px;">Agrees: ${x.driverAgrees}</div></div>`:''}
+    ${x.driverResponse?`<div style="margin:12px 0;padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;"><div style="font-size:13px;color:var(--mid);margin-bottom:4px;">DRIVER RESPONSE</div><div style="font-size:13px;white-space:pre-wrap;">${x.driverResponse}</div><div style="font-size:13px;color:var(--mid);margin-top:4px;">Agrees: ${x.driverAgrees}</div></div>`:''}
     <div style="margin-top:14px;padding:14px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:10px;">
-      <div style="font-size:12px;font-weight:700;margin-bottom:8px;">Signatures & Acknowledgment</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px;">Signatures & Acknowledgment</div>
       <div class="detail-row"><span class="detail-key">Driver Signature</span><span>${x.driverSignature||'Not signed'}</span></div>
       <div class="detail-row"><span class="detail-key">Driver Signed At</span><span>${x.driverSignedAt?new Date(x.driverSignedAt).toLocaleString():'—'}</span></div>
       <div class="detail-row"><span class="detail-key">Supervisor Signature</span><span>${x.adminSignature||'Not signed'}</span></div>

@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -87,7 +92,7 @@ body {
   align-items: center;
   gap: 8px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--text-muted);
   letter-spacing: 0.5px;
 }
@@ -122,7 +127,7 @@ body {
 .btn-primary:hover { background: #1e40af; }
 .btn-ghost { background: transparent; color: var(--ice); border: 1px solid var(--border); }
 .btn-ghost:hover { border-color: var(--steel-blue); color: var(--white); }
-.btn-sm { padding: 5px 12px; font-size: 11px; }
+.btn-sm { padding: 5px 12px; font-size: 13px; }
 .btn-danger { background: rgba(239,68,68,0.12); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
 .btn-danger:hover { background: rgba(239,68,68,0.2); }
 .btn-save { position: relative; }
@@ -189,7 +194,7 @@ body {
   line-height: 1.1;
 }
 .profile-location {
-  font-size: 12px;
+  font-size: 13px;
   color: rgba(255,255,255,0.65);
   display: flex;
   align-items: center;
@@ -197,7 +202,7 @@ body {
 }
 .profile-member-since {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   color: rgba(255,255,255,0.45);
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -260,7 +265,7 @@ body {
 }
 .stat-cell-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 8px;
+  font-size: 13px;
   color: var(--text-muted);
   letter-spacing: 0.8px;
   text-transform: uppercase;
@@ -331,7 +336,7 @@ body {
 /* ── SECTION HEADINGS ── */
 .section-heading {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 1.5px;
   color: var(--text-muted);
@@ -348,7 +353,7 @@ body {
 .form-field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 120px; }
 .form-field label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--text-muted);
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -370,7 +375,7 @@ body {
 .form-field textarea { resize: vertical; min-height: 80px; }
 .char-count {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--text-muted);
   text-align: right;
   margin-top: 2px;
@@ -383,7 +388,7 @@ body {
   border-radius: 20px;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.5px;
   cursor: pointer;
   border: 1px solid var(--border);
@@ -411,7 +416,7 @@ body {
   padding: 3px 9px;
   border-radius: 4px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.8px;
   text-transform: uppercase;
@@ -425,7 +430,7 @@ body {
 .cred-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
 .cred-table th {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: 1px;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -448,7 +453,7 @@ body {
   padding: 5px 8px;
   border-radius: 5px;
   font-family: 'Barlow', sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   width: 100%;
 }
 .cred-table td input:focus, .cred-table td select:focus { outline: none; border-color: var(--steel-blue); }
@@ -457,7 +462,7 @@ body {
 .wh-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .wh-table th {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: 1px;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -491,7 +496,7 @@ body {
   margin-bottom: 4px;
 }
 .cert-card-org {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-muted);
   margin-bottom: 8px;
 }
@@ -499,7 +504,7 @@ body {
   display: flex;
   gap: 12px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--text-muted);
   margin-bottom: 10px;
 }
@@ -509,7 +514,7 @@ body {
   border: none;
   color: var(--red);
   cursor: pointer;
-  font-size: 11px;
+  font-size: 13px;
   opacity: 0.6;
   padding: 4px;
   margin-left: auto;
@@ -540,7 +545,7 @@ body {
 .perf-card-value.green { color: var(--green); }
 .perf-card-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--text-muted);
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -551,7 +556,7 @@ body {
   display: flex;
   justify-content: space-between;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--text-muted);
   margin-bottom: 6px;
 }
@@ -603,7 +608,7 @@ body {
   margin-bottom: 2px;
 }
 .privacy-toggle-desc {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-muted);
 }
 .toggle-switch {
@@ -645,7 +650,7 @@ body {
 }
 .save-status {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--text-muted);
   letter-spacing: 0.5px;
 }
@@ -702,7 +707,7 @@ body {
   border-radius: 6px;
   padding: 10px 14px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--steel-blue);
   word-break: break-all;
   margin-bottom: 16px;
@@ -734,7 +739,7 @@ body {
   @media (max-width: 480px) {
     body { font-size: 14px; }
     .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: 1fr !important; }
-    .small-text, .meta { font-size: 12px !important; }
+    .small-text, .meta { font-size: 13px !important; }
   }
   </style>
 </head>
@@ -1590,8 +1595,8 @@ function renderWorkHistory(history) {
       <td class="muted">${e.role}</td>
       <td class="muted">${fmtDateShort(e.start)}</td>
       <td class="muted">${e.end ? fmtDateShort(e.end) : '<span class="badge badge-green">Current</span>'}</td>
-      <td class="muted" style="font-size:12px;">${e.equipment || '—'}</td>
-      <td class="muted" style="font-size:12px;max-width:180px;">${e.notes || '—'}</td>
+      <td class="muted" style="font-size:13px;">${e.equipment || '—'}</td>
+      <td class="muted" style="font-size:13px;max-width:180px;">${e.notes || '—'}</td>
       <td>
         <button class="btn btn-ghost btn-sm" onclick="editWorkHistEntry('${e.id}')">Edit</button>
         <button class="btn btn-danger btn-sm" onclick="deleteWorkHistEntry('${e.id}')">Del</button>

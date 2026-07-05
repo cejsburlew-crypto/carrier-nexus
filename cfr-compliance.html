@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -52,11 +57,11 @@
   .btn-blue { background: var(--blue); color: #fff; }
   .btn-red { background: var(--red); color: #fff; }
   .btn-mid { background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
-  .last-scanned { color: var(--mid); font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+  .last-scanned { color: var(--mid); font-size: 13px; font-family: 'JetBrains Mono', monospace; }
 
   .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
   .filter-btn { background: var(--panel2); border: 1px solid var(--border); color: var(--mid);
-    font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px; cursor: pointer;
+    font-size: 13px; font-weight: 600; padding: 5px 14px; border-radius: 20px; cursor: pointer;
     font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.3px; transition: all 0.15s; }
   .filter-btn:hover { border-color: var(--blue); color: var(--text); }
   .filter-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; }
@@ -66,7 +71,7 @@
 
   .stats-row { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
   .stat-chip { display: flex; align-items: center; gap: 6px; background: var(--panel); border: 1px solid var(--border);
-    border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 600; font-family: 'Barlow Condensed', sans-serif; }
+    border-radius: 20px; padding: 5px 14px; font-size: 13px; font-weight: 600; font-family: 'Barlow Condensed', sans-serif; }
   .stat-chip .dot { width: 8px; height: 8px; border-radius: 50%; }
   .dot-red { background: var(--red); }
   .dot-yellow { background: var(--yellow); }
@@ -81,12 +86,12 @@
   .alert-card.sev-INFO { border-left-color: var(--blue); }
   .alert-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
   .alert-card-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .sev-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; padding: 2px 8px;
+  .sev-badge { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; padding: 2px 8px;
     border-radius: 4px; white-space: nowrap; }
   .sev-badge.CRITICAL { background: rgba(239,68,68,0.2); color: var(--red); }
   .sev-badge.WARNING { background: rgba(245,158,11,0.2); color: var(--yellow); }
   .sev-badge.INFO { background: rgba(59,130,246,0.2); color: var(--blue); }
-  .cfr-cite { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mid); }
+  .cfr-cite { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--mid); }
   .alert-title { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 600; }
   .dismiss-btn { background: none; border: none; color: var(--mid); font-size: 18px; cursor: pointer;
     line-height: 1; padding: 0 4px; flex-shrink: 0; }
@@ -94,7 +99,7 @@
   .alert-detail { color: var(--mid); font-size: 13px; margin-bottom: 12px; }
   .alert-detail strong { color: var(--text); }
   .alert-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-  .btn-sm { font-size: 12px; padding: 5px 12px; border: none; border-radius: 5px; cursor: pointer;
+  .btn-sm { font-size: 13px; padding: 5px 12px; border: none; border-radius: 5px; cursor: pointer;
     font-family: 'Barlow', sans-serif; font-weight: 600; transition: opacity 0.15s; }
   .btn-sm:hover { opacity: 0.8; }
   .btn-reg { background: rgba(59,130,246,0.15); color: var(--blue); }
@@ -106,7 +111,7 @@
     font-size: 13px; resize: vertical; min-height: 60px; }
   .inline-action textarea:focus { outline: none; border-color: var(--blue); }
   .inline-action .confirm-inline-btn { margin-top: 8px; background: var(--green); color: #fff;
-    font-size: 12px; padding: 5px 12px; border: none; border-radius: 5px; cursor: pointer;
+    font-size: 13px; padding: 5px 12px; border: none; border-radius: 5px; cursor: pointer;
     font-family: 'Barlow', sans-serif; font-weight: 600; }
 
   .empty-state { text-align: center; padding: 60px 20px; }
@@ -121,7 +126,7 @@
 
   .log-filter-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 20px;
     background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; }
-  .log-filter-bar label { font-size: 11px; color: var(--mid); font-weight: 600; display: flex; flex-direction: column; gap: 4px; }
+  .log-filter-bar label { font-size: 13px; color: var(--mid); font-weight: 600; display: flex; flex-direction: column; gap: 4px; }
   .log-filter-bar input, .log-filter-bar select { background: var(--panel2); border: 1px solid var(--border);
     color: var(--text); border-radius: 5px; padding: 5px 9px; font-family: 'Barlow', sans-serif; font-size: 13px; }
   .log-filter-bar input:focus, .log-filter-bar select:focus { outline: none; border-color: var(--blue); }
@@ -129,20 +134,20 @@
   .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
   table { width: 100%; border-collapse: collapse; background: var(--panel); }
   thead tr { background: var(--panel2); }
-  th { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 600; color: var(--mid);
+  th { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 600; color: var(--mid);
     text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 14px; text-align: left;
     border-bottom: 1px solid var(--border); white-space: nowrap; }
   tbody tr { border-bottom: 1px solid rgba(30,45,69,0.6); }
   tbody tr:nth-child(even) { background: var(--panel2); }
   tbody tr:last-child { border-bottom: none; }
-  td { padding: 9px 14px; font-size: 12px; vertical-align: middle; }
-  td .cfr-mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mid); }
-  td .note-text { color: var(--mid); font-style: italic; font-size: 11px; max-width: 160px; overflow: hidden;
+  td { padding: 9px 14px; font-size: 13px; vertical-align: middle; }
+  td .cfr-mono { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--mid); }
+  td .note-text { color: var(--mid); font-style: italic; font-size: 13px; max-width: 160px; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap; display: block; }
-  .btn-review { font-size: 11px; padding: 3px 10px; background: rgba(168,85,247,0.15); color: var(--purple);
+  .btn-review { font-size: 13px; padding: 3px 10px; background: rgba(168,85,247,0.15); color: var(--purple);
     border: 1px solid rgba(168,85,247,0.3); border-radius: 4px; cursor: pointer; white-space: nowrap; }
   .btn-review:hover { background: rgba(168,85,247,0.3); }
-  .reviewed-tag { font-size: 11px; color: var(--green); font-family: 'JetBrains Mono', monospace; }
+  .reviewed-tag { font-size: 13px; color: var(--green); font-family: 'JetBrains Mono', monospace; }
 
   .library-intro { background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
     padding: 16px 20px; margin-bottom: 24px; }
@@ -159,11 +164,11 @@
   .lib-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px;
     transition: border-color 0.15s; }
   .lib-card:hover { border-color: var(--blue); }
-  .lib-card .part-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--blue); margin-bottom: 4px; }
+  .lib-card .part-label { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--blue); margin-bottom: 4px; }
   .lib-card h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 6px; }
-  .lib-card p { color: var(--mid); font-size: 12px; line-height: 1.5; margin-bottom: 12px; }
+  .lib-card p { color: var(--mid); font-size: 13px; line-height: 1.5; margin-bottom: 12px; }
   .btn-ecfr { background: rgba(59,130,246,0.12); color: var(--blue); border: 1px solid rgba(59,130,246,0.3);
-    border-radius: 5px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer;
+    border-radius: 5px; padding: 5px 12px; font-size: 13px; font-weight: 600; cursor: pointer;
     font-family: 'Barlow', sans-serif; text-decoration: none; display: inline-block; transition: background 0.15s; }
   .btn-ecfr:hover { background: rgba(59,130,246,0.25); }
   .lib-footer { background: var(--panel2); border: 1px solid var(--border); border-radius: 8px;
@@ -179,9 +184,9 @@
   .rule-toggle-row:last-child { border-bottom: none; }
   .rule-info { flex: 1; }
   .rule-info .rule-name { font-size: 13px; font-weight: 600; }
-  .rule-info .rule-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mid); margin-top: 2px; }
+  .rule-info .rule-meta { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--mid); margin-top: 2px; }
   .toggle-wrap { display: flex; align-items: center; gap: 8px; }
-  .toggle-label { font-size: 12px; color: var(--mid); }
+  .toggle-label { font-size: 13px; color: var(--mid); }
   .toggle { position: relative; display: inline-block; width: 40px; height: 22px; }
   .toggle input { opacity: 0; width: 0; height: 0; }
   .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
@@ -226,7 +231,7 @@
     </div>
 
     <div class="filter-bar">
-      <span style="font-size:12px;color:var(--mid);font-weight:600;">Filter:</span>
+      <span style="font-size:13px;color:var(--mid);font-weight:600;">Filter:</span>
       <button class="filter-btn active" data-filter="ALL" onclick="setFilter('ALL')">All</button>
       <button class="filter-btn f-critical" data-filter="CRITICAL" onclick="setFilter('CRITICAL')">CRITICAL</button>
       <button class="filter-btn f-warning" data-filter="WARNING" onclick="setFilter('WARNING')">WARNING</button>
@@ -929,18 +934,18 @@ function renderLog() {
   var rows = "";
   filtered.forEach(function(e) {
     var ts = new Date(e.timestamp).toLocaleString();
-    var sevBadge = "<span class=\"sev-badge " + e.severity + "\" style=\"font-size:10px;\">" + e.severity + "</span>";
+    var sevBadge = "<span class=\"sev-badge " + e.severity + "\" style=\"font-size:13px;\">" + e.severity + "</span>";
     var actionColor = e.action === "ACKNOWLEDGED" ? "var(--green)" : "var(--orange)";
     var reviewedCell = e.reviewed_by
       ? "<span class=\"reviewed-tag\">&#x2713; " + escHtml(e.reviewed_by) + "</span>"
       : "<button class=\"btn-review\" onclick=\"markReviewed('" + escHtml(e.id) + "')\">Mark Reviewed</button>";
     rows += "<tr>";
-    rows += "<td style=\"white-space:nowrap;font-size:11px;\">" + ts + "</td>";
+    rows += "<td style=\"white-space:nowrap;font-size:13px;\">" + ts + "</td>";
     rows += "<td><span class=\"cfr-mono\">" + escHtml(e.cfr) + "</span></td>";
-    rows += "<td style=\"font-size:12px;max-width:160px;\">" + escHtml(e.title) + "</td>";
+    rows += "<td style=\"font-size:13px;max-width:160px;\">" + escHtml(e.title) + "</td>";
     rows += "<td>" + escHtml(e.entity) + "</td>";
     rows += "<td>" + sevBadge + "</td>";
-    rows += "<td style=\"color:" + actionColor + ";font-weight:600;font-size:12px;\">" + e.action + "</td>";
+    rows += "<td style=\"color:" + actionColor + ";font-weight:600;font-size:13px;\">" + e.action + "</td>";
     rows += "<td><span class=\"note-text\" title=\"" + escHtml(e.note) + "\">" + escHtml(e.note || "—") + "</span></td>";
     rows += "<td>" + escHtml(e.user || "—") + "</td>";
     rows += "<td>" + reviewedCell + "</td>";
@@ -1007,7 +1012,7 @@ function renderSettings() {
     var isEnabled = disabled.indexOf(rule.id) === -1;
     html += "<div class=\"rule-toggle-row\">";
     html += "<div class=\"rule-info\">";
-    html += "<div class=\"rule-name\">" + escHtml(rule.title) + " <span class=\"sev-badge " + rule.severity + "\" style=\"font-size:10px;margin-left:6px;\">" + rule.severity + "</span></div>";
+    html += "<div class=\"rule-name\">" + escHtml(rule.title) + " <span class=\"sev-badge " + rule.severity + "\" style=\"font-size:13px;margin-left:6px;\">" + rule.severity + "</span></div>";
     html += "<div class=\"rule-meta\">" + escHtml(rule.cfr) + "</div>";
     html += "</div>";
     html += "<div class=\"toggle-wrap\">";

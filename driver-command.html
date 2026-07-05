@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -31,7 +36,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .topbar{background:var(--bar);padding:14px 18px 12px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
 .topbar-brand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:.06em;color:#fff;}
 .topbar-brand span{color:var(--accent);}
-.topbar-sub{font-size:11px;color:#8b949e;margin-top:1px;}
+.topbar-sub{font-size:13px;color:#8b949e;margin-top:1px;}
 .topbar-notif{width:36px;height:36px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;}
 .notif-badge{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--orange);border-radius:50%;border:1.5px solid var(--bar);}
 
@@ -77,10 +82,10 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
 
 .sec-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.04em;color:#fff;flex:1;}
-.sec-sub{font-size:11px;color:#8b949e;margin-top:2px;}
+.sec-sub{font-size:13px;color:#8b949e;margin-top:2px;}
 .sec-meta{text-align:right;flex-shrink:0;}
 .sec-meta-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;}
-.sec-meta-lbl{font-size:10px;color:#8b949e;}
+.sec-meta-lbl{font-size:13px;color:#8b949e;}
 .sec-chevron{font-size:16px;color:#6b7280;flex-shrink:0;transition:transform .25s;line-height:1;}
 .sec-chevron.open{transform:rotate(180deg);}
 
@@ -102,7 +107,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 }
 .rc-row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 14px;border-bottom:1px solid var(--border);}
 .rc-row:last-child{border-bottom:none;}
-.rc-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;margin-right:12px;}
+.rc-label{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;margin-right:12px;}
 .rc-val{font-size:13px;font-weight:600;color:var(--text);text-align:right;}
 .rc-val.green{color:var(--green);}
 .rc-val.orange{color:var(--orange);}
@@ -135,8 +140,8 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .tile.c-purple{border-color:rgba(124,58,237,.22);background:rgba(124,58,237,.04);}
 .tile.locked{opacity:.3;filter:grayscale(.7);}
 .tile-icon{font-size:24px;line-height:1;}
-.tile-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-align:center;line-height:1.2;color:var(--text);}
-.tile-badge{position:absolute;top:6px;right:6px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:20px;background:var(--accent);color:#fff;white-space:nowrap;}
+.tile-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;text-align:center;line-height:1.2;color:var(--text);}
+.tile-badge{position:absolute;top:6px;right:6px;font-size:13px;font-weight:700;padding:1px 5px;border-radius:20px;background:var(--accent);color:#fff;white-space:nowrap;}
 .tile-badge.og{background:#1d4ed8;}
 .tile-badge.gn{background:var(--green);}
 .tile-badge.rd{background:var(--red);}
@@ -153,7 +158,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .rep-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;line-height:1.2;}
 .rep-lbl.red{color:var(--red);}
 .rep-lbl.og{color:#60a5fa;}
-.rep-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+.rep-sub{font-size:13px;color:var(--muted);margin-top:2px;}
 
 /* ── DVIR CHECKLIST ── */
 .dvir-list{padding:0 14px 12px;}
@@ -161,7 +166,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .dvir-item:last-child{border-bottom:none;}
 .dvir-name{font-size:13px;color:#374151;}
 .dvir-radios{display:flex;gap:10px;}
-.dvir-radios label{display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;}
+.dvir-radios label{display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;}
 
 /* ── EMERGENCY BAR ── */
 .emg-bar{
@@ -188,7 +193,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .emg-btn.sos{background:#1a0505;border-left:1px solid #3d1212;border-right:1px solid #3d1212;flex:1.3;}
 .emg-btn.sos:active{background:#2a0808;}
 .emg-icon{font-size:20px;line-height:1;}
-.emg-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#9ca3af;}
+.emg-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:#9ca3af;}
 .emg-btn.blowout .emg-lbl,.emg-btn.accident .emg-lbl{color:#f87171;}
 .emg-btn.breakdown .emg-lbl{color:#60a5fa;}
 .emg-btn.sos .emg-lbl{color:#f87171;}
@@ -204,7 +209,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .minput{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:'Barlow',sans-serif;font-size:15px;color:var(--text);background:#f8f9fa;outline:none;margin-bottom:10px;}
 .minput:focus{border-color:var(--accent);background:#fff;}
 .minput.big{font-size:28px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-align:center;}
-.mlbl{font-size:11px;font-weight:600;color:var(--mid);margin-bottom:5px;display:block;letter-spacing:.04em;text-transform:uppercase;}
+.mlbl{font-size:13px;font-weight:600;color:var(--mid);margin-bottom:5px;display:block;letter-spacing:.04em;text-transform:uppercase;}
 .mbtn{width:100%;padding:14px;border:none;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;margin-top:8px;}
 .mbtn.primary{background:var(--accent);color:#fff;}
 .mbtn.danger{background:var(--red);color:#fff;}
@@ -213,7 +218,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .upzone:active{border-color:var(--accent);}
 
 /* photo picker */
-.phsec{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:12px 0 7px;}
+.phsec{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:12px 0 7px;}
 .phgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:7px;margin-bottom:2px;}
 .phtile{display:flex;align-items:center;gap:8px;padding:9px 11px;background:#f8f9fa;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .1s;}
 .phtile:active,.phtile:hover{background:#ffe4f1;border-color:var(--accent);}
@@ -225,25 +230,25 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 #toast.show{opacity:1;}
 
 /* ─── EQUIPMENT SECTION ─── */
-.equip-hdr{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:14px 14px 6px;border-bottom:1px solid #1a2030;margin-bottom:10px;}
+.equip-hdr{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:14px 14px 6px;border-bottom:1px solid #1a2030;margin-bottom:10px;}
 .equip-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 10px;}
 .equip-card{background:#111820;border:1.5px solid #21262d;border-radius:12px;padding:12px;cursor:pointer;transition:border-color .18s;}
 .equip-card:active{filter:brightness(1.1);}
 .equip-card.active-equip{border-color:#3b82f6;background:#0e1828;}
 .equip-icon{font-size:22px;margin-bottom:6px;}
 .equip-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.04em;color:#e4e6ea;}
-.equip-detail{font-size:10px;color:var(--muted);margin-top:2px;}
-.equip-chip{display:inline-block;margin-top:6px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
+.equip-detail{font-size:13px;color:var(--muted);margin-top:2px;}
+.equip-chip{display:inline-block;margin-top:6px;font-size:13px;font-weight:700;padding:2px 8px;border-radius:10px;}
 .equip-chip.ok{background:rgba(21,128,61,.18);color:#4ade80;border:1px solid rgba(34,197,94,.3);}
 .equip-chip.attached{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3);}
-.equip-tire-btn{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;font-weight:700;color:#3b82f6;cursor:pointer;padding:5px 0 0;}
+.equip-tire-btn{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:13px;font-weight:700;color:#3b82f6;cursor:pointer;padding:5px 0 0;}
 .equip-tire-btn span{font-size:14px;}
 
 /* ─── TIRE PLAN VIEW CARD ─── */
 .tire-plan-card{background:#0d1117;border:1.5px solid #21262d;border-radius:14px;overflow:hidden;margin:0 14px 10px;}
 .tire-plan-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#111820;border-bottom:1px solid #1a2030;}
 .tire-plan-bar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#e4e6ea;flex:1;}
-.tire-legend{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted);}
+.tire-legend{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);}
 .tlg{display:flex;align-items:center;gap:3px;}
 .tlg-dot{width:8px;height:8px;border-radius:50%;}
 .tlg-dot.ok{background:#4ade80;}
@@ -251,22 +256,22 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .tlg-dot.fail{background:#f87171;}
 
 .tire-view-tabs{display:flex;border-bottom:1px solid #1a2030;}
-.tire-tab{flex:1;text-align:center;padding:9px 0;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
+.tire-tab{flex:1;text-align:center;padding:9px 0;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
 .tire-tab.active{color:#3b82f6;border-bottom-color:#3b82f6;}
 
 .tire-svg-wrap{padding:14px;display:flex;flex-direction:column;align-items:center;gap:14px;}
-.tire-svg-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;}
+.tire-svg-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;}
 
 /* tire pressure summary row */
 .psi-summary{display:flex;gap:6px;padding:0 14px 12px;flex-wrap:wrap;}
-.psi-chip{background:#111820;border:1px solid #21262d;border-radius:8px;padding:5px 9px;font-size:11px;font-weight:600;min-width:56px;text-align:center;cursor:pointer;}
-.psi-chip .psi-pos{font-size:9px;color:var(--muted);display:block;margin-bottom:1px;}
+.psi-chip{background:#111820;border:1px solid #21262d;border-radius:8px;padding:5px 9px;font-size:13px;font-weight:600;min-width:56px;text-align:center;cursor:pointer;}
+.psi-chip .psi-pos{font-size:13px;color:var(--muted);display:block;margin-bottom:1px;}
 .psi-chip .psi-val{color:#4ade80;}
 .psi-chip .psi-val.warn{color:#fb923c;}
 .psi-chip .psi-val.fail{color:#f87171;}
 
 /* ─── SECTION DIVIDER ─── */
-.equip-section-divider{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:10px 14px 4px;border-top:1px solid #1a2030;margin-top:4px;}
+.equip-section-divider{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:10px 14px 4px;border-top:1px solid #1a2030;margin-top:4px;}
 
 /* ─── TIRE PRESSURE MODAL ─── */
 .tire-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:600;display:none;align-items:flex-end;justify-content:center;}
@@ -284,13 +289,13 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .tcp-num.warn{color:#fb923c;}
 .tcp-num.fail{color:#f87171;}
 .tcp-unit{font-size:14px;color:var(--muted);}
-.tcp-target{font-size:12px;color:var(--muted);margin-top:4px;}
+.tcp-target{font-size:13px;color:var(--muted);margin-top:4px;}
 .psi-input-row{display:flex;gap:8px;align-items:center;margin-bottom:14px;}
 .psi-input{flex:1;background:#0d1117;border:1.5px solid #30363d;border-radius:10px;color:#e4e6ea;font-size:22px;font-family:'Barlow Condensed',sans-serif;font-weight:700;padding:10px 14px;text-align:center;outline:none;}
 .psi-input:focus{border-color:#3b82f6;}
 .psi-btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
 .psi-save-btn{background:#1d4ed8;border:2px solid #3b82f6;color:#fff;padding:12px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;letter-spacing:.06em;cursor:pointer;width:100%;margin-bottom:8px;}
-.psi-secondary-btn{background:#1e3a8a;border:1px solid #1d4ed8;color:#fff;padding:10px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;cursor:pointer;}
+.psi-secondary-btn{background:#1e3a8a;border:1px solid #1d4ed8;color:#fff;padding:10px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;cursor:pointer;}
 
 
 /* ─── COMPANY + CLOCK STRIP ─── */
@@ -301,10 +306,10 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 }
 .company-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.06em;color:#e4e6ea;}
 .company-name span{color:var(--accent);}
-.company-ids{font-size:10px;color:var(--muted);margin-top:1px;letter-spacing:.03em;}
+.company-ids{font-size:13px;color:var(--muted);margin-top:1px;letter-spacing:.03em;}
 .live-clock-wrap{text-align:right;}
 .live-clock{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;letter-spacing:.05em;color:#e4e6ea;line-height:1;}
-.live-date{font-size:9px;color:var(--muted);margin-top:1px;letter-spacing:.04em;}
+.live-date{font-size:13px;color:var(--muted);margin-top:1px;letter-spacing:.04em;}
 
 /* ─── HOS DASHBOARD STRIP ─── */
 .hos-strip{
@@ -318,14 +323,14 @@ nav.sidebar#nexus-sidebar{display:none!important;}
   cursor:default;
 }
 .hos-cell:last-child{border-right:none;}
-.hos-lbl{font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin-bottom:3px;}
+.hos-lbl{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin-bottom:3px;}
 .hos-timer{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;line-height:1;letter-spacing:.02em;text-shadow:0 0 12px currentColor;}
 .hos-timer.safe{color:#34d399;}
 .hos-timer.warn{color:#fb923c;}
 .hos-timer.crit{color:#f87171;}
 .hos-timer.alert{color:#f87171;animation:pulse-red 1s infinite;}
 @keyframes pulse-red{0%,100%{opacity:1;}50%{opacity:.45;}}
-.hos-sub{font-size:9px;color:#94a3b8;margin-top:2px;font-weight:600;}
+.hos-sub{font-size:13px;color:#94a3b8;margin-top:2px;font-weight:600;}
 .hos-bar-track{width:100%;height:4px;background:#1e2d45;border-radius:2px;margin-top:5px;}
 .hos-bar-fill{height:4px;border-radius:2px;transition:width .5s;}
 .hos-bar-fill.safe{background:#22c55e;}
@@ -333,12 +338,12 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .hos-bar-fill.crit{background:#ef4444;}
 
 /* ─── TOPBAR ADJUSTMENTS ─── */
-.topbar-company{font-size:10px;color:var(--accent);margin-top:1px;font-weight:600;letter-spacing:.04em;}
+.topbar-company{font-size:13px;color:var(--accent);margin-top:1px;font-weight:600;letter-spacing:.04em;}
 
 
 /* ─── ADMIN DRIVER SELECTOR ─── */
 .admin-mode-badge{
-  display:inline-block;font-size:9px;font-weight:800;padding:2px 7px;border-radius:8px;
+  display:inline-block;font-size:13px;font-weight:800;padding:2px 7px;border-radius:8px;
   background:rgba(233,30,140,.15);border:1px solid rgba(233,30,140,.35);color:var(--accent);
   letter-spacing:.06em;text-transform:uppercase;margin-left:6px;vertical-align:middle;
 }
@@ -350,14 +355,14 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .driver-selector-wrap:focus-within{border-color:var(--accent);}
 .driver-selector-avatar{
   width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#7c3aed);
-  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;
   color:#fff;flex-shrink:0;
 }
 .driver-selector-info{flex:1;min-width:0;}
 .driver-selector-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;
   letter-spacing:.04em;color:#e4e6ea;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.driver-selector-role{font-size:9px;color:var(--muted);margin-top:1px;}
-.driver-selector-caret{font-size:10px;color:var(--muted);}
+.driver-selector-role{font-size:13px;color:var(--muted);margin-top:1px;}
+.driver-selector-caret{font-size:13px;color:var(--muted);}
 .driver-select-native{
   position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;
   font-size:16px; /* prevents iOS zoom */
@@ -368,7 +373,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 .admin-viewing-banner{
   background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);
   border-radius:10px;margin:10px 14px;padding:8px 12px;
-  display:flex;align-items:center;gap:8px;font-size:11px;color:#a78bfa;
+  display:flex;align-items:center;gap:8px;font-size:13px;color:#a78bfa;
 }
 .admin-viewing-banner span{font-size:16px;}
 
@@ -548,7 +553,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
       <div class="tile" onclick="capturePhoto('Pre-Trip Defect')"><div class="tile-icon">📷</div><div class="tile-lbl">Defect Photo</div></div>
     </div>
     <div class="dvir-list" id="quick-dvir">
-      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding-bottom:8px;">Quick Status Check</div>
+      <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding-bottom:8px;">Quick Status Check</div>
     </div>
   </div>
 
@@ -665,7 +670,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
       <div style="font-size:26px;">📷</div>
       <div>
         <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;">Take / Upload Photo</div>
-        <div style="font-size:11px;color:var(--mid);margin-top:2px;">20+ categories — tap to choose type</div>
+        <div style="font-size:13px;color:var(--mid);margin-top:2px;">20+ categories — tap to choose type</div>
       </div>
       <div style="margin-left:auto;font-size:20px;color:var(--muted);">›</div>
     </div>
@@ -735,7 +740,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
   </button>
   <button class="emg-btn sos" onclick="openModal('sosModal')">
     <span class="emg-icon" style="font-size:22px;">🆘</span>
-    <span class="emg-lbl" style="font-size:11px;font-weight:900;">SOS</span>
+    <span class="emg-lbl" style="font-size:13px;font-weight:900;">SOS</span>
   </button>
   <button class="emg-btn breakdown" onclick="openModal('repairModal')">
     <span class="emg-icon">🔧</span>
@@ -823,8 +828,8 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     <div class="mhandle"></div>
     <div class="mtitle" id="captureTitle">Take Photo</div>
     <div class="msub" id="captureSub">Saved to your vault</div>
-    <div class="upzone" style="padding:26px;"><div style="font-size:34px;margin-bottom:8px;">📷</div><div style="font-weight:700;font-size:15px;">Open Camera</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">Tap to take photo</div></div>
-    <div class="upzone" style="display:flex;align-items:center;gap:14px;text-align:left;padding:13px 16px;"><div style="font-size:22px;">📁</div><div><div style="font-weight:600;font-size:14px;">Choose from Library</div><div style="font-size:11px;color:var(--muted);">PDF, JPG, PNG</div></div></div>
+    <div class="upzone" style="padding:26px;"><div style="font-size:34px;margin-bottom:8px;">📷</div><div style="font-weight:700;font-size:15px;">Open Camera</div><div style="font-size:13px;color:var(--muted);margin-top:4px;">Tap to take photo</div></div>
+    <div class="upzone" style="display:flex;align-items:center;gap:14px;text-align:left;padding:13px 16px;"><div style="font-size:22px;">📁</div><div><div style="font-weight:600;font-size:14px;">Choose from Library</div><div style="font-size:13px;color:var(--muted);">PDF, JPG, PNG</div></div></div>
     <label class="mlbl" style="margin-top:6px;">Notes (optional)</label>
     <input class="minput" type="text" id="captureNote" placeholder="Add a note...">
     <button class="mbtn primary" id="captureSubmit">✓ Submit Photo</button>
@@ -839,7 +844,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     <div class="mtitle">Upload POD / BOL</div>
     <div class="msub">Load LDX-2841 · Coyote Logistics</div>
     <div class="upzone"><div style="font-size:28px;margin-bottom:6px;">📷</div><div style="font-weight:600;font-size:14px;">Take Photo</div></div>
-    <div class="upzone" style="display:flex;align-items:center;gap:14px;text-align:left;padding:13px 16px;"><div style="font-size:22px;">📁</div><div><div style="font-weight:600;font-size:14px;">Choose File</div><div style="font-size:11px;color:var(--muted);">PDF, JPG, PNG</div></div></div>
+    <div class="upzone" style="display:flex;align-items:center;gap:14px;text-align:left;padding:13px 16px;"><div style="font-size:22px;">📁</div><div><div style="font-weight:600;font-size:14px;">Choose File</div><div style="font-size:13px;color:var(--muted);">PDF, JPG, PNG</div></div></div>
     <button class="mbtn primary" onclick="closeModal('podModal');toast('POD uploaded — LDX-2841')">✓ Submit POD</button>
     <button class="mbtn sec" onclick="closeModal('podModal')">Cancel</button>
   </div>
@@ -894,12 +899,12 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     <div class="msub">LDX-2841 · Coyote Logistics</div>
     <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;">
       <div style="padding:13px 16px;border-bottom:1px solid var(--border);">
-        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;">Broker</div>
+        <div style="font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;">Broker</div>
         <div style="font-size:15px;font-weight:600;margin-top:3px;">Coyote Logistics — Sarah M.</div>
         <a href="tel:+13125550100" style="display:inline-block;margin-top:8px;padding:8px 18px;background:var(--green);color:#fff;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;">📞 Call Broker</a>
       </div>
       <div style="padding:13px 16px;">
-        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;">Shipper</div>
+        <div style="font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;">Shipper</div>
         <div style="font-size:15px;font-weight:600;margin-top:3px;">Miami Auto Parts Distribution</div>
         <a href="tel:+13055550200" style="display:inline-block;margin-top:8px;padding:8px 18px;background:var(--blue);color:#fff;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;">📞 Call Shipper</a>
       </div>
@@ -916,7 +921,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     <div class="msub">LDX-2841 · Free time: 2 hrs after arrival</div>
     <div style="text-align:center;padding:18px 0;">
       <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:52px;color:#60a5fa;">00:00:00</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px;">Detention clock</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px;">Detention clock</div>
     </div>
     <label class="mlbl">Arrival Time</label>
     <input class="minput" type="time">
@@ -935,7 +940,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     <input class="minput" type="text" placeholder="e.g. TFORCE Lumper Services">
     <label class="mlbl">Amount ($)</label>
     <input class="minput big" type="number" placeholder="0.00" inputmode="decimal">
-    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Receipt Photo</div></div>
+    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:13px;font-weight:600;margin-top:3px;">Receipt Photo</div></div>
     <button class="mbtn primary" onclick="closeModal('lumperModal');toast('Lumper request sent — pending approval')">✓ Request Approval</button>
     <button class="mbtn sec" onclick="closeModal('lumperModal')">Cancel</button>
   </div>
@@ -950,7 +955,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     <div id="pretrip-items"></div>
     <label class="mlbl" style="margin-top:10px;">Defects / Notes</label>
     <textarea class="minput" rows="3" placeholder="None — or describe defects" style="resize:none;"></textarea>
-    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Photo of Any Defect</div></div>
+    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:13px;font-weight:600;margin-top:3px;">Photo of Any Defect</div></div>
     <button class="mbtn primary" onclick="closeModal('pretripModal');toast('Pre-trip DVIR submitted')">✓ Submit Inspection</button>
     <button class="mbtn sec" onclick="closeModal('pretripModal')">Cancel</button>
   </div>
@@ -965,7 +970,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     <div id="posttrip-items"></div>
     <label class="mlbl" style="margin-top:10px;">Defects / Notes</label>
     <textarea class="minput" rows="3" placeholder="None — or describe defects" style="resize:none;"></textarea>
-    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Photo of Any Defect</div></div>
+    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:13px;font-weight:600;margin-top:3px;">Photo of Any Defect</div></div>
     <button class="mbtn primary" onclick="closeModal('posttripModal');toast('Post-trip DVIR submitted')">✓ Submit Inspection</button>
     <button class="mbtn sec" onclick="closeModal('posttripModal')">Cancel</button>
   </div>
@@ -981,7 +986,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     <select class="minput"><option>Select...</option><option>Steer Left</option><option>Steer Right</option><option>Drive Left Inner</option><option>Drive Left Outer</option><option>Drive Right Inner</option><option>Drive Right Outer</option><option>Trailer Axle</option></select>
     <label class="mlbl">Location</label>
     <input class="minput" type="text" placeholder="e.g. I-75 MM 142, Gainesville FL">
-    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Photo of Tire</div></div>
+    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:13px;font-weight:600;margin-top:3px;">Photo of Tire</div></div>
     <button class="mbtn danger" onclick="closeModal('blowoutModal');toast('Blowout reported — dispatch alerted')">🚨 Report Now</button>
     <button class="mbtn sec" onclick="closeModal('blowoutModal')">Cancel</button>
   </div>
@@ -999,7 +1004,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     <input class="minput" type="text" placeholder="e.g. Pilot Flying J — Valdosta GA">
     <label class="mlbl">Amount ($)</label>
     <input class="minput big" type="number" placeholder="0.00" inputmode="decimal">
-    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Receipt Photo</div></div>
+    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:13px;font-weight:600;margin-top:3px;">Receipt Photo</div></div>
     <button class="mbtn primary" onclick="closeModal('repairModal');toast('Repair submitted — pending approval')">✓ Submit Repair</button>
     <button class="mbtn sec" onclick="closeModal('repairModal')">Cancel</button>
   </div>
@@ -1017,7 +1022,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     <input class="minput" type="text" placeholder="Street, city, state">
     <label class="mlbl">Other Party Info</label>
     <input class="minput" type="text" placeholder="Name, plate, insurance (if applicable)">
-    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:12px;font-weight:600;margin-top:3px;">Scene Photos</div></div>
+    <div class="upzone" style="padding:12px;"><div style="font-size:18px;">📷</div><div style="font-size:13px;font-weight:600;margin-top:3px;">Scene Photos</div></div>
     <button class="mbtn danger" onclick="closeModal('accidentModal');toast('Incident reported — dispatch alerted')">🚨 Report Incident</button>
     <button class="mbtn sec" onclick="closeModal('accidentModal')">Cancel</button>
   </div>
@@ -1044,10 +1049,10 @@ nav.sidebar#nexus-sidebar{display:none!important;}
     <div class="mhandle"></div>
     <div class="mtitle">Notifications</div>
     <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;">🔴 Rate con ready to sign — LDX-2841</span><span style="font-size:11px;color:var(--muted);">9:04 AM</span></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;">🟡 POD reminder — LDX-2826</span><span style="font-size:11px;color:var(--muted);">Yesterday</span></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;">✅ Settlement paid — LDX-2810</span><span style="font-size:11px;color:var(--muted);">Jun 21</span></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;"><span style="font-size:13px;">⚠️ CDL expires in 30 days</span><span style="font-size:11px;color:var(--muted);">Jun 20</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;">🔴 Rate con ready to sign — LDX-2841</span><span style="font-size:13px;color:var(--muted);">9:04 AM</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;">🟡 POD reminder — LDX-2826</span><span style="font-size:13px;color:var(--muted);">Yesterday</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--border);"><span style="font-size:13px;">✅ Settlement paid — LDX-2810</span><span style="font-size:13px;color:var(--muted);">Jun 21</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;"><span style="font-size:13px;">⚠️ CDL expires in 30 days</span><span style="font-size:13px;color:var(--muted);">Jun 20</span></div>
     </div>
     <button class="mbtn sec" onclick="closeModal('alertModal')">Dismiss All</button>
   </div>
@@ -1169,7 +1174,7 @@ function capturePhoto(type){
         '<label><input type="radio" name="'+n+'" value="fail" style="accent-color:var(--red);"> <span style="color:var(--red);">Defect</span></label>'+
         '</div></div>';
     }).join('');
-    quick.innerHTML+='<div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding-bottom:8px;">Quick Status Check</div>'+qhtml+
+    quick.innerHTML+='<div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding-bottom:8px;">Quick Status Check</div>'+qhtml+
     '<button onclick="openModal(\'pretripModal\')" style="margin-top:10px;width:100%;padding:10px;border:none;border-radius:8px;background:var(--green);color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:14px;letter-spacing:.05em;cursor:pointer;">Full Pre-Trip DVIR →</button>';
   }
 })();
@@ -1706,7 +1711,7 @@ function closeTireModalDirect(){ document.getElementById('tirePressureModal').cl
         <button class="psi-secondary-btn" onclick="openTireWarranty()">🏷️ View Warranty</button>
         <button class="psi-secondary-btn" onclick="captureTirePhoto()">📷 Take Tire Photo</button>
       </div>
-      <div style="font-size:10px;color:#4b5563;text-align:center;margin-top:4px;" id="tireLastLog">Last logged: Not yet recorded</div>
+      <div style="font-size:13px;color:#4b5563;text-align:center;margin-top:4px;" id="tireLastLog">Last logged: Not yet recorded</div>
     </div>
   </div>
 </div>

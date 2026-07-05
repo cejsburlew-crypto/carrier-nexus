@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -31,11 +36,11 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--gunmetal);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;}
 .page-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:.12em;color:var(--white-pure);}
-.page-subtitle{font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.page-subtitle{font-size:13px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono',monospace;}
 .topbar-actions{display:flex;gap:8px;}
 .content{padding:24px;flex:1;}
 /* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;font-family:'Barlow',sans-serif;cursor:pointer;border:none;transition:all .15s;letter-spacing:.04em;white-space:nowrap;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;font-family:'Barlow',sans-serif;cursor:pointer;border:none;transition:all .15s;letter-spacing:.04em;white-space:nowrap;}
 .btn-pink{background:linear-gradient(135deg,#c2185b,#e91e8c);color:#fff;}
 .btn-pink:hover{filter:brightness(1.1);}
 .btn-orange{background:#1d4ed8;color:#fff;}
@@ -46,51 +51,51 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .btn-green:hover{background:rgba(34,197,94,.25);}
 .btn-red{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);}
 .btn-red:hover{background:rgba(239,68,68,.22);}
-.btn-sm{padding:5px 10px;font-size:11px;}
+.btn-sm{padding:5px 10px;font-size:13px;}
 /* CARDS */
 .card{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden;}
 .card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);}
 .card-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:.12em;color:var(--white-pure);}
-.card-sub{font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.card-sub{font-size:13px;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono',monospace;}
 .card-body{padding:20px;}
 /* TABS */
 .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 20px;background:var(--gunmetal);margin-bottom:20px;}
-.tab{padding:12px 18px;font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:'Barlow Condensed',sans-serif;letter-spacing:.06em;}
+.tab{padding:12px 18px;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:'Barlow Condensed',sans-serif;letter-spacing:.06em;}
 .tab:hover{color:var(--white);}
 .tab.active{color:var(--pink);border-bottom-color:var(--pink);}
 .tab-content{display:none;}
 .tab-content.active{display:block;}
 /* FORMS */
 .form-group{margin-bottom:16px;}
-.form-label{display:block;font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.08em;margin-bottom:5px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+.form-label{display:block;font-size:13px;font-weight:700;color:var(--text-muted);letter-spacing:.08em;margin-bottom:5px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
 .form-input,.form-select,.form-textarea{width:100%;padding:9px 12px;background:#f8f9fa;border:1px solid var(--border);border-radius:6px;color:var(--white);font-size:13px;font-family:'Barlow',sans-serif;transition:border-color .15s;}
 .form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--steel-blue);}
 .form-select{cursor:pointer;}
 .form-textarea{resize:vertical;min-height:70px;}
-.form-hint{font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.4;}
+.form-hint{font-size:13px;color:var(--text-muted);margin-top:4px;line-height:1.4;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 .id-row{display:flex;gap:8px;}
-.id-row .form-input{flex:1;font-family:'JetBrains Mono',monospace;font-size:12px;}
-.extracted-ok{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);margin-top:4px;padding:4px 8px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:4px;display:none;}
+.id-row .form-input{flex:1;font-family:'JetBrains Mono',monospace;font-size:13px;}
+.extracted-ok{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green);margin-top:4px;padding:4px 8px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:4px;display:none;}
 /* INBOX STATUS */
 .inbox-status{display:flex;align-items:center;gap:12px;padding:14px 20px;background:rgba(233,30,140,.05);border-bottom:1px solid var(--border);}
 .inbox-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .inbox-dot.set{background:var(--green);}
 .inbox-dot.unset{background:var(--red);}
 .inbox-label{font-size:13px;font-weight:600;flex:1;}
-.inbox-id{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);}
+.inbox-id{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);}
 /* DRIVER TABLE */
 .driver-table{width:100%;border-collapse:collapse;}
-.driver-table th{padding:9px 14px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;text-align:left;background:var(--gunmetal-light);border-bottom:1px solid var(--border);}
+.driver-table th{padding:9px 14px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;text-align:left;background:var(--gunmetal-light);border-bottom:1px solid var(--border);}
 .driver-table td{padding:11px 14px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
 .driver-table tr:last-child td{border-bottom:none;}
 .driver-table tr:hover td{background:rgba(255,255,255,.02);}
 .driver-name{font-weight:600;color:var(--white-pure);}
-.driver-folder-id{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);}
+.driver-folder-id{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);}
 /* CATEGORY CHIPS */
 .cat-list{display:flex;flex-wrap:wrap;gap:6px;padding:16px 20px;}
-.cat-chip{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--gunmetal-light);border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--text-mid);}
+.cat-chip{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--gunmetal-light);border:1px solid var(--border);border-radius:6px;font-size:13px;font-weight:600;color:var(--text-mid);}
 .cat-chip .chip-icon{font-size:14px;}
 .cat-chip .chip-del{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:0 0 0 4px;line-height:1;}
 .cat-chip .chip-del:hover{color:var(--red);}
@@ -107,7 +112,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .modal-body{padding:24px;}
 .modal-footer{display:flex;gap:10px;justify-content:flex-end;padding:16px 24px;border-top:1px solid var(--border);}
 /* BANNER */
-.banner{padding:10px 16px;border-radius:6px;font-size:12px;display:flex;gap:8px;align-items:center;margin-bottom:16px;}
+.banner{padding:10px 16px;border-radius:6px;font-size:13px;display:flex;gap:8px;align-items:center;margin-bottom:16px;}
 .banner-success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:var(--green);}
 .banner-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red);}
 .banner-info{background:rgba(46,109,164,.1);border:1px solid rgba(46,109,164,.25);color:#60a5fa;}
@@ -117,8 +122,8 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .auth-icon{width:40px;height:40px;border-radius:8px;background:rgba(46,109,164,.15);border:1px solid rgba(46,109,164,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .auth-info{flex:1;}
 .auth-title{font-size:14px;font-weight:600;}
-.auth-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
-.auth-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:3px 8px;border-radius:4px;}
+.auth-sub{font-size:13px;color:var(--text-muted);margin-top:2px;}
+.auth-badge{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:3px 8px;border-radius:4px;}
 .auth-badge.ok{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25);}
 .auth-badge.no{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
 .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
@@ -126,16 +131,16 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .queue-item{display:flex;align-items:flex-start;gap:14px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04);}
 .queue-item:last-child{border-bottom:none;}
 .queue-item:hover{background:rgba(255,255,255,.02);}
-.q-icon{width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.q-icon{width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;}
 .q-icon.pdf{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.2);}
 .q-icon.doc{background:rgba(46,109,164,.15);color:#60a5fa;border:1px solid rgba(46,109,164,.2);}
 .q-icon.img{background:rgba(233,30,140,.12);color:var(--pink);border:1px solid rgba(233,30,140,.2);}
 .q-icon.other{background:rgba(100,116,139,.12);color:var(--text-mid);border:1px solid rgba(100,116,139,.2);}
 .q-info{flex:1;min-width:0;}
 .q-name{font-size:13px;font-weight:600;color:var(--white-pure);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.q-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:2px;}
+.q-meta{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);margin-top:2px;}
 .q-guess{margin-top:6px;display:flex;flex-wrap:wrap;gap:5px;}
-.q-guess-chip{font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:2px 7px;border-radius:4px;}
+.q-guess-chip{font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:2px 7px;border-radius:4px;}
 .guess-load{background:rgba(46,109,164,.15);color:#60a5fa;border:1px solid rgba(46,109,164,.2);}
 .guess-driver{background:rgba(233,30,140,.12);color:var(--pink);border:1px solid rgba(233,30,140,.2);}
 .guess-cat{background:rgba(232,100,10,.12);color:var(--orange);border:1px solid rgba(232,100,10,.2);}
@@ -146,7 +151,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .empty-state{padding:48px;text-align:center;color:var(--text-muted);}
 .empty-icon{font-size:36px;margin-bottom:12px;opacity:.4;}
 .empty-text{font-size:14px;margin-bottom:4px;}
-.empty-sub{font-size:12px;}
+.empty-sub{font-size:13px;}
 /* SPINNER */
 .spinner{width:16px;height:16px;border:2px solid rgba(233,30,140,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -238,38 +243,38 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
           </div>
           <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
             <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--gunmetal-light);border:1px solid var(--border);border-radius:7px;">
-              <div style="width:24px;height:24px;border-radius:5px;background:rgba(46,109,164,.2);color:#60a5fa;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">1</div>
+              <div style="width:24px;height:24px;border-radius:5px;background:rgba(46,109,164,.2);color:#60a5fa;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">1</div>
               <div>
                 <div style="font-size:13px;font-weight:600;color:var(--white-pure);margin-bottom:3px;">Match to a Rate Con / Load Number</div>
-                <div style="font-size:12px;color:var(--text-muted);">Filename scanned for load numbers (e.g. 363402, RC-, BOL-). If matched → files under that load's driver folder → Rate Cons category.</div>
+                <div style="font-size:13px;color:var(--text-muted);">Filename scanned for load numbers (e.g. 363402, RC-, BOL-). If matched → files under that load's driver folder → Rate Cons category.</div>
               </div>
             </div>
             <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--gunmetal-light);border:1px solid var(--border);border-radius:7px;">
-              <div style="width:24px;height:24px;border-radius:5px;background:rgba(233,30,140,.15);color:var(--pink);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">2</div>
+              <div style="width:24px;height:24px;border-radius:5px;background:rgba(233,30,140,.15);color:var(--pink);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">2</div>
               <div>
                 <div style="font-size:13px;font-weight:600;color:var(--white-pure);margin-bottom:3px;">Match to a Driver by Name</div>
-                <div style="font-size:12px;color:var(--text-muted);">Filename scanned for driver names (Guillermo, Miguel, Nelson, Yosviel, etc.). If matched → that driver's folder → correct category.</div>
+                <div style="font-size:13px;color:var(--text-muted);">Filename scanned for driver names (Guillermo, Miguel, Nelson, Yosviel, etc.). If matched → that driver's folder → correct category.</div>
               </div>
             </div>
             <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--gunmetal-light);border:1px solid var(--border);border-radius:7px;">
-              <div style="width:24px;height:24px;border-radius:5px;background:rgba(232,100,10,.15);color:var(--orange);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">3</div>
+              <div style="width:24px;height:24px;border-radius:5px;background:rgba(232,100,10,.15);color:var(--orange);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">3</div>
               <div>
                 <div style="font-size:13px;font-weight:600;color:var(--white-pure);margin-bottom:3px;">Detect Document Category</div>
-                <div style="font-size:12px;color:var(--text-muted);">Keywords in filename determine category: PERMIT → Permits, EXPENSE/EXP → Expenses, COI/INSURANCE → Personal, LEASE → Contracts, etc.</div>
+                <div style="font-size:13px;color:var(--text-muted);">Keywords in filename determine category: PERMIT → Permits, EXPENSE/EXP → Expenses, COI/INSURANCE → Personal, LEASE → Contracts, etc.</div>
               </div>
             </div>
             <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--gunmetal-light);border:1px solid var(--border);border-radius:7px;">
-              <div style="width:24px;height:24px;border-radius:5px;background:rgba(34,197,94,.12);color:var(--green);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">4</div>
+              <div style="width:24px;height:24px;border-radius:5px;background:rgba(34,197,94,.12);color:var(--green);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">4</div>
               <div>
                 <div style="font-size:13px;font-weight:600;color:var(--white-pure);margin-bottom:3px;">Extract Document Date</div>
-                <div style="font-size:12px;color:var(--text-muted);">Date extracted from filename or file creation date. Used to tie document to the correct settlement period (bi-weekly, monthly).</div>
+                <div style="font-size:13px;color:var(--text-muted);">Date extracted from filename or file creation date. Used to tie document to the correct settlement period (bi-weekly, monthly).</div>
               </div>
             </div>
             <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:7px;">
-              <div style="width:24px;height:24px;border-radius:5px;background:rgba(251,191,36,.15);color:var(--yellow);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">!</div>
+              <div style="width:24px;height:24px;border-radius:5px;background:rgba(251,191,36,.15);color:var(--yellow);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;">!</div>
               <div>
                 <div style="font-size:13px;font-weight:600;color:var(--white-pure);margin-bottom:3px;">Unmatched → Review Queue</div>
-                <div style="font-size:12px;color:var(--text-muted);">If no driver or load can be determined, the document goes to the <strong style="color:var(--yellow);">Review Queue</strong> (Doc Inbox page) for manual routing by admin.</div>
+                <div style="font-size:13px;color:var(--text-muted);">If no driver or load can be determined, the document goes to the <strong style="color:var(--yellow);">Review Queue</strong> (Doc Inbox page) for manual routing by admin.</div>
               </div>
             </div>
           </div>
@@ -321,7 +326,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
           </div>
           <button class="btn btn-pink btn-sm" onclick="openDriverModal()">+ Add Driver Vault</button>
         </div>
-        <div style="padding:12px 20px 16px;font-size:12px;color:var(--text-muted);background:rgba(46,109,164,.04);border-bottom:1px solid var(--border);line-height:1.6;">
+        <div style="padding:12px 20px 16px;font-size:13px;color:var(--text-muted);background:rgba(46,109,164,.04);border-bottom:1px solid var(--border);line-height:1.6;">
           Each driver vault has the <strong style="color:var(--white);">same folder categories</strong> (configured in the Categories tab). The app uses the categories to route incoming documents. Map the root Drive folder ID for each driver — the sub-folders are referenced by name.
         </div>
         <div id="driver-vaults-body">
@@ -343,7 +348,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
             <div class="card-sub">Same folder structure applied to every driver vault</div>
           </div>
         </div>
-        <div style="padding:14px 20px 10px;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border);">
+        <div style="padding:14px 20px 10px;font-size:13px;color:var(--text-muted);border-bottom:1px solid var(--border);">
           These are the sub-folder names inside every driver's vault. The routing engine uses the <strong style="color:var(--white);">keywords</strong> to classify incoming documents. Folder name must match exactly what's in Google Drive.
         </div>
         <div id="categories-list" class="cat-list"></div>
@@ -406,8 +411,8 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
         </div>
         <div id="cid-warn" style="padding:0 20px 18px;display:none;">
           <div style="background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);border-radius:7px;padding:12px 14px;">
-            <div style="font-size:11px;color:var(--yellow);font-weight:700;margin-bottom:6px;font-family:'JetBrains Mono',monospace;">⚠ GOOGLE OAUTH CLIENT ID NOT SET</div>
-            <div style="font-size:12px;color:var(--text-mid);margin-bottom:10px;">Set <code style="color:var(--orange);">NEXUS_GOOGLE_CLIENT_ID</code> in <code style="color:var(--orange);">nexus-config.js</code>, or enter a Client ID below for this session.</div>
+            <div style="font-size:13px;color:var(--yellow);font-weight:700;margin-bottom:6px;font-family:'JetBrains Mono',monospace;">⚠ GOOGLE OAUTH CLIENT ID NOT SET</div>
+            <div style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Set <code style="color:var(--orange);">NEXUS_GOOGLE_CLIENT_ID</code> in <code style="color:var(--orange);">nexus-config.js</code>, or enter a Client ID below for this session.</div>
             <div style="display:flex;gap:8px;">
               <input type="text" id="temp-cid" class="form-input" placeholder="Your Google OAuth Client ID">
               <button class="btn btn-orange" onclick="useTempCid()">Use</button>
@@ -689,13 +694,13 @@ function refreshDriverVaultsUI() {
     html += `<tr>
       <td>
         <div class="driver-name">${esc(v.name)}</div>
-        ${v.truck ? `<div style="font-size:11px;color:var(--orange);margin-top:2px;">🚛 Unit ${esc(v.truck)}</div>` : ''}
+        ${v.truck ? `<div style="font-size:13px;color:var(--orange);margin-top:2px;">🚛 Unit ${esc(v.truck)}</div>` : ''}
       </td>
       <td>
         <div class="driver-folder-id">${esc(v.rootId||'—')}</div>
-        <a href="https://drive.google.com/drive/folders/${esc(v.rootId||'')}" target="_blank" style="font-size:10px;color:var(--steel-blue-light);">Open ↗</a>
+        <a href="https://drive.google.com/drive/folders/${esc(v.rootId||'')}" target="_blank" style="font-size:13px;color:var(--steel-blue-light);">Open ↗</a>
       </td>
-      <td><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">${esc(v.shortNames||v.name)}</div></td>
+      <td><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);">${esc(v.shortNames||v.name)}</div></td>
       <td><span class="${v.status==='inactive'?'auth-badge no':'auth-badge ok'}"><span class="dot"></span>${(v.status||'active').toUpperCase()}</span></td>
       <td>
         <div style="display:flex;gap:6px;">
@@ -785,7 +790,7 @@ function refreshCategoriesUI() {
     <div class="cat-chip">
       <span class="chip-icon">${c.emoji||'📁'}</span>
       <span>${esc(c.name)}</span>
-      <span style="font-size:10px;color:var(--text-muted);margin-left:4px;">[${esc(c.keywords||'')}]</span>
+      <span style="font-size:13px;color:var(--text-muted);margin-left:4px;">[${esc(c.keywords||'')}]</span>
       <button class="chip-del" onclick="deleteCategory(${i})" title="Remove">×</button>
     </div>`).join('');
 }

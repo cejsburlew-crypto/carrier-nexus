@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -31,27 +36,27 @@
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
 .layout{display:flex;min-height:100vh;}.main{flex:1;overflow-x:hidden;margin-left:220px;}
 .topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
-.topbar-title{font-size:17px;font-weight:700;}.topbar-sub{font-size:11px;color:var(--mid);margin-top:2px;}
+.topbar-title{font-size:17px;font-weight:700;}.topbar-sub{font-size:13px;color:var(--mid);margin-top:2px;}
 .btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
 .btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:#2563eb;}
 .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}.btn-outline:hover{background:var(--panel2);}
-.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-sm{padding:6px 12px;font-size:13px;}
 .btn-green{background:var(--green);color:#fff;}
 .content{padding:20px;max-width:1100px;margin:0 auto;}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
 .kpi{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;}
-.kpi-label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.kpi-label{font-size:13px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
 .kpi-value{font-size:26px;font-weight:800;line-height:1;}
-.kpi-sub{font-size:11px;color:var(--mid);margin-top:3px;}
+.kpi-sub{font-size:13px;color:var(--mid);margin-top:3px;}
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
 .panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.panel-title{font-size:14px;font-weight:700;}.panel-sub{font-size:12px;color:var(--mid);}
+.panel-title{font-size:14px;font-weight:700;}.panel-sub{font-size:13px;color:var(--mid);}
 table{width:100%;border-collapse:collapse;}
-th{padding:9px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+th{padding:9px 14px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
 td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:rgba(255,255,255,.02);}
-.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:13px;font-weight:700;}
 .badge-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
 .badge-yellow{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25);}
 .badge-green{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);}
@@ -66,7 +71,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
 .modal-body{padding:20px;}
 .modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
 .field-group{margin-bottom:14px;}
-.field-label{font-size:12px;color:var(--mid);margin-bottom:5px;display:block;}
+.field-label{font-size:13px;color:var(--mid);margin-bottom:5px;display:block;}
 .form-input,.form-select,.form-textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;}
 .form-input:focus,.form-select:focus{outline:none;border-color:var(--blue);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -137,7 +142,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
         <div class="field-group"><label class="field-label">Effective Date *</label><input class="form-input" type="date" id="c-start"></div>
         <div class="field-group"><label class="field-label">Expiration Date *</label><input class="form-input" type="date" id="c-end"></div>
       </div>
-      <div class="field-group"><label class="field-label">Certificate Holder</label><input class="form-input" id="c-holder" value="Carrier Trucking US, LLC — US DOT 4326039 — MC 1688495" readonly style="color:var(--mid);font-size:12px;"></div>
+      <div class="field-group"><label class="field-label">Certificate Holder</label><input class="form-input" id="c-holder" value="Carrier Trucking US, LLC — US DOT 4326039 — MC 1688495" readonly style="color:var(--mid);font-size:13px;"></div>
       <div class="field-group"><label class="field-label">Additional Insured (if any)</label><input class="form-input" id="c-addinsured" placeholder="Name or leave blank"></div>
       <div class="field-group"><label class="field-label">Notes</label><textarea class="form-input" id="c-notes" rows="2" placeholder="Any special conditions, project name, load reference..."></textarea></div>
     </div>
@@ -195,12 +200,12 @@ function renderTable(){
     const stLabel = {active:'Active',expiring:'Expiring',expired:'Expired',revoked:'Revoked'}[st]||st;
     const cov = c.coverage ? '$'+Number(c.coverage).toLocaleString() : '—';
     return `<tr>
-      <td style="font-family:monospace;font-size:12px;">${c.id}</td>
-      <td><div style="font-weight:600;">${c.company}</div><div style="font-size:11px;color:var(--mid);">${c.contact||''}</div></td>
-      <td style="font-size:12px;">${c.policyType||'—'}</td>
-      <td style="font-size:12px;">${cov}</td>
-      <td style="font-size:12px;">${fmtDate(c.startDate)}</td>
-      <td style="font-size:12px;">${fmtDate(c.expDate)}</td>
+      <td style="font-family:monospace;font-size:13px;">${c.id}</td>
+      <td><div style="font-weight:600;">${c.company}</div><div style="font-size:13px;color:var(--mid);">${c.contact||''}</div></td>
+      <td style="font-size:13px;">${c.policyType||'—'}</td>
+      <td style="font-size:13px;">${cov}</td>
+      <td style="font-size:13px;">${fmtDate(c.startDate)}</td>
+      <td style="font-size:13px;">${fmtDate(c.expDate)}</td>
       <td style="color:${dlColor};font-weight:700;">${dlText}</td>
       <td><span class="badge ${stBadge}">${stLabel}</span></td>
       <td style="white-space:nowrap;">

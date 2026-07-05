@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -78,7 +83,7 @@
     .status-meta-item span { color: var(--mid); }
     .status-meta-item strong { color: var(--text); margin-left: 4px; }
     .status-confirm {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--mid);
       margin-top: 8px;
       font-family: monospace;
@@ -130,7 +135,7 @@
     .detail-item { display: flex; flex-direction: column; gap: 4px; }
     .detail-item.full { grid-column: 1 / -1; }
     .detail-label {
-      font-size: 11px;
+      font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--mid);
@@ -154,7 +159,7 @@
       display: inline-block;
       padding: 3px 10px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.4px;
     }
@@ -219,7 +224,7 @@
     }
     .resource-link:hover { border-color: var(--blue); }
     .resource-link .resource-desc {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--mid);
       font-weight: 400;
       margin-left: 4px;
@@ -292,7 +297,7 @@
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group.full { grid-column: 1 / -1; }
     .form-label {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
       color: var(--mid);
       text-transform: uppercase;

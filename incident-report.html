@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -33,33 +38,33 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .main{flex:1;overflow-x:hidden;margin-left:220px;}
 .topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
 .topbar-title{font-size:17px;font-weight:700;}
-.topbar-sub{font-size:11px;color:var(--mid);margin-top:2px;}
+.topbar-sub{font-size:13px;color:var(--mid);margin-top:2px;}
 .btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
 .btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:#2563eb;}
 .btn-red{background:var(--red);color:#fff;}.btn-red:hover{background:#dc2626;}
 .btn-green{background:var(--green);color:#fff;}.btn-green:hover{background:#059669;}
 .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}.btn-outline:hover{background:var(--panel2);}
-.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-sm{padding:6px 12px;font-size:13px;}
 .content{padding:20px;max-width:1100px;margin:0 auto;}
 /* KPI */
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
 .kpi{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;}
-.kpi-label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.kpi-label{font-size:13px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
 .kpi-value{font-size:26px;font-weight:800;line-height:1;}
-.kpi-sub{font-size:11px;color:var(--mid);margin-top:3px;}
+.kpi-sub{font-size:13px;color:var(--mid);margin-top:3px;}
 /* PANEL */
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
 .panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .panel-title{font-size:14px;font-weight:700;}
-.panel-sub{font-size:12px;color:var(--mid);}
+.panel-sub{font-size:13px;color:var(--mid);}
 /* TABLE */
 table{width:100%;border-collapse:collapse;}
-th{padding:9px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+th{padding:9px 14px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
 td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:rgba(255,255,255,.02);}
 /* BADGES */
-.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:13px;font-weight:700;}
 .badge-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
 .badge-yellow{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25);}
 .badge-green{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);}
@@ -78,12 +83,12 @@ tr:hover td{background:rgba(255,255,255,.02);}
 .progress-bar{height:4px;background:var(--dim);border-radius:2px;margin-top:12px;overflow:hidden;}
 .progress-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .3s;}
 .step-labels{display:flex;justify-content:space-between;margin-top:6px;}
-.step-label{font-size:10px;color:var(--mid);}
+.step-label{font-size:13px;color:var(--mid);}
 .step-label.active{color:var(--blue);font-weight:700;}
 .wizard-body{padding:22px;}
 .step{display:none;}.step.active{display:block;}
 .field-group{margin-bottom:16px;}
-.field-label{font-size:12px;color:var(--mid);margin-bottom:5px;display:block;}
+.field-label{font-size:13px;color:var(--mid);margin-bottom:5px;display:block;}
 .field-label span{color:var(--red);}
 .form-input,.form-select,.form-textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;}
 .form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--blue);}
@@ -99,10 +104,10 @@ tr:hover td{background:rgba(255,255,255,.02);}
 .sev-opt.selected-major{border-color:#f97316;background:rgba(249,115,22,.08);}
 .sev-opt.selected-critical{border-color:#ef4444;background:rgba(239,68,68,.08);}
 .sev-title{font-size:13px;font-weight:700;}
-.sev-sub{font-size:11px;color:var(--mid);margin-top:2px;}
+.sev-sub{font-size:13px;color:var(--mid);margin-top:2px;}
 /* CHECKBOXES */
 .check-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}
-.check-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:7px;cursor:pointer;font-size:12px;}
+.check-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:7px;cursor:pointer;font-size:13px;}
 .check-item input{width:14px;height:14px;cursor:pointer;}
 /* TOGGLE */
 .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;}
@@ -115,11 +120,11 @@ tr:hover td{background:rgba(255,255,255,.02);}
 .photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
 .photo-slot{background:var(--panel2);border:1px dashed var(--border);border-radius:8px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;}
 .photo-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
-.photo-slot-label{font-size:10px;color:var(--mid);text-align:center;margin-top:4px;}
+.photo-slot-label{font-size:13px;color:var(--mid);text-align:center;margin-top:4px;}
 .photo-slot input{display:none;}
 /* PARTY ROWS */
 .party-row{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;position:relative;}
-.party-row .remove-btn{position:absolute;top:8px;right:8px;background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:5px;padding:2px 8px;font-size:11px;cursor:pointer;}
+.party-row .remove-btn{position:absolute;top:8px;right:8px;background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:5px;padding:2px 8px;font-size:13px;cursor:pointer;}
 /* FMCSA BANNER */
 .fmcsa-banner{background:rgba(239,68,68,.1);border:2px solid var(--red);border-radius:10px;padding:14px;margin-bottom:12px;display:none;}
 .fmcsa-banner.show{display:block;}
@@ -185,7 +190,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
 <div id="detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;overflow-y:auto;padding:20px;">
   <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;width:100%;max-width:780px;margin:auto;">
     <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-      <div><div id="detail-title" style="font-size:16px;font-weight:700;"></div><div id="detail-subtitle" style="font-size:12px;color:var(--mid);"></div></div>
+      <div><div id="detail-title" style="font-size:16px;font-weight:700;"></div><div id="detail-subtitle" style="font-size:13px;color:var(--mid);"></div></div>
       <div style="display:flex;gap:8px;">
         <button class="btn btn-outline btn-sm no-print" onclick="printDetail()">🖨 Print</button>
         <button class="btn btn-outline btn-sm no-print" onclick="closeDetail()">✕ Close</button>
@@ -203,7 +208,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
         <div class="wizard-title">📋 New Incident Report</div>
         <button class="btn btn-outline btn-sm" onclick="closeWizard()">✕ Cancel</button>
       </div>
-      <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--mid);" id="step-counter">Step 1 of 6</div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:13px;color:var(--mid);" id="step-counter">Step 1 of 6</div>
       <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:16.6%;"></div></div>
       <div class="step-labels">
         <span class="step-label active" id="sl0">Basics</span>
@@ -291,7 +296,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
           <div class="sev-grid" id="sev-grid">
             <div class="sev-opt" onclick="setSev('minor',this)"><input type="radio" name="sev" value="minor"><div class="sev-title" style="color:#10b981;">Minor</div><div class="sev-sub">No injury · &lt;$500 damage · No tow</div></div>
             <div class="sev-opt" onclick="setSev('moderate',this)"><input type="radio" name="sev" value="moderate"><div class="sev-title" style="color:#f59e0b;">Moderate</div><div class="sev-sub">$500–$5,000 damage or minor injury</div></div>
-            <div class="sev-opt" onclick="setSev('major',this)"><input type="radio" name="sev" value="major"><div class="sev-title" style="color:#f97316;">Major</div><div class="sev-title" style="font-weight:400;font-size:11px;color:var(--mid);">&gt;$5,000 damage or injury requiring treatment</div></div>
+            <div class="sev-opt" onclick="setSev('major',this)"><input type="radio" name="sev" value="major"><div class="sev-title" style="color:#f97316;">Major</div><div class="sev-title" style="font-weight:400;font-size:13px;color:var(--mid);">&gt;$5,000 damage or injury requiring treatment</div></div>
             <div class="sev-opt" onclick="setSev('critical',this)"><input type="radio" name="sev" value="critical"><div class="sev-title" style="color:#ef4444;">Critical</div><div class="sev-sub">Fatality or serious injury</div></div>
           </div>
         </div>
@@ -403,18 +408,18 @@ tr:hover td{background:rgba(255,255,255,.02);}
         </div>
         <div class="toggle-row"><span class="toggle-label">Driver statement obtained</span><div class="toggle" id="tog-drvstmt" onclick="togToggle('tog-drvstmt')"></div></div>
         <div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:14px;margin-top:14px;margin-bottom:14px;">
-          <div style="font-size:12px;color:var(--mid);margin-bottom:10px;">By signing below, I certify that the information in this report is accurate and complete to the best of my knowledge.</div>
+          <div style="font-size:13px;color:var(--mid);margin-bottom:10px;">By signing below, I certify that the information in this report is accurate and complete to the best of my knowledge.</div>
           <div class="form-row">
             <div class="field-group"><label class="field-label">Driver Signature (type full name)</label><input class="form-input" id="sig-driver" placeholder="Type full name to certify" oninput="stampSig('sig-ts-driver')"></div>
             <div class="field-group"><label class="field-label">Supervisor Signature</label><input class="form-input" id="sig-admin" placeholder="Jim Burlew" oninput="stampSig('sig-ts-admin')"></div>
           </div>
-          <div style="font-size:11px;color:var(--mid);">Driver signed: <span id="sig-ts-driver">—</span> &nbsp;·&nbsp; Supervisor: <span id="sig-ts-admin">—</span></div>
+          <div style="font-size:13px;color:var(--mid);">Driver signed: <span id="sig-ts-driver">—</span> &nbsp;·&nbsp; Supervisor: <span id="sig-ts-admin">—</span></div>
         </div>
       </div>
     </div>
     <div class="wizard-footer">
       <button class="btn btn-outline" id="btn-back" onclick="stepNav(-1)" style="visibility:hidden;">← Back</button>
-      <span id="step-indicator" style="font-size:12px;color:var(--mid);">Step 1 of 6</span>
+      <span id="step-indicator" style="font-size:13px;color:var(--mid);">Step 1 of 6</span>
       <button class="btn btn-primary" id="btn-next" onclick="stepNav(1)">Next →</button>
     </div>
   </div>
@@ -467,13 +472,13 @@ function renderTable(){
   const tbody = document.getElementById('inc-tbody');
   if(!filtered.length){ tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--mid);padding:24px;">No incidents on record — <span style="color:var(--green);">✅ Keep it that way</span></td></tr>'; return; }
   tbody.innerHTML = filtered.map(i=>`<tr>
-    <td style="font-family:monospace;font-size:12px;">${i.id}</td>
+    <td style="font-family:monospace;font-size:13px;">${i.id}</td>
     <td>${fmtDate(i.date)}</td>
     <td style="font-weight:600;">${i.driverName||'—'}</td>
-    <td style="font-size:12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.location||'—'}</td>
-    <td style="font-size:12px;">${(i.types||[]).slice(0,1).join(', ')||'—'}${i.types&&i.types.length>1?' +'+( i.types.length-1):''}</td>
+    <td style="font-size:13px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.location||'—'}</td>
+    <td style="font-size:13px;">${(i.types||[]).slice(0,1).join(', ')||'—'}${i.types&&i.types.length>1?' +'+( i.types.length-1):''}</td>
     <td><span class="badge ${SEV_BADGE[i.severity]||'badge-gray'}">${(i.severity||'—').toUpperCase()}</span></td>
-    <td>${i.fmcsaReportable?'<span class="badge badge-red">FMCSA</span>':'<span style="color:var(--mid);font-size:12px;">No</span>'}</td>
+    <td>${i.fmcsaReportable?'<span class="badge badge-red">FMCSA</span>':'<span style="color:var(--mid);font-size:13px;">No</span>'}</td>
     <td><span class="badge ${STATUS_BADGE[i.status]||'badge-gray'}">${STATUS_LABEL[i.status]||i.status}</span></td>
     <td><button class="btn btn-outline btn-sm" onclick="viewInc('${i.id}')">View</button> <button class="btn btn-outline btn-sm" onclick="changeStatus('${i.id}')" style="margin-left:4px;">Status</button> <a href="claims.html?incident=${encodeURIComponent(i.id)}" class="btn btn-outline btn-sm" style="margin-left:4px;text-decoration:none;">⚖️ Claim</a></td>
   </tr>`).join('');
@@ -505,7 +510,7 @@ function viewInc(id){
       <div class="detail-section-title">Other Parties (${(inc.parties||[]).length})</div>
       ${(inc.parties||[]).map((p,i)=>`<div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;">
         <div style="font-weight:700;margin-bottom:4px;">Party ${i+1}: ${p.name||'—'}</div>
-        <div style="font-size:12px;color:var(--mid);">Phone: ${p.phone||'—'} · Plate: ${p.plate||'—'} ${p.plateState||''} · Insurance: ${p.insuranceCo||'—'} · Policy: ${p.policyNum||'—'}</div>
+        <div style="font-size:13px;color:var(--mid);">Phone: ${p.phone||'—'} · Plate: ${p.plate||'—'} ${p.plateState||''} · Insurance: ${p.insuranceCo||'—'} · Policy: ${p.policyNum||'—'}</div>
       </div>`).join('')||'<div style="color:var(--mid);font-size:13px;">No other parties recorded</div>'}
     </div>
     <div class="detail-section">
@@ -612,7 +617,7 @@ function addParty(){
   const c = partyCount++;
   const d = document.createElement('div'); d.className='party-row'; d.id='party-'+c;
   d.innerHTML = `<button class="remove-btn" onclick="document.getElementById('party-${c}').remove()">✕</button>
-    <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--blue);">Party ${c+1}</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--blue);">Party ${c+1}</div>
     <div class="form-row"><div class="field-group"><label class="field-label">Name</label><input class="form-input" id="pr-name-${c}"></div><div class="field-group"><label class="field-label">Phone</label><input class="form-input" id="pr-phone-${c}"></div></div>
     <div class="form-row"><div class="field-group"><label class="field-label">License Plate</label><input class="form-input" id="pr-plate-${c}"></div><div class="field-group"><label class="field-label">State</label><input class="form-input" id="pr-state-${c}" maxlength="2" placeholder="FL"></div></div>
     <div class="form-row"><div class="field-group"><label class="field-label">Insurance Company</label><input class="form-input" id="pr-ins-${c}"></div><div class="field-group"><label class="field-label">Policy Number</label><input class="form-input" id="pr-pol-${c}"></div></div>
@@ -624,7 +629,7 @@ function addWitness(){
   const c = witnessCount++;
   const d = document.createElement('div'); d.className='party-row'; d.id='witness-'+c;
   d.innerHTML = `<button class="remove-btn" onclick="document.getElementById('witness-${c}').remove()">✕</button>
-    <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--mid);">Witness ${c+1}</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--mid);">Witness ${c+1}</div>
     <div class="form-row"><div class="field-group"><label class="field-label">Name</label><input class="form-input" id="wi-name-${c}"></div><div class="field-group"><label class="field-label">Phone</label><input class="form-input" id="wi-phone-${c}"></div></div>
     <div class="field-group"><label class="field-label">Statement Summary</label><textarea class="form-textarea" id="wi-stmt-${c}" rows="2"></textarea></div>`;
   document.getElementById('witnesses-container').appendChild(d);

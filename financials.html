@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -54,7 +59,7 @@
   .sidebar-logo-mark { width: 28px; height: 28px; background: var(--orange); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 16px; color: #fff; flex-shrink: 0; }
   .sidebar-logo-text { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--white-pure); }
   .sidebar-nav { flex: 1; padding: 12px 0; }
-  .sidebar-section-label { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); padding: 12px 16px 4px; }
+  .sidebar-section-label { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); padding: 12px 16px 4px; }
   .sidebar-link { display: flex; align-items: center; gap: 10px; padding: 8px 16px; font-size: 13px; font-weight: 500; color: var(--text-dim); text-decoration: none; border-radius: 0; transition: background 0.15s, color 0.15s; }
   .sidebar-link:hover { background: rgba(255,255,255,0.05); color: var(--white-pure); }
   .sidebar-link.active { background: var(--orange-dim); color: var(--orange); border-left: 2px solid var(--orange); }
@@ -67,15 +72,15 @@
   .topbar { background: var(--black-2); border-bottom: 1px solid var(--border); padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
   .topbar-left { display: flex; align-items: center; gap: 16px; }
   .topbar-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 20px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .topbar-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(232,100,10,0.3); }
+  .topbar-badge { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(232,100,10,0.3); }
   .topbar-right { display: flex; align-items: center; gap: 12px; }
 
   /* ── TOGGLE ROW ── */
   .view-toggle { display: flex; gap: 4px; background: var(--black-3); border: 1px solid var(--border); border-radius: 8px; padding: 3px; }
-  .toggle-btn { padding: 6px 14px; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border: none; border-radius: 5px; cursor: pointer; transition: all 0.15s; background: transparent; color: var(--text-muted); }
+  .toggle-btn { padding: 6px 14px; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border: none; border-radius: 5px; cursor: pointer; transition: all 0.15s; background: transparent; color: var(--text-muted); }
   .toggle-btn.active { background: var(--orange); color: #fff; }
 
-  .period-select { background: var(--black-3); border: 1px solid var(--border); color: var(--white-pure); padding: 6px 12px; font-size: 12px; border-radius: 6px; font-family: 'Barlow', sans-serif; cursor: pointer; }
+  .period-select { background: var(--black-3); border: 1px solid var(--border); color: var(--white-pure); padding: 6px 12px; font-size: 13px; border-radius: 6px; font-family: 'Barlow', sans-serif; cursor: pointer; }
 
   /* ── CONTENT ── */
   .content { padding: 24px 28px; flex: 1; }
@@ -83,10 +88,10 @@
   /* ── KPI ROW ── */
   .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
   .kpi-card { background: var(--black-2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
-  .kpi-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  .kpi-label { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
   .kpi-value { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 26px; letter-spacing: 0.02em; }
-  .kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-  .kpi-delta { font-size: 11px; font-weight: 600; margin-top: 4px; }
+  .kpi-sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .kpi-delta { font-size: 13px; font-weight: 600; margin-top: 4px; }
   .kpi-delta.up { color: var(--green); }
   .kpi-delta.down { color: var(--red); }
   .kpi-card.highlight { border-color: rgba(232,100,10,0.3); background: linear-gradient(135deg, rgba(232,100,10,0.06) 0%, var(--black-2) 100%); }
@@ -97,17 +102,17 @@
   .chart-panel.full { grid-column: 1 / -1; }
   .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
   .panel-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 0.06em; }
-  .panel-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .panel-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
   .chart-wrap { position: relative; }
 
   /* ── VARIABLE TABLE ── */
-  .var-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .var-table th { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); padding: 6px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+  .var-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .var-table th { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); padding: 6px 10px; border-bottom: 1px solid var(--border); text-align: left; }
   .var-table td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); }
   .var-table tr:last-child td { border-bottom: none; }
   .var-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
   .var-name { display: flex; align-items: center; font-weight: 500; }
-  .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .mono { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
   .range-bar { height: 4px; background: var(--black-4); border-radius: 2px; position: relative; margin-top: 3px; width: 100%; }
   .range-fill { position: absolute; top: 0; height: 4px; border-radius: 2px; }
   .mean-tick { position: absolute; top: -2px; width: 2px; height: 8px; background: rgba(255,255,255,0.6); border-radius: 1px; }
@@ -115,12 +120,12 @@
   /* ── DRIVER SECTION ── */
   .driver-section { background: var(--black-2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
   .driver-tabs { display: flex; gap: 4px; background: var(--black-3); border: 1px solid var(--border); border-radius: 8px; padding: 3px; margin-bottom: 16px; overflow-x: auto; }
-  .driver-tab { padding: 5px 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; border: none; border-radius: 5px; cursor: pointer; transition: all 0.15s; background: transparent; color: var(--text-muted); white-space: nowrap; }
+  .driver-tab { padding: 5px 14px; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; border: none; border-radius: 5px; cursor: pointer; transition: all 0.15s; background: transparent; color: var(--text-muted); white-space: nowrap; }
   .driver-tab.active { background: var(--black-4); color: var(--white-pure); }
 
   /* ── LEGEND ── */
   .chart-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim); cursor: pointer; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-dim); cursor: pointer; }
   .legend-swatch { width: 20px; height: 3px; border-radius: 2px; flex-shrink: 0; }
 
   @media (max-width: 900px) {
@@ -566,7 +571,7 @@ function buildVarTable() {
         <td><span class="var-name"><span class="var-dot" style="background:${v.color}"></span>${v.label}</span></td>
         <td class="mono" style="color:${v.color}">${actualMean}%</td>
         <td style="min-width:100px;">
-          <div style="display:flex;gap:6px;font-size:10px;color:var(--text-muted);">
+          <div style="display:flex;gap:6px;font-size:13px;color:var(--text-muted);">
             <span>${actualLow}%</span>
             <span style="margin-left:auto;">${actualHigh}%</span>
           </div>
@@ -588,7 +593,7 @@ function buildVarTable() {
       <td><span class="var-name"><span class="var-dot" style="background:${NET_COLOR}"></span><strong>Net Margin</strong></span></td>
       <td class="mono" style="color:${NET_COLOR}"><strong>${netMean}%</strong></td>
       <td style="min-width:100px;">
-        <div style="display:flex;gap:6px;font-size:10px;color:var(--text-muted);">
+        <div style="display:flex;gap:6px;font-size:13px;color:var(--text-muted);">
           <span>${netLow}%</span><span style="margin-left:auto;">${netHigh}%</span>
         </div>
         <div class="range-bar">

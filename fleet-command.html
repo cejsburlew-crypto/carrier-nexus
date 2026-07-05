@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -75,12 +80,12 @@ body {
 .logo-hex svg { width: 36px; height: 36px; }
 .logo-text { display: flex; flex-direction: column; }
 .logo-text .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: 2px; color: var(--white-pure); }
-.logo-text .sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--orange); letter-spacing: 1px; }
+.logo-text .sub { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--orange); letter-spacing: 1px; }
 .sidebar-section { padding: 12px 0 4px; }
 .sidebar-section-label {
   padding: 0 16px 6px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-muted);
   letter-spacing: 1.5px;
@@ -113,7 +118,7 @@ body {
   background: var(--red);
   color: #fff;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 500;
   padding: 2px 6px;
   border-radius: 10px;
@@ -125,12 +130,12 @@ body {
   padding: 14px 16px;
   border-top: 1px solid var(--border);
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--orange);
   letter-spacing: 0.5px;
 }
 .sidebar-user .user-name { font-weight: 500; }
-.sidebar-user .user-role { color: var(--text-muted); font-size: 9px; margin-top: 2px; }
+.sidebar-user .user-role { color: var(--text-muted); font-size: 13px; margin-top: 2px; }
 
 /* Ã¢ÂÂÃ¢ÂÂ MAIN CONTENT Ã¢ÂÂÃ¢ÂÂ */
 .main {
@@ -165,7 +170,7 @@ body {
   align-items: center;
   gap: 6px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--green);
   letter-spacing: 1px;
 }
@@ -224,7 +229,7 @@ body {
 .kpi-card.kpi-red::before { background: var(--red); }
 .kpi-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--text-muted);
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -238,7 +243,7 @@ body {
   line-height: 1;
 }
 .kpi-sub {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-muted);
   margin-top: 4px;
 }
@@ -275,7 +280,7 @@ body {
 }
 .panel-count {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--text-muted);
 }
 
@@ -285,7 +290,7 @@ body {
   padding: 10px 16px;
   text-align: left;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--text-muted);
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -302,7 +307,7 @@ body {
 .nx-table tr:hover td { background: rgba(46,109,164,0.05); }
 .load-id {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-size: 13px;
   color: #0f172a;
 }
 .rate-cell {
@@ -319,7 +324,7 @@ body {
   padding: 3px 9px;
   border-radius: 4px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.8px;
   text-transform: uppercase;
@@ -335,7 +340,7 @@ body {
 .driver-chips { display: flex; gap: 4px; flex-wrap: wrap; }
 .driver-chip {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   padding: 2px 7px;
   border-radius: 3px;
   background: rgba(46,109,164,0.22);
@@ -371,7 +376,7 @@ body {
 }
 .truck-unit-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 8px;
+  font-size: 13px;
   color: var(--text-muted);
   letter-spacing: 1px;
 }
@@ -392,12 +397,12 @@ body {
 }
 .truck-vin {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--text-muted);
   margin-top: 2px;
 }
 .truck-driver {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--ice);
   margin-top: 3px;
 }
@@ -421,13 +426,13 @@ body {
   justify-content: center;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 800;
-  font-size: 12px;
+  font-size: 13px;
   color: #1a1a1a;
   flex-shrink: 0;
 }
 .settlement-name { flex: 1; }
 .settlement-name .name { font-weight: 500; font-size: 13px; color: var(--white-pure); }
-.settlement-name .week { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-muted); margin-top: 2px; }
+.settlement-name .week { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); margin-top: 2px; }
 .settlement-amount {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
@@ -457,9 +462,9 @@ body {
   flex-shrink: 0;
 }
 .missing-doc-info { flex: 1; }
-.missing-doc-info .doc-load { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #0f172a; }
-.missing-doc-info .doc-desc { font-size: 12px; color: var(--text-mid); margin-top: 2px; }
-.missing-doc-action { font-size: 12px; color: var(--orange); cursor: pointer; text-decoration: underline; }
+.missing-doc-info .doc-load { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #0f172a; }
+.missing-doc-info .doc-desc { font-size: 13px; color: var(--text-mid); margin-top: 2px; }
+.missing-doc-action { font-size: 13px; color: var(--orange); cursor: pointer; text-decoration: underline; }
 
 /* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
    MOBILE RESPONSIVE Ã¢ÂÂ Carrier Nexus Admin Pages
@@ -489,8 +494,8 @@ body {
   }
   .topbar-title { font-size: 13px !important; }
   .topbar .btn-ghost { display: none !important; }
-  .topbar .btn-primary { font-size: 11px !important; padding: 6px 10px !important; }
-  .status-live, .topbar-status { font-size: 10px !important; }
+  .topbar .btn-primary { font-size: 13px !important; padding: 6px 10px !important; }
+  .status-live, .topbar-status { font-size: 13px !important; }
   .topbar-actions { gap: 6px !important; }
 
   /* Content padding */
@@ -501,14 +506,14 @@ body {
   .kpi-row { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
   .kpi-card { padding: 12px 14px !important; }
   .kpi-value { font-size: 26px !important; }
-  .kpi-sub { font-size: 10px !important; }
+  .kpi-sub { font-size: 13px !important; }
 
   /* Panels: single column stack */
   .panels-row { grid-template-columns: 1fr !important; gap: 12px !important; }
   .panel-full { grid-column: auto !important; }
 
   /* Tables: scrollable horizontally */
-  .load-table, .doc-table, table { font-size: 11px !important; }
+  .load-table, .doc-table, table { font-size: 13px !important; }
   .panel { overflow-x: auto !important; }
 
   /* Equipment grid: 1 column */
@@ -530,7 +535,7 @@ body {
     gap: 6px !important;
     flex-wrap: wrap !important;
   }
-  .filter-bar select, .filter-bar input { font-size: 12px !important; padding: 6px 8px !important; }
+  .filter-bar select, .filter-bar input { font-size: 13px !important; padding: 6px 8px !important; }
 
   /* Settlement table: make rows cards on very small screens */
   .stmt-table th:nth-child(n+5),
@@ -560,7 +565,7 @@ body {
     gap: 2px;
     text-decoration: none;
     color: rgba(168, 196, 224, 0.45);
-    font-size: 9px;
+    font-size: 13px;
     font-family: 'JetBrains Mono', monospace;
     letter-spacing: 0.05em;
     padding: 6px 8px;
@@ -611,7 +616,7 @@ body {
 .sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
 .sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
 .sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#111827 !important; display:block !important; }
-.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
+.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:13px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
 /* Ã¢ÂÂÃ¢ÂÂ NAV LINKS Ã¢ÂÂÃ¢ÂÂ */
 .sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
 .sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
@@ -620,7 +625,7 @@ body {
 .sidebar-link.active svg { opacity:1 !important; }
 /* Ã¢ÂÂÃ¢ÂÂ SECTION LABELS Ã¢ÂÂÃ¢ÂÂ */
 .sidebar-section { padding:12px 0 4px !important; }
-.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
+.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:13px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
 /* Ã¢ÂÂÃ¢ÂÂ TOPBAR Ã¢ÂÂÃ¢ÂÂ */
 .topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
 .topbar *, .top-bar * { color:#111827 !important; }
@@ -650,7 +655,7 @@ body {
     <button class="btn btn-ghost">Export Report</button>
     <button class="btn btn-primary">+ New Load</button>
     <button id="nexus-update-btn" class="btn btn-ghost" onclick="runNexusUpdate()" style="background:#1d4ed8;color:#fff;font-weight:800;">Ã¢ÂÂ» Update Nexus</button>
-    <span id="nexus-sync-status" style="display:none;font-size:12px;margin-left:8px;padding:4px 8px;border-radius:4px;background:rgba(0,0,0,0.3);"></span>
+    <span id="nexus-sync-status" style="display:none;font-size:13px;margin-left:8px;padding:4px 8px;border-radius:4px;background:rgba(0,0,0,0.3);"></span>
   </div>
 
   <!-- CONTENT -->
@@ -687,7 +692,7 @@ body {
       <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
           <div style="font-size:14px;font-weight:600;color:var(--text);">🌦️ Route Weather</div>
-          <a href="route-compliance.html" style="font-size:11px;color:#3b82f6;text-decoration:none;">Full Forecast →</a>
+          <a href="route-compliance.html" style="font-size:13px;color:#3b82f6;text-decoration:none;">Full Forecast →</a>
         </div>
         <div id="dashboard-weather">
           <div style="color:var(--mid);font-size:13px;">Loading weather...</div>
@@ -698,7 +703,7 @@ body {
       <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
           <div style="font-size:14px;font-weight:600;color:var(--text);">⚖️ Scale Proximity</div>
-          <a href="route-compliance.html" style="font-size:11px;color:#3b82f6;text-decoration:none;">Full View →</a>
+          <a href="route-compliance.html" style="font-size:13px;color:#3b82f6;text-decoration:none;">Full View →</a>
         </div>
         <div id="dashboard-scales">
           <div style="color:var(--mid);font-size:13px;">Checking fleet positions...</div>
@@ -736,7 +741,7 @@ body {
                   <span class="driver-chip">AMET</span>
                 </div>
               </td>
-              <td style="font-size:12px;color:var(--text-mid);">Expressway Logistics</td>
+              <td style="font-size:13px;color:var(--text-mid);">Expressway Logistics</td>
               <td><span class="rate-cell">$3,500</span></td>
               <td><span class="badge badge-blue">IN TRANSIT</span></td>
             </tr>
@@ -749,7 +754,7 @@ body {
                   <span class="driver-chip">NELSON</span>
                 </div>
               </td>
-              <td style="font-size:12px;color:var(--text-mid);">Expressway Logistics</td>
+              <td style="font-size:13px;color:var(--text-mid);">Expressway Logistics</td>
               <td><span class="rate-cell">$2,500</span></td>
               <td><span class="badge badge-green">DELIVERED</span></td>
             </tr>
@@ -760,7 +765,7 @@ body {
                   <span class="driver-chip">DAVID</span>
                 </div>
               </td>
-              <td style="font-size:12px;color:var(--text-mid);">STT Logistics Group</td>
+              <td style="font-size:13px;color:var(--text-mid);">STT Logistics Group</td>
               <td><span class="rate-cell">$1,600</span></td>
               <td><span class="badge badge-green">DELIVERED</span></td>
             </tr>
@@ -771,7 +776,7 @@ body {
                   <span class="driver-chip">GUILLERMO</span>
                 </div>
               </td>
-              <td style="font-size:12px;color:var(--text-mid);">SET Logistics</td>
+              <td style="font-size:13px;color:var(--text-mid);">SET Logistics</td>
               <td><span class="rate-cell">$4,500</span></td>
               <td><span class="badge badge-green">DELIVERED</span></td>
             </tr>
@@ -782,7 +787,7 @@ body {
                   <span class="driver-chip">YOSVIEL</span>
                 </div>
               </td>
-              <td style="font-size:12px;color:var(--text-mid);">LRS Logistics</td>
+              <td style="font-size:13px;color:var(--text-mid);">LRS Logistics</td>
               <td><span class="rate-cell">$1,200</span></td>
               <td><span class="badge badge-orange">PENDING</span></td>
             </tr>
@@ -794,7 +799,7 @@ body {
                   <span class="driver-chip">AMET</span>
                 </div>
               </td>
-              <td style="font-size:12px;color:var(--text-mid);">Coast to Coast</td>
+              <td style="font-size:13px;color:var(--text-mid);">Coast to Coast</td>
               <td><span class="rate-cell">$4,300</span></td>
               <td><span class="badge badge-green">DELIVERED</span></td>
             </tr>
@@ -1013,7 +1018,7 @@ body {
     const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     const topbar = document.querySelector('.topbar');
     const clockEl = document.createElement('div');
-    clockEl.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--text-muted);margin-right:8px;';
+    clockEl.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--text-muted);margin-right:8px;';
     clockEl.textContent = dateStr + ' ÃÂ· ' + timeStr;
     topbar.insertBefore(clockEl, topbar.querySelector('.status-live'));
   })();
@@ -1170,14 +1175,14 @@ async function loadDashboardWeather() {
       var lo = dd.temperature_2m_min ? Math.round(dd.temperature_2m_min[0]) : '--';
       var windAlert = wind >= 40 ? 'color:#ef4444;font-weight:700;' : (wind >= 25 ? 'color:#f59e0b;' : 'color:var(--mid);');
       html += '<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:160px;flex:1;">' +
-        '<div style="font-size:11px;color:var(--mid);margin-bottom:4px;">' + city.name + '</div>' +
+        '<div style="font-size:13px;color:var(--mid);margin-bottom:4px;">' + city.name + '</div>' +
         '<div style="font-size:18px;font-weight:700;color:var(--text);">' + desc + '</div>' +
         '<div style="font-size:13px;color:var(--text);margin-top:2px;">' + hi + '° / ' + lo + '°F</div>' +
-        '<div style="font-size:12px;margin-top:2px;' + windAlert + '">💨 ' + wind + ' mph</div>' +
-        (wind >= 35 ? '<div style="font-size:10px;color:#ef4444;margin-top:3px;font-weight:600;">⚠️ WIDE LOAD WIND ALERT</div>' : '') +
+        '<div style="font-size:13px;margin-top:2px;' + windAlert + '">💨 ' + wind + ' mph</div>' +
+        (wind >= 35 ? '<div style="font-size:13px;color:#ef4444;margin-top:3px;font-weight:600;">⚠️ WIDE LOAD WIND ALERT</div>' : '') +
       '</div>';
     } catch(e) {
-      html += '<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:160px;flex:1;"><div style="font-size:11px;color:var(--mid);">' + city.name + '</div><div style="color:var(--mid);font-size:12px;margin-top:8px;">Weather unavailable</div></div>';
+      html += '<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:160px;flex:1;"><div style="font-size:13px;color:var(--mid);">' + city.name + '</div><div style="color:var(--mid);font-size:13px;margin-top:8px;">Weather unavailable</div></div>';
     }
   }
   html += '</div>';
@@ -1220,13 +1225,13 @@ function loadScaleAlerts() {
   });
   
   if (alerts.length === 0) {
-    el.innerHTML = '<div style="color:#10b981;font-size:13px;">✅ No scales within 25 miles of active fleet</div><div style="color:var(--mid);font-size:11px;margin-top:4px;">Units: ' + (vehicles.length) + ' tracked</div>';
+    el.innerHTML = '<div style="color:#10b981;font-size:13px;">✅ No scales within 25 miles of active fleet</div><div style="color:var(--mid);font-size:13px;margin-top:4px;">Units: ' + (vehicles.length) + ' tracked</div>';
   } else {
     el.innerHTML = alerts.map(function(a){
       return '<div style="background:' + (a.osow?'rgba(239,68,68,.1)':'rgba(245,158,11,.1)') + ';border:1px solid ' + (a.osow?'#ef4444':'#f59e0b') + ';border-radius:6px;padding:10px;margin-bottom:8px;">' +
         '<div style="font-weight:600;color:' + (a.osow?'#ef4444':'#f59e0b') + ';font-size:13px;">' + (a.osow?'⛔':'⚠️') + ' Unit ' + a.unit + ' — ' + a.dist + ' mi</div>' +
-        '<div style="font-size:12px;color:var(--text);margin-top:2px;">' + a.station + '</div>' +
-        '<div style="font-size:11px;color:var(--mid);margin-top:2px;">' + (a.osow?'OS/OW — MUST STOP':'PrePass eligible if legal') + '</div>' +
+        '<div style="font-size:13px;color:var(--text);margin-top:2px;">' + a.station + '</div>' +
+        '<div style="font-size:13px;color:var(--mid);margin-top:2px;">' + (a.osow?'OS/OW — MUST STOP':'PrePass eligible if legal') + '</div>' +
       '</div>';
     }).join('');
   }

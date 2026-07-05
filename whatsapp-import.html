@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" data-nexus-theme="dark">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -45,7 +50,7 @@
   /* Stats bar */
   .stats-bar{display:flex;gap:16px;margin:20px 0;flex-wrap:wrap}
   .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 18px;min-width:140px}
-  .stat-card .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .stat-card .label{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
   .stat-card .value{font-size:22px;font-weight:700}
   .stat-card.green .value{color:var(--green)}
   .stat-card.yellow .value{color:var(--yellow)}
@@ -67,11 +72,11 @@
   /* Table */
   .table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px}
   table{width:100%;border-collapse:collapse;min-width:700px}
-  th{background:#f8f9fa;padding:8px 12px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);white-space:nowrap}
+  th{background:#f8f9fa;padding:8px 12px;text-align:left;font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);white-space:nowrap}
   td{padding:8px 12px;border-top:1px solid var(--border);vertical-align:middle}
   tr.excluded td{opacity:.4;text-decoration:line-through}
   tr:hover td{background:rgba(255,255,255,.02)}
-  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;text-transform:uppercase}
+  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;text-transform:uppercase}
   .badge-fuel{background:#f8f9fa;color:#58a6ff}
   .badge-repair{background:#f8f9fa;color:#f85149}
   .badge-tire{background:#f8f9fa;color:#a371f7}
@@ -79,19 +84,19 @@
   .badge-permit{background:#f8f9fa;color:#3fb950}
   .badge-meals{background:#f8f9fa;color:#d29922}
   .badge-dup{background:#f8f9fa;color:#d29922}
-  td select{padding:3px 6px;font-size:12px;width:120px}
+  td select{padding:3px 6px;font-size:13px;width:120px}
   .chk{width:16px;height:16px;cursor:pointer;accent-color:var(--accent)}
-  .row-num{color:var(--muted);font-size:11px}
+  .row-num{color:var(--muted);font-size:13px}
 
   /* Progress */
   .progress-wrap{margin-top:20px;display:none}
   .progress-bar-outer{background:var(--surface);border:1px solid var(--border);border-radius:6px;height:10px;overflow:hidden;margin-top:8px}
   .progress-bar-inner{height:100%;background:var(--accent);transition:width .2s}
-  .log{margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px;max-height:200px;overflow-y:auto;font-family:monospace;font-size:12px;color:var(--muted)}
+  .log{margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px;max-height:200px;overflow-y:auto;font-family:monospace;font-size:13px;color:var(--muted)}
 
   .empty{text-align:center;padding:48px;color:var(--muted)}
-  .tag-new{background:#f8f9fa;color:var(--green);padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;margin-left:4px}
-  .tag-dup{background:#f8f9fa;color:var(--yellow);padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;margin-left:4px}
+  .tag-new{background:#f8f9fa;color:var(--green);padding:1px 6px;border-radius:3px;font-size:13px;font-weight:700;margin-left:4px}
+  .tag-dup{background:#f8f9fa;color:var(--yellow);padding:1px 6px;border-radius:3px;font-size:13px;font-weight:700;margin-left:4px}
 
       @media(max-width:768px){.main{margin-left:0!important;}}
 </style>
@@ -402,7 +407,7 @@ function renderTable() {
       <td><input type="checkbox" id="chk-${i}" class="chk row-chk" data-idx="${i}" ${checked}
         onchange="document.getElementById('row-${i}').classList.toggle('excluded',!this.checked)"/></td>
       <td class="row-num">${rowNum+1}</td>
-      <td><input type="date" value="${e.date}" style="background:transparent;border:none;color:var(--text);font-size:12px;width:115px"
+      <td><input type="date" value="${e.date}" style="background:transparent;border:none;color:var(--text);font-size:13px;width:115px"
         onchange="parsedExpenses[${i}].date=this.value"/></td>
       <td>${e.driver}</td>
       <td>${buildCatSelect(e.category,i)}</td>
@@ -446,7 +451,7 @@ async function processFile(file) {
   parsedExpenses = parseChatText(text);
 
   dz.innerHTML = `<p style="color:var(--green)">✓ Parsed <strong>${file.name}</strong> — ${parsedExpenses.length} expenses found</p>
-    <p style="color:var(--muted);margin-top:6px;font-size:12px"><a href="#" onclick="document.getElementById('fileInput').click();return false" style="color:var(--accent)">Load different file</a></p>`;
+    <p style="color:var(--muted);margin-top:6px;font-size:13px"><a href="#" onclick="document.getElementById('fileInput').click();return false" style="color:var(--accent)">Load different file</a></p>`;
 
   document.getElementById('results').style.display = 'block';
   populateDriverFilter();

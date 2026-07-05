@@ -1,6 +1,11 @@
 <!DOCTYPE html><html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -41,7 +46,7 @@
     .card-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px}
     .form-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
     .form-group{display:flex;flex-direction:column;gap:5px;flex:1;min-width:140px}
-    .form-group label{font-size:12px;color:var(--mid);font-weight:500}
+    .form-group label{font-size:13px;color:var(--mid);font-weight:500}
     .form-group input,.form-group select,.form-group textarea{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;transition:.15s}
     .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--blue)}
     .form-group select option{background:var(--panel2)}
@@ -51,27 +56,27 @@
     .btn-primary:hover{background:#2563eb}
     .btn-danger{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
     .btn-danger:hover{background:rgba(239,68,68,.3)}
-    .btn-sm{padding:5px 12px;font-size:12px}
+    .btn-sm{padding:5px 12px;font-size:13px}
     table{width:100%;border-collapse:collapse;font-size:13px}
-    th{background:var(--panel2);color:var(--mid);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+    th{background:var(--panel2);color:var(--mid);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
     td{padding:9px 12px;border-bottom:1px solid rgba(30,45,69,.5);color:var(--text);vertical-align:top}
     tr:hover td{background:rgba(255,255,255,.02)}
     .tbl-wrap{overflow-x:auto}
     .search-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
     .search-bar input,.search-bar select{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:8px 12px;font-size:13px;outline:none}
     .search-bar input:focus,.search-bar select:focus{border-color:var(--blue)}
-    .badge-config{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.4px}
+    .badge-config{display:inline-block;padding:3px 10px;border-radius:20px;font-size:13px;font-weight:700;letter-spacing:.4px}
     .cfg-full{background:rgba(16,185,129,.2);color:var(--green)}
     .cfg-partial{background:rgba(59,130,246,.2);color:var(--blue)}
     .cfg-disassembled{background:rgba(249,115,22,.2);color:var(--orange)}
     .cfg-component{background:rgba(168,85,247,.2);color:var(--purple)}
-    .wt-display{font-size:11px;color:var(--mid);margin-top:3px}
+    .wt-display{font-size:13px;color:var(--mid);margin-top:3px}
     .result-box{padding:16px;border-radius:8px;margin-top:16px;border:1px solid var(--border)}
     .result-box.legal{background:rgba(16,185,129,.08);border-color:var(--green)}
     .result-box.permit{background:rgba(245,158,11,.08);border-color:var(--yellow)}
     .result-box.overweight{background:rgba(239,68,68,.08);border-color:var(--red)}
     .trailer-rec{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:12px}
-    .trailer-rec-title{font-size:12px;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+    .trailer-rec-title{font-size:13px;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
     .trailer-rec-value{font-size:14px;font-weight:600;color:var(--text)}
     .info-box{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:8px;padding:14px;font-size:13px;color:var(--text);margin-bottom:16px;line-height:1.6}
     .live-weight{font-size:13px;color:var(--mid);margin-top:6px;padding:8px 10px;background:var(--panel2);border-radius:6px;border:1px solid var(--border)}
@@ -434,11 +439,11 @@ function filterEquipment() {
   }).map(function(e) {
     var transWt = e.transport_weight_lbs && e.transport_weight_lbs !== e.operating_weight_lbs ? "<div class=\"wt-display\">Transport: " + fmtWeight(e.transport_weight_lbs) + "</div>" : "";
     return "<tr>" +
-      "<td><strong>" + e.name + "</strong><br><span style=\"font-size:11px;color:var(--mid)\">" + e.make + " " + e.model + "</span></td>" +
-      "<td><span style=\"font-size:12px;color:var(--mid)\">" + e.category + "</span></td>" +
+      "<td><strong>" + e.name + "</strong><br><span style=\"font-size:13px;color:var(--mid)\">" + e.make + " " + e.model + "</span></td>" +
+      "<td><span style=\"font-size:13px;color:var(--mid)\">" + e.category + "</span></td>" +
       "<td>" + fmtWeight(e.operating_weight_lbs) + transWt + "</td>" +
       "<td>" + configBadge(e.transport_config) + "</td>" +
-      "<td style=\"font-size:12px;color:var(--mid);max-width:300px\">" + (e.notes || "-") + "</td>" +
+      "<td style=\"font-size:13px;color:var(--mid);max-width:300px\">" + (e.notes || "-") + "</td>" +
     "</tr>";
   });
   document.getElementById("eq-tbody").innerHTML = rows.join("") || "<tr><td colspan=\"5\" style=\"color:var(--mid);text-align:center\">No results</td></tr>";
@@ -472,11 +477,11 @@ function onCalcEqChange() {
   document.getElementById("calc-weight").value = transWt;
   updateLiveWeight();
   detailDiv.innerHTML = "<div style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px\">" +
-    "<div><div style=\"font-size:11px;color:var(--mid)\">Operating Weight</div><div style=\"font-size:13px;font-weight:600;color:var(--text)\">" + fmtWeight(eq.operating_weight_lbs) + "</div></div>" +
-    "<div><div style=\"font-size:11px;color:var(--mid)\">Transport Config</div><div style=\"margin-top:3px\">" + configBadge(eq.transport_config) + "</div></div>" +
-    "<div><div style=\"font-size:11px;color:var(--mid)\">Transport Weight</div><div style=\"font-size:13px;font-weight:600;color:var(--text)\">" + fmtWeight(transWt) + "</div></div>" +
+    "<div><div style=\"font-size:13px;color:var(--mid)\">Operating Weight</div><div style=\"font-size:13px;font-weight:600;color:var(--text)\">" + fmtWeight(eq.operating_weight_lbs) + "</div></div>" +
+    "<div><div style=\"font-size:13px;color:var(--mid)\">Transport Config</div><div style=\"margin-top:3px\">" + configBadge(eq.transport_config) + "</div></div>" +
+    "<div><div style=\"font-size:13px;color:var(--mid)\">Transport Weight</div><div style=\"font-size:13px;font-weight:600;color:var(--text)\">" + fmtWeight(transWt) + "</div></div>" +
     "</div>" +
-    (eq.notes ? "<div style=\"margin-top:10px;font-size:12px;color:var(--mid);line-height:1.5;padding:10px;background:var(--bg);border-radius:6px;border:1px solid var(--border)\">" + eq.notes + "</div>" : "");
+    (eq.notes ? "<div style=\"margin-top:10px;font-size:13px;color:var(--mid);line-height:1.5;padding:10px;background:var(--bg);border-radius:6px;border:1px solid var(--border)\">" + eq.notes + "</div>" : "");
   infoDiv.style.display = "block";
 }
 
@@ -500,12 +505,12 @@ function runCalc() {
     "<div style=\"font-size:16px;font-weight:700;color:" + (isLegal ? "var(--green)" : "var(--red)") + ";margin-bottom:10px\">" +
     (isLegal ? "LEGAL in " + stateName : "OVERWEIGHT in " + stateName) + "</div>" +
     "<div style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px\">" +
-    "<div><div style=\"font-size:11px;color:var(--mid)\">Planned Load Weight</div><div style=\"font-size:13px;font-weight:600;color:var(--text)\">" + fmtWeight(lbs) + "</div></div>" +
-    "<div><div style=\"font-size:11px;color:var(--mid)\">" + stateName + " Legal GVW</div><div style=\"font-size:13px;font-weight:600;color:var(--text)\">" + fmtWeight(legalGvw) + "</div></div>" +
-    (isLegal ? "<div><div style=\"font-size:11px;color:var(--mid)\">Margin</div><div style=\"font-size:13px;font-weight:600;color:var(--green)\">Under by " + (legalGvw - lbs).toLocaleString() + " lbs</div></div>" : "<div><div style=\"font-size:11px;color:var(--mid)\">Over By</div><div style=\"font-size:13px;font-weight:600;color:var(--red)\">" + overBy.toLocaleString() + " lbs — permit required</div></div>") +
+    "<div><div style=\"font-size:13px;color:var(--mid)\">Planned Load Weight</div><div style=\"font-size:13px;font-weight:600;color:var(--text)\">" + fmtWeight(lbs) + "</div></div>" +
+    "<div><div style=\"font-size:13px;color:var(--mid)\">" + stateName + " Legal GVW</div><div style=\"font-size:13px;font-weight:600;color:var(--text)\">" + fmtWeight(legalGvw) + "</div></div>" +
+    (isLegal ? "<div><div style=\"font-size:13px;color:var(--mid)\">Margin</div><div style=\"font-size:13px;font-weight:600;color:var(--green)\">Under by " + (legalGvw - lbs).toLocaleString() + " lbs</div></div>" : "<div><div style=\"font-size:13px;color:var(--mid)\">Over By</div><div style=\"font-size:13px;font-weight:600;color:var(--red)\">" + overBy.toLocaleString() + " lbs — permit required</div></div>") +
     "</div>" +
     "</div>" +
-    "<div class=\"trailer-rec\"><div class=\"trailer-rec-title\">Recommended Trailer Type</div><div class=\"trailer-rec-value\">" + trailerRec + "</div><div style=\"font-size:11px;color:var(--mid);margin-top:4px\">Based on planned load weight of " + fmtWeight(lbs) + "</div></div>";
+    "<div class=\"trailer-rec\"><div class=\"trailer-rec-title\">Recommended Trailer Type</div><div class=\"trailer-rec-value\">" + trailerRec + "</div><div style=\"font-size:13px;color:var(--mid);margin-top:4px\">Based on planned load weight of " + fmtWeight(lbs) + "</div></div>";
   document.getElementById("calc-results").innerHTML = html;
 }
 
@@ -552,7 +557,7 @@ function renderCustomEquipment() {
       "<td>" + e.category + "</td>" +
       "<td>" + fmtWeight(e.operating_weight_lbs) + "</td>" +
       "<td>" + configBadge(e.transport_config) + "</td>" +
-      "<td style=\"font-size:12px;color:var(--mid)\">" + (e.notes || "-") + "</td>" +
+      "<td style=\"font-size:13px;color:var(--mid)\">" + (e.notes || "-") + "</td>" +
       "<td><button class=\"btn btn-danger btn-sm\" onclick=\"deleteCustomEquipment(" + idx + ")\">Delete</button></td>" +
     "</tr>";
   }).join("");
@@ -603,7 +608,7 @@ function renderScaleTickets() {
       "<td>" + t.date + "</td>" +
       "<td>" + fmtWeight(t.weight) + "</td>" +
       "<td>" + t.location + "</td>" +
-      "<td style=\"font-size:12px;color:var(--mid)\">" + (t.notes || "-") + "</td>" +
+      "<td style=\"font-size:13px;color:var(--mid)\">" + (t.notes || "-") + "</td>" +
       "<td><button class=\"btn btn-danger btn-sm\" onclick=\"deleteScaleTicket(" + idx + ")\">Delete</button></td>" +
     "</tr>";
   }).join("");

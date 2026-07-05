@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -98,7 +103,7 @@ body {
   gap: 4px;
 }
 .kpi-label {
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -139,7 +144,7 @@ body {
   justify-content: space-between;
 }
 .channel-panel-title {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -152,7 +157,7 @@ body {
   border: none;
   padding: 6px 12px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   font-family: 'Barlow', sans-serif;
   cursor: pointer;
@@ -194,7 +199,7 @@ body {
 .channel-badge {
   background: var(--accent);
   color: #fff;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 700;
   border-radius: 10px;
   padding: 1px 7px;
@@ -206,7 +211,7 @@ body {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--muted);
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: .04em;
 }
 .channel-badge.active-badge {
@@ -283,7 +288,7 @@ body {
 }
 .message-item.unread .msg-sender { color: var(--white); }
 .msg-time {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text2);
   white-space: nowrap;
   font-family: 'JetBrains Mono', monospace;
@@ -301,7 +306,7 @@ body {
   font-weight: 600;
 }
 .msg-snippet {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text3);
   white-space: nowrap;
   overflow: hidden;
@@ -361,7 +366,7 @@ body {
   background: rgba(255,255,255,.02);
 }
 .thread-msg-sender { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
-.thread-msg-time { font-size: 11px; color: var(--text2); font-family: 'JetBrains Mono', monospace; }
+.thread-msg-time { font-size: 13px; color: var(--text2); font-family: 'JetBrains Mono', monospace; }
 .thread-msg-body {
   padding: 16px;
   font-size: 13px;
@@ -426,7 +431,7 @@ body {
   color: var(--yellow);
   padding: 6px 16px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   font-family: 'JetBrains Mono', monospace;
 }
@@ -539,7 +544,7 @@ body {
 .mclose:hover { background: rgba(255,255,255,.14); }
 .mbody { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
 .mfield { display: flex; flex-direction: column; gap: 5px; }
-.mfield label { font-size: 11px; color: var(--text2); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.mfield label { font-size: 13px; color: var(--text2); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
 .mfield select,
 .mfield input,
 .mfield textarea {
@@ -598,7 +603,7 @@ body {
   .inbox-body { flex-direction: column; }
   .channel-panel { width: 100%; height: auto; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--border); }
   .channel-item { padding: 10px 12px; flex-direction: column; align-items: center; gap: 4px; min-width: 70px; }
-  .channel-name { font-size: 10px; }
+  .channel-name { font-size: 13px; }
 }
 </style>
 </head>
@@ -1086,7 +1091,7 @@ function openGmailThread(id) {
       var body = extractBody(msg.payload);
       return '<div class="thread-msg">' +
         '<div class="thread-msg-header">' +
-          '<div class="avatar" style="background:' + avatarColor(from) + ';width:28px;height:28px;font-size:12px;">' + (from.charAt(0) || '?').toUpperCase() + '</div>' +
+          '<div class="avatar" style="background:' + avatarColor(from) + ';width:28px;height:28px;font-size:13px;">' + (from.charAt(0) || '?').toUpperCase() + '</div>' +
           '<span class="thread-msg-sender">' + esc(from) + '</span>' +
           '<span class="thread-msg-time">' + esc(date) + '</span>' +
         '</div>' +
@@ -1150,7 +1155,7 @@ function openInternalMessage(id) {
   document.getElementById('threadMessages').innerHTML =
     '<div class="thread-msg">' +
       '<div class="thread-msg-header">' +
-        '<div class="avatar" style="background:' + avatarColor(msg.from) + ';width:28px;height:28px;font-size:12px;">' + (msg.from || '?').charAt(0).toUpperCase() + '</div>' +
+        '<div class="avatar" style="background:' + avatarColor(msg.from) + ';width:28px;height:28px;font-size:13px;">' + (msg.from || '?').charAt(0).toUpperCase() + '</div>' +
         '<span class="thread-msg-sender">' + esc(msg.from) + '</span>' +
         '<span class="thread-msg-time">' + formatTime(msg.timestamp) + '</span>' +
       '</div>' +

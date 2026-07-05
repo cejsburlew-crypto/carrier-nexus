@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -38,7 +43,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 h1{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:var(--text);letter-spacing:0.5px;}
 .subtitle{font-size:13px;color:var(--mid);margin-top:2px;}
 .tab-nav{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--border);}
-.tab-btn{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:8px 16px;border:none;background:none;cursor:pointer;color:var(--mid);border-bottom:2px solid transparent;transition:all .15s;}
+.tab-btn{font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;padding:8px 16px;border:none;background:none;cursor:pointer;color:var(--mid);border-bottom:2px solid transparent;transition:all .15s;}
 .tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
 .tab-btn:hover:not(.active){color:var(--text);background:var(--panel2);}
 .tab-pane{display:none;}
@@ -46,25 +51,25 @@ h1{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;colo
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
 @media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr);}}
 .kpi-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
-.kpi-label{font-size:10px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.kpi-label{font-size:13px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
 .kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--text);}
-.kpi-sub{font-size:11px;color:var(--mid);margin-top:4px;}
+.kpi-sub{font-size:13px;color:var(--mid);margin-top:4px;}
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;}
 .panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .panel-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);}
 .panel-body{padding:18px;}
 table{width:100%;border-collapse:collapse;}
-th{font-size:10px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+th{font-size:13px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
 td{padding:10px 14px;font-size:13px;color:var(--text);border-bottom:1px solid #f1f5f9;vertical-align:top;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:#f8f9fb;}
-.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.04em;}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:13px;font-weight:700;letter-spacing:.04em;}
 .badge-green{background:#dcfce7;color:#15803d;}
 .badge-yellow{background:#fef9c3;color:#a16207;}
 .badge-red{background:#fee2e2;color:#dc2626;}
 .badge-blue{background:#dbeafe;color:#1d4ed8;}
 .badge-gray{background:#f3f4f6;color:#6b7280;}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;letter-spacing:.04em;transition:all .15s;font-family:'Barlow',sans-serif;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none;letter-spacing:.04em;transition:all .15s;font-family:'Barlow',sans-serif;}
 .btn-primary{background:var(--blue);color:#fff;}
 .btn-primary:hover{background:#1e40af;}
 .btn-outline{background:var(--panel);border:1px solid var(--border);color:var(--text);}
@@ -75,16 +80,16 @@ tr:hover td{background:#f8f9fb;}
 .info-section h3{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--mid);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
 .info-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f1f5f9;gap:12px;}
 .info-row:last-child{border-bottom:none;}
-.info-label{font-size:12px;color:var(--mid);flex-shrink:0;}
+.info-label{font-size:13px;color:var(--mid);flex-shrink:0;}
 .info-val{font-size:13px;color:var(--text);font-weight:500;text-align:right;}
-.info-val.mono{font-family:'JetBrains Mono',monospace;font-size:11px;}
+.info-val.mono{font-family:'JetBrains Mono',monospace;font-size:13px;}
 .alert-banner{background:#fef9c3;border:1px solid #fcd34d;border-radius:8px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:flex-start;gap:10px;font-size:13px;color:#92400e;}
 .alert-banner-icon{font-size:18px;flex-shrink:0;}
 .doc-list{display:flex;flex-direction:column;gap:8px;}
 .doc-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;}
 .doc-icon{font-size:20px;flex-shrink:0;}
 .doc-name{font-size:13px;font-weight:600;color:var(--text);flex:1;}
-.doc-date{font-size:11px;color:var(--mid);}
+.doc-date{font-size:13px;color:var(--mid);}
 .doc-actions{display:flex;gap:6px;}
 </style>
 </head>
@@ -252,7 +257,7 @@ tr:hover td{background:#f8f9fb;}
               <td>Florida SOS</td>
               <td>—</td>
               <td>$138.75</td>
-              <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;">—</span></td>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:13px;">—</span></td>
               <td><span class="badge badge-green">Filed</span></td>
             </tr>
             <tr>
@@ -260,7 +265,7 @@ tr:hover td{background:#f8f9fb;}
               <td>Florida SOS</td>
               <td>—</td>
               <td>$138.75</td>
-              <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;">—</span></td>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:13px;">—</span></td>
               <td><span class="badge badge-gray">Archived</span></td>
             </tr>
           </tbody>
@@ -283,7 +288,7 @@ tr:hover td{background:#f8f9fb;}
             <div class="doc-name">Articles of Organization</div>
             <div class="doc-date">Formation document</div>
             <div class="doc-actions">
-              <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="alert('Upload the Articles of Organization PDF to view.')">View</button>
+              <button class="btn btn-outline" style="padding:4px 10px;font-size:13px;" onclick="alert('Upload the Articles of Organization PDF to view.')">View</button>
             </div>
           </div>
           <div class="doc-row">
@@ -291,7 +296,7 @@ tr:hover td{background:#f8f9fb;}
             <div class="doc-name">Operating Agreement</div>
             <div class="doc-date">Member agreement</div>
             <div class="doc-actions">
-              <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="alert('Upload the Operating Agreement PDF to view.')">View</button>
+              <button class="btn btn-outline" style="padding:4px 10px;font-size:13px;" onclick="alert('Upload the Operating Agreement PDF to view.')">View</button>
             </div>
           </div>
           <div class="doc-row">
@@ -299,7 +304,7 @@ tr:hover td{background:#f8f9fb;}
             <div class="doc-name">EIN Assignment Letter (IRS CP575)</div>
             <div class="doc-date">Federal Tax ID</div>
             <div class="doc-actions">
-              <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="alert('Upload the CP575 PDF to view.')">View</button>
+              <button class="btn btn-outline" style="padding:4px 10px;font-size:13px;" onclick="alert('Upload the CP575 PDF to view.')">View</button>
             </div>
           </div>
           <div class="doc-row">
@@ -307,7 +312,7 @@ tr:hover td{background:#f8f9fb;}
             <div class="doc-name">Certificate of Good Standing</div>
             <div class="doc-date">Latest annual report</div>
             <div class="doc-actions">
-              <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="window.open('https://dos.fl.gov/sunbiz/','_blank')">FL SOS</button>
+              <button class="btn btn-outline" style="padding:4px 10px;font-size:13px;" onclick="window.open('https://dos.fl.gov/sunbiz/','_blank')">FL SOS</button>
             </div>
           </div>
           <div class="doc-row">
@@ -315,7 +320,7 @@ tr:hover td{background:#f8f9fb;}
             <div class="doc-name">MC Operating Authority Certificate</div>
             <div class="doc-date">FMCSA issued</div>
             <div class="doc-actions">
-              <button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="window.open('https://safer.fmcsa.dot.gov/','_blank')">SAFER</button>
+              <button class="btn btn-outline" style="padding:4px 10px;font-size:13px;" onclick="window.open('https://safer.fmcsa.dot.gov/','_blank')">SAFER</button>
             </div>
           </div>
         </div>
@@ -354,7 +359,7 @@ tr:hover td{background:#f8f9fb;}
             <span class="info-val" id="ra-email">—</span>
           </div>
         </div>
-        <div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:12px;color:var(--mid);">
+        <div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:13px;color:var(--mid);">
           <strong style="color:var(--text);">Note:</strong> The registered agent must be available during business hours to receive legal documents and service of process. Changes must be filed with the Florida Division of Corporations within a timely manner.
           <br><br>
           <a href="https://dos.fl.gov/sunbiz/manage-e-file/online-services/change-registered-agent/" target="_blank" style="color:var(--blue);">File a change of registered agent with FL SOS →</a>

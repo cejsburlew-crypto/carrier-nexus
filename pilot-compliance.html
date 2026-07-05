@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -30,28 +35,28 @@
   .state-card.no-cert { border-color:#86efac;background:#f0fdf4; }
   .state-card.selected { border-color:var(--blue);background:#eff6ff; }
   .state-abbr { font-size:20px;font-weight:700;font-family:'Barlow Condensed',sans-serif; }
-  .state-name { font-size:10px;color:var(--mid);margin-top:2px; }
-  .state-status { font-size:10px;font-weight:600;margin-top:4px; }
+  .state-name { font-size:13px;color:var(--mid);margin-top:2px; }
+  .state-status { font-size:13px;font-weight:600;margin-top:4px; }
   .detail-panel { background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px; }
   .detail-panel h2 { font-size:18px;font-weight:700;margin:0 0 16px;display:flex;align-items:center;gap:10px; }
   .req-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px; }
   .req-box { background:var(--bg);border-radius:8px;padding:14px; }
-  .req-label { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--mid);margin-bottom:6px; }
+  .req-label { font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--mid);margin-bottom:6px; }
   .req-value { font-size:13px;color:var(--text);line-height:1.5; }
-  .btn-permit { display:inline-block;background:var(--blue);color:#fff;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:600;text-decoration:none;margin-right:8px;margin-top:8px; }
+  .btn-permit { display:inline-block;background:var(--blue);color:#fff;border-radius:7px;padding:8px 14px;font-size:13px;font-weight:600;text-decoration:none;margin-right:8px;margin-top:8px; }
   .cert-card { background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px; }
   .cert-card h3 { font-size:14px;font-weight:700;margin:0 0 10px; }
-  .exp-badge { font-size:11px;padding:3px 8px;border-radius:12px;font-weight:600; }
+  .exp-badge { font-size:13px;padding:3px 8px;border-radius:12px;font-weight:600; }
   .exp-ok { background:#f0fdf4;color:var(--green); }
   .exp-warn { background:#fffbeb;color:var(--amber); }
   .exp-expired { background:#fee2e2;color:var(--red); }
   .legend { display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap; }
-  .legend-item { display:flex;align-items:center;gap:6px;font-size:12px; }
+  .legend-item { display:flex;align-items:center;gap:6px;font-size:13px; }
   .legend-dot { width:12px;height:12px;border-radius:3px;border:2px solid; }
   .modal-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center; }
   .modal-box { background:#fff;border-radius:12px;padding:24px;width:420px;max-width:95vw; }
   .form-row { margin-bottom:12px; }
-  .form-row label { display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px; }
+  .form-row label { display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:4px; }
   .form-row input, .form-row select { width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:7px;font-size:14px;font-family:'Barlow',sans-serif; }
   @media (max-width:768px) { .main { margin-left:0;padding:16px; } .req-grid { grid-template-columns:1fr; } }
 </style>
@@ -83,7 +88,7 @@
         <div class="req-box"><div class="req-label">Notes / Statutes</div><div class="req-value" id="detail-notes"></div></div>
       </div>
       <a class="btn-permit" id="detail-permit-link" href="#" target="_blank" rel="noopener">State Permit Office</a>
-      <button style="padding:8px 14px;border:1px solid var(--blue);border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;background:#eff6ff;color:var(--blue);margin-top:8px;" onclick="addCertForSelected()">+ Track My Certification</button>
+      <button style="padding:8px 14px;border:1px solid var(--blue);border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;background:#eff6ff;color:var(--blue);margin-top:8px;" onclick="addCertForSelected()">+ Track My Certification</button>
     </div>
   </div>
 
@@ -216,7 +221,7 @@ function renderStateGrid() {
       '<div class="state-abbr">' + abbr + '</div>' +
       '<div class="state-name">' + s.name + '</div>' +
       '<div class="state-status">' + (s.certRequired ? 'Cert Req.' : 'No Cert') + '</div>' +
-      (hasCert ? '<div style="font-size:9px;color:#2563eb;margin-top:3px;">Tracked</div>' : '') +
+      (hasCert ? '<div style="font-size:13px;color:#2563eb;margin-top:3px;">Tracked</div>' : '') +
       '</div>';
   }).join('');
   if (sel && sel.options.length <= 1) {
@@ -305,9 +310,9 @@ function renderCertList() {
     return '<div class="cert-card">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;">' +
       '<h3>' + abbr + ' - ' + (s.name || abbr) + ' ' + expBadge + '</h3>' +
-      '<button onclick="deleteCert(\'' + abbr + '\')" style="padding:5px 10px;border:none;border-radius:6px;font-size:11px;background:#fee2e2;color:#dc2626;cursor:pointer;">Remove</button>' +
+      '<button onclick="deleteCert(\'' + abbr + '\')" style="padding:5px 10px;border:none;border-radius:6px;font-size:13px;background:#fee2e2;color:#dc2626;cursor:pointer;">Remove</button>' +
       '</div>' +
-      '<div style="font-size:12px;color:var(--mid);display:flex;gap:20px;flex-wrap:wrap;">' +
+      '<div style="font-size:13px;color:var(--mid);display:flex;gap:20px;flex-wrap:wrap;">' +
       (c.number ? '<span>Cert #: <strong style="color:var(--text);">' + c.number + '</strong></span>' : '') +
       (c.issued ? '<span>Issued: <strong style="color:var(--text);">' + c.issued + '</strong></span>' : '') +
       (c.expiry ? '<span>Expires: <strong style="color:var(--text);">' + c.expiry + '</strong></span>' : '') +
@@ -324,9 +329,9 @@ function renderEquipmentList() {
     return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">' +
       '<input type="checkbox" id="eq-' + i + '" ' + (checked ? 'checked' : '') + ' onchange="saveEquipCheck(' + i + ',this.checked)" style="margin-top:3px;cursor:pointer;width:16px;height:16px;">' +
       '<div><label for="eq-' + i + '" style="font-size:13px;font-weight:600;cursor:pointer;">' +
-      '<span style="font-size:10px;font-weight:700;margin-right:6px;' + (item.required ? 'color:#dc2626;' : 'color:#6b7280;') + '">' + (item.required ? 'REQUIRED' : 'RECOMMENDED') + '</span>' +
+      '<span style="font-size:13px;font-weight:700;margin-right:6px;' + (item.required ? 'color:#dc2626;' : 'color:#6b7280;') + '">' + (item.required ? 'REQUIRED' : 'RECOMMENDED') + '</span>' +
       item.item + '</label>' +
-      '<div style="font-size:11px;color:var(--mid);margin-top:2px;">' + item.note + '</div>' +
+      '<div style="font-size:13px;color:var(--mid);margin-top:2px;">' + item.note + '</div>' +
       '</div></div>';
   }).join('');
 }

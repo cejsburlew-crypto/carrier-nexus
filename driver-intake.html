@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -57,7 +62,7 @@
     }
     #topbar .title { flex: 1; font-size: 17px; font-weight: 700; letter-spacing: 0.3px; }
     #topbar .title span { color: var(--teal); }
-    #draft-indicator { font-size: 11px; color: rgba(255,255,255,0.6); white-space: nowrap; }
+    #draft-indicator { font-size: 13px; color: rgba(255,255,255,0.6); white-space: nowrap; }
 
     /* WHO ARE YOU */
     #who-bar {
@@ -89,7 +94,7 @@
     .tab-btn {
       flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
       gap: 3px; cursor: pointer; border: none; background: none; padding: 6px 4px;
-      color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 600; transition: color 0.2s;
+      color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 600; transition: color 0.2s;
     }
     .tab-btn .tab-icon { font-size: 24px; }
     .tab-btn.active { color: var(--teal); border-top: 3px solid var(--teal); margin-top: -2px; }
@@ -186,10 +191,10 @@
     .doc-tile:active { border-color: var(--teal); }
     .doc-tile .tile-icon { font-size: 26px; }
     .doc-tile .tile-label { font-size: 13px; font-weight: 700; color: var(--navy); line-height: 1.2; }
-    .doc-tile .tile-count { font-size: 11px; color: var(--gray-text); }
-    .doc-tile .tile-expiry { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; background: var(--gray-bg); color: var(--gray-text); }
+    .doc-tile .tile-count { font-size: 13px; color: var(--gray-text); }
+    .doc-tile .tile-expiry { font-size: 13px; font-weight: 700; padding: 2px 6px; border-radius: 10px; background: var(--gray-bg); color: var(--gray-text); }
     .doc-tile .tile-expiry.urgent { background: #fff0f0; color: var(--danger); }
-    .doc-tile .badge { position: absolute; top: 8px; right: 8px; background: var(--teal); color: var(--navy); font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
+    .doc-tile .badge { position: absolute; top: 8px; right: 8px; background: var(--teal); color: var(--navy); font-size: 13px; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
 
     /* BOTTOM SHEET */
     #sheet-overlay { position: fixed; inset: 0; background: rgba(248, 249, 250, 1),0.5); z-index: 300; display: none; }
@@ -219,7 +224,7 @@
     .quick-btn {
       background: white; border-radius: 12px; padding: 14px 6px; text-align: center;
       box-shadow: 0 1px 4px rgba(0,0,0,0.08); cursor: pointer; border: 2px solid transparent;
-      font-size: 11px; font-weight: 700; color: var(--navy); transition: border-color 0.2s;
+      font-size: 13px; font-weight: 700; color: var(--navy); transition: border-color 0.2s;
     }
     .quick-btn:active { border-color: var(--teal); }
     .quick-btn .q-icon { font-size: 24px; display: block; margin-bottom: 4px; }
@@ -229,7 +234,7 @@
     .expense-item .e-icon { font-size: 24px; }
     .expense-item .e-info { flex: 1; }
     .expense-item .e-cat { font-size: 14px; font-weight: 600; color: var(--navy); }
-    .expense-item .e-date { font-size: 12px; color: var(--gray-text); }
+    .expense-item .e-date { font-size: 13px; color: var(--gray-text); }
     .expense-item .e-amount { font-size: 17px; font-weight: 800; color: var(--navy); }
     .empty-state { text-align: center; padding: 40px 20px; color: var(--gray-text); }
     .empty-state .e-icon { font-size: 40px; margin-bottom: 10px; }
@@ -246,9 +251,9 @@
     .thumb-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 20px; }
     .thumb-item { aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: var(--gray-bg); position: relative; }
     .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
-    .thumb-item .thumb-type { position: absolute; bottom: 2px; left: 2px; right: 2px; background: rgba(248, 249, 250, 1),0.6); color: white; font-size: 9px; text-align: center; padding: 2px; border-radius: 3px; font-weight: 600; }
+    .thumb-item .thumb-type { position: absolute; bottom: 2px; left: 2px; right: 2px; background: rgba(248, 249, 250, 1),0.6); color: white; font-size: 13px; text-align: center; padding: 2px; border-radius: 3px; font-weight: 600; }
     .type-select-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .type-chip { padding: 10px 6px; text-align: center; border-radius: 8px; border: 2px solid var(--gray-border); font-size: 12px; font-weight: 600; color: var(--navy); cursor: pointer; background: white; }
+    .type-chip { padding: 10px 6px; text-align: center; border-radius: 8px; border: 2px solid var(--gray-border); font-size: 13px; font-weight: 600; color: var(--navy); cursor: pointer; background: white; }
     .type-chip.selected { border-color: var(--teal); background: #e8faf6; }
     .rotate-controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 10px; }
     .rotate-btn { background: var(--gray-bg); border: none; border-radius: 8px; padding: 10px 18px; font-size: 15px; cursor: pointer; }
@@ -259,7 +264,7 @@
     .conditional-fields .form-group:last-child { margin-bottom: 0; }
 
     .section-divider { height: 1px; background: var(--gray-border); margin: 16px 0; }
-    .helper-text { font-size: 12px; color: var(--gray-text); margin-top: 4px; }
+    .helper-text { font-size: 13px; color: var(--gray-text); margin-top: 4px; }
     .link-btn { background: none; border: none; color: var(--teal); font-size: 15px; font-weight: 700; cursor: pointer; padding: 10px 0; text-decoration: underline; }
 
     /* SECTION SUB-HEADER BAR */
@@ -276,7 +281,7 @@
       line-height: 1.2;
     }
     #section-bar .sb-desc {
-      font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 1px; font-weight: 400;
+      font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 1px; font-weight: 400;
     }
     --section-bar-h: 52px;
 
@@ -306,7 +311,7 @@
     #intake-splash .splash-list li .s-icon { font-size: 20px; flex-shrink: 0; }
     #intake-splash .splash-list li .s-text { line-height: 1.3; }
     #intake-splash .splash-list li .s-label { font-weight: 700; color: #111827; }
-    #intake-splash .splash-list li .s-sub { font-size: 12px; color: rgba(255,255,255,0.5); }
+    #intake-splash .splash-list li .s-sub { font-size: 13px; color: rgba(255,255,255,0.5); }
     #intake-splash .splash-hint {
       font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 20px;
     }
@@ -326,7 +331,7 @@
 <!-- TOP BAR -->
 <div id="topbar">
   <a href="driver-command.html" class="back-btn" id="back-btn" onclick="return confirmBack()">←</a>
-  <div class="title" style="display:flex;flex-direction:column;gap:1px;"><span style="font-size:16px;font-weight:900;letter-spacing:0.5px;color:#fff;line-height:1.1;">DRIVER INTAKE</span><span style="font-size:11px;font-weight:500;color:var(--teal);letter-spacing:0.3px;line-height:1;">Carrier Nexus</span></div>
+  <div class="title" style="display:flex;flex-direction:column;gap:1px;"><span style="font-size:16px;font-weight:900;letter-spacing:0.5px;color:#fff;line-height:1.1;">DRIVER INTAKE</span><span style="font-size:13px;font-weight:500;color:var(--teal);letter-spacing:0.3px;line-height:1;">Carrier Nexus</span></div>
   <div id="draft-indicator"></div>
 </div>
 
@@ -352,43 +357,43 @@
       
       <!-- Greeting -->
       <div style="background:var(--navy);border-radius:14px;padding:20px 18px;margin-bottom:20px;">
-        <div style="font-size:12px;color:rgba(255,255,255,0.6);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">DRIVER INTAKE PORTAL</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.6);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">DRIVER INTAKE PORTAL</div>
         <div id="home-greeting" style="font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;">Good morning</div>
         <div id="home-name" style="font-size:15px;color:var(--teal);font-weight:600;">Carrier Nexus</div>
       </div>
 
       <!-- 2x2 Action Grid -->
-      <div style="font-size:11px;font-weight:700;color:var(--gray-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Quick Actions</div>
+      <div style="font-size:13px;font-weight:700;color:var(--gray-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Quick Actions</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
         
         <button onclick="goToTab('ratecon')" style="background:var(--navy);border:2px solid var(--teal);border-radius:14px;padding:20px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:background 0.15s;">
           <span style="font-size:28px;">📋</span>
           <div style="font-size:14px;font-weight:700;color:#fff;">Submit Rate Con</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.55);">Add a new load</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.55);">Add a new load</div>
         </button>
 
         <button onclick="goToTab('docs')" style="background:var(--navy);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:20px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:background 0.15s;">
           <span style="font-size:28px;">📄</span>
           <div style="font-size:14px;font-weight:700;color:#fff;">Upload Document</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.55);">BOL, CDL, permits…</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.55);">BOL, CDL, permits…</div>
         </button>
 
         <button onclick="goToTab('expenses')" style="background:var(--navy);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:20px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:background 0.15s;">
           <span style="font-size:28px;">💳</span>
           <div style="font-size:14px;font-weight:700;color:#fff;">Log Expense</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.55);">Fuel, tolls, repairs…</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.55);">Fuel, tolls, repairs…</div>
         </button>
 
         <button onclick="goToTab('camera')" style="background:var(--navy);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:20px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;transition:background 0.15s;">
           <span style="font-size:28px;">📷</span>
           <div style="font-size:14px;font-weight:700;color:#fff;">Scan / Capture</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.55);">Camera upload</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.55);">Camera upload</div>
         </button>
 
       </div>
 
       <!-- Recent Activity -->
-      <div style="font-size:11px;font-weight:700;color:var(--gray-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Recent Submissions</div>
+      <div style="font-size:13px;font-weight:700;color:var(--gray-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Recent Submissions</div>
       <div id="home-recent-list" style="display:flex;flex-direction:column;gap:8px;">
         <div style="background:#f5f7fa;border-radius:10px;padding:14px 16px;font-size:13px;color:var(--gray-text);text-align:center;">No recent submissions</div>
       </div>
@@ -796,7 +801,7 @@ document.addEventListener('DOMContentLoaded', () => {
               '<span style="font-size:20px;">' + (d.type === 'ratecon' ? '📋' : d.type === 'bol' ? '📜' : '📄') + '</span>' +
               '<div style="flex:1;min-width:0;">' +
                 '<div style="font-size:13px;font-weight:600;color:#1a1a2e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (d.title || d.type || 'Document') + '</div>' +
-                '<div style="font-size:11px;color:#6b7a99;">' + (d.date || d.submittedAt || '') + '</div>' +
+                '<div style="font-size:13px;color:#6b7a99;">' + (d.date || d.submittedAt || '') + '</div>' +
               '</div>' +
             '</div>';
           }).join('');

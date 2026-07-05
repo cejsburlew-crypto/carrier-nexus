@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -37,7 +42,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;disp
 .btn-blue:hover{background:#2563eb;}
 .btn-ghost{background:transparent;color:var(--mid);border:1px solid var(--border);}
 .btn-ghost:hover{color:var(--text);border-color:var(--blue);}
-.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-sm{padding:5px 12px;font-size:13px;}
 .btn-green{background:var(--green);color:#fff;}
 .btn-green:hover{background:#059669;}
 .btn-red{background:var(--red);color:#fff;}
@@ -62,18 +67,18 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;disp
 .escort-card:hover{border-color:var(--blue);}
 .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
 .card-company{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;}
-.card-contact{font-size:12px;color:var(--mid);margin-bottom:4px;}
-.card-phone,.card-email{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue);}
+.card-contact{font-size:13px;color:var(--mid);margin-bottom:4px;}
+.card-phone,.card-email{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue);}
 .card-states{display:flex;flex-wrap:wrap;gap:4px;margin:10px 0;}
-.state-badge{background:var(--panel2);border:1px solid var(--border);color:var(--mid);font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 6px;border-radius:3px;}
-.card-cert{font-size:11px;color:var(--mid);margin-top:8px;font-family:'JetBrains Mono',monospace;}
+.state-badge{background:var(--panel2);border:1px solid var(--border);color:var(--mid);font-size:13px;font-family:'JetBrains Mono',monospace;padding:2px 6px;border-radius:3px;}
+.card-cert{font-size:13px;color:var(--mid);margin-top:8px;font-family:'JetBrains Mono',monospace;}
 .card-actions{display:flex;gap:8px;margin-top:12px;}
 /* COI STATUS */
 .coi-ok{color:var(--green);}
 .coi-missing{color:var(--red);}
 .coi-pending{color:var(--yellow);}
 /* STATUS BADGES */
-.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;text-transform:uppercase;}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;text-transform:uppercase;}
 .badge-pending{background:rgba(245,158,11,.15);color:var(--yellow);}
 .badge-confirmed{background:rgba(59,130,246,.15);color:var(--blue);}
 .badge-enroute{background:rgba(168,85,247,.15);color:var(--purple);}
@@ -83,22 +88,22 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;disp
 /* TABLE */
 .table-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
-th{background:var(--panel2);color:var(--mid);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+th{background:var(--panel2);color:var(--mid);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
 td{padding:11px 14px;border-bottom:1px solid rgba(30,45,69,.6);vertical-align:middle;}
 tr:hover td{background:rgba(59,130,246,.04);}
 /* COI VAULT */
 .coi-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;}
 .coi-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
 .coi-checklist{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
-.check-item{display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:6px 8px;border-radius:5px;transition:background .1s;}
+.check-item{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;padding:6px 8px;border-radius:5px;transition:background .1s;}
 .check-item:hover{background:var(--panel2);}
 .check-item input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;}
 .score-bar{background:var(--panel2);border-radius:6px;height:8px;margin:8px 0;}
 .score-fill{height:8px;border-radius:6px;transition:width .3s;}
 .vin-row{display:flex;gap:8px;align-items:center;margin-top:12px;}
-.vin-row input{flex:1;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:12px;}
+.vin-row input{flex:1;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:13px;}
 .vin-row input:focus{outline:none;border-color:var(--blue);}
-.vin-result{font-size:12px;font-family:'JetBrains Mono',monospace;margin-top:6px;}
+.vin-result{font-size:13px;font-family:'JetBrains Mono',monospace;margin-top:6px;}
 /* STATE REQ TABLE */
 .state-search{margin-bottom:16px;display:flex;gap:10px;}
 .state-search input{flex:1;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:9px 14px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;}
@@ -109,12 +114,12 @@ tr:hover td{background:rgba(59,130,246,.04);}
 .modal{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;}
 .modal h3{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;margin-bottom:20px;}
 .form-row{margin-bottom:14px;}
-.form-row label{display:block;font-size:12px;color:var(--mid);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.form-row label{display:block;font-size:13px;color:var(--mid);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
 .form-row input,.form-row select,.form-row textarea{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;}
 .form-row input:focus,.form-row select:focus,.form-row textarea:focus{outline:none;border-color:var(--blue);}
 .form-row textarea{resize:vertical;min-height:80px;}
 .state-checkboxes{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;max-height:180px;overflow-y:auto;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:10px;}
-.state-cb-item{display:flex;align-items:center;gap:4px;font-size:11px;}
+.state-cb-item{display:flex;align-items:center;gap:4px;font-size:13px;}
 .state-cb-item input{accent-color:var(--blue);}
 .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
 .empty-state{text-align:center;padding:60px 20px;color:var(--mid);}
@@ -205,7 +210,7 @@ tr:hover td{background:rgba(59,130,246,.04);}
     <div class="tab-pane" id="pane-requirements">
       <div class="state-search">
         <input type="text" id="stateReqSearch" placeholder="Search state…" oninput="filterStateReqs()">
-        <span style="font-size:12px;color:var(--mid);align-self:center;">* All measurements in feet. Verify current rules with your state DOT before each move.</span>
+        <span style="font-size:13px;color:var(--mid);align-self:center;">* All measurements in feet. Verify current rules with your state DOT before each move.</span>
       </div>
       <div class="table-wrap">
         <table>
@@ -539,7 +544,7 @@ function renderEscorts() {
       '<div class="card-email">✉ ' + (e.email || '—') + '</div>' +
       '<div class="card-states">' + states + '</div>' +
       '<div class="card-cert">OOIDA/Cert: ' + (e.cert || '—') + '</div>' +
-      (e.notes ? '<div style="font-size:11px;color:var(--mid);margin-top:6px;">' + e.notes + '</div>' : '') +
+      (e.notes ? '<div style="font-size:13px;color:var(--mid);margin-top:6px;">' + e.notes + '</div>' : '') +
       '<div class="card-actions">' +
         '<button class="btn btn-blue btn-sm" onclick="quickAssign(\'' + e.id + '\')">Assign to Load</button>' +
         '<button class="btn btn-ghost btn-sm" onclick="deleteEscort(\'' + e.id + '\')">Delete</button>' +
@@ -640,8 +645,8 @@ function renderAssignments() {
       '<td><strong>' + a.loadNum + '</strong></td>' +
       '<td style="color:var(--mid);">' + (a.route || '—') + '</td>' +
       '<td>' + a.escortName + '</td>' +
-      '<td style="font-family:\'JetBrains Mono\',monospace;font-size:12px;">' + a.escortPhone + '</td>' +
-      '<td style="font-size:12px;">' + a.date + '</td>' +
+      '<td style="font-family:\'JetBrains Mono\',monospace;font-size:13px;">' + a.escortPhone + '</td>' +
+      '<td style="font-size:13px;">' + a.date + '</td>' +
       '<td>' + coiCell + '</td>' +
       '<td><span class="badge ' + badgeClass + '">' + a.status + '</span></td>' +
       '<td><button class="btn btn-ghost btn-sm" onclick="changeStatus(\'' + a.id + '\')">Update</button> <button class="btn btn-ghost btn-sm" style="color:var(--red);" onclick="deleteAssignment(\'' + a.id + '\')">Del</button></td>' +
@@ -747,39 +752,39 @@ function renderCOICard(coi) {
     '<div class="coi-card-header">' +
       '<div>' +
         '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:17px;font-weight:700;">' + coi.escortName + '</div>' +
-        '<div style="font-size:12px;color:var(--mid);margin-top:2px;">📄 ' + coi.filename + ' &nbsp;·&nbsp; Uploaded: ' + coi.uploadDate + '</div>' +
+        '<div style="font-size:13px;color:var(--mid);margin-top:2px;">📄 ' + coi.filename + ' &nbsp;·&nbsp; Uploaded: ' + coi.uploadDate + '</div>' +
       '</div>' +
       '<span class="badge ' + statusClass + '">' + status + '</span>' +
     '</div>' +
     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;">' +
       '<div style="background:var(--panel2);border-radius:6px;padding:8px 10px;">' +
-        '<div style="font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;">Policy #</div>' +
-        '<div style="font-family:\'JetBrains Mono\',monospace;font-size:12px;margin-top:2px;">' + (coi.policy || '—') + '</div>' +
+        '<div style="font-size:13px;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;">Policy #</div>' +
+        '<div style="font-family:\'JetBrains Mono\',monospace;font-size:13px;margin-top:2px;">' + (coi.policy || '—') + '</div>' +
       '</div>' +
       '<div style="background:var(--panel2);border-radius:6px;padding:8px 10px;">' +
-        '<div style="font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;">Effective</div>' +
-        '<div style="font-size:12px;margin-top:2px;color:' + (effOk ? 'var(--green)' : 'var(--red)') + ';">' + (coi.effDate || '—') + '</div>' +
+        '<div style="font-size:13px;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;">Effective</div>' +
+        '<div style="font-size:13px;margin-top:2px;color:' + (effOk ? 'var(--green)' : 'var(--red)') + ';">' + (coi.effDate || '—') + '</div>' +
       '</div>' +
       '<div style="background:var(--panel2);border-radius:6px;padding:8px 10px;">' +
-        '<div style="font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;">Expires</div>' +
-        '<div style="font-size:12px;margin-top:2px;color:' + (expOk ? 'var(--green)' : 'var(--red)') + ';">' + (coi.expDate || '—') + '</div>' +
+        '<div style="font-size:13px;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;">Expires</div>' +
+        '<div style="font-size:13px;margin-top:2px;color:' + (expOk ? 'var(--green)' : 'var(--red)') + ';">' + (coi.expDate || '—') + '</div>' +
       '</div>' +
       '<div style="background:var(--panel2);border-radius:6px;padding:8px 10px;">' +
-        '<div style="font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;">Coverage</div>' +
-        '<div style="font-size:12px;margin-top:2px;color:' + (coi.coverage >= 300000 ? 'var(--green)' : 'var(--red)') + ';">' + (coi.coverage ? '$' + coi.coverage.toLocaleString() : '—') + '</div>' +
+        '<div style="font-size:13px;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;">Coverage</div>' +
+        '<div style="font-size:13px;margin-top:2px;color:' + (coi.coverage >= 300000 ? 'var(--green)' : 'var(--red)') + ';">' + (coi.coverage ? '$' + coi.coverage.toLocaleString() : '—') + '</div>' +
       '</div>' +
     '</div>' +
-    '<div style="font-size:12px;font-weight:600;color:var(--mid);margin-bottom:8px;">Verification Checklist</div>' +
+    '<div style="font-size:13px;font-weight:600;color:var(--mid);margin-bottom:8px;">Verification Checklist</div>' +
     '<div class="coi-checklist">' + checklistHtml + '</div>' +
     '<div style="display:flex;align-items:center;gap:12px;margin-top:8px;">' +
-      '<div style="font-size:12px;color:var(--mid);">Score:</div>' +
+      '<div style="font-size:13px;color:var(--mid);">Score:</div>' +
       '<div style="flex:1;background:var(--panel2);border-radius:6px;height:8px;overflow:hidden;">' +
         '<div style="height:8px;border-radius:6px;width:' + score + '%;background:' + fillColor + ';transition:width .3s;"></div>' +
       '</div>' +
-      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:12px;font-weight:700;color:' + fillColor + ';">' + score + '%</div>' +
+      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:13px;font-weight:700;color:' + fillColor + ';">' + score + '%</div>' +
     '</div>' +
     '<div class="vin-row">' +
-      '<div style="font-size:12px;color:var(--mid);white-space:nowrap;">VIN on COI:</div>' +
+      '<div style="font-size:13px;color:var(--mid);white-space:nowrap;">VIN on COI:</div>' +
       '<input type="text" id="vin_input_' + coi.id + '" value="' + (coi.vin || '') + '" placeholder="Enter VIN from COI…" maxlength="17">' +
       '<button class="btn btn-ghost btn-sm" onclick="checkVIN(\'' + coi.id + '\')">Check VIN</button>' +
     '</div>' +
@@ -842,13 +847,13 @@ function renderStateReqs(filter) {
   }) : STATE_REQUIREMENTS;
   tbody.innerHTML = data.map(function(r) {
     return '<tr>' +
-      '<td><strong>' + r.state + '</strong> <span style="color:var(--mid);font-size:11px;">' + (STATE_NAMES[r.state] || '') + '</span></td>' +
+      '<td><strong>' + r.state + '</strong> <span style="color:var(--mid);font-size:13px;">' + (STATE_NAMES[r.state] || '') + '</span></td>' +
       '<td>' + r.noP + '\'</td>' +
       '<td>' + r.oneP + '\'</td>' +
       '<td>' + r.twoP + '\'</td>' +
       '<td>' + r.length + '\'</td>' +
       '<td>' + r.height + '\'</td>' +
-      '<td style="font-size:12px;color:var(--mid);">' + r.notes + '</td>' +
+      '<td style="font-size:13px;color:var(--mid);">' + r.notes + '</td>' +
     '</tr>';
   }).join('');
 }

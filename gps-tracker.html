@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -39,8 +44,8 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;disp
 .btn-blue:hover{background:#2563eb;}
 .btn-ghost{background:transparent;color:var(--mid);border:1px solid var(--border);}
 .btn-ghost:hover{color:var(--text);border-color:var(--blue);}
-.btn-sm{padding:5px 10px;font-size:12px;}
-.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;text-transform:uppercase;}
+.btn-sm{padding:5px 10px;font-size:13px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;text-transform:uppercase;}
 .badge-moving{background:rgba(16,185,129,.15);color:var(--green);}
 .badge-idle{background:rgba(245,158,11,.15);color:var(--yellow);}
 .badge-stopped{background:rgba(239,68,68,.15);color:var(--red);}
@@ -52,16 +57,16 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;disp
 /* VEHICLE LIST */
 .vehicle-list-panel{width:320px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
 .vlp-header{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;}
-.vlp-header span{font-size:12px;color:var(--mid);}
+.vlp-header span{font-size:13px;color:var(--mid);}
 .vehicle-list{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;}
 .vehicle-item{padding:12px 16px;border-bottom:1px solid rgba(30,45,69,.5);cursor:pointer;transition:background .15s;}
 .vehicle-item:hover{background:var(--panel);}
 .vehicle-item.selected{background:var(--panel);border-left:3px solid var(--blue);}
 .vi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
 .vi-unit{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;}
-.vi-driver{font-size:12px;color:var(--mid);}
-.vi-loc{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mid);margin-top:3px;}
-.vi-ping{font-size:10px;color:var(--mid);}
+.vi-driver{font-size:13px;color:var(--mid);}
+.vi-loc{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--mid);margin-top:3px;}
+.vi-ping{font-size:13px;color:var(--mid);}
 /* MAP PANEL */
 .map-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 #map{flex:1;min-height:350px;z-index:1;}
@@ -73,14 +78,14 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;disp
 .gps-card{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:16px;}
 .gps-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
 .gps-card-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;}
-.gps-provider-sel{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-size:12px;font-family:'Barlow',sans-serif;}
+.gps-provider-sel{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-size:13px;font-family:'Barlow',sans-serif;}
 .gps-provider-sel:focus{outline:none;border-color:var(--blue);}
-.gps-stat{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(30,45,69,.4);font-size:12px;}
+.gps-stat{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(30,45,69,.4);font-size:13px;}
 .gps-stat:last-of-type{border-bottom:none;}
 .gps-stat-label{color:var(--mid);}
 .gps-stat-val{font-family:'JetBrains Mono',monospace;}
 .gps-card-footer{display:flex;gap:8px;margin-top:10px;}
-.connect-hint{font-size:11px;color:var(--mid);margin-top:8px;}
+.connect-hint{font-size:13px;color:var(--mid);margin-top:8px;}
 /* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(248, 249, 250, 1),.75);z-index:2000;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
@@ -88,11 +93,11 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;disp
 .modal h3{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;margin-bottom:6px;}
 .modal p{font-size:13px;color:var(--mid);margin-bottom:20px;}
 .form-row{margin-bottom:14px;}
-.form-row label{display:block;font-size:12px;color:var(--mid);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.form-row label{display:block;font-size:13px;color:var(--mid);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
 .form-row input,.form-row select{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;}
 .form-row input:focus,.form-row select:focus{outline:none;border-color:var(--blue);}
 .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
-.provider-instructions{background:var(--panel2);border-radius:6px;padding:12px;font-size:12px;color:var(--mid);line-height:1.6;margin-bottom:14px;}
+.provider-instructions{background:var(--panel2);border-radius:6px;padding:12px;font-size:13px;color:var(--mid);line-height:1.6;margin-bottom:14px;}
 /* LEAFLET DARK OVERRIDES */
 .leaflet-container{background:var(--bg) !important;}
 .leaflet-popup-content-wrapper{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:8px;}
@@ -101,7 +106,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;disp
 .leaflet-bar a{background:var(--panel);color:var(--text);border-color:var(--border);}
 .leaflet-bar a:hover{background:var(--panel2);}
 .popup-unit{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px;}
-.popup-row{display:flex;gap:8px;margin-top:3px;font-size:12px;color:#94a3b8;}
+.popup-row{display:flex;gap:8px;margin-top:3px;font-size:13px;color:#94a3b8;}
 </style>
 </head>
 <body>
@@ -111,7 +116,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;disp
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:14px;">
       <div class="page-title">📡 GPS Tracker</div>
-      <div style="font-size:12px;color:var(--mid);">Live dual-source tracking — ELD + hardware GPS</div>
+      <div style="font-size:13px;color:var(--mid);">Live dual-source tracking — ELD + hardware GPS</div>
     </div>
     <div class="filter-row">
       <input type="text" id="searchInput" placeholder="Search driver or unit…" oninput="filterVehicles()" style="width:180px;">
@@ -131,7 +136,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;disp
     <div class="vehicle-list-panel">
       <div class="vlp-header">
         <span id="vehicleCount">0 vehicles</span>
-        <span id="lastRefresh" style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--mid);"></span>
+        <span id="lastRefresh" style="font-size:13px;font-family:'JetBrains Mono',monospace;color:var(--mid);"></span>
       </div>
       <div class="vehicle-list" id="vehicleList"></div>
     </div>
@@ -335,7 +340,7 @@ function addMarkers(vehicles) {
     var icon = createMarkerIcon(v.status, v.unit.replace('Unit ',''));
     var speedStr = v.speed > 0 ? v.speed + ' mph' : 'Stopped';
     var popupHtml = '<div class="popup-unit">🚛 ' + v.unit + '</div>' +
-      '<div style="font-size:12px;font-weight:600;color:var(--text);">' + v.driver + '</div>' +
+      '<div style="font-size:13px;font-weight:600;color:var(--text);">' + v.driver + '</div>' +
       '<div class="popup-row">📍 ' + v.lat.toFixed(4) + ', ' + v.lng.toFixed(4) + '</div>' +
       '<div class="popup-row">⚡ ' + speedStr + ' &nbsp;·&nbsp; Heading: ' + (v.heading || '—') + '</div>' +
       '<div class="popup-row">🕐 Last ping: ' + (v.lastPing || '—') + '</div>';

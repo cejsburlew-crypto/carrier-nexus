@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -35,7 +40,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 @media(max-width:700px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
 .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
 .stat-card .stat-num{font-size:28px;font-weight:700}
-.stat-card .stat-label{font-size:12px;color:var(--mid);margin-top:4px}
+.stat-card .stat-label{font-size:13px;color:var(--mid);margin-top:4px}
 .filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center}
 .filter-btn{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--panel2);color:var(--mid);cursor:pointer;font-size:13px;transition:.15s}
 .filter-btn.active{border-color:var(--blue);color:var(--blue);background:rgba(59,130,246,.1)}
@@ -46,16 +51,16 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .item-card.SOON{border-left-color:var(--yellow)}
 .item-card.OK{border-left-color:var(--green)}
 .item-card.UNKNOWN{border-left-color:var(--mid)}
-.badge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap}
+.badge{padding:3px 10px;border-radius:12px;font-size:13px;font-weight:700;white-space:nowrap}
 .badge.EXPIRED{background:rgba(239,68,68,.15);color:var(--red)}
 .badge.URGENT{background:rgba(249,115,22,.15);color:var(--orange)}
 .badge.SOON{background:rgba(245,158,11,.15);color:var(--yellow)}
 .badge.OK{background:rgba(16,185,129,.15);color:var(--green)}
 .badge.UNKNOWN{background:rgba(100,116,139,.15);color:var(--mid)}
 .item-name{font-size:15px;font-weight:600;color:var(--text)}
-.item-meta{font-size:12px;color:var(--mid);margin-top:3px}
+.item-meta{font-size:13px;color:var(--mid);margin-top:3px}
 .item-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-.btn-sm{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--panel2);color:var(--text);cursor:pointer;font-size:12px}
+.btn-sm{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--panel2);color:var(--text);cursor:pointer;font-size:13px}
 .btn-sm:hover{border-color:var(--blue);color:var(--blue)}
 .top-actions{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
 .btn-primary{padding:10px 20px;background:var(--blue);color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600}
@@ -66,7 +71,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .modal-box{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;width:420px;max-width:95vw}
 .modal-box h3{font-size:16px;color:var(--text);margin-bottom:16px}
 .form-group{margin-bottom:14px}
-.form-group label{display:block;font-size:12px;color:var(--mid);margin-bottom:5px}
+.form-group label{display:block;font-size:13px;color:var(--mid);margin-bottom:5px}
 .form-group input,.form-group select,.form-group textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-size:14px}
 .form-row{display:flex;gap:8px}
 .modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}

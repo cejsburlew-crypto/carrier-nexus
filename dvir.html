@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -46,10 +51,10 @@
     .content { padding: 24px; }
     .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
     .kpi-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 18px 22px; }
-    .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; margin-bottom: 6px; }
+    .kpi-label { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; margin-bottom: 6px; }
     .kpi-value { font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 700; color: #111827; line-height: 1; }
     .kpi-value.accent { color: #e91e8c; }
-    .kpi-sub { font-size: 11px; color: #6b7280; margin-top: 4px; }
+    .kpi-sub { font-size: 13px; color: #6b7280; margin-top: 4px; }
     .card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; }
     .card-title {
       font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700;
@@ -57,20 +62,20 @@
     }
     .dvir-table { width: 100%; border-collapse: collapse; }
     .dvir-table th {
-      text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase;
+      text-align: left; font-size: 13px; font-weight: 600; text-transform: uppercase;
       letter-spacing: 0.8px; color: #6b7280; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--bg);
     }
     .dvir-table td { padding: 12px 14px; border-bottom: 1px solid #1a1f2e; vertical-align: middle; }
     .dvir-table tr:last-child td { border-bottom: none; }
     .dvir-table tr:hover td { background: #f8f9fa; }
-    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.4px; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 13px; font-weight: 600; letter-spacing: 0.4px; }
     .badge-ok { background: #f8f9fa; color: #4ade80; border: 1px solid #166534; }
     .badge-defect { background: #f8f9fa; color: #f87171; border: 1px solid #7f1d1d; }
     .badge-pre { background: #f8f9fa; color: #60a5fa; border: 1px solid #1e3a5f; }
     .badge-post { background: #f8f9fa; color: #a78bfa; border: 1px solid #3b1f6e; }
     .btn-view {
       background: transparent; border: 1px solid #374151; color: #9ca3af;
-      padding: 5px 13px; border-radius: 5px; font-size: 12px; cursor: pointer; transition: all 0.2s;
+      padding: 5px 13px; border-radius: 5px; font-size: 13px; cursor: pointer; transition: all 0.2s;
     }
     .btn-view:hover { border-color: #e91e8c; color: #e91e8c; }
     .empty-state { text-align: center; padding: 48px 24px; color: #4b5563; }
@@ -96,7 +101,7 @@
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group.full { grid-column: 1 / -1; }
-    .form-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: #9ca3af; }
+    .form-label { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: #9ca3af; }
     .form-label span.req { color: #e91e8c; margin-left: 2px; }
     .form-input, .form-select, .form-textarea {
       background: var(--bg); border: 1px solid #374151; border-radius: 6px; color: #111827;
@@ -118,7 +123,7 @@
     .radio-group { display: flex; gap: 4px; }
     .radio-btn {
       padding: 3px 10px; border-radius: 4px; border: 1px solid #374151;
-      background: transparent; color: #6b7280; font-size: 11px; font-weight: 600;
+      background: transparent; color: #6b7280; font-size: 13px; font-weight: 600;
       cursor: pointer; transition: all 0.15s;
     }
     .radio-btn:hover { border-color: #e91e8c; color: #e91e8c; }
@@ -127,7 +132,7 @@
     .radio-btn.active-na { background: #f8f9fa; border-color: #4b5563; color: #9ca3af; }
     .defect-notes-box { background: #f8f9fa; border: 1px solid #7f1d1d; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: none; }
     .defect-notes-box.visible { display: block; }
-    .defect-notes-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #f87171; margin-bottom: 8px; }
+    .defect-notes-label { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #f87171; margin-bottom: 8px; }
     .cert-box { background: var(--bg); border: 1px solid #374151; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; }
     .cert-box input[type="checkbox"] { width: 18px; height: 18px; accent-color: #e91e8c; flex-shrink: 0; margin-top: 1px; cursor: pointer; }
     .cert-text { font-size: 13px; color: #9ca3af; line-height: 1.5; }
@@ -144,12 +149,12 @@
     .btn-submit:hover { background: #c91478; }
     .btn-submit:disabled { background: #374151; cursor: not-allowed; }
     .view-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-    .view-item label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: #6b7280; margin-bottom: 3px; }
+    .view-item label { display: block; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: #6b7280; margin-bottom: 3px; }
     .view-item p { font-size: 14px; color: #111827; }
     .view-checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .view-check-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; border-radius: 4px; font-size: 12px; border: 1px solid #1a1f2e; margin-bottom: 3px; }
+    .view-check-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; border-radius: 4px; font-size: 13px; border: 1px solid #1a1f2e; margin-bottom: 3px; }
     .view-check-name { color: #9ca3af; }
-    .view-check-val { font-weight: 600; font-size: 11px; }
+    .view-check-val { font-weight: 600; font-size: 13px; }
     .val-ok { color: #4ade80; } .val-defect { color: #f87171; } .val-na { color: #6b7280; }
     .view-notes-box { background: #f8f9fa; border: 1px solid #7f1d1d; border-radius: 6px; padding: 12px; font-size: 13px; color: #fca5a5; line-height: 1.5; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -296,7 +301,7 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
           FMCSA Inspection Checklist
         </div>
-        <div style="font-size:12px;color:#6b7280;margin-bottom:14px;">
+        <div style="font-size:13px;color:#6b7280;margin-bottom:14px;">
           Mark each item: <strong style="color:#4ade80;">OK</strong> = Satisfactory &nbsp;|&nbsp; <strong style="color:#f87171;">DEF</strong> = Defect Found &nbsp;|&nbsp; <strong style="color:#9ca3af;">N/A</strong> = Not Applicable
         </div>
         <div class="checklist-columns">
@@ -549,7 +554,7 @@ function viewInspection(id) {
 
   const defSec = r.hasDefect && r.defectNotes ? `
     <div style="margin-bottom:20px;">
-      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#f87171;margin-bottom:8px;">Defect Notes</div>
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#f87171;margin-bottom:8px;">Defect Notes</div>
       <div class="view-notes-box">${esc(r.defectNotes)}</div>
     </div>` : '';
 
@@ -570,24 +575,24 @@ function viewInspection(id) {
         <div class="view-item"><label>Odometer</label><p>${r.odometer ? Number(r.odometer).toLocaleString() + ' miles' : '—'}</p></div>
         <div class="view-item"><label>Trailer #</label><p>${r.trailer ? esc(r.trailer) : '—'}</p></div>
         <div class="view-item"><label>Overall Status</label><p>${statusBadge}</p></div>
-        <div class="view-item"><label>Submitted</label><p style="color:#6b7280;font-size:12px;">${new Date(r.submittedAt).toLocaleString()}</p></div>
+        <div class="view-item"><label>Submitted</label><p style="color:#6b7280;font-size:13px;">${new Date(r.submittedAt).toLocaleString()}</p></div>
       </div>
     </div>
     <div style="margin-bottom:20px;">
-      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#9ca3af;margin-bottom:12px;">FMCSA Checklist</div>
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#9ca3af;margin-bottom:12px;">FMCSA Checklist</div>
       <div class="view-checklist-grid">
         <div>
-          <div style="font-size:12px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid #1e3a5f;">Tractor</div>
+          <div style="font-size:13px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid #1e3a5f;">Tractor</div>
           ${makeRows(TRACTOR_ITEMS,'tractor')}
         </div>
         <div>
-          <div style="font-size:12px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid #3b1f6e;">Trailer</div>
+          <div style="font-size:13px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid #3b1f6e;">Trailer</div>
           ${makeRows(TRAILER_ITEMS,'trailer')}
         </div>
       </div>
     </div>
     ${defSec}
-    <div style="font-size:11px;color:#4b5563;border-top:1px solid var(--border);padding-top:12px;">
+    <div style="font-size:13px;color:#4b5563;border-top:1px solid var(--border);padding-top:12px;">
       Driver certified this report per 49 CFR 396.13 &nbsp;|&nbsp; Record ID: ${r.id}
     </div>`;
 

@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -35,9 +40,9 @@
     .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;color: #111827;letter-spacing:1px;}
     .inner{padding:24px;}
     .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;}
-    .card-title{font-size:11px;color:var(--mid);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+    .card-title{font-size:13px;color:var(--mid);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
     .form-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
-    .form-label{font-size:12px;color:var(--mid);display:block;margin-bottom:5px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px;text-transform:uppercase;}
+    .form-label{font-size:13px;color:var(--mid);display:block;margin-bottom:5px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px;text-transform:uppercase;}
     .form-select{background:#f8f9fa;border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:6px;font-size:13px;font-family:'Barlow',sans-serif;min-width:300px;}
     .form-select:focus{outline:none;border-color:var(--blue);}
     .btn{padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;border:none;transition:all .15s;}
@@ -60,8 +65,8 @@
     #blurLayer.edit-mode{pointer-events:all;}
     .blur-zone{position:absolute;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(248, 249, 250, 1),0.5);border:2px solid var(--red);display:flex;align-items:center;justify-content:center;cursor:default;}
     .blur-zone.edit-mode-zone{cursor:move;}
-    .blur-zone-label{font-size:10px;color:#111827;font-family:'JetBrains Mono',monospace;text-align:center;pointer-events:none;padding:2px 4px;background:rgba(248,249,250,.9);border-radius:3px;max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-    .blur-zone-remove{position:absolute;top:-8px;right:-8px;width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;border:none;cursor:pointer;font-size:11px;line-height:1;display:none;align-items:center;justify-content:center;font-weight:700;}
+    .blur-zone-label{font-size:13px;color:#111827;font-family:'JetBrains Mono',monospace;text-align:center;pointer-events:none;padding:2px 4px;background:rgba(248,249,250,.9);border-radius:3px;max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .blur-zone-remove{position:absolute;top:-8px;right:-8px;width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;border:none;cursor:pointer;font-size:13px;line-height:1;display:none;align-items:center;justify-content:center;font-weight:700;}
     .blur-zone-remove.visible{display:flex;}
     .drag-rect{position:absolute;background:rgba(59,130,246,.2);border:2px dashed var(--blue);pointer-events:none;}
     .placeholder-box{width:600px;max-width:100%;height:400px;background:var(--panel2);border:2px dashed var(--border);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--mid);font-size:14px;gap:8px;}
@@ -69,7 +74,7 @@
     .save-row{margin-top:14px;display:flex;align-items:center;gap:10px;}
     .toast{position:fixed;bottom:24px;right:24px;background:#f8f9fa;border:1px solid var(--green);color:var(--green);padding:12px 20px;border-radius:8px;font-size:13px;z-index:9999;animation:slideIn .2s ease;font-family:'JetBrains Mono',monospace;}
     @keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
-    .zone-count{font-size:12px;color:var(--mid);font-family:'JetBrains Mono',monospace;}
+    .zone-count{font-size:13px;color:var(--mid);font-family:'JetBrains Mono',monospace;}
     .clear-all-btn{margin-left:auto;}
   </style>
 </head>
@@ -139,7 +144,7 @@
         <div class="placeholder-box" id="placeholderBox">
           <svg viewBox="0 0 48 48" fill="none" width="48" height="48"><rect x="8" y="4" width="32" height="40" rx="4" stroke="#64748b" stroke-width="2"/><line x1="16" y1="14" x2="32" y2="14" stroke="#64748b" stroke-width="2"/><line x1="16" y1="20" x2="32" y2="20" stroke="#64748b" stroke-width="2"/><line x1="16" y1="26" x2="28" y2="26" stroke="#64748b" stroke-width="2"/></svg>
           <span>Select a document above to view it</span>
-          <span style="font-size:12px;">CDL, W-9, insurance, and other driver documents</span>
+          <span style="font-size:13px;">CDL, W-9, insurance, and other driver documents</span>
         </div>
         <div class="doc-wrap" id="docWrap" style="display:none;">
           <img id="docImg" alt="Document" ondragstart="return false">

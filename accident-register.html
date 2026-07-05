@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -63,7 +68,7 @@
       padding: 16px 20px; text-align: center;
     }
     .kpi-card .kpi-val { font-size: 30px; font-weight: 700; line-height: 1.1; }
-    .kpi-card .kpi-label { font-size: 12px; color: var(--mid); margin-top: 4px; text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-card .kpi-label { font-size: 13px; color: var(--mid); margin-top: 4px; text-transform: uppercase; letter-spacing: .04em; }
     .kpi-blue .kpi-val { color: var(--blue); }
     .kpi-orange .kpi-val { color: var(--orange); }
     .kpi-yellow .kpi-val { color: var(--yellow); }
@@ -86,7 +91,7 @@
     .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     thead tr { background: var(--panel2); }
-    th { padding: 10px 12px; text-align: left; color: var(--mid); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; border-bottom: 1px solid var(--border); }
+    th { padding: 10px 12px; text-align: left; color: var(--mid); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; border-bottom: 1px solid var(--border); }
     td { padding: 10px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
     tbody tr:last-child td { border-bottom: none; }
     tbody tr:hover { background: var(--panel2); }
@@ -95,7 +100,7 @@
     /* ── Badges ── */
     .badge {
       display: inline-block; padding: 3px 9px; border-radius: 20px;
-      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+      font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
     }
     .badge-open { background: rgba(249,115,22,0.18); color: var(--orange); }
     .badge-closed { background: rgba(16,185,129,0.18); color: var(--green); }
@@ -108,7 +113,7 @@
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .form-full { grid-column: 1 / -1; }
     .form-group { display: flex; flex-direction: column; gap: 5px; }
-    .form-group label { font-size: 12px; font-weight: 600; color: var(--mid); text-transform: uppercase; letter-spacing: .04em; }
+    .form-group label { font-size: 13px; font-weight: 600; color: var(--mid); text-transform: uppercase; letter-spacing: .04em; }
     .form-group input,
     .form-group select,
     .form-group textarea {
@@ -125,7 +130,7 @@
     .checkbox-row input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--blue); cursor: pointer; }
     .checkbox-row label { font-size: 14px; color: var(--text); text-transform: none; letter-spacing: 0; font-weight: 400; cursor: pointer; }
     .form-section { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
-    .form-section-title { font-size: 12px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+    .form-section-title { font-size: 13px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
 
     /* ── Modal ── */
     .modal-backdrop {
@@ -151,7 +156,7 @@
     .modal-body { padding: 24px; }
     .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; }
     .detail-field { }
-    .detail-field .df-label { font-size: 11px; color: var(--mid); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
+    .detail-field .df-label { font-size: 13px; color: var(--mid); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
     .detail-field .df-val { font-size: 14px; color: var(--text); }
     .detail-full { grid-column: 1 / -1; }
     .detail-textarea {
@@ -622,8 +627,8 @@ function renderRegister() {
       '<td style="text-align:center">' + checkMark(r.hazmat_spill) + '</td>' +
       '<td>' + statusBadge(r.status) + '</td>' +
       '<td style="white-space:nowrap;">' +
-        '<button class="btn btn-ghost" style="padding:4px 10px;font-size:12px;margin-right:4px;" onclick="viewRecord(\'' + r.id + '\')">View</button>' +
-        '<button class="btn btn-red" style="padding:4px 10px;font-size:12px;" onclick="deleteRecord(\'' + r.id + '\')">Delete</button>' +
+        '<button class="btn btn-ghost" style="padding:4px 10px;font-size:13px;margin-right:4px;" onclick="viewRecord(\'' + r.id + '\')">View</button>' +
+        '<button class="btn btn-red" style="padding:4px 10px;font-size:13px;" onclick="deleteRecord(\'' + r.id + '\')">Delete</button>' +
       '</td>' +
     '</tr>';
   }).join('');

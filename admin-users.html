@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -34,9 +39,9 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .sidebar-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;text-decoration:none;}
 .logo-hex svg{width:36px;height:36px;}
 .logo-text .brand{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;color:var(--white);letter-spacing:0.04em;}
-.logo-text .sub{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:0.1em;margin-top:1px;}
+.logo-text .sub{display:block;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);letter-spacing:0.1em;margin-top:1px;}
 .sidebar-section{padding:14px 0 4px;}
-.sidebar-section-label{padding:0 16px 6px;font-size:10px;font-weight:600;letter-spacing:0.12em;color:var(--text-muted);text-transform:uppercase;}
+.sidebar-section-label{padding:0 16px 6px;font-size:13px;font-weight:600;letter-spacing:0.12em;color:var(--text-muted);text-transform:uppercase;}
 .sidebar-link{display:flex;align-items:center;gap:9px;padding:7px 16px;font-size:13px;color:var(--text-mid);text-decoration:none;cursor:pointer;position:relative;transition:color 0.15s;}
 .sidebar-link:hover{color:var(--white);}
 .sidebar-link.active{color:var(--white);background:var(--gunmetal-light);border-left:3px solid var(--orange);padding-left:13px;}
@@ -57,16 +62,16 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .btn-ghost:hover{color:var(--white);border-color:var(--steel-blue);}
 .btn-danger{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
 .btn-danger:hover{background:rgba(239,68,68,0.25);}
-.btn-sm{padding:5px 10px;font-size:11px;}
+.btn-sm{padding:5px 10px;font-size:13px;}
 
 /* USER TABLE */
 .content{padding:24px 28px 60px;}
 .section-card{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px;}
 .section-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .section-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;letter-spacing:0.06em;color:var(--white);}
-.section-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.section-sub{font-size:13px;color:var(--text-muted);margin-top:2px;}
 table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
-.user-table thead th{padding:10px 16px;text-align:left;font-size:10px;font-weight:600;letter-spacing:0.1em;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--gunmetal);white-space:nowrap;}
+.user-table thead th{padding:10px 16px;text-align:left;font-size:13px;font-weight:600;letter-spacing:0.1em;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--gunmetal);white-space:nowrap;}
 .user-table tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
 .user-table tbody tr:last-child{border-bottom:none;}
 .user-table tbody tr:hover td{background:var(--gunmetal-light);}
@@ -74,21 +79,21 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
 .avatar{width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;flex-shrink:0;}
 .user-info{display:flex;align-items:center;gap:10px;}
 .user-name{font-weight:600;color:var(--white);}
-.user-email{font-size:11px;color:var(--text-muted);margin-top:1px;font-family:'JetBrains Mono',monospace;}
-.role-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.06em;}
+.user-email{font-size:13px;color:var(--text-muted);margin-top:1px;font-family:'JetBrains Mono',monospace;}
+.role-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:700;letter-spacing:0.06em;}
 .role-admin{background:rgba(232,100,10,0.2);color:var(--orange);border:1px solid rgba(232,100,10,0.35);}
 .role-operations{background:rgba(46,109,164,0.2);color:#60a5fa;border:1px solid rgba(46,109,164,0.35);}
 .role-dispatch{background:rgba(99,102,241,0.2);color:#a5b4fc;border:1px solid rgba(99,102,241,0.35);}
 .role-driver{background:rgba(34,197,94,0.2);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
 
-.status-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;}
+.status-badge{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:600;}
 .status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .status-active .status-dot{background:var(--green);}
 .status-active{color:var(--green);}
 .status-inactive .status-dot{background:var(--text-muted);}
 .status-inactive{color:var(--text-muted);}
 .action-btns{display:flex;gap:6px;}
-.ts-cell{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);}
+.ts-cell{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);}
 
 /* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(248, 249, 250, 1),0.65);z-index:9999;align-items:center;justify-content:center;padding:20px;}
@@ -100,13 +105,13 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
 .modal-close:hover{color:var(--white);}
 .modal-body{padding:24px;}
 .form-group{margin-bottom:16px;}
-.form-label{display:block;font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.06em;margin-bottom:5px;text-transform:uppercase;}
+.form-label{display:block;font-size:13px;font-weight:700;color:var(--text-muted);letter-spacing:0.06em;margin-bottom:5px;text-transform:uppercase;}
 .form-input,.form-select{width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--white);font-size:13px;font-family:'Barlow',sans-serif;box-sizing:border-box;transition:border-color 0.15s;}
 .form-input:focus,.form-select:focus{outline:none;border-color:var(--steel-blue);}
 .form-select{cursor:pointer;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.form-hint{font-size:11px;color:var(--text-muted);margin-top:4px;}
-.form-error{font-size:11px;color:var(--red);margin-top:4px;display:none;}
+.form-hint{font-size:13px;color:var(--text-muted);margin-top:4px;}
+.form-error{font-size:13px;color:var(--red);margin-top:4px;display:none;}
 .form-error.visible{display:block;}
 .modal-footer{display:flex;gap:10px;justify-content:flex-end;padding:16px 24px;border-top:1px solid var(--border);}
 
@@ -168,7 +173,7 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
           <div class="section-sub" id="user-count">Loading...</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
-          <input type="text" id="search-users" placeholder="Search users..." style="background:var(--bg);border:1px solid var(--border);color:var(--white);padding:6px 10px;border-radius:6px;font-size:12px;font-family:'Barlow',sans-serif;width:200px;" oninput="filterUsers(this.value)">
+          <input type="text" id="search-users" placeholder="Search users..." style="background:var(--bg);border:1px solid var(--border);color:var(--white);padding:6px 10px;border-radius:6px;font-size:13px;font-family:'Barlow',sans-serif;width:200px;" oninput="filterUsers(this.value)">
         </div>
       </div>
       <table class="user-table">
@@ -196,19 +201,19 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
       <div style="padding:16px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;">
           <span class="role-badge role-admin" style="margin-bottom:8px;display:inline-block;">ADMIN</span>
-          <p style="font-size:12px;color:var(--text-muted);line-height:1.5;">Full access to all pages, user management, settings, and financial data.</p>
+          <p style="font-size:13px;color:var(--text-muted);line-height:1.5;">Full access to all pages, user management, settings, and financial data.</p>
         </div>
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;">
           <span class="role-badge role-operations" style="margin-bottom:8px;display:inline-block;">OPERATIONS</span>
-          <p style="font-size:12px;color:var(--text-muted);line-height:1.5;">Access to loads, settlements, documents, drivers, and permits.</p>
+          <p style="font-size:13px;color:var(--text-muted);line-height:1.5;">Access to loads, settlements, documents, drivers, and permits.</p>
         </div>
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;">
           <span class="role-badge role-driver" style="margin-bottom:8px;display:inline-block;">DRIVER</span>
-          <p style="font-size:12px;color:var(--text-muted);line-height:1.5;">Limited to driver command view — their loads and documents only.</p>
+          <p style="font-size:13px;color:var(--text-muted);line-height:1.5;">Limited to driver command view — their loads and documents only.</p>
         </div>
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;">
           <span class="role-badge role-dispatch" style="margin-bottom:8px;display:inline-block;">DISPATCH</span>
-          <p style="font-size:12px;color:var(--text-muted);line-height:1.5;">Dispatch coordination — loads, drivers, and permit management.</p>
+          <p style="font-size:13px;color:var(--text-muted);line-height:1.5;">Dispatch coordination — loads, drivers, and permit management.</p>
         </div>
       </div>
     </div>
@@ -222,7 +227,7 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
           <div class="section-title">DISPATCHER ↔ DRIVER ASSIGNMENTS</div>
           <div class="section-sub">Assign drivers to dispatchers. Dispatchers only see their assigned drivers.</div>
         </div>
-        <button onclick="openAssignModal()" style="background:#3b7eff;color:#fff;border:none;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.04em;">+ ADD ASSIGNMENT</button>
+        <button onclick="openAssignModal()" style="background:#3b7eff;color:#fff;border:none;border-radius:6px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.04em;">+ ADD ASSIGNMENT</button>
       </div>
       <div style="padding:16px 20px;">
         <div id="assign-list"></div>
@@ -415,9 +420,9 @@ function renderTable(users) {
     var ac = avatarColor(u.email);
     var ini = initials(u.name, u.email);
     var contactHtml = '';
-    if (u.phone) contactHtml += '<div style="font-size:11px;color:var(--text-mid);font-family:\'JetBrains Mono\',monospace;">' + u.phone + '</div>';
-    if (u.whatsapp) contactHtml += '<div style="font-size:11px;color:#25d366;font-family:\'JetBrains Mono\',monospace;">WA: ' + u.whatsapp + '</div>';
-    if (!u.phone && !u.whatsapp) contactHtml = '<span style="font-size:11px;color:var(--text-muted);">&#8212;</span>';
+    if (u.phone) contactHtml += '<div style="font-size:13px;color:var(--text-mid);font-family:\'JetBrains Mono\',monospace;">' + u.phone + '</div>';
+    if (u.whatsapp) contactHtml += '<div style="font-size:13px;color:#25d366;font-family:\'JetBrains Mono\',monospace;">WA: ' + u.whatsapp + '</div>';
+    if (!u.phone && !u.whatsapp) contactHtml = '<span style="font-size:13px;color:var(--text-muted);">&#8212;</span>';
     return '<tr>' +
       '<td><div class="user-info">' +
         '<div class="avatar" style="background:' + ac.bg + ';color:' + ac.color + ';">' + ini + '</div>' +
@@ -434,7 +439,7 @@ function renderTable(users) {
         '<button class="btn btn-ghost btn-sm" onclick="copyInviteLink(\'' + u.id + '\')">Invite Link</button>' +
         (allUsers.filter(function(x){return x.role==='admin' && x.active!==false;}).length > 1 || u.role !== 'admin'
           ? '<button class="btn btn-danger btn-sm" onclick="openDeleteModal(\'' + u.id + '\')">Remove</button>'
-          : '<span style="font-size:11px;color:var(--text-muted);padding:0 6px;">Last admin</span>') +
+          : '<span style="font-size:13px;color:var(--text-muted);padding:0 6px;">Last admin</span>') +
       '</div></td>' +
     '</tr>';
   }).join('');
@@ -628,7 +633,7 @@ function _showVaultBanner(name, folderId, status) {
   b.style.display      = 'flex';
 
   if (status === 'ok' && folderId) {
-    b.innerHTML = '✅ Vault folder created for <strong style="margin:0 4px;">'+name+'</strong> — <a href="https://drive.google.com/drive/folders/'+folderId+'" target="_blank" style="color:#60a5fa;margin-left:4px;">Open in Drive ↗</a> &nbsp;<span style="color:var(--text-muted);font-size:11px;">(Move folder under dispatcher in Drive)</span>';
+    b.innerHTML = '✅ Vault folder created for <strong style="margin:0 4px;">'+name+'</strong> — <a href="https://drive.google.com/drive/folders/'+folderId+'" target="_blank" style="color:#60a5fa;margin-left:4px;">Open in Drive ↗</a> &nbsp;<span style="color:var(--text-muted);font-size:13px;">(Move folder under dispatcher in Drive)</span>';
   } else if (status === 'no-auth') {
     b.innerHTML = '📁 Driver added. <a href="documents.html" style="color:#60a5fa;margin:0 4px;">Connect Drive in Documents</a> to provision their vault folder automatically.';
   } else {
@@ -849,17 +854,17 @@ function loadAssignments() {
       var email = item.assignment.driverEmail;
       var date = item.assignment.assignedAt ? new Date(item.assignment.assignedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
       return '<tr><td style="padding:9px 14px;font-size:13px;">' + name + '</td>' +
-             '<td style="padding:9px 14px;font-size:11px;color:var(--text-muted);">' + email + '</td>' +
-             '<td style="padding:9px 14px;font-size:11px;color:var(--text-muted);">' + date + '</td>' +
-             '<td style="padding:9px 14px;text-align:right;"><button onclick="removeAssignment(\'' + item.assignment.id + '\')" style="background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25);border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer;">Remove</button></td></tr>';
+             '<td style="padding:9px 14px;font-size:13px;color:var(--text-muted);">' + email + '</td>' +
+             '<td style="padding:9px 14px;font-size:13px;color:var(--text-muted);">' + date + '</td>' +
+             '<td style="padding:9px 14px;text-align:right;"><button onclick="removeAssignment(\'' + item.assignment.id + '\')" style="background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25);border-radius:4px;padding:3px 10px;font-size:13px;cursor:pointer;">Remove</button></td></tr>';
     }).join('');
     var dispName = group.disp.name || group.disp.email;
     return '<div style="margin-bottom:16px;">' +
-      '<div style="font-size:12px;font-weight:700;color:#3b7eff;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border);">' + dispName + ' <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0;">' + group.disp.email + '</span></div>' +
+      '<div style="font-size:13px;font-weight:700;color:#3b7eff;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border);">' + dispName + ' <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0;">' + group.disp.email + '</span></div>' +
       '<table style="width:100%;border-collapse:collapse;"><thead><tr>' +
-      '<th style="text-align:left;font-size:10px;color:var(--text-muted);padding:6px 14px;letter-spacing:.08em;text-transform:uppercase;">Driver</th>' +
-      '<th style="text-align:left;font-size:10px;color:var(--text-muted);padding:6px 14px;letter-spacing:.08em;text-transform:uppercase;">Email</th>' +
-      '<th style="text-align:left;font-size:10px;color:var(--text-muted);padding:6px 14px;letter-spacing:.08em;text-transform:uppercase;">Assigned</th>' +
+      '<th style="text-align:left;font-size:13px;color:var(--text-muted);padding:6px 14px;letter-spacing:.08em;text-transform:uppercase;">Driver</th>' +
+      '<th style="text-align:left;font-size:13px;color:var(--text-muted);padding:6px 14px;letter-spacing:.08em;text-transform:uppercase;">Email</th>' +
+      '<th style="text-align:left;font-size:13px;color:var(--text-muted);padding:6px 14px;letter-spacing:.08em;text-transform:uppercase;">Assigned</th>' +
       '<th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
   }).join('');
 

@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -30,12 +35,12 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .hdr-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
 .hdr-back{background:none;border:none;color:var(--mid);font-size:20px;cursor:pointer;padding:4px;min-width:32px;min-height:32px;display:flex;align-items:center;}
 .hdr-title{font-size:15px;font-weight:700;flex:1;}
-.hdr-sub{font-size:11px;color:var(--mid);}
-.hdr-exit{background:none;border:1px solid var(--border);color:var(--mid);font-size:12px;padding:5px 10px;border-radius:6px;cursor:pointer;min-height:32px;}
+.hdr-sub{font-size:13px;color:var(--mid);}
+.hdr-exit{background:none;border:1px solid var(--border);color:var(--mid);font-size:13px;padding:5px 10px;border-radius:6px;cursor:pointer;min-height:32px;}
 /* ── PROGRESS ── */
 .progress-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
 .progress-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .3s ease;}
-.progress-label{display:flex;justify-content:space-between;font-size:10px;color:var(--mid);margin-top:4px;}
+.progress-label{display:flex;justify-content:space-between;font-size:13px;color:var(--mid);margin-top:4px;}
 /* ── CARD DECK ── */
 .card-deck{position:fixed;top:104px;left:0;right:0;bottom:80px;overflow:hidden;}
 .cards-wrap{display:flex;height:100%;transition:transform .35s cubic-bezier(.4,0,.2,1);}
@@ -44,8 +49,8 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .sec-head{text-align:center;padding:12px 8px 16px;}
 .sec-icon{font-size:40px;margin-bottom:8px;}
 .sec-name{font-size:20px;font-weight:700;margin-bottom:4px;}
-.sec-cfr{font-size:11px;color:var(--mid);}
-.sec-tag{display:inline-block;padding:3px 10px;border-radius:99px;font-size:10px;font-weight:700;margin-top:6px;}
+.sec-cfr{font-size:13px;color:var(--mid);}
+.sec-tag{display:inline-block;padding:3px 10px;border-radius:99px;font-size:13px;font-weight:700;margin-top:6px;}
 .tag-tractor{background:rgba(59,130,246,.15);color:var(--blue);}
 .tag-trailer{background:rgba(245,158,11,.15);color:var(--yellow);}
 /* ── ITEMS ── */
@@ -54,9 +59,9 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .item-row.ok{border-color:var(--green);background:rgba(16,185,129,.05);}
 .item-row.defect{border-color:var(--red);background:rgba(239,68,68,.05);}
 .item-label{font-size:14px;font-weight:600;margin-bottom:3px;}
-.item-tip{font-size:11px;color:var(--mid);line-height:1.4;}
+.item-tip{font-size:13px;color:var(--mid);line-height:1.4;}
 .item-actions{display:flex;gap:6px;flex-shrink:0;flex-direction:column;}
-.itm-btn{border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;padding:8px 12px;min-width:52px;min-height:44px;transition:.12s;}
+.itm-btn{border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;padding:8px 12px;min-width:52px;min-height:44px;transition:.12s;}
 .itm-ok{background:rgba(16,185,129,.15);color:var(--green);}
 .itm-ok.selected{background:var(--green);color:#fff;}
 .itm-def{background:rgba(239,68,68,.12);color:var(--red);}
@@ -72,7 +77,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .setup-title{font-size:20px;font-weight:800;margin-bottom:4px;}
 .setup-sub{font-size:13px;color:var(--mid);margin-bottom:24px;}
 .field-grp{margin-bottom:16px;}
-.field-lbl{font-size:12px;font-weight:600;color:var(--mid);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;}
+.field-lbl{font-size:13px;font-weight:600;color:var(--mid);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;}
 .field-in{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-size:16px;width:100%;min-height:48px;}
 .field-in:focus{outline:none;border-color:var(--blue);}
 .type-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
@@ -89,11 +94,11 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .summary-stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
 .sum-stat{text-align:center;background:var(--panel2);border-radius:8px;padding:12px 8px;}
 .sum-val{font-size:22px;font-weight:800;}
-.sum-lbl{font-size:10px;color:var(--mid);margin-top:3px;font-weight:600;}
+.sum-lbl{font-size:13px;color:var(--mid);margin-top:3px;font-weight:600;}
 .defect-item{background:var(--panel2);border-left:3px solid var(--red);border-radius:6px;padding:12px 14px;margin-bottom:8px;}
-.def-sec{font-size:10px;color:var(--mid);font-weight:700;text-transform:uppercase;margin-bottom:3px;}
+.def-sec{font-size:13px;color:var(--mid);font-weight:700;text-transform:uppercase;margin-bottom:3px;}
 .def-label{font-size:13px;font-weight:600;}
-.def-sev{font-size:11px;margin-top:4px;}
+.def-sev{font-size:13px;margin-top:4px;}
 .sev-major{color:var(--red);}
 .sev-minor{color:var(--yellow);}
 .sig-field{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-size:16px;width:100%;min-height:48px;margin-bottom:8px;}
@@ -116,8 +121,8 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 /* ── HISTORY LIST (bottom of setup) ── */
 .hist-row{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;}
 .hist-main{font-size:13px;font-weight:600;}
-.hist-sub{font-size:11px;color:var(--mid);margin-top:2px;}
-.badge{display:inline-block;padding:2px 7px;border-radius:99px;font-size:10px;font-weight:700;}
+.hist-sub{font-size:13px;color:var(--mid);margin-top:2px;}
+.badge{display:inline-block;padding:2px 7px;border-radius:99px;font-size:13px;font-weight:700;}
 .badge-green{background:rgba(16,185,129,.15);color:var(--green);}
 .badge-red{background:rgba(239,68,68,.15);color:var(--red);}
 .badge-yellow{background:rgba(245,158,11,.15);color:var(--yellow);}
@@ -133,7 +138,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 <div id="setup-screen" class="setup-screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
     <button class="hdr-exit" onclick="history.back()">← Back</button>
-    <div style="font-size:11px;color:var(--mid);">DOT Pre-Trip · 49 CFR 396.11</div>
+    <div style="font-size:13px;color:var(--mid);">DOT Pre-Trip · 49 CFR 396.11</div>
   </div>
   <div class="setup-title">Pre-Trip Inspection</div>
   <div class="setup-sub">Complete before every dispatch. Required by 49 CFR 396.11.</div>
@@ -532,14 +537,14 @@ function renderSummary(){
       html+='<div class="defect-item"><div class="def-sec">'+d.section+'</div>';
       html+='<div class="def-label">'+d.itemLabel+'</div>';
       html+='<div class="def-sev '+(d.severity==='major'?'sev-major':'sev-minor')+'">'+(d.severity==='major'?'🚫 MAJOR — Out of Service':'⚠️ Minor — Monitor')+'</div>';
-      if(d.description) html+='<div style="font-size:12px;color:var(--mid);margin-top:4px;">'+d.description+'</div>';
+      if(d.description) html+='<div style="font-size:13px;color:var(--mid);margin-top:4px;">'+d.description+'</div>';
       html+='</div>';
     });
   }
   html+='<div style="margin-top:20px;">';
-  html+='<div style="font-size:12px;color:var(--mid);margin-bottom:6px;font-weight:600;">DRIVER SIGNATURE (type full name)</div>';
+  html+='<div style="font-size:13px;color:var(--mid);margin-bottom:6px;font-weight:600;">DRIVER SIGNATURE (type full name)</div>';
   html+='<input class="sig-field" id="sig-driver" placeholder="Type full name to certify">';
-  html+='<div style="font-size:11px;color:var(--mid);margin-bottom:12px;">By signing, I certify this inspection is accurate per 49 CFR 396.11.</div>';
+  html+='<div style="font-size:13px;color:var(--mid);margin-bottom:12px;">By signing, I certify this inspection is accurate per 49 CFR 396.11.</div>';
   html+='<button class="btn-submit '+(canDepart?'green':'red')+'" onclick="submitInspection()">'+(canDepart?'✓ Submit & Clear to Depart':'Submit with Defects Noted')+'</button>';
   html+='</div>';
   document.getElementById('summary-content').innerHTML=html;
@@ -593,7 +598,7 @@ function returnToSetup(){
 function renderHistory(){
   try{
     var arr=JSON.parse(localStorage.getItem(LSK)||'[]').slice(0,5);
-    if(!arr.length){document.getElementById('hist-list').innerHTML='<div style="font-size:12px;color:var(--mid);padding:8px 0;">No inspections yet</div>';return;}
+    if(!arr.length){document.getElementById('hist-list').innerHTML='<div style="font-size:13px;color:var(--mid);padding:8px 0;">No inspections yet</div>';return;}
     document.getElementById('hist-list').innerHTML=arr.map(function(r){
       var bc=r.canDepart?'badge-green':r.majorDefectCount?'badge-red':'badge-yellow';
       var bl=r.canDepart?'PASSED':r.majorDefectCount?'OOS':'DEFECTS';

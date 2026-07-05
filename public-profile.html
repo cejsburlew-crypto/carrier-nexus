@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -34,7 +39,7 @@
     .top-nav-brand{display:flex;align-items:center;gap:10px;}
     .top-nav-brand .hex{width:32px;height:32px;}
     .top-nav-brand .brand-text{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;letter-spacing:2px;color:#111827;}
-    .top-nav-brand .powered{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--mid);letter-spacing:1px;margin-left:4px;}
+    .top-nav-brand .powered{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--mid);letter-spacing:1px;margin-left:4px;}
     .nav-actions{display:flex;align-items:center;gap:10px;}
     .btn-login{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.35);color:var(--blue);padding:7px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;transition:all .15s;}
     .btn-login:hover{background:rgba(59,130,246,.25);}
@@ -54,7 +59,7 @@
     .company-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:36px;color:#111827;letter-spacing:1px;}
     .company-tagline{color:var(--mid);font-size:15px;margin-top:4px;}
     .badge-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;}
-    .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+    .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace;}
     .badge-green{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:var(--green);}
     .badge-blue{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);color:var(--blue);}
     .badge-gray{background:rgba(100,116,139,.12);border:1px solid rgba(100,116,139,.25);color:var(--mid);}
@@ -76,7 +81,7 @@
     .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px 16px;text-align:center;}
     .stat-icon{font-size:22px;margin-bottom:8px;}
     .stat-num{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:#111827;line-height:1;}
-    .stat-label{font-size:12px;color:var(--mid);margin-top:4px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px;}
+    .stat-label{font-size:13px;color:var(--mid);margin-top:4px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px;}
     /* TABS */
     .tab-nav{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:24px;}
     .tab-btn{padding:10px 20px;background:none;border:none;border-bottom:2px solid transparent;color:var(--mid);font-size:13px;font-weight:600;font-family:'Barlow',sans-serif;cursor:pointer;transition:all .15s;margin-bottom:-1px;}
@@ -94,13 +99,13 @@
     .fleet-img{height:120px;background:linear-gradient(135deg,#1a2235,#0d1421);display:flex;align-items:center;justify-content:center;font-size:32px;}
     .fleet-info{padding:12px;}
     .fleet-name{font-weight:600;font-size:14px;color:var(--text);}
-    .fleet-type{font-size:12px;color:var(--mid);margin-top:2px;}
+    .fleet-type{font-size:13px;color:var(--mid);margin-top:2px;}
     /* CREDENTIALS */
     .cred-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
     .cred-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;}
-    .cred-title{font-size:11px;color:var(--mid);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+    .cred-title{font-size:13px;color:var(--mid);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
     .cred-value{font-size:16px;font-weight:700;color:var(--text);}
-    .cred-link{font-size:12px;color:var(--blue);margin-top:4px;display:block;}
+    .cred-link{font-size:13px;color:var(--blue);margin-top:4px;display:block;}
     /* BRAG */
     .brag-list{list-style:none;display:flex;flex-direction:column;gap:12px;}
     .brag-item{display:flex;align-items:flex-start;gap:12px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;}
@@ -114,7 +119,7 @@
     .contact-form{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px;}
     .form-title{font-weight:700;font-size:16px;margin-bottom:16px;}
     .form-group{margin-bottom:14px;}
-    .form-label{display:block;font-size:12px;color:var(--mid);margin-bottom:6px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px;text-transform:uppercase;}
+    .form-label{display:block;font-size:13px;color:var(--mid);margin-bottom:6px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px;text-transform:uppercase;}
     .form-input{width:100%;background:#f8f9fa;border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:6px;font-size:13px;font-family:'Barlow',sans-serif;}
     .form-input:focus{outline:none;border-color:var(--blue);}
     textarea.form-input{resize:vertical;min-height:80px;}
@@ -131,7 +136,7 @@
     .rig-content{max-width:1100px;margin:0 auto;padding:24px;}
     .rig-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;}
     .spec-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px;}
-    .spec-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mid);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+    .spec-title{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--mid);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
     .spec-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}
     .spec-row:last-child{border-bottom:none;}
     .spec-key{font-size:13px;color:var(--mid);}
@@ -145,7 +150,7 @@
     .toast{position:fixed;bottom:24px;right:24px;background:#f8f9fa;border:1px solid var(--green);color:var(--green);padding:12px 20px;border-radius:8px;font-size:13px;z-index:9999;animation:slideIn .2s ease;font-family:'JetBrains Mono',monospace;}
     @keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
     /* FOOTER */
-    .page-footer{background:#f8f9fa;border-top:1px solid var(--border);padding:20px 24px;text-align:center;font-size:12px;color:var(--mid);margin-top:48px;}
+    .page-footer{background:#f8f9fa;border-top:1px solid var(--border);padding:20px 24px;text-align:center;font-size:13px;color:var(--mid);margin-top:48px;}
     .page-footer a{color:var(--blue);}
     /* MODAL */
     .modal-bg{display:none;position:fixed;inset:0;background:rgba(248, 249, 250, 1),.7);z-index:500;align-items:center;justify-content:center;}
@@ -358,7 +363,7 @@
     var aboutContent = '<p class="about-text">' + (co.about || '') + '</p>';
     if (co.founded) aboutContent += '<p style="color:var(--mid);font-size:13px;margin-bottom:16px;">Founded: ' + co.founded + '</p>';
     if (co.services && co.services.length) {
-      aboutContent += '<div style="margin-top:16px"><div style="font-size:11px;color:var(--mid);font-family:\'JetBrains Mono\',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Services</div><div class="services-grid">' + servicesChips + '</div></div>';
+      aboutContent += '<div style="margin-top:16px"><div style="font-size:13px;color:var(--mid);font-family:\'JetBrains Mono\',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Services</div><div class="services-grid">' + servicesChips + '</div></div>';
     }
 
     // Fleet tab

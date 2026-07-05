@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -31,25 +36,25 @@
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
 .layout{display:flex;min-height:100vh;}.main{flex:1;overflow-x:hidden;margin-left:220px;}
 .topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
-.topbar-title{font-size:17px;font-weight:700;}.topbar-sub{font-size:11px;color:var(--mid);margin-top:2px;}
+.topbar-title{font-size:17px;font-weight:700;}.topbar-sub{font-size:13px;color:var(--mid);margin-top:2px;}
 .btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
 .btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:#2563eb;}
 .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}.btn-outline:hover{background:var(--panel2);}
-.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-sm{padding:6px 12px;font-size:13px;}
 .content{padding:20px;max-width:1100px;margin:0 auto;}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
 .kpi{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;}
-.kpi-label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
-.kpi-value{font-size:26px;font-weight:800;line-height:1;}.kpi-sub{font-size:11px;color:var(--mid);margin-top:3px;}
+.kpi-label{font-size:13px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.kpi-value{font-size:26px;font-weight:800;line-height:1;}.kpi-sub{font-size:13px;color:var(--mid);margin-top:3px;}
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
 .panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.panel-title{font-size:14px;font-weight:700;}.panel-sub{font-size:12px;color:var(--mid);}
+.panel-title{font-size:14px;font-weight:700;}.panel-sub{font-size:13px;color:var(--mid);}
 table{width:100%;border-collapse:collapse;}
-th{padding:9px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+th{padding:9px 14px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
 td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:rgba(255,255,255,.02);}
-.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:13px;font-weight:700;}
 .badge-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
 .badge-yellow{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25);}
 .badge-green{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);}
@@ -58,7 +63,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
 .badge-gray{background:rgba(100,116,139,.12);color:#94a3b8;border:1px solid rgba(100,116,139,.25);}
 /* STATUS TABS */
 .status-tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:16px;overflow-x:auto;}
-.stab{padding:7px 14px;border-radius:7px;border:none;background:transparent;color:var(--mid);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.stab{padding:7px 14px;border-radius:7px;border:none;background:transparent;color:var(--mid);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
 .stab.active{background:var(--blue);color:#fff;}
 /* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(248, 249, 250, 1),.8);z-index:100;overflow-y:auto;padding:20px;align-items:flex-start;justify-content:center;}
@@ -67,16 +72,16 @@ tr:hover td{background:rgba(255,255,255,.02);}
 .modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
 .modal-body{padding:20px;}.modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
 .field-group{margin-bottom:14px;}
-.field-label{font-size:12px;color:var(--mid);margin-bottom:5px;display:block;}
+.field-label{font-size:13px;color:var(--mid);margin-bottom:5px;display:block;}
 .form-input,.form-select,.form-textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;}
 .form-input:focus,.form-select:focus{outline:none;border-color:var(--blue);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 /* TIMELINE */
 .timeline{display:flex;align-items:center;gap:0;margin:16px 0;overflow-x:auto;}
 .tl-step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:80px;}
-.tl-circle{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid;}
+.tl-circle{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;border:2px solid;}
 .tl-line{flex:1;height:2px;background:var(--dim);}
-.tl-label{font-size:10px;color:var(--mid);margin-top:4px;text-align:center;}
+.tl-label{font-size:13px;color:var(--mid);margin-top:4px;text-align:center;}
 /* DETAIL */
 .detail-row{display:flex;gap:8px;margin-bottom:8px;font-size:13px;}
 .detail-key{color:var(--mid);min-width:160px;flex-shrink:0;}
@@ -111,7 +116,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
 <!-- DETAIL MODAL -->
 <div id="detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;overflow-y:auto;padding:20px;">
   <div class="modal-box" style="max-width:740px;">
-    <div class="modal-head"><div><div id="detail-title" style="font-size:16px;font-weight:700;"></div><div id="detail-sub" style="font-size:12px;color:var(--mid);"></div></div>
+    <div class="modal-head"><div><div id="detail-title" style="font-size:16px;font-weight:700;"></div><div id="detail-sub" style="font-size:13px;color:var(--mid);"></div></div>
     <div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm no-print" onclick="window.print()">🖨</button><button class="btn btn-outline btn-sm" onclick="closeDetail()">✕</button></div></div>
     <div id="detail-body" style="padding:20px;"></div>
   </div>
@@ -155,7 +160,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
         <div class="field-group"><label class="field-label">Amount Claimed ($)</label><input class="form-input" type="number" id="cl-claimed" placeholder="0"></div>
       </div>
       <div style="padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;margin-bottom:14px;">
-        <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--mid);">Adjuster Information</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--mid);">Adjuster Information</div>
         <div class="form-row">
           <div class="field-group" style="margin-bottom:0;"><label class="field-label">Adjuster Name</label><input class="form-input" id="cl-adj-name"></div>
           <div class="field-group" style="margin-bottom:0;"><label class="field-label">Adjuster Phone</label><input class="form-input" id="cl-adj-phone"></div>
@@ -245,14 +250,14 @@ function renderTable(){
     const doColor = do_>90?'var(--red)':do_>30?'var(--yellow)':'var(--text)';
     const variance = c.settlementAmt&&c.amountClaimed ? Number(c.settlementAmt)-Number(c.amountClaimed) : null;
     return `<tr style="cursor:pointer;" onclick="viewClaim('${c.id}')">
-      <td style="font-family:monospace;font-size:12px;">${c.id}</td>
-      <td style="font-size:12px;">${c.incidentId?`<a href="incident-report.html" style="color:var(--blue);" onclick="event.stopPropagation();">${c.incidentId}</a>`:'—'}</td>
+      <td style="font-family:monospace;font-size:13px;">${c.id}</td>
+      <td style="font-size:13px;">${c.incidentId?`<a href="incident-report.html" style="color:var(--blue);" onclick="event.stopPropagation();">${c.incidentId}</a>`:'—'}</td>
       <td style="font-weight:600;">${c.driverName||'—'}</td>
       <td>${fmtDate(c.dateOfLoss)}</td>
-      <td style="font-size:12px;">${c.claimType||'—'}</td>
-      <td style="font-size:12px;">${c.insurer||'—'}</td>
+      <td style="font-size:13px;">${c.claimType||'—'}</td>
+      <td style="font-size:13px;">${c.insurer||'—'}</td>
       <td>${fmtMoney(c.amountClaimed)}</td>
-      <td style="color:${c.settlementAmt?'var(--green)':'var(--mid)'}">${fmtMoney(c.settlementAmt)}${variance!==null?`<span style="font-size:10px;color:${variance<=0?'var(--green)':'var(--red)'};">${variance<=0?' ▼':' ▲'}$${Math.abs(variance).toLocaleString()}</span>`:''}</td>
+      <td style="color:${c.settlementAmt?'var(--green)':'var(--mid)'}">${fmtMoney(c.settlementAmt)}${variance!==null?`<span style="font-size:13px;color:${variance<=0?'var(--green)':'var(--red)'};">${variance<=0?' ▼':' ▲'}$${Math.abs(variance).toLocaleString()}</span>`:''}</td>
       <td><span class="badge ${sm.badge}">${sm.label}</span></td>
       <td style="color:${doColor};">${do_}d</td>
       <td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();editClaim('${c.id}')">Edit</button></td>
@@ -277,11 +282,11 @@ function viewClaim(id){
     <div style="margin-bottom:16px;">${tl}</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
       <div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px;">
-        <div style="font-size:11px;color:var(--mid);margin-bottom:4px;">AMOUNT CLAIMED</div>
+        <div style="font-size:13px;color:var(--mid);margin-bottom:4px;">AMOUNT CLAIMED</div>
         <div style="font-size:22px;font-weight:800;">${fmtMoney(c.amountClaimed)}</div>
       </div>
       <div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px;">
-        <div style="font-size:11px;color:var(--mid);margin-bottom:4px;">SETTLED AMOUNT</div>
+        <div style="font-size:13px;color:var(--mid);margin-bottom:4px;">SETTLED AMOUNT</div>
         <div style="font-size:22px;font-weight:800;color:${c.settlementAmt?'var(--green)':'var(--mid)'}">${fmtMoney(c.settlementAmt)||'Pending'}</div>
       </div>
     </div>
@@ -297,7 +302,7 @@ function viewClaim(id){
     <div class="detail-row"><span class="detail-key">Subrogation</span><span>${c.subrogation||'No'}</span></div>
     <div class="detail-row"><span class="detail-key">Days Open</span><span>${daysOpen(c)}d</span></div>
     <div style="margin-top:12px;padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;">
-      <div style="font-size:12px;color:var(--mid);margin-bottom:6px;">Notes / Activity Log</div>
+      <div style="font-size:13px;color:var(--mid);margin-bottom:6px;">Notes / Activity Log</div>
       <div style="font-size:13px;white-space:pre-wrap;">${c.notes||'No notes recorded'}</div>
     </div>
     <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end;">

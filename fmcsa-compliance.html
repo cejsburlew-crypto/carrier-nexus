@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -32,14 +37,14 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .main{flex:1;overflow-x:hidden;margin-left:220px;}
 .topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
 .topbar-title{font-size:17px;font-weight:700;}
-.topbar-sub{font-size:11px;color:var(--mid);margin-top:2px;}
+.topbar-sub{font-size:13px;color:var(--mid);margin-top:2px;}
 .btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
 .btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:#2563eb;}
 .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}.btn-outline:hover{background:var(--panel2);}
 .btn-green{background:var(--green);color:#fff;}.btn-green:hover{background:#059669;}
 .btn-red{background:var(--red);color:#fff;}.btn-red:hover{background:#dc2626;}
-.btn-sm{padding:5px 11px;font-size:12px;}
-.btn-xs{padding:3px 8px;font-size:11px;}
+.btn-sm{padding:5px 11px;font-size:13px;}
+.btn-xs{padding:3px 8px;font-size:13px;}
 .content{padding:20px;max-width:1100px;margin:0 auto;}
 
 /* Tabs */
@@ -54,18 +59,18 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
 .panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .panel-title{font-size:14px;font-weight:700;}
-.panel-sub{font-size:12px;color:var(--mid);}
+.panel-sub{font-size:13px;color:var(--mid);}
 .panel-body{padding:18px;}
 
 /* Info grid for carrier data */
 .info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:14px;}
 .info-card{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:13px 15px;}
-.info-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:5px;}
+.info-label{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:5px;}
 .info-value{font-size:14px;font-weight:700;color:var(--text);}
 .info-value.muted{color:var(--mid);font-weight:400;font-size:13px;}
 
 /* Badges */
-.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;gap:4px;}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:13px;font-weight:700;gap:4px;}
 .badge-green{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);}
 .badge-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
 .badge-yellow{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25);}
@@ -76,7 +81,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 
 /* Form elements */
 .field-group{margin-bottom:14px;}
-.field-label{font-size:12px;color:var(--mid);margin-bottom:5px;display:block;}
+.field-label{font-size:13px;color:var(--mid);margin-bottom:5px;display:block;}
 .form-input,.form-select{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:inherit;}
 .form-input:focus,.form-select:focus{outline:none;border-color:var(--blue);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -96,7 +101,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .action-card:hover{border-color:var(--blue);background:rgba(59,130,246,.06);}
 .action-card-icon{font-size:22px;margin-bottom:8px;}
 .action-card-title{font-size:13px;font-weight:700;margin-bottom:4px;}
-.action-card-desc{font-size:12px;color:var(--mid);line-height:1.4;}
+.action-card-desc{font-size:13px;color:var(--mid);line-height:1.4;}
 
 /* Checklist */
 .checklist{list-style:none;padding:0;margin:0;}
@@ -143,7 +148,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 /* Steps */
 .steps{counter-reset:step;list-style:none;padding:0;margin:0;}
 .steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:13px;line-height:1.5;}
-.steps li::before{content:counter(step);width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.steps li::before{content:counter(step);width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
 
 /* MCS-150 meter */
 .progress-bar{width:100%;height:8px;background:var(--panel2);border-radius:4px;overflow:hidden;margin-top:8px;}
@@ -261,7 +266,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 
         <!-- OOS / Crash row -->
         <div style="margin-top:14px;">
-          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:10px;">Safety Statistics (Last 24 Months)</div>
+          <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:10px;">Safety Statistics (Last 24 Months)</div>
           <div class="info-grid">
             <div class="info-card">
               <div class="info-label">Driver OOS Rate</div>
@@ -378,7 +383,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
       <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;align-items:center;">
         <button class="btn btn-green btn-sm" onclick="markVerified()">✅ Mark as Verified</button>
         <button class="btn btn-red btn-sm" onclick="markRejected()">❌ Mark as Rejected</button>
-        <span id="verif-progress" style="font-size:12px;color:var(--mid);"></span>
+        <span id="verif-progress" style="font-size:13px;color:var(--mid);"></span>
       </div>
     </div>
   </div>
@@ -410,7 +415,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
     <strong>About MOTUS:</strong> MOTUS is FMCSA's official Licensing &amp; Insurance system at <strong>motus.dot.gov</strong> (part of the U.S. Department of Transportation). It replaced the old L&amp;I Public search. Use it to verify operating authority, broker bonds, and insurance filings for any carrier or broker.
   </div>
 
-  <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:10px;">Quick Access — Official FMCSA / DOT Links</div>
+  <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:10px;">Quick Access — Official FMCSA / DOT Links</div>
   <div class="action-cards">
     <a class="action-card" href="https://motus.dot.gov" target="_blank" rel="noopener">
       <div class="action-card-icon">🏢</div>
@@ -488,7 +493,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
         The <strong>FMCSA Query Center (QC) API</strong> returns real-time carrier data in JSON format. It's free to register. Once configured, Carrier Nexus can look up any carrier's safety record, authority status, and insurance directly — no browser redirects needed.
       </div>
 
-      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:10px;">How to Get Your API Key</div>
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:10px;">How to Get Your API Key</div>
       <ol class="steps">
         <li>Go to the FMCSA registration page: <a href="https://ask.fmcsa.dot.gov/app/answers/detail/a_id/1898" target="_blank" rel="noopener" style="color:var(--blue);">ask.fmcsa.dot.gov — Register for QC API</a> — opens in new tab</li>
         <li>Complete the short registration form with your company name, USDOT#, and email address</li>
@@ -530,7 +535,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
       </div>
 
       <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px;">
-        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:10px;">Saved Configuration</div>
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:10px;">Saved Configuration</div>
         <div id="api-saved-display">
           <div style="color:var(--mid);font-size:13px;">No API key configured yet.</div>
         </div>
@@ -942,7 +947,7 @@ function renderRecentVerifications() {
     var badgeCls = v.status === 'verified' ? 'badge-green' : v.status === 'rejected' ? 'badge-red' : 'badge-gray';
     var badgeLbl = v.status === 'verified' ? '✅ Verified' : v.status === 'rejected' ? '❌ Rejected' : v.status;
     var dt = v.checkedAt ? new Date(v.checkedAt).toLocaleDateString() : '';
-    return '<div class="verif-item"><div class="verif-item-left"><span class="badge ' + badgeCls + '">' + badgeLbl + '</span><span style="font-weight:600;">' + escHtml(v.insurer) + '</span></div><span style="font-size:11px;color:var(--mid);">' + dt + '</span></div>';
+    return '<div class="verif-item"><div class="verif-item-left"><span class="badge ' + badgeCls + '">' + badgeLbl + '</span><span style="font-weight:600;">' + escHtml(v.insurer) + '</span></div><span style="font-size:13px;color:var(--mid);">' + dt + '</span></div>';
   }).join('');
 }
 

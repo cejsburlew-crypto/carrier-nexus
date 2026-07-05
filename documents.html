@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -51,16 +56,16 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .sidebar-logo span{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;color:var(--white);letter-spacing:0.04em;}
 .sidebar-logo span em{color:var(--orange);font-style:normal;}
 .nav-section{padding:14px 0 4px;}
-.nav-section-label{padding:0 16px 6px;font-size:10px;font-weight:600;letter-spacing:0.12em;color:var(--text-muted);text-transform:uppercase;}
+.nav-section-label{padding:0 16px 6px;font-size:13px;font-weight:600;letter-spacing:0.12em;color:var(--text-muted);text-transform:uppercase;}
 .nav-item{display:flex;align-items:center;gap:9px;padding:7px 16px;font-size:13px;color:var(--text-mid);text-decoration:none;cursor:pointer;position:relative;transition:color 0.15s;}
 .nav-item:hover{color:var(--white);}
 .nav-item.active{color:var(--white);background:var(--gunmetal-light);border-left:3px solid var(--orange);padding-left:13px;}
 .nav-item svg{flex-shrink:0;opacity:0.7;}
 .nav-item.active svg{opacity:1;}
-.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px;}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:13px;font-weight:700;border-radius:10px;padding:1px 6px;}
 .sidebar-bottom{margin-top:auto;padding:14px 16px;border-top:1px solid var(--border);}
-.sidebar-user{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange);}
-.sidebar-user span{display:block;color:var(--text-muted);font-size:10px;margin-top:2px;}
+.sidebar-user{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--orange);}
+.sidebar-user span{display:block;color:var(--text-muted);font-size:13px;margin-top:2px;}
 
 /* MAIN */
 .main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
@@ -77,12 +82,12 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 /* KPI BAR */
 .kpi-bar{display:flex;gap:16px;padding:20px 28px;}
 .kpi-card{background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;padding:16px 20px;flex:1;}
-.kpi-label{font-size:11px;font-weight:600;letter-spacing:0.1em;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;}
+.kpi-label{font-size:13px;font-weight:600;letter-spacing:0.1em;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;}
 .kpi-value{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--white);}
 .kpi-value.green{color:var(--green);}
 .kpi-value.red{color:var(--red);}
 .kpi-value.yellow{color:var(--yellow);}
-.kpi-sub{font-size:11px;color:var(--text-muted);margin-top:3px;}
+.kpi-sub{font-size:13px;color:var(--text-muted);margin-top:3px;}
 
 /* FILTER BAR */
 .filter-bar{padding:0 28px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
@@ -93,44 +98,44 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;}
 .filter-select{background:var(--gunmetal);border:1px solid var(--border);color:var(--white);padding:7px 12px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;cursor:pointer;}
 .filter-select:focus{outline:none;border-color:var(--steel-blue);}
-.filter-label{font-size:12px;color:var(--text-muted);}
+.filter-label{font-size:13px;color:var(--text-muted);}
 .filter-divider{width:1px;height:20px;background:var(--border);}
 
 /* TOGGLE GROUP */
 .toggle-group{display:flex;background:var(--gunmetal);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
-.toggle-btn{padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--text-mid);border:none;font-family:'Barlow',sans-serif;transition:all 0.15s;}
+.toggle-btn{padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--text-mid);border:none;font-family:'Barlow',sans-serif;transition:all 0.15s;}
 .toggle-btn:hover{color:var(--white);}
 .toggle-btn.active{background:var(--steel-blue);color:#fff;}
 
 /* TABLE */
 .table-wrap{padding:0 28px 28px;overflow-x:auto;}
 .table{width:100%;border-collapse:collapse;font-size:13px;}
-.table thead th{padding:10px 12px;text-align:left;font-size:11px;font-weight:600;letter-spacing:0.1em;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--gunmetal);white-space:nowrap;}
+.table thead th{padding:10px 12px;text-align:left;font-size:13px;font-weight:600;letter-spacing:0.1em;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--gunmetal);white-space:nowrap;}
 .table tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
 .table tbody tr:hover td{background:var(--gunmetal-light);}
 .table td{padding:9px 12px;vertical-align:middle;}
-.table td.date-col{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-mid);white-space:nowrap;}
+.table td.date-col{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-mid);white-space:nowrap;}
 .filename-cell{display:flex;align-items:center;gap:8px;max-width:380px;}
 .filename-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--white);font-size:13px;}
 .pdf-icon{flex-shrink:0;color:var(--red);font-size:14px;}
 
 /* DRIVER BADGES */
-.driver-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#111;white-space:nowrap;}
+.driver-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:700;letter-spacing:0.06em;color:#111;white-space:nowrap;}
 
 /* TYPE BADGES */
-.type-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;letter-spacing:0.04em;white-space:nowrap;}
+.type-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600;letter-spacing:0.04em;white-space:nowrap;}
 .type-bol{background:rgba(46,109,164,0.25);color: #1e3a6e;border:1px solid rgba(46,109,164,0.4);}
 .type-lc{background:rgba(232,100,10,0.2);color:var(--orange);border:1px solid rgba(232,100,10,0.35);}
 .type-permit{background:rgba(192,132,252,0.2);color:#c084fc;border:1px solid rgba(192,132,252,0.35);}
 .type-scan{background:rgba(107,122,153,0.2);color:var(--text-mid);border:1px solid rgba(107,122,153,0.35);}
 
 /* ADD/DEDUCT BADGES */
-.ad-badge{display:inline-block;padding:3px 9px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.08em;}
+.ad-badge{display:inline-block;padding:3px 9px;border-radius:4px;font-size:13px;font-weight:700;letter-spacing:0.08em;}
 .ad-add{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
 .ad-deduct{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
 .ad-review{background:rgba(251,191,36,0.15);color:var(--yellow);border:1px solid rgba(251,191,36,0.3);}
 
-.row-count{font-size:12px;color:var(--text-muted);padding:0 28px 12px;}
+.row-count{font-size:13px;color:var(--text-muted);padding:0 28px 12px;}
 .no-results{padding:40px;text-align:center;color:var(--text-muted);font-size:14px;}
 
 /* ═══════════════════════════════════════════════
@@ -161,8 +166,8 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
   }
   .topbar-title { font-size: 13px !important; }
   .topbar .btn-ghost { display: none !important; }
-  .topbar .btn-primary { font-size: 11px !important; padding: 6px 10px !important; }
-  .status-live, .topbar-status { font-size: 10px !important; }
+  .topbar .btn-primary { font-size: 13px !important; padding: 6px 10px !important; }
+  .status-live, .topbar-status { font-size: 13px !important; }
   .topbar-actions { gap: 6px !important; }
 
   /* Content padding */
@@ -173,14 +178,14 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
   .kpi-row { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
   .kpi-card { padding: 12px 14px !important; }
   .kpi-value { font-size: 26px !important; }
-  .kpi-sub { font-size: 10px !important; }
+  .kpi-sub { font-size: 13px !important; }
 
   /* Panels: single column stack */
   .panels-row { grid-template-columns: 1fr !important; gap: 12px !important; }
   .panel-full { grid-column: auto !important; }
 
   /* Tables: scrollable horizontally */
-  .load-table, .doc-table, table { font-size: 11px !important; }
+  .load-table, .doc-table, table { font-size: 13px !important; }
   .panel { overflow-x: auto !important; }
 
   /* Equipment grid: 1 column */
@@ -202,7 +207,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
     gap: 6px !important;
     flex-wrap: wrap !important;
   }
-  .filter-bar select, .filter-bar input { font-size: 12px !important; padding: 6px 8px !important; }
+  .filter-bar select, .filter-bar input { font-size: 13px !important; padding: 6px 8px !important; }
 
   /* Settlement table: make rows cards on very small screens */
   .stmt-table th:nth-child(n+5),
@@ -232,7 +237,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
     gap: 2px;
     text-decoration: none;
     color: rgba(168, 196, 224, 0.45);
-    font-size: 9px;
+    font-size: 13px;
     font-family: 'JetBrains Mono', monospace;
     letter-spacing: 0.05em;
     padding: 6px 8px;
@@ -280,21 +285,21 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .vault-dispatcher-header{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);}
 .vault-dispatcher-header:hover{background:var(--gunmetal-light);}
 .vault-dispatcher-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:.06em;color:var(--white);}
-.vault-dispatcher-count{font-size:11px;color:var(--text-muted);margin-left:auto;}
+.vault-dispatcher-count{font-size:13px;color:var(--text-muted);margin-left:auto;}
 .vault-dispatcher-chevron{color:var(--text-muted);transition:transform .2s;}
 .vault-dispatcher-chevron.open{transform:rotate(90deg);}
 .vault-drivers{display:flex;flex-direction:column;gap:0;}
 .vault-driver-row{display:flex;align-items:center;gap:10px;padding:10px 16px 10px 32px;border-bottom:1px solid var(--border);cursor:pointer;text-decoration:none;transition:background .1s;}
 .vault-driver-row:last-child{border-bottom:none;}
 .vault-driver-row:hover{background:var(--gunmetal-light);}
-.vault-driver-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;flex-shrink:0;}
+.vault-driver-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;flex-shrink:0;}
 .vault-driver-name{font-size:13px;font-weight:600;color:var(--white);}
-.vault-driver-meta{font-size:11px;color:var(--text-muted);margin-left:auto;}
+.vault-driver-meta{font-size:13px;color:var(--text-muted);margin-left:auto;}
 .vault-subcats{display:flex;gap:6px;flex-wrap:wrap;margin-left:8px;}
-.vault-subcat{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--steel);color:var(--text-mid);letter-spacing:.04em;}
+.vault-subcat{font-size:13px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--steel);color:var(--text-mid);letter-spacing:.04em;}
 .vault-connect-box{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:48px 28px;background:var(--gunmetal);border:1px solid var(--border);border-radius:10px;text-align:center;}
 .vault-connect-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--white);}
-.vault-connect-sub{font-size:12px;color:var(--text-muted);max-width:320px;}
+.vault-connect-sub{font-size:13px;color:var(--text-muted);max-width:320px;}
 .vault-loading{display:flex;align-items:center;gap:10px;padding:28px;color:var(--text-muted);font-size:13px;}
 .vault-loading-spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--steel-blue);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -309,7 +314,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .sidebar-logo .logo-hex svg { width:36px !important; height:36px !important; display:block !important; }
 .sidebar-logo .logo-text { display:flex !important; flex-direction:column !important; gap:2px !important; }
 .sidebar-logo .logo-text .brand { font-family:'Barlow Condensed',sans-serif !important; font-weight:800 !important; font-size:15px !important; letter-spacing:2px !important; color:#111827 !important; display:block !important; }
-.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:9px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
+.sidebar-logo .logo-text .sub { font-family:'JetBrains Mono',monospace !important; font-size:13px !important; color:rgba(255,255,255,0.55) !important; letter-spacing:1px !important; display:block !important; }
 /* ── NAV LINKS ── */
 .sidebar-link { display:flex !important; align-items:center !important; gap:10px !important; padding:8px 16px !important; color:#a0aec0 !important; border-left:3px solid transparent !important; text-decoration:none !important; font-size:13px !important; }
 .sidebar-link:hover { background:rgba(194,24,91,0.18) !important; border-left-color:#c2185b !important; color:#fff !important; }
@@ -318,7 +323,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .sidebar-link.active svg { opacity:1 !important; }
 /* ── SECTION LABELS ── */
 .sidebar-section { padding:12px 0 4px !important; }
-.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:9px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
+.sidebar-section-label { color:rgba(255,255,255,0.3) !important; font-family:'JetBrains Mono',monospace !important; font-size:13px !important; font-weight:700 !important; letter-spacing:1.5px !important; padding:16px 16px 6px !important; text-transform:uppercase !important; display:block !important; }
 /* ── TOPBAR ── */
 .topbar, .top-bar { background:linear-gradient(135deg,#000000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%) !important; }
 .topbar *, .top-bar * { color:#111827 !important; }
@@ -347,7 +352,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
   @media (max-width: 480px) {
     body { font-size: 14px; }
     .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: 1fr !important; }
-    .small-text, .meta { font-size: 12px !important; }
+    .small-text, .meta { font-size: 13px !important; }
   }
   </style>
 </head>
@@ -442,7 +447,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
     </div>
     <div class="filter-divider"></div>
     <input type="date" class="filter-select" id="f-date-from" onchange="applyFilters()" style="font-family:'Barlow',sans-serif;color-scheme:dark;">
-    <span style="font-size:12px;color:var(--text-muted)">–</span>
+    <span style="font-size:13px;color:var(--text-muted)">–</span>
     <input type="date" class="filter-select" id="f-date-to" onchange="applyFilters()" style="font-family:'Barlow',sans-serif;color-scheme:dark;">
     <button class="btn btn-ghost" onclick="clearFilters()">Clear</button>
   </div>
@@ -736,8 +741,8 @@ function renderTable(data){
       <td>${getTypeBadge(doc.type)}</td>
       <td>${getADBadge(doc.add_deduct)}</td>
       <td>
-        <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="openDoc('${doc.driveId||''}')">Open</button>
-          <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;color:#ef4444;" onclick="deleteDoc('${doc.id||doc.filename}','${(doc.filename||'').replace(/'/g,'')}')">&#128465;</button>
+        <button class="btn btn-ghost" style="padding:4px 10px;font-size:13px;" onclick="openDoc('${doc.driveId||''}')">Open</button>
+          <button class="btn btn-ghost" style="padding:4px 10px;font-size:13px;color:#ef4444;" onclick="deleteDoc('${doc.id||doc.filename}','${(doc.filename||'').replace(/'/g,'')}')">&#128465;</button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -1024,7 +1029,7 @@ function renderVaultTree(tree) {
           driver.name.substring(0,2) +
         '</div>' +
         '<div>' +
-          '<div class="vault-driver-name">' + driver.name + (isShortcut ? ' <span style="font-size:10px;color:var(--text-muted);font-weight:400;">(shortcut)</span>' : '') + '</div>' +
+          '<div class="vault-driver-name">' + driver.name + (isShortcut ? ' <span style="font-size:13px;color:var(--text-muted);font-weight:400;">(shortcut)</span>' : '') + '</div>' +
         '</div>' +
         '<svg style="margin-left:auto;opacity:0.35;flex-shrink:0;" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
 
@@ -1131,52 +1136,52 @@ document.addEventListener('DOMContentLoaded', function() {
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
         <a href="https://mail.google.com/mail/u/0/#search/has:attachment+carrier+OR+BOL+OR+load" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--bg);border:1px solid #334155;border-radius:8px;text-decoration:none;" onmouseover="this.style.borderColor='#2e6da4'" onmouseout="this.style.borderColor='#334155'">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#ea4335"/><path d="M4 8l8 5 8-5V18H4V8z" fill="white"/></svg>
-          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">GMAIL</div><div style="font-size:11px;color:var(--mid);margin-top:2px;">BOL, load confirmations, permits</div></div>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">GMAIL</div><div style="font-size:13px;color:var(--mid);margin-top:2px;">BOL, load confirmations, permits</div></div>
           <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
         <a href="https://web.whatsapp.com" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--bg);border:1px solid #334155;border-radius:8px;text-decoration:none;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#334155'">
           <svg width="28" height="28" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#25d366"/><path d="M12 4a8 8 0 100 16 8 8 0 000-16z" fill="white" fill-opacity="0.2"/><path d="M9 9.5s1-1.5 3.5-.5 2 4 0 5-4.5-1-4.5-1L9 15.5" stroke="white" stroke-width="1.2" fill="none"/></svg>
-          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">WHATSAPP WEB</div><div style="font-size:11px;color:var(--mid);margin-top:2px;">Download PDFs from driver chats</div></div>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">WHATSAPP WEB</div><div style="font-size:13px;color:var(--mid);margin-top:2px;">Download PDFs from driver chats</div></div>
           <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
         <a href="https://drive.google.com" target="_blank" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--bg);border:1px solid #334155;border-radius:8px;text-decoration:none;" onmouseover="this.style.borderColor='#4285f4'" onmouseout="this.style.borderColor='#334155'">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#1a73e8"/><path d="M6 18l3.5-6L12 18H6zM12 18l3.5-6 2.5-4.5L16 6l-4 7-1.5 2.5L12 18zm6 0l-2-3.5L12 6h2.5l5.5 9.5L18 18z" fill="white"/></svg>
-          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">GOOGLE DRIVE</div><div style="font-size:11px;color:var(--mid);margin-top:2px;">Drop files into vault folder</div></div>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#f1f5f9;">GOOGLE DRIVE</div><div style="font-size:13px;color:var(--mid);margin-top:2px;">Drop files into vault folder</div></div>
           <svg style="margin-left:auto;opacity:0.4;" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
       </div>
       <!-- IMPORT NOW -->
       <div style="background:var(--bg);border:1px solid #334155;border-radius:8px;padding:16px 18px;margin-bottom:16px;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#e8640a;letter-spacing:.06em;margin-bottom:10px;">IMPORT FROM GMAIL SYNC</div>
-        <p style="font-size:12px;color:#94a3b8;margin:0 0 12px;">Pull all documents the Gmail Apps Script synced into NEXUS automatically.</p>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#e8640a;letter-spacing:.06em;margin-bottom:10px;">IMPORT FROM GMAIL SYNC</div>
+        <p style="font-size:13px;color:#94a3b8;margin:0 0 12px;">Pull all documents the Gmail Apps Script synced into NEXUS automatically.</p>
         <button id="import-drive-btn" onclick="quickImportDrive()" style="width:100%;padding:10px;background:#1a73e8;color:#fff;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;cursor:pointer;">
           &#8595; IMPORT FROM DRIVE SYNC
         </button>
-        <div id="import-status" style="font-size:11px;color:var(--mid);margin-top:8px;text-align:center;"></div>
+        <div id="import-status" style="font-size:13px;color:var(--mid);margin-top:8px;text-align:center;"></div>
       </div>
       <button onclick="closeSyncModal()" style="width:100%;padding:11px;background:#2e6da4;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;cursor:pointer;">DONE</button>
     </div>
     <!-- CONFIGURE TAB -->
     <div id="sync-tab-cfg" style="display:none;padding:24px;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#e8640a;letter-spacing:.06em;margin-bottom:16px;">GMAIL SYNC CONFIGURATION</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#e8640a;letter-spacing:.06em;margin-bottom:16px;">GMAIL SYNC CONFIGURATION</div>
       <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px;">
         <div>
-          <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">GOOGLE ACCOUNT EMAIL</label>
+          <label style="font-size:13px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">GOOGLE ACCOUNT EMAIL</label>
           <input id="sc-email" type="email" placeholder="crtruckus@gmail.com" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
         </div>
         <div>
-          <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DRIVE VAULT FOLDER ID</label>
+          <label style="font-size:13px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DRIVE VAULT FOLDER ID</label>
           <input id="sc-folder" type="text" placeholder="Paste folder ID or full Drive share URL" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
-          <div style="font-size:10px;color:#475569;margin-top:4px;">Paste the full share URL or just the folder ID</div>
+          <div style="font-size:13px;color:#475569;margin-top:4px;">Paste the full share URL or just the folder ID</div>
         </div>
         <div>
-          <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DRIVE SYNC — AUTO-IMPORT CSV URL</label>
+          <label style="font-size:13px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DRIVE SYNC — AUTO-IMPORT CSV URL</label>
           <input id="sc-csvurl" type="url" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?...output=csv" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
-          <div style="font-size:10px;color:#475569;margin-top:4px;">Google Sheet published as CSV (NEXUS Vault tab)</div>
+          <div style="font-size:13px;color:#475569;margin-top:4px;">Google Sheet published as CSV (NEXUS Vault tab)</div>
         </div>
       </div>
       <button onclick="saveSyncConfig()" style="width:100%;padding:11px;background:#e8640a;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;cursor:pointer;">SAVE CONFIGURATION</button>
-      <div id="cfg-status" style="font-size:11px;color:#22c55e;margin-top:8px;text-align:center;display:none;">Configuration saved.</div>
+      <div id="cfg-status" style="font-size:13px;color:#22c55e;margin-top:8px;text-align:center;display:none;">Configuration saved.</div>
     </div>
   </div>
 </div>
@@ -1190,15 +1195,15 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     <form id="add-doc-form" onsubmit="submitAddDoc(event)" style="padding:24px;display:flex;flex-direction:column;gap:14px;">
       <div>
-        <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DATE</label>
+        <label style="font-size:13px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DATE</label>
         <input type="date" id="nd-date" required style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;box-sizing:border-box;color-scheme:dark;">
       </div>
       <div>
-        <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">FILENAME</label>
+        <label style="font-size:13px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">FILENAME</label>
         <input type="text" id="nd-filename" placeholder="AMET - BROKER BOL 12345.pdf (optional)" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
       </div>
       <div>
-        <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DRIVER</label>
+        <label style="font-size:13px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">DRIVER</label>
         <select id="nd-driver" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
           <option value="">Select driver...</option>
           <option value="AMET">Amet Abreu</option><option value="AVIS">Avis Modesto</option>
@@ -1208,7 +1213,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </select>
       </div>
       <div>
-        <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">TYPE</label>
+        <label style="font-size:13px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">TYPE</label>
         <select id="nd-type" required style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
           <option value="BOL">BOL</option>
           <option value="Load Confirmation">Load Confirmation</option>
@@ -1223,13 +1228,13 @@ document.addEventListener('DOMContentLoaded', function() {
         </select>
       </div>
       <div>
-        <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">ADD / DEDUCT</label>
+        <label style="font-size:13px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">ADD / DEDUCT</label>
         <select id="nd-ad" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:14px;">
           <option value="ADD">Revenue</option><option value="DEDUCT">Expense</option><option value="REVIEW">REVIEW</option>
         </select>
       </div>
       <div>
-        <label style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">GOOGLE DRIVE LINK (optional)</label>
+        <label style="font-size:13px;font-weight:700;color:#94a3b8;letter-spacing:.06em;display:block;margin-bottom:5px;">GOOGLE DRIVE LINK (optional)</label>
         <input type="url" id="nd-drive" placeholder="https://drive.google.com/file/d/..." style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:13px;box-sizing:border-box;">
       </div>
       <button type="submit" style="padding:11px;background:#2e6da4;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;cursor:pointer;margin-top:4px;">ADD TO VAULT</button>

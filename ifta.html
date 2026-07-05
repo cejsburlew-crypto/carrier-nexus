@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -37,25 +42,25 @@ body{background:var(--black);color:var(--text);font-family:'Barlow',sans-serif;d
 .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;}
 .topbar{height:56px;background:linear-gradient(135deg,#000 0%,#6b0000 45%,#c2185b 80%,#e91e8c 100%);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;padding:0 28px;gap:14px;position:sticky;top:0;z-index:50;}
 .topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#fff;flex:1;}
-.topbar-badge{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:4px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);}
+.topbar-badge{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:4px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);}
 .content{padding:24px 28px 60px;}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
 .kpi-card{background:var(--black2);border:1px solid var(--border2);border-radius:10px;padding:16px 20px;transition:border-color .2s;}
 .kpi-card:hover{border-color:rgba(233,30,140,0.3);}
-.kpi-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;}
+.kpi-label{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;}
 .kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;line-height:1;color:#e6edf3;}
-.kpi-sub{font-size:11px;color:var(--text-dim);margin-top:5px;}
+.kpi-sub{font-size:13px;color:var(--text-dim);margin-top:5px;}
 .kpi-card.tax-owed .kpi-val{color:var(--red);}
 .kpi-card.tax-credit .kpi-val{color:var(--green);}
 .panel{background:var(--black2);border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:20px;}
 .panel-head{padding:14px 20px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
 .panel-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:#e6edf3;letter-spacing:.06em;text-transform:uppercase;}
-.panel-sub{font-size:11px;color:var(--text-dim);margin-top:2px;}
+.panel-sub{font-size:13px;color:var(--text-dim);margin-top:2px;}
 .q-sel-wrap{display:flex;align-items:center;gap:8px;}
-.q-sel{background:var(--black3);border:1px solid var(--border2);color:var(--text);padding:6px 12px;font-size:12px;border-radius:6px;font-family:'Barlow',sans-serif;cursor:pointer;}
+.q-sel{background:var(--black3);border:1px solid var(--border2);color:var(--text);padding:6px 12px;font-size:13px;border-radius:6px;font-family:'Barlow',sans-serif;cursor:pointer;}
 .q-sel:focus{outline:none;border-color:var(--pink);}
 .ifta-table{width:100%;border-collapse:collapse;}
-.ifta-table th{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);padding:10px 14px;text-align:left;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border2);white-space:nowrap;}
+.ifta-table th{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);padding:10px 14px;text-align:left;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border2);white-space:nowrap;}
 .ifta-table th.right{text-align:right;}
 .ifta-table td{padding:0;border-bottom:1px solid rgba(255,255,255,0.04);}
 .ifta-table tr:last-child td{border-bottom:none;}
@@ -71,17 +76,17 @@ body{background:var(--black);color:var(--text);font-family:'Barlow',sans-serif;d
 .delete-btn:hover{color:var(--red);}
 .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:20px;}
 .sum-block{background:var(--black3);border:1px solid var(--border2);border-radius:8px;padding:16px 18px;}
-.sum-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;}
+.sum-label{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;}
 .sum-val{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;color:#e6edf3;}
 .sum-val.owed{color:var(--red);}
 .sum-val.credit{color:var(--green);}
-.sum-detail{font-size:11px;color:var(--text-dim);margin-top:6px;}
+.sum-detail{font-size:13px;color:var(--text-dim);margin-top:6px;}
 .sum-net-block{grid-column:1/-1;background:var(--black3);border:1px solid var(--border2);border-radius:8px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;}
 .sum-net-label{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);}
 .sum-net-val{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;}
 .sum-net-val.owed{color:var(--red);}
 .sum-net-val.credit{color:var(--green);}
-.sum-net-badge{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.04em;margin-top:6px;display:inline-block;}
+.sum-net-badge{font-size:13px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.04em;margin-top:6px;display:inline-block;}
 .sum-net-badge.owed{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
 .sum-net-badge.credit{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.25);}
 .sum-net-badge.balanced{background:rgba(255,255,255,0.07);color:var(--text-dim);border:1px solid var(--border2);}
@@ -89,10 +94,10 @@ body{background:var(--black);color:var(--text);font-family:'Barlow',sans-serif;d
 .btn:hover{border-color:rgba(233,30,140,0.4);background:rgba(233,30,140,0.08);color:#fff;}
 .btn-primary{background:var(--pink);color:#fff;border-color:var(--pink);}
 .btn-primary:hover{background:#c2185b;border-color:#c2185b;}
-.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-sm{padding:5px 12px;font-size:13px;}
 .btn-ghost{background:transparent;border-color:var(--border2);color:var(--text-dim);}
 .btn-ghost:hover{border-color:rgba(233,30,140,0.4);color:#fff;background:rgba(233,30,140,0.08);}
-.info-bar{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:10px 16px;font-size:12px;color:#7dd3fc;display:flex;align-items:flex-start;gap:10px;margin-bottom:18px;}
+.info-bar{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:10px 16px;font-size:13px;color:#7dd3fc;display:flex;align-items:flex-start;gap:10px;margin-bottom:18px;}
 @media(max-width:768px){
   .main{margin-left:0;}
   .content{padding:14px 12px 80px;}
@@ -163,7 +168,7 @@ body{background:var(--black);color:var(--text);font-family:'Barlow',sans-serif;d
         <div class="q-sel-wrap">
           <button class="btn btn-ghost btn-sm" onclick="autoImportMiles()" title="Pull miles from Active Loads">⚡ Import Miles</button>
           <button class="btn btn-ghost btn-sm" onclick="openFuelLog()" title="Log fuel purchases by state">⛽ Log Fuel</button>
-          <label style="font-size:11px;color:var(--text-dim);font-weight:600;letter-spacing:.06em;">QUARTER</label>
+          <label style="font-size:13px;color:var(--text-dim);font-weight:600;letter-spacing:.06em;">QUARTER</label>
           <select class="q-sel" id="quarter-select" onchange="changeQuarter()">
             <option value="Q1-2026">Q1 2026</option>
             <option value="Q2-2026">Q2 2026</option>
@@ -231,7 +236,7 @@ body{background:var(--black);color:var(--text);font-family:'Barlow',sans-serif;d
           </div>
         </div>
         <div style="grid-column:1/-1;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;padding:0 2px;">State Breakdown by Miles (Top 8)</div>
+          <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;padding:0 2px;">State Breakdown by Miles (Top 8)</div>
           <div id="state-breakdown"></div>
         </div>
       </div>
@@ -468,7 +473,7 @@ function updateKPIs() {
   var maxMiles = sorted.length ? sorted[0].miles : 1;
   var bd = document.getElementById('state-breakdown');
   if (!sorted.length) {
-    bd.innerHTML = '<span style="font-size:12px;color:var(--text-dim);">Enter mileage data above to see the breakdown.</span>';
+    bd.innerHTML = '<span style="font-size:13px;color:var(--text-dim);">Enter mileage data above to see the breakdown.</span>';
     return;
   }
   var bdHtml = '';
@@ -478,12 +483,12 @@ function updateKPIs() {
     var sNetStr = (s.net >= 0 ? '+' : '-') + '$' + Math.abs(s.net).toFixed(2);
     var sNetCol = s.net > 0.005 ? 'var(--green)' : s.net < -0.005 ? 'var(--red)' : 'var(--text-dim)';
     bdHtml += '<div style="display:grid;grid-template-columns:52px 1fr 90px 80px;align-items:center;gap:10px;margin-bottom:8px;">' +
-      '<span style="font-family:JetBrains Mono,monospace;font-size:11px;font-weight:600;color:#e6edf3;">' + escHtml(s.state) + '</span>' +
+      '<span style="font-family:JetBrains Mono,monospace;font-size:13px;font-weight:600;color:#e6edf3;">' + escHtml(s.state) + '</span>' +
       '<div style="height:6px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;">' +
         '<div style="height:100%;width:' + pct + '%;background:var(--pink);border-radius:3px;"></div>' +
       '</div>' +
-      '<span style="font-size:11px;color:var(--text-dim);text-align:right;">' + fmtNum(s.miles) + ' mi</span>' +
-      '<span style="font-size:11px;font-family:JetBrains Mono,monospace;text-align:right;color:' + sNetCol + ';">' + sNetStr + '</span>' +
+      '<span style="font-size:13px;color:var(--text-dim);text-align:right;">' + fmtNum(s.miles) + ' mi</span>' +
+      '<span style="font-size:13px;font-family:JetBrains Mono,monospace;text-align:right;color:' + sNetCol + ';">' + sNetStr + '</span>' +
     '</div>';
   }
   bd.innerHTML = bdHtml;
@@ -641,22 +646,22 @@ function renderFuelHistory() {
 
   var el = document.getElementById('fl-history');
   if (!filtered.length) {
-    el.innerHTML = '<div style="font-size:12px;color:#8b949e;padding:8px 0;">No fuel entries for ' + currentQuarter + ' yet.</div>';
+    el.innerHTML = '<div style="font-size:13px;color:#8b949e;padding:8px 0;">No fuel entries for ' + currentQuarter + ' yet.</div>';
     return;
   }
 
-  var html = '<div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8b949e;margin-bottom:8px;">This Quarter (' + currentQuarter + ')</div>';
+  var html = '<div style="font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8b949e;margin-bottom:8px;">This Quarter (' + currentQuarter + ')</div>';
   filtered.forEach(function(e) {
     var pct = e.amount && e.gallons ? '$' + (e.amount/e.gallons).toFixed(2) + '/gal' : '';
     html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);gap:10px;">' +
       '<div>' +
-        '<span style="font-family:JetBrains Mono,monospace;font-size:12px;font-weight:700;color:#e6edf3;margin-right:10px;">' + e.state + '</span>' +
-        '<span style="font-size:12px;color:#8b949e;">' + e.date + (e.location ? ' · ' + e.location : '') + (e.unit ? ' · ' + e.unit : '') + '</span>' +
+        '<span style="font-family:JetBrains Mono,monospace;font-size:13px;font-weight:700;color:#e6edf3;margin-right:10px;">' + e.state + '</span>' +
+        '<span style="font-size:13px;color:#8b949e;">' + e.date + (e.location ? ' · ' + e.location : '') + (e.unit ? ' · ' + e.unit : '') + '</span>' +
       '</div>' +
       '<div style="text-align:right;flex-shrink:0;">' +
         '<span style="font-size:13px;font-weight:600;color:#e6edf3;">' + e.gallons + ' gal</span>' +
-        (e.amount ? '<span style="font-size:11px;color:#8b949e;margin-left:8px;">$' + e.amount.toFixed(2) + '</span>' : '') +
-        (pct ? '<span style="font-size:10px;color:#8b949e;margin-left:6px;">(' + pct + ')</span>' : '') +
+        (e.amount ? '<span style="font-size:13px;color:#8b949e;margin-left:8px;">$' + e.amount.toFixed(2) + '</span>' : '') +
+        (pct ? '<span style="font-size:13px;color:#8b949e;margin-left:6px;">(' + pct + ')</span>' : '') +
         '<button onclick="deleteFuelEntry(\'' + e.id + '\')" style="background:none;border:none;color:rgba(255,80,80,.4);cursor:pointer;margin-left:10px;font-size:14px;">✕</button>' +
       '</div>' +
     '</div>';

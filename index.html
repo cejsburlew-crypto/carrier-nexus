@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -54,7 +59,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .action-card .card-count{position:absolute;top:20px;right:20px;font-size:28px;font-weight:800;color:rgba(255,255,255,.12)}
 
 /* Quick actions */
-.quick-label{font-size:12px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.quick-label{font-size:13px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
 .quick-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
 .quick-pill{padding:11px 18px;background:var(--panel2);border:1px solid var(--border);border-radius:24px;color:var(--text);font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;transition:.15s;min-height:44px;display:flex;align-items:center;gap:6px;white-space:nowrap}
 .quick-pill:hover{border-color:var(--blue);color:var(--blue);background:rgba(59,130,246,.08)}
@@ -66,8 +71,8 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .recent-item:last-child{border-bottom:none}
 .recent-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0}
 .recent-name{font-weight:600;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.recent-type{font-size:11px;color:var(--mid);background:var(--panel2);padding:2px 8px;border-radius:10px;white-space:nowrap}
-.recent-time{font-size:11px;color:var(--mid);white-space:nowrap}
+.recent-type{font-size:13px;color:var(--mid);background:var(--panel2);padding:2px 8px;border-radius:10px;white-space:nowrap}
+.recent-time{font-size:13px;color:var(--mid);white-space:nowrap}
 .empty-recent{padding:32px;text-align:center;color:var(--mid);font-size:14px}
 
 /* Platform modules grid */

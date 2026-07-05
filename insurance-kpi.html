@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -35,7 +40,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 /* TOP BAR */
 .topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
 .topbar-title{font-size:18px;font-weight:700;color:var(--text);}
-.topbar-sub{font-size:12px;color:var(--mid);margin-top:2px;}
+.topbar-sub{font-size:13px;color:var(--mid);margin-top:2px;}
 .topbar-actions{display:flex;gap:8px;align-items:center;}
 .btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
 .btn-primary{background:var(--blue);color:#fff;}
@@ -44,7 +49,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .btn-outline:hover{background:var(--panel2);}
 .btn-green{background:var(--green);color:#fff;}
 .btn-green:hover{background:#059669;}
-.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-sm{padding:6px 12px;font-size:13px;}
 /* CONTENT */
 .content{padding:24px;max-width:1200px;margin:0 auto;}
 /* SCORE HERO */
@@ -52,19 +57,19 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .fleet-score-ring{width:110px;height:110px;position:relative;flex-shrink:0;}
 .fleet-score-ring svg{width:110px;height:110px;}
 .fleet-score-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-size:28px;font-weight:800;line-height:1;}
-.fleet-score-label{font-size:11px;color:var(--mid);margin-top:3px;}
+.fleet-score-label{font-size:13px;color:var(--mid);margin-top:3px;}
 .fleet-info h2{font-size:20px;font-weight:700;margin-bottom:4px;}
 .fleet-info p{font-size:13px;color:var(--mid);margin-bottom:10px;}
 .fleet-meta{display:flex;gap:20px;flex-wrap:wrap;}
-.fleet-meta-item{font-size:12px;color:var(--mid);}
+.fleet-meta-item{font-size:13px;color:var(--mid);}
 .fleet-meta-item strong{color:var(--text);display:block;font-size:13px;}
 .score-grade-badge{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;border:3px solid;}
 /* KPI CARDS */
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
 .kpi-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;}
-.kpi-label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+.kpi-label{font-size:13px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
 .kpi-value{font-size:28px;font-weight:800;line-height:1;margin-bottom:4px;}
-.kpi-sub{font-size:12px;color:var(--mid);}
+.kpi-sub{font-size:13px;color:var(--mid);}
 .kpi-bar{height:4px;background:var(--dim);border-radius:2px;margin-top:10px;overflow:hidden;}
 .kpi-bar-fill{height:100%;border-radius:2px;transition:width .6s;}
 /* TABS */
@@ -77,9 +82,9 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:20px;overflow:hidden;}
 .panel-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .panel-title{font-size:14px;font-weight:700;}
-.panel-sub{font-size:12px;color:var(--mid);}
+.panel-sub{font-size:13px;color:var(--mid);}
 table{width:100%;border-collapse:collapse;}
-th{padding:10px 16px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
+th{padding:10px 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);text-align:left;background:var(--panel2);border-bottom:1px solid var(--border);}
 td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--border);}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:var(--panel2);}
@@ -96,14 +101,14 @@ tr:hover td{background:var(--panel2);}
 /* CSA PANEL */
 .csa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px;}
 .csa-card{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:14px;}
-.csa-name{font-size:11px;color:var(--mid);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em;}
+.csa-name{font-size:13px;color:var(--mid);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em;}
 .csa-score-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
 .csa-score-input{width:60px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-size:16px;font-weight:700;text-align:center;}
 .csa-score-input:focus{outline:none;border-color:var(--blue);}
-.csa-threshold{font-size:11px;color:var(--mid);}
+.csa-threshold{font-size:13px;color:var(--mid);}
 .csa-meter{height:6px;background:var(--dim);border-radius:3px;overflow:hidden;margin-top:6px;}
 .csa-meter-fill{height:100%;border-radius:3px;transition:width .5s;}
-.csa-alert{font-size:11px;margin-top:6px;padding:4px 8px;border-radius:5px;}
+.csa-alert{font-size:13px;margin-top:6px;padding:4px 8px;border-radius:5px;}
 .csa-alert-ok{background:rgba(16,185,129,.1);color:var(--green);}
 .csa-alert-warn{background:rgba(245,158,11,.1);color:var(--yellow);}
 .csa-alert-crit{background:rgba(239,68,68,.1);color:var(--red);}
@@ -113,7 +118,7 @@ tr:hover td{background:var(--panel2);}
 .trend-bars{display:flex;align-items:flex-end;height:100%;gap:3px;}
 .trend-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
 .trend-bar{width:100%;border-radius:3px 3px 0 0;min-height:3px;transition:height .4s;}
-.trend-bar-label{font-size:9px;color:var(--mid);}
+.trend-bar-label{font-size:13px;color:var(--mid);}
 /* UNDERWRITER REPORT */
 @media print {
   .no-print{display:none!important;}
@@ -171,7 +176,7 @@ tr:hover td{background:var(--panel2);}
 <div class="print-only" style="text-align:center;padding:16px 0 24px;border-bottom:2px solid #333;margin-bottom:20px;">
   <div style="font-size:22px;font-weight:800;">Carrier Trucking US, LLC</div>
   <div style="font-size:14px;color:#555;margin-top:4px;">US DOT 4326039 · MC 1688495 · Fleet Safety & Compliance Report</div>
-  <div style="font-size:12px;color:#777;margin-top:4px;" id="print-date"></div>
+  <div style="font-size:13px;color:#777;margin-top:4px;" id="print-date"></div>
 </div>
 
 <!-- ALERT STRIP -->
@@ -205,24 +210,24 @@ tr:hover td{background:var(--panel2);}
 <!-- INSURANCE MODULE QUICK LINKS -->
 <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;" class="no-print" id="module-links">
   <a href="incident-report.html" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--orange)'" onmouseout="this.style.borderColor='var(--border)'">
-    <div style="font-size:20px;margin-bottom:4px;">🚨</div><div style="font-size:12px;font-weight:700;">Incidents</div>
-    <div style="font-size:11px;color:var(--mid);" id="ql-incidents">—</div>
+    <div style="font-size:20px;margin-bottom:4px;">🚨</div><div style="font-size:13px;font-weight:700;">Incidents</div>
+    <div style="font-size:13px;color:var(--mid);" id="ql-incidents">—</div>
   </div></a>
   <a href="claims.html" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--border)'">
-    <div style="font-size:20px;margin-bottom:4px;">⚖️</div><div style="font-size:12px;font-weight:700;">Claims</div>
-    <div style="font-size:11px;color:var(--mid);" id="ql-claims">—</div>
+    <div style="font-size:20px;margin-bottom:4px;">⚖️</div><div style="font-size:13px;font-weight:700;">Claims</div>
+    <div style="font-size:13px;color:var(--mid);" id="ql-claims">—</div>
   </div></a>
   <a href="coi-management.html" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">
-    <div style="font-size:20px;margin-bottom:4px;">📜</div><div style="font-size:12px;font-weight:700;">COI Registry</div>
-    <div style="font-size:11px;color:var(--mid);" id="ql-cois">—</div>
+    <div style="font-size:20px;margin-bottom:4px;">📜</div><div style="font-size:13px;font-weight:700;">COI Registry</div>
+    <div style="font-size:13px;color:var(--mid);" id="ql-cois">—</div>
   </div></a>
   <a href="coaching-log.html" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
-    <div style="font-size:20px;margin-bottom:4px;">📋</div><div style="font-size:12px;font-weight:700;">Coaching Log</div>
-    <div style="font-size:11px;color:var(--mid);" id="ql-coaching">—</div>
+    <div style="font-size:20px;margin-bottom:4px;">📋</div><div style="font-size:13px;font-weight:700;">Coaching Log</div>
+    <div style="font-size:13px;color:var(--mid);" id="ql-coaching">—</div>
   </div></a>
   <a href="#" onclick="exportTelematicsJSON();return false;" style="text-decoration:none;"><div style="background:var(--panel);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:12px;text-align:center;transition:.15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='rgba(16,185,129,.3)'">
-    <div style="font-size:20px;margin-bottom:4px;">⬇️</div><div style="font-size:12px;font-weight:700;color:var(--green);">Export Data</div>
-    <div style="font-size:11px;color:var(--mid);">JSON for insurer</div>
+    <div style="font-size:20px;margin-bottom:4px;">⬇️</div><div style="font-size:13px;font-weight:700;color:var(--green);">Export Data</div>
+    <div style="font-size:13px;color:var(--mid);">JSON for insurer</div>
   </div></a>
 </div>
 
@@ -275,7 +280,7 @@ tr:hover td{background:var(--panel2);}
       <button class="btn btn-primary btn-sm" onclick="saveCSA()">Save Scores</button>
     </div>
     <div class="csa-grid" id="csa-grid"></div>
-    <div style="padding:12px 16px;font-size:12px;color:var(--mid);border-top:1px solid var(--border);">
+    <div style="padding:12px 16px;font-size:13px;color:var(--mid);border-top:1px solid var(--border);">
       ⚠️ Alert threshold = % of carriers with worse scores. Scores above threshold flag a BASIC for intervention.
       Last updated: <span id="csa-last-updated">never</span>
     </div>
@@ -309,7 +314,7 @@ tr:hover td{background:var(--panel2);}
         <tbody id="camera-config-body"></tbody>
       </table>
     </div>
-    <div style="padding:12px 16px;font-size:12px;color:var(--mid);border-top:1px solid var(--border);">
+    <div style="padding:12px 16px;font-size:13px;color:var(--mid);border-top:1px solid var(--border);">
       <strong style="color:var(--text);">Status codes:</strong>
       <span style="margin-left:8px;">🟢 Active &nbsp;|&nbsp; 🟡 Offline/Fault &nbsp;|&nbsp; ⚫ Not Installed</span>
       &nbsp;&nbsp;·&nbsp;&nbsp;Insurance minimum: <strong style="color:var(--green);">CH1 + CH2 both Active</strong>
@@ -345,11 +350,11 @@ tr:hover td{background:var(--panel2);}
     <div style="font-size:16px;font-weight:700;margin-bottom:16px;">Log Camera Event</div>
     <div style="display:grid;gap:12px;">
       <div>
-        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Date</label>
+        <label style="font-size:13px;color:var(--mid);display:block;margin-bottom:4px;">Date</label>
         <input type="date" id="ev-date" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
       </div>
       <div>
-        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Unit / Driver</label>
+        <label style="font-size:13px;color:var(--mid);display:block;margin-bottom:4px;">Unit / Driver</label>
         <select id="ev-unit" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
           <option value="">Select driver/unit...</option>
           <option value="Unit 01 — Avis Modesto">Unit 01 — Avis Modesto</option>
@@ -362,7 +367,7 @@ tr:hover td{background:var(--panel2);}
         </select>
       </div>
       <div>
-        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Event Type</label>
+        <label style="font-size:13px;color:var(--mid);display:block;margin-bottom:4px;">Event Type</label>
         <select id="ev-type" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
           <option value="hard_braking">Hard Braking</option>
           <option value="hard_acceleration">Hard Acceleration</option>
@@ -381,7 +386,7 @@ tr:hover td{background:var(--panel2);}
         </select>
       </div>
       <div>
-        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Camera Channel</label>
+        <label style="font-size:13px;color:var(--mid);display:block;margin-bottom:4px;">Camera Channel</label>
         <select id="ev-channel" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
           <option value="CH1">CH1 — Forward Road</option>
           <option value="CH2">CH2 — Driver Cab</option>
@@ -392,7 +397,7 @@ tr:hover td{background:var(--panel2);}
         </select>
       </div>
       <div>
-        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Severity</label>
+        <label style="font-size:13px;color:var(--mid);display:block;margin-bottom:4px;">Severity</label>
         <select id="ev-severity" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;">
           <option value="low">Low — Minor / Logged only</option>
           <option value="medium">Medium — Coaching recommended</option>
@@ -401,7 +406,7 @@ tr:hover td{background:var(--panel2);}
         </select>
       </div>
       <div>
-        <label style="font-size:12px;color:var(--mid);display:block;margin-bottom:4px;">Notes</label>
+        <label style="font-size:13px;color:var(--mid);display:block;margin-bottom:4px;">Notes</label>
         <textarea id="ev-notes" rows="2" style="width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;resize:vertical;" placeholder="Location, circumstances, follow-up action..."></textarea>
       </div>
     </div>
@@ -423,7 +428,7 @@ tr:hover td{background:var(--panel2);}
       <div class="trend-chart">
         <div class="trend-bars" id="trend-bars"></div>
       </div>
-      <div style="display:flex;gap:16px;margin-top:8px;font-size:11px;color:var(--mid);">
+      <div style="display:flex;gap:16px;margin-top:8px;font-size:13px;color:var(--mid);">
         <span><span style="display:inline-block;width:10px;height:10px;background:var(--green);border-radius:2px;margin-right:4px;"></span>Inspection completed</span>
         <span><span style="display:inline-block;width:10px;height:10px;background:var(--red);border-radius:2px;margin-right:4px;"></span>No inspection</span>
       </div>
@@ -627,11 +632,11 @@ function renderDriverTable(fleet){
       </td>
       <td>
         <span style="color:${d.dvirRate>=80?'var(--green)':d.dvirRate>=50?'var(--yellow)':'var(--red)'};">${d.dvirCount} insp</span>
-        <div style="font-size:11px;color:var(--mid);">${d.dvirRate}% rate (30d)</div>
+        <div style="font-size:13px;color:var(--mid);">${d.dvirRate}% rate (30d)</div>
       </td>
       <td><span style="color:var(--text);">${d.totalRS} insp</span></td>
-      <td><span style="color:${d.violations===0?'var(--green)':d.violations<=1?'var(--yellow)':'var(--red)'}">${d.violations} violation${d.violations!==1?'s':''}</span>${d.oos?`<span style="color:var(--red);font-size:11px;margin-left:4px;">${d.oos} OOS</span>`:''}</td>
-      <td><span style="color:${d.hasPositive?'var(--red)':'var(--green)'}">${d.hasPositive?'⚠️ Positive':'✅ Clean'}</span><div style="font-size:11px;color:var(--mid);">${d.tested} test${d.tested!==1?'s':''} YTD</div></td>
+      <td><span style="color:${d.violations===0?'var(--green)':d.violations<=1?'var(--yellow)':'var(--red)'}">${d.violations} violation${d.violations!==1?'s':''}</span>${d.oos?`<span style="color:var(--red);font-size:13px;margin-left:4px;">${d.oos} OOS</span>`:''}</td>
+      <td><span style="color:${d.hasPositive?'var(--red)':'var(--green)'}">${d.hasPositive?'⚠️ Positive':'✅ Clean'}</span><div style="font-size:13px;color:var(--mid);">${d.tested} test${d.tested!==1?'s':''} YTD</div></td>
       <td><span class="status-dot" style="background:${statusDot};"></span>${statusLabel}</td>
     </tr>`;
   }).join('');
@@ -658,7 +663,7 @@ function renderCSA(){
         <span class="csa-threshold">Threshold: ${b.threshold}%</span>
       </div>
       <div class="csa-meter"><div class="csa-meter-fill" id="csam_${b.key}" style="width:${pct}%;background:${barColor};"></div></div>
-      ${val!==''?`<div class="csa-alert ${alertClass}">${alertMsg}</div>`:'<div style="font-size:11px;color:var(--mid);margin-top:6px;">Enter score from FMCSA SMS</div>'}
+      ${val!==''?`<div class="csa-alert ${alertClass}">${alertMsg}</div>`:'<div style="font-size:13px;color:var(--mid);margin-top:6px;">Enter score from FMCSA SMS</div>'}
     </div>`;
   }).join('');
 }
@@ -710,17 +715,17 @@ function renderDVIRLog(){
   if(!dvirs.length){ tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--mid);padding:24px;">No DVIR records found — <a href="pretrip.html" style="color:var(--blue);">Start first inspection ↗</a></td></tr>'; return; }
   tbody.innerHTML = dvirs.map(r=>{
     const defColor = r.defectCount>0?(r.majorDefectCount>0?'var(--red)':'var(--yellow)'):'var(--green)';
-    const oosBadge = !r.canDepart ? '<span style="background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3);border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700;">OOS</span>' : '';
+    const oosBadge = !r.canDepart ? '<span style="background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3);border-radius:4px;padding:2px 6px;font-size:13px;font-weight:700;">OOS</span>' : '';
     const statusColor = r.status==='certified'?'var(--green)':'var(--yellow)';
     return `<tr>
-      <td style="font-family:monospace;font-size:12px;">${r.id}</td>
+      <td style="font-family:monospace;font-size:13px;">${r.id}</td>
       <td>${new Date(r.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
       <td style="font-weight:600;">${r.driverName||'—'}</td>
       <td>${r.vehicleId||'—'}${r.trailerId?' + '+r.trailerId:''}</td>
       <td style="text-transform:capitalize;">${r.type||'—'}</td>
       <td>${r.totalItems||'—'}</td>
       <td style="color:${defColor};">${r.defectCount||0}${r.majorDefectCount>0?' ('+r.majorDefectCount+' major)':''}</td>
-      <td>${oosBadge||'<span style="color:var(--green);font-size:12px;">Clear</span>'}</td>
+      <td>${oosBadge||'<span style="color:var(--green);font-size:13px;">Clear</span>'}</td>
       <td style="color:${statusColor};text-transform:capitalize;">${r.status||'—'}</td>
     </tr>`;
   }).join('');
@@ -803,14 +808,14 @@ function renderCameraConfig(){
       const val = ucfg[ch.id]||'none';
       const opts = STATUS_OPTS.map(s=>`<option value="${s.v}"${s.v===val?' selected':''}>${s.label}</option>`).join('');
       const bdr = ch.insMin ? 'border:1px solid rgba(59,130,246,.3);' : '';
-      return `<td><select id="cam_${u.id}_${ch.id}" style="background:var(--panel2);border:1px solid var(--border);${bdr}border-radius:6px;padding:4px 8px;color:var(--text);font-size:12px;width:100%;">${opts}</select></td>`;
+      return `<td><select id="cam_${u.id}_${ch.id}" style="background:var(--panel2);border:1px solid var(--border);${bdr}border-radius:6px;padding:4px 8px;color:var(--text);font-size:13px;width:100%;">${opts}</select></td>`;
     }).join('');
     const ready = (ucfg.ch1==='active') && (ucfg.ch2==='active');
     const readyBadge = ready
-      ? '<span style="background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;">✅ Eligible</span>'
-      : '<span style="background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;">⚠️ Needs CH1+CH2</span>';
+      ? '<span style="background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3);border-radius:6px;padding:3px 8px;font-size:13px;font-weight:700;">✅ Eligible</span>'
+      : '<span style="background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:3px 8px;font-size:13px;font-weight:700;">⚠️ Needs CH1+CH2</span>';
     return `<tr>
-      <td style="font-weight:700;">${u.label}<div style="font-size:11px;color:var(--mid);">${u.driver}</div></td>
+      <td style="font-weight:700;">${u.label}<div style="font-size:13px;color:var(--mid);">${u.driver}</div></td>
       ${cells}
       <td>${readyBadge}</td>
     </tr>`;
@@ -861,7 +866,7 @@ function renderCameraEventStats(){
     {label:'Medium',             val:counts.medium,       color:counts.medium>0?'var(--yellow)':'var(--green)'},
     {label:'Low',                val:counts.low,          color:'var(--mid)'}
   ].map(s=>`<div style="padding:14px 16px;border-right:1px solid var(--border);">
-    <div style="font-size:11px;color:var(--mid);text-transform:uppercase;margin-bottom:4px;">${s.label}</div>
+    <div style="font-size:13px;color:var(--mid);text-transform:uppercase;margin-bottom:4px;">${s.label}</div>
     <div style="font-size:22px;font-weight:800;color:${s.color};">${s.val}</div>
   </div>`).join('');
 }
@@ -878,13 +883,13 @@ function renderCameraEvents(){
     const sc = SEV_COLOR[e.severity]||'var(--mid)';
     return `<tr>
       <td>${new Date(e.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
-      <td style="font-size:12px;">${e.unit||'—'}</td>
+      <td style="font-size:13px;">${e.unit||'—'}</td>
       <td style="font-weight:600;">${e.driver||'—'}</td>
       <td>${EV_TYPES[e.type]||e.type}</td>
-      <td style="font-family:monospace;font-size:12px;color:var(--blue);">${e.channel||'—'}</td>
+      <td style="font-family:monospace;font-size:13px;color:var(--blue);">${e.channel||'—'}</td>
       <td><span style="color:${sc};font-weight:700;text-transform:capitalize;">${e.severity}</span></td>
-      <td style="font-size:12px;color:var(--mid);">${e.notes||'—'}</td>
-      <td><a href="coaching-log.html?trigger=camera_event&ref=${e.id}&driver=${encodeURIComponent(e.driver||e.unit||'')}" style="font-size:11px;color:var(--yellow);text-decoration:none;border:1px solid rgba(245,158,11,.4);padding:2px 7px;border-radius:4px;white-space:nowrap;" title="Open coaching session for this event">📋 Coach</a></td>
+      <td style="font-size:13px;color:var(--mid);">${e.notes||'—'}</td>
+      <td><a href="coaching-log.html?trigger=camera_event&ref=${e.id}&driver=${encodeURIComponent(e.driver||e.unit||'')}" style="font-size:13px;color:var(--yellow);text-decoration:none;border:1px solid rgba(245,158,11,.4);padding:2px 7px;border-radius:4px;white-space:nowrap;" title="Open coaching session for this event">📋 Coach</a></td>
     </tr>`;
   }).join('');
 }

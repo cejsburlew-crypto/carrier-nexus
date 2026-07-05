@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" data-nexus-theme="dark">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -105,7 +110,7 @@
     .results-empty .big-icon { font-size: 48px; margin-bottom: 12px; }
     .results-empty h3 { color: #6b7280; font-size: 16px; margin-bottom: 6px; }
     .results-stats {
-      font-size: 12px;
+      font-size: 13px;
       color: #6b7280;
       font-family: 'JetBrains Mono', monospace;
       margin-bottom: 20px;
@@ -124,7 +129,7 @@
     }
     .category-label {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 700;
       letter-spacing: 1.5px;
       text-transform: uppercase;
@@ -132,7 +137,7 @@
     .category-count {
       background: #f8f9fa;
       color: #6b7280;
-      font-size: 10px;
+      font-size: 13px;
       font-family: 'JetBrains Mono', monospace;
       padding: 2px 7px;
       border-radius: 10px;
@@ -177,14 +182,14 @@
       margin-bottom: 3px;
     }
     .result-subtitle {
-      font-size: 11px;
+      font-size: 13px;
       color: #9ca3af;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .result-meta {
-      font-size: 11px;
+      font-size: 13px;
       color: #6b7280;
       background: #f8f9fa;
       padding: 2px 8px;
@@ -195,7 +200,7 @@
       margin-top: 2px;
     }
     .result-arrow {
-      font-size: 12px;
+      font-size: 13px;
       color: #374151;
       flex-shrink: 0;
       align-self: center;
@@ -222,7 +227,7 @@
 
     <div class="search-hero">
       <h1>Search Everything</h1>
-      <p>Search across loads, drivers, documents, expenses, invoices, inspections, and more. Press <kbd style="background:#1f2937;border:1px solid #374151;padding:1px 5px;border-radius:3px;font-size:11px;font-family:'JetBrains Mono',monospace;">⌘K</kbd> from any page for quick access.</p>
+      <p>Search across loads, drivers, documents, expenses, invoices, inspections, and more. Press <kbd style="background:#1f2937;border:1px solid #374151;padding:1px 5px;border-radius:3px;font-size:13px;font-family:'JetBrains Mono',monospace;">⌘K</kbd> from any page for quick access.</p>
       <div class="search-bar-wrap">
         <input type="text" id="search-page-input" class="search-bar" placeholder="Search loads, drivers, documents, expenses…" autocomplete="off" autocorrect="off" spellcheck="false">
         <button class="btn-search" onclick="doPageSearch()">Search</button>

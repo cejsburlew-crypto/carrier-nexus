@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{visibility:hidden}</style>
+<style>
+      /* === NEXUS GLOBAL FONT STANDARDS: min 10pt (13px) Arial === */
+      body { font-family: Arial, sans-serif; }
+      body *:not(i):not(.fa):not([class*="fa-"]):not([class*="icon"]) {
+        font-family: inherit;
+      }html{visibility:hidden}</style>
 <script>
 /* NEXUS AUTH GUARD */
 (function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
@@ -73,7 +78,7 @@ body {
 .btn-primary:hover { background: #f50057; }
 .btn-ghost { background: transparent; color: rgba(255,255,255,.8); border: 1px solid rgba(255,255,255,.3); }
 .btn-ghost:hover { border-color: rgba(255,255,255,.6); color: #fff; }
-.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-sm { padding: 5px 12px; font-size: 13px; }
 .content { padding: 24px 28px; }
 
 /* ── SUMMARY BAR ── */
@@ -85,7 +90,7 @@ body {
 .sum-pill {
   display: inline-flex; align-items: center; gap: 7px;
   padding: 8px 16px; border-radius: 20px; font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; font-weight: 700; letter-spacing: .5px; cursor: pointer;
+  font-size: 13px; font-weight: 700; letter-spacing: .5px; cursor: pointer;
   border: 1.5px solid; transition: all .15s; user-select: none;
 }
 .sum-pill:hover { transform: translateY(-1px); }
@@ -102,7 +107,7 @@ body {
 
 /* ── SECTION HEADERS ── */
 .sec-hdr {
-  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
   font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
   color: var(--text-muted); margin: 24px 0 10px; display: flex;
   align-items: center; gap: 10px;
@@ -114,7 +119,7 @@ body {
 .alert-table { width: 100%; border-collapse: collapse; }
 .alert-table th {
   padding: 10px 14px; text-align: left;
-  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
   font-weight: 700; color: var(--text-muted); letter-spacing: 1.5px;
   text-transform: uppercase; border-bottom: 1px solid var(--border);
   background: rgba(255,255,255,.03);
@@ -135,7 +140,7 @@ body {
 .dot-gray   { background: rgba(107,114,128,.2); }
 
 .days-badge {
-  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
   padding: 3px 9px; border-radius: 4px; display: inline-block;
 }
 .days-expired { background: rgba(239,68,68,.15); color: #f87171; }
@@ -144,7 +149,7 @@ body {
 .days-none    { background: rgba(107,114,128,.12); color: #9ca3af; }
 
 .cat-badge {
-  font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
   padding: 2px 8px; border-radius: 3px; letter-spacing: .5px; text-transform: uppercase;
   background: rgba(255,255,255,.07); color: var(--text-muted); border: 1px solid var(--border2);
 }
@@ -155,7 +160,7 @@ body {
 .edit-row.open { display: table-row; }
 .edit-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; padding: 4px 0; }
 .ef-group { display: flex; flex-direction: column; gap: 4px; }
-.ef-group label { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .8px; }
+.ef-group label { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .8px; }
 .ef-group input, .ef-group select, .ef-group textarea {
   background: var(--bg); border: 1px solid var(--border2); border-radius: 5px;
   color: var(--text); font-family: 'Barlow', sans-serif; font-size: 13px;
@@ -187,7 +192,7 @@ body {
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
 .form-row.full { grid-template-columns: 1fr; }
 .form-group { display: flex; flex-direction: column; gap: 5px; }
-.form-group label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .8px; }
+.form-group label { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .8px; }
 .form-group input, .form-group select, .form-group textarea {
   background: var(--bg); border: 1px solid var(--border2); border-radius: 6px;
   color: var(--text); font-family: 'Barlow', sans-serif; font-size: 14px; padding: 9px 12px;
@@ -198,7 +203,7 @@ body {
 /* ── EMPTY STATE ── */
 .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
 .empty-state svg { opacity: .3; margin-bottom: 12px; }
-.empty-state p { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.empty-state p { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
 
 /* ── MOBILE ── */
 @media (max-width: 768px) {
@@ -206,7 +211,7 @@ body {
   .content { padding: 14px 12px 80px; }
   .topbar { padding: 0 14px; }
   .summary-bar { gap: 6px; padding: 12px 14px; }
-  .sum-pill { font-size: 10px; padding: 6px 10px; }
+  .sum-pill { font-size: 13px; padding: 6px 10px; }
   .alert-table th:nth-child(4), .alert-table td:nth-child(4),
   .alert-table th:nth-child(6), .alert-table td:nth-child(6) { display: none; }
   .form-row { grid-template-columns: 1fr; }
@@ -226,7 +231,7 @@ body {
   @media (max-width: 480px) {
     body { font-size: 14px; }
     .kpi-row, .stats-row, .kpi-grid, .stats-grid { grid-template-columns: 1fr !important; }
-    .small-text, .meta { font-size: 12px !important; }
+    .small-text, .meta { font-size: 13px !important; }
   }
   </style>
 </head>
@@ -264,7 +269,7 @@ body {
     </div>
 
     <!-- SYSTEM ALERTS -->
-    <div class="sec-hdr">System Alerts <span style="color:var(--text-muted);font-size:9px;margin-left:4px;">auto-populated from driver &amp; vehicle records</span></div>
+    <div class="sec-hdr">System Alerts <span style="color:var(--text-muted);font-size:13px;margin-left:4px;">auto-populated from driver &amp; vehicle records</span></div>
     <div class="alert-table-wrap">
       <table class="alert-table" id="system-table">
         <thead>
@@ -285,7 +290,7 @@ body {
     </div>
 
     <!-- CUSTOM ALERTS -->
-    <div class="sec-hdr">Custom Alerts <span style="color:var(--text-muted);font-size:9px;margin-left:4px;">user-created, unlimited</span></div>
+    <div class="sec-hdr">Custom Alerts <span style="color:var(--text-muted);font-size:13px;margin-left:4px;">user-created, unlimited</span></div>
     <div class="alert-table-wrap">
       <table class="alert-table" id="custom-table">
         <thead>
@@ -574,12 +579,12 @@ function renderSystemTable(alerts) {
     var editId   = 'sys_edit_' + i;
     html += '<tr data-status="' + status + '" class="' + rowClass + '">';
     html += '<td>' + statusDot(status) + '</td>';
-    html += '<td><strong style="color:var(--text-bright);">' + esc(a.name) + '</strong><br><span style="font-size:11px;color:var(--text-muted);">Source: ' + esc(a.source) + '</span></td>';
+    html += '<td><strong style="color:var(--text-bright);">' + esc(a.name) + '</strong><br><span style="font-size:13px;color:var(--text-muted);">Source: ' + esc(a.source) + '</span></td>';
     html += '<td>' + esc(a.assignedTo || '—') + '</td>';
-    html += '<td style="font-family:\'JetBrains Mono\',monospace;font-size:12px;">' + fmtDate(a.expiry) + '</td>';
+    html += '<td style="font-family:\'JetBrains Mono\',monospace;font-size:13px;">' + fmtDate(a.expiry) + '</td>';
     html += '<td>' + daysBadge(a.days, 30) + '</td>';
-    html += '<td><span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-muted);">≤ 30d</span></td>';
-    html += '<td><button class="btn btn-ghost btn-sm" onclick="toggleSysEdit(\'' + editId + '\')" style="font-size:11px;padding:3px 10px;">Edit</button></td>';
+    html += '<td><span style="font-family:\'JetBrains Mono\',monospace;font-size:13px;color:var(--text-muted);">≤ 30d</span></td>';
+    html += '<td><button class="btn btn-ghost btn-sm" onclick="toggleSysEdit(\'' + editId + '\')" style="font-size:13px;padding:3px 10px;">Edit</button></td>';
     html += '</tr>';
     // Inline edit row
     html += '<tr class="edit-row" id="' + editId + '">';
@@ -633,15 +638,15 @@ function renderCustomTable() {
     html += '<tr data-status="' + status + '" data-id="' + a.id + '" class="' + rowClass + '">';
     html += '<td>' + statusDot(status) + '</td>';
     html += '<td><strong style="color:var(--text-bright);">' + esc(a.name) + '</strong>' +
-            (a.notes ? '<br><span style="font-size:11px;color:var(--text-muted);">' + esc(a.notes) + '</span>' : '') + '</td>';
+            (a.notes ? '<br><span style="font-size:13px;color:var(--text-muted);">' + esc(a.notes) + '</span>' : '') + '</td>';
     html += '<td><span class="cat-badge">' + esc(a.category||'Other') + '</span>' +
-            (a.assignedTo ? ' <span style="font-size:12px;color:var(--text-muted);">' + esc(a.assignedTo) + '</span>' : '') + '</td>';
-    html += '<td style="font-family:\'JetBrains Mono\',monospace;font-size:12px;">' + fmtDate(a.expiry) + '</td>';
+            (a.assignedTo ? ' <span style="font-size:13px;color:var(--text-muted);">' + esc(a.assignedTo) + '</span>' : '') + '</td>';
+    html += '<td style="font-family:\'JetBrains Mono\',monospace;font-size:13px;">' + fmtDate(a.expiry) + '</td>';
     html += '<td>' + daysBadge(days, a.threshold) + '</td>';
-    html += '<td><span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--text-muted);">≤ ' + (a.threshold||30) + 'd</span></td>';
+    html += '<td><span style="font-family:\'JetBrains Mono\',monospace;font-size:13px;color:var(--text-muted);">≤ ' + (a.threshold||30) + 'd</span></td>';
     html += '<td style="display:flex;gap:5px;align-items:center;">' +
-            '<button class="btn btn-ghost btn-sm" onclick="editAlert(\'' + a.id + '\')" style="font-size:11px;padding:3px 10px;">Edit</button>' +
-            '<button class="btn btn-sm" onclick="deleteAlert(\'' + a.id + '\')" style="background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.3);font-size:11px;padding:3px 8px;">Del</button>' +
+            '<button class="btn btn-ghost btn-sm" onclick="editAlert(\'' + a.id + '\')" style="font-size:13px;padding:3px 10px;">Edit</button>' +
+            '<button class="btn btn-sm" onclick="deleteAlert(\'' + a.id + '\')" style="background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.3);font-size:13px;padding:3px 8px;">Del</button>' +
             '</td>';
     html += '</tr>';
   });
