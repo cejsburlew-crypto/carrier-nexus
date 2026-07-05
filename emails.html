@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>html{visibility:hidden}</style>
+<script>
+/* NEXUS AUTH GUARD */
+(function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Emails — Carrier Nexus</title>
@@ -50,7 +55,7 @@
   .topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.05em;}
   .topbar-actions{display:flex;align-items:center;gap:10px;}
   .btn{padding:7px 16px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border:none;border-radius:6px;cursor:pointer;transition:all .15s;}
-  .btn-primary{background:var(--orange);color:#fff;}
+  .btn-primary{background:#1d4ed8;color:#fff;}
   .btn-primary:hover{background:#d45c08;}
   .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-dim);}
   .btn-ghost:hover{border-color:rgba(255,255,255,.2);color:var(--white-pure);}

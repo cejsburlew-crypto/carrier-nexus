@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>html{visibility:hidden}</style>
+<script>
+/* NEXUS AUTH GUARD */
+(function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Document Inbox — Carrier Nexus</title>
@@ -119,7 +124,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:5px;font-size:12px;font-weight:600;font-family:'Barlow',sans-serif;cursor:pointer;border:none;transition:all .13s;letter-spacing:.04em;white-space:nowrap;}
 .btn-pink{background:linear-gradient(135deg,#c2185b,#e91e8c);color:#fff;}
 .btn-pink:hover{filter:brightness(1.1);}
-.btn-orange{background:linear-gradient(135deg,#e8640a,#ff7518);color:#fff;}
+.btn-orange{background:#1d4ed8;color:#fff;}
 .btn-ghost{background:transparent;color:var(--text-mid);border:1px solid var(--border);}
 .btn-ghost:hover{background:var(--gunmetal-light);color:var(--white);}
 .btn-green{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3);}

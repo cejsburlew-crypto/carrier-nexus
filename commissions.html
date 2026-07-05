@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>html{visibility:hidden}</style>
+<script>
+/* NEXUS AUTH GUARD */
+(function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Carrier Nexus — Dispatcher Commissions</title>
@@ -53,7 +58,7 @@ html,body{height:100%;background:var(--gunmetal);color:var(--white);font-family:
 .btn-ghost:hover{border-color:var(--text-mid);color:var(--white);}
 .btn-blue{background:var(--steel-blue);color:#fff;}
 .btn-blue:hover{background:#2563eb;}
-.btn-orange{background:var(--orange);color:#fff;}
+.btn-orange{background:#1d4ed8;color:#fff;font-weight:800;}
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px;}
 .kpi{background:var(--gunmetal-light);border:1px solid var(--border);border-radius:10px;padding:16px 20px;}
 .kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--white);}

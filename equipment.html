@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>html{visibility:hidden}</style>
+<script>
+/* NEXUS AUTH GUARD */
+(function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fleet &amp; Equipment — Carrier Nexus</title>
@@ -185,8 +190,8 @@ body {
   cursor: pointer;
   transition: all 0.15s;
 }
-.btn-primary { background: var(--orange); color: #fff; }
-.btn-primary:hover { background: var(--orange-bright); }
+.btn-primary { background: #1d4ed8; color: #fff; font-weight:800; }
+.btn-primary:hover { background: #1e40af; }
 .btn-ghost { background: transparent; color: var(--ice); border: 1px solid var(--border); }
 .btn-ghost:hover { border-color: var(--steel-blue); color: var(--white); }
 .btn-sm {

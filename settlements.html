@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>html{visibility:hidden}</style>
+<script>
+/* NEXUS AUTH GUARD */
+(function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Settlements — Carrier Nexus</title>
@@ -64,8 +69,8 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .page-subtitle{font-size:13px;color:var(--text-muted);margin-top:2px;}
 .topbar-actions{display:flex;gap:10px;align-items:center;}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
-.btn-orange{background:var(--orange);color:#fff;}
-.btn-orange:hover{background:#d05508;}
+.btn-orange{background:#1d4ed8;color:#fff;font-weight:800;}
+.btn-orange:hover{background:#1e40af;}
 .btn-ghost{background:transparent;color:var(--text-mid);border:1px solid var(--border);}
 .btn-ghost:hover{color:var(--white);border-color:var(--steel-blue);}
 
@@ -111,7 +116,7 @@ body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;
 .badge-pending{background:rgba(46,109,164,0.2);color: #1e3a6e;border:1px solid rgba(46,109,164,0.3);}
 
 /* ACTIONS */
-.btn-finalize{background:var(--orange);color:#fff;border:none;padding:5px 12px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;}
+.btn-finalize{background:#1d4ed8;color:#fff;border:none;padding:5px 12px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;}
 .btn-finalize:hover{background:#d05508;}
 .btn-view{background:#f8f9fa;color:#111827;border:none;padding:5px 12px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;}
 .btn-view:hover{background:#2e6da4;}

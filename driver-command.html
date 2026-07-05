@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>html{visibility:hidden}</style>
+<script>
+/* NEXUS AUTH GUARD */
+(function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -386,7 +391,7 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 <!-- ══ COMPANY + CLOCK STRIP ══ -->
 <div class="company-strip">
   <div>
-    <div class="company-name">CARRIER <span>TRUCKING US</span></div>
+    <div class="company-name">CARRIER <span>TRUCKING US, LLC</span></div>
     <div class="company-ids" id="companyStripSub" style="color:#94a3b8;">USDOT 4326039 · MC 1688495 · Truck #104 · On Duty</div>
   </div>
   <div class="live-clock-wrap">

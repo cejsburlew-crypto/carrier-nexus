@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>html{visibility:hidden}</style>
+<script>
+/* NEXUS AUTH GUARD */
+(function(){try{var s=localStorage.getItem('nexus_session');if(!s)throw 0;var d=JSON.parse(s);if(!d||!d.role)throw 0;document.documentElement.style.visibility='visible';}catch(e){document.documentElement.style.visibility='hidden';window.location.replace('login.html?return='+encodeURIComponent(location.pathname+location.search));}})();
+</script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Missing PODs — Carrier Nexus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -60,7 +65,7 @@ tr:hover td{background:#f8fafc;}
 .btn-primary{background:#2e6da4;color:#fff;border-color:#2e6da4;}
 .btn-primary:hover{background:#1d5a8a;}
 .btn-orange{background:#e8640a;color:#fff;border-color:#e8640a;}
-.btn-orange:hover{background:#c4520a;}
+.btn-orange:hover{background:#1e40af;}
 .disp-amet{background:#dbeafe;color:#1d4ed8;}
 .disp-betty{background:#fce7f3;color:#9d174d;}
 .mobile-nav{display:none;}
