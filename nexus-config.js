@@ -246,7 +246,7 @@ window.nexusMemberId = function(firstName, lastName, loginDate) {
 // One record per human â never deleted. Company memberships are separate.
 // ============================================================
 window.NEXUS_SEED_MEMBERS = [
-  { id:'mem_001', memberId:'JB26148.0', firstName:'Jim', lastName:'Burlew', email:'jim.burlew@jbca-inc.com', phone:'', type:'admin', mc:'', dot:'', createdAt:'2026-05-28' },
+  { id:'mem_001', memberId:'JB26148.0', firstName:'Jim', lastName:'Burlew', email:'cejsburlew@gmail.com', phone:'', type:'admin', mc:'', dot:'', createdAt:'2026-05-28' },
   { id:'mem_002', memberId:'LM26165.0', firstName:'Laura', lastName:'Moreno', email:'lbmoreno92@gmail.com', phone:'', type:'approver', mc:'', dot:'', createdAt:'2026-06-14' },
   { id:'mem_003', memberId:'AA26148.0', firstName:'Amet', lastName:'Abreu', email:'', phone:'', type:'dispatcher', mc:'', dot:'', createdAt:'2026-05-28' },
   { id:'mem_004', memberId:'BG26148.0', firstName:'Betty', lastName:'Gutierrez', email:'', phone:'', type:'dispatcher', mc:'', dot:'', createdAt:'2026-05-28' },
