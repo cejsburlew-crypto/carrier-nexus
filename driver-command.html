@@ -28,7 +28,7 @@
   --bar:#0d1117; --bar2:#13181f;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{background:#0d1117;}
+html{background:#0d1117;}[data-nexus-theme="light"] html,[data-nexus-theme="light"]{background:#f0f2f5!important;}
 body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);max-width:1400px;margin:0 auto;min-height:100vh;overflow-x:hidden;padding-bottom:76px;}
 nav.sidebar#nexus-sidebar{display:none!important;}
 
@@ -377,16 +377,49 @@ nav.sidebar#nexus-sidebar{display:none!important;}
 }
 .admin-viewing-banner span{font-size:16px;}
 
+
+/* ── GLOBAL THEME OVERRIDES (driver-command) ── */
+[data-nexus-theme="light"] body{background:#f0f2f5!important;color:#111827!important;}
+[data-nexus-theme="light"] .topbar{background:#1d4ed8!important;} /* keep brand bar blue in light */
+[data-nexus-theme="light"] .company-strip{background:#e8edf5!important;border-bottom-color:#c8d3e0!important;}
+[data-nexus-theme="light"] .company-name{color:#111827!important;}
+[data-nexus-theme="light"] .company-ids{color:#6b7280!important;}
+[data-nexus-theme="light"] .live-clock{color:#111827!important;}
+[data-nexus-theme="light"] .live-date{color:#6b7280!important;}
+[data-nexus-theme="light"] .hos-strip{background:#dde4ef!important;border-bottom-color:#b8c5d6!important;}
+[data-nexus-theme="light"] .hos-cell{border-right-color:#b8c5d6!important;}
+[data-nexus-theme="light"] .hos-lbl,.hos-sub{color:#4b5563!important;}
+[data-nexus-theme="light"] .hos-bar-track{background:#c0ccdb!important;}
+[data-nexus-theme="light"] .sec-bar{background:#d8e0ec!important;border-bottom-color:#b8c5d6!important;}
+[data-nexus-theme="light"] .sec-title{color:#111827!important;}
+[data-nexus-theme="light"] .tile{background:#fff!important;border-color:#d0d7de!important;}
+[data-nexus-theme="light"] .tile-lbl{color:#111827!important;}
+[data-nexus-theme="light"] .modal-box,.modal-box{background:#fff;}
+[data-nexus-theme="light"] .psi-input{background:#f0f2f5!important;border-color:#d0d7de!important;color:#111827!important;}
+[data-nexus-theme="light"] .emergency-bar{background:#1d4ed8!important;}
+
+[data-nexus-theme="dark"] body{background:#060810!important;color:#e6edf3!important;}
+[data-nexus-theme="dark"] .company-strip{background:#080b10!important;}
+[data-nexus-theme="dark"] .hos-strip{background:#0b0f18!important;}
+[data-nexus-theme="dark"] .tile{background:#0d1117!important;border-color:#1e2535!important;}
 </style>
 </head>
 <body>
 
+<script>
+/* NEXUS THEME INIT — driver-command */
+(function(){
+  var t = localStorage.getItem('nexus_theme') || 'dark';
+  document.documentElement.setAttribute('data-nexus-theme', t);
+})();
+</script>
 <!-- ══ TOP BAR ══ -->
 <div class="topbar">
   <div>
     <div class="topbar-brand">CARRIER <span>NEXUS</span></div>
     <div class="topbar-sub">Driver Command · <span class="topbar-company" id="topbarDriverName">David Hernandez</span></div>
   </div>
+  <button id="dc-theme-btn" title="Toggle light / dark" onclick="(function(){var t=document.documentElement.getAttribute('data-nexus-theme')==='light'?'dark':'light';document.documentElement.setAttribute('data-nexus-theme',t);localStorage.setItem('nexus_theme',t);document.getElementById('dc-theme-btn').textContent=t==='dark'?'☀️':'🌙';})()" style="background:none;border:none;cursor:pointer;font-size:18px;padding:4px;color:#fff;margin-left:auto;margin-right:8px;"></button>
   <div class="topbar-notif" onclick="openModal('alertModal')">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a5 5 0 00-5 5v3H2v1h12v-1h-1V7a5 5 0 00-5-5zM6 13a2 2 0 004 0H6z" fill="rgba(255,255,255,.7)"/></svg>
     <div class="notif-badge"></div>
@@ -1715,6 +1748,14 @@ function closeTireModalDirect(){ document.getElementById('tirePressureModal').cl
     </div>
   </div>
 </div>
+
+
+/* Init theme toggle icon */
+(function(){
+  var t = document.documentElement.getAttribute('data-nexus-theme') || 'dark';
+  var btn = document.getElementById('dc-theme-btn');
+  if(btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+})();
 
 </body>
 </html>
