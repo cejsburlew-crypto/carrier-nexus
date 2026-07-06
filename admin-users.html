@@ -234,6 +234,28 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
       </div>
     </div>
 
+    <!-- MY DEVICES -->
+    <div class="section-card" id="my-devices-card" style="display:none;">
+      <div class="section-header">
+        <div>
+          <div class="section-title">MY DEVICES</div>
+          <div class="section-sub">Browsers that can skip your two-factor code. Revoke any you don't recognize.</div>
+        </div>
+      </div>
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>Device</th>
+            <th>Last Used</th>
+            <th>Trusted Until</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="device-tbody">
+          <tr><td colspan="4" class="empty-state"><p>Loading devices...</p></td></tr>
+        </tbody>
+      </table>
+    </div>
 
 <!-- ADD / EDIT USER MODAL -->
 <div class="modal-overlay" id="user-modal">
@@ -339,7 +361,9 @@ table.user-table{width:100%;border-collapse:collapse;font-size:13px;}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="nexus-config.js?v=5"></script>
+<script src="nexus-db.js?v=3"></script>
 <script>
 // ============================================================
 // NEXUS USER MANAGEMENT
@@ -656,10 +680,6 @@ function openResetModal(id) {
 }
 function closeResetModal() { document.getElementById('reset-modal').classList.remove('open'); }
 
-var GH_REPO = 'cejsburlew-crypto/carrier-nexus';
-var GH_FILE = 'nexus-config.js';
-var GH_TOK  = ['ghp_0x0gnoXB9', 'qbzkY9AxWfbC5A9ThQKJg32Wgu3'].join('');
-
 async function doReset() {
   var id  = document.getElementById('reset-user-id').value;
   var pwd = document.getElementById('reset-pwd').value;
@@ -676,39 +696,9 @@ async function doReset() {
   saveUsersToStorage(users);
   allUsers = users;
 
-  // Push to GitHub so it works on all devices
-  var targetEmail = idx >= 0 ? users[idx].email : '';
-  try {
-    await pushHashToGitHub(targetEmail, hash);
-    closeResetModal();
-    showToast('Password set and synced to all devices ✓', 'success');
-  } catch(e) {
-    closeResetModal();
-    showToast('Password saved locally. GitHub sync failed: ' + e.message, 'warn');
-  }
+  closeResetModal();
+  showToast('Password set on this device', 'success');
   if (resetBtn) { resetBtn.textContent = 'Save Password'; resetBtn.disabled = false; }
-}
-
-async function pushHashToGitHub(email, hash) {
-  var api = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE;
-  var r   = await fetch(api, { headers:{ Authorization:'token '+GH_TOK, Accept:'application/vnd.github.v3+json' }});
-  if (!r.ok) throw new Error('GitHub fetch ' + r.status);
-  var data    = await r.json();
-  var content = atob(data.content.replace(/\n/g,''));
-  var escaped = email.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/'/g,"\\'");
-  var pattern = new RegExp("(\\{[^}]*email:\\s*'" + escaped + "'[^}]*passwordHash:\\s*')[^']*(')", 'g');
-  var updated = content.replace(pattern, '$1' + hash + '$2');
-  updated = updated.replace(
-    new RegExp("(email:\\s*'" + escaped + "'[^}]*active:\\s*)false", 'g'), '$1true'
-  );
-  if (updated === content) throw new Error('Email not found in config SEED');
-  var encoded = btoa(unescape(encodeURIComponent(updated)));
-  var put = await fetch(api, {
-    method:'PUT',
-    headers:{ Authorization:'token '+GH_TOK, Accept:'application/vnd.github.v3+json', 'Content-Type':'application/json' },
-    body: JSON.stringify({ message:'auth: set password for ' + email, content: encoded, sha: data.sha })
-  });
-  if (!put.ok) { var e=await put.json(); throw new Error(e.message||'GitHub PUT '+put.status); }
 }
 
 function copyInviteLink(id) {
@@ -774,6 +764,50 @@ function updateStrength(pwd, barId) {
   if (bar) { bar.style.width = pct + '%'; bar.style.background = color; }
 }
 
+// === MY DEVICES (trusted-device management) ===
+async function loadMyDevices() {
+  var card = document.getElementById('my-devices-card');
+  if (!card || !window.NexusDB || !NexusDB.isConfigured) return;
+  var user;
+  try { user = await NexusDB.Auth.getUser(); } catch(e) { return; }
+  if (!user) return;
+  card.dataset.userId = user.id;
+  card.style.display = '';
+  renderDevices(await NexusDB.Auth.Device.list(user.id));
+}
+
+function renderDevices(devices) {
+  var tbody = document.getElementById('device-tbody');
+  if (!tbody) return;
+  if (!devices.length) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty-state"><p>No trusted devices yet.</p></td></tr>';
+    return;
+  }
+  var currentId = NexusDB.Auth.Device.currentId();
+  tbody.innerHTML = devices.map(function(d) {
+    var isThis = d.device_id === currentId;
+    var lastUsed = d.last_used_at ? new Date(d.last_used_at).toLocaleString() : '—';
+    var expires = d.expires_at ? new Date(d.expires_at).toLocaleDateString() : '—';
+    return '<tr>' +
+      '<td>' + (d.label || 'Unknown device') + (isThis ? ' <span style="color:var(--green);font-size:13px;">(this device)</span>' : '') + '</td>' +
+      '<td class="ts-cell">' + lastUsed + '</td>' +
+      '<td class="ts-cell">' + expires + '</td>' +
+      '<td><button class="btn btn-danger btn-sm" onclick="revokeDevice(\'' + d.id + '\')">Revoke</button></td>' +
+    '</tr>';
+  }).join('');
+}
+
+async function revokeDevice(id) {
+  var ok = await NexusDB.Auth.Device.revoke(id);
+  var card = document.getElementById('my-devices-card');
+  if (ok) {
+    showToast('Device revoked', 'success');
+    renderDevices(await NexusDB.Auth.Device.list(card.dataset.userId));
+  } else {
+    showToast('Could not revoke device', 'warn');
+  }
+}
+
 // === GUARD: require admin session ===
 function checkAuth() {
   try {
@@ -794,6 +828,7 @@ function checkAuth() {
 // Init
 checkAuth();
 loadUsers();
+loadMyDevices();
 </script>
 <!-- DISPATCHER ASSIGNMENT MODAL -->
 <div class="modal-overlay" id="assign-modal">
