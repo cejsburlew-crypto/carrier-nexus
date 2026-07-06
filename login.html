@@ -1026,6 +1026,7 @@
   </div>
 
   <!-- Google Login -->
+  <div id="preLoginBlock">
   <a href="#" class="btn-google" id="googleBtn">
     <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -1040,6 +1041,7 @@
     <div class="divider-line"></div>
     <div class="divider-text">or email</div>
     <div class="divider-line"></div>
+  </div>
   </div>
 
   <!-- Login Form -->
@@ -1077,12 +1079,8 @@
       <div class="form-error" id="passwordError">Password is required</div>
     </div>
 
-    <div class="form-row">
-      <label class="remember-me">
-        <input type="checkbox" id="rememberMe"/>
-        <span>Keep me signed in</span>
-      </label>
-      <a href="#" class="forgot-link">Forgot password?</a>
+    <div class="form-row" style="justify-content:flex-end;">
+      <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
     </div>
 
     <!-- Role Indicator (shows after email recognized) -->
@@ -1117,7 +1115,40 @@
     </div>
   </form>
 
-  <div class="form-footer">
+  <!-- MFA Panel (TOTP enrollment / challenge) — admin & dispatcher only -->
+  <div class="mfa-panel" id="mfaPanel" style="display:none;">
+    <div class="form-header" style="margin-bottom:24px;">
+      <div class="form-eyebrow">Two-Factor Authentication</div>
+      <div class="form-title" style="font-size:28px;" id="mfaTitle">Scan to Set Up</div>
+      <div class="form-subtitle" id="mfaSubtitle">Use an authenticator app to scan this code, then enter the 6-digit code it shows.</div>
+    </div>
+
+    <div id="mfaQrWrap" style="display:flex;justify-content:center;margin-bottom:20px;">
+      <div id="mfaQr" style="background:#fff;padding:16px;border-radius:8px;"></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="mfaCode">6-Digit Code</label>
+      <input type="text" id="mfaCode" class="form-input" placeholder="000000" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" />
+      <div class="form-error" id="mfaError">Invalid code — try again</div>
+    </div>
+
+    <label class="remember-me" style="margin-bottom:20px;">
+      <input type="checkbox" id="trustDevice" checked/>
+      <span>Trust this device for 30 days</span>
+    </label>
+
+    <button type="button" class="btn-login" id="mfaVerifyBtn">
+      <span class="btn-text">Verify &amp; Continue</span>
+      <div class="spinner"></div>
+    </button>
+
+    <div class="form-footer-text" style="margin-top: 16px; text-align:center;">
+      <a href="#" id="mfaCancel">← Back to sign in</a>
+    </div>
+  </div>
+
+  <div class="form-footer" id="loginFooter">
     <div class="form-footer-text">
       Don't have an account? <a href="#">Contact your fleet administrator</a>
     </div>
@@ -1128,6 +1159,7 @@
 </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="nexus-config.js?v=5"></script>
     <script src="nexus-db.js?v=3"></script>
     <script src="nexus-lang.js"></script>
@@ -1176,8 +1208,23 @@
   const roleInfo = document.getElementById('roleInfo');
   // If already authenticated, skip login
   (async () => {
+    const ret = new URLSearchParams(window.location.search).get('return');
     const local = localStorage.getItem('nexus_session');
-    if (local) { const _lr=JSON.parse(local).role||'staff'; window.location.href = _lr==='driver'?'driver-portal.html':_lr==='dispatcher'?'dispatcher-hub.html':'index.html'; return; }
+    if (local) {
+      const _lr = JSON.parse(local).role || 'staff';
+      window.location.href = ret || (_lr==='driver'?'driver-portal.html':_lr==='dispatcher'?'dispatcher-hub.html':'index.html');
+      return;
+    }
+    if (window.NexusDB && NexusDB.isConfigured) {
+      try {
+        const session = await NexusDB.Auth.getSession();
+        if (session && session.user) {
+          const profile = await NexusDB.Auth.getProfile();
+          const role = profile ? profile.role : 'admin';
+          window.location.href = ret || (role==='dispatcher'?'dispatcher-hub.html':'index.html');
+        }
+      } catch (_) {}
+    }
   })();
 
   const loginBtn = document.getElementById('loginBtn');
@@ -1221,7 +1268,129 @@
     }
   });
 
-  // Form submit — Supabase auth
+  // ── MFA (TOTP) — admin/dispatcher device-trust + enroll/challenge UI ──
+  const mfaPanel = document.getElementById('mfaPanel');
+  const preLoginBlock = document.getElementById('preLoginBlock');
+  const loginFooter = document.getElementById('loginFooter');
+  const mfaQr = document.getElementById('mfaQr');
+  const mfaQrWrap = document.getElementById('mfaQrWrap');
+  const mfaTitle = document.getElementById('mfaTitle');
+  const mfaSubtitle = document.getElementById('mfaSubtitle');
+  const mfaCode = document.getElementById('mfaCode');
+  const mfaError = document.getElementById('mfaError');
+  const mfaVerifyBtn = document.getElementById('mfaVerifyBtn');
+  const trustDeviceChk = document.getElementById('trustDevice');
+  const mfaCancel = document.getElementById('mfaCancel');
+  let _mfaCtx = null; // { mode: 'enroll'|'challenge', factorId, challengeId, role }
+
+  function redirectForRole(role) {
+    const ret = new URLSearchParams(window.location.search).get('return');
+    window.location.href = ret || (role === 'dispatcher' ? 'dispatcher-hub.html' : 'index.html');
+  }
+
+  function showMfaPanel() {
+    preLoginBlock.style.display = 'none';
+    loginForm.style.display = 'none';
+    loginFooter.style.display = 'none';
+    mfaPanel.style.display = 'block';
+    mfaCode.value = '';
+    mfaError.classList.remove('visible');
+    setTimeout(() => mfaCode.focus(), 50);
+  }
+
+  function hideMfaPanel() {
+    preLoginBlock.style.display = '';
+    loginForm.style.display = '';
+    loginFooter.style.display = '';
+    mfaPanel.style.display = 'none';
+    _mfaCtx = null;
+  }
+
+  mfaCancel.addEventListener('click', async (e) => {
+    e.preventDefault();
+    try { await NexusDB.Auth.signOut(); } catch (_) {}
+    hideMfaPanel();
+  });
+
+  async function beginEnrollment(role) {
+    const enrolled = await NexusDB.Auth.mfa.enroll();
+    mfaTitle.textContent = 'Scan to Set Up';
+    mfaSubtitle.textContent = 'Use an authenticator app (Google Authenticator, Authy, 1Password) to scan this code, then enter the 6-digit code it shows.';
+    mfaQrWrap.style.display = 'flex';
+    mfaQr.innerHTML = '';
+    new QRCode(mfaQr, {
+      text: enrolled.totp.uri,
+      width: 200, height: 200,
+      colorDark: '#0d1117', colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+    _mfaCtx = { mode: 'enroll', factorId: enrolled.id, role };
+    showMfaPanel();
+  }
+
+  async function beginChallenge(factorId, role) {
+    const challenge = await NexusDB.Auth.mfa.challenge(factorId);
+    mfaTitle.textContent = 'Enter Your Code';
+    mfaSubtitle.textContent = 'Open your authenticator app and enter the current 6-digit code.';
+    mfaQrWrap.style.display = 'none';
+    _mfaCtx = { mode: 'challenge', factorId, challengeId: challenge.id, role };
+    showMfaPanel();
+  }
+
+  mfaVerifyBtn.addEventListener('click', async () => {
+    if (!_mfaCtx) return;
+    const code = mfaCode.value.trim();
+    if (!/^\d{6}$/.test(code)) {
+      mfaError.textContent = 'Enter the 6-digit code from your authenticator app';
+      mfaError.classList.add('visible');
+      return;
+    }
+    mfaVerifyBtn.classList.add('loading');
+    try {
+      let challengeId = _mfaCtx.challengeId;
+      if (_mfaCtx.mode === 'enroll') {
+        const challenge = await NexusDB.Auth.mfa.challenge(_mfaCtx.factorId);
+        challengeId = challenge.id;
+      }
+      await NexusDB.Auth.mfa.verify(_mfaCtx.factorId, challengeId, code);
+      const user = await NexusDB.Auth.getUser();
+      if (user && trustDeviceChk.checked) {
+        await NexusDB.Auth.Device.trust(user.id, 30);
+      }
+      mfaVerifyBtn.classList.remove('loading');
+      redirectForRole(_mfaCtx.role);
+    } catch (err) {
+      mfaVerifyBtn.classList.remove('loading');
+      mfaError.textContent = err.message || 'Invalid code — try again';
+      mfaError.classList.add('visible');
+    }
+  });
+
+  // Forgot password — real Supabase reset email (admin/dispatcher only; no-op without a backend)
+  document.getElementById('forgotLink').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = emailInput.value.trim();
+    if (!email || !email.includes('@')) {
+      const errEl = document.getElementById('emailError');
+      errEl.textContent = 'Enter your email above first, then click "Forgot password?"';
+      errEl.classList.add('visible');
+      emailInput.classList.add('error');
+      emailInput.focus();
+      return;
+    }
+    if (!window.NexusDB || !NexusDB.isConfigured) {
+      alert('Password reset requires an administrator — contact your fleet administrator.');
+      return;
+    }
+    try {
+      await NexusDB.Auth.resetPassword(email);
+      alert('If an account exists for ' + email + ', a reset link has been sent.');
+    } catch (err) {
+      alert(err.message || 'Could not send reset email.');
+    }
+  });
+
+  // Form submit — real Supabase auth + TOTP for admin/dispatcher, unchanged local flow for everyone else
   const loginForm = document.getElementById('loginForm');
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1251,32 +1420,74 @@
     if (!valid) return;
 
     loginBtn.classList.add('loading');
-    try {
-      // Local auth: validate against NEXUS_LOCAL_USERS (SHA-256 hashed passwords)
-        const users = window.NEXUS_LOCAL_USERS || [];
-        const msgBuf = new TextEncoder().encode(password);
-        const hashBuf = await crypto.subtle.digest('SHA-256', msgBuf);
-        const hash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('');
-        const match = users.find(u =>
-          u.email.toLowerCase() === email.toLowerCase() &&
-          u.passwordHash === hash &&
-          u.active !== false
-        );
-        if (!match) throw new Error('Invalid email or password');
-        const _co = match.company || 'co_001';
-        const localSession = { email: match.email, role: match.role, name: match.name || 'User', company: _co, ts: Date.now() };
-        localStorage.setItem('nexus_session', JSON.stringify(localSession));
-        // Set active company — use raw bypass to survive storage proxy
-        if (Storage.prototype._rawSet) {
-          Storage.prototype._rawSet.call(localStorage, 'nexus_active_company', _co);
-        } else {
-          localStorage.setItem('nexus_active_company', _co);
+
+    // Role directory lookup only — does NOT validate the password locally for
+    // admin/dispatcher. Their real authentication is Supabase's, below.
+    const directory = window.NEXUS_LOCAL_USERS || [];
+    const directoryMatch = directory.find(u => u.email.toLowerCase() === email.toLowerCase());
+    const isPrivileged = directoryMatch && (directoryMatch.role === 'admin' || directoryMatch.role === 'dispatcher');
+
+    if (isPrivileged && window.NexusDB && NexusDB.isConfigured) {
+      try {
+        await NexusDB.Auth.signIn(email, password);
+        const user = await NexusDB.Auth.getUser();
+        const profile = await NexusDB.Auth.getProfile();
+        const role = (profile && profile.role) || directoryMatch.role;
+
+        const factorsData = await NexusDB.Auth.mfa.listFactors();
+        const verifiedFactor = ((factorsData && factorsData.totp) || []).find(f => f.status === 'verified');
+
+        loginBtn.classList.remove('loading');
+
+        if (!verifiedFactor) {
+          await beginEnrollment(role);
+          return;
         }
-        await new Promise(r => setTimeout(r, 400));
+
+        const trusted = user ? await NexusDB.Auth.Device.isTrusted(user.id) : false;
+        if (trusted) {
+          redirectForRole(role);
+          return;
+        }
+
+        await beginChallenge(verifiedFactor.id, role);
+      } catch (err) {
+        loginBtn.classList.remove('loading');
+        const errEl = document.getElementById('passwordError');
+        errEl.textContent = err.message || 'Invalid email or password';
+        errEl.classList.add('visible');
+        pwdInput.classList.add('error');
+      }
+      return;
+    }
+
+    // Driver / everyone else — unchanged local flow
+    try {
+      const users = window.NEXUS_LOCAL_USERS || [];
+      const msgBuf = new TextEncoder().encode(password);
+      const hashBuf = await crypto.subtle.digest('SHA-256', msgBuf);
+      const hash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('');
+      const match = users.find(u =>
+        u.email.toLowerCase() === email.toLowerCase() &&
+        u.passwordHash === hash &&
+        u.active !== false
+      );
+      if (!match) throw new Error('Invalid email or password');
+      const _co = match.company || 'co_001';
+      const localSession = { email: match.email, role: match.role, name: match.name || 'User', company: _co, ts: Date.now() };
+      localStorage.setItem('nexus_session', JSON.stringify(localSession));
+      // Set active company — use raw bypass to survive storage proxy
+      if (Storage.prototype._rawSet) {
+        Storage.prototype._rawSet.call(localStorage, 'nexus_active_company', _co);
+      } else {
+        localStorage.setItem('nexus_active_company', _co);
+      }
+      await new Promise(r => setTimeout(r, 400));
       loginBtn.classList.remove('loading');
       const _sess = JSON.parse(localStorage.getItem('nexus_session')||'{}');
       const _role = _sess.role || 'staff';
-      window.location.href = _role==='driver'?'driver-portal.html':_role==='dispatcher'?'dispatcher-hub.html':'index.html';
+      const ret = new URLSearchParams(window.location.search).get('return');
+      window.location.href = ret || (_role==='driver'?'driver-portal.html':_role==='dispatcher'?'dispatcher-hub.html':'index.html');
     } catch (err) {
       loginBtn.classList.remove('loading');
       // Show error under password field

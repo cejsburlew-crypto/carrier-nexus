@@ -47,6 +47,23 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION handle_new_user();
 
+-- ── TRUSTED DEVICES (2FA device recognition) ────────────────
+-- A row means "this browser skipped the TOTP prompt until expires_at"
+-- for this user. TOTP factors themselves live in Supabase's native
+-- auth.mfa_factors — not duplicated here.
+CREATE TABLE IF NOT EXISTS trusted_devices (
+  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  device_id     TEXT NOT NULL,
+  label         TEXT,
+  user_agent    TEXT,
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  last_used_at  TIMESTAMPTZ DEFAULT NOW(),
+  expires_at    TIMESTAMPTZ NOT NULL,
+  revoked_at    TIMESTAMPTZ,
+  UNIQUE (user_id, device_id)
+);
+
 -- ── DRIVERS ─────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS drivers (
   id                 UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -251,12 +268,14 @@ CREATE INDEX IF NOT EXISTS idx_invoices_company   ON invoices(company_id);
 CREATE INDEX IF NOT EXISTS idx_contacts_company   ON contacts(company_id);
 CREATE INDEX IF NOT EXISTS idx_maint_company      ON maintenance_orders(company_id);
 CREATE INDEX IF NOT EXISTS idx_docs_company       ON documents(company_id);
+CREATE INDEX IF NOT EXISTS idx_trusted_devices_user ON trusted_devices(user_id);
 
 -- ============================================================
 -- ROW LEVEL SECURITY
 -- ============================================================
 ALTER TABLE companies          ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profiles           ENABLE ROW LEVEL SECURITY;
+ALTER TABLE trusted_devices    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE drivers            ENABLE ROW LEVEL SECURITY;
 ALTER TABLE fleet              ENABLE ROW LEVEL SECURITY;
 ALTER TABLE loads              ENABLE ROW LEVEL SECURITY;
@@ -274,9 +293,29 @@ RETURNS UUID LANGUAGE sql STABLE AS $$
   SELECT company_id FROM profiles WHERE id = auth.uid()
 $$;
 
--- Profiles: own row only
-CREATE POLICY "profiles_own" ON profiles
-  FOR ALL USING (id = auth.uid());
+-- Helper: is the current user an admin in the given company?
+-- SECURITY DEFINER so this check bypasses profiles' own RLS instead of
+-- recursing into it.
+CREATE OR REPLACE FUNCTION is_company_admin(cid UUID)
+RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin' AND company_id = cid
+  )
+$$;
+
+-- Profiles: readable by the row owner and by admins in the same company;
+-- writable only by the row owner.
+DROP POLICY IF EXISTS "profiles_own" ON profiles;
+CREATE POLICY "profiles_select" ON profiles
+  FOR SELECT USING (id = auth.uid() OR is_company_admin(company_id));
+CREATE POLICY "profiles_insert_own" ON profiles
+  FOR INSERT WITH CHECK (id = auth.uid());
+CREATE POLICY "profiles_update_own" ON profiles
+  FOR UPDATE USING (id = auth.uid());
+
+-- Trusted devices: only the owning user can see or manage their own rows
+CREATE POLICY "trusted_devices_own" ON trusted_devices
+  FOR ALL USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
 
 -- Companies: members only
 CREATE POLICY "companies_member" ON companies

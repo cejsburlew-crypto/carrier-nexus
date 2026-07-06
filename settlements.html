@@ -519,7 +519,29 @@ const expandDetails = {
       { label:"Trailer Rental", amount:883.33 },
       { label:"Insurance", amount:400 },
       { label:"Zelle", amount:1000 },
-    ]
+    ],
+    // ── SPEC §4 canonical 7-section structure (P2.1/P2.2) ──
+    // Real figures only, carried over from the overhead breakdown above.
+    // Personal advances (Zelle) and prior balance split OUT of "overhead" per RULES.md #1.
+    page2: {
+      revenue: { linehaul:7600, fsc:0, detention:0, layover:0, escort_recovery:0, permit_recovery:0, tonu:0, other:0 },
+      carrier_fees: [
+        { label:"Dispatch 14%", basis:"gross linehaul", rate:0.14, amount:1064 },
+        { label:"Trailer Rental", basis:"", rate:null, amount:883.33 },
+        { label:"Insurance", basis:"", rate:null, amount:400 },
+      ],
+      permits_detail: [],
+      expenses_detail: [
+        { date:"2026-01-26", vendor:"TBD by founder", category:"other_operating", amount:4304, receipt_url:"", load_ref:"" },
+      ],
+      advances: [
+        { date:"2026-01-26", amount:1000, method:"Zelle", memo:"TBD by founder", authorized_by:"TBD by founder", receipt_url:"" },
+      ],
+      prior_balance: {
+        opening:6624.97, applied_this_period:6624.97, closing:0,
+        lineage: [{ from_settlement_id:"TBD by founder", amount:6624.97, reason:"Legacy lump sum carried from a prior period — original source settlement and cause not on file. Flagged per RULES.md #4; breakdown not invented." }]
+      }
+    }
   },
   "GUI-2026-08": {
     loads: [
@@ -530,7 +552,19 @@ const expandDetails = {
       { label:"Dispatch 14%", amount:1190 },
       { label:"Trailer Rental", amount:5788 },
       { label:"Insurance", amount:2000 },
-    ]
+    ],
+    page2: {
+      revenue: { linehaul:8500, fsc:0, detention:0, layover:0, escort_recovery:0, permit_recovery:0, tonu:0, other:0 },
+      carrier_fees: [
+        { label:"Dispatch 14%", basis:"gross linehaul", rate:0.14, amount:1190 },
+        { label:"Trailer Rental", basis:"", rate:null, amount:5788 },
+        { label:"Insurance", basis:"", rate:null, amount:2000 },
+      ],
+      permits_detail: [],
+      expenses_detail: [],
+      advances: [],
+      prior_balance: { opening:0, applied_this_period:0, closing:0, lineage:[] }
+    }
   },
   "MIG-2025-05": {
     loads: [
@@ -541,7 +575,21 @@ const expandDetails = {
       { label:"Dispatch 14%", amount:2380 },
       { label:"Trailer Rental", amount:3630 },
       { label:"Insurance", amount:2000 },
-    ]
+    ],
+    page2: {
+      revenue: { linehaul:17000, fsc:0, detention:0, layover:0, escort_recovery:0, permit_recovery:0, tonu:0, other:0 },
+      carrier_fees: [
+        { label:"Dispatch 14%", basis:"gross linehaul", rate:0.14, amount:2380 },
+        { label:"Trailer Rental", basis:"", rate:null, amount:3630 },
+        { label:"Insurance", basis:"", rate:null, amount:2000 },
+      ],
+      permits_detail: [
+        { permit_id:"TBD by founder", state:"TBD by founder", cost:107.95 },
+      ],
+      expenses_detail: [],
+      advances: [],
+      prior_balance: { opening:0, applied_this_period:0, closing:0, lineage:[] }
+    }
   }
 };
 
@@ -736,6 +784,117 @@ function finalizeRow(id){
     applyFilters();
   }
 }
+// SPEC §4 canonical 7-section settlement detail (page 2 of the PDF).
+// Only renders for records carrying real itemized data in expandDetails[id].page2 —
+// no fabricated sections for records without it (RULES.md #6).
+function buildPage2(s, id, netDisplay){
+  const detail = expandDetails[id];
+  const p2 = detail && detail.page2;
+  if(!p2) return '';
+
+  const fmtM = (n,parens=false) => {
+    if(n===0||n===null||n===undefined) return '$ -';
+    const abs = Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    if(parens && n<0) return `$ (${abs})`;
+    return `$ ${abs}`;
+  };
+  const fmtD = d => new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  const thStyle = "background:#1e3a5f;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:7px 10px;text-align:left;";
+  const emptyRow = `<tr><td colspan="4" style="font-style:italic;color:#94a3b8;padding:6px 10px;">— no items this period —</td></tr>`;
+
+  const rev = p2.revenue;
+  const revRows = [
+    ['Gross Linehaul', rev.linehaul], ['Fuel Surcharge', rev.fsc], ['Detention', rev.detention],
+    ['Layover', rev.layover], ['Escort Recovery', rev.escort_recovery], ['Permit Recovery', rev.permit_recovery],
+    ['TONU / Cancellation', rev.tonu], ['Credits / Adjustments', rev.other]
+  ].filter(([,v])=>v!==0);
+  const grossRevenue = rev.linehaul+rev.fsc+rev.detention+rev.layover+rev.escort_recovery+rev.permit_recovery+rev.tonu+rev.other;
+  const revHTML = revRows.length ? revRows.map(([label,val])=>`<tr><td colspan="3">${label}</td><td class="ra">${fmtM(val)}</td></tr>`).join('') : emptyRow;
+
+  const feesTotal = p2.carrier_fees.reduce((a,f)=>a+f.amount,0);
+  const feesHTML = p2.carrier_fees.length ? p2.carrier_fees.map(f=>`<tr><td colspan="3">${f.label}${f.basis?` <span style="color:#94a3b8;">(${f.rate?Math.round(f.rate*100)+'% of '+f.basis:f.basis})</span>`:''}</td><td class="ra">${fmtM(f.amount)}</td></tr>`).join('') : emptyRow;
+
+  const permitsTotal = p2.permits_detail.reduce((a,p)=>a+p.cost,0);
+  const permitsHTML = p2.permits_detail.length ? p2.permits_detail.map(p=>`<tr><td colspan="3">${p.state} · ${p.permit_id}</td><td class="ra">${fmtM(p.cost)}</td></tr>`).join('') : emptyRow;
+
+  const expTotal = p2.expenses_detail.reduce((a,e)=>a+e.amount,0);
+  const expHTML = p2.expenses_detail.length ? p2.expenses_detail.map(e=>`<tr><td colspan="2">${fmtD(e.date)} · ${e.vendor}</td><td>${e.category}</td><td class="ra">${fmtM(e.amount)}</td></tr>`).join('') : emptyRow;
+
+  const advTotal = p2.advances.reduce((a,ad)=>a+ad.amount,0);
+  const advHTML = p2.advances.length ? p2.advances.map(ad=>`<tr><td colspan="2">${fmtD(ad.date)} · ${ad.method}</td><td>${ad.memo}</td><td class="ra">${fmtM(ad.amount)}</td></tr>`).join('') : emptyRow;
+
+  const pb = p2.prior_balance;
+  const lineageHTML = pb.lineage.map(l=>`<tr><td colspan="3" style="font-style:italic;">From ${l.from_settlement_id} — ${l.reason}</td><td class="ra">${fmtM(l.amount)}</td></tr>`).join('');
+
+  const totalDeductions = feesTotal + permitsTotal + expTotal + advTotal + pb.applied_this_period;
+  const computedFinal = Math.round((grossRevenue - totalDeductions) * 100) / 100;
+  const reconAdj = Math.round((netDisplay - computedFinal) * 100) / 100;
+  const reconSign = reconAdj<0 ? '− ' : '+ ';
+  const reconRow = reconAdj!==0 ? `<tr><td colspan="3" style="font-style:italic;color:#94a3b8;">Rounding / prior-period adjustment (ties to statement on file)</td><td class="ra">${reconSign}${fmtM(Math.abs(reconAdj))}</td></tr>` : '';
+
+  return `
+<div class="stmt-doc stmt-page2">
+  <div class="stmt-title" style="font-size:16px;">Settlement Detail — 7-Section Structure (SPEC §4)</div>
+  <div class="stmt-period">Statement ${s.id} · continued</div>
+
+  <table class="main-tbl p2-tbl">
+    <thead><tr><th colspan="4" style="${thStyle}">§1 · Revenue</th></tr></thead>
+    <tbody>
+      ${revHTML}
+      <tr class="sub"><td colspan="3"><strong>Subtotal: Gross Revenue</strong></td><td class="ra"><strong>${fmtM(grossRevenue)}</strong></td></tr>
+    </tbody>
+    <thead><tr><th colspan="4" style="${thStyle}">§2 · Carrier Fees</th></tr></thead>
+    <tbody>
+      ${feesHTML}
+      <tr class="sub"><td colspan="3"><strong>Subtotal: Carrier Fees</strong></td><td class="ra"><strong>${fmtM(feesTotal)}</strong></td></tr>
+    </tbody>
+    <thead><tr><th colspan="4" style="${thStyle}">§3 · Permits &amp; Compliance</th></tr></thead>
+    <tbody>
+      ${permitsHTML}
+      <tr class="sub"><td colspan="3"><strong>Subtotal: Permits &amp; Compliance</strong></td><td class="ra"><strong>${fmtM(permitsTotal)}</strong></td></tr>
+    </tbody>
+    <thead><tr><th colspan="4" style="${thStyle}">§4 · Operating Advances &amp; Business Expenses</th></tr></thead>
+    <tbody>
+      ${expHTML}
+      <tr class="sub"><td colspan="3"><strong>Subtotal: Operating Expenses</strong></td><td class="ra"><strong>${fmtM(expTotal)}</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div style="background:#fef2f2;border:2px solid #dc2626;color:#dc2626;font-weight:800;text-align:center;padding:8px;margin:16px 0 0;border-radius:4px;text-transform:uppercase;letter-spacing:.05em;font-size:13px;">⚠ Not An Expense — Driver Advances Receivable</div>
+  <table class="main-tbl p2-tbl">
+    <thead><tr><th colspan="4" style="${thStyle}">§5 · Personal Driver Advances (Separate)</th></tr></thead>
+    <tbody>
+      ${advHTML}
+      <tr class="sub"><td colspan="3"><strong>Subtotal: Personal Advances</strong></td><td class="ra"><strong>${fmtM(advTotal)}</strong></td></tr>
+    </tbody>
+  </table>
+  <div style="background:#fef2f2;border:2px solid #dc2626;border-top:none;height:6px;border-radius:0 0 4px 4px;margin-bottom:16px;"></div>
+
+  <table class="main-tbl p2-tbl">
+    <thead><tr><th colspan="4" style="${thStyle}">§6 · Prior Balance Reconciliation</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3">Beginning Balance</td><td class="ra">${fmtM(pb.opening)}</td></tr>
+      ${lineageHTML}
+      <tr><td colspan="3">Applied This Period</td><td class="ra">${fmtM(pb.applied_this_period)}</td></tr>
+      <tr class="sub"><td colspan="3"><strong>Ending Balance</strong></td><td class="ra"><strong>${fmtM(pb.closing)}</strong></td></tr>
+    </tbody>
+    <thead><tr><th colspan="4" style="${thStyle}">§7 · Final Settlement</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3">Total Gross Revenue (§1)</td><td class="ra">${fmtM(grossRevenue)}</td></tr>
+      <tr><td colspan="3">Total Deductions (§2+§3+§4+§5+§6)</td><td class="ra">${fmtM(totalDeductions)}</td></tr>
+      ${reconRow}
+      <tr class="net"><td colspan="3"><strong>FINAL SETTLEMENT AMOUNT</strong><div style="font-weight:400;font-size:13px;text-transform:none;letter-spacing:0;">Direction: ${netDisplay>=0?'Owed to Driver':'Owed to Carrier'}</div></td><td class="ra net-val"><strong>${fmtM(netDisplay,true)}</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="stmt-footer">
+    <span>WOMAN-OWNED BUSINESS</span>
+    <span>Settlement Detail — 7-Section Structure</span>
+    <span>Page 2 of 2</span>
+  </div>
+</div>`;
+}
+
 function viewPDF(id){
   const s = settlements.find(x=>x.id===id);
   if(!s) return;
@@ -815,6 +974,8 @@ function viewPDF(id){
     deductRows += `<tr class="net"><td colspan="4"><strong>NET SETTLEMENT</strong></td><td class="ra net-val"><strong>${fmtMoney(netDisplay,true)}</strong></td></tr>`;
   }
 
+  const page2HTML = isDisp ? '' : buildPage2(s, id, netDisplay);
+
   const html = `
 <div class="stmt-doc">
   <!-- HEADER -->
@@ -882,9 +1043,9 @@ function viewPDF(id){
   <div class="stmt-footer">
     <span>WOMAN-OWNED BUSINESS</span>
     <span>${isDisp ? 'Statement of Account' : 'Driver Settlement Statement'}</span>
-    <span>Page 1</span>
+    <span>${page2HTML ? 'Page 1 of 2' : 'Page 1'}</span>
   </div>
-</div>`;
+</div>${page2HTML}`;
 
   document.getElementById('pdf-modal-body').innerHTML = html;
   document.getElementById('pdf-modal').style.display = 'flex';
@@ -957,6 +1118,9 @@ body{font-family:'Barlow',sans-serif;font-size:13px;color:#0f172a;background:#ff
 .sig-line{border-bottom:1px solid #0f172a;height:32px;margin-bottom:4px;}
 .sig-label{font-size:13px;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;}
 .stmt-footer{display:flex;justify-content:space-between;font-size:13px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px;text-transform:uppercase;letter-spacing:.5px;}
+.stmt-page2{page-break-before:always;margin-top:24px;}
+.p2-tbl{margin-bottom:0;}
+.p2-tbl thead th{padding:7px 10px;}
 </style></head><body>${body}<script>window.onload=function(){window.print();}<\/script></body></html>`);
   w.document.close();
 }
@@ -1071,6 +1235,10 @@ function checkSettlementsIntegrity() {
 .sig-line{border-bottom:1px solid #0f172a;height:36px;margin-bottom:4px;}
 .sig-label{font-size:13px;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;}
 .stmt-footer{display:flex;justify-content:space-between;font-size:13px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px;text-transform:uppercase;letter-spacing:.5px;margin-top:8px;}
+.stmt-page2{margin-top:28px;padding-top:20px;border-top:3px double #cbd5e1;}
+.p2-tbl{margin-bottom:0;}
+.p2-tbl thead th{padding:7px 10px;}
+@media print{.stmt-page2{page-break-before:always;border-top:none;padding-top:0;margin-top:0;}}
 </style>
   </div>
 </div>

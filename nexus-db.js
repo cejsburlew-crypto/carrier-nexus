@@ -40,6 +40,11 @@
       if (!sb()) { localStorage.removeItem('nexus_session'); return; }
       await sb().auth.signOut();
     },
+    async resetPassword(email) {
+      if (!sb()) throw new Error('Supabase not configured');
+      const { error } = await sb().auth.resetPasswordForEmail(email);
+      if (error) throw error;
+    },
     async getSession() {
       if (sb()) {
         const { data } = await sb().auth.getSession();
@@ -72,10 +77,137 @@
     async requireAuth() {
       const session = await Auth.getSession();
       if (!session) {
-        window.location.href = 'login.html';
+        const ret = encodeURIComponent(location.pathname + location.search);
+        window.location.href = 'login.html?return=' + ret;
         return false;
       }
       return true;
+    },
+
+    // ── TOTP MFA — thin wrappers around Supabase's native factor store ──
+    mfa: {
+      async enroll() {
+        if (!sb()) throw new Error('Supabase not configured');
+        const { data, error } = await sb().auth.mfa.enroll({ factorType: 'totp' });
+        if (error) throw error;
+        return data; // { id, totp: { qr_code, secret, uri } }
+      },
+      async challenge(factorId) {
+        if (!sb()) throw new Error('Supabase not configured');
+        const { data, error } = await sb().auth.mfa.challenge({ factorId });
+        if (error) throw error;
+        return data; // { id: challengeId }
+      },
+      async verify(factorId, challengeId, code) {
+        if (!sb()) throw new Error('Supabase not configured');
+        const { data, error } = await sb().auth.mfa.verify({ factorId, challengeId, code });
+        if (error) throw error;
+        return data;
+      },
+      async listFactors() {
+        if (!sb()) return { totp: [] };
+        const { data, error } = await sb().auth.mfa.listFactors();
+        if (error) throw error;
+        return data;
+      },
+      async unenroll(factorId) {
+        if (!sb()) throw new Error('Supabase not configured');
+        const { data, error } = await sb().auth.mfa.unenroll({ factorId });
+        if (error) throw error;
+        return data;
+      },
+      async assuranceLevel() {
+        if (!sb()) return null;
+        const { data, error } = await sb().auth.mfa.getAuthenticatorAssuranceLevel();
+        if (error) throw error;
+        return data; // { currentLevel, nextLevel }
+      }
+    },
+
+    // ── Trusted devices — lets a recognized browser skip the TOTP prompt ──
+    Device: {
+      currentId() {
+        let id = localStorage.getItem('nexus_device_id');
+        if (!id) {
+          id = crypto.randomUUID();
+          localStorage.setItem('nexus_device_id', id);
+        }
+        return id;
+      },
+      async isTrusted(userId) {
+        if (!sb() || !userId) return false;
+        const deviceId = Auth.Device.currentId();
+        const { data, error } = await sb()
+          .from('trusted_devices')
+          .select('*')
+          .eq('user_id', userId)
+          .eq('device_id', deviceId)
+          .is('revoked_at', null)
+          .gt('expires_at', new Date().toISOString())
+          .maybeSingle();
+        if (error) {
+          console.warn('[NexusDB] Device.isTrusted failed:', error.message);
+          return false;
+        }
+        if (data) {
+          sb().from('trusted_devices')
+            .update({ last_used_at: new Date().toISOString() })
+            .eq('id', data.id)
+            .then(() => {}, () => {});
+          return true;
+        }
+        return false;
+      },
+      async trust(userId, days = 30) {
+        if (!sb() || !userId) return null;
+        const deviceId = Auth.Device.currentId();
+        const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+        const uaMatch = (navigator.userAgent || '').match(/Chrome|Firefox|Safari|Edge/);
+        const { data, error } = await sb()
+          .from('trusted_devices')
+          .upsert({
+            user_id: userId,
+            device_id: deviceId,
+            label: (uaMatch ? uaMatch[0] : 'Browser') + ' on ' + (navigator.platform || 'device'),
+            user_agent: navigator.userAgent,
+            last_used_at: new Date().toISOString(),
+            expires_at: expiresAt,
+            revoked_at: null
+          }, { onConflict: 'user_id,device_id' })
+          .select()
+          .single();
+        if (error) {
+          console.warn('[NexusDB] Device.trust failed:', error.message);
+          return null;
+        }
+        return data;
+      },
+      async list(userId) {
+        if (!sb() || !userId) return [];
+        const { data, error } = await sb()
+          .from('trusted_devices')
+          .select('*')
+          .eq('user_id', userId)
+          .is('revoked_at', null)
+          .order('last_used_at', { ascending: false });
+        if (error) {
+          console.warn('[NexusDB] Device.list failed:', error.message);
+          return [];
+        }
+        return data || [];
+      },
+      async revoke(deviceRowId) {
+        if (!sb()) return false;
+        const { error } = await sb()
+          .from('trusted_devices')
+          .update({ revoked_at: new Date().toISOString() })
+          .eq('id', deviceRowId);
+        if (error) {
+          console.warn('[NexusDB] Device.revoke failed:', error.message);
+          return false;
+        }
+        return true;
+      }
     }
   };
 
